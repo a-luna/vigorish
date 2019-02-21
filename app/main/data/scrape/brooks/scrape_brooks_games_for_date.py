@@ -26,9 +26,10 @@ TEMPL_XPATH_PITCHLOG_URLS = (
 
 def scrape_brooks_games_for_date(scrape_dict):
     scrape_date = scrape_dict['date']
+    session = scrape_dict['session']
     if not scrape_date:
         scrape_date = date.now()
-    result = Season.is_date_in_season(scrape_date)
+    result = Season.is_date_in_season(session, scrape_date)
     if not result['success']:
         return result
 

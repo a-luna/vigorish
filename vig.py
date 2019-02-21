@@ -58,8 +58,8 @@ class DateString(click.ParamType):
         except Exception:
             error = (
                 f'"{value}" could not be parsed as a valid date. You can use '
-                'any format recognized by dateutil.parser, for example:'
-                '\t2018-5-13  -or-  08/10/2017  -or-  "Apr 27 2018"'
+                'any format recognized by dateutil.parser, for example: '
+                '2018-5-13  -or-  08/10/2017  -or-  "Apr 27 2018"'
             )
             self.fail(error, param, ctx)
 
@@ -157,7 +157,7 @@ def scrape(ctx, data_set, start, end):
     with tqdm(total=len(date_range), ncols=100, unit='page') as pbar:
         for scrape_date in date_range:
             pbar.set_description(f'Processing: {scrape_date.strftime(DATE_ONLY)}')
-            result = __scrape_data_for_date(scrape_date, func_dict)
+            result = __scrape_data_for_date(s, scrape_date, func_dict)
             if not result['success']:
                 break
             delay_ms = (randint(150, 250)/100.0)
@@ -211,11 +211,11 @@ def __get_func_dict_for_data_set(data_set):
     )
 
 
-def __scrape_data_for_date(scrape_date, func_dict):
+def __scrape_data_for_date(s, scrape_date, func_dict):
     get_input_func = func_dict['get_input']
     input_data = get_input_func(scrape_date) \
         if get_input_func else None
-    input_dict = dict(date=scrape_date, input_data=input_data)
+    input_dict = dict(date=scrape_date, input_data=input_data, session=s)
     result = func_dict['scrape'](input_dict)
     if not result['success']:
         return result
