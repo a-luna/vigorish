@@ -1,0 +1,424 @@
+
+
+<!doctype html>
+<html>
+
+  <head>
+    <title>BrooksBaseball.net: PITCHf/x Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/flick/jquery-ui.css" />
+    <link rel="stylesheet" href="css/cosmo-min.test.css">
+    <link rel="stylesheet" href="css/datepicker.css">
+	<link rel="stylesheet" type="text/css" href="css/jquery.multiselect.css" />
+	<style>
+    	.credit{
+    		height: 150px;
+    	}
+    </style>
+    <script src="js/jquery-min.js"></script>
+ 	<script src="js/jquery.smooth-scroll.min.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-datepicker.js"></script>
+    <script src="js/bootswatch.js"></script>
+	<script type="text/javascript" src="js/jquery.multiselect.js"></script>
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-105198-4']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+</script>
+<script type="text/javascript">
+$(function(){
+	$("#isel").multiselect({
+		selectedList: 4,
+		close: function(event,ui){
+		  var values = $(this).val().join("&");
+		  window.location = ("pfx.php?s_type=3&sp_type=1&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&pnf=&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428&" + values);
+		}
+
+	});
+});
+</script>
+
+<script>
+$(function(){
+	$("#msel").multiselect({
+		multiple: false,
+		header: "Select a Matchup",
+		nonSelectedText: "All Matchups",
+		selectedList: 1,
+	    click: function(event, ui){
+		   window.location = ("pfx.php?s_type=3&sp_type=1&year=2018&month=4&day=28&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&pnf=&prevDate=428&batterX=" + ui.value);
+	    },
+	});
+});
+</script>
+
+
+<script>
+$(function(){
+	$("#psel").multiselect({
+		multiple: false,
+		header: "Select a Pitch Number",
+		nonSelectedText: "All Pitches",
+		selectedList: 1,
+	    click: function(event, ui){
+		   window.location = ("pfx.php?s_type=3&sp_type=1&year=2018&month=4&day=28&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428&pnf=" + ui.value);
+	    },
+	});
+});
+</script>
+
+
+
+  </head>
+
+  <body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+
+<div class="container">
+ <div class="navbar-float">
+ 	<a href="http://www.brooksbaseball.net"><img src=img/bbb.png></a>
+ </div>
+</div>
+
+  <!-- Navbar
+    ================================================== -->
+ <div class="navbar navbar-fixed-top">
+   <div class="navbar-inner">
+     <div class="container">
+       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+       </a>
+       <div class="nav-collapse collapse" id="main-menu">
+        <ul class="nav" id="main-menu-left">
+          <li class=first-nav><a href="http://www.brooksbaseball.net/dashboard.php">Dashboard</a></li>
+          <li><a href="http://www.brooksbaseball.net/pc_splash.php">Player Cards</a></li>
+          <li class="active"><a href="http://www.brooksbaseball.net/pfxVB/pfx.php">PITCHf/x Tool</a></li>
+          <li><a href="http://www.brooksbaseball.net/about.php">About</a></li>
+        </ul>
+		<form class="navbar-search pull-right" action="http://www.brooksbaseball.net/search.php" method="get">
+			<input type="text" class="search-query span2" placeholder="Player Search" name="name">
+   	    </form>
+        <ul class="nav pull-right" id="main-menu-right">
+          <li>
+          		<a style="font-size: 10px;" rel="tooltip" target="_blank" href="http://www.baseballprospectus.com/">Presented by Baseball Prospectus<i class="icon-share-alt"></i></a>
+          </li>
+          <li>
+          		<a style="font-size: 10px;" rel="tooltip" target="_blank" href="#">Powered by Pitch Info<i class="icon-share-alt"></i></a>
+          </li>
+        </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+
+<div class="container">
+
+
+<!-- Masthead
+================================================== -->
+	<header class="jumbotron subhead" id="overview">
+	  <div class="subnav navbar-fixed-top" style="height: 37px">
+		<div class="container">
+		</div>
+	  </div>
+	</header>
+
+	<div class="container" style="height:80px">
+
+	</div>
+
+
+
+<div class="container">
+      <div class="row-fluid">
+        <div class="span3">
+
+          <ul class="nav  nav-pills nav-stacked" id="ln" style="visibility:hidden;">
+            <li class="nav-header">Plot Style
+              <br>
+            </li>
+
+
+            <li  class=active >
+              <a href="pfx.php?s_type=3&sp_type=1&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428">Pitch Results</a>
+			</li>
+            <li >
+              <a href="pfx.php?s_type=2&sp_type=1&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428">Pitch Types</a>
+			</li>
+            <li >
+              <a href="pfx.php?s_type=4&sp_type=1&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428">At-Bat Results</a>
+			</li>
+            <li >
+              <a href="pfx.php?s_type=8&sp_type=1&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428">Batter Stance</a>
+			</li>
+            <li >
+              <a href="pfx.php?s_type=11&sp_type=1&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428">Two-Strike Counts</a>
+			</li>
+
+            <li class="nav-header">Batter Filters
+              <br>
+            </li>
+            <li  class=active >
+              <a href="pfx.php?s_type=3&sp_type=1&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428">vs. LHH & RHH</a>
+			</li>
+            <li >
+              <a href="pfx.php?s_type=3&sp_type=2&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428">vs. LHH</a>
+			</li>
+            <li >
+              <a href="pfx.php?s_type=3&sp_type=3&year=2018&month=4&day=28&batterX=&pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/&prevDate=428">vs. RHH</a>
+			</li>
+
+            <li class="nav-header">Inning Selector
+              <br>
+            </li>
+
+			<li>
+			<select style="width: 270px;" id=isel multiple="multiple" size="5">
+							<option  value="inning1=y">Inning 1</option>
+							<option  value="inning2=y">Inning 2</option>
+							<option  value="inning3=y">Inning 3</option>
+							<option  value="inning4=y">Inning 4</option>
+							<option  value="inning5=y">Inning 5</option>
+							<option  value="inning6=y">Inning 6</option>
+							<option  value="inning7=y">Inning 7</option>
+							<option  value="inning8=y">Inning 8</option>
+							<option  value="inning9=y">Inning 9</option>
+						</select>
+			</li>
+
+
+            <li class="nav-header">Pitch of AB Selector
+              <br>
+            </li>
+
+			<li>
+			<select style="width: 270px;" id=psel multiple="multiple" size="5">
+							<option  value="1">Pitch #1</option>
+							<option  value="2">Pitch #2</option>
+							<option  value="3">Pitch #3</option>
+							<option  value="4">Pitch #4</option>
+							<option  value="5">Pitch #5</option>
+						</select>
+			</li>
+
+
+
+
+
+            <li class="nav-header">Matchup Selector
+				<br>
+            </li>
+
+            <li>
+              <select style="width: 270px;" id=msel name=batterX>";
+<option value=0>--Against All Batters--</option>
+http://gd2.mlb.com/components/game/mlb/year_2018/month_04/day_28/gid_2018_04_28_detmlb_balmlb_1//players.xml<option value=57 >Inning: 7  -  - Strikeout</option><option value=67 >Inning: 8  -  - Single</option><option value=68 >Inning: 8  -  - Flyout</option><option value=69 >Inning: 8  -  - Flyout</option><option value=71 >Inning: 8  -  - Strikeout</option></select>              <br>
+            </li>
+
+
+          </ul>
+        </div>
+        <div class="span9">
+		  <div class="hero-unit">
+
+
+<h2>BrooksBaseball.net PITCHf/x Tool</h2>
+<i>For Start-by-Start Analysis of Any Pitcher, Any Game.</i><br>
+
+
+			<b>Select a Date, Game, and Pitcher to find data to analyze:</b>
+			<br>
+
+			<form action="pfx.php" method="get">
+			<select style="width: 120px;" name="month">
+			<option value=3>March</option><option value=4 selected >April</option><option value=5>May</option><option value=6>June</option><option value=7>July</option><option value=8>August</option><option value=9>September</option><option value=10>October</option><option value=11>November</option><option value=12>December</option>			</select>
+			<select style="width: 75px;" name="day">
+			<option value=1>1</option><option value=2>2</option><option value=3>3</option><option value=4>4</option><option value=5>5</option><option value=6>6</option><option value=7>7</option><option value=8>8</option><option value=9>9</option><option value=10>10</option><option value=11>11</option><option value=12>12</option><option value=13>13</option><option value=14>14</option><option value=15>15</option><option value=16>16</option><option value=17>17</option><option value=18>18</option><option value=19>19</option><option value=20>20</option><option value=21>21</option><option value=22>22</option><option value=23>23</option><option value=24>24</option><option value=25>25</option><option value=26>26</option><option value=27>27</option><option value=28 selected >28</option><option value=29>29</option><option value=30>30</option><option value=31>31</option>			</select>
+			<select style="width: 120px;" name="year">
+			<option value=2007>2007</option><option value=2008>2008</option><option value=2009>2009</option><option value=2010>2010</option><option value=2011>2011</option><option value=2012>2012</option><option value=2013>2013</option><option value=2014>2014</option><option value=2015>2015</option><option value=2016>2016</option><option value=2017>2017</option><option value=2018 selected >2018</option><option value=2019>2019</option>			</select>
+
+
+		
+								<br>
+					<select style="width: 450px" name="game">
+					
+					<option value=gid_2018_04_28_arimlb_wasmlb_1/>Arizona Diamondbacks - Washington Nationals </option><option value=gid_2018_04_28_atlmlb_phimlb_1/>Atlanta Braves - Philadelphia Phillies </option><option value=gid_2018_04_28_chamlb_kcamlb_1/>Chicago White Sox - Kansas City Royals </option><option value=gid_2018_04_28_chamlb_kcamlb_2/>Chicago White Sox - Kansas City Royals </option><option value=gid_2018_04_28_cinmlb_minmlb_1/>Cincinnati Reds - Minnesota Twins </option><option value=gid_2018_04_28_colmlb_miamlb_1/>Colorado Rockies - Miami Marlins </option><option value=gid_2018_04_28_detmlb_balmlb_1/ selected >Detroit Tigers - Baltimore Orioles </option><option value=gid_2018_04_28_lanmlb_sfnmlb_1/>Los Angeles Dodgers - San Francisco Giants </option><option value=gid_2018_04_28_lanmlb_sfnmlb_2/>Los Angeles Dodgers - San Francisco Giants </option><option value=gid_2018_04_28_milmlb_chnmlb_1/>Milwaukee Brewers - Chicago Cubs </option><option value=gid_2018_04_28_nyamlb_anamlb_1/>New York Yankees - Anaheim Angels </option><option value=gid_2018_04_28_nynmlb_sdnmlb_1/>New York Mets - San Diego Padres </option><option value=gid_2018_04_28_oakmlb_houmlb_1/>Oakland Athletics - Houston Astros </option><option value=gid_2018_04_28_seamlb_clemlb_1/>Seattle Mariners - Cleveland Indians </option><option value=gid_2018_04_28_slnmlb_pitmlb_1/>St. Louis Cardinals - Pittsburgh Pirates </option><option value=gid_2018_04_28_tbamlb_bosmlb_1/>Tampa Bay Rays - Boston Red Sox </option><option value=gid_2018_04_28_texmlb_tormlb_1/>Texas Rangers - Toronto Blue Jays </option>
+					</select>
+
+											<br>
+
+
+					
+					
+			
+		
+					
+					<select style="width: 450px" name="pitchSel">
+					<option value=434538>Francisco Liriano - 434538 - (det)</option><option value=488768>Andrew Cashner - 488768 - (bal)</option><option value=503285>Darren O'Day - 503285 - (bal)</option><option value=572888>Shane Greene - 572888 - (det)</option><option value=599683>Warwick Saupold - 599683 - (det)</option><option value=606478>Pedro Araujo - 606478 - (bal)</option><option value=612434 selected >Miguel Castro - 612434 - (bal)</option><option value=641729>Joe Jimenez - 641729 - (det)</option>
+					</select>
+					<input type=hidden name=prevGame value=gid_2018_04_28_detmlb_balmlb_1/>
+			
+			<input type="hidden" name="prevDate" value="428">
+			<input type="hidden" name="league" value="mlb">
+			<br>
+			<input class="btn btn-primary" type="submit" value="Select"/>
+
+			</form>
+
+			
+
+			
+
+			
+			</div>
+			<div class=hero-unit>
+
+
+
+
+			
+
+
+
+
+			
+
+
+			<h3>Graphs and Statistics</h3>
+
+			<script>
+				$("#ln").css( "visibility", "visible" );
+			</script>
+
+			<h4>Data Exporting</h4>
+			<p style="font-size: 12px;">
+			 <a target="_blank" href="tabdel_expanded.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&s_type=3&h_size=700&v_size=500">Get Expanded Tabled Data</a> to be exported into Excel.
+			</p>
+			<br>
+			<h4>Strikezone Maps</h4>
+			<p style="font-size: 12px">
+			Strikezone maps plot all of the calls made by the home plate umpire for the entire game:<br>
+			<a target="_blank" href="zoneTrack.php?&game=gid_2018_04_28_detmlb_balmlb_1/&innings=yyyyyyyyy&month=04&day=28&year=2018">Strikezone Maps For This Game (LHH, RHH, and Combined)</a><br>
+			</p>
+			<br><br>
+
+
+			
+			
+
+
+
+			
+
+
+
+<br><br>
+<table border="2" style="border-color:blue; border-width:4px;font-size:70%" CELLPADDING="5">
+<tr>
+	<td colspan=11 halign=middle>
+	<center><b><font color=blue>Pitch Statistics as coded by PITCH INFO</font></b></center>
+	</td>
+</tr>
+<tr>
+	<td>Type</td>
+	<td>Velo (Max)</td>
+	<td>H-Break</td>
+	<td>V-Break</td>
+	<td>Count</td>
+	<td>Strikes/%</td>
+	<td>Swings/%</td>
+	<td>Whiffs/%</td>
+	<td>BIP(No Out)</td>
+	<td>SNIPs/% </td>
+	<td>LWTS</td>
+	
+</tr>
+
+<tr><td>FA (Fastball)</td><td>96.6 (99.0)</td><td>-10.15</td><td>5.25</td><td>8</td><td>5 / 62.5%</td><td>3 / 37.5%</td><td>0 / 0.0% </td><td valign=right>1 (1)</td><td>4 / 57.1%</td><td>0.45</td></tr><tr><td>CH (Changeup)</td><td>87.0 (88.5)</td><td>-11.20</td><td>3.41</td><td>7</td><td>5 / 71.4%</td><td>4 / 57.1%</td><td>0 / 0.0% </td><td valign=right>2 (0)</td><td>3 / 60.0%</td><td>-0.59</td></tr><tr><td>SL (Slider)</td><td>86.2 (88.2)</td><td>3.13</td><td>0.26</td><td>8</td><td>5 / 62.5%</td><td>3 / 37.5%</td><td>3 / 37.5% </td><td valign=right>0 (0)</td><td>5 / 62.5%</td><td>-0.50</td></tr>
+<tr>
+	<td colspan=11 halign=center>
+
+		<i>Pitch classifications provided by PITCH INFO.</i><br><br>
+
+
+	SNIPs are "Strikes Not In Play" and do not include any balls in play.<br>
+	LWTS are linear weighted outcomes per pitch type.<br><br>
+
+	<b>Velocities are assumed from 55ft (rather than the gameday standard of 50ft) for increased realism.<br>
+	These 55ft numbers are directly comparable with our player cards.</b></td>
+</td>
+</tr>
+
+</table>
+
+<br>
+
+
+
+<table border="1" border="black" CELLPADDING="5">
+<tr>
+	<td colspan=9 halign=middle>
+	<center><b>Inning-by-Inning Pitch Totals</b></center>
+	</td>
+</tr>
+<tr>
+	<td>Inning</td>
+	<td>Pitches in Inning</td>
+	<td>Strikes in Inning</td>
+	<td>Strike% in Inning</td>
+	<td>Cumulative Total Pitches</td>
+	<td>Pitch LWTS in Inning</td>
+</tr>
+
+<tr><td>7</td><td>4</td><td>3</td><td>75.00</td><td>4</td><td>-0.292</td></tr><tr><td>8</td><td>19</td><td>12</td><td>63.16</td><td>23</td><td>-0.350</td></tr></table>
+
+
+
+
+			
+			<br><br>
+
+			<center>
+
+			
+			
+
+									<a href=speed.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="speed.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=release.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="release.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=location.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="location.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=numlocation.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="numlocation.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=numlocation_io.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="numlocation_io.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=horzspeed.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="horzspeed.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=numhorzspeed.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="numhorzspeed.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=vertspeed.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="vertspeed.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=movement.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="movement.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=spin.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="spin.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=rpm.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="rpm.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+											<a href=speed2.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo=&cache=1><img src ="speed2.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&batterX=0&innings=yyyyyyyyy&sp_type=1&s_type=3&league=mlb&pnf=&zlpo="></a><br><br>
+								</center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div></div></div>

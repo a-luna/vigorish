@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='vigorish',
     version='0.1',
-    packages=find_packages(),
+    py_modules=['yourscript'],
     include_package_data=True,
     install_requires=[
         'alembic'
@@ -11,6 +11,7 @@ setup(
         'Click',
         'lxml',
         'pandas',
+        'python-dotenv',
         'requests',
         'SQLAlchemy',
         'tqdm',
@@ -19,6 +20,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        vig=app.main.vig:cli
+        vig=vig:cli
     ''',
 )

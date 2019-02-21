@@ -3,37 +3,34 @@ import os
 from os.path import join, dirname
 from pathlib import Path
 
+from dotenv import load_dotenv
 
-APP_MAIN = Path.cwd()
-APP_ROOT = str(APP_MAIN.parent.parent)
-APP_MAIN_ABS = str(APP_MAIN)
+APP_ROOT = Path.cwd()
+DOTENV_PATH = APP_ROOT / '.env'
+APP_MAIN = APP_ROOT / 'app' / 'main'
 sqlite_url = 'sqlite:///' / APP_MAIN / 'vig_test.db'
 
 class Config:
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 class DevelopmentConfig(Config):
-    ENV = 'dev'
     DEBUG = True
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 class TestingConfig(Config):
-    ENV = 'test'
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = sqlite_url
+    SQLALCHEMY_DATABASE_URI = str(sqlite_url)
     PRESERVE_CONTEXT_ON_EXCEPTION = False
 
 
 class ProductionConfig(Config):
-    ENV = 'prod'
     DEBUG = False
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 config_by_name = dict(
@@ -42,4 +39,3 @@ config_by_name = dict(
     prod=ProductionConfig
 )
 
-key = Config.SECRET_KEY
