@@ -1,4 +1,4 @@
-class BbrefPlayByPlayEvent():
+class BBrefPlayByPlayEvent():
     """Various numeric and string values that describe a plate appearance."""
 
     scrape_success = ""

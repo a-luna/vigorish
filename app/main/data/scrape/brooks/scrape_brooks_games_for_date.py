@@ -12,7 +12,8 @@ from app.main.constants import (
 from app.main.data.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.data.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.models.season import Season
-from app.main.util.dt_format_strings import DATE_ONLY_FILENAME
+from app.main.util.dt_format_strings import DATE_ONLY
+from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import parse_timestamp
 
 TEMPL_XPATH_GAMEINFO = (
@@ -34,30 +35,19 @@ def scrape_brooks_games_for_date(scrape_dict):
         return result
 
     url = __get_dashboard_url_for_date(scrape_date)
-    result = __request_daily_dash_page(url)
+    result = request_url(url)
     if not result['success']:
         return result
-
     response = result['response']
     return __parse_daily_dash_page(response, scrape_date, url)
 
 def __get_dashboard_url_for_date(scrape_date):
     date_str = scrape_date.strftime(BROOKS_DASHBOARD_DATE_FORMAT)
-    url = Template(T_BROOKS_DASH_URL).substitute(date=date_str)
-    return url
-
-def __request_daily_dash_page(url):
-    try:
-        page = requests.get(url)
-        response = html.fromstring(page.content, base_url=url)
-        return dict(success=True, response=response)
-    except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
-        return dict(success=False, message=error)
+    return Template(T_BROOKS_DASH_URL).substitute(date=date_str)
 
 def __parse_daily_dash_page(response, scrape_date, url):
     games_for_date = BrooksGamesForDate()
-    games_for_date.game_date_str = scrape_date.strftime(DATE_ONLY_FILENAME)
+    games_for_date.game_date_str = scrape_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
     games_for_date.games = []
 

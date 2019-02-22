@@ -1,6 +1,6 @@
 import json
 
-class BbrefBoxScore():
+class BBrefBoxScore():
     """Batting and pitching statistics for a single MLB game."""
 
     scrape_success = ""

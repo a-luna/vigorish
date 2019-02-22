@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-class BbrefPlayerTransaction():
+class BBrefPlayerTransaction():
     """Detailed information describing teams, players and dates related to a MLB transaction such as a trade."""
 
     category_id = 0

@@ -15,7 +15,6 @@ setup(
         'python-dotenv',
         'requests',
         'SQLAlchemy',
-        'sqlite3',
         'tqdm',
         'tzlocal',
         'urllib3',

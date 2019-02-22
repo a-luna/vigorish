@@ -6,7 +6,6 @@ from app.main.models.season import Season
 
 def populate_seasons(session):
     """Populate mlb_season table with initial data."""
-    print('\nPopulating mlb_season table:')
     result = __add_mlb_seasons(session)
     if not result['success']:
         return result
@@ -78,7 +77,15 @@ def __add_mlb_seasons(session):
         seasons.append(mlb2019season)
         seasons.append(mlb2019postseason)
 
-        for season in tqdm(seasons, ncols=100, unit='row'):
+        for season in tqdm(
+            seasons,
+            desc='Populating mlb_season table..',
+            ncols=100,
+            unit='row',
+            mininterval=0.12,
+            maxinterval=5,
+            unit_scale=True
+        ):
             session.add(season)
         return dict(success=True)
     except Exception as e:

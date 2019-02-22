@@ -12,7 +12,6 @@ from app.main.data.scrape.brooks.scrape_brooks_games_for_date import (
 )
 from app.main.data.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.data.scrape.brooks.models.games_for_date import BrooksGamesForDate
-from app.main.util.dt_format_strings import DATE_ONLY_FILENAME
 from app.main.util.file_util import (
     write_brooks_games_for_date_to_file, read_brooks_games_for_date_from_file
 )

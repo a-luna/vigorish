@@ -13,19 +13,16 @@ PLAYER_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'csv/People.csv')
 
 def populate_players(session):
     """Populate player_id and player tables with initial data."""
-    print('\nPopulating player_id table:')
     result = __import_idmap_csv(session)
     if not result['success']:
         return result
     session.commit()
 
-    print('\nPoplulating player table:')
     result = __import_people_csv(session)
     if not result['success']:
         return result
     session.commit()
 
-    print('\nLinking player tables:')
     result = __link_player_tables(session)
     if not result['success']:
         return result
@@ -58,7 +55,15 @@ def __import_idmap_csv(session):
         )
         df_ids.columns = df_ids.columns.str.strip()
 
-        with tqdm(total=len(df_ids), ncols=100, unit='row') as pbar:
+        with tqdm(
+            total=len(df_ids),
+            desc='Populating player_id table...',
+            ncols=100,
+            unit='row',
+            mininterval=0.12,
+            maxinterval=5,
+            unit_scale=True
+        ) as pbar:
             for _, row in df_ids.iterrows():
                 if is_nan(row['mlb_id']) or is_nan(row['bref_id']):
                     pbar.update()
@@ -121,7 +126,15 @@ def __import_people_csv(session):
         )
         df_player.columns = df_player.columns.str.strip()
 
-        with tqdm(total=len(df_player), ncols=100, unit='row') as pbar:
+        with tqdm(
+            total=len(df_player),
+            desc='Poplulating player table.....',
+            ncols=100,
+            unit='row',
+            mininterval=0.12,
+            maxinterval=5,
+            unit_scale=True
+        ) as pbar:
             for _, row in df_player.iterrows():
                 if is_nan(row['birthYear'])\
                 or is_nan(row['birthMonth'])\
@@ -164,7 +177,15 @@ def __import_people_csv(session):
 
 def __link_player_tables(session):
     try:
-        for p in tqdm(session.query(Player).all(), ncols=100, unit='row'):
+        for p in tqdm(
+            session.query(Player).all(),
+            desc='Linking player tables........',
+            ncols=100,
+            unit='row',
+            mininterval=0.12,
+            maxinterval=5,
+            unit_scale=True
+        ):
             player_id = PlayerId.find_by_mlb_id(session, p.mlb_id)
             player_id.db_player_id = p.id
         return dict(success=True)

@@ -1,34 +1,27 @@
-import os
 from pathlib import Path
 from unittest import TestCase
 
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.main.models.base import Base
 
-
-APP_ROOT = Path.cwd()
-DOTENV_PATH = APP_ROOT / '.env'
+TEST_FOLDER = Path.cwd() / 'app' / 'test'
+SQLITE_FILEPATH = TEST_FOLDER / 'vig_test.db'
+SQLITE_URI = f'sqlite:///{SQLITE_FILEPATH}'
 
 class BaseTestCase(TestCase):
     """Base Tests."""
 
-    config = {}
+    engine = create_engine(str(SQLITE_URI))
+    sessionmaker = sessionmaker(bind=engine)
+    session = sessionmaker()
+
     def setUp(self):
-        if DOTENV_PATH.is_file():
-            load_dotenv(DOTENV_PATH)
-        engine = create_engine(os.getenv('DATABASE_URL'))
-        session = sessionmaker(bind=engine)
-        self.config = {
-            'engine': engine,
-            'session': session()
-        }
-        Base.metadata.drop_all(engine)
-        Base.metadata.create_all(engine)
+        Base.metadata.drop_all(self.engine)
+        Base.metadata.create_all(self.engine)
 
     def tearDown(self):
-        self.config['session'].close()
-        Base.metadata.drop_all(self.config['engine'])
-
+        self.session.close()
+        Base.metadata.drop_all(self.engine)
+        SQLITE_FILEPATH.unlink()

@@ -4,13 +4,10 @@ from app.main.models.runners_on_base import RunnersOnBase
 
 def populate_base_tables(session):
     """Populate reference tables with data."""
-    print('\nPopulating base tables...')
     result = __add_runners_on_base(session)
     if not result['success']:
         return result
     session.commit()
-
-    print('Complete!')
     return dict(success=True)
 
 def __add_runners_on_base(session):

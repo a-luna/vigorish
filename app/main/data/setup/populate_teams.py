@@ -11,7 +11,6 @@ TEAM_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'csv/Teams.csv')
 
 def populate_teams(session):
     """Populate team table with initial data."""
-    print('\nPoplulating team table:')
     result = __import_teams_csv(session)
     if not result['success']:
         return result
@@ -57,7 +56,15 @@ def __import_teams_csv(session):
         )
         df_team.columns = df_team.columns.str.strip()
 
-        with tqdm(total=len(df_team), ncols=100, unit='row') as pbar:
+        with tqdm(
+            total=len(df_team),
+            desc='Poplulating team table.......',
+            ncols=100,
+            unit='row',
+            mininterval=0.12,
+            maxinterval=5,
+            unit_scale=True
+        ) as pbar:
             for _, row in df_team.iterrows():
                 t = Team(
                     year=int(sanitize(row['yearID'])),

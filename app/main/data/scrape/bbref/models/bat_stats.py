@@ -1,4 +1,4 @@
-class BbrefBatStats():
+class BBrefBatStats():
     """Statistics for all plate appearances that occurred for one player in a single game."""
 
     player_bbref_id = ""

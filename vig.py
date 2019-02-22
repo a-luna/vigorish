@@ -11,16 +11,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
-from config import config_by_name
+from config import scrape_config_by_data_set
 from app.main.constants import MLB_DATA_SETS
-from app.main.data.scrape.brooks.scrape_brooks_games_for_date import (
-    scrape_brooks_games_for_date
-)
-from app.main.data.setup.populate_base_tables import populate_base_tables
-from app.main.data.setup.populate_seasons import populate_seasons
-from app.main.data.setup.populate_players import populate_players
-from app.main.data.setup.populate_teams import populate_teams
-from app.main.data.setup.truncate_tables import delete_all_data
+from app.main.data.setup.initialize_database import initialize_database
 from app.main.models.base import Base
 from app.main.models.player import Player
 from app.main.models.player_id import PlayerId
@@ -28,26 +21,15 @@ from app.main.models.runners_on_base import RunnersOnBase
 from app.main.models.season import Season
 from app.main.models.team import Team
 from app.main.util.datetime_util import get_date_range
-from app.main.util.dt_format_strings import DATE_ONLY
-from app.main.util.s3_helper import (
-    upload_brooks_games_for_date, get_brooks_games_for_date_from_s3
-)
+from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
+from app.main.util.scrape_functions import get_chromedriver
 
 #TODO New tables: SeasonScrapeStatus, DayScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PlayerScrapeStatus
 #TODO New setup processes: create entries in season and day scrapestatus tables.
-#TODO New cli command: vig status [YEAR], reports scrape status of mlb reg season for year provided 
+#TODO New cli command: vig status [YEAR], reports scrape status of mlb reg season for year provided
 
 APP_ROOT = Path.cwd()
 DOTENV_PATH = APP_ROOT / '.env'
-GET_INPUT_FUNCTIONS = dict(
-    brooks_pitch_logs=get_brooks_games_for_date_from_s3
-)
-SCRAPE_FUNCTIONS = dict(
-    brooks_games_for_date=scrape_brooks_games_for_date
-)
-SAVE_RESULT_FUNCTIONS = dict(
-    brooks_games_for_date=upload_brooks_games_for_date
-)
 
 class DateString(click.ParamType):
     name = 'date-string'
@@ -59,7 +41,7 @@ class DateString(click.ParamType):
             error = (
                 f'"{value}" could not be parsed as a valid date. You can use '
                 'any format recognized by dateutil.parser, for example: '
-                '2018-5-13  -or-  08/10/2017  -or-  "Apr 27 2018"'
+                '"2018-5-13" -or- "08/10/2017" -or- "Apr 27 2018"'
             )
             self.fail(error, param, ctx)
 
@@ -71,16 +53,18 @@ def cli(ctx):
         load_dotenv(DOTENV_PATH)
 
     engine = create_engine(os.getenv('DATABASE_URL'))
-    session = sessionmaker(bind=engine)
+    session_maker = sessionmaker(bind=engine)
     ctx.obj = {
         'engine': engine,
-        'session': session
+        'sessionmaker': session_maker,
+        'chrome_binary_path': os.getenv('GOOGLE_CHROME_BIN'),
+        'chromedriver_path': os.getenv('CHROMEDRIVER_PATH')
     }
 
 
 @cli.command()
 @click.confirmation_option(
-    prompt='\nAre you sure you want to delete all existing data?')
+    prompt='Are you sure you want to delete all existing data?')
 @click.pass_context
 def setup(ctx):
     """Populate database with initial Player, Team and MLB Season data.
@@ -88,36 +72,16 @@ def setup(ctx):
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
     """
-    s = ctx.obj['session']()
+    session = ctx.obj['sessionmaker']()
     Base.metadata.drop_all(ctx.obj['engine'])
     Base.metadata.create_all(ctx.obj['engine'])
-
-    result = populate_base_tables(s)
+    result = initialize_database(session)
     if not result['success']:
-        click.secho(f"\n{result['message']}\n", fg='red')
-        s.close()
+        click.secho(result['message'], fg='red')
+        session.close()
         return 1
-
-    result = populate_seasons(s)
-    if not result['success']:
-        click.secho(f"\n{result['message']}\n", fg='red')
-        s.close()
-        return 1
-
-    result = populate_players(s)
-    if not result['success']:
-        click.secho(f"\n{result['message']}\n", fg='red')
-        s.close()
-        return 1
-
-    result = populate_teams(s)
-    if not result['success']:
-        click.secho(f"\n{result['message']}\n", fg='red')
-        s.close()
-        return 1
-
-    click.secho('\nSuccessfully populated database with initial data.\n', fg='green')
-    s.close()
+    click.secho('Successfully populated database with initial data.\n', fg='green')
+    session.close()
     return 0
 
 
@@ -145,29 +109,49 @@ def setup(ctx):
 @click.pass_context
 def scrape(ctx, data_set, start, end):
     """Scrape MLB data sets from websites."""
-    s = ctx.obj['session']()
-    result = __validate_date_range(s, start, end)
+    session = ctx.obj['sessionmaker']()
+    result = __validate_date_range(session, start, end)
     if not result['success']:
-        click.secho(f"\n{result['message']}\n", fg='red')
-        s.close()
+        click.secho(result['message'], fg='red')
+        session.close()
         return 1
 
-    func_dict = __get_func_dict_for_data_set(data_set)
+    config = scrape_config_by_data_set[data_set]
+    driver = get_chromedriver() if config.REQUIRES_SELENIUM else None
     date_range = get_date_range(start, end)
-    with tqdm(total=len(date_range), ncols=100, unit='page') as pbar:
+    with tqdm(
+        total=len(date_range),
+        ncols=100,
+        unit='page',
+        mininterval=0.12,
+        maxinterval=5
+    ) as pbar:
         for scrape_date in date_range:
             pbar.set_description(f'Processing: {scrape_date.strftime(DATE_ONLY)}')
-            result = __scrape_data_for_date(s, scrape_date, func_dict)
+            result = __scrape_data_for_date(session, scrape_date, config, driver)
             if not result['success']:
                 break
             delay_ms = (randint(150, 250)/100.0)
             time.sleep(delay_ms)
             pbar.update()
 
-    s.close()
+    session.close()
+    if config.REQUIRES_SELENIUM:
+        driver.close()
+        driver.quit()
+
     if not result['success']:
-        click.secho(f"\n{result['message']}\n", fg='red')
+        click.secho(result['message'], fg='red')
         return 1
+
+    start_str = start.strftime(MONTH_NAME_SHORT)
+    end_str = end.strftime(MONTH_NAME_SHORT)
+    success = (
+        f'Requested data was successfully scraped:\n'
+        f'data set....: {config.DISPLAY_NAME}\n'
+        f'date range..: {start_str} - {end_str}\n'
+    )
+    click.secho(success, fg='green')
     return 0
 
 
@@ -201,26 +185,18 @@ def __validate_date_range(session, start, end):
     return dict(success=True)
 
 
-def __get_func_dict_for_data_set(data_set):
-    get_input_function = GET_INPUT_FUNCTIONS[data_set] \
-        if data_set in GET_INPUT_FUNCTIONS else None
-    return dict(
-        get_input=get_input_function,
-        scrape=SCRAPE_FUNCTIONS[data_set],
-        upload=SAVE_RESULT_FUNCTIONS[data_set]
-    )
-
-
-def __scrape_data_for_date(s, scrape_date, func_dict):
-    get_input_func = func_dict['get_input']
-    input_data = get_input_func(scrape_date) \
-        if get_input_func else None
-    input_dict = dict(date=scrape_date, input_data=input_data, session=s)
-    result = func_dict['scrape'](input_dict)
+def __scrape_data_for_date(session, scrape_date, config, driver):
+    input_dict = dict(date=scrape_date, session=session)
+    if config.REQUIRES_INPUT:
+        input_dict['input_data'] = config.GET_INPUT_FUNCTION(scrape_date)
+    if config.REQUIRES_SELENIUM:
+        input_dict['driver'] = driver
+    result = config.SCRAPE_FUNCTION(input_dict)
     if not result['success']:
         return result
     scraped_data = result['result']
-    return func_dict['upload'](scraped_data, scrape_date)
+    return config.PERSIST_FUNCTION(scraped_data, scrape_date)
+
 
 if __name__ == '__main__':
-    cli()
+    cli({})

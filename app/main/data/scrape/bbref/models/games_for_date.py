@@ -1,24 +1,26 @@
 """Boxscore URLs for all games that took place on a single day."""
 import json
 
-class BbrefGamesForDate():
+class BBrefGamesForDate():
     """Boxscore URLs for all games that took place on a single day."""
 
-    scrape_success = ""
-    scrape_error = ""
-    url = ""
-    game_date = ""
+    dashboard_url = ""
+    game_date = None
+    game_date_str = ""
     game_count = ""
     boxscore_urls = []
 
     def as_dict(self):
         """Convert daily boxscore URL values to a dictionary."""
         dict = {
-            "scrape_success": "{}".format(self.scrape_success),
-            "scrape_error": "{}".format(self.scrape_error),
-            "url": "{}".format(self.url),
-            "game_date": "{}".format(self.game_date),
+            "__bbref_games_for_date__": True,
+            "dashboard_url": "{}".format(self.dashboard_url),
+            "game_date_str": "{}".format(self.game_date_str),
             "game_count": int(self.game_count),
             "boxscore_urls": self.boxscore_urls
         }
         return dict
+
+    def as_json(self):
+        """Convert daily game list to JSON."""
+        return json.dumps(self.as_dict(), indent=2, sort_keys=True)
