@@ -1,4 +1,4 @@
-class BBrefUmpire():
+class BBRefUmpire():
     """Name and field location of one umpire for a single game."""
 
     field_location = ""

@@ -116,19 +116,31 @@ def scrape(ctx, data_set, start, end):
         session.close()
         return 1
 
-    config = scrape_config_by_data_set[data_set]
-    driver = get_chromedriver() if config.REQUIRES_SELENIUM else None
+    scrape_config = scrape_config_by_data_set[data_set]
+    result = __get_driver(scrape_config)
+    if not result['success']:
+        click.secho(result['message'], fg='red')
+        session.close()
+        return 1
+    driver = result['driver']
+
     date_range = get_date_range(start, end)
     with tqdm(
         total=len(date_range),
         ncols=100,
         unit='page',
         mininterval=0.12,
-        maxinterval=5
+        maxinterval=5,
+        position=0
     ) as pbar:
         for scrape_date in date_range:
             pbar.set_description(f'Processing: {scrape_date.strftime(DATE_ONLY)}')
-            result = __scrape_data_for_date(session, scrape_date, config, driver)
+            result = __scrape_data_for_date(
+                session,
+                scrape_date,
+                scrape_config,
+                driver
+            )
             if not result['success']:
                 break
             delay_ms = (randint(150, 250)/100.0)
@@ -136,19 +148,17 @@ def scrape(ctx, data_set, start, end):
             pbar.update()
 
     session.close()
-    if config.REQUIRES_SELENIUM:
+    if scrape_config.REQUIRES_SELENIUM:
         driver.close()
         driver.quit()
-
     if not result['success']:
         click.secho(result['message'], fg='red')
         return 1
-
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
-        f'Requested data was successfully scraped:\n'
-        f'data set....: {config.DISPLAY_NAME}\n'
+        'Requested data was successfully scraped:\n'
+        f'data set....: {scrape_config.DISPLAY_NAME}\n'
         f'date range..: {start_str} - {end_str}\n'
     )
     click.secho(success, fg='green')
@@ -185,17 +195,27 @@ def __validate_date_range(session, start, end):
     return dict(success=True)
 
 
-def __scrape_data_for_date(session, scrape_date, config, driver):
+def __get_driver(scrape_config):
+    if not scrape_config.REQUIRES_SELENIUM:
+        return dict(success=True, driver=None)
+    result = get_chromedriver()
+    if not result['success']:
+        return result
+    driver = result['result']
+    return dict(success=True, driver=driver)
+
+
+def __scrape_data_for_date(session, scrape_date, scrape_config, driver):
     input_dict = dict(date=scrape_date, session=session)
-    if config.REQUIRES_INPUT:
-        input_dict['input_data'] = config.GET_INPUT_FUNCTION(scrape_date)
-    if config.REQUIRES_SELENIUM:
+    if scrape_config.REQUIRES_INPUT:
+        input_dict['input_data'] = scrape_config.GET_INPUT_FUNCTION(scrape_date)
+    if scrape_config.REQUIRES_SELENIUM:
         input_dict['driver'] = driver
-    result = config.SCRAPE_FUNCTION(input_dict)
+    result = scrape_config.SCRAPE_FUNCTION(input_dict)
     if not result['success']:
         return result
     scraped_data = result['result']
-    return config.PERSIST_FUNCTION(scraped_data, scrape_date)
+    return scrape_config.PERSIST_FUNCTION(scraped_data, scrape_date)
 
 
 if __name__ == '__main__':

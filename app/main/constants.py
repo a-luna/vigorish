@@ -27,5 +27,4 @@ MLB_DATA_SETS = [
 BROOKS_DASHBOARD_DATE_FORMAT = '%m/%d/%Y'
 T_BROOKS_DASH_URL = 'http://www.brooksbaseball.net/dashboard.php?dts=${date}'
 
-BBREF_DASHBOARD_DATE_FORMAT = '%m/%d/%Y'
 T_BBREF_DASH_URL = "https://www.baseball-reference.com/boxes/?month=${m}&day=${d}&year=${y}"

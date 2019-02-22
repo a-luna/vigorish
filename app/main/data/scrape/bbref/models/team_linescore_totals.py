@@ -1,4 +1,4 @@
-class BBrefTeamLinescoreTotals():
+class BBRefTeamLinescoreTotals():
     """Total runs, hits and errors credited to a team in one game."""
 
     team_id_br = ""

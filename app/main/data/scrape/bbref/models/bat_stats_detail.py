@@ -1,4 +1,4 @@
-class BBrefBatStatsDetail():
+class BBRefBatStatsDetail():
     """Additional details for important batting events."""
 
     count = ""

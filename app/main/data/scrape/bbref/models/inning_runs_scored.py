@@ -1,4 +1,4 @@
-class BBrefInningRunsScored():
+class BBRefInningRunsScored():
     """The number of runs scored in one inning by a team."""
 
     team_id = ""

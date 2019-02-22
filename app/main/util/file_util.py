@@ -51,7 +51,7 @@ def read_brooks_games_for_date_from_file(game_date, folderpath=None, delete_file
         return dict(success=False, message=error)
 
 def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=False):
-    """Decode BBrefGamesForDate object from json file."""
+    """Decode BBRefGamesForDate object from json file."""
     folderpath = folderpath if folderpath else Path.cwd()
     date_str = game_date.strftime(DATE_ONLY)
     filename = Template(T_BBREF_GAMESFORDATE_FILENAME).substitute(date=date_str)

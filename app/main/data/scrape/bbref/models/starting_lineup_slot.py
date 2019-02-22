@@ -1,4 +1,4 @@
-class BBrefStartingLineupSlot():
+class BBRefStartingLineupSlot():
     """Batting order and defensive position for a single player in a starting lineup."""
 
     player_id_br = ""

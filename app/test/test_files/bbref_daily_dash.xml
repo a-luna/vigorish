@@ -53,7 +53,7 @@ else                     { loadJS( _sr_basic_url, function() { vjs_ready(sr_fire
 <meta name="keywords" content="">
     <link rel="canonical" href="https://www.baseball-reference.com/boxes/2018/7/26/" /><meta itemprop="url"           content="https://www.baseball-reference.com">
     <meta itemprop="name"          content="Baseball Reference">
-    <meta itemprop="alternateName" content="BBref">
+    <meta itemprop="alternateName" content="BBRef">
     <meta name="Description" content="MLB scoreboard/standings for July 26, 2018 and historical box scores/standings on Baseball-Reference.com.">
 <meta property="fb:app_id"     content="">
     <meta property="og:url"          content="https://www.baseball-reference.com/boxes/2018/7/26/">

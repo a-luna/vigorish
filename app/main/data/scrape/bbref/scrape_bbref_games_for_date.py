@@ -2,10 +2,8 @@ from string import Template
 
 from urllib.parse import urljoin
 
-from app.main.constants import (
-    T_BBREF_DASH_URL, BBREF_DASHBOARD_DATE_FORMAT
-)
-from app.main.data.scrape.bbref.models.games_for_date import BBrefGamesForDate
+from app.main.constants import T_BBREF_DASH_URL
+from app.main.data.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.scrape_functions import request_url
 
@@ -30,7 +28,7 @@ def __get_dashboard_url_for_date(scrape_date):
     return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
 
 def __parse_dashboard_page(response, scrape_date, url):
-    games_for_date = BBrefGamesForDate()
+    games_for_date = BBRefGamesForDate()
     games_for_date.game_date_str = scrape_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
 

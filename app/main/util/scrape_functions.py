@@ -20,7 +20,7 @@ def get_chromedriver(page_load_timeout=6000):
             options.add_argument('--ignore-certificate-errors')
             options.add_argument("--test-type")
             options.add_argument('--pageLoadStrategy=none')
-            #options.add_argument('--headless')
+            options.add_argument('--headless')
             options.add_argument('--disable-gpu')
             options.add_argument('--no-sandbox')
             options.add_argument('--remote-debugging-port=9222')
@@ -63,11 +63,6 @@ def render_url(driver, url, max_attempts=100):
     while(attempts < max_attempts):
         try:
             driver.get(url)
-
-            WebDriverWait(driver, 6000).until(
-                ec.presence_of_element_located((By.XPATH, '//select[contains(@id, "selector_0")]'))
-            )
-
             page = driver.page_source
             response = html.fromstring(page, base_url=url)
             return dict(success=True, response=response)

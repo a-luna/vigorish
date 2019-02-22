@@ -52,7 +52,7 @@ else                     { loadJS( _sr_basic_url, function() { vjs_ready(sr_fire
 
 <meta itemprop="url"           content="https://www.baseball-reference.com">
     <meta itemprop="name"          content="Baseball Reference">
-    <meta itemprop="alternateName" content="BBref">
+    <meta itemprop="alternateName" content="BBRef">
     <meta name="Description" content="New York Mets beat Pittsburgh Pirates (12-6). Jul 26, 2018, Attendance: 21981, Time of Game: 3:05.  Visit Baseball-Reference.com for the complete box score, play-by-play, and win probability">
 <meta property="fb:app_id"     content="">
     <meta property="og:url"          content="https://www.baseball-reference.com/boxes/PIT/PIT201807260.shtml">

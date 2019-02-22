@@ -78,7 +78,7 @@ def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=
     )
 
 def upload_bbref_games_for_date(games_for_date, scrape_date):
-    """Upload a file to S3 containing json encoded BBrefGamesForDate object."""
+    """Upload a file to S3 containing json encoded BBRefGamesForDate object."""
     result = write_bbref_games_for_date_to_file(games_for_date)
     if not result['success']:
         return result
@@ -95,7 +95,7 @@ def upload_bbref_games_for_date(games_for_date, scrape_date):
         return dict(success=False, message=error)
 
 def download_bbref_games_for_date(scrape_date, folderpath=None):
-    """Download a file from S3 containing json encoded BBrefGamesForDate object."""
+    """Download a file from S3 containing json encoded BBRefGamesForDate object."""
     if not folderpath:
         folderpath = Path.cwd()
     date_str = scrape_date.strftime(DATE_ONLY_FILENAME)
@@ -116,7 +116,7 @@ def download_bbref_games_for_date(scrape_date, folderpath=None):
         return False
 
 def get_bbref_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=True):
-    """Retrieve BBrefGamesForDate object from json encoded file stored in S3."""
+    """Retrieve BBRefGamesForDate object from json encoded file stored in S3."""
     if not folderpath:
         folderpath = Path.cwd()
     result = download_bbref_games_for_date(scrape_date, folderpath)

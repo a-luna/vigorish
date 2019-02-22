@@ -50,7 +50,7 @@ else                     { loadJS( _sr_basic_url, function() { vjs_ready(sr_fire
 <meta name="keywords" content="">
     <link rel="canonical" href="https://www.baseball-reference.com/players/g/glasnty01.shtml" /><meta itemprop="url"           content="https://www.baseball-reference.com">
     <meta itemprop="name"          content="Baseball Reference">
-    <meta itemprop="alternateName" content="BBref">
+    <meta itemprop="alternateName" content="BBRef">
     <meta name="Description" content="2018: 2-7, 4.27 ERA, 136 SO,Career: 4-16, 5.35 ERA, 216 SO, P, Pirates/Rays 2016-2018, t:R, born in CA 1993">
 <meta property="fb:app_id"     content="">
     <meta property="og:url"          content="https://www.baseball-reference.com/players/g/glasnty01.shtml">

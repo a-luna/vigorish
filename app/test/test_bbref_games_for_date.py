@@ -6,18 +6,17 @@ from pathlib import Path
 
 from lxml import html
 
-from app.main.constants import BBREF_DASHBOARD_DATE_FORMAT
 from app.main.data.scrape.bbref.scrape_bbref_games_for_date import (
     __parse_dashboard_page as parse_dashboard_page
 )
-from app.main.data.scrape.bbref.models.games_for_date import BBrefGamesForDate
+from app.main.data.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.file_util import (
     write_bbref_games_for_date_to_file, read_bbref_games_for_date_from_file
 )
 from app.main.util.json_decoders import decode_bbref_games_for_date
 from app.test.base import BaseTestCase
 
-class TestBBrefGamesForDate(BaseTestCase):
+class TestBBRefGamesForDate(BaseTestCase):
     GAME_DATE = datetime(2018, 7, 26)
     GAME_DATE_STR = '2018-07-26'
     APP_TEST_FOLDER = Path.cwd() / 'app' / 'test'
@@ -25,14 +24,14 @@ class TestBBrefGamesForDate(BaseTestCase):
     DAILY_DASH_HTML = APP_TEST_FOLDER / 'test_files' / 'bbref_daily_dash.xml'
 
     def test_scrape_bbref_games_for_date(self):
-        """Verify BBrefGameInfo object is correctly parsed from webpage."""
+        """Verify BBRefGameInfo object is correctly parsed from webpage."""
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_dashboard_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
         self.assertTrue(result['success'])
 
         games_for_date = result['result']
         self.assertEqual(games_for_date.dashboard_url, self.DAILY_DASH_URL)
-        self.assertTrue(isinstance(games_for_date, BBrefGamesForDate))
+        self.assertTrue(isinstance(games_for_date, BBRefGamesForDate))
         self.assertEqual(games_for_date.game_date_str, self.GAME_DATE_STR)
         self.assertEqual(games_for_date.game_count, 11)
 
@@ -64,7 +63,7 @@ class TestBBrefGamesForDate(BaseTestCase):
         self.assertEqual(boxscore_urls[10], url10)
 
     def test_persist_bbref_games_for_date(self):
-        """Verify BBrefGamesForDate object can be written to file and read from file."""
+        """Verify BBRefGamesForDate object can be written to file and read from file."""
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_dashboard_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
         self.assertTrue(result['success'])
@@ -85,7 +84,7 @@ class TestBBrefGamesForDate(BaseTestCase):
         self.assertTrue(result['success'])
         games_for_date_out = result['result']
 
-        self.assertTrue(isinstance(games_for_date_out, BBrefGamesForDate))
+        self.assertTrue(isinstance(games_for_date_out, BBRefGamesForDate))
         self.assertEqual(games_for_date_out.dashboard_url, self.DAILY_DASH_URL)
         self.assertEqual(games_for_date_out.game_date, self.GAME_DATE)
         self.assertEqual(games_for_date_out.game_date_str, self.GAME_DATE_STR)

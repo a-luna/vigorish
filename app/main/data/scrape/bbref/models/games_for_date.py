@@ -1,7 +1,7 @@
 """Boxscore URLs for all games that took place on a single day."""
 import json
 
-class BBrefGamesForDate():
+class BBRefGamesForDate():
     """Boxscore URLs for all games that took place on a single day."""
 
     dashboard_url = ""

@@ -1,4 +1,4 @@
-class BBrefTransactionDetail():
+class BBRefTransactionDetail():
     player_id = 0
     player_id_br = ""
     draft_year = ""

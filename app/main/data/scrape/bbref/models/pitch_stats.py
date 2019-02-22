@@ -1,4 +1,4 @@
-class BBrefPitchStats():
+class BBRefPitchStats():
     """Statistics for a an individual pitching appearance in a single game."""
 
     player_id_br = ""

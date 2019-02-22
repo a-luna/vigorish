@@ -2,14 +2,14 @@
 from datetime import datetime, timezone
 from dateutil import parser, tz
 
-from app.main.data.scrape.bbref.models.games_for_date import BBrefGamesForDate
+from app.main.data.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.data.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.data.scrape.brooks.models.game_info import BrooksGameInfo
 
 def decode_bbref_games_for_date(json_dict):
     """Convert json dictionary to BbrefGamesForDate"""
     if "__bbref_games_for_date__" in json_dict:
-        games_for_date = BBrefGamesForDate()
+        games_for_date = BBRefGamesForDate()
         games_for_date.dashboard_url = json_dict['dashboard_url']
         games_for_date.game_date_str = json_dict['game_date_str']
         games_for_date.game_count = json_dict['game_count']
