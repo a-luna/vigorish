@@ -5,7 +5,7 @@ class BBRefBoxScore():
 
     scrape_success = ""
     scrape_error = ""
-    url = ""
+    boxscore_url = ""
     bbref_game_id = ""
     away_team_id_br = ""
     home_team_id_br = ""
@@ -37,12 +37,17 @@ class BBRefBoxScore():
     play_by_play = []
     player_dict = {}
 
+    @property
+    def upload_id(self):
+        return self.bbref_game_id
+
     def as_dict(self):
         """Convert boxscore to a dictionary."""
         dict = {
+            "__bbref_boxscore__": True,
             "scrape_success": "{}".format(self.scrape_success),
             "scrape_error": "{}".format(self.scrape_error),
-            "url": "{}".format(self.url),
+            "boxscore_url": "{}".format(self.boxscore_url),
             "bbref_game_id": "{}".format(self.bbref_game_id),
             "away_team_id_br": "{}".format(self.away_team_id_br),
             "home_team_id_br": "{}".format(self.home_team_id_br),

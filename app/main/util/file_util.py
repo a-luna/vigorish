@@ -6,11 +6,13 @@ from string import Template
 
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.json_decoders import (
-    decode_brooks_games_for_date, decode_bbref_games_for_date
+    decode_brooks_games_for_date, decode_bbref_games_for_date,
+    decode_bbref_boxscore
 )
 
 T_BROOKS_GAMESFORDATE_FILENAME = 'brooks_games_for_date_${date}.json'
 T_BBREF_GAMESFORDATE_FILENAME = 'bbref_games_for_date_${date}.json'
+T_BBREF_BOXSCORE_FILENAME = '${gid}.json'
 
 def write_brooks_games_for_date_to_file(games_for_date, folderpath=None):
     date_str = games_for_date.game_date_str
@@ -22,6 +24,12 @@ def write_bbref_games_for_date_to_file(games_for_date, folderpath=None):
     date_str = games_for_date.game_date_str
     filename = Template(T_BBREF_GAMESFORDATE_FILENAME).substitute(date=date_str)
     json_dict = games_for_date.as_json()
+    return write_json_dict_to_file(json_dict, filename, folderpath)
+
+def write_bbref_boxscore_to_file(boxscore, folderpath=None):
+    game_id = boxscore.bbref_game_id
+    filename = Template(T_BBREF_BOXSCORE_FILENAME).substitute(gid=game_id)
+    json_dict = boxscore.as_json()
     return write_json_dict_to_file(json_dict, filename, folderpath)
 
 def write_json_dict_to_file(json_dict, filename, folderpath=None):
@@ -61,6 +69,20 @@ def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=
         if delete_file:
             filepath.unlink()
         return decode_bbref_games_for_date(json.loads(contents))
+    except Exception as e:
+        error = 'Error: {error}'.format(error=repr(e))
+        return dict(success=False, message=error)
+
+def read_bbref_boxscore_from_file(bbref_game_id, folderpath=None, delete_file=False):
+    """Decode BBRefBoxScore object from file."""
+    folderpath = folderpath if folderpath else Path.cwd()
+    filename = Template(T_BBREF_BOXSCORE_FILENAME).substitute(gid=bbref_game_id)
+    filepath = folderpath / filename
+    try:
+        contents = filepath.read_text()
+        if delete_file:
+            filepath.unlink()
+        return decode_bbref_boxscore(json.loads(contents))
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         return dict(success=False, message=error)

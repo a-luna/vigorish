@@ -14,7 +14,8 @@ from app.main.data.scrape.brooks.scrape_brooks_games_for_date import (
 )
 from app.main.util.s3_helper import (
     upload_brooks_games_for_date, get_brooks_games_for_date_from_s3,
-    upload_bbref_games_for_date, get_bbref_games_for_date_from_s3
+    upload_bbref_games_for_date, get_bbref_games_for_date_from_s3,
+    upload_bbref_boxscore, get_bbref_boxscore_from_s3
 )
 
 
@@ -25,6 +26,7 @@ class DataSetConfig:
     GET_INPUT_FUNCTION = None
     SCRAPE_FUNCTION = None
     PERSIST_FUNCTION = None
+    PRODUCES_LIST = False
 
 class BBRefGamesForDateConfig(DataSetConfig):
     DISPLAY_NAME = 'Games for date (bbref.com)'
@@ -37,6 +39,8 @@ class BBRefBoxscoreConfig(DataSetConfig):
     REQUIRES_SELENIUM = True
     GET_INPUT_FUNCTION = get_bbref_games_for_date_from_s3
     SCRAPE_FUNCTION = scrape_boxscores_for_date
+    PERSIST_FUNCTION = upload_bbref_boxscore
+    PRODUCES_LIST = True
 
 class BBRefPlayerConfig(DataSetConfig):
     DISPLAY_NAME = 'Player bio (bbref.com)'

@@ -4,7 +4,6 @@ setup(
     name='vigorish',
     version='0.1',
     py_modules=['vig'],
-    include_package_data=True,
     install_requires=[
         'alembic',
         'boto3',

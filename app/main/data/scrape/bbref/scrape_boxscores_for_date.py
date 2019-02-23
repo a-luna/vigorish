@@ -14,15 +14,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from tqdm import tqdm
 
-from app.main.data.scrape.bbref.models.boxscore import BBRefBoxScore
-from app.main.data.scrape.bbref.models.bat_stats import BBRefBatStats
-from app.main.data.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
-from app.main.data.scrape.bbref.models.inning_runs_scored import BBRefInningRunsScored
-from app.main.data.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
-from app.main.data.scrape.bbref.models.pitch_stats import BBRefPitchStats
-from app.main.data.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
-from app.main.data.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
-from app.main.data.scrape.bbref.models.umpire import BBRefUmpire
+from .models.boxscore import BBRefBoxScore
+from .models.bat_stats import BBRefBatStats
+from .models.bat_stats_detail import BBRefBatStatsDetail
+from .models.inning_runs_scored import BBRefInningRunsScored
+from .models.pbp_event import BBRefPlayByPlayEvent
+from .models.pitch_stats import BBRefPitchStats
+from .models.starting_lineup_slot import BBRefStartingLineupSlot
+from .models.team_linescore_totals import BBRefTeamLinescoreTotals
+from .models.umpire import BBRefUmpire
 from app.main.util.scrape_functions import request_url, get_chromedriver
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
@@ -121,7 +121,6 @@ _GAME_DURATION_PATTERN = r'[1-9]:[0-5][0-9]'
 
 
 def scrape_boxscores_for_date(scrape_dict):
-    scrape_date = scrape_dict['date']
     driver = scrape_dict['driver']
     games_for_date = scrape_dict['input_data']
     boxscore_urls = games_for_date.boxscore_urls
@@ -133,16 +132,18 @@ def scrape_boxscores_for_date(scrape_dict):
         unit='boxscore',
         mininterval=0.12,
         maxinterval=10,
-        unit_scale=True,
+        leave=False,
         position=1
     ) as pbar:
         for url in boxscore_urls:
-            max_attempts = 100
+            max_attempts = 10
             attempts = 1
-            while(attempts < max_attempts):
+            error_occurred = False
+            parsing_boxscore = True
+            while(parsing_boxscore):
                 try:
                     uri = Path(url)
-                    pbar.set_description(f'Rendering: {uri.stem}')
+                    pbar.set_description(f'Processing {uri.stem}..')
                     driver.get(url)
 
                     WebDriverWait(driver, 6000).until(
@@ -155,38 +156,45 @@ def scrape_boxscores_for_date(scrape_dict):
                         ec.presence_of_element_located((By.XPATH, _PLAY_BY_PLAY_TABLE))
                     )
 
-                    pbar.set_description(f'Parsing: {uri.stem}')
                     page = driver.page_source
                     response = html.fromstring(page, base_url=url)
-                    bbref_boxscore = parse_bbref_boxscore(response)
+                    bbref_boxscore = __parse_bbref_boxscore(response, url)
                     scraped_boxscores.append(bbref_boxscore)
 
-                    pbar.set_description(f'Finishing: {uri.stem}')
                     time.sleep(random.uniform(2.5, 3.0))
-                    page = ''
-                    response = None
-                    bbref_boxscore = None
-                    break
+                    parsing_boxscore = False
+                    pbar.update()
                 except Exception:
                     attempts += 1
                     if (attempts < max_attempts):
-                        pbar.set_description(f'Page failed to load, retrying...')
+                        pbar.set_description('Page failed to load, retrying')
                     else:
                         error = 'Unable to retrive URL content after {m} failed attempts, aborting task\n'.format(m=max_attempts)
-                        return dict(success=False, message=error)
-            pbar.update()
+                        result = dict(success=False, message=error)
+                        error_occurred = True
+                        parsing_boxscore = False
+            if error_occurred:
+                break
+
+    if error_occurred:
+        return result
     return dict(success=True, result=scraped_boxscores)
 
-def parse_bbref_boxscore(response):
-    """Parse boxscore data from the web page content supplied in response."""
+def __parse_bbref_boxscore(response, url, silent=False):
+    """Parse boxscore data from the page source."""
     item = BBRefBoxScore()
-    item.scrape_status = 'success'
-    item.url = response.base_url
+    item.scrape_success = True
+    item.boxscore_url = url
 
-    game_id = _parse_bbref_gameid_from_url(response.base_url)
+    if not silent:
+        pbar = tqdm(total=4, ncols=100, unit='chunk', leave=False, position=2)
+        pbar.set_description(f'Parsing game info........')
+
+    game_id = _parse_bbref_gameid_from_url(url)
     if not game_id:
-        item.scrape_status = 'rescrape_did_not_parse_game_id'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_game_id'
+        #_print_scrape_status(item, game_id)
         return item
     item.bbref_game_id = game_id
 
@@ -194,8 +202,9 @@ def parse_bbref_boxscore(response):
 
     away_team_id = _parse_away_team_id(response)
     if not away_team_id:
-        item.scrape_status = 'rescrape_did_not_parse_away_team_id'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_away_team_id'
+        #_print_scrape_status(item, game_id)
         return item
     item.away_team_id_br = away_team_id
 
@@ -203,8 +212,9 @@ def parse_bbref_boxscore(response):
 
     home_team_id = _parse_home_team_id(response)
     if not home_team_id:
-        item.scrape_status = 'rescrape_did_not_parse_home_team_id'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_home_team_id'
+        #_print_scrape_status(item, game_id)
         return item
     item.home_team_id_br = home_team_id
 
@@ -212,8 +222,9 @@ def parse_bbref_boxscore(response):
 
     away_team_runs = _parse_away_team_runs(response)
     if not away_team_runs:
-        item.scrape_status = 'rescrape_did_not_parse_away_team_runs'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_away_team_runs'
+        #_print_scrape_status(item, game_id)
         return item
     item.away_team_runs = away_team_runs
 
@@ -221,8 +232,9 @@ def parse_bbref_boxscore(response):
 
     home_team_runs = _parse_home_team_runs(response)
     if not home_team_runs:
-        item.scrape_status = 'rescrape_did_not_parse_home_team_runs'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_home_team_runs'
+        #_print_scrape_status(item, game_id)
         return item
     item.home_team_runs = home_team_runs
 
@@ -230,8 +242,9 @@ def parse_bbref_boxscore(response):
 
     away_team_record = _parse_away_team_record(response)
     if not away_team_record:
-        item.scrape_status = 'rescrape_did_not_parse_away_team_record'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_away_team_record'
+        #_print_scrape_status(item, game_id)
         return item
     item.away_team_wins_before_game = away_team_record[0]
     item.away_team_losses_before_game = away_team_record[1]
@@ -241,8 +254,9 @@ def parse_bbref_boxscore(response):
 
     home_team_record = _parse_home_team_record(response)
     if not home_team_record:
-        item.scrape_status = 'rescrape_did_not_parse_home_team_record'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_home_team_record'
+        #_print_scrape_status(item, game_id)
         return item
     item.home_team_wins_before_game = home_team_record[0]
     item.home_team_losses_before_game = home_team_record[1]
@@ -264,8 +278,9 @@ def parse_bbref_boxscore(response):
 
     venue_matches = _parse_venue_from_strings(scorebox_meta_strings)
     if venue_matches is None:
-        item.scrape_status = 'rescrape_did_not_parse_park_name'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_park_name'
+        #_print_scrape_status(item, game_id)
         return item
 
     item.park_name = venue_matches['match']
@@ -276,8 +291,9 @@ def parse_bbref_boxscore(response):
 
     game_duration_matches = _parse_game_duration_from_strings(scorebox_meta_strings)
     if game_duration_matches is None:
-        item.scrape_status = 'rescrape_did_not_parse_game_duration'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_game_duration'
+        #_print_scrape_status(item, game_id)
         return item
 
     item.game_duration = game_duration_matches['match']
@@ -288,8 +304,9 @@ def parse_bbref_boxscore(response):
 
     day_night_field = _parse_day_night_field_type_from_strings(scorebox_meta_strings)
     if day_night_field is None:
-        item.scrape_status = 'rescrape_did_not_parse_day_night_field'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_day_night_field'
+        #_print_scrape_status(item, game_id)
         return item
 
     split = day_night_field['match'].split(',')
@@ -297,8 +314,9 @@ def parse_bbref_boxscore(response):
     del scorebox_meta_strings[day_night_field_index]
 
     if len(split) < 2:
-        item.scrape_status = 'rescrape_did_not_parse_day_night_field'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_day_night_field'
+        #_print_scrape_status(item, game_id)
         return item
 
     item.day_night = split[0].strip()
@@ -309,13 +327,15 @@ def parse_bbref_boxscore(response):
 
     first_pitch_weather = response.xpath(_FIRST_PITCH_WEATHER_XPATH)
     if not first_pitch_weather:
-        item.scrape_status = 'rescrape_did_not_parse_first_pitch_weather'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_first_pitch_weather'
+        #_print_scrape_status(item, game_id)
         return item
     split2 = first_pitch_weather[0].split(',')
     if len(split2) < 3:
-        item.scrape_status = 'rescrape_did_not_parse_first_pitch_weather'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_first_pitch_weather'
+        #_print_scrape_status(item, game_id)
         return item
 
     item.first_pitch_temperature = split2[0].strip()[:2]
@@ -333,70 +353,88 @@ def parse_bbref_boxscore(response):
 
     away_team_linescore_innings = _parse_linescore_innings(response, away_team_id, False)
     if not away_team_linescore_innings:
-        item.scrape_status = 'rescrape_did_not_parse_away_team_linescore_innings'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_away_team_linescore_innings'
+        #_print_scrape_status(item, game_id)
         return item
     item.away_team_linescore_innings = away_team_linescore_innings
 
     away_team_linescore_totals = _parse_linescore_totals(response, away_team_id, False)
     if not away_team_linescore_totals:
-        item.scrape_status = 'rescrape_did_not_parse_away_team_linescore_totals'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_away_team_linescore_totals'
+        #_print_scrape_status(item, game_id)
         return item
     item.away_team_linescore_totals = away_team_linescore_totals
 
     home_team_linescore_innings = _parse_linescore_innings(response, home_team_id, True)
     if not home_team_linescore_innings:
-        item.scrape_status = 'rescrape_did_not_parse_home_team_linescore_innings'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_home_team_linescore_innings'
+        #_print_scrape_status(item, game_id)
         return item
     item.home_team_linescore_innings = home_team_linescore_innings
 
     home_team_linescore_totals = _parse_linescore_totals(response, home_team_id, True)
     if not home_team_linescore_totals:
-        item.scrape_status = 'rescrape_did_not_parse_home_team_linescore_totals'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_home_team_linescore_totals'
+        #_print_scrape_status(item, game_id)
         return item
     item.home_team_linescore_totals = home_team_linescore_totals
 
     #print('\nLinescore:')
     #_print_linescore(away_team_linescore_innings, away_team_linescore_totals, home_team_linescore_innings, home_team_linescore_totals)
-    print('\nSuccessfully parsed game meta data from BBRef boxscore page')
+    #print('\nSuccessfully parsed game meta data from BBRef boxscore page')
+    if not silent:
+        pbar.update()
+        pbar.set_description(f'Parsing bat stats........')
 
     batter_id_dict = _parse_batter_id_dict(response)
     if not batter_id_dict:
-        item.scrape_status = 'rescrape_did_not_parse_batter_id_dict'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_batter_id_dict'
+        #_print_scrape_status(item, game_id)
         return item
 
     batting_stats = _parse_batting_stats(response)
     if not batting_stats:
-        item.scrape_status = 'rescrape_did_not_parse_batting_stats'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_batting_stats'
+        #_print_scrape_status(item, game_id)
         return item
     item.batting_stats = batting_stats
 
-    print('Successfully parsed batting stats from BBRef boxscore page ({n} players total)'.format(n=len(batting_stats)))
+    #print('Successfully parsed batting stats from BBRef boxscore page ({n} players total)'.format(n=len(batting_stats)))
+    if not silent:
+        pbar.update()
+        pbar.set_description(f'Parsing pitch stats......')
 
     pitcher_id_dict = _parse_pitcher_id_dict(response)
     if not pitcher_id_dict:
-        item.scrape_status = 'rescrape_did_not_parse_pitcher_id_dict'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_pitcher_id_dict'
+        #_print_scrape_status(item, game_id)
         return item
 
     pitching_stats =  _parse_pitching_stats(response)
     if not pitching_stats:
-        item.scrape_status = 'rescrape_did_not_parse_pitching_stats'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_pitching_stats'
+        #_print_scrape_status(item, game_id)
         return item
     item.pitching_stats = pitching_stats
 
-    print('Successfully parsed pitching stats from BBRef boxscore page ({n} players total)'.format(n=len(pitching_stats)))
+    #print('Successfully parsed pitching stats from BBRef boxscore page ({n} players total)'.format(n=len(pitching_stats)))
+    if not silent:
+        pbar.update()
+        pbar.set_description(f'Parsing play-by-play.....')
 
     umpires = _parse_umpires(response)
     if not umpires:
-        item.scrape_status = 'rescrape_did_not_parse_umpires'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_umpires'
+        #_print_scrape_status(item, game_id)
         return item
     item.umpires = umpires
 
@@ -404,8 +442,9 @@ def parse_bbref_boxscore(response):
 
     away_team_lineup = _parse_away_team_lineup(response)
     if not away_team_lineup:
-        item.scrape_status = 'rescrape_did_not_parse_away_team_lineup'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_away_team_lineup'
+        #_print_scrape_status(item, game_id)
         return item
     item.away_starting_lineup = away_team_lineup
 
@@ -414,8 +453,9 @@ def parse_bbref_boxscore(response):
 
     home_team_lineup = _parse_home_team_lineup(response)
     if not home_team_lineup:
-        item.scrape_status = 'rescrape_did_not_parse_home_team_lineup'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_home_team_lineup'
+        #_print_scrape_status(item, game_id)
         return item
     item.home_starting_lineup = home_team_lineup
 
@@ -424,34 +464,43 @@ def parse_bbref_boxscore(response):
 
     inning_summaries = _parse_inning_summaries(response)
     if not inning_summaries:
-        item.scrape_status = 'rescrape_did_not_parse_inning_summaries'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_inning_summaries'
+        #_print_scrape_status(item, game_id)
         return item
     item.inning_summaries = inning_summaries
 
     play_by_play = _parse_play_by_play(response, game_id, batter_id_dict, pitcher_id_dict, away_team_id, home_team_id)
     if not play_by_play:
-        item.scrape_status = 'rescrape_did_not_parse_play_by_play'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_did_not_parse_play_by_play'
+        #_print_scrape_status(item, game_id)
         return item
     item.play_by_play = play_by_play
 
-    print('Sucessfully parsed play-by-play data from BBRef boxscore page ({n} events total)'.format(n=len(play_by_play)))
+    #print('Sucessfully parsed play-by-play data from BBRef boxscore page ({n} events total)'.format(n=len(play_by_play)))
+    if not silent:
+        pbar.update()
+        pbar.set_description(f'Finished parsing.........')
 
     player_dict = _create_player_team_dict(play_by_play)
     if not player_dict:
-        item.scrape_status = 'rescrape_player_name_unmatched_in_pbp'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_player_name_unmatched_in_pbp'
+        #_print_scrape_status(item, game_id)
         return item
 
     player_dict = _verify_all_players_in_dict(response, player_dict)
     if not player_dict:
-        item.scrape_status = 'rescrape_player_id_not_found_in_pbp'
-        _print_scrape_status(item, game_id)
+        item.scrape_success = False
+        item.scrape_error = 'rescrape_player_id_not_found_in_pbp'
+        #_print_scrape_status(item, game_id)
         return item
     item.player_dict = player_dict
 
-    _print_scrape_status(item, game_id)
+    #_print_scrape_status(item, game_id)
+    if not silent:
+        pbar.close()
     return item
 
 
@@ -653,7 +702,7 @@ def _parse_batting_stats(response):
                     details.append(d)
 
         player_batting_stats = BBRefBatStats()
-        player_batting_stats.player_bbref_id = b
+        player_batting_stats.player_id_br = b
         player_batting_stats.at_bats = at_bats
         player_batting_stats.runs_scored = runs_scored
         player_batting_stats.hits = hits
@@ -843,7 +892,7 @@ def _parse_pitching_stats(response):
             re24_pitch  = "0"
 
         pitch_app = BBRefPitchStats()
-        pitch_app.player_bbref_id = p
+        pitch_app.player_id_br = p
         pitch_app.innings_pitched = innings_pitched
         pitch_app.hits = hits
         pitch_app.runs = runs
@@ -914,37 +963,39 @@ def _parse_play_by_play(response, game_id, batter_id_dict, pitcher_id_dict, away
 
         try:
             play = BBRefPlayByPlayEvent()
-            play.scrape_status = 'success'
+            play.scrape_success = True
             play.inning = th_inning[i]
             play.score = td_score[i]
             play.outs_before_play = td_outs_before_play[i]
             play.runners_on_base = td_rob[i]
             play.pitch_sequence = td_sequence[i]
             play.runs_outs_result = td_runs_outs_result[i]
-            play.team_batting = td_team_batting[i]
+            play.team_batting_id_br = td_team_batting[i]
             play.play_description = td_play_desc[i]
 
             if td_team_batting[i] == away_team_id:
-                play.team_pitching = home_team_id
+                play.team_pitching_id_br = home_team_id
             else:
-                play.team_pitching = away_team_id
+                play.team_pitching_id_br = away_team_id
         except IndexError as e:
             print('Error: {e}'.format(e=repr(e)))
 
         try:
             match_pitcher_id = _get_pitcher_id(pitcher_id_dict, fixed_pitchers[i])
-            play.pitcher_id = match_pitcher_id
+            play.pitcher_id_br = match_pitcher_id
         except Exception as e:
-            play.scrape_status = 'rescrape_did_not_match_pitcher_name_to_id'
-            play.pitcher_id = fixed_pitchers[i]
+            play.scrape_success = False
+            play.scrape_error = 'rescrape_did_not_match_pitcher_name_to_id'
+            play.pitcher_id_br = fixed_pitchers[i]
             print('Error: {e}'.format(e=repr(e)))
 
         try:
             match_batter_id = _get_batter_id(batter_id_dict, fixed_batters[i])
-            play.batter_id = match_batter_id
+            play.batter_id_br = match_batter_id
         except Exception as e:
-            play.scrape_status = 'rescrape_did_not_match_batter_name_to_id'
-            play.batter_id = fixed_batters[i]
+            play.scrape_success = False
+            play.scrape_error = 'rescrape_did_not_match_batter_name_to_id'
+            play.batter_id_br = fixed_batters[i]
             print('Error: {e}'.format(e=repr(e)))
 
         play_by_play.append(play)
@@ -954,10 +1005,10 @@ def _create_player_team_dict(play_by_play):
     ids = []
     teams = []
     for pbp in play_by_play:
-        ids.append(pbp.batter_id)
-        ids.append(pbp.pitcher_id)
-        teams.append(pbp.team_batting)
-        teams.append(pbp.team_pitching)
+        ids.append(pbp.batter_id_br)
+        ids.append(pbp.pitcher_id_br)
+        teams.append(pbp.team_batting_id_br)
+        teams.append(pbp.team_pitching_id_br)
 
     player_dict = dict(zip(ids, teams))
     for id in player_dict.keys():
@@ -1024,8 +1075,8 @@ def _print_linescore(away_linescore_innings, away_linescore_totals, home_linesco
     linescore = _adjust_linescore(linescore, "E", away_total_errors, home_total_errors)
 
     top_line = linescore[0]
-    away_line = '{al}{at}'.format(al=linescore[1], at=away_linescore_totals.team_id)
-    home_line = '{hl}{ht}'.format(hl=linescore[2], ht=home_linescore_totals.team_id)
+    away_line = '{al}{at}'.format(al=linescore[1], at=away_linescore_totals.team_id_br)
+    home_line = '{hl}{ht}'.format(hl=linescore[2], ht=home_linescore_totals.team_id_br)
 
     print(top_line + '\n' + away_line + '\n' + home_line)
 
@@ -1101,7 +1152,7 @@ def _parse_linescore_innings(response, team_id, is_home_team):
     linescore_innings = []
     for i in range(0, len(vals)):
         team_inning_runs_scored = BBRefInningRunsScored()
-        team_inning_runs_scored.team_id = team_id
+        team_inning_runs_scored.team_id_br = team_id
         team_inning_runs_scored.inning = keys[i]
         team_inning_runs_scored.runs = vals[i]
         linescore_innings.append(team_inning_runs_scored)
@@ -1129,7 +1180,7 @@ def _parse_linescore_totals(response, team_id, is_home_team):
         return None
     parsed_totals = dict(zip(keys, vals))
     linescore_totals = BBRefTeamLinescoreTotals()
-    linescore_totals.team_id = team_id
+    linescore_totals.team_id_br = team_id
     linescore_totals.total_runs = parsed_totals['R']
     linescore_totals.total_hits = parsed_totals['H']
     linescore_totals.total_errors = parsed_totals['E']
@@ -1182,7 +1233,7 @@ def _parse_away_team_lineup(response):
         split = player_links[i].split('/')
         if len(split) != 4:
             return None
-        bat.player_bbref_id = split[3][:-6]
+        bat.player_id_br = split[3][:-6]
         bat.bat_order = bat_orders[i]
         bat.def_position = def_positions[i]
         lineup.append(bat)
@@ -1201,7 +1252,7 @@ def _parse_home_team_lineup(response):
         split = player_links[i].split('/')
         if len(split) != 4:
             return None
-        bat.player_bbref_id = split[3][:-6]
+        bat.player_id_br = split[3][:-6]
         bat.bat_order = bat_orders[i]
         bat.def_position = def_positions[i]
         lineup.append(bat)
@@ -1296,7 +1347,7 @@ def _create_dict_list(objects):
 def _print_lineup(lineup):
     for bat in lineup:
         print('{o}: {b} ({p})'.format(
-            o=bat.bat_order, b=bat.player_bbref_id, p=bat.def_position)
+            o=bat.bat_order, b=bat.player_id_br, p=bat.def_position)
         )
 
 def _print_umpires(umpires):
@@ -1342,4 +1393,5 @@ def _print_play_event(play):
 
 def _print_scrape_status(item, game_id):
     print('\nParsing operation complete for Game ID: {gid}'.format(gid=game_id))
-    print('Scrape Status: {s}'.format(s=item.scrape_status))
+    if not item.scrape_success:
+        print('Error message: {s}'.format(s=item.scrape_error))

@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as ec
 
 def get_chromedriver(page_load_timeout=6000):
     """Initialize a Chrome webdriver instance with user-specified value for page load timeout."""
-    max_attempts = 100
+    max_attempts = 10
     attempts = 1
     while(attempts < max_attempts):
         try:

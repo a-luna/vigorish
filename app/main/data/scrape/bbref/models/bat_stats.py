@@ -1,7 +1,7 @@
 class BBRefBatStats():
     """Statistics for all plate appearances that occurred for one player in a single game."""
 
-    player_bbref_id = ""
+    player_id_br = ""
     at_bats = ""
     runs_scored = ""
     hits = ""
@@ -25,7 +25,7 @@ class BBRefBatStats():
     def as_dict(self):
         """Convert batting statistics for one player in a single game to a dictionary."""
         dict = {
-            "player_bbref_id": "{}".format(self.player_bbref_id),
+            "player_id_br": "{}".format(self.player_id_br),
             "at_bats": int(self.at_bats),
             "runs_scored": int(self.runs_scored),
             "hits": int(self.hits),

@@ -40,8 +40,9 @@ class DateString(click.ParamType):
         except Exception:
             error = (
                 f'"{value}" could not be parsed as a valid date. You can use '
-                'any format recognized by dateutil.parser, for example: '
-                '"2018-5-13" -or- "08/10/2017" -or- "Apr 27 2018"'
+                'any format recognized by dateutil.parser. For example, all '
+                'of the strings below represent the same date and are valid\n'
+                '"2018-5-13" -or- "05/13/2018" -or- "May 13 2018"'
             )
             self.fail(error, param, ctx)
 
@@ -128,13 +129,13 @@ def scrape(ctx, data_set, start, end):
     with tqdm(
         total=len(date_range),
         ncols=100,
-        unit='page',
+        unit='day',
         mininterval=0.12,
         maxinterval=5,
         position=0
     ) as pbar:
         for scrape_date in date_range:
-            pbar.set_description(f'Processing: {scrape_date.strftime(DATE_ONLY)}')
+            pbar.set_description(f'Processing {scrape_date.strftime(DATE_ONLY)}....')
             result = __scrape_data_for_date(
                 session,
                 scrape_date,
@@ -157,7 +158,7 @@ def scrape(ctx, data_set, start, end):
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
-        'Requested data was successfully scraped:\n'
+        '\nRequested data was successfully scraped:\n'
         f'data set....: {scrape_config.DISPLAY_NAME}\n'
         f'date range..: {start_str} - {end_str}\n'
     )
@@ -208,15 +209,40 @@ def __get_driver(scrape_config):
 def __scrape_data_for_date(session, scrape_date, scrape_config, driver):
     input_dict = dict(date=scrape_date, session=session)
     if scrape_config.REQUIRES_INPUT:
-        input_dict['input_data'] = scrape_config.GET_INPUT_FUNCTION(scrape_date)
+        result = scrape_config.GET_INPUT_FUNCTION(scrape_date)
+        if not result['success']:
+            return result
+        input_dict['input_data'] = result['result']
     if scrape_config.REQUIRES_SELENIUM:
         input_dict['driver'] = driver
     result = scrape_config.SCRAPE_FUNCTION(input_dict)
     if not result['success']:
         return result
     scraped_data = result['result']
+    if scrape_config.PRODUCES_LIST:
+        return __upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
     return scrape_config.PERSIST_FUNCTION(scraped_data, scrape_date)
 
+
+def __upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
+    with tqdm(
+        total=len(scraped_data),
+        ncols=100,
+        unit='file',
+        mininterval=0.12,
+        maxinterval=5,
+        leave=False,
+        position=1
+    ) as pbar:
+        for data in scraped_data:
+            pbar.set_description(f'Uploading {data.upload_id}...')
+            result = scrape_config.PERSIST_FUNCTION(data, scrape_date)
+            if not result['success']:
+                return result
+            delay_ms = (randint(50, 100)/100.0)
+            time.sleep(delay_ms)
+            pbar.update()
+    return dict(success=True)
 
 if __name__ == '__main__':
     cli({})
