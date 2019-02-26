@@ -130,7 +130,7 @@ def get_bbref_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=T
     )
 
 def upload_bbref_boxscore(boxscore, scrape_date):
-    """Upload a file to S3 containing json encoded BBRefBoxScore object."""
+    """Upload a file to S3 containing json encoded BBRefBoxscore object."""
     result = write_bbref_boxscore_to_file(boxscore)
     if not result['success']:
         return result
@@ -147,7 +147,7 @@ def upload_bbref_boxscore(boxscore, scrape_date):
         return dict(success=False, message=error)
 
 def download_bbref_boxscore(bbref_game_id, folderpath=None):
-    """Download a file from S3 containing json encoded BBRefBoxScore object."""
+    """Download a file from S3 containing json encoded BBRefBoxscore object."""
     folderpath = folderpath if folderpath else Path.cwd()
     filename = Template(T_BBREF_BOXSCORE_FILENAME)\
         .substitute(gid=bbref_game_id)
@@ -170,7 +170,7 @@ def download_bbref_boxscore(bbref_game_id, folderpath=None):
         return False
 
 def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True):
-    """Retrieve BBRefBoxScore object from json encoded file stored in S3."""
+    """Retrieve BBRefBoxscore object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
     result = download_bbref_boxscore(bbref_game_id, folderpath)
     if not result['success']:

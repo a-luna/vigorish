@@ -2,6 +2,7 @@
 from sqlalchemy import Column, Boolean, Integer, DateTime
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from app.main.constants import SEASON_TYPE_DICT
 from app.main.models.base import Base
@@ -27,12 +28,8 @@ class Season(Base):
             name='season_type_enum'
         ), default='None'
     )
-    initialized_tables = Column(Boolean, default=False)
-    all_boxscore_urls_scraped = Column(Boolean, default=False)
-    all_boxscores_scraped = Column(Boolean, default=False)
-    all_pitch_apps_scraped = Column(Boolean, default=False)
-    all_pitchfx_scraped = Column(Boolean, default=False)
 
+    #status = relationship('SeasonStatus', back_populates='season')
     #dates = relationship('SeasonDate', back_populates='season')
     #boxscores = relationship('Boxscore', back_populates='season')
     #itching_stats = relationship('PitchingStats', back_populates='season')

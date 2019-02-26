@@ -15,11 +15,7 @@ from config import scrape_config_by_data_set
 from app.main.constants import MLB_DATA_SETS
 from app.main.data.setup.initialize_database import initialize_database
 from app.main.models.base import Base
-from app.main.models.player import Player
-from app.main.models.player_id import PlayerId
-from app.main.models.runners_on_base import RunnersOnBase
 from app.main.models.season import Season
-from app.main.models.team import Team
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.scrape_functions import get_chromedriver
@@ -68,7 +64,7 @@ def cli(ctx):
     prompt='Are you sure you want to delete all existing data?')
 @click.pass_context
 def setup(ctx):
-    """Populate database with initial Player, Team and MLB Season data.
+    """Populate database with initial Player, Team and Season data.
 
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
@@ -109,7 +105,7 @@ def setup(ctx):
         'recognized by dateutil.parser.'))
 @click.pass_context
 def scrape(ctx, data_set, start, end):
-    """Scrape MLB data sets from websites."""
+    """Scrape MLB data from websites."""
     session = ctx.obj['sessionmaker']()
     result = __validate_date_range(session, start, end)
     if not result['success']:
@@ -149,7 +145,7 @@ def scrape(ctx, data_set, start, end):
             pbar.update()
 
     session.close()
-    if scrape_config.REQUIRES_SELENIUM:
+    if scrape_config.requires_selenium:
         driver.close()
         driver.quit()
     if not result['success']:
@@ -159,7 +155,7 @@ def scrape(ctx, data_set, start, end):
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
         '\nRequested data was successfully scraped:\n'
-        f'data set....: {scrape_config.DISPLAY_NAME}\n'
+        f'data set....: {scrape_config.display_name}\n'
         f'date range..: {start_str} - {end_str}\n'
     )
     click.secho(success, fg='green')
@@ -197,7 +193,7 @@ def __validate_date_range(session, start, end):
 
 
 def __get_driver(scrape_config):
-    if not scrape_config.REQUIRES_SELENIUM:
+    if not scrape_config.requires_selenium:
         return dict(success=True, driver=None)
     result = get_chromedriver()
     if not result['success']:
@@ -208,20 +204,20 @@ def __get_driver(scrape_config):
 
 def __scrape_data_for_date(session, scrape_date, scrape_config, driver):
     input_dict = dict(date=scrape_date, session=session)
-    if scrape_config.REQUIRES_INPUT:
-        result = scrape_config.GET_INPUT_FUNCTION(scrape_date)
+    if scrape_config.requires_input:
+        result = scrape_config.get_input_function(scrape_date)
         if not result['success']:
             return result
         input_dict['input_data'] = result['result']
-    if scrape_config.REQUIRES_SELENIUM:
+    if scrape_config.requires_selenium:
         input_dict['driver'] = driver
-    result = scrape_config.SCRAPE_FUNCTION(input_dict)
+    result = scrape_config.scrape_function(input_dict)
     if not result['success']:
         return result
     scraped_data = result['result']
-    if scrape_config.PRODUCES_LIST:
+    if scrape_config.produces_list:
         return __upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
-    return scrape_config.PERSIST_FUNCTION(scraped_data, scrape_date)
+    return scrape_config.persist_function(scraped_data, scrape_date)
 
 
 def __upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
@@ -236,7 +232,7 @@ def __upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
     ) as pbar:
         for data in scraped_data:
             pbar.set_description(f'Uploading {data.upload_id}...')
-            result = scrape_config.PERSIST_FUNCTION(data, scrape_date)
+            result = scrape_config.persist_function(data, scrape_date)
             if not result['success']:
                 return result
             delay_ms = (randint(50, 100)/100.0)

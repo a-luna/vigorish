@@ -74,7 +74,7 @@ def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=
         return dict(success=False, message=error)
 
 def read_bbref_boxscore_from_file(bbref_game_id, folderpath=None, delete_file=False):
-    """Decode BBRefBoxScore object from file."""
+    """Decode BBRefBoxscore object from file."""
     folderpath = folderpath if folderpath else Path.cwd()
     filename = Template(T_BBREF_BOXSCORE_FILENAME).substitute(gid=bbref_game_id)
     filepath = folderpath / filename

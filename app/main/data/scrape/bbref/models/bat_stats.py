@@ -2,6 +2,8 @@ class BBRefBatStats():
     """Statistics for all plate appearances that occurred for one player in a single game."""
 
     player_id_br = ""
+    player_team_id_br = ""
+    opponent_team_id_br = ""
     at_bats = ""
     runs_scored = ""
     hits = ""
@@ -26,6 +28,8 @@ class BBRefBatStats():
         """Convert batting statistics for one player in a single game to a dictionary."""
         dict = {
             "player_id_br": "{}".format(self.player_id_br),
+            "player_team_id_br": "{}".format(self.player_team_id_br),
+            "opponent_team_id_br": "{}".format(self.opponent_team_id_br),
             "at_bats": int(self.at_bats),
             "runs_scored": int(self.runs_scored),
             "hits": int(self.hits),

@@ -15,6 +15,31 @@ TRADE_TYPE_DICT = dict(
     fa='Granted Free Agency'
 )
 
+DEFENSE_POSITIONS = [
+    'P',
+    'C',
+    '1B',
+    '2B',
+    '3B',
+    'SS',
+    'RF',
+    'CF',
+    'LF',
+    'PH'
+]
+
+DEF_POSITION_DICT = {
+    'P': 'Pitcher',
+    'C': 'Catcher',
+    '1B': 'First Base',
+    '2B': 'Second Base',
+    '3B': 'Third Base',
+    'SS': 'Short Stop',
+    'RF': 'Right Field',
+    'CF': 'Center Field',
+    'LF': 'Left Field'
+}
+
 MLB_DATA_SETS = [
     'bbref_games_for_date',
     'bbref_boxscore',

@@ -3,6 +3,8 @@ from sqlalchemy import Column, Boolean, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 
 from app.main.models.base import Base
+from app.main.models.player_id import PlayerId
+from app.main.util.list_functions import display_dict
 
 
 class Player(Base):
@@ -52,6 +54,9 @@ class Player(Base):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def display(self):
+        display_dict(self.as_dict())
 
     @classmethod
     def find_by_bbref_id(cls, session, bbref_id):

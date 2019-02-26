@@ -6,6 +6,7 @@ import random
 import re
 import time
 from pathlib import Path
+from string import Template
 
 from lxml import html
 from selenium import webdriver
@@ -14,16 +15,24 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from tqdm import tqdm
 
-from .models.boxscore import BBRefBoxScore
+from app.main.constants import DEFENSE_POSITIONS
 from .models.bat_stats import BBRefBatStats
 from .models.bat_stats_detail import BBRefBatStatsDetail
+from .models.boxscore import BBRefBoxscore
+from .models.boxscore_game_meta import BBRefBoxscoreMeta
+from .models.half_inning import BBRefHalfInning
+from .models.boxscore_team_data import BBRefBoxscoreTeamData
 from .models.inning_runs_scored import BBRefInningRunsScored
 from .models.pbp_event import BBRefPlayByPlayEvent
+from .models.pbp_substitution import BBRefInGameSubstitution
 from .models.pitch_stats import BBRefPitchStats
 from .models.starting_lineup_slot import BBRefStartingLineupSlot
 from .models.team_linescore_totals import BBRefTeamLinescoreTotals
 from .models.umpire import BBRefUmpire
 from app.main.util.scrape_functions import request_url, get_chromedriver
+from app.main.util.string_functions import fuzzy_match, normalize
+from app.main.util.list_functions import display_dict
+from app.main.util.numeric_functions import is_even
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _TEAM_RUNS_XPATH = '//div[@class="score"]/text()'
@@ -35,61 +44,63 @@ _LINESCORE_AWAY_VALS_XPATH = '//table[contains(@class, "linescore")]//tbody/tr[1
 _LINESCORE_HOME_VALS_XPATH = '//table[contains(@class, "linescore")]//tbody/tr[2]//td/text()'
 
 _BATTING_STATS_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]'
-_BATTER_IDS_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]/@data-append-csv'
-_BATTER_NAMES_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]//a/text()'
+_BATTER_IDS_XPATH = './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]/@data-append-csv'
+_BATTER_NAMES_XPATH = './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]//a/text()'
+_BATTER_STATS_ROW = './tbody//th[@data-append-csv="{pid}"]/..'
 
-_BATTER_AB_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="AB"]/text()'
-_BATTER_R_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="R"]/text()'
-_BATTER_H_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="H"]/text()'
-_BATTER_RBI_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="RBI"]/text()'
-_BATTER_BB_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="BB"]/text()'
-_BATTER_SO_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="SO"]/text()'
-_BATTER_PA_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="PA"]/text()'
+_BATTER_AB_XPATH = './td[@data-stat="AB"]/text()'
+_BATTER_R_XPATH = './td[@data-stat="R"]/text()'
+_BATTER_H_XPATH = './td[@data-stat="H"]/text()'
+_BATTER_RBI_XPATH = './td[@data-stat="RBI"]/text()'
+_BATTER_BB_XPATH = './td[@data-stat="BB"]/text()'
+_BATTER_SO_XPATH = './td[@data-stat="SO"]/text()'
+_BATTER_PA_XPATH = './td[@data-stat="PA"]/text()'
 
-_BATTER_AVG_TO_DATE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="batting_avg"]/text()'
-_BATTER_OBP_TO_DATE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="onbase_perc"]/text()'
-_BATTER_SLG_TO_DATE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="slugging_perc"]/text()'
-_BATTER_OPS_TO_DATE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="onbase_plus_slugging"]/text()'
-_BATTER_TOTAL_PITCHES_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="pitches"]/text()'
-_BATTER_TOTAL_STRIKES_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="strikes_total"]/text()'
+_BATTER_AVG_TO_DATE_XPATH = './td[@data-stat="batting_avg"]/text()'
+_BATTER_OBP_TO_DATE_XPATH = './td[@data-stat="onbase_perc"]/text()'
+_BATTER_SLG_TO_DATE_XPATH = './td[@data-stat="slugging_perc"]/text()'
+_BATTER_OPS_TO_DATE_XPATH = './td[@data-stat="onbase_plus_slugging"]/text()'
+_BATTER_TOTAL_PITCHES_XPATH = './td[@data-stat="pitches"]/text()'
+_BATTER_TOTAL_STRIKES_XPATH = './td[@data-stat="strikes_total"]/text()'
 
-_BATTER_WPA_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="wpa_bat"]/text()'
-_BATTER_ALI_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="leverage_index_avg"]/text()'
-_BATTER_WPA_POS_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="wpa_bat_pos"]/text()'
-_BATTER_WPA_NEG_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="wpa_bat_neg"]/text()'
-_BATTER_RE24_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="re24_bat"]/text()'
-_BATTER_DETAILS_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="details"]/text()'
+_BATTER_WPA_XPATH = './td[@data-stat="wpa_bat"]/text()'
+_BATTER_ALI_XPATH = './td[@data-stat="leverage_index_avg"]/text()'
+_BATTER_WPA_POS_XPATH = './td[@data-stat="wpa_bat_pos"]/text()'
+_BATTER_WPA_NEG_XPATH = './td[@data-stat="wpa_bat_neg"]/text()'
+_BATTER_RE24_XPATH = './td[@data-stat="re24_bat"]/text()'
+_BATTER_DETAILS_XPATH = './td[@data-stat="details"]/text()'
 
 _PITCHING_STATS_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]'
-_PITCHER_IDS_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tbody//td[@data-stat="earned_run_avg"]/..//th[@data-stat="player"]/@data-append-csv'
-_PITCHER_NAMES_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tbody//td[@data-stat="earned_run_avg"]/..//th[@data-stat="player"]//a/text()'
+_PITCHER_IDS_XPATH = './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]/@data-append-csv'
+_PITCHER_NAMES_XPATH = './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]//a/text()'
+_PITCHER_STATS_ROW = './tbody//th[@data-append-csv="{pid}"]/..'
 
-_PITCHER_IP_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="IP"]/text()'
-_PITCHER_H_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="H"]/text()'
-_PITCHER_R_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="R"]/text()'
-_PITCHER_ER_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="ER"]/text()'
-_PITCHER_BB_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="BB"]/text()'
-_PITCHER_SO_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="SO"]/text()'
-_PITCHER_HR_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="HR"]/text()'
+_PITCHER_IP_XPATH = './td[@data-stat="IP"]/text()'
+_PITCHER_H_XPATH = './td[@data-stat="H"]/text()'
+_PITCHER_R_XPATH = './td[@data-stat="R"]/text()'
+_PITCHER_ER_XPATH = './td[@data-stat="ER"]/text()'
+_PITCHER_BB_XPATH = './td[@data-stat="BB"]/text()'
+_PITCHER_SO_XPATH = './td[@data-stat="SO"]/text()'
+_PITCHER_HR_XPATH = './td[@data-stat="HR"]/text()'
 
-_PITCHER_BATTERS_FACED_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="batters_faced"]/text()'
-_PITCHER_PITCH_COUNT_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="pitches"]/text()'
-_PITCHER_STRIKES_TOTAL_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="strikes_total"]/text()'
-_PITCHER_STRIKES_CONTACT_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="strikes_contact"]/text()'
-_PITCHER_STRIKES_SWINGING_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="strikes_swinging"]/text()'
-_PITCHER_STRIKES_LOOKING_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="strikes_looking"]/text()'
+_PITCHER_BATTERS_FACED_XPATH = './td[@data-stat="batters_faced"]/text()'
+_PITCHER_PITCH_COUNT_XPATH = './td[@data-stat="pitches"]/text()'
+_PITCHER_STRIKES_TOTAL_XPATH = './td[@data-stat="strikes_total"]/text()'
+_PITCHER_STRIKES_CONTACT_XPATH = './td[@data-stat="strikes_contact"]/text()'
+_PITCHER_STRIKES_SWINGING_XPATH = './td[@data-stat="strikes_swinging"]/text()'
+_PITCHER_STRIKES_LOOKING_XPATH = './td[@data-stat="strikes_looking"]/text()'
 
-_PITCHER_GB_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="inplay_gb_total"]/text()'
-_PITCHER_FB_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="inplay_fb_total"]/text()'
-_PITCHER_LD_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="inplay_ld"]/text()'
-_PITCHER_UNK_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="inplay_unk"]/text()'
+_PITCHER_GB_XPATH = './td[@data-stat="inplay_gb_total"]/text()'
+_PITCHER_FB_XPATH = './td[@data-stat="inplay_fb_total"]/text()'
+_PITCHER_LD_XPATH = './td[@data-stat="inplay_ld"]/text()'
+_PITCHER_UNK_XPATH = './td[@data-stat="inplay_unk"]/text()'
 
-_PITCHER_GSC_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="game_score"]/text()'
-_PITCHER_IR_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="inherited_runners"]/text()'
-_PITCHER_IS_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="inherited_score"]/text()'
-_PITCHER_WPA_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="wpa_def"]/text()'
-_PITCHER_ALI_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="leverage_index_avg"]/text()'
-_PITCHER_RE24_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]//tr//th[@data-append-csv="{pid}"]/..//td[@data-stat="re24_def"]/text()'
+_PITCHER_GSC_XPATH = './td[@data-stat="game_score"]/text()'
+_PITCHER_IR_XPATH = './td[@data-stat="inherited_runners"]/text()'
+_PITCHER_IS_XPATH = './td[@data-stat="inherited_score"]/text()'
+_PITCHER_WPA_XPATH = './td[@data-stat="wpa_def"]/text()'
+_PITCHER_ALI_XPATH = './td[@data-stat="leverage_index_avg"]/text()'
+_PITCHER_RE24_XPATH = './td[@data-stat="re24_def"]/text()'
 
 _UMPIRES_XPATH = '//div[@id="content"]/div[9]/div[3]/div[1]/text()'
 _FIRST_PITCH_WEATHER_XPATH = '//div[@id="content"]/div[9]/div[3]/div[4]/text()'
@@ -101,23 +112,41 @@ _HOME_LINEUP_PLAYER_XPATH = '//div[@id="lineups_2"]//table//tbody//a/@href'
 _HOME_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[3]/text()'
 
 _PLAY_BY_PLAY_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]'
-_PBP_INNING_SUMMARIES_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//th[@data-stat="inning_summary_12"]/text()'
-_PBP_INNING_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//th[@data-stat="inning"]/text()'
-_PBP_SCORE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//td[@data-stat="score_batting_team"]/text()'
-_PBP_OUTS_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//td[@data-stat="outs"]/text()'
-_PBP_RUNNERS_ON_BASE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//td[@data-stat="runners_on_bases_pbp"]/text()'
-_PBP_PITCH_SEQUENCE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//span[@class="pitch_sequence"]/text()'
-_PBP_TEAM_BATTING_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//td[@data-stat="batting_team_id"]/text()'
-_PBP_BATTER_NAME_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//td[@data-stat="batter"]/text()'
-_PBP_PITCHER_NAME_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//td[@data-stat="pitcher"]/text()'
-_PBP_PLAY_DESC_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//td[@data-stat="play_desc"]/text()'
-_PBP_RUNS_OUTS_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]//tbody//tr[@id="event_{n}"]/td[@data-stat="runs_outs_result"]/text()'
+_PBP_INNING_SUMMARY_TOP_XPATH = './tbody//th[@data-stat="inning_summary_12"]/text()'
+_PBP_INNING_SUMMARY_TOP_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_top"]/@data-row'
+_PBP_INNING_SUMMARY_BOTTOM_XPATH = './tbody//tr[@class="pbp_summary_bottom"]//td[last()]/text()'
+_PBP_INNING_SUMMARY_BOTTOM_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_bottom"]/@data-row'
+_PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = './tbody//tr[@class="pbp_summary_bottom"]//span[@class="half_inning_summary"]/text()'
+_PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
+_T_PBP_IN_GAME_SUBSTITUTION_XPATH = './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]//td[@data-stat="inning_summary_3"]//div/text()'
+_PBP_INNING_XPATH = './tbody//th[@data-stat="inning"]/text()'
+_PBP_SCORE_XPATH = './tbody//td[@data-stat="score_batting_team"]/text()'
+_PBP_OUTS_XPATH = './tbody//td[@data-stat="outs"]/text()'
+_PBP_RUNNERS_ON_BASE_XPATH = './tbody//td[@data-stat="runners_on_bases_pbp"]/text()'
+_PBP_PITCH_SEQUENCE_XPATH = './tbody//span[@class="pitch_sequence"]/text()'
+_PBP_TEAM_BATTING_XPATH = './tbody//td[@data-stat="batting_team_id"]/text()'
+_PBP_BATTER_NAME_XPATH = './tbody//td[@data-stat="batter"]/text()'
+_PBP_PITCHER_NAME_XPATH = './tbody//td[@data-stat="pitcher"]/text()'
+_PBP_PLAY_DESC_XPATH = './tbody//td[@data-stat="play_desc"]/text()'
+_PBP_RUNS_OUTS_XPATH = './tbody//tr[@id="event_{n}"]/td[@data-stat="runs_outs_result"]/text()'
+_T_PBP_ROW_NUMBER_XPATH = './tbody//tr[@id="event_${n}"]/@data-row'
 
 _GAME_ID_PATTERN = r'[A-Z][A-Z][A-Z]\d{9,9}'
 _TEAM_ID_PATTERN = r'[A-Z][A-Z][A-Z]'
 _ATTENDANCE_PATTERN = r'\d{1,2},\d{3,3}'
 _GAME_DATE_PATTERN = r'[1-3]?[0-9], 20[0-1][0-9]'
 _GAME_DURATION_PATTERN = r'[1-9]:[0-5][0-9]'
+_INNING_TOTALS_PATTERN = (
+    r'(?P<runs>\d{1,2})\s\b\w+\b,\s'
+    r'(?P<hits>\d{1,2})\s\b\w+\b,\s'
+    r'(?P<errors>\d{1,2})\s\b\w+\b,\s'
+    r'(?P<left_on_base>\d{1,2})\s\b\w+\b.\s\b\w+\b\s'
+    r'(?P<away_team_runs>\d{1,2}),\s\b\w+\b\s'
+    r'(?P<home_team_runs>\d{1,2})'
+)
+POS_REGEX = re.compile(r'\([BCFHLPRS123]{1,2}\)')
+NUM_REGEX = re.compile(r'[1-9]{1}')
+INNING_TOTALS_REGEX = re.compile(_INNING_TOTALS_PATTERN)
 
 
 def scrape_boxscores_for_date(scrape_dict):
@@ -182,8 +211,7 @@ def scrape_boxscores_for_date(scrape_dict):
 
 def __parse_bbref_boxscore(response, url, silent=False):
     """Parse boxscore data from the page source."""
-    item = BBRefBoxScore()
-    item.scrape_success = True
+    item = BBRefBoxscore()
     item.boxscore_url = url
 
     if not silent:
@@ -192,98 +220,88 @@ def __parse_bbref_boxscore(response, url, silent=False):
 
     game_id = _parse_bbref_gameid_from_url(url)
     if not game_id:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_game_id'
-        #_print_scrape_status(item, game_id)
-        return item
+        error = 'Failed to parse game ID'
+        return dict(success=False, message=error)
     item.bbref_game_id = game_id
 
     #print('\nBBRef Game ID..........: {gid}'.format(gid=game_id))
 
+    item.away_team_data = BBRefBoxscoreTeamData()
+    item.home_team_data = BBRefBoxscoreTeamData()
+
     away_team_id = _parse_away_team_id(response)
     if not away_team_id:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_away_team_id'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.away_team_id_br = away_team_id
+        error = 'Failed to parse away team ID'
+        return dict(success=False, message=error)
+    item.away_team_data.team_id_br = away_team_id
 
     #print('Away Team ID...........: {at}'.format(at=away_team_id))
 
     home_team_id = _parse_home_team_id(response)
     if not home_team_id:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_home_team_id'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.home_team_id_br = home_team_id
+        error = 'Failed to parse home team ID'
+        return dict(success=False, message=error)
+    item.home_team_data.team_id_br = home_team_id
 
     #print('Home Team ID...........: {ht}'.format(ht=home_team_id))
 
     away_team_runs = _parse_away_team_runs(response)
     if not away_team_runs:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_away_team_runs'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.away_team_runs = away_team_runs
+        error = 'Failed to parse away team runs scored'
+        return dict(success=False, message=error)
+    item.away_team_data.total_runs_scored_by_team = away_team_runs
+    item.home_team_data.total_runs_scored_by_opponent = away_team_runs
 
     #print('Away Team Runs Scored..: {ar}'.format(ar=away_team_runs))
 
     home_team_runs = _parse_home_team_runs(response)
     if not home_team_runs:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_home_team_runs'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.home_team_runs = home_team_runs
+        error = 'Failed to parse home team runs scored'
+        return dict(success=False, message=error)
+    item.home_team_data.total_runs_scored_by_team = home_team_runs
+    item.away_team_data.total_runs_scored_by_opponent = home_team_runs
 
     #print('Home Team Runs Scored..: {hr}'.format(hr=home_team_runs))
 
     away_team_record = _parse_away_team_record(response)
     if not away_team_record:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_away_team_record'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.away_team_wins_before_game = away_team_record[0]
-    item.away_team_losses_before_game = away_team_record[1]
+        error = 'Failed to parse away team record'
+        return dict(success=False, message=error)
+    item.away_team_data.total_wins_before_game = away_team_record[0]
+    item.away_team_data.total_losses_before_game = away_team_record[1]
 
     #away_team_record_before_game = '{w}-{l}'.format(w=away_team_record[0], l=away_team_record[1])
     #print('Away Team Record.......: {at}'.format(at=away_team_record_before_game))
 
     home_team_record = _parse_home_team_record(response)
     if not home_team_record:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_home_team_record'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.home_team_wins_before_game = home_team_record[0]
-    item.home_team_losses_before_game = home_team_record[1]
+        error = 'Failed to parse home team record'
+        return dict(success=False, message=error)
+    item.home_team_data.total_wins_before_game = home_team_record[0]
+    item.home_team_data.total_losses_before_game = home_team_record[1]
 
     #home_team_record_before_game = '{w}-{l}'.format(w=home_team_record[0], l=home_team_record[1])
     #print('Home Team Record.......: {ht}'.format(ht=home_team_record_before_game))
 
+    item.game_meta_info = BBRefBoxscoreMeta()
     scorebox_meta_strings = response.xpath(_SCOREBOX_META_XPATH)
 
     attendance_matches = _parse_attendance_from_strings(scorebox_meta_strings)
     if attendance_matches is not None:
-        item.attendance = attendance_matches['match']
+        item.game_meta_info.attendance = attendance_matches['match']
         attendance_index = attendance_matches['index']
         del scorebox_meta_strings[attendance_index]
         #print('Attendance.............: {a}'.format(a=item.attendance))
     else:
-        item.attendance = "0"
+        item.game_meta_info.attendance = "0"
         #print('Attendance.............: Was not found on page')
 
     venue_matches = _parse_venue_from_strings(scorebox_meta_strings)
     if venue_matches is None:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_park_name'
-        #_print_scrape_status(item, game_id)
-        return item
+        error = 'Failed to parse park name'
+        return dict(success=False, message=error)
 
-    item.park_name = venue_matches['match']
+    item.game_meta_info.park_name = venue_matches['match']
     venue_index = venue_matches['index']
     del scorebox_meta_strings[venue_index]
 
@@ -291,12 +309,10 @@ def __parse_bbref_boxscore(response, url, silent=False):
 
     game_duration_matches = _parse_game_duration_from_strings(scorebox_meta_strings)
     if game_duration_matches is None:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_game_duration'
-        #_print_scrape_status(item, game_id)
-        return item
+        error = 'Failed to parse game duration'
+        return dict(success=False, message=error)
 
-    item.game_duration = game_duration_matches['match']
+    item.game_meta_info.game_duration = game_duration_matches['match']
     game_duration_index = game_duration_matches['index']
     del scorebox_meta_strings[game_duration_index]
 
@@ -304,126 +320,132 @@ def __parse_bbref_boxscore(response, url, silent=False):
 
     day_night_field = _parse_day_night_field_type_from_strings(scorebox_meta_strings)
     if day_night_field is None:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_day_night_field'
-        #_print_scrape_status(item, game_id)
-        return item
+        error = 'Failed to parse game time/field type'
+        return dict(success=False, message=error)
 
     split = day_night_field['match'].split(',')
     day_night_field_index = day_night_field['index']
     del scorebox_meta_strings[day_night_field_index]
 
     if len(split) < 2:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_day_night_field'
-        #_print_scrape_status(item, game_id)
-        return item
+        error = 'Failed to parse game time/field type'
+        return dict(success=False, message=error)
 
-    item.day_night = split[0].strip()
-    item.field_type = split[1].strip().title()
+    item.game_meta_info.day_night = split[0].strip()
+    item.game_meta_info.field_type = split[1].strip().title()
 
     #print('Day/Night..............: {f}'.format(f=item.day_night))
     #print('Field Type.............: {f}'.format(f=item.field_type))
 
     first_pitch_weather = response.xpath(_FIRST_PITCH_WEATHER_XPATH)
     if not first_pitch_weather:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_first_pitch_weather'
-        #_print_scrape_status(item, game_id)
-        return item
+        error = 'Failed to parse first pitch weather info'
+        return dict(success=False, message=error)
     split2 = first_pitch_weather[0].split(',')
     if len(split2) < 3:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_first_pitch_weather'
-        #_print_scrape_status(item, game_id)
-        return item
+        error = 'Failed to parse first pitch weather info'
+        return dict(success=False, message=error)
 
-    item.first_pitch_temperature = split2[0].strip()[:2]
-    item.first_pitch_wind = split2[1].strip()
-    item.first_pitch_clouds = split2[2].strip().strip('.')
+    item.game_meta_info.first_pitch_temperature = split2[0].strip()[:2]
+    item.game_meta_info.first_pitch_wind = split2[1].strip()
+    item.game_meta_info.first_pitch_clouds = split2[2].strip().strip('.')
 
     #print('Temperature............: {f}'.format(f=item.first_pitch_temperature))
     #print('Wind Speed.............: {f}'.format(f=item.first_pitch_wind))
     #print('Cloud Cover............: {f}'.format(f=item.first_pitch_clouds))
 
-    item.first_pitch_precipitation = ""
     if len(split2) > 3:
-        item.first_pitch_precipitation = split2[3].strip().strip('.')
+        item.game_meta_info.first_pitch_precipitation = split2[3].strip().strip('.')
         #print('Precipitation..........: {f}'.format(f=item.first_pitch_precipitation))
-
-    away_team_linescore_innings = _parse_linescore_innings(response, away_team_id, False)
-    if not away_team_linescore_innings:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_away_team_linescore_innings'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.away_team_linescore_innings = away_team_linescore_innings
 
     away_team_linescore_totals = _parse_linescore_totals(response, away_team_id, False)
     if not away_team_linescore_totals:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_away_team_linescore_totals'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.away_team_linescore_totals = away_team_linescore_totals
-
-    home_team_linescore_innings = _parse_linescore_innings(response, home_team_id, True)
-    if not home_team_linescore_innings:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_home_team_linescore_innings'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.home_team_linescore_innings = home_team_linescore_innings
+        error = 'Failed to parse away team linescore totals'
+        return dict(success=False, message=error)
+    item.away_team_data.total_hits_by_team = away_team_linescore_totals.total_hits
+    item.away_team_data.total_errors_by_team = away_team_linescore_totals.total_errors
+    item.home_team_data.total_hits_by_opponent = away_team_linescore_totals.total_hits
+    item.home_team_data.total_errors_by_opponent = away_team_linescore_totals.total_errors
 
     home_team_linescore_totals = _parse_linescore_totals(response, home_team_id, True)
     if not home_team_linescore_totals:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_home_team_linescore_totals'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.home_team_linescore_totals = home_team_linescore_totals
+        error = 'Failed to parse home team linescore totals'
+        return dict(success=False, message=error)
 
-    #print('\nLinescore:')
-    #_print_linescore(away_team_linescore_innings, away_team_linescore_totals, home_team_linescore_innings, home_team_linescore_totals)
-    #print('\nSuccessfully parsed game meta data from BBRef boxscore page')
+    item.home_team_data.total_hits_by_team = home_team_linescore_totals.total_hits
+    item.home_team_data.total_errors_by_team = home_team_linescore_totals.total_errors
+    item.away_team_data.total_hits_by_opponent = home_team_linescore_totals.total_hits
+    item.away_team_data.total_errors_by_opponent = home_team_linescore_totals.total_errors
+
     if not silent:
         pbar.update()
         pbar.set_description(f'Parsing bat stats........')
 
-    batter_id_dict = _parse_batter_id_dict(response)
-    if not batter_id_dict:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_batter_id_dict'
-        #_print_scrape_status(item, game_id)
-        return item
+    result = response.xpath(_BATTING_STATS_TABLE)
+    if not result or len(result) != 2:
+        error = 'Failed to parse batting stats table'
+        return dict(success=False, message=error)
+    away_team_bat_table = result[0]
+    home_team_bat_table = result[1]
 
-    batting_stats = _parse_batting_stats(response)
-    if not batting_stats:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_batting_stats'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.batting_stats = batting_stats
+    away_team_batter_name_dict = _parse_batter_name_dict(away_team_bat_table)
+    if not away_team_batter_name_dict:
+        error = 'Failed to parse away team batter name dictionary'
+        return dict(success=False, message=error)
+
+    away_team_batting_stats = _parse_batting_stats(away_team_bat_table, away_team_id, home_team_id)
+    if not away_team_batting_stats:
+        error = 'Failed to parse away team batting stats'
+        return dict(success=False, message=error)
+    item.away_team_data.batting_stats = away_team_batting_stats
+
+    home_team_batter_name_dict = _parse_batter_name_dict(home_team_bat_table)
+    if not home_team_batter_name_dict:
+        error = 'Failed to parse home team batter name dictionary'
+        return dict(success=False, message=error)
+
+    home_team_batting_stats = _parse_batting_stats(home_team_bat_table, home_team_id, away_team_id)
+    if not home_team_batting_stats:
+        error = 'Failed to parse home team batting stats'
+        return dict(success=False, message=error)
+    item.home_team_data.batting_stats = home_team_batting_stats
 
     #print('Successfully parsed batting stats from BBRef boxscore page ({n} players total)'.format(n=len(batting_stats)))
     if not silent:
         pbar.update()
         pbar.set_description(f'Parsing pitch stats......')
 
-    pitcher_id_dict = _parse_pitcher_id_dict(response)
-    if not pitcher_id_dict:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_pitcher_id_dict'
-        #_print_scrape_status(item, game_id)
-        return item
+    result = response.xpath(_PITCHING_STATS_TABLE)
+    if not result or len(result) != 2:
+        error = 'Failed to parse pitching stats table'
+        return dict(success=False, message=error)
+    away_team_pitch_table = result[0]
+    home_team_pitch_table = result[1]
 
-    pitching_stats =  _parse_pitching_stats(response)
-    if not pitching_stats:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_pitching_stats'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.pitching_stats = pitching_stats
+    away_team_pitcher_name_dict = _parse_pitcher_name_dict(away_team_pitch_table)
+    if not away_team_pitcher_name_dict:
+        error = 'Failed to parse away team pitcher name dictionary'
+        return dict(success=False, message=error)
+
+    away_team_pitching_stats =  _parse_pitching_stats(away_team_pitch_table, away_team_id, home_team_id)
+    if not away_team_pitching_stats:
+        error = 'Failed to parse away team pitching stats'
+        return dict(success=False, message=error)
+    item.away_team_data.pitching_stats = away_team_pitching_stats
+
+    home_team_pitcher_name_dict = _parse_pitcher_name_dict(home_team_pitch_table)
+    if not home_team_pitcher_name_dict:
+        error = 'Failed to parse home team pitcher name dictionary'
+        return dict(success=False, message=error)
+    batter_name_dict = {**away_team_batter_name_dict, **home_team_batter_name_dict}
+    pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
+    player_name_dict = {**batter_name_dict, **pitcher_name_dict}
+
+    home_team_pitching_stats =  _parse_pitching_stats(home_team_pitch_table, home_team_id, away_team_id)
+    if not home_team_pitching_stats:
+        error = 'Failed to parse home team pitching stats'
+        return dict(success=False, message=error)
+    item.home_team_data.pitching_stats = home_team_pitching_stats
 
     #print('Successfully parsed pitching stats from BBRef boxscore page ({n} players total)'.format(n=len(pitching_stats)))
     if not silent:
@@ -432,76 +454,102 @@ def __parse_bbref_boxscore(response, url, silent=False):
 
     umpires = _parse_umpires(response)
     if not umpires:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_umpires'
-        #_print_scrape_status(item, game_id)
-        return item
+        error = 'Failed to parse umpire info'
+        return dict(success=False, message=error)
     item.umpires = umpires
 
     #_print_umpires(umpires)
 
     away_team_lineup = _parse_away_team_lineup(response)
     if not away_team_lineup:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_away_team_lineup'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.away_starting_lineup = away_team_lineup
+        error = 'Failed to parse away team starting lineup'
+        return dict(success=False, message=error)
+    item.away_team_data.starting_lineup = away_team_lineup
 
     #print('\n{at} Starting Lineup:'.format(at=away_team_id))
     #_print_lineup(away_team_lineup)
 
     home_team_lineup = _parse_home_team_lineup(response)
     if not home_team_lineup:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_home_team_lineup'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.home_starting_lineup = home_team_lineup
+        error = 'Failed to parse home team starting lineup'
+        return dict(success=False, message=error)
+    item.home_team_data.starting_lineup = home_team_lineup
 
     #print('\n{ht} Starting Lineup:'.format(ht=home_team_id))
     #_print_lineup(home_team_lineup)
 
-    inning_summaries = _parse_inning_summaries(response)
-    if not inning_summaries:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_inning_summaries'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.inning_summaries = inning_summaries
+    result = response.xpath(_PLAY_BY_PLAY_TABLE)
+    if not result:
+        error = 'Failed to parse play by play table'
+        return dict(success=False, message=error)
+    play_by_play_table = result[0]
 
-    play_by_play = _parse_play_by_play(response, game_id, batter_id_dict, pitcher_id_dict, away_team_id, home_team_id)
-    if not play_by_play:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_did_not_parse_play_by_play'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.play_by_play = play_by_play
+    inning_summaries_top = _parse_inning_summary_top(play_by_play_table)
+    if not inning_summaries_top:
+        error = 'Failed to parse inning start summaries'
+        return dict(success=False, message=error)
+
+    inning_summaries_bottom = _parse_inning_summary_bottom(play_by_play_table)
+    if not inning_summaries_bottom:
+        error = 'Failed to parse inning end summaries'
+        return dict(success=False, message=error)
+
+    item.player_id_match_log = []
+    result = _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict)
+    if not result['success']:
+        error = 'Failed to parse in game substitutions'
+        return dict(success=False, message=error)
+    in_game_substitutions = result['sub_list']
+    item.player_id_match_log.extend(result['player_id_match_log'])
+
+    result = _parse_play_by_play(
+        play_by_play_table,
+        game_id,
+        batter_name_dict,
+        pitcher_name_dict,
+        away_team_id,
+        home_team_id
+    )
+    if not result['success']:
+        error = f"""rescrape_did_not_parse_play_by_play:\n
+            {result['message']}
+            """
+        return dict(success=False, message=error)
+    play_by_play_events = result['play_by_play']
+    item.player_id_match_log.extend(result['player_id_match_log'])
+
+    result = _create_innings_list(
+        game_id,
+        inning_summaries_top,
+        inning_summaries_bottom,
+        play_by_play_events,
+        in_game_substitutions
+    )
+    if not result['success']:
+        error = 'Failed to parse innnings list'
+        return dict(success=False, message=error)
+    item.innings_list = result['innings_list']
 
     #print('Sucessfully parsed play-by-play data from BBRef boxscore page ({n} events total)'.format(n=len(play_by_play)))
     if not silent:
         pbar.update()
         pbar.set_description(f'Finished parsing.........')
 
-    player_dict = _create_player_team_dict(play_by_play)
-    if not player_dict:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_player_name_unmatched_in_pbp'
-        #_print_scrape_status(item, game_id)
-        return item
+    player_team_dict = _create_player_team_dict(play_by_play_events)
+    if not player_team_dict:
+        error = 'Player name was unmatched in play by play events'
+        return dict(success=False, message=error)
 
-    player_dict = _verify_all_players_in_dict(response, player_dict)
-    if not player_dict:
-        item.scrape_success = False
-        item.scrape_error = 'rescrape_player_id_not_found_in_pbp'
-        #_print_scrape_status(item, game_id)
-        return item
-    item.player_dict = player_dict
+    player_team_dict = _verify_all_players_in_dict(response, player_team_dict)
+    if not player_team_dict:
+        error = 'Player id was not found in play by play events'
+        return dict(success=False, message=error)
+    item.player_team_dict = player_team_dict
+    item.player_name_dict = player_name_dict
 
-    #_print_scrape_status(item, game_id)
     if not silent:
         pbar.close()
-    return item
+    return dict(success=True, result=item)
 
 
 def _parse_attendance_from_strings(strings):
@@ -556,138 +604,142 @@ def _parse_day_night_field_type_from_strings(strings):
     return None
 
 
-def _parse_batting_stats(response):
+def _parse_batting_stats(team_batting_table, player_team_id, opponent_team_id):
     batting_stats = []
-    for b in response.xpath(_BATTER_IDS_XPATH):
+    for player_id in team_batting_table.xpath(_BATTER_IDS_XPATH):
+        stats_row = team_batting_table.xpath(_BATTER_STATS_ROW.format(pid=player_id))
+        if not stats_row:
+            return None
+        player_stats = stats_row[0]
 
         at_bats = ""
-        result = response.xpath(_BATTER_AB_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_AB_XPATH)
         if result is not None and len(result) > 0:
             at_bats = result[0]
         else:
             at_bats = "0"
 
         runs_scored = ""
-        result = response.xpath(_BATTER_R_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_R_XPATH)
         if result is not None and len(result) > 0:
             runs_scored = result[0]
         else:
             runs_scored = "0"
 
         hits = ""
-        result = response.xpath(_BATTER_H_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_H_XPATH)
         if result is not None and len(result) > 0:
             hits = result[0]
         else:
             hits = "0"
 
         rbis = ""
-        result = response.xpath(_BATTER_RBI_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_RBI_XPATH)
         if result is not None and len(result) > 0:
             rbis = result[0]
         else:
             rbis = "0"
 
         bases_on_balls = ""
-        result = response.xpath(_BATTER_BB_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_BB_XPATH)
         if result is not None and len(result) > 0:
             bases_on_balls = result[0]
         else:
             bases_on_balls = "0"
 
         strikeouts = ""
-        result = response.xpath(_BATTER_SO_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_SO_XPATH)
         if result is not None and len(result) > 0:
             strikeouts = result[0]
         else:
             strikeouts = "0"
 
         plate_appearances = ""
-        result = response.xpath(_BATTER_PA_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_PA_XPATH)
         if result is not None and len(result) > 0:
             plate_appearances = result[0]
         else:
             plate_appearances = "0"
 
         avg_to_date = ""
-        result = response.xpath(_BATTER_AVG_TO_DATE_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_AVG_TO_DATE_XPATH)
         if result is not None and len(result) > 0:
             avg_to_date = result[0]
         else:
             avg_to_date = "0"
 
         obp_to_date = ""
-        result = response.xpath(_BATTER_OBP_TO_DATE_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_OBP_TO_DATE_XPATH)
         if result is not None and len(result) > 0:
             obp_to_date = result[0]
         else:
             obp_to_date = "0"
 
         slg_to_date = ""
-        result = response.xpath(_BATTER_SLG_TO_DATE_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_SLG_TO_DATE_XPATH)
         if result is not None and len(result) > 0:
             slg_to_date = result[0]
         else:
             slg_to_date = "0"
 
         ops_to_date = ""
-        result = response.xpath(_BATTER_OPS_TO_DATE_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_OPS_TO_DATE_XPATH)
         if result is not None and len(result) > 0:
             ops_to_date = result[0]
         else:
             ops_to_date = "0"
 
         total_pitches = ""
-        result = response.xpath(_BATTER_TOTAL_PITCHES_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_TOTAL_PITCHES_XPATH)
         if result is not None and len(result) > 0:
             total_pitches = result[0]
         else:
             total_pitches = "0"
 
         total_strikes = ""
-        result = response.xpath(_BATTER_TOTAL_STRIKES_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_TOTAL_STRIKES_XPATH)
         if result is not None and len(result) > 0:
             total_strikes = result[0]
         else:
             total_strikes = "0"
 
         wpa_bat = ""
-        result = response.xpath(_BATTER_WPA_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_WPA_XPATH)
         if result is not None and len(result) > 0:
             wpa_bat = result[0]
         else:
             wpa_bat = "0"
 
         avg_lvg_index = ""
-        result = response.xpath(_BATTER_ALI_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_ALI_XPATH)
         if result is not None and len(result) > 0:
             avg_lvg_index = result[0]
         else:
             avg_lvg_index = "0"
 
         wpa_bat_pos = ""
-        result = response.xpath(_BATTER_WPA_POS_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_WPA_POS_XPATH)
         if result is not None and len(result) > 0:
             wpa_bat_pos = result[0]
         else:
             wpa_bat_pos = "0"
 
         wpa_bat_neg = ""
-        result = response.xpath(_BATTER_WPA_NEG_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_WPA_NEG_XPATH)
         if result is not None and len(result) > 0:
             wpa_bat_neg = result[0]
         else:
             wpa_bat_neg = "0"
 
         re24_bat = ""
-        result = response.xpath(_BATTER_RE24_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_RE24_XPATH)
         if result is not None and len(result) > 0:
             re24_bat = result[0]
         else:
             re24_bat = "0"
 
         details = []
-        result = response.xpath(_BATTER_DETAILS_XPATH.format(pid=b))
+        result = player_stats.xpath(_BATTER_DETAILS_XPATH)
         if result is not None and len(result) > 0:
             for s in result[0].split(','):
                 d = BBRefBatStatsDetail()
@@ -702,7 +754,9 @@ def _parse_batting_stats(response):
                     details.append(d)
 
         player_batting_stats = BBRefBatStats()
-        player_batting_stats.player_id_br = b
+        player_batting_stats.player_id_br = player_id
+        player_batting_stats.player_team_id_br = player_team_id
+        player_batting_stats.opponent_team_id_br = opponent_team_id
         player_batting_stats.at_bats = at_bats
         player_batting_stats.runs_scored = runs_scored
         player_batting_stats.hits = hits
@@ -726,173 +780,179 @@ def _parse_batting_stats(response):
     return batting_stats
 
 
-def _parse_pitching_stats(response):
+def _parse_pitching_stats(team_pitching_table, player_team_id, opponent_team_id):
     pitch_appearances = []
-    for p in response.xpath(_PITCHER_IDS_XPATH):
+    for player_id in team_pitching_table.xpath(_PITCHER_IDS_XPATH):
+        stats_row = team_pitching_table.xpath(_PITCHER_STATS_ROW.format(pid=player_id))
+        if not stats_row:
+            return None
+        player_stats = stats_row[0]
 
         innings_pitched = ""
-        result = response.xpath(_PITCHER_IP_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_IP_XPATH)
         if result is not None and len(result) > 0:
             innings_pitched = result[0]
         else:
             innings_pitched = "0"
 
         hits = ""
-        result = response.xpath(_PITCHER_H_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_H_XPATH)
         if result is not None and len(result) > 0:
             hits = result[0]
         else:
             hits = "0"
 
         runs =  ""
-        result = response.xpath(_PITCHER_R_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_R_XPATH)
         if result is not None and len(result) > 0:
             runs = result[0]
         else:
             runs = "0"
 
         earned_runs = ""
-        result = response.xpath(_PITCHER_ER_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_ER_XPATH)
         if result is not None and len(result) > 0:
             earned_runs = result[0]
         else:
             earned_runs = "0"
 
         bases_on_balls = ""
-        result = response.xpath(_PITCHER_BB_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_BB_XPATH)
         if result is not None and len(result) > 0:
             bases_on_balls = result[0]
         else:
             bases_on_balls = "0"
 
         strikeouts = ""
-        result = response.xpath(_PITCHER_SO_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_SO_XPATH)
         if result is not None and len(result) > 0:
             strikeouts = result[0]
         else:
             strikeouts = "0"
 
         homeruns = ""
-        result = response.xpath(_PITCHER_HR_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_HR_XPATH)
         if result is not None and len(result) > 0:
             homeruns = result[0]
         else:
             homeruns = "0"
 
         batters_faced = ""
-        result = response.xpath(_PITCHER_BATTERS_FACED_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_BATTERS_FACED_XPATH)
         if result is not None and len(result) > 0:
             batters_faced = result[0]
         else:
             batters_faced = "0"
 
         pitch_count = ""
-        result = response.xpath(_PITCHER_PITCH_COUNT_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_PITCH_COUNT_XPATH)
         if result is not None and len(result) > 0:
             pitch_count = result[0]
         else:
             pitch_count = "0"
 
         strikes = ""
-        result = response.xpath(_PITCHER_STRIKES_TOTAL_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_STRIKES_TOTAL_XPATH)
         if result is not None and len(result) > 0:
             strikes = result[0]
         else:
             strikes = "0"
 
         strikes_contact = ""
-        result = response.xpath(_PITCHER_STRIKES_CONTACT_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_STRIKES_CONTACT_XPATH)
         if result is not None and len(result) > 0:
             strikes_contact = result[0]
         else:
             strikes_contact = "0"
 
         strikes_swinging = ""
-        result = response.xpath(_PITCHER_STRIKES_SWINGING_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_STRIKES_SWINGING_XPATH)
         if result is not None and len(result) > 0:
             strikes_swinging = result[0]
         else:
             strikes_swinging = "0"
 
         strikes_looking = ""
-        result = response.xpath(_PITCHER_STRIKES_LOOKING_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_STRIKES_LOOKING_XPATH)
         if result is not None and len(result) > 0:
             strikes_looking = result[0]
         else:
             strikes_looking = "0"
 
         ground_balls = ""
-        result = response.xpath(_PITCHER_GB_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_GB_XPATH)
         if result is not None and len(result) > 0:
             ground_balls = result[0]
         else:
             ground_balls = "0"
 
         fly_balls = ""
-        result = response.xpath(_PITCHER_FB_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_FB_XPATH)
         if result is not None and len(result) > 0:
             fly_balls = result[0]
         else:
             fly_balls = "0"
 
         line_drives = ""
-        result = response.xpath(_PITCHER_LD_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_LD_XPATH)
         if result is not None and len(result) > 0:
             line_drives = result[0]
         else:
             line_drives = "0"
 
         unknown_type = ""
-        result = response.xpath(_PITCHER_UNK_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_UNK_XPATH)
         if result is not None and len(result) > 0:
             unknown_type = result[0]
         else:
             unknown_type = "0"
 
         game_score = ""
-        result = response.xpath(_PITCHER_GSC_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_GSC_XPATH)
         if result is not None and len(result) > 0:
             game_score = result[0]
         else:
             game_score = "0"
 
         inherited_runners = ""
-        result = response.xpath(_PITCHER_IR_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_IR_XPATH)
         if result is not None and len(result) > 0:
             inherited_runners = result[0]
         else:
             inherited_runners = "0"
 
         inherited_scored = ""
-        result = response.xpath(_PITCHER_IS_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_IS_XPATH)
         if result is not None and len(result) > 0:
             inherited_scored = result[0]
         else:
             inherited_scored = "0"
 
         wpa_pitch = ""
-        result = response.xpath(_PITCHER_WPA_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_WPA_XPATH)
         if result is not None and len(result) > 0:
             wpa_pitch = result[0]
         else:
             wpa_pitch = "0"
 
         avg_lvg_index = ""
-        result = response.xpath(_PITCHER_ALI_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_ALI_XPATH)
         if result is not None and len(result) > 0:
             avg_lvg_index = result[0]
         else:
             avg_lvg_index = "0"
 
         re24_pitch = ""
-        result = response.xpath(_PITCHER_RE24_XPATH.format(pid=p))
+        result = player_stats.xpath(_PITCHER_RE24_XPATH)
         if result is not None and len(result) > 0:
             re24_pitch = result[0]
         else:
             re24_pitch  = "0"
 
         pitch_app = BBRefPitchStats()
-        pitch_app.player_id_br = p
+        pitch_app.player_id_br = player_id
+        pitch_app.player_team_id_br = player_team_id
+        pitch_app.opponent_team_id_br = opponent_team_id
         pitch_app.innings_pitched = innings_pitched
         pitch_app.hits = hits
         pitch_app.runs = runs
@@ -920,86 +980,125 @@ def _parse_pitching_stats(response):
     return pitch_appearances
 
 def _parse_play_by_play(response, game_id, batter_id_dict, pitcher_id_dict, away_team_id, home_team_id):
-    th_inning = response.xpath(_PBP_INNING_XPATH)
-    td_score = response.xpath(_PBP_SCORE_XPATH)
-    td_outs_before_play = response.xpath(_PBP_OUTS_XPATH)
-    td_rob = response.xpath(_PBP_RUNNERS_ON_BASE_XPATH)
-    td_sequence = response.xpath(_PBP_PITCH_SEQUENCE_XPATH)
-    td_team_batting = response.xpath(_PBP_TEAM_BATTING_XPATH)
-    td_batter_name = response.xpath(_PBP_BATTER_NAME_XPATH)
-    td_pitcher_name = response.xpath(_PBP_PITCHER_NAME_XPATH)
-    td_play_desc = response.xpath(_PBP_PLAY_DESC_XPATH)
+    pbp_inning_list = response.xpath(_PBP_INNING_XPATH)
+    pbp_score_list = response.xpath(_PBP_SCORE_XPATH)
+    pbp_outs_before_play_list = response.xpath(_PBP_OUTS_XPATH)
+    pbp_runners_on_base_list = response.xpath(_PBP_RUNNERS_ON_BASE_XPATH)
+    pbp_pitch_sequence = response.xpath(_PBP_PITCH_SEQUENCE_XPATH)
+    pbp_team_batting = response.xpath(_PBP_TEAM_BATTING_XPATH)
+    pbp_batter_name = response.xpath(_PBP_BATTER_NAME_XPATH)
+    pbp_pitcher_name = response.xpath(_PBP_PITCHER_NAME_XPATH)
+    pbp_play_description = response.xpath(_PBP_PLAY_DESC_XPATH)
 
-    td_runs_outs_result = []
-    for i in range(0, len(th_inning)):
+    pbp_runs_outs_result = []
+    pbp_row_numbers = []
+    for i in range(0, len(pbp_inning_list)):
         play_num = i + 1
         runs_outs_query = _PBP_RUNS_OUTS_XPATH.format(n=play_num)
+        row_number_query = Template(_T_PBP_ROW_NUMBER_XPATH).substitute(n=play_num)
 
         runs_outs = ""
         result = response.xpath(runs_outs_query)
         if result is not None and len(result) > 0:
             runs_outs = result[0]
-        td_runs_outs_result.append(runs_outs)
+        pbp_runs_outs_result.append(runs_outs)
 
-    if th_inning is None or td_score is None or td_outs_before_play is None:
-        return None
-    if td_rob is None or td_sequence is None or td_runs_outs_result is None:
-        return None
-    if td_team_batting is None or td_batter_name is None or td_pitcher_name is None:
-        return None
-    if td_play_desc is None:
-        return None
-
-    fixed_batters = []
-    for name in td_batter_name:
-        fixed_batters.append(name.replace(u'\xa0', u' '))
-
-    fixed_pitchers = []
-    for name in td_pitcher_name:
-        fixed_pitchers.append(name.replace(u'\xa0', u' '))
+        row_num = 0
+        result = response.xpath(row_number_query)
+        if result:
+            row_num = int(result[0])
+        pbp_row_numbers.append(row_num)
 
     play_by_play = []
-    for i in range(0, len(th_inning)):
-
+    player_id_match_log = []
+    for i in range(0, len(pbp_inning_list)):
         try:
             play = BBRefPlayByPlayEvent()
             play.scrape_success = True
-            play.inning = th_inning[i]
-            play.score = td_score[i]
-            play.outs_before_play = td_outs_before_play[i]
-            play.runners_on_base = td_rob[i]
-            play.pitch_sequence = td_sequence[i]
-            play.runs_outs_result = td_runs_outs_result[i]
-            play.team_batting_id_br = td_team_batting[i]
-            play.play_description = td_play_desc[i]
+            play.pbp_table_row_number = pbp_row_numbers[i]
+            play.inning = pbp_inning_list[i]
+            play.score = pbp_score_list[i]
+            play.outs_before_play = pbp_outs_before_play_list[i]
+            play.runners_on_base = pbp_runners_on_base_list[i]
+            play.pitch_sequence = pbp_pitch_sequence[i]
+            play.runs_outs_result = pbp_runs_outs_result[i]
+            play.team_batting_id_br = pbp_team_batting[i]
+            play.play_description = pbp_play_description[i]
 
-            if td_team_batting[i] == away_team_id:
+            if pbp_team_batting[i] == away_team_id:
                 play.team_pitching_id_br = home_team_id
             else:
                 play.team_pitching_id_br = away_team_id
         except IndexError as e:
-            print('Error: {e}'.format(e=repr(e)))
+            error = f'Error: {repr(e)}'
+            return dict(success=False, message=error)
 
         try:
-            match_pitcher_id = _get_pitcher_id(pitcher_id_dict, fixed_pitchers[i])
-            play.pitcher_id_br = match_pitcher_id
+            pitcher_name = pbp_pitcher_name[i].replace(u'\xa0', u' ')
+            match_pitcher_result = _match_player_name_to_player_id(pitcher_name, pitcher_id_dict)
+            if not match_pitcher_result['success']:
+                return match_pitcher_result
+            if match_pitcher_result['match_type'] != 'Exact match':
+                player_id_match_log.append(match_pitcher_result['match_details'])
+            play.pitcher_id_br = match_pitcher_result['player_id']
         except Exception as e:
-            play.scrape_success = False
-            play.scrape_error = 'rescrape_did_not_match_pitcher_name_to_id'
-            play.pitcher_id_br = fixed_pitchers[i]
-            print('Error: {e}'.format(e=repr(e)))
+            error = f"""
+            Exception occurred trying to match '{pitcher_name}' with a player_id:
+            Error: {repr(e)}
+            """
+            return dict(success=False, message=error)
 
         try:
-            match_batter_id = _get_batter_id(batter_id_dict, fixed_batters[i])
-            play.batter_id_br = match_batter_id
+            batter_name = pbp_batter_name[i].replace(u'\xa0', u' ')
+            match_batter_result = _match_player_name_to_player_id(batter_name, batter_id_dict)
+            if not match_batter_result['success']:
+                return match_batter_result
+            if match_batter_result['match_type'] != 'Exact match':
+                player_id_match_log.append(match_batter_result['match_details'])
+            play.batter_id_br = match_batter_result['player_id']
         except Exception as e:
-            play.scrape_success = False
-            play.scrape_error = 'rescrape_did_not_match_batter_name_to_id'
-            play.batter_id_br = fixed_batters[i]
-            print('Error: {e}'.format(e=repr(e)))
-
+            error = f"""
+            Exception occurred trying to match '{batter_name}' with a player_id:
+            Error: {repr(e)}
+            """
+            return dict(success=False, message=error)
         play_by_play.append(play)
-    return play_by_play
+
+    return dict(
+        success=True,
+        play_by_play=play_by_play,
+        player_id_match_log=player_id_match_log
+    )
+
+def _match_player_name_to_player_id(name, id_dict):
+    try:
+        match_result = _match_player_id(name, id_dict)
+        if not match_result['success']:
+            return match_result
+        player_id = match_result['player_id']
+        match_type = match_result['match_type']
+        match_details = None
+        if match_type != 'Exact match':
+            dict_swapped = {v:k for k,v in id_dict.items()}
+            matched_name = dict_swapped[player_id]
+            match_details = dict(
+                player_name=name,
+                match_type=match_type,
+                matched_id=player_id,
+                matched_name=matched_name
+            )
+        return dict(
+            success=True,
+            player_id=player_id,
+            match_type=match_type,
+            match_details=match_details
+        )
+    except Exception as e:
+        error = f"""
+        Exception occurred trying to match '{name}' with a player_id:
+        Error: {repr(e)}
+        """
+        return dict(succes=False, message=error)
 
 def _create_player_team_dict(play_by_play):
     ids = []
@@ -1039,47 +1138,6 @@ def _verify_all_players_in_dict(response, player_dict):
             player_dict[missing] = prev_player_team
             searching_for_team = False
     return player_dict
-
-def _print_play_by_play(play_by_play, inning_summaries):
-    print('\nPlay-By-Play:\n')
-    current_inning = ""
-    summary_index = 0
-    for play in play_by_play:
-        if play.inning != current_inning:
-            print('{summ}\n'.format(summ=inning_summaries[summary_index]))
-            current_inning = play.inning
-            summary_index += 1
-        _print_play_event(play)
-
-def _print_linescore(away_linescore_innings, away_linescore_totals, home_linescore_innings, home_linescore_totals):
-    top_line = ''
-    away_line = ''
-    home_line = ''
-    linescore = [top_line, away_line, home_line]
-
-    for i in range(0, len(away_linescore_innings)):
-        top_value = away_linescore_innings[i].inning
-        away_value = away_linescore_innings[i].runs
-        home_value = home_linescore_innings[i].runs
-        linescore = _adjust_linescore(linescore, top_value, away_value, home_value)
-
-    away_total_runs = away_linescore_totals.total_runs
-    home_total_runs = home_linescore_totals.total_runs
-    away_total_hits = away_linescore_totals.total_hits
-    home_total_hits = home_linescore_totals.total_hits
-    away_total_errors = away_linescore_totals.total_errors
-    home_total_errors = home_linescore_totals.total_errors
-
-    linescore = _adjust_linescore(linescore, "R", away_total_runs, home_total_runs)
-    linescore = _adjust_linescore(linescore, "H", away_total_hits, home_total_hits)
-    linescore = _adjust_linescore(linescore, "E", away_total_errors, home_total_errors)
-
-    top_line = linescore[0]
-    away_line = '{al}{at}'.format(al=linescore[1], at=away_linescore_totals.team_id_br)
-    home_line = '{hl}{ht}'.format(hl=linescore[2], ht=home_linescore_totals.team_id_br)
-
-    print(top_line + '\n' + away_line + '\n' + home_line)
-
 
 def _parse_bbref_gameid_from_url(url):
     matches = re.findall(_GAME_ID_PATTERN, url)
@@ -1129,35 +1187,6 @@ def _parse_home_team_record(response):
         return None
     return team_record
 
-def _parse_linescore_innings(response, team_id, is_home_team):
-    if is_home_team:
-        query = _LINESCORE_HOME_VALS_XPATH
-    else:
-        query = _LINESCORE_AWAY_VALS_XPATH
-
-    keys = response.xpath(_LINESCORE_KEYS_XPATH)
-    vals = response.xpath(query)
-    if not keys or not vals:
-        return None
-    if len(keys) < 2 or len(vals) < 2:
-        return None
-    del keys[0:2]
-    del vals[0:2]
-    if len(keys) < 3 or len(vals) < 3:
-        return None
-    del keys[-3:]
-    del vals[-3:]
-    if len(keys) != len(vals):
-        return None
-    linescore_innings = []
-    for i in range(0, len(vals)):
-        team_inning_runs_scored = BBRefInningRunsScored()
-        team_inning_runs_scored.team_id_br = team_id
-        team_inning_runs_scored.inning = keys[i]
-        team_inning_runs_scored.runs = vals[i]
-        linescore_innings.append(team_inning_runs_scored)
-    return linescore_innings
-
 def _parse_linescore_totals(response, team_id, is_home_team):
     if is_home_team:
         query = _LINESCORE_HOME_VALS_XPATH
@@ -1186,18 +1215,18 @@ def _parse_linescore_totals(response, team_id, is_home_team):
     linescore_totals.total_errors = parsed_totals['E']
     return linescore_totals
 
-def _parse_batter_id_dict(response):
-    batter_ids = response.xpath(_BATTER_IDS_XPATH)
-    batter_names = response.xpath(_BATTER_NAMES_XPATH)
+def _parse_batter_name_dict(team_batting_table):
+    batter_ids = team_batting_table.xpath(_BATTER_IDS_XPATH)
+    batter_names = team_batting_table.xpath(_BATTER_NAMES_XPATH)
     if not batter_ids or not batter_names:
         return None
     if len(batter_ids) != len(batter_names):
         return None
     return dict(zip(batter_names, batter_ids))
 
-def _parse_pitcher_id_dict(response):
-    pitcher_ids = response.xpath(_PITCHER_IDS_XPATH)
-    pitcher_names = response.xpath(_PITCHER_NAMES_XPATH)
+def _parse_pitcher_name_dict(team_pitching_table):
+    pitcher_ids = team_pitching_table.xpath(_PITCHER_IDS_XPATH)
+    pitcher_names = team_pitching_table.xpath(_PITCHER_NAMES_XPATH)
     if not pitcher_ids or not pitcher_names:
         return None
     if len(pitcher_ids) != len(pitcher_names):
@@ -1258,84 +1287,301 @@ def _parse_home_team_lineup(response):
         lineup.append(bat)
     return lineup
 
-def _get_batter_id(batter_id_dict, name):
-    match = ""
-    for dict_name, batter_id in batter_id_dict.items():
-        if name in dict_name:
-            match = batter_id
-            break
-    if len(match) > 0:
-        return match
-    last_name = name.split(' ')[-1]
-    for dict_name, batter_id in batter_id_dict.items():
-        if last_name in dict_name.split(' ')[-1]:
-            match = batter_id
-            break
-    return match
+def _match_player_id(name, id_dict):
+    if name in id_dict:
+        return dict(
+            success=True,
+            match_type='Exact match',
+            player_id=id_dict[name]
+        )
+    dict_norm = {normalize(k):v for k,v in id_dict.items()}
+    name_norm = normalize(name)
+    if name_norm in dict_norm:
+        return dict(
+            success=True,
+            match_type='Normalized match',
+            player_id=dict_norm[name_norm]
+        )
+    best_match = fuzzy_match(name, id_dict.keys())
+    if best_match:
+        return dict(
+            success=True,
+            match_type='Fuzzy match',
+            player_id=dict_norm[best_match]
+        )
 
-def _get_pitcher_id(pitcher_id_dict, name):
-    match = ""
-    for dict_name, pitcher_id in pitcher_id_dict.items():
-        if name in dict_name:
-            match = pitcher_id
-            break
-    if len(match) > 0:
-        return match
-    last_name = name.split(' ')[-1]
-    for dict_name, pitcher_id in pitcher_id_dict.items():
-        if last_name in dict_name.split(' ')[-1]:
-            match = pitcher_id
-            break
-    return match
+    error = f'Unable to match name "{name}" with a player_id'
+    return dict(success=False, message=error)
 
-def _parse_inning_summaries(response):
-    summaries = response.xpath(_PBP_INNING_SUMMARIES_XPATH)
+def _parse_inning_summary_top(response):
+    summaries = response.xpath(_PBP_INNING_SUMMARY_TOP_XPATH)
+    if summaries is None:
+        return None
+    inning_summaries = []
+    for s in summaries:
+        inning_summaries.append(s.strip().replace(u'\xa0', u' '))
+    row_numbers = response.xpath(_PBP_INNING_SUMMARY_TOP_ROW_NUM_XPATH)
+    if row_numbers is None:
+        return None
+    summary_row_numbers = []
+    for s in row_numbers:
+        summary_row_numbers.append(int(s))
+    if len(inning_summaries) != len(summary_row_numbers):
+        return None
+    return dict(zip(summary_row_numbers, inning_summaries))
+
+def _parse_inning_summary_bottom(response):
+    summaries = response.xpath(_PBP_INNING_SUMMARY_BOTTOM_XPATH)
     if summaries is None:
         return None
     inning_summaries = []
     for s in summaries:
         inning_summaries.append(s.strip())
-    return inning_summaries
+    last_summary = response.xpath(_PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH)
+    for s in last_summary:
+        inning_summaries.append(s.strip())
+    row_numbers = response.xpath(_PBP_INNING_SUMMARY_BOTTOM_ROW_NUM_XPATH)
+    if row_numbers is None:
+        return None
+    summary_row_numbers = []
+    for s in row_numbers:
+        summary_row_numbers.append(int(s))
+    if len(inning_summaries) != len(summary_row_numbers):
+        return None
+    return dict(zip(summary_row_numbers, inning_summaries))
 
-def _adjust_linescore(linescore, top_value, away_value, home_value):
-    lt = len(top_value)
-    la = len(away_value)
-    lh = len(home_value)
+def _parse_in_game_substitutions(response, game_id, player_name_dict):
+    row_numbers = response.xpath(_PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH)
+    if row_numbers is None:
+        error = 'No in game substitutions found in play-by-play table'
+        return dict(success=False, message=error)
 
-    top_line = linescore[0]
-    away_line = linescore[1]
-    home_line = linescore[2]
+    sub_list = []
+    player_id_match_log = []
+    for n in row_numbers:
+        row_num = int(n)
+        subs_xpath = Template(_T_PBP_IN_GAME_SUBSTITUTION_XPATH).substitute(row=row_num)
+        sub_descriptions = response.xpath(subs_xpath)
+        if sub_descriptions is None:
+            continue
 
-    if lt == 1 and la == 1 and lh > 1:
-        top_line += ' ' + top_value + '  '
-        away_line += ' ' + away_value + '  '
-        home_line += home_value + '  '
-    elif lt == 1 and la > 1 and lh == 1:
-        top_line += ' ' + top_value + '  '
-        away_line += away_value + '  '
-        home_line += ' ' + home_value + '  '
-    elif lt == 1 and la > 1 and lh > 1:
-        top_line += ' ' + top_value + '  '
-        away_line += away_value + '  '
-        home_line += home_value + '  '
-    elif lt > 1 and la == 1 and lh == 1:
-        top_line += top_value + '  '
-        away_line += ' ' + away_value + '  '
-        home_line += ' ' + home_value + '  '
-    elif lt > 1 and la == 1 and lh > 1:
-        top_line += top_value + '  '
-        away_line += ' ' + away_value + '  '
-        home_line += home_value + '  '
-    elif lt > 1 and la > 1 and lh == 1:
-        top_line += top_value + '  '
-        away_line += away_value + '  '
-        home_line += ' ' + home_value + '  '
+        for i in range(0, len(sub_descriptions)):
+            s = sub_descriptions[i]
+            result = _parse_substitution_description(s.strip().replace(u'\xa0', u' '))
+            if not result['success']:
+                return result
+            sub_dict = result['result']
+            substitution = BBRefInGameSubstitution()
+            substitution.pbp_table_row_number = row_num
+            substitution.sub_description = sub_dict['description']
+            substitution.incoming_player_pos = sub_dict['incoming_player_pos']
+            substitution.outgoing_player_pos = sub_dict['outgoing_player_pos']
+            substitution.lineup_slot = sub_dict['lineup_slot']
+
+            result = _get_sub_player_ids(
+                sub_dict['incoming_player_name'],
+                sub_dict['outgoing_player_name'],
+                player_name_dict
+            )
+            if not result['success']:
+                return result
+            if result['player_id_match_log']:
+                player_id_match_log.extend(result['player_id_match_log'])
+
+            substitution.outgoing_player_id_br = result['outgoing_player_id_br']
+            substitution.incoming_player_id_br = result['incoming_player_id_br']
+            sub_list.append(substitution)
+
+    return dict(
+        success=True,
+        sub_list=sub_list,
+        player_id_match_log=player_id_match_log
+    )
+
+def _parse_substitution_description(sub_description):
+    parsed_sub = {}
+    parsed_sub['description'] = sub_description
+    split = None
+    if 'replaces' in sub_description:
+        split = [s.strip() for s in sub_description.split('replaces')]
+    elif 'pinch hits for' in sub_description:
+        parsed_sub['incoming_player_pos'] = 'PH'
+        split = [s.strip() for s in sub_description.split('pinch hits for')]
     else:
-        top_line += top_value + '  '
-        away_line += away_value + '  '
-        home_line += home_value + '  '
+        error = (
+            'Substitution description does not contain "replaces" or "pinch '
+            'hits for"'
+        )
+        return dict(success=False, message=error)
 
-    return [top_line, away_line, home_line]
+    if not split or len(split) != 2:
+        error = 'First split operation did not produce a list with length=2.'
+        return dict(success=False, message=error)
+    parsed_sub['incoming_player_name'] = split[0]
+    remaining_description = split[1]
+
+    split2 = [s.strip() for s in remaining_description.split('batting')]
+    if not split2 or len(split2) != 2:
+        error = 'Second split operation did not produce a list with length=2.'
+        return dict(success=False, message=error)
+    remaining_description = split2[0]
+    lineup_slot_str = split2[1]
+
+    match = NUM_REGEX.search(lineup_slot_str)
+    if not match:
+        error = 'Failed to parse batting order number.'
+        return dict(success=False, message=error)
+    parsed_sub['lineup_slot'] = int(match.group())
+
+    split3 = None
+    match = POS_REGEX.search(remaining_description)
+    if match:
+        parsed_sub['outgoing_player_pos'] = match.group()[1:-1]
+        split3 = [s.strip() for s in remaining_description.split(match.group())]
+        if not split3 or len(split3) != 2:
+            error = 'Third split operation did not produce a list with length=2.'
+            return dict(success=False, message=error)
+        parsed_sub['outgoing_player_name'] = split3[0]
+        remaining_description = split3[1]
+    if not remaining_description:
+        return dict(success=True, result=parsed_sub)
+
+    split4 = None
+    if 'pitching' in remaining_description:
+        parsed_sub['incoming_player_pos'] = 'P'
+        split4 = [s.strip() for s in remaining_description.split('pitching')]
+        if not split4 or len(split4) != 2:
+            error = 'Fourth split operation did not produce a list with length=2.'
+            return dict(success=False, message=error)
+        if 'outgoing_player_name' not in parsed_sub:
+            parsed_sub['outgoing_player_name'] = split4[0]
+        remaining_description = split4[1]
+
+    elif 'playing' in remaining_description:
+        split4 = [s.strip() for s in remaining_description.split('playing')]
+        if not split4 or len(split4) != 2:
+            error = 'Fourth split operation did not produce a list with length=2.'
+            return dict(success=False, message=error)
+        if 'outgoing_player_name' not in parsed_sub:
+            parsed_sub['outgoing_player_name'] = split4[0]
+        remaining_description = split4[1]
+
+        found_incoming_player_pos = False
+        for pos in DEFENSE_POSITIONS:
+            if pos in remaining_description:
+                parsed_sub['incoming_player_pos'] = pos
+                found_incoming_player_pos = True
+                break
+        if not found_incoming_player_pos:
+            error = (
+                'Unable to find incoming player position in remaining description:\n'
+                f'remaining_description: {remaining_description}\n'
+            )
+            return dict(success=False, message=error)
+
+    if 'outgoing_player_pos' not in parsed_sub:
+        parsed_sub['outgoing_player_pos'] = parsed_sub['incoming_player_pos']
+    return dict(success=True, result=parsed_sub)
+
+def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_dict):
+    player_id_match_log = []
+    try:
+        match_result = _match_player_name_to_player_id(
+            outgoing_player_name,
+            player_name_dict
+        )
+        if not match_result['success']:
+            return match_result
+        if match_result['match_type'] != 'Exact match':
+            player_id_match_log.append(match_result['match_details'])
+        outgoing_player_id_br = match_result['player_id']
+    except Exception as e:
+        error = f"""
+        Exception occurred trying to match '{outgoing_player_name}' with a player_id:
+        Error: {repr(e)}
+        """
+        return dict(success=False, message=error)
+
+    try:
+        match_result = _match_player_name_to_player_id(
+            incoming_player_name,
+            player_name_dict
+        )
+        if not match_result['success']:
+            return match_result
+        if match_result['match_type'] != 'Exact match':
+            player_id_match_log.append(match_result['match_details'])
+        incoming_player_id_br = match_result['player_id']
+    except Exception as e:
+        error = f"""
+        Exception occurred trying to match '{incoming_player_name}' with a player_id:
+        Error: {repr(e)}
+        """
+        return dict(success=False, message=error)
+    return dict(
+        success=True,
+        incoming_player_id_br=incoming_player_id_br,
+        outgoing_player_id_br=outgoing_player_id_br,
+        player_id_match_log=player_id_match_log
+    )
+
+def _create_innings_list(
+    game_id,
+    summaries_begin,
+    summaries_end,
+    game_events,
+    substitutions
+):
+    if len(summaries_begin) != len(summaries_end):
+        error = 'Begin inning and end inning summary list lengths do not match.'
+        return dict(success=False, message=error)
+
+    start_boundaries = sorted(summaries_begin.keys())
+    end_boundaries = sorted(summaries_end.keys())
+    inning_number = 0
+    innings_list = []
+    for i in range(0, len(summaries_begin)):
+        if is_even(i):
+            inning_number += 1
+            inning_label = f't{inning_number}'
+            inning_id = f'{game_id}_INN_TOP{inning_number:02d}'
+        else:
+            inning_label = f'b{inning_number}'
+            inning_id = f'{game_id}_INN_BOT{inning_number:02d}'
+
+        start_row = start_boundaries[i]
+        end_row = end_boundaries[i]
+        inning_events = [
+            g for g in game_events
+            if g.pbp_table_row_number > start_row and
+            g.pbp_table_row_number < end_row
+        ]
+        inning_substitutions = [
+            sub for sub in substitutions
+            if sub.pbp_table_row_number > start_row and
+            sub.pbp_table_row_number < end_row
+        ]
+
+        inning = BBRefHalfInning()
+        inning.inning_id = inning_id
+        inning.inning_label = inning_label
+        inning.begin_inning_summary = summaries_begin[start_row]
+        inning.end_inning_summary = summaries_end[end_row]
+        inning.game_events = inning_events
+        inning.substitutions = inning_substitutions
+
+        match = INNING_TOTALS_REGEX.search(summaries_end[end_row])
+        if match:
+            inning_totals = match.groupdict()
+            inning.inning_total_runs = inning_totals['runs']
+            inning.inning_total_hits = inning_totals['hits']
+            inning.inning_total_errors = inning_totals['errors']
+            inning.inning_total_left_on_base = inning_totals['left_on_base']
+            inning.away_team_runs_after_inning = inning_totals['away_team_runs']
+            inning.home_team_runs_after_inning = inning_totals['home_team_runs']
+
+        innings_list.append(inning)
+    return dict(success=True, innings_list=innings_list)
 
 def _create_dict_list(objects):
     dicts = []
@@ -1372,26 +1618,3 @@ def _print_list(list, name):
         else:
             sp = ''
         print('{i}{s} {item}'.format(i=index, s=sp, item=list[index]))
-
-def _print_play_event(play):
-    if play.scrape_status != 'success':
-        print('Scrape Status: {ss}\n'.format(ss=play.scrape_status))
-
-    runs_outs = ""
-    if play.runs_outs_result != "":
-        runs_outs = '| Runs/Outs: {res}'.format(res=play.runs_outs_result)
-
-    outs_int = int(play.outs_before_play)
-    num_outs = '{n} outs'.format(n=outs_int)
-    if outs_int == 1:
-        num_outs[:-1]
-
-    print('{inn} {out} | Score: {sc} | Runners On Base: {rob}'.format(inn=play.inning, out=num_outs, sc=play.score, rob=play.runners_on_base))
-    print('Pitching: {pid} ({tp}) | At Bat: {bid} ({tb})'.format(pid=play.pitcher_id, tp=play.team_pitching, bid=play.batter_id, tb=play.team_batting))
-    print('{des}'.format(des=play.play_description))
-    print('Pitch Seq: {seq} {ror}\n'.format(seq=play.pitch_sequence, ror=runs_outs))
-
-def _print_scrape_status(item, game_id):
-    print('\nParsing operation complete for Game ID: {gid}'.format(gid=game_id))
-    if not item.scrape_success:
-        print('Error message: {s}'.format(s=item.scrape_error))

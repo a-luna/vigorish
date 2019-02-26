@@ -19,54 +19,54 @@ from app.main.util.s3_helper import (
 )
 
 
-class DataSetConfig:
-    DISPLAY_NAME = ''
-    REQUIRES_INPUT = False
-    REQUIRES_SELENIUM = False
-    GET_INPUT_FUNCTION = None
-    SCRAPE_FUNCTION = None
-    PERSIST_FUNCTION = None
-    PRODUCES_LIST = False
+class ScrapeConfig:
+    display_name = ''
+    requires_input = False
+    requires_selenium = False
+    produces_list = False
+    get_input_function = None
+    scrape_function = None
+    persist_function = None
 
-class BBRefGamesForDateConfig(DataSetConfig):
-    DISPLAY_NAME = 'Games for date (bbref.com)'
-    SCRAPE_FUNCTION = scrape_bbref_games_for_date
-    PERSIST_FUNCTION = upload_bbref_games_for_date
+class BBRefGamesForDateScrapeConfig(ScrapeConfig):
+    display_name = 'Games for date (bbref.com)'
+    scrape_function = scrape_bbref_games_for_date
+    persist_function = upload_bbref_games_for_date
 
-class BBRefBoxscoreConfig(DataSetConfig):
-    DISPLAY_NAME = 'Boxscores for date (bbref.com)'
-    REQUIRES_INPUT = True
-    REQUIRES_SELENIUM = True
-    GET_INPUT_FUNCTION = get_bbref_games_for_date_from_s3
-    SCRAPE_FUNCTION = scrape_boxscores_for_date
-    PERSIST_FUNCTION = upload_bbref_boxscore
-    PRODUCES_LIST = True
+class BBRefBoxscoreScrapeConfig(ScrapeConfig):
+    display_name = 'Boxscores for date (bbref.com)'
+    requires_input = True
+    requires_selenium = True
+    produces_list = True
+    get_input_function = get_bbref_games_for_date_from_s3
+    scrape_function = scrape_boxscores_for_date
+    persist_function = upload_bbref_boxscore
 
-class BBRefPlayerConfig(DataSetConfig):
-    DISPLAY_NAME = 'Player bio (bbref.com)'
-    REQUIRES_INPUT = True
-    REQUIRES_SELENIUM = True
+class BBRefPlayerScrapeConfig(ScrapeConfig):
+    display_name = 'Player bio (bbref.com)'
+    requires_input = True
+    requires_selenium = True
 
-class BrooksGamesForDateConfig(DataSetConfig):
-    DISPLAY_NAME = 'Games for date (brooksbaseball.com)'
-    SCRAPE_FUNCTION = scrape_brooks_games_for_date
-    PERSIST_FUNCTION = upload_brooks_games_for_date
+class BrooksGamesForDateScrapeConfig(ScrapeConfig):
+    display_name = 'Games for date (brooksbaseball.com)'
+    scrape_function = scrape_brooks_games_for_date
+    persist_function = upload_brooks_games_for_date
 
-class BrooksPitchLogConfig(DataSetConfig):
-    DISPLAY_NAME = 'Pitch logs for date (brooksbaseball.com)'
-    REQUIRES_INPUT = True
-    GET_INPUT_FUNCTION = get_brooks_games_for_date_from_s3
+class BrooksPitchLogScrapeConfig(ScrapeConfig):
+    display_name = 'Pitch logs for date (brooksbaseball.com)'
+    requires_input = True
+    get_input_function = get_brooks_games_for_date_from_s3
 
-class BrooksPitchFxConfig(DataSetConfig):
-    DISPLAY_NAME = 'PitchFX for pitching appearance (brooksbaseball.com)'
-    REQUIRES_INPUT = True
+class BrooksPitchFxScrapeConfig(ScrapeConfig):
+    display_name = 'PitchFX for pitching appearance (brooksbaseball.com)'
+    requires_input = True
 
 scrape_config_by_data_set = dict(
-    bbref_games_for_date=BBRefGamesForDateConfig,
-    bbref_boxscore=BBRefBoxscoreConfig,
-    bbref_player=BBRefPlayerConfig,
-    brooks_games_for_date=BrooksGamesForDateConfig,
-    brooks_pitch_log=BrooksPitchLogConfig,
-    brooks_pitchfx=BrooksPitchFxConfig
+    bbref_games_for_date=BBRefGamesForDateScrapeConfig,
+    bbref_boxscore=BBRefBoxscoreScrapeConfig,
+    bbref_player=BBRefPlayerScrapeConfig,
+    brooks_games_for_date=BrooksGamesForDateScrapeConfig,
+    brooks_pitch_log=BrooksPitchLogScrapeConfig,
+    brooks_pitchfx=BrooksPitchFxScrapeConfig
 )
 

@@ -1,9 +1,8 @@
 class BBRefPlayByPlayEvent():
     """Various numeric and string values that describe a plate appearance."""
 
-    scrape_success = ""
-    scrape_error = ""
     inning = ""
+    pbp_table_row_number = None
     score = ""
     outs_before_play = ""
     runners_on_base = ""
@@ -18,9 +17,9 @@ class BBRefPlayByPlayEvent():
     def as_dict(self):
         """Convert play event values to a dictionary."""
         dict = {
-            "scrape_success": "{}".format(self.scrape_success),
-            "scrape_error": "{}".format(self.scrape_error),
+            "__bbref_pbp_game_event__": True,
             "inning": "{}".format(self.inning),
+            'pbp_table_row_number': int(self.pbp_table_row_number),
             "score": "{}".format(self.score),
             "outs_before_play": int(self.outs_before_play),
             "runners_on_base": "{}".format(self.runners_on_base),

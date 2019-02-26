@@ -2,6 +2,8 @@ class BBRefPitchStats():
     """Statistics for a an individual pitching appearance in a single game."""
 
     player_id_br = ""
+    player_team_id_br = ""
+    opponent_team_id_br = ""
     innings_pitched = ""
     hits = ""
     runs = ""
@@ -30,6 +32,8 @@ class BBRefPitchStats():
         """Convert a single player's pitching appearance to a dictionary."""
         dict = {
                 "player_id_br": "{}".format(self.player_id_br),
+                "player_team_id_br": "{}".format(self.player_team_id_br),
+                "opponent_team_id_br": "{}".format(self.opponent_team_id_br),
                 "innings_pitched": float(self.innings_pitched),
                 "hits": int(self.hits),
                 "runs": int(self.runs),
