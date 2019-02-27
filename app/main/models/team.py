@@ -1,5 +1,6 @@
 """Team statistics for a single season."""
 from sqlalchemy import Column, Boolean, Integer, String, Date, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from app.main.models.base import Base
@@ -40,6 +41,11 @@ class Team(Base):
     pitching_park_factor = Column(Integer)
     team_id_br = Column(String)
     team_id_retro = Column(String)
+    regular_season_id = Column(Integer, ForeignKey('season.id'))
+    post_season_id = Column(Integer, ForeignKey('season.id'))
+
+    regular_season = relationship('Season', foreign_keys=[regular_season_id])
+    post_season = relationship('Season', foreign_keys=[post_season_id])
 
     #team_pitching_stats = relationship('PitchingStats', primaryjoin='Team.id==PitchingStats.player_team_id', back_populates='player_team')
     #opponent_pitching_stats = relationship('PitchingStats', primaryjoin='Team.id==PitchingStats.opponent_team_id', back_populates='opponent_team')

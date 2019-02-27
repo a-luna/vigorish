@@ -17,16 +17,11 @@ def populate_players(session):
     if not result['success']:
         return result
     session.commit()
-
     result = __import_people_csv(session)
     if not result['success']:
         return result
     session.commit()
-
-    result = __link_player_tables(session)
-    if not result['success']:
-        return result
-    session.commit()
+    
     return dict(success=True)
 
 def __import_idmap_csv(session):
@@ -128,7 +123,7 @@ def __import_people_csv(session):
 
         with tqdm(
             total=len(df_player),
-            desc='Poplulating player table.....',
+            desc='Populating player table......',
             ncols=100,
             unit='row',
             mininterval=0.12,
@@ -175,21 +170,3 @@ def __import_people_csv(session):
         session.rollback()
         return dict(success=False, message=error)
 
-def __link_player_tables(session):
-    try:
-        for p in tqdm(
-            session.query(Player).all(),
-            desc='Linking player tables........',
-            ncols=100,
-            unit='row',
-            mininterval=0.12,
-            maxinterval=5,
-            unit_scale=True
-        ):
-            player_id = PlayerId.find_by_mlb_id(session, p.mlb_id)
-            player_id.db_player_id = p.id
-        return dict(success=True)
-    except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
-        session.rollback()
-        return dict(success=False, message=error)

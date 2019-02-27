@@ -6,8 +6,9 @@ from sqlalchemy.orm import relationship
 
 from app.main.constants import SEASON_TYPE_DICT
 from app.main.models.base import Base
-from app.main.util.list_functions import display_dict
+from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY
+from app.main.util.list_functions import display_dict
 
 
 class Season(Base):
@@ -30,9 +31,9 @@ class Season(Base):
     )
 
     #status = relationship('SeasonStatus', back_populates='season')
-    #dates = relationship('SeasonDate', back_populates='season')
+    dates = relationship('DateScrapeStatus', back_populates='season')
     #boxscores = relationship('Boxscore', back_populates='season')
-    #itching_stats = relationship('PitchingStats', back_populates='season')
+    #pitching_stats = relationship('PitchingStats', back_populates='season')
     #batting_stats = relationship('BattingStats', back_populates='season')
 
     @hybrid_property
@@ -58,6 +59,9 @@ class Season(Base):
         title = self.name
         display_dict(season_dict, title=title)
 
+    def get_date_range(self):
+        return get_date_range(self.start_date, self.end_date)
+
     @classmethod
     def find_by_year(cls, session, year, season_type='Regular Season'):
         return session.query(cls).filter_by(season_type=season_type)\
@@ -79,3 +83,10 @@ class Season(Base):
             return dict(success=False, message=error)
         message = f'{date_str} is within the scope of the {season.name}'
         return dict(success=True, message=message, result=season)
+
+    @classmethod
+    def all_regular_seasons(cls, session):
+        return [season
+                for season
+                in session.query(cls).filter_by(
+                    season_type=SEASON_TYPE_DICT['reg'])]

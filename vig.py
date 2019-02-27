@@ -51,11 +51,10 @@ def cli(ctx):
 
     engine = create_engine(os.getenv('DATABASE_URL'))
     session_maker = sessionmaker(bind=engine)
+    session = session_maker()
     ctx.obj = {
         'engine': engine,
-        'sessionmaker': session_maker,
-        'chrome_binary_path': os.getenv('GOOGLE_CHROME_BIN'),
-        'chromedriver_path': os.getenv('CHROMEDRIVER_PATH')
+        'session': session
     }
 
 
@@ -69,9 +68,10 @@ def setup(ctx):
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
     """
-    session = ctx.obj['sessionmaker']()
-    Base.metadata.drop_all(ctx.obj['engine'])
-    Base.metadata.create_all(ctx.obj['engine'])
+    engine = ctx.obj['engine']
+    session = ctx.obj['session']
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
     result = initialize_database(session)
     if not result['success']:
         click.secho(result['message'], fg='red')
@@ -106,7 +106,7 @@ def setup(ctx):
 @click.pass_context
 def scrape(ctx, data_set, start, end):
     """Scrape MLB data from websites."""
-    session = ctx.obj['sessionmaker']()
+    session = ctx.obj['session']
     result = __validate_date_range(session, start, end)
     if not result['success']:
         click.secho(result['message'], fg='red')
@@ -154,9 +154,9 @@ def scrape(ctx, data_set, start, end):
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
-        '\nRequested data was successfully scraped:\n'
+        'Requested data was successfully scraped:\n'
         f'data set....: {scrape_config.display_name}\n'
-        f'date range..: {start_str} - {end_str}\n'
+        f'date range..: {start_str} - {end_str}'
     )
     click.secho(success, fg='green')
     return 0

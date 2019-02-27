@@ -58,7 +58,7 @@ def __import_teams_csv(session):
 
         with tqdm(
             total=len(df_team),
-            desc='Poplulating team table.......',
+            desc='Populating team table........',
             ncols=100,
             unit='row',
             mininterval=0.12,
