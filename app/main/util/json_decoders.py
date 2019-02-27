@@ -9,12 +9,10 @@ from app.main.data.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMe
 from app.main.data.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
 from app.main.data.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.data.scrape.bbref.models.half_inning import BBRefHalfInning
-from app.main.data.scrape.bbref.models.inning_runs_scored import BBRefInningRunsScored
 from app.main.data.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
 from app.main.data.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
 from app.main.data.scrape.bbref.models.pitch_stats import BBRefPitchStats
 from app.main.data.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
-from app.main.data.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
 from app.main.data.scrape.bbref.models.umpire import BBRefUmpire
 from app.main.data.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.data.scrape.brooks.models.game_info import BrooksGameInfo
@@ -257,7 +255,8 @@ def decode_bbref_playbyplay_event(json_dict):
     if '__bbref_pbp_game_event__' in json_dict:
         pbp_event = BBRefPlayByPlayEvent()
         pbp_event.pbp_table_row_number = json_dict['pbp_table_row_number']
-        pbp_event.inning = json_dict['inning']
+        pbp_event.inning_id = json_dict['inning_id']
+        pbp_event.inning_label = json_dict['inning_label']
         pbp_event.score = json_dict['score']
         pbp_event.outs_before_play = int(json_dict['outs_before_play'])
         pbp_event.runners_on_base = json_dict['runners_on_base']
@@ -273,7 +272,8 @@ def decode_bbref_playbyplay_event(json_dict):
 def decode_bbref_pbp_substitution(json_dict):
     if '__bbref_pbp_in_game_substitution__' in json_dict:
         substitution = BBRefInGameSubstitution()
-        substitution.inning = json_dict['inning']
+        substitution.inning_id = json_dict['inning_id']
+        substitution.inning_label = json_dict['inning_label']
         substitution.pbp_table_row_number = json_dict['pbp_table_row_number']
         substitution.sub_description = json_dict['sub_description']
         substitution.incoming_player_id_br = json_dict['incoming_player_id_br']

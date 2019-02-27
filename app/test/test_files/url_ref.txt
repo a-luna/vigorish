@@ -1,4 +1,4 @@
-bbref_boxscore: https://www.baseball-reference.com/boxes/PIT/PIT201807260.shtml
+bbref_boxscore: https://www.baseball-reference.com/boxes/ATL/ATL201803290.shtml
 bbref_daily_dash: https://www.baseball-reference.com/boxes/?month=7&day=26&year=2018
 bbref_player: https://www.baseball-reference.com/players/g/glasnty01.shtml
 

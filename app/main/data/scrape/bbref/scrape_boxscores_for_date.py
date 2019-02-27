@@ -16,23 +16,24 @@ from selenium.webdriver.support import expected_conditions as ec
 from tqdm import tqdm
 
 from app.main.constants import DEFENSE_POSITIONS
-from .models.bat_stats import BBRefBatStats
-from .models.bat_stats_detail import BBRefBatStatsDetail
-from .models.boxscore import BBRefBoxscore
-from .models.boxscore_game_meta import BBRefBoxscoreMeta
-from .models.half_inning import BBRefHalfInning
-from .models.boxscore_team_data import BBRefBoxscoreTeamData
-from .models.inning_runs_scored import BBRefInningRunsScored
-from .models.pbp_event import BBRefPlayByPlayEvent
-from .models.pbp_substitution import BBRefInGameSubstitution
-from .models.pitch_stats import BBRefPitchStats
-from .models.starting_lineup_slot import BBRefStartingLineupSlot
-from .models.team_linescore_totals import BBRefTeamLinescoreTotals
-from .models.umpire import BBRefUmpire
+from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
 from app.main.util.scrape_functions import request_url, get_chromedriver
 from app.main.util.string_functions import fuzzy_match, normalize
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
+
+from app.main.data.scrape.bbref.models.bat_stats import BBRefBatStats
+from app.main.data.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
+from app.main.data.scrape.bbref.models.boxscore import BBRefBoxscore
+from app.main.data.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
+from app.main.data.scrape.bbref.models.half_inning import BBRefHalfInning
+from app.main.data.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
+from app.main.data.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
+from app.main.data.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
+from app.main.data.scrape.bbref.models.pitch_stats import BBRefPitchStats
+from app.main.data.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
+from app.main.data.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
+from app.main.data.scrape.bbref.models.umpire import BBRefUmpire
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _TEAM_RUNS_XPATH = '//div[@class="score"]/text()'
@@ -82,7 +83,6 @@ _PITCHER_ER_XPATH = './td[@data-stat="ER"]/text()'
 _PITCHER_BB_XPATH = './td[@data-stat="BB"]/text()'
 _PITCHER_SO_XPATH = './td[@data-stat="SO"]/text()'
 _PITCHER_HR_XPATH = './td[@data-stat="HR"]/text()'
-
 _PITCHER_BATTERS_FACED_XPATH = './td[@data-stat="batters_faced"]/text()'
 _PITCHER_PITCH_COUNT_XPATH = './td[@data-stat="pitches"]/text()'
 _PITCHER_STRIKES_TOTAL_XPATH = './td[@data-stat="strikes_total"]/text()'
@@ -110,7 +110,6 @@ _AWAY_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_1"]//table//tbody//tr//td[3]/te
 _HOME_LINEUP_ORDER_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[1]/text()'
 _HOME_LINEUP_PLAYER_XPATH = '//div[@id="lineups_2"]//table//tbody//a/@href'
 _HOME_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[3]/text()'
-
 _PLAY_BY_PLAY_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]'
 _PBP_INNING_SUMMARY_TOP_XPATH = './tbody//th[@data-stat="inning_summary_12"]/text()'
 _PBP_INNING_SUMMARY_TOP_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_top"]/@data-row'
@@ -144,17 +143,21 @@ _INNING_TOTALS_PATTERN = (
     r'(?P<away_team_runs>\d{1,2}),\s\b\w+\b\s'
     r'(?P<home_team_runs>\d{1,2})'
 )
+INNING_TOTALS_REGEX = re.compile(_INNING_TOTALS_PATTERN)
+CHANGE_POS_PATTERN = r'from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b'
+CHANGE_POS_REGEX = re.compile(CHANGE_POS_PATTERN)
 POS_REGEX = re.compile(r'\([BCFHLPRS123]{1,2}\)')
 NUM_REGEX = re.compile(r'[1-9]{1}')
-INNING_TOTALS_REGEX = re.compile(_INNING_TOTALS_PATTERN)
 
 
 def scrape_boxscores_for_date(scrape_dict):
     driver = scrape_dict['driver']
+    scrape_date = scrape_dict['date']
     games_for_date = scrape_dict['input_data']
     boxscore_urls = games_for_date.boxscore_urls
 
     scraped_boxscores = []
+    player_name_match_logs = []
     with tqdm(
         total=len(boxscore_urls),
         ncols=100,
@@ -187,8 +190,14 @@ def scrape_boxscores_for_date(scrape_dict):
 
                     page = driver.page_source
                     response = html.fromstring(page, base_url=url)
-                    bbref_boxscore = __parse_bbref_boxscore(response, url)
+                    result = __parse_bbref_boxscore(response, url)
+                    if not result['success']:
+                        return result
+                    bbref_boxscore = result['result']
                     scraped_boxscores.append(bbref_boxscore)
+                    player_match_log = bbref_boxscore.player_id_match_log
+                    if player_match_log:
+                        player_name_match_logs.append(player_match_log)
 
                     time.sleep(random.uniform(2.5, 3.0))
                     parsing_boxscore = False
@@ -207,6 +216,10 @@ def scrape_boxscores_for_date(scrape_dict):
 
     if error_occurred:
         return result
+    if player_name_match_logs:
+        date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
+        with open(f'player_match_log_{date_str}.json', 'w') as f:
+            f.write(player_match_log)
     return dict(success=True, result=scraped_boxscores)
 
 def __parse_bbref_boxscore(response, url, silent=False):
@@ -1016,7 +1029,7 @@ def _parse_play_by_play(response, game_id, batter_id_dict, pitcher_id_dict, away
             play = BBRefPlayByPlayEvent()
             play.scrape_success = True
             play.pbp_table_row_number = pbp_row_numbers[i]
-            play.inning = pbp_inning_list[i]
+            play.inning_label = pbp_inning_list[i]
             play.score = pbp_score_list[i]
             play.outs_before_play = pbp_outs_before_play_list[i]
             play.runners_on_base = pbp_runners_on_base_list[i]
@@ -1407,6 +1420,11 @@ def _parse_substitution_description(sub_description):
     elif 'pinch hits for' in sub_description:
         parsed_sub['incoming_player_pos'] = 'PH'
         split = [s.strip() for s in sub_description.split('pinch hits for')]
+    elif 'pinch runs for' in sub_description:
+        parsed_sub['incoming_player_pos'] = 'PR'
+        split = [s.strip() for s in sub_description.split('pinch runs for')]
+    elif 'moves' in sub_description:
+        split = [s.strip() for s in sub_description.split('moves')]
     else:
         error = (
             'Substitution description does not contain "replaces" or "pinch '
@@ -1420,7 +1438,18 @@ def _parse_substitution_description(sub_description):
     parsed_sub['incoming_player_name'] = split[0]
     remaining_description = split[1]
 
-    split2 = [s.strip() for s in remaining_description.split('batting')]
+    if 'batting' in remaining_description:
+        split2 = [s.strip() for s in remaining_description.split('batting')]
+    elif 'from' in remaining_description:
+        match = CHANGE_POS_REGEX.search(remaining_description)
+        if match:
+            match_dict = match.groupdict()
+            parsed_sub['outgoing_player_name'] = parsed_sub['incoming_player_name']
+            parsed_sub['outgoing_player_pos'] = match_dict['old_pos']
+            parsed_sub['incoming_player_pos'] = match_dict['new_pos']
+            parsed_sub['lineup_slot'] = 0
+            return dict(success=True, result=parsed_sub)
+
     if not split2 or len(split2) != 2:
         error = 'Second split operation did not produce a list with length=2.'
         return dict(success=False, message=error)
@@ -1569,6 +1598,13 @@ def _create_innings_list(
         inning.end_inning_summary = summaries_end[end_row]
         inning.game_events = inning_events
         inning.substitutions = inning_substitutions
+
+        for event in inning_events:
+            event.inning_id = inning_id
+
+        for sub in inning_substitutions:
+            sub.inning_id = inning_id
+            sub.inning_label = inning_label
 
         match = INNING_TOTALS_REGEX.search(summaries_end[end_row])
         if match:

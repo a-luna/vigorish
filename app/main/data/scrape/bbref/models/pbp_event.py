@@ -1,7 +1,8 @@
 class BBRefPlayByPlayEvent():
     """Various numeric and string values that describe a plate appearance."""
 
-    inning = ""
+    inning_id = ""
+    inning_label = ""
     pbp_table_row_number = None
     score = ""
     outs_before_play = ""
@@ -18,7 +19,8 @@ class BBRefPlayByPlayEvent():
         """Convert play event values to a dictionary."""
         dict = {
             "__bbref_pbp_game_event__": True,
-            "inning": "{}".format(self.inning),
+            "inning_id": "{}".format(self.inning_id),
+            "inning_label": "{}".format(self.inning_label),
             'pbp_table_row_number': int(self.pbp_table_row_number),
             "score": "{}".format(self.score),
             "outs_before_play": int(self.outs_before_play),

@@ -3,7 +3,8 @@ import re
 from app.main.util.list_functions import display_dict
 
 class BBRefInGameSubstitution():
-    inning = None
+    inning_id = None
+    inning_label = None
     pbp_table_row_number = None
     sub_description = None
     incoming_player_id_br = None
@@ -15,7 +16,8 @@ class BBRefInGameSubstitution():
     def as_dict(self):
         dict = {
             "__bbref_pbp_in_game_substitution__": True,
-            "inning": "{}".format(self.inning),
+            "inning_id": "{}".format(self.inning_id),
+            "inning_label": "{}".format(self.inning_label),
             'pbp_table_row_number': int(self.pbp_table_row_number),
             "sub_description": "{}".format(self.sub_description),
             "incoming_player_id_br": "{}".format(self.incoming_player_id_br),

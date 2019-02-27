@@ -8,7 +8,7 @@ from string import Template
 import boto3
 import botocore
 
-from app.main.util.dt_format_strings import DATE_ONLY_FILENAME
+from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.file_util import (
     T_BROOKS_GAMESFORDATE_FILENAME,
     read_brooks_games_for_date_from_file,
@@ -49,7 +49,7 @@ def upload_brooks_games_for_date(games_for_date, scrape_date):
 def download_brooks_games_for_date(scrape_date, folderpath=None):
     """Download a file from S3 containing json encoded BrooksGamesForDate object."""
     folderpath = folderpath if folderpath else Path.cwd()
-    date_str = scrape_date.strftime(DATE_ONLY_FILENAME)
+    date_str = scrape_date.strftime(DATE_ONLY)
     filename = Template(T_BROOKS_GAMESFORDATE_FILENAME)\
         .substitute(date=date_str)
     filepath = folderpath / filename
@@ -99,7 +99,7 @@ def upload_bbref_games_for_date(games_for_date, scrape_date):
 def download_bbref_games_for_date(scrape_date, folderpath=None):
     """Download a file from S3 containing json encoded BBRefGamesForDate object."""
     folderpath = folderpath if folderpath else Path.cwd()
-    date_str = scrape_date.strftime(DATE_ONLY_FILENAME)
+    date_str = scrape_date.strftime(DATE_ONLY)
     filename = Template(T_BBREF_GAMESFORDATE_FILENAME)\
         .substitute(date=date_str)
     filepath = folderpath / filename
