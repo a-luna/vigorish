@@ -49,8 +49,7 @@ class TestBBRefBoxscore(BaseTestCase):
         self.assertEqual(boxscore.home_team_data.total_wins_before_game, 1)
         self.assertEqual(boxscore.home_team_data.total_losses_before_game, 0)
 
-        self.assertEqual(boxscore.game_meta_info.attendance, 40
-        208)
+        self.assertEqual(boxscore.game_meta_info.attendance, 40208)
         self.assertEqual(boxscore.game_meta_info.park_name, 'SunTrust Park')
         self.assertEqual(boxscore.game_meta_info.game_duration, '3:28')
         self.assertEqual(boxscore.game_meta_info.day_night, 'Day Game')
