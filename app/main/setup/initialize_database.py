@@ -1,9 +1,9 @@
-from app.main.data.setup.create_relationships import create_relationships
-from app.main.data.setup.populate_base_tables import populate_base_tables
-from app.main.data.setup.populate_seasons import populate_seasons
-from app.main.data.setup.populate_status_tables import populate_status_tables
-from app.main.data.setup.populate_players import populate_players
-from app.main.data.setup.populate_teams import populate_teams
+from app.main.setup.create_relationships import create_relationships
+from app.main.setup.populate_base_tables import populate_base_tables
+from app.main.setup.populate_seasons import populate_seasons
+from app.main.setup.populate_status_tables import populate_status_tables
+from app.main.setup.populate_players import populate_players
+from app.main.setup.populate_teams import populate_teams
 
 def initialize_database(session):
     result = populate_base_tables(session)

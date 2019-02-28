@@ -25,7 +25,9 @@ DEFENSE_POSITIONS = [
     'RF',
     'CF',
     'LF',
-    'PH'
+    'DH',
+    'PH',
+    'PR'
 ]
 
 DEF_POSITION_DICT = {

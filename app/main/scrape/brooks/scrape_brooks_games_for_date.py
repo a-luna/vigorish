@@ -9,8 +9,8 @@ from lxml import html
 from app.main.constants import (
     T_BROOKS_DASH_URL, BROOKS_DASHBOARD_DATE_FORMAT
 )
-from app.main.data.scrape.brooks.models.games_for_date import BrooksGamesForDate
-from app.main.data.scrape.brooks.models.game_info import BrooksGameInfo
+from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
+from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.models.season import Season
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.scrape_functions import request_url

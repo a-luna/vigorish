@@ -22,18 +22,18 @@ from app.main.util.string_functions import fuzzy_match, normalize
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
 
-from app.main.data.scrape.bbref.models.bat_stats import BBRefBatStats
-from app.main.data.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
-from app.main.data.scrape.bbref.models.boxscore import BBRefBoxscore
-from app.main.data.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
-from app.main.data.scrape.bbref.models.half_inning import BBRefHalfInning
-from app.main.data.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
-from app.main.data.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
-from app.main.data.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
-from app.main.data.scrape.bbref.models.pitch_stats import BBRefPitchStats
-from app.main.data.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
-from app.main.data.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
-from app.main.data.scrape.bbref.models.umpire import BBRefUmpire
+from app.main.scrape.bbref.models.bat_stats import BBRefBatStats
+from app.main.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
+from app.main.scrape.bbref.models.boxscore import BBRefBoxscore
+from app.main.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
+from app.main.scrape.bbref.models.half_inning import BBRefHalfInning
+from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
+from app.main.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
+from app.main.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
+from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
+from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
+from app.main.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
+from app.main.scrape.bbref.models.umpire import BBRefUmpire
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _TEAM_RUNS_XPATH = '//div[@class="score"]/text()'
@@ -139,18 +139,18 @@ _INNING_TOTALS_PATTERN = (
     r'(?P<runs>\d{1,2})\s\b\w+\b,\s'
     r'(?P<hits>\d{1,2})\s\b\w+\b,\s'
     r'(?P<errors>\d{1,2})\s\b\w+\b,\s'
-    r'(?P<left_on_base>\d{1,2})\s\b\w+\b.\s\b\w+\b\s'
-    r'(?P<away_team_runs>\d{1,2}),\s\b\w+\b\s'
+    r'(?P<left_on_base>\d{1,2})\s\b\w+\b.\s(\b\w+\b){1,1}(\s\b\w+\b){0,1}\s'
+    r'(?P<away_team_runs>\d{1,2}),\s(\b\w+\b){1,1}(\s\b\w+\b){0,1}\s'
     r'(?P<home_team_runs>\d{1,2})'
 )
 INNING_TOTALS_REGEX = re.compile(_INNING_TOTALS_PATTERN)
 CHANGE_POS_PATTERN = r'from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b'
 CHANGE_POS_REGEX = re.compile(CHANGE_POS_PATTERN)
-POS_REGEX = re.compile(r'\([BCFHLPRS123]{1,2}\)')
+POS_REGEX = re.compile(r'\([BCDFHLPRS123]{1,2}\)')
 NUM_REGEX = re.compile(r'[1-9]{1}')
 
 
-def scrape_boxscores_for_date(scrape_dict):
+def scrape_bbref_boxscores_for_date(scrape_dict):
     driver = scrape_dict['driver']
     scrape_date = scrape_dict['date']
     games_for_date = scrape_dict['input_data']
@@ -219,7 +219,10 @@ def scrape_boxscores_for_date(scrape_dict):
     if player_name_match_logs:
         date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
         with open(f'player_match_log_{date_str}.json', 'w') as f:
-            f.write(player_match_log)
+            matches = ''
+            for log in player_match_log:
+                matches += str(log) + '\n'
+            f.write(matches)
     return dict(success=True, result=scraped_boxscores)
 
 def __parse_bbref_boxscore(response, url, silent=False):
@@ -1315,7 +1318,7 @@ def _match_player_id(name, id_dict):
             match_type='Normalized match',
             player_id=dict_norm[name_norm]
         )
-    best_match = fuzzy_match(name, id_dict.keys())
+    (best_match, score) = fuzzy_match(name, id_dict.keys())
     if best_match:
         return dict(
             success=True,
@@ -1417,6 +1420,16 @@ def _parse_substitution_description(sub_description):
     split = None
     if 'replaces' in sub_description:
         split = [s.strip() for s in sub_description.split('replaces')]
+    elif 'pinch hit for' and 'and is now' in sub_description:
+        split = [s.strip() for s in sub_description.split('pinch hit for')]
+        parsed_sub['incoming_player_name'] = split[0]
+        remaining_description = split[1]
+        split2 = [s.strip() for s in remaining_description.split('and is now')]
+        parsed_sub['incoming_player_pos'] = split[0]
+        parsed_sub['outgoing_player_pos'] = split[0]
+        parsed_sub['outgoing_player_name'] = 'N/A'
+        parsed_sub['lineup_slot'] = 0
+        return dict(success=True, result=parsed_sub)
     elif 'pinch hits for' in sub_description:
         parsed_sub['incoming_player_pos'] = 'PH'
         split = [s.strip() for s in sub_description.split('pinch hits for')]
@@ -1426,10 +1439,7 @@ def _parse_substitution_description(sub_description):
     elif 'moves' in sub_description:
         split = [s.strip() for s in sub_description.split('moves')]
     else:
-        error = (
-            'Substitution description does not contain "replaces" or "pinch '
-            'hits for"'
-        )
+        error = 'Substitution description was in an unrecognized format. (Before first split)'
         return dict(success=False, message=error)
 
     if not split or len(split) != 2:
@@ -1449,6 +1459,16 @@ def _parse_substitution_description(sub_description):
             parsed_sub['incoming_player_pos'] = match_dict['new_pos']
             parsed_sub['lineup_slot'] = 0
             return dict(success=True, result=parsed_sub)
+    elif remaining_description.endswith('pitching'):
+        split2 = [s.strip() for s in remaining_description.split('pitching')]
+        parsed_sub['outgoing_player_name'] = split2[0]
+        parsed_sub['outgoing_player_pos'] = 'P'
+        parsed_sub['incoming_player_pos'] = 'P'
+        parsed_sub['lineup_slot'] = 0
+        return dict(success=True, result=parsed_sub)
+    else:
+        error = 'Substitution description was in an unrecognized format. (After first split)'
+        return dict(success=False, message=error)
 
     if not split2 or len(split2) != 2:
         error = 'Second split operation did not produce a list with length=2.'
@@ -1514,39 +1534,47 @@ def _parse_substitution_description(sub_description):
 
 def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_dict):
     player_id_match_log = []
-    try:
-        match_result = _match_player_name_to_player_id(
-            outgoing_player_name,
-            player_name_dict
-        )
-        if not match_result['success']:
-            return match_result
-        if match_result['match_type'] != 'Exact match':
-            player_id_match_log.append(match_result['match_details'])
-        outgoing_player_id_br = match_result['player_id']
-    except Exception as e:
-        error = f"""
-        Exception occurred trying to match '{outgoing_player_name}' with a player_id:
-        Error: {repr(e)}
-        """
-        return dict(success=False, message=error)
+    if outgoing_player_name != 'N/A':
+        try:
+            match_result = _match_player_name_to_player_id(
+                outgoing_player_name,
+                player_name_dict
+            )
+            if not match_result['success']:
+                return match_result
+            if match_result['match_type'] != 'Exact match':
+                player_id_match_log.append(match_result['match_details'])
+            outgoing_player_id_br = match_result['player_id']
+        except Exception as e:
+            error = f"""
+            Exception occurred trying to match '{outgoing_player_name}' with a player_id:
+            Error: {repr(e)}
+            """
+            return dict(success=False, message=error)
 
-    try:
-        match_result = _match_player_name_to_player_id(
-            incoming_player_name,
-            player_name_dict
-        )
-        if not match_result['success']:
-            return match_result
-        if match_result['match_type'] != 'Exact match':
-            player_id_match_log.append(match_result['match_details'])
-        incoming_player_id_br = match_result['player_id']
-    except Exception as e:
-        error = f"""
-        Exception occurred trying to match '{incoming_player_name}' with a player_id:
-        Error: {repr(e)}
-        """
-        return dict(success=False, message=error)
+    if incoming_player_name != 'N/A':
+        try:
+            match_result = _match_player_name_to_player_id(
+                incoming_player_name,
+                player_name_dict
+            )
+            if not match_result['success']:
+                return match_result
+            if match_result['match_type'] != 'Exact match':
+                player_id_match_log.append(match_result['match_details'])
+            incoming_player_id_br = match_result['player_id']
+        except Exception as e:
+            error = f"""
+            Exception occurred trying to match '{incoming_player_name}' with a player_id:
+            Error: {repr(e)}
+            """
+            return dict(success=False, message=error)
+
+    if incoming_player_name == 'N/A':
+        incoming_player_id_br = 'N/A'
+    if outgoing_player_name == 'N/A':
+        outgoing_player_id_br = 'N/A'
+
     return dict(
         success=True,
         incoming_player_id_br=incoming_player_id_br,

@@ -28,7 +28,6 @@ class DateScrapeStatus(Base):
     def game_date_str(self):
         return self.game_date.strftime(DATE_ONLY)
 
-
     season = relationship('Season', back_populates='dates')
     #boxscores = relationship('Boxscore', back_populates='date')
 

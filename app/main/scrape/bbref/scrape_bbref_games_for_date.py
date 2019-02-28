@@ -3,7 +3,7 @@ from string import Template
 from urllib.parse import urljoin
 
 from app.main.constants import T_BBREF_DASH_URL
-from app.main.data.scrape.bbref.models.games_for_date import BBRefGamesForDate
+from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.scrape_functions import request_url
 

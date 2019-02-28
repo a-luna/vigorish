@@ -1,24 +1,24 @@
 """CLI application entry point."""
 import os
 import time
-from dateutil import parser
 from pathlib import Path
 from random import randint
 
 import click
+from dateutil import parser
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
-from config import scrape_config_by_data_set
 from app.main.constants import MLB_DATA_SETS
-from app.main.data.setup.initialize_database import initialize_database
 from app.main.models.base import Base
 from app.main.models.season import Season
+from app.main.setup.initialize_database import initialize_database
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.scrape_functions import get_chromedriver
+from config import scrape_config_by_data_set
 
 #TODO New tables: SeasonScrapeStatus, DayScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PlayerScrapeStatus
 #TODO New setup processes: create entries in season and day scrapestatus tables.
@@ -56,6 +56,16 @@ def cli(ctx):
         'engine': engine,
         'session': session
     }
+
+@cli.command()
+def clean():
+    """Remove *.pyc and *.pyo files recursively starting at current directory."""
+    for dirpath, _, filenames in os.walk('.'):
+        for filename in filenames:
+            if filename.endswith('.pyc') or filename.endswith('.pyo'):
+                full_pathname = os.path.join(dirpath, filename)
+                click.echo('Removing {}'.format(full_pathname))
+                os.remove(full_pathname)
 
 
 @cli.command()

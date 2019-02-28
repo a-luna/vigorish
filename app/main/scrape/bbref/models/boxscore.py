@@ -1,7 +1,7 @@
 import json
 
-from app.main.data.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
-from app.main.data.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
+from app.main.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
+from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
 
 class BBRefBoxscore():
     """Batting and pitching statistics for a single MLB game."""

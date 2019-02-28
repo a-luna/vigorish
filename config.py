@@ -3,13 +3,13 @@ import os
 from os.path import join, dirname
 from pathlib import Path
 
-from app.main.data.scrape.bbref.scrape_boxscores_for_date import (
-    scrape_boxscores_for_date
+from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import (
+    scrape_bbref_boxscores_for_date
 )
-from app.main.data.scrape.bbref.scrape_bbref_games_for_date import (
+from app.main.scrape.bbref.scrape_bbref_games_for_date import (
     scrape_bbref_games_for_date
 )
-from app.main.data.scrape.brooks.scrape_brooks_games_for_date import (
+from app.main.scrape.brooks.scrape_brooks_games_for_date import (
     scrape_brooks_games_for_date
 )
 from app.main.util.s3_helper import (
@@ -39,7 +39,7 @@ class BBRefBoxscoreScrapeConfig(ScrapeConfig):
     requires_selenium = True
     produces_list = True
     get_input_function = get_bbref_games_for_date_from_s3
-    scrape_function = scrape_boxscores_for_date
+    scrape_function = scrape_bbref_boxscores_for_date
     persist_function = upload_bbref_boxscore
 
 class BBRefPlayerScrapeConfig(ScrapeConfig):

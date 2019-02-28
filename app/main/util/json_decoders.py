@@ -2,20 +2,20 @@
 from datetime import datetime, timezone
 from dateutil import parser, tz
 
-from app.main.data.scrape.bbref.models.bat_stats import BBRefBatStats
-from app.main.data.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
-from app.main.data.scrape.bbref.models.boxscore import BBRefBoxscore
-from app.main.data.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
-from app.main.data.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
-from app.main.data.scrape.bbref.models.games_for_date import BBRefGamesForDate
-from app.main.data.scrape.bbref.models.half_inning import BBRefHalfInning
-from app.main.data.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
-from app.main.data.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
-from app.main.data.scrape.bbref.models.pitch_stats import BBRefPitchStats
-from app.main.data.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
-from app.main.data.scrape.bbref.models.umpire import BBRefUmpire
-from app.main.data.scrape.brooks.models.games_for_date import BrooksGamesForDate
-from app.main.data.scrape.brooks.models.game_info import BrooksGameInfo
+from app.main.scrape.bbref.models.bat_stats import BBRefBatStats
+from app.main.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
+from app.main.scrape.bbref.models.boxscore import BBRefBoxscore
+from app.main.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
+from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
+from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
+from app.main.scrape.bbref.models.half_inning import BBRefHalfInning
+from app.main.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
+from app.main.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
+from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
+from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
+from app.main.scrape.bbref.models.umpire import BBRefUmpire
+from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
+from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 
 
 def decode_bbref_games_for_date(json_dict):

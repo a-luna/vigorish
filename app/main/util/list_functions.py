@@ -21,8 +21,9 @@ def display_dict(
     """Pretty print all dict keys and values, title is optional."""
     max_length = 0
     for k, v in dict.items():
-        if not v and type(v) is not bool:
-            continue
+        if not v:
+            if type(v) is not int and type(v) is not bool:
+                continue
         if len(k) > max_length:
             max_length = len(k)
     max_length += extra_dots
@@ -32,8 +33,9 @@ def display_dict(
     else:
         print('')
     for k, v in dict.items():
-        if not v and type(v) is not bool:
-            continue
+        if not v:
+            if type(v) is not int and type(v) is not bool:
+                continue
         if type(v) is datetime:
             v = v.strftime(DT_STR_FORMAT_ALL)
         c = max_length - len(k)

@@ -6,10 +6,10 @@ from pathlib import Path
 
 from lxml import html
 
-from app.main.data.scrape.bbref.scrape_bbref_games_for_date import (
+from app.main.scrape.bbref.scrape_bbref_games_for_date import (
     __parse_dashboard_page as parse_dashboard_page
 )
-from app.main.data.scrape.bbref.models.games_for_date import BBRefGamesForDate
+from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.file_util import (
     write_bbref_games_for_date_to_file, read_bbref_games_for_date_from_file
 )
