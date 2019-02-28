@@ -22,7 +22,9 @@ from config import scrape_config_by_data_set
 
 #TODO New tables: SeasonScrapeStatus, DayScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PlayerScrapeStatus
 #TODO New setup processes: create entries in season and day scrapestatus tables.
-#TODO New cli command: vig status [YEAR], reports scrape status of mlb reg season for year provided
+#TODO New cli command: vig status [YEAR, MONTH_YEAR, GAMEID, PLAYER]: generate a status report with completion percentages and total #s scraped,missing,imported for daily_game_totals, boxscores, pitchlogs, pitchfx, etc.
+#TODO Create unit tests for all substitution parsing scenarios
+#TODO Track lineup changes to avoid the various name,pos=N/A and lineupslot=0 hacks introduced in order to get boxscores parsing successfully
 
 APP_ROOT = Path.cwd()
 DOTENV_PATH = APP_ROOT / '.env'
