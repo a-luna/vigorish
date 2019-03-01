@@ -1,11 +1,14 @@
 """Db model that describes a MLB season and tracks data scraping progress."""
-from sqlalchemy import Column, Boolean, Integer, DateTime
+from sqlalchemy import Column, Boolean, Index, Integer, DateTime, select, func, join
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app.main.constants import SEASON_TYPE_DICT
 from app.main.models.base import Base
+from app.main.models.status_date import DateScrapeStatus
+from app.main.models.views.materialized_view import MaterializedView
+from app.main.models.views.materialized_view_factory import create_mat_view
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.list_functions import display_dict
@@ -32,10 +35,17 @@ class Season(Base):
     )
 
     #status = relationship('SeasonStatus', back_populates='season')
-    dates = relationship('DateScrapeStatus', back_populates='season')
+    dates = relationship('DateScrapeStatus')
     #boxscores = relationship('Boxscore', back_populates='season')
     #pitching_stats = relationship('PitchingStats', back_populates='season')
     #batting_stats = relationship('BattingStats', back_populates='season')
+
+    mat_view = relationship(
+        'SeasonStatusMV', backref='original',
+        uselist=False, # makes it a one-to-one relationship
+        primaryjoin='Season.id==SeasonStatusMV.id',
+        foreign_keys='SeasonStatusMV.id'
+    )
 
     @hybrid_property
     def name(self):
@@ -49,11 +59,79 @@ class Season(Base):
     def end_date_str(self):
         return self.end_date.strftime(DATE_ONLY)
 
+    @hybrid_property
+    def days_total(self):
+        if self.mat_view is not None: # if None, mat_view needs refreshing
+            return self.mat_view.days_total
+
+    @hybrid_property
+    def days_scraped_bbref_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.days_scraped_bbref_total
+
+    @hybrid_property
+    def days_scraped_brooks_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.days_scraped_brooks_total
+
+    @hybrid_property
+    def games_bbref_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.games_bbref_total
+
+    @hybrid_property
+    def games_brooks_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.games_brooks_total
+
+    @hybrid_property
+    def boxscores_scraped_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.boxscores_scraped_total
+
+    @hybrid_property
+    def boxscores_missing_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.boxscores_missing_total
+
+    @hybrid_property
+    def pitch_logs_scraped_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.pitch_logs_scraped_total
+
+    @hybrid_property
+    def pitch_logs_missing_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.pitch_logs_missing_total
+
+    @hybrid_property
+    def pitchfx_scraped_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.pitchfx_scraped_total
+
+    @hybrid_property
+    def pitchfx_missing_total(self):
+        if self.mat_view is not None:
+            return self.mat_view.pitchfx_missing_total
+
     def __repr__(self):
         return (f'<Season(name="{self.name}", id={self.id})>')
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        d['name'] = self.name
+        d['days_total'] = self.days_total
+        d['days_scraped_bbref_total'] = self.days_scraped_bbref_total
+        d['days_scraped_brooks_total'] = self.days_scraped_brooks_total
+        d['games_bbref_total'] = self.games_bbref_total
+        d['games_brooks_total'] = self.games_brooks_total
+        d['boxscores_scraped_total'] = self.boxscores_scraped_total
+        d['boxscores_missing_total'] = self.boxscores_missing_total
+        d['pitch_logs_scraped_total'] = self.pitch_logs_scraped_total
+        d['pitch_logs_missing_total'] = self.pitch_logs_missing_total
+        d['pitchfx_scraped_total'] = self.pitchfx_scraped_total
+        d['pitchfx_missing_total'] = self.pitchfx_missing_total
+        return d
 
     def display(self):
         season_dict = self.as_dict()
@@ -90,3 +168,32 @@ class Season(Base):
                 for season
                 in session.query(cls).filter_by(
                     season_type=SEASON_TYPE_DICT['reg'])]
+
+
+class SeasonStatusMV(MaterializedView):
+    __table__ = create_mat_view(
+        Base.metadata,
+        "season_status_mv",
+        select([
+            Season.id.label('id'),
+            func.count(DateScrapeStatus.id).label('days_total'),
+            func.sum(DateScrapeStatus.scraped_daily_dash_bbref).label('days_scraped_bbref_total'),
+            func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label('days_scraped_brooks_total'),
+            func.sum(DateScrapeStatus.game_count_bbref).label('games_bbref_total'),
+            func.sum(DateScrapeStatus.game_count_brooks).label('games_brooks_total'),
+            func.sum(DateScrapeStatus.scraped_boxscore_count).label('boxscores_scraped_total'),
+            func.sum(DateScrapeStatus.missing_boxscore_count).label('boxscores_missing_total'),
+            func.sum(DateScrapeStatus.scraped_pitch_logs_count).label('pitch_logs_scraped_total'),
+            func.sum(DateScrapeStatus.missing_pitch_logs_count).label('pitch_logs_missing_total'),
+            func.sum(DateScrapeStatus.scraped_pitchfx_count).label('pitchfx_scraped_total'),
+            func.sum(DateScrapeStatus.missing_pitchfx_count).label('pitchfx_missing_total'),
+        ]).select_from(join(
+            Season,
+            DateScrapeStatus,
+            Season.id == DateScrapeStatus.season_id,
+            isouter=True)
+        ).where(Season.season_type == SEASON_TYPE_DICT['reg']
+        ).group_by(Season.id)
+    )
+
+Index('season_status_mv_id_idx', SeasonStatusMV.id, unique=True)

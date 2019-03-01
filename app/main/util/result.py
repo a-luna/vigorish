@@ -19,7 +19,7 @@ class Result():
         if self.success:
             return f'[Success]'
         else:
-            return f'[Failure] Error message: {self.error}'
+            return f'[Failure] {self.error}'
 
     def __repr__(self):
         return f'Result(success={self.success}, message="{self.error}")'
