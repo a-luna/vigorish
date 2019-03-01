@@ -16,32 +16,31 @@ from app.test.base import BaseTestCase
 
 class TestBBRefBoxscore(BaseTestCase):
     APP_TEST_FOLDER = Path.cwd() / 'app' / 'test'
-    BOXSCORE_URL = 'https://www.baseball-reference.com/boxes/KCA/KCA201803290.shtml'
-    BOXSCORE_HTML = APP_TEST_FOLDER / 'test_files' / 'bbref_boxscore.xml'
-    GAME_ID = 'KCA201803290'
-    TEMP = Path.cwd() / 'KCA201803290.xml'
+    BOXSCORE_URL = 'https://www.baseball-reference.com/boxes/ATL/ATL201803290.shtml'
+    BOXSCORE_HTML = APP_TEST_FOLDER / 'test_files' / 'ATL201803290.xml'
+    GAME_ID = 'ATL201803290'
 
     def test_scrape_bbref_boxscore(self):
         """Verify BBRefBoxscore object is correctly parsed from webpage."""
-        response = html.parse(str(self.TEMP))
+        response = html.parse(str(self.BOXSCORE_HTML))
         result = parse_bbref_boxscore(response, self.BOXSCORE_URL, silent=True)
-        self.assertTrue(result['success'])
-        boxscore_parsed = result['result']
+        self.assertTrue(result.success)
+        boxscore_parsed = result.value
 
         result = write_bbref_boxscore_to_file(
             boxscore_parsed,
             folderpath=self.APP_TEST_FOLDER
         )
-        self.assertTrue(result['success'])
-        filepath = result['filepath']
+        self.assertTrue(result.success)
+        filepath = result.value
         self.assertEqual(filepath.name, f'{self.GAME_ID}.json')
 
         result = read_bbref_boxscore_from_file(
             self.GAME_ID,
             folderpath=self.APP_TEST_FOLDER
         )
-        self.assertTrue(result['success'])
-        boxscore = result['result']
+        self.assertTrue(result.success)
+        boxscore = result.value
 
         self.assertEqual(boxscore.boxscore_url, self.BOXSCORE_URL)
         self.assertEqual(boxscore.bbref_game_id, 'ATL201803290')

@@ -24,12 +24,11 @@ def convert_dt_for_display(obj, attr_name, user_tz=None, str_format=DT_STR_FORMA
     an empty string is returned.
     """
     result = better_getattr(obj, attr_name)
-    if not result['success']:
-        print(result['error_message'])
-        return ''
+    if result.failure:
+        return result
     try:
         s = convert_dt_to_user_tz_str(
-            result['value'],
+            result.value,
             user_tz=user_tz,
             str_format=str_format
         )
@@ -54,11 +53,10 @@ def convert_dt_to_user_tz_str(dt, user_tz=None, str_format=DT_STR_FORMAT):
 
 def get_dt_iso_format_utc(obj, attr_name):
     result = better_getattr(obj, attr_name)
-    if not result['success']:
-        print(result['error_message'])
-        return ''
+    if result.failure:
+        return result
     try:
-        dt = result['value']
+        dt = result.value
         return dt.replace(tzinfo=timezone.utc).strftime(DT_FORMAT_ISO)
     except ValueError:
         return ''

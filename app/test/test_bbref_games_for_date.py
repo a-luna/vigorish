@@ -27,9 +27,9 @@ class TestBBRefGamesForDate(BaseTestCase):
         """Verify BBRefGameInfo object is correctly parsed from webpage."""
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_dashboard_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
-        self.assertTrue(result['success'])
+        self.assertTrue(result.success)
 
-        games_for_date = result['result']
+        games_for_date = result.value
         self.assertEqual(games_for_date.dashboard_url, self.DAILY_DASH_URL)
         self.assertTrue(isinstance(games_for_date, BBRefGamesForDate))
         self.assertEqual(games_for_date.game_date_str, self.GAME_DATE_STR)
@@ -66,23 +66,23 @@ class TestBBRefGamesForDate(BaseTestCase):
         """Verify BBRefGamesForDate object can be written to file and read from file."""
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_dashboard_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
-        self.assertTrue(result['success'])
+        self.assertTrue(result.success)
 
-        games_for_date_in = result['result']
+        games_for_date_in = result.value
         result = write_bbref_games_for_date_to_file(
             games_for_date_in,
             folderpath=self.APP_TEST_FOLDER
         )
-        self.assertTrue(result['success'])
-        filepath = result['filepath']
+        self.assertTrue(result.success)
+        filepath = result.value
 
         self.assertEqual(filepath.name, 'bbref_games_for_date_2018-07-26.json')
         result = read_bbref_games_for_date_from_file(
             self.GAME_DATE,
             folderpath=self.APP_TEST_FOLDER
         )
-        self.assertTrue(result['success'])
-        games_for_date_out = result['result']
+        self.assertTrue(result.success)
+        games_for_date_out = result.value
 
         self.assertTrue(isinstance(games_for_date_out, BBRefGamesForDate))
         self.assertEqual(games_for_date_out.dashboard_url, self.DAILY_DASH_URL)

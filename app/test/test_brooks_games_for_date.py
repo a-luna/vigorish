@@ -29,9 +29,9 @@ class TestBrooksGamesForDate(BaseTestCase):
         """Verify BrooksGameInfo objects are correctly parsed from webpage."""
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_daily_dash_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
-        self.assertTrue(result['success'])
+        self.assertTrue(result.success)
 
-        games_for_date = result['result']
+        games_for_date = result.value
         self.assertEqual(games_for_date.dashboard_url, self.DAILY_DASH_URL)
         self.assertTrue(isinstance(games_for_date, BrooksGamesForDate))
         self.assertEqual(games_for_date.game_date_str, self.GAME_DATE_STR)
@@ -128,23 +128,23 @@ class TestBrooksGamesForDate(BaseTestCase):
         """Verify BrooksGamesForDate and BrooksGameInfo objects can be written to file and read from file."""
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_daily_dash_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
-        self.assertTrue(result['success'])
+        self.assertTrue(result.success)
 
-        games_for_date_in = result['result']
+        games_for_date_in = result.value
         result = write_brooks_games_for_date_to_file(
             games_for_date_in,
             folderpath=self.APP_TEST_FOLDER
         )
-        self.assertTrue(result['success'])
-        filepath = result['filepath']
+        self.assertTrue(result.success)
+        filepath = result.value
 
         self.assertEqual(filepath.name, 'brooks_games_for_date_2018-04-17.json')
         result = read_brooks_games_for_date_from_file(
             self.GAME_DATE,
             folderpath=self.APP_TEST_FOLDER
         )
-        self.assertTrue(result['success'])
-        games_for_date_out = result['result']
+        self.assertTrue(result.success)
+        games_for_date_out = result.value
 
         self.assertTrue(isinstance(games_for_date_out, BrooksGamesForDate))
         self.assertEqual(games_for_date_out.dashboard_url, self.DAILY_DASH_URL)
@@ -163,5 +163,5 @@ class TestBrooksGamesForDate(BaseTestCase):
         self.assertEqual(game1.game_start_time, game_start)
 
         filepath.unlink()
-        self.assertTrue(result['success'])
+        self.assertTrue(result.success)
         self.assertFalse(filepath.exists())

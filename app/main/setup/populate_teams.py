@@ -6,16 +6,17 @@ from tqdm import tqdm
 
 from app.main.models.team import Team
 from app.main.util.numeric_functions import sanitize
+from app.main.util.result import Result
 
 TEAM_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'csv/Teams.csv')
 
 def populate_teams(session):
     """Populate team table with initial data."""
     result = __import_teams_csv(session)
-    if not result['success']:
+    if result.failure:
         return result
     session.commit()
-    return dict(success=True)
+    return Result.Ok()
 
 def __import_teams_csv(session):
     try:
@@ -100,8 +101,8 @@ def __import_teams_csv(session):
                 )
                 session.add(t)
                 pbar.update()
-        return dict(success=True)
+        return Result.Ok()
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         session.rollback()
-        return dict(success=False, message=error)
+        return Result.Fail(error)

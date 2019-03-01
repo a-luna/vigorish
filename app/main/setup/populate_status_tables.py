@@ -3,6 +3,7 @@ from tqdm import tqdm
 from app.main.constants import SEASON_TYPE_DICT
 from app.main.models.season import Season
 from app.main.models.status_date import DateScrapeStatus
+from app.main.util.result import Result
 
 def populate_status_tables(session):
     try:
@@ -22,18 +23,8 @@ def populate_status_tables(session):
                     session.add(scrape_status)
                 pbar.update()
         session.commit()
-        return dict(success=True)
+        return Result.Ok()
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         session.rollback()
-        return dict(success=False, message=error)
-
-
-def __populate_scrape_status_date_table(session, season):
-    try:
-        
-        return dict(success=True)
-    except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
-        session.rollback()
-        return dict(success=False, message=error)
+        return Result.Fail(error)

@@ -17,10 +17,11 @@ from tqdm import tqdm
 
 from app.main.constants import DEFENSE_POSITIONS
 from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
-from app.main.util.scrape_functions import request_url, get_chromedriver
-from app.main.util.string_functions import fuzzy_match, normalize
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
+from app.main.util.result import Result
+from app.main.util.scrape_functions import request_url, get_chromedriver
+from app.main.util.string_functions import fuzzy_match, normalize
 
 from app.main.scrape.bbref.models.bat_stats import BBRefBatStats
 from app.main.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
@@ -191,13 +192,13 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
                     page = driver.page_source
                     response = html.fromstring(page, base_url=url)
                     result = __parse_bbref_boxscore(response, url)
-                    if not result['success']:
+                    if result.failure:
                         return result
-                    bbref_boxscore = result['result']
+                    bbref_boxscore = result.value
                     scraped_boxscores.append(bbref_boxscore)
                     player_match_log = bbref_boxscore.player_id_match_log
                     if player_match_log:
-                        player_name_match_logs.append(player_match_log)
+                        player_name_match_logs.extend(player_match_log)
 
                     time.sleep(random.uniform(2.5, 3.0))
                     parsing_boxscore = False
@@ -208,7 +209,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
                         pbar.set_description('Page failed to load, retrying')
                     else:
                         error = 'Unable to retrive URL content after {m} failed attempts, aborting task\n'.format(m=max_attempts)
-                        result = dict(success=False, message=error)
+                        result = Result.Fail(error)
                         error_occurred = True
                         parsing_boxscore = False
             if error_occurred:
@@ -220,15 +221,15 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
         with open(f'player_match_log_{date_str}.json', 'w') as f:
             matches = ''
-            for log in player_match_log:
+            for log in player_name_match_logs:
                 matches += str(log) + '\n'
             f.write(matches)
-    return dict(success=True, result=scraped_boxscores)
+    return Result.Ok(scraped_boxscores)
 
 def __parse_bbref_boxscore(response, url, silent=False):
     """Parse boxscore data from the page source."""
-    item = BBRefBoxscore()
-    item.boxscore_url = url
+    boxscore = BBRefBoxscore()
+    boxscore.boxscore_url = url
 
     if not silent:
         pbar = tqdm(total=4, ncols=100, unit='chunk', leave=False, position=2)
@@ -237,54 +238,54 @@ def __parse_bbref_boxscore(response, url, silent=False):
     game_id = _parse_bbref_gameid_from_url(url)
     if not game_id:
         error = 'Failed to parse game ID'
-        return dict(success=False, message=error)
-    item.bbref_game_id = game_id
+        return Result.Fail(error)
+    boxscore.bbref_game_id = game_id
 
     #print('\nBBRef Game ID..........: {gid}'.format(gid=game_id))
 
-    item.away_team_data = BBRefBoxscoreTeamData()
-    item.home_team_data = BBRefBoxscoreTeamData()
+    boxscore.away_team_data = BBRefBoxscoreTeamData()
+    boxscore.home_team_data = BBRefBoxscoreTeamData()
 
     away_team_id = _parse_away_team_id(response)
     if not away_team_id:
         error = 'Failed to parse away team ID'
-        return dict(success=False, message=error)
-    item.away_team_data.team_id_br = away_team_id
+        return Result.Fail(error)
+    boxscore.away_team_data.team_id_br = away_team_id
 
     #print('Away Team ID...........: {at}'.format(at=away_team_id))
 
     home_team_id = _parse_home_team_id(response)
     if not home_team_id:
         error = 'Failed to parse home team ID'
-        return dict(success=False, message=error)
-    item.home_team_data.team_id_br = home_team_id
+        return Result.Fail(error)
+    boxscore.home_team_data.team_id_br = home_team_id
 
     #print('Home Team ID...........: {ht}'.format(ht=home_team_id))
 
     away_team_runs = _parse_away_team_runs(response)
     if not away_team_runs:
         error = 'Failed to parse away team runs scored'
-        return dict(success=False, message=error)
-    item.away_team_data.total_runs_scored_by_team = away_team_runs
-    item.home_team_data.total_runs_scored_by_opponent = away_team_runs
+        return Result.Fail(error)
+    boxscore.away_team_data.total_runs_scored_by_team = away_team_runs
+    boxscore.home_team_data.total_runs_scored_by_opponent = away_team_runs
 
     #print('Away Team Runs Scored..: {ar}'.format(ar=away_team_runs))
 
     home_team_runs = _parse_home_team_runs(response)
     if not home_team_runs:
         error = 'Failed to parse home team runs scored'
-        return dict(success=False, message=error)
-    item.home_team_data.total_runs_scored_by_team = home_team_runs
-    item.away_team_data.total_runs_scored_by_opponent = home_team_runs
+        return Result.Fail(error)
+    boxscore.home_team_data.total_runs_scored_by_team = home_team_runs
+    boxscore.away_team_data.total_runs_scored_by_opponent = home_team_runs
 
     #print('Home Team Runs Scored..: {hr}'.format(hr=home_team_runs))
 
     away_team_record = _parse_away_team_record(response)
     if not away_team_record:
         error = 'Failed to parse away team record'
-        return dict(success=False, message=error)
-    item.away_team_data.total_wins_before_game = away_team_record[0]
-    item.away_team_data.total_losses_before_game = away_team_record[1]
+        return Result.Fail(error)
+    boxscore.away_team_data.total_wins_before_game = away_team_record[0]
+    boxscore.away_team_data.total_losses_before_game = away_team_record[1]
 
     #away_team_record_before_game = '{w}-{l}'.format(w=away_team_record[0], l=away_team_record[1])
     #print('Away Team Record.......: {at}'.format(at=away_team_record_before_game))
@@ -292,32 +293,32 @@ def __parse_bbref_boxscore(response, url, silent=False):
     home_team_record = _parse_home_team_record(response)
     if not home_team_record:
         error = 'Failed to parse home team record'
-        return dict(success=False, message=error)
-    item.home_team_data.total_wins_before_game = home_team_record[0]
-    item.home_team_data.total_losses_before_game = home_team_record[1]
+        return Result.Fail(error)
+    boxscore.home_team_data.total_wins_before_game = home_team_record[0]
+    boxscore.home_team_data.total_losses_before_game = home_team_record[1]
 
     #home_team_record_before_game = '{w}-{l}'.format(w=home_team_record[0], l=home_team_record[1])
     #print('Home Team Record.......: {ht}'.format(ht=home_team_record_before_game))
 
-    item.game_meta_info = BBRefBoxscoreMeta()
+    boxscore.game_meta_info = BBRefBoxscoreMeta()
     scorebox_meta_strings = response.xpath(_SCOREBOX_META_XPATH)
 
     attendance_matches = _parse_attendance_from_strings(scorebox_meta_strings)
     if attendance_matches is not None:
-        item.game_meta_info.attendance = attendance_matches['match']
+        boxscore.game_meta_info.attendance = attendance_matches['match']
         attendance_index = attendance_matches['index']
         del scorebox_meta_strings[attendance_index]
         #print('Attendance.............: {a}'.format(a=item.attendance))
     else:
-        item.game_meta_info.attendance = "0"
+        boxscore.game_meta_info.attendance = "0"
         #print('Attendance.............: Was not found on page')
 
     venue_matches = _parse_venue_from_strings(scorebox_meta_strings)
     if venue_matches is None:
         error = 'Failed to parse park name'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
-    item.game_meta_info.park_name = venue_matches['match']
+    boxscore.game_meta_info.park_name = venue_matches['match']
     venue_index = venue_matches['index']
     del scorebox_meta_strings[venue_index]
 
@@ -326,9 +327,9 @@ def __parse_bbref_boxscore(response, url, silent=False):
     game_duration_matches = _parse_game_duration_from_strings(scorebox_meta_strings)
     if game_duration_matches is None:
         error = 'Failed to parse game duration'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
-    item.game_meta_info.game_duration = game_duration_matches['match']
+    boxscore.game_meta_info.game_duration = game_duration_matches['match']
     game_duration_index = game_duration_matches['index']
     del scorebox_meta_strings[game_duration_index]
 
@@ -337,7 +338,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
     day_night_field = _parse_day_night_field_type_from_strings(scorebox_meta_strings)
     if day_night_field is None:
         error = 'Failed to parse game time/field type'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     split = day_night_field['match'].split(',')
     day_night_field_index = day_night_field['index']
@@ -345,10 +346,10 @@ def __parse_bbref_boxscore(response, url, silent=False):
 
     if len(split) < 2:
         error = 'Failed to parse game time/field type'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
-    item.game_meta_info.day_night = split[0].strip()
-    item.game_meta_info.field_type = split[1].strip().title()
+    boxscore.game_meta_info.day_night = split[0].strip()
+    boxscore.game_meta_info.field_type = split[1].strip().title()
 
     #print('Day/Night..............: {f}'.format(f=item.day_night))
     #print('Field Type.............: {f}'.format(f=item.field_type))
@@ -356,42 +357,42 @@ def __parse_bbref_boxscore(response, url, silent=False):
     first_pitch_weather = response.xpath(_FIRST_PITCH_WEATHER_XPATH)
     if not first_pitch_weather:
         error = 'Failed to parse first pitch weather info'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     split2 = first_pitch_weather[0].split(',')
     if len(split2) < 3:
         error = 'Failed to parse first pitch weather info'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
-    item.game_meta_info.first_pitch_temperature = split2[0].strip()[:2]
-    item.game_meta_info.first_pitch_wind = split2[1].strip()
-    item.game_meta_info.first_pitch_clouds = split2[2].strip().strip('.')
+    boxscore.game_meta_info.first_pitch_temperature = split2[0].strip()[:2]
+    boxscore.game_meta_info.first_pitch_wind = split2[1].strip()
+    boxscore.game_meta_info.first_pitch_clouds = split2[2].strip().strip('.')
 
     #print('Temperature............: {f}'.format(f=item.first_pitch_temperature))
     #print('Wind Speed.............: {f}'.format(f=item.first_pitch_wind))
     #print('Cloud Cover............: {f}'.format(f=item.first_pitch_clouds))
 
     if len(split2) > 3:
-        item.game_meta_info.first_pitch_precipitation = split2[3].strip().strip('.')
+        boxscore.game_meta_info.first_pitch_precipitation = split2[3].strip().strip('.')
         #print('Precipitation..........: {f}'.format(f=item.first_pitch_precipitation))
 
     away_team_linescore_totals = _parse_linescore_totals(response, away_team_id, False)
     if not away_team_linescore_totals:
         error = 'Failed to parse away team linescore totals'
-        return dict(success=False, message=error)
-    item.away_team_data.total_hits_by_team = away_team_linescore_totals.total_hits
-    item.away_team_data.total_errors_by_team = away_team_linescore_totals.total_errors
-    item.home_team_data.total_hits_by_opponent = away_team_linescore_totals.total_hits
-    item.home_team_data.total_errors_by_opponent = away_team_linescore_totals.total_errors
+        return Result.Fail(error)
+    boxscore.away_team_data.total_hits_by_team = away_team_linescore_totals.total_hits
+    boxscore.away_team_data.total_errors_by_team = away_team_linescore_totals.total_errors
+    boxscore.home_team_data.total_hits_by_opponent = away_team_linescore_totals.total_hits
+    boxscore.home_team_data.total_errors_by_opponent = away_team_linescore_totals.total_errors
 
     home_team_linescore_totals = _parse_linescore_totals(response, home_team_id, True)
     if not home_team_linescore_totals:
         error = 'Failed to parse home team linescore totals'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
-    item.home_team_data.total_hits_by_team = home_team_linescore_totals.total_hits
-    item.home_team_data.total_errors_by_team = home_team_linescore_totals.total_errors
-    item.away_team_data.total_hits_by_opponent = home_team_linescore_totals.total_hits
-    item.away_team_data.total_errors_by_opponent = home_team_linescore_totals.total_errors
+    boxscore.home_team_data.total_hits_by_team = home_team_linescore_totals.total_hits
+    boxscore.home_team_data.total_errors_by_team = home_team_linescore_totals.total_errors
+    boxscore.away_team_data.total_hits_by_opponent = home_team_linescore_totals.total_hits
+    boxscore.away_team_data.total_errors_by_opponent = home_team_linescore_totals.total_errors
 
     if not silent:
         pbar.update()
@@ -400,31 +401,31 @@ def __parse_bbref_boxscore(response, url, silent=False):
     result = response.xpath(_BATTING_STATS_TABLE)
     if not result or len(result) != 2:
         error = 'Failed to parse batting stats table'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     away_team_bat_table = result[0]
     home_team_bat_table = result[1]
 
     away_team_batter_name_dict = _parse_batter_name_dict(away_team_bat_table)
     if not away_team_batter_name_dict:
         error = 'Failed to parse away team batter name dictionary'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     away_team_batting_stats = _parse_batting_stats(away_team_bat_table, away_team_id, home_team_id)
     if not away_team_batting_stats:
         error = 'Failed to parse away team batting stats'
-        return dict(success=False, message=error)
-    item.away_team_data.batting_stats = away_team_batting_stats
+        return Result.Fail(error)
+    boxscore.away_team_data.batting_stats = away_team_batting_stats
 
     home_team_batter_name_dict = _parse_batter_name_dict(home_team_bat_table)
     if not home_team_batter_name_dict:
         error = 'Failed to parse home team batter name dictionary'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     home_team_batting_stats = _parse_batting_stats(home_team_bat_table, home_team_id, away_team_id)
     if not home_team_batting_stats:
         error = 'Failed to parse home team batting stats'
-        return dict(success=False, message=error)
-    item.home_team_data.batting_stats = home_team_batting_stats
+        return Result.Fail(error)
+    boxscore.home_team_data.batting_stats = home_team_batting_stats
 
     #print('Successfully parsed batting stats from BBRef boxscore page ({n} players total)'.format(n=len(batting_stats)))
     if not silent:
@@ -434,25 +435,25 @@ def __parse_bbref_boxscore(response, url, silent=False):
     result = response.xpath(_PITCHING_STATS_TABLE)
     if not result or len(result) != 2:
         error = 'Failed to parse pitching stats table'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     away_team_pitch_table = result[0]
     home_team_pitch_table = result[1]
 
     away_team_pitcher_name_dict = _parse_pitcher_name_dict(away_team_pitch_table)
     if not away_team_pitcher_name_dict:
         error = 'Failed to parse away team pitcher name dictionary'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     away_team_pitching_stats =  _parse_pitching_stats(away_team_pitch_table, away_team_id, home_team_id)
     if not away_team_pitching_stats:
         error = 'Failed to parse away team pitching stats'
-        return dict(success=False, message=error)
-    item.away_team_data.pitching_stats = away_team_pitching_stats
+        return Result.Fail(error)
+    boxscore.away_team_data.pitching_stats = away_team_pitching_stats
 
     home_team_pitcher_name_dict = _parse_pitcher_name_dict(home_team_pitch_table)
     if not home_team_pitcher_name_dict:
         error = 'Failed to parse home team pitcher name dictionary'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     batter_name_dict = {**away_team_batter_name_dict, **home_team_batter_name_dict}
     pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
     player_name_dict = {**batter_name_dict, **pitcher_name_dict}
@@ -460,8 +461,8 @@ def __parse_bbref_boxscore(response, url, silent=False):
     home_team_pitching_stats =  _parse_pitching_stats(home_team_pitch_table, home_team_id, away_team_id)
     if not home_team_pitching_stats:
         error = 'Failed to parse home team pitching stats'
-        return dict(success=False, message=error)
-    item.home_team_data.pitching_stats = home_team_pitching_stats
+        return Result.Fail(error)
+    boxscore.home_team_data.pitching_stats = home_team_pitching_stats
 
     #print('Successfully parsed pitching stats from BBRef boxscore page ({n} players total)'.format(n=len(pitching_stats)))
     if not silent:
@@ -471,16 +472,16 @@ def __parse_bbref_boxscore(response, url, silent=False):
     umpires = _parse_umpires(response)
     if not umpires:
         error = 'Failed to parse umpire info'
-        return dict(success=False, message=error)
-    item.umpires = umpires
+        return Result.Fail(error)
+    boxscore.umpires = umpires
 
     #_print_umpires(umpires)
 
     away_team_lineup = _parse_away_team_lineup(response)
     if not away_team_lineup:
         error = 'Failed to parse away team starting lineup'
-        return dict(success=False, message=error)
-    item.away_team_data.starting_lineup = away_team_lineup
+        return Result.Fail(error)
+    boxscore.away_team_data.starting_lineup = away_team_lineup
 
     #print('\n{at} Starting Lineup:'.format(at=away_team_id))
     #_print_lineup(away_team_lineup)
@@ -488,8 +489,8 @@ def __parse_bbref_boxscore(response, url, silent=False):
     home_team_lineup = _parse_home_team_lineup(response)
     if not home_team_lineup:
         error = 'Failed to parse home team starting lineup'
-        return dict(success=False, message=error)
-    item.home_team_data.starting_lineup = home_team_lineup
+        return Result.Fail(error)
+    boxscore.home_team_data.starting_lineup = home_team_lineup
 
     #print('\n{ht} Starting Lineup:'.format(ht=home_team_id))
     #_print_lineup(home_team_lineup)
@@ -497,26 +498,27 @@ def __parse_bbref_boxscore(response, url, silent=False):
     result = response.xpath(_PLAY_BY_PLAY_TABLE)
     if not result:
         error = 'Failed to parse play by play table'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     play_by_play_table = result[0]
 
     inning_summaries_top = _parse_inning_summary_top(play_by_play_table)
     if not inning_summaries_top:
         error = 'Failed to parse inning start summaries'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     inning_summaries_bottom = _parse_inning_summary_bottom(play_by_play_table)
     if not inning_summaries_bottom:
         error = 'Failed to parse inning end summaries'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
-    item.player_id_match_log = []
+    boxscore.player_id_match_log = []
     result = _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict)
-    if not result['success']:
-        error = 'Failed to parse in game substitutions'
-        return dict(success=False, message=error)
-    in_game_substitutions = result['sub_list']
-    item.player_id_match_log.extend(result['player_id_match_log'])
+    if result.failure:
+        error = f'Failed to parse in game substitutions:\n{result.error}'
+        return Result.Fail(error)
+    result_dict = result.value
+    in_game_substitutions = result_dict['sub_list']
+    boxscore.player_id_match_log.extend(result_dict['player_id_match_log'])
 
     result = _parse_play_by_play(
         play_by_play_table,
@@ -526,13 +528,12 @@ def __parse_bbref_boxscore(response, url, silent=False):
         away_team_id,
         home_team_id
     )
-    if not result['success']:
-        error = f"""rescrape_did_not_parse_play_by_play:\n
-            {result['message']}
-            """
-        return dict(success=False, message=error)
-    play_by_play_events = result['play_by_play']
-    item.player_id_match_log.extend(result['player_id_match_log'])
+    if result.failure:
+        error = f'rescrape_did_not_parse_play_by_play:\n{result.error}'
+        return Result.Fail(error)
+    result_dict = result.value
+    play_by_play_events = result_dict['play_by_play']
+    boxscore.player_id_match_log.extend(result_dict['player_id_match_log'])
 
     result = _create_innings_list(
         game_id,
@@ -541,10 +542,10 @@ def __parse_bbref_boxscore(response, url, silent=False):
         play_by_play_events,
         in_game_substitutions
     )
-    if not result['success']:
-        error = 'Failed to parse innnings list'
-        return dict(success=False, message=error)
-    item.innings_list = result['innings_list']
+    if result.failure:
+        error = f'Failed to parse innnings list:\n{result.error}'
+        return Result.Fail(error)
+    boxscore.innings_list = result.value
 
     #print('Sucessfully parsed play-by-play data from BBRef boxscore page ({n} events total)'.format(n=len(play_by_play)))
     if not silent:
@@ -554,18 +555,18 @@ def __parse_bbref_boxscore(response, url, silent=False):
     player_team_dict = _create_player_team_dict(play_by_play_events)
     if not player_team_dict:
         error = 'Player name was unmatched in play by play events'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     player_team_dict = _verify_all_players_in_dict(response, player_team_dict)
     if not player_team_dict:
         error = 'Player id was not found in play by play events'
-        return dict(success=False, message=error)
-    item.player_team_dict = player_team_dict
-    item.player_name_dict = player_name_dict
+        return Result.Fail(error)
+    boxscore.player_team_dict = player_team_dict
+    boxscore.player_name_dict = player_name_dict
 
     if not silent:
         pbar.close()
-    return dict(success=True, result=item)
+    return Result.Ok(boxscore)
 
 
 def _parse_attendance_from_strings(strings):
@@ -1047,52 +1048,56 @@ def _parse_play_by_play(response, game_id, batter_id_dict, pitcher_id_dict, away
                 play.team_pitching_id_br = away_team_id
         except IndexError as e:
             error = f'Error: {repr(e)}'
-            return dict(success=False, message=error)
+            return Result.Fail(error)
 
         try:
             pitcher_name = pbp_pitcher_name[i].replace(u'\xa0', u' ')
-            match_pitcher_result = _match_player_name_to_player_id(pitcher_name, pitcher_id_dict)
-            if not match_pitcher_result['success']:
-                return match_pitcher_result
-            if match_pitcher_result['match_type'] != 'Exact match':
-                player_id_match_log.append(match_pitcher_result['match_details'])
-            play.pitcher_id_br = match_pitcher_result['player_id']
+            result = _match_player_name_to_player_id(pitcher_name, pitcher_id_dict)
+            if result.failure:
+                return result
+            match_dict = result.value
+            if match_dict['match_type'] != 'Exact match':
+                player_id_match_log.append(match_dict['match_details'])
+            play.pitcher_id_br = match_dict['player_id']
         except Exception as e:
             error = f"""
             Exception occurred trying to match '{pitcher_name}' with a player_id:
             Error: {repr(e)}
             """
-            return dict(success=False, message=error)
+            return Result.Fail(error)
 
         try:
             batter_name = pbp_batter_name[i].replace(u'\xa0', u' ')
-            match_batter_result = _match_player_name_to_player_id(batter_name, batter_id_dict)
-            if not match_batter_result['success']:
-                return match_batter_result
-            if match_batter_result['match_type'] != 'Exact match':
-                player_id_match_log.append(match_batter_result['match_details'])
-            play.batter_id_br = match_batter_result['player_id']
+            result = _match_player_name_to_player_id(batter_name, batter_id_dict)
+            if result.failure:
+                return result
+            match_dict = result.value
+            if match_dict['match_type'] != 'Exact match':
+                player_id_match_log.append(match_dict['match_details'])
+            play.batter_id_br = match_dict['player_id']
         except Exception as e:
             error = f"""
             Exception occurred trying to match '{batter_name}' with a player_id:
             Error: {repr(e)}
             """
-            return dict(success=False, message=error)
+            return Result.Fail(error)
+
         play_by_play.append(play)
 
-    return dict(
-        success=True,
+    result_dict = dict(
         play_by_play=play_by_play,
         player_id_match_log=player_id_match_log
     )
+    return Result.Ok(result_dict)
 
 def _match_player_name_to_player_id(name, id_dict):
     try:
-        match_result = _match_player_id(name, id_dict)
-        if not match_result['success']:
-            return match_result
-        player_id = match_result['player_id']
-        match_type = match_result['match_type']
+        result = _match_player_id(name, id_dict)
+        if result.failure:
+            return result
+        match_dict = result.value
+        player_id = match_dict['player_id']
+        match_type = match_dict['match_type']
         match_details = None
         if match_type != 'Exact match':
             dict_swapped = {v:k for k,v in id_dict.items()}
@@ -1103,18 +1108,18 @@ def _match_player_name_to_player_id(name, id_dict):
                 matched_id=player_id,
                 matched_name=matched_name
             )
-        return dict(
-            success=True,
+        result = dict(
             player_id=player_id,
             match_type=match_type,
             match_details=match_details
         )
+        return Result.Ok(result)
     except Exception as e:
         error = f"""
         Exception occurred trying to match '{name}' with a player_id:
         Error: {repr(e)}
         """
-        return dict(succes=False, message=error)
+        return Result.Fail(error)
 
 def _create_player_team_dict(play_by_play):
     ids = []
@@ -1305,29 +1310,18 @@ def _parse_home_team_lineup(response):
 
 def _match_player_id(name, id_dict):
     if name in id_dict:
-        return dict(
-            success=True,
+        result = dict(
             match_type='Exact match',
             player_id=id_dict[name]
         )
-    dict_norm = {normalize(k):v for k,v in id_dict.items()}
-    name_norm = normalize(name)
-    if name_norm in dict_norm:
-        return dict(
-            success=True,
-            match_type='Normalized match',
-            player_id=dict_norm[name_norm]
-        )
-    (best_match, score) = fuzzy_match(name, id_dict.keys())
-    if best_match:
-        return dict(
-            success=True,
+    else:
+        (best_match, _) = fuzzy_match(name, id_dict.keys())
+        result = dict(
             match_type='Fuzzy match',
-            player_id=dict_norm[best_match]
+            player_id=id_dict[best_match]
         )
 
-    error = f'Unable to match name "{name}" with a player_id'
-    return dict(success=False, message=error)
+    return Result.Ok(result)
 
 def _parse_inning_summary_top(response):
     summaries = response.xpath(_PBP_INNING_SUMMARY_TOP_XPATH)
@@ -1370,7 +1364,7 @@ def _parse_in_game_substitutions(response, game_id, player_name_dict):
     row_numbers = response.xpath(_PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH)
     if row_numbers is None:
         error = 'No in game substitutions found in play-by-play table'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     sub_list = []
     player_id_match_log = []
@@ -1382,11 +1376,11 @@ def _parse_in_game_substitutions(response, game_id, player_name_dict):
             continue
 
         for i in range(0, len(sub_descriptions)):
-            s = sub_descriptions[i]
-            result = _parse_substitution_description(s.strip().replace(u'\xa0', u' '))
-            if not result['success']:
+            s = sub_descriptions[i].strip().replace(u'\xa0', u' ')
+            result = _parse_substitution_description(s)
+            if result.failure:
                 return result
-            sub_dict = result['result']
+            sub_dict = result.value
             substitution = BBRefInGameSubstitution()
             substitution.pbp_table_row_number = row_num
             substitution.sub_description = sub_dict['description']
@@ -1399,20 +1393,21 @@ def _parse_in_game_substitutions(response, game_id, player_name_dict):
                 sub_dict['outgoing_player_name'],
                 player_name_dict
             )
-            if not result['success']:
+            if result.failure:
                 return result
-            if result['player_id_match_log']:
-                player_id_match_log.extend(result['player_id_match_log'])
+            id_dict = result.value
+            if id_dict['player_id_match_log']:
+                player_id_match_log.extend(id_dict['player_id_match_log'])
 
-            substitution.outgoing_player_id_br = result['outgoing_player_id_br']
-            substitution.incoming_player_id_br = result['incoming_player_id_br']
+            substitution.outgoing_player_id_br = id_dict['outgoing_player_id_br']
+            substitution.incoming_player_id_br = id_dict['incoming_player_id_br']
             sub_list.append(substitution)
 
-    return dict(
-        success=True,
+    result = dict(
         sub_list=sub_list,
         player_id_match_log=player_id_match_log
     )
+    return Result.Ok(result)
 
 def _parse_substitution_description(sub_description):
     parsed_sub = {}
@@ -1429,7 +1424,7 @@ def _parse_substitution_description(sub_description):
         parsed_sub['outgoing_player_pos'] = split[0]
         parsed_sub['outgoing_player_name'] = 'N/A'
         parsed_sub['lineup_slot'] = 0
-        return dict(success=True, result=parsed_sub)
+        return Result.Ok(parsed_sub)
     elif 'pinch hits for' in sub_description:
         parsed_sub['incoming_player_pos'] = 'PH'
         split = [s.strip() for s in sub_description.split('pinch hits for')]
@@ -1440,11 +1435,11 @@ def _parse_substitution_description(sub_description):
         split = [s.strip() for s in sub_description.split('moves')]
     else:
         error = 'Substitution description was in an unrecognized format. (Before first split)'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     if not split or len(split) != 2:
         error = 'First split operation did not produce a list with length=2.'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     parsed_sub['incoming_player_name'] = split[0]
     remaining_description = split[1]
 
@@ -1458,28 +1453,28 @@ def _parse_substitution_description(sub_description):
             parsed_sub['outgoing_player_pos'] = match_dict['old_pos']
             parsed_sub['incoming_player_pos'] = match_dict['new_pos']
             parsed_sub['lineup_slot'] = 0
-            return dict(success=True, result=parsed_sub)
+            return Result.Ok(parsed_sub)
     elif remaining_description.endswith('pitching'):
         split2 = [s.strip() for s in remaining_description.split('pitching')]
         parsed_sub['outgoing_player_name'] = split2[0]
         parsed_sub['outgoing_player_pos'] = 'P'
         parsed_sub['incoming_player_pos'] = 'P'
         parsed_sub['lineup_slot'] = 0
-        return dict(success=True, result=parsed_sub)
+        return Result.Ok(parsed_sub)
     else:
         error = 'Substitution description was in an unrecognized format. (After first split)'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     if not split2 or len(split2) != 2:
         error = 'Second split operation did not produce a list with length=2.'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     remaining_description = split2[0]
     lineup_slot_str = split2[1]
 
     match = NUM_REGEX.search(lineup_slot_str)
     if not match:
         error = 'Failed to parse batting order number.'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     parsed_sub['lineup_slot'] = int(match.group())
 
     split3 = None
@@ -1489,11 +1484,11 @@ def _parse_substitution_description(sub_description):
         split3 = [s.strip() for s in remaining_description.split(match.group())]
         if not split3 or len(split3) != 2:
             error = 'Third split operation did not produce a list with length=2.'
-            return dict(success=False, message=error)
+            return Result.Fail(error)
         parsed_sub['outgoing_player_name'] = split3[0]
         remaining_description = split3[1]
     if not remaining_description:
-        return dict(success=True, result=parsed_sub)
+        return Result.Ok(parsed_sub)
 
     split4 = None
     if 'pitching' in remaining_description:
@@ -1501,7 +1496,7 @@ def _parse_substitution_description(sub_description):
         split4 = [s.strip() for s in remaining_description.split('pitching')]
         if not split4 or len(split4) != 2:
             error = 'Fourth split operation did not produce a list with length=2.'
-            return dict(success=False, message=error)
+            return Result.Fail(error)
         if 'outgoing_player_name' not in parsed_sub:
             parsed_sub['outgoing_player_name'] = split4[0]
         remaining_description = split4[1]
@@ -1510,7 +1505,7 @@ def _parse_substitution_description(sub_description):
         split4 = [s.strip() for s in remaining_description.split('playing')]
         if not split4 or len(split4) != 2:
             error = 'Fourth split operation did not produce a list with length=2.'
-            return dict(success=False, message=error)
+            return Result.Fail(error)
         if 'outgoing_player_name' not in parsed_sub:
             parsed_sub['outgoing_player_name'] = split4[0]
         remaining_description = split4[1]
@@ -1526,61 +1521,63 @@ def _parse_substitution_description(sub_description):
                 'Unable to find incoming player position in remaining description:\n'
                 f'remaining_description: {remaining_description}\n'
             )
-            return dict(success=False, message=error)
+            return Result.Fail(error)
 
     if 'outgoing_player_pos' not in parsed_sub:
         parsed_sub['outgoing_player_pos'] = parsed_sub['incoming_player_pos']
-    return dict(success=True, result=parsed_sub)
+    return Result.Ok(parsed_sub)
 
 def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_dict):
     player_id_match_log = []
     if outgoing_player_name != 'N/A':
         try:
-            match_result = _match_player_name_to_player_id(
+            result = _match_player_name_to_player_id(
                 outgoing_player_name,
                 player_name_dict
             )
-            if not match_result['success']:
-                return match_result
-            if match_result['match_type'] != 'Exact match':
-                player_id_match_log.append(match_result['match_details'])
-            outgoing_player_id_br = match_result['player_id']
+            if result.failure:
+                return result
+            match_dict = result.value
+            if match_dict['match_type'] != 'Exact match':
+                player_id_match_log.append(match_dict['match_details'])
+            outgoing_player_id_br = match_dict['player_id']
         except Exception as e:
             error = f"""
             Exception occurred trying to match '{outgoing_player_name}' with a player_id:
             Error: {repr(e)}
             """
-            return dict(success=False, message=error)
+            return Result.Fail(error)
 
     if incoming_player_name != 'N/A':
         try:
-            match_result = _match_player_name_to_player_id(
+            result = _match_player_name_to_player_id(
                 incoming_player_name,
                 player_name_dict
             )
-            if not match_result['success']:
-                return match_result
-            if match_result['match_type'] != 'Exact match':
-                player_id_match_log.append(match_result['match_details'])
-            incoming_player_id_br = match_result['player_id']
+            if result.failure:
+                return result
+            match_dict = result.value
+            if match_dict['match_type'] != 'Exact match':
+                player_id_match_log.append(match_dict['match_details'])
+            incoming_player_id_br = match_dict['player_id']
         except Exception as e:
             error = f"""
             Exception occurred trying to match '{incoming_player_name}' with a player_id:
             Error: {repr(e)}
             """
-            return dict(success=False, message=error)
+            return Result.Fail(error)
 
     if incoming_player_name == 'N/A':
         incoming_player_id_br = 'N/A'
     if outgoing_player_name == 'N/A':
         outgoing_player_id_br = 'N/A'
 
-    return dict(
-        success=True,
+    result = dict(
         incoming_player_id_br=incoming_player_id_br,
         outgoing_player_id_br=outgoing_player_id_br,
         player_id_match_log=player_id_match_log
     )
+    return Result.Ok(result)
 
 def _create_innings_list(
     game_id,
@@ -1591,7 +1588,7 @@ def _create_innings_list(
 ):
     if len(summaries_begin) != len(summaries_end):
         error = 'Begin inning and end inning summary list lengths do not match.'
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
     start_boundaries = sorted(summaries_begin.keys())
     end_boundaries = sorted(summaries_end.keys())
@@ -1645,14 +1642,7 @@ def _create_innings_list(
             inning.home_team_runs_after_inning = inning_totals['home_team_runs']
 
         innings_list.append(inning)
-    return dict(success=True, innings_list=innings_list)
-
-def _create_dict_list(objects):
-    dicts = []
-    for obj in objects:
-        d = obj.as_dict()
-        dicts.append(d)
-    return dicts
+    return Result.Ok(innings_list)
 
 def _print_lineup(lineup):
     for bat in lineup:
@@ -1665,20 +1655,3 @@ def _print_umpires(umpires):
     for i in range(0, len(umpires)):
         print('{pos}: {ump}'.format(pos=umpires[i].field_location, ump=umpires[i].umpire_name))
 
-def _print_dict(dict, name, use_tabs):
-    print('\n{n}:'.format(n=name))
-    if use_tabs:
-        tab = '\t'
-    else:
-        tab = ''
-    for name, val in dict.items():
-        print('{n}:{t} {v}'.format(n=name, t=tab, v=val))
-
-def _print_list(list, name):
-    print('\n{n}:'.format(n=name))
-    for index in range(0, len(list)):
-        if len(list) > 10 and index < 10:
-            sp = ' '
-        else:
-            sp = ''
-        print('{i}{s} {item}'.format(i=index, s=sp, item=list[index]))

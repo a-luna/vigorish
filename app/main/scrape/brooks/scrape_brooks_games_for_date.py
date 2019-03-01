@@ -13,6 +13,7 @@ from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.models.season import Season
 from app.main.util.dt_format_strings import DATE_ONLY
+from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import parse_timestamp
 
@@ -31,14 +32,14 @@ def scrape_brooks_games_for_date(scrape_dict):
     if not scrape_date:
         scrape_date = date.now()
     result = Season.is_date_in_season(session, scrape_date)
-    if not result['success']:
+    if result.failure:
         return result
 
     url = __get_dashboard_url_for_date(scrape_date)
     result = request_url(url)
-    if not result['success']:
+    if not result.failure:
         return result
-    response = result['response']
+    response = result.value
     return __parse_daily_dash_page(response, scrape_date, url)
 
 def __get_dashboard_url_for_date(scrape_date):
@@ -60,10 +61,10 @@ def __parse_daily_dash_page(response, scrape_date, url):
                 continue
 
             timestamp_str = gameinfo_list[1]
-            init_result = __init_gameinfo(timestamp_str, scrape_date)
-            if not init_result['success']:
-                return init_result
-            g = init_result['result']
+            result = __init_gameinfo(timestamp_str, scrape_date)
+            if result.failure:
+                return result
+            g = result.value
 
             xpath_pitchlog_urls = Template(TEMPL_XPATH_PITCHLOG_URLS)\
                 .substitute(r=row, g=game)
@@ -71,14 +72,14 @@ def __parse_daily_dash_page(response, scrape_date, url):
             if not pitchlog_urls:
                 continue
 
-            parse_result = __parse_pitch_log_dict(g, pitchlog_urls)
-            if not parse_result['success']:
-                return parse_result
-            g = parse_result['result']
+            result = __parse_pitch_log_dict(g, pitchlog_urls)
+            if result.failure:
+                return result
+            g = result.value
             games_for_date.games.append(g)
 
     games_for_date.game_count = len(games_for_date.games)
-    return dict(success=True, result=games_for_date)
+    return Result.Ok(games_for_date)
 
 def __init_gameinfo(timestamp_str, scrape_date):
     gameinfo = BrooksGameInfo()
@@ -94,15 +95,15 @@ def __init_gameinfo(timestamp_str, scrape_date):
     else:
         gameinfo.game_time_hour = 0
         gameinfo.game_time_minute = 0
-    return dict(success=True, result=gameinfo)
+    return Result.Ok(gameinfo)
 
 def __parse_pitch_log_dict(gameinfo, pitchlog_url_list):
     gameinfo.pitcher_appearance_count = len(pitchlog_url_list)
     url = pitchlog_url_list[0]
-    parse_gameinfo_result = __parse_gameinfo_from_url(gameinfo, url)
-    if not parse_gameinfo_result['success']:
-        return parse_gameinfo_result
-    gameinfo = parse_gameinfo_result['result']
+    result = __parse_gameinfo_from_url(gameinfo, url)
+    if result.failure:
+        return result
+    gameinfo = result.value
 
     gameinfo.pitcher_appearance_dict = {}
     for url in pitchlog_url_list:
@@ -112,9 +113,9 @@ def __parse_pitch_log_dict(gameinfo, pitchlog_url_list):
                 'Unable to parse pitcher_id from url query string:\n'
                 f'url: {url}'
             )
-            return dict(success=False, message=error)
+            return Result.Fail(error)
         gameinfo.pitcher_appearance_dict[pitcher_id] = url
-    return dict(success=True, result=gameinfo)
+    return Result.Ok(gameinfo)
 
 def __parse_gameinfo_from_url(gameinfo, url):
     gameid = __parse_gameid_from_url(url)
@@ -123,12 +124,12 @@ def __parse_gameinfo_from_url(gameinfo, url):
             'URL not in expected format, unable to retrieve value of '
             f'query parameter "game":\n{url}'
         )
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     gameinfo.bb_game_id = gameid
     gameinfo.away_team_id_bb = __parse_away_team_from_gameid(gameid)
     gameinfo.home_team_id_bb = __parse_home_team_from_gameid(gameid)
     gameinfo.game_number_this_day = __parse_game_number_from_gameid(gameid)
-    return dict(success=True, result=gameinfo)
+    return Result.Ok(gameinfo)
 
 def __parse_gameid_from_url(url):
     gameid = w3lib.url.url_query_parameter(url, "game")

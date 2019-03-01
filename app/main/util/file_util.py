@@ -9,6 +9,7 @@ from app.main.util.json_decoders import (
     decode_brooks_games_for_date, decode_bbref_games_for_date,
     decode_bbref_boxscore
 )
+from app.main.util.result import Result
 
 T_BROOKS_GAMESFORDATE_FILENAME = 'brooks_games_for_date_${date}.json'
 T_BBREF_GAMESFORDATE_FILENAME = 'bbref_games_for_date_${date}.json'
@@ -38,10 +39,10 @@ def write_json_dict_to_file(json_dict, filename, folderpath=None):
     filepath = folderpath / filename
     try:
         filepath.write_text(json_dict)
-        return dict(success=True, filepath=filepath)
+        return Result.Ok(filepath)
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
 def read_brooks_games_for_date_from_file(game_date, folderpath=None, delete_file=False):
     """Decode BrooksGamesForDate object from json file."""
@@ -56,7 +57,7 @@ def read_brooks_games_for_date_from_file(game_date, folderpath=None, delete_file
         return decode_brooks_games_for_date(json.loads(contents))
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
 def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=False):
     """Decode BBRefGamesForDate object from json file."""
@@ -71,7 +72,7 @@ def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=
         return decode_bbref_games_for_date(json.loads(contents))
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
 def read_bbref_boxscore_from_file(bbref_game_id, folderpath=None, delete_file=False):
     """Decode BBRefBoxscore object from file."""
@@ -85,4 +86,4 @@ def read_bbref_boxscore_from_file(bbref_game_id, folderpath=None, delete_file=Fa
         return decode_bbref_boxscore(json.loads(contents))
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
-        return dict(success=False, message=error)
+        return Result.Fail(error)

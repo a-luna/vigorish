@@ -17,6 +17,7 @@ from app.main.models.season import Season
 from app.main.setup.initialize_database import initialize_database
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
+from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
 from config import scrape_config_by_data_set
 
@@ -85,8 +86,8 @@ def setup(ctx):
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     result = initialize_database(session)
-    if not result['success']:
-        click.secho(result['message'], fg='red')
+    if result.failure:
+        click.secho(str(result), fg='red')
         session.close()
         return 1
     click.secho('Successfully populated database with initial data.\n', fg='green')
@@ -120,18 +121,18 @@ def scrape(ctx, data_set, start, end):
     """Scrape MLB data from websites."""
     session = ctx.obj['session']
     result = __validate_date_range(session, start, end)
-    if not result['success']:
-        click.secho(result['message'], fg='red')
+    if result.failure:
+        click.secho(str(result), fg='red')
         session.close()
         return 1
 
     scrape_config = scrape_config_by_data_set[data_set]
     result = __get_driver(scrape_config)
-    if not result['success']:
-        click.secho(result['message'], fg='red')
+    if result.failure:
+        click.secho(str(result), fg='red')
         session.close()
         return 1
-    driver = result['driver']
+    driver = result.value
 
     date_range = get_date_range(start, end)
     with tqdm(
@@ -150,7 +151,7 @@ def scrape(ctx, data_set, start, end):
                 scrape_config,
                 driver
             )
-            if not result['success']:
+            if result.failure:
                 break
             delay_ms = (randint(150, 250)/100.0)
             time.sleep(delay_ms)
@@ -160,8 +161,8 @@ def scrape(ctx, data_set, start, end):
     if scrape_config.requires_selenium:
         driver.close()
         driver.quit()
-    if not result['success']:
-        click.secho(result['message'], fg='red')
+    if result.failure:
+        click.secho(str(result), fg='red')
         return 1
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
@@ -180,7 +181,7 @@ def __validate_date_range(session, start, end):
             "Start and end dates must both be in the same year and within "
             "the scope of that year's MLB Regular Season."
         )
-        return dict(success=False, message=error)
+        return Result.Fail(error)
     if start > end:
         start_str = start.strftime(DATE_ONLY)
         end_str = end.strftime(DATE_ONLY)
@@ -189,44 +190,39 @@ def __validate_date_range(session, start, end):
             f'start_date: {start_str}\n'
             f'end_date: {end_str}'
         )
-        return dict(success=False, message=error)
-
+        return Result.Fail(error)
     season = Season.find_by_year(session, start.year)
-    start_date_valid = Season.is_date_in_season(session, start)['success']
-    end_date_valid = Season.is_date_in_season(session, end)['success']
+    start_date_valid = Season.is_date_in_season(session, start).success
+    end_date_valid = Season.is_date_in_season(session, end).success
     if not start_date_valid or not end_date_valid:
         error = (
             f"Start and end date must both be within the {season.name}:\n"
             f"season_start_date: {season.start_date_str}\n"
             f"season_end_date: {season.end_date_str}"
         )
-        return dict(success=False, message=error)
-    return dict(success=True)
+        return Result.Fail(error)
+    return Result.Ok()
 
 
 def __get_driver(scrape_config):
     if not scrape_config.requires_selenium:
-        return dict(success=True, driver=None)
-    result = get_chromedriver()
-    if not result['success']:
-        return result
-    driver = result['result']
-    return dict(success=True, driver=driver)
+        return Result.Ok()
+    return get_chromedriver()
 
 
 def __scrape_data_for_date(session, scrape_date, scrape_config, driver):
     input_dict = dict(date=scrape_date, session=session)
     if scrape_config.requires_input:
         result = scrape_config.get_input_function(scrape_date)
-        if not result['success']:
+        if result.failure:
             return result
-        input_dict['input_data'] = result['result']
+        input_dict['input_data'] = result.value
     if scrape_config.requires_selenium:
         input_dict['driver'] = driver
     result = scrape_config.scrape_function(input_dict)
-    if not result['success']:
+    if result.failure:
         return result
-    scraped_data = result['result']
+    scraped_data = result.value
     if scrape_config.produces_list:
         return __upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
     return scrape_config.persist_function(scraped_data, scrape_date)
@@ -245,12 +241,12 @@ def __upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
         for data in scraped_data:
             pbar.set_description(f'Uploading {data.upload_id}...')
             result = scrape_config.persist_function(data, scrape_date)
-            if not result['success']:
+            if result.failure:
                 return result
             delay_ms = (randint(50, 100)/100.0)
             time.sleep(delay_ms)
             pbar.update()
-    return dict(success=True)
+    return Result.Ok()
 
 if __name__ == '__main__':
     cli({})

@@ -10,8 +10,7 @@ def string_is_null_or_blank(s):
     return not s or s.isspace()
 
 def fuzzy_match(s, choices):
-    choices_norm = [normalize(c) for c in choices]
-    return process.extractOne(normalize(s), choices_norm)
+    return process.extractOne(s, choices)
 
 def normalize(s):
     for p in string.punctuation:

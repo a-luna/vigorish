@@ -7,6 +7,7 @@ from tqdm import tqdm
 from app.main.models.player import Player
 from app.main.models.player_id import PlayerId
 from app.main.util.numeric_functions import sanitize, is_nan
+from app.main.util.result import Result
 
 PLAYER_ID_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'csv/idmap.csv')
 PLAYER_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'csv/People.csv')
@@ -14,15 +15,15 @@ PLAYER_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'csv/People.csv')
 def populate_players(session):
     """Populate player_id and player tables with initial data."""
     result = __import_idmap_csv(session)
-    if not result['success']:
+    if result.failure:
         return result
     session.commit()
     result = __import_people_csv(session)
-    if not result['success']:
+    if result.failure:
         return result
     session.commit()
-    
-    return dict(success=True)
+
+    return Result.Ok()
 
 def __import_idmap_csv(session):
     try:
@@ -89,11 +90,11 @@ def __import_idmap_csv(session):
                 )
                 session.add(pid)
                 pbar.update()
-        return dict(success=True)
+        return Result.Ok()
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         session.rollback()
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
 def __import_people_csv(session):
     try:
@@ -164,9 +165,9 @@ def __import_people_csv(session):
                 )
                 session.add(p)
                 pbar.update()
-        return dict(success=True)
+        return Result.Ok()
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         session.rollback()
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 

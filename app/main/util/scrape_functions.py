@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 
+from app.main.util.result import Result
 
 def get_chromedriver(page_load_timeout=6000):
     """Initialize a Chrome webdriver instance with user-specified value for page load timeout."""
@@ -42,8 +43,8 @@ def get_chromedriver(page_load_timeout=6000):
                     f'Unable to initialize chromedriver after {max_attempts} '
                     f'failed attempts, aborting task.\nError: {error}'
                 )
-                return dict(success=False, message=message)
-    return dict(success=True, result=driver)
+                return Result.Fail(message)
+    return Result.Ok(driver)
 
 
 def request_url(url):
@@ -51,10 +52,10 @@ def request_url(url):
     try:
         page = requests.get(url)
         response = html.fromstring(page.content, base_url=url)
-        return dict(success=True, response=response)
+        return Result.Ok(response)
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
 
 def render_url(driver, url, max_attempts=100):
@@ -65,7 +66,7 @@ def render_url(driver, url, max_attempts=100):
             driver.get(url)
             page = driver.page_source
             response = html.fromstring(page, base_url=url)
-            return dict(success=True, response=response)
+            return Result.Ok(response)
         except Exception as e:
             attempts += 1
             exception_detail = 'Error: {r}'.format(r=repr(e))
@@ -76,4 +77,4 @@ def render_url(driver, url, max_attempts=100):
                     'Maximum number of attempts reached, unable to retrieve '
                     f'URL content\n{exception_detail}'
                 )
-                return dict(success=False, message=error)
+                return Result.Fail(error)

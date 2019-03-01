@@ -5,17 +5,18 @@ from app.main.models.player import Player
 from app.main.models.player_id import PlayerId
 from app.main.models.season import Season
 from app.main.models.team import Team
+from app.main.util.result import Result
 
 def create_relationships(session):
     result = __link_player_tables(session)
-    if not result['success']:
+    if result.failure:
         return result
     result = __link_teams_and_seasons(session)
-    if not result['success']:
+    if result.failure:
         return result
 
     session.commit()
-    return dict(success=True)
+    return Result.Ok()
 
 def __link_player_tables(session):
     try:
@@ -31,11 +32,11 @@ def __link_player_tables(session):
             player_id = PlayerId.find_by_mlb_id(session, p.mlb_id)
             if player_id:
                 player_id.db_player_id = p.id
-        return dict(success=True)
+        return Result.Ok()
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         session.rollback()
-        return dict(success=False, message=error)
+        return Result.Fail(error)
 
 def __link_teams_and_seasons(session):
     try:
@@ -58,8 +59,8 @@ def __link_teams_and_seasons(session):
                 team.regular_season_id = reg_season.id
             if post_season:
                 team.post_season_id = post_season.id
-        return dict(success=True)
+        return Result.Ok()
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         session.rollback()
-        return dict(success=False, message=error)
+        return Result.Fail(error)

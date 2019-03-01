@@ -3,14 +3,15 @@ from tqdm import tqdm
 
 from app.main.constants import SEASON_TYPE_DICT
 from app.main.models.season import Season
+from app.main.util.result import Result
 
 def populate_seasons(session):
     """Populate mlb_season table with initial data."""
     result = __add_mlb_seasons(session)
-    if not result['success']:
+    if result.failure:
         return result
     session.commit()
-    return dict(success=True)
+    return Result.Ok()
 
 def __add_mlb_seasons(session):
     try:
@@ -79,8 +80,8 @@ def __add_mlb_seasons(session):
             unit_scale=True
         ):
             session.add(season)
-        return dict(success=True)
+        return Result.Ok()
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         session.rollback()
-        return dict(success=False, message=error)
+        return Result.Fail(error)

@@ -9,6 +9,7 @@ from app.main.models.base import Base
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.list_functions import display_dict
+from app.main.util.result import Result
 
 
 class Season(Base):
@@ -75,14 +76,13 @@ class Season(Base):
                 f'Database does not contain info for MLB {season_type} '
                 f'{check_date.year}'
             )
-            return dict(success=False, message=error)
+            return Result.Fail(error)
 
         date_str = check_date.strftime(DATE_ONLY)
         if check_date < season.start_date or check_date > season.end_date:
             error = f'{date_str} is not within the scope of the {season.name}'
-            return dict(success=False, message=error)
-        message = f'{date_str} is within the scope of the {season.name}'
-        return dict(success=True, message=message, result=season)
+            return Result.Fail(error)
+        return Result.Ok(season)
 
     @classmethod
     def all_regular_seasons(cls, session):
