@@ -10,6 +10,7 @@ venv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+.pytest_cache
 
 # C extensions
 *.so
@@ -28,6 +29,7 @@ parts/
 sdist/
 var/
 *.egg-info/
+*.egg-info
 .installed.cfg
 *.egg
 

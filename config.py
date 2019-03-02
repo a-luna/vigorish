@@ -49,6 +49,7 @@ class BBRefPlayerScrapeConfig(ScrapeConfig):
 
 class BrooksGamesForDateScrapeConfig(ScrapeConfig):
     display_name = 'Games for date (brooksbaseball.com)'
+    requires_selenium = True
     scrape_function = scrape_brooks_games_for_date
     persist_function = upload_brooks_games_for_date
 

@@ -27,6 +27,7 @@ TEMPL_XPATH_PITCHLOG_URLS = (
 )
 
 def scrape_brooks_games_for_date(scrape_dict):
+    driver = scrape_dict['driver']
     scrape_date = scrape_dict['date']
     session = scrape_dict['session']
     if not scrape_date:
@@ -36,10 +37,9 @@ def scrape_brooks_games_for_date(scrape_dict):
         return result
 
     url = __get_dashboard_url_for_date(scrape_date)
-    result = request_url(url)
-    if not result.failure:
-        return result
-    response = result.value
+    driver.get(url)
+    page = driver.page_source
+    response = html.fromstring(page, base_url=url)
     return __parse_daily_dash_page(response, scrape_date, url)
 
 def __get_dashboard_url_for_date(scrape_date):
