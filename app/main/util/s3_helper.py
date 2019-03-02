@@ -2,6 +2,7 @@
 import errno
 import json
 import os
+from dateutil import parser
 from pathlib import Path
 from string import Template
 
@@ -23,6 +24,9 @@ from app.main.util.file_util import (
 from app.main.util.result import Result
 
 S3_BUCKET = 'vig-data'
+T_BROOKS_GAMESFORDATE_FOLDER = '${year}/brooks_games_for_date'
+T_BBREF_GAMESFORDATE_FOLDER = '${year}/bbref_games_for_date'
+T_BBREF_BOXSCORE_FOLDER = '${year}/bbref_boxscore'
 T_BROOKS_GAMESFORDATE_KEY = '${year}/brooks_games_for_date/${filename}'
 T_BBREF_GAMESFORDATE_KEY = '${year}/bbref_games_for_date/${filename}'
 T_BBREF_BOXSCORE_KEY = '${year}/bbref_boxscore/${filename}'
@@ -80,6 +84,26 @@ def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=
         delete_file=True
     )
 
+def get_all_brooks_dates_scraped(year):
+    s3_brooks_games_folder = Template(T_BROOKS_GAMESFORDATE_FOLDER).\
+        substitute(year=year)
+    bucket = boto3.resource('s3').Bucket(S3_BUCKET)
+    scraped_keys = [obj.key
+                    for obj
+                    in bucket.objects.all()
+                    if s3_brooks_games_folder in obj.key]
+
+    scraped_dates = []
+    for key in scraped_keys:
+        try:
+            date_str = Path(key).stem.split('_')[-1]
+            parsed_date = parser.parse(date_str)
+            scraped_dates.append(parsed_date)
+        except Exception as e:
+            error = 'Error: {error}'.format(error=repr(e))
+            return Result.Fail(error)
+    return Result.Ok(scraped_dates)
+
 def upload_bbref_games_for_date(games_for_date, scrape_date):
     """Upload a file to S3 containing json encoded BBRefGamesForDate object."""
     result = write_bbref_games_for_date_to_file(games_for_date)
@@ -129,6 +153,26 @@ def get_bbref_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=T
         folderpath=filepath.parent,
         delete_file=True
     )
+
+def get_all_bbref_dates_scraped(year):
+    s3_bbref_games_folder = Template(T_BBREF_GAMESFORDATE_FOLDER).\
+        substitute(year=year)
+    bucket = boto3.resource('s3').Bucket(S3_BUCKET)
+    scraped_keys = [obj.key
+                    for obj
+                    in bucket.objects.all()
+                    if s3_bbref_games_folder in obj.key]
+
+    scraped_dates = []
+    for key in scraped_keys:
+        try:
+            date_str = Path(key).stem.split('_')[-1]
+            parsed_date = parser.parse(date_str)
+            scraped_dates.append(parsed_date)
+        except Exception as e:
+            error = 'Error: {error}'.format(error=repr(e))
+            return Result.Fail(error)
+    return Result.Ok(scraped_dates)
 
 def upload_bbref_boxscore(boxscore, scrape_date):
     """Upload a file to S3 containing json encoded BBRefBoxscore object."""
@@ -182,3 +226,15 @@ def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True)
         folderpath=filepath.parent,
         delete_file=True
     )
+
+def get_all_bbref_boxscores_scraped(year):
+    s3_bbref_boxscores_folder = Template(T_BBREF_BOXSCORE_FOLDER).\
+        substitute(year=year)
+    bucket = boto3.resource('s3').Bucket(S3_BUCKET)
+    scraped_keys = [obj.key
+                    for obj
+                    in bucket.objects.all()
+                    if s3_bbref_boxscores_folder in obj.key]
+
+    scraped_gameids = [Path(key).stem for key in scraped_keys]
+    return Result.Ok(scraped_gameids)

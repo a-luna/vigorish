@@ -14,16 +14,16 @@ from tqdm import tqdm
 from app.main.constants import MLB_DATA_SETS
 from app.main.models.base import Base
 from app.main.models.season import Season
+from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
+from app.main.status.update_status import update_status_for_mlb_season
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
 from config import scrape_config_by_data_set
 
-#TODO New tables: SeasonScrapeStatus, DayScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PlayerScrapeStatus
-#TODO New setup processes: create entries in season and day scrapestatus tables.
-#TODO New cli command: vig status [YEAR, MONTH_YEAR, GAMEID, PLAYER]: generate a status report with completion percentages and total #s scraped,missing,imported for daily_game_totals, boxscores, pitchlogs, pitchfx, etc.
+#TODO New cli command: vig status [YEAR, MONTH+YEAR, GAMEID, PLAYER]: generate a status report with completion percentages and total #s scraped,missing,imported for daily_game_totals, boxscores, pitchlogs, pitchfx, etc.
 #TODO Create unit tests for all substitution parsing scenarios
 #TODO Track lineup changes to avoid the various name,pos=N/A and lineupslot=0 hacks introduced in order to get boxscores parsing successfully
 
@@ -90,6 +90,7 @@ def setup(ctx):
         click.secho(str(result), fg='red')
         session.close()
         return 1
+    refresh_all_mat_views(engine, session)
     click.secho('Successfully populated database with initial data.\n', fg='green')
     session.close()
     return 0
@@ -174,6 +175,23 @@ def scrape(ctx, data_set, start, end):
     click.secho(success, fg='green')
     return 0
 
+@cli.command()
+@click.pass_context
+def status(ctx):
+    """Scrape status of mlb data sets."""
+    engine = ctx.obj['engine']
+    session = ctx.obj['session']
+
+    result = update_status_for_mlb_season(session, 2018)
+    if result.failure:
+        click.secho(str(result), fg='red')
+        return 1
+    refresh_all_mat_views(engine, session)
+    mlb = Season.find_by_year(session, 2018)
+    mlb.display()
+
+    session.close()
+    return 0
 
 def __validate_date_range(session, start, end):
     if start.year != end.year:
