@@ -4,20 +4,27 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 README = (HERE / "README.md").read_text()
+DESCRIPTION = (
+    'Vigorish scrapes and stores MLB data, including detailed boxscores, '
+    'pitchfx measurements and player biographical info.'
+)
 
 setup(
     name='vigorish-lunaa',
     version='0.1.0',
-    description="""Vigorish scrapes and stores MLB data sets, including
-        detailed boxscores, pitchfx measurements and player biographical info.
-        """,
+    description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
-    keywords='mlb boxscore pitchfx baseball sports',
+    keywords='baseball mlb scrape boxscore pitchfx',
     url="https://github.com/a-luna/vigorish",
     author='Aaron Luna',
     author_email='aaronluna@gmail.com',
     license="MIT",
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+    ],
     py_modules=['vig'],
     install_requires=[
         'alembic',

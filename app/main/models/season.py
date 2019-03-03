@@ -70,19 +70,41 @@ class Season(Base):
             return self.mat_view.days_scraped_bbref_total
 
     @hybrid_property
+    def percent_complete_bbref_games_for_date(self):
+        if self.mat_view is not None:
+            if self.days_total and self.days_total > 0:
+                return self.days_scraped_bbref_total/float(self.days_total)
+
+    @hybrid_property
     def days_scraped_brooks_total(self):
         if self.mat_view is not None:
             return self.mat_view.days_scraped_brooks_total
 
     @hybrid_property
-    def games_bbref_total(self):
+    def percent_complete_brooks_games_for_date(self):
         if self.mat_view is not None:
-            return self.mat_view.games_bbref_total
+            if self.days_total and self.days_total > 0:
+                return self.days_scraped_brooks_total/float(self.days_total)
 
     @hybrid_property
-    def games_brooks_total(self):
+    def games_total_bbref(self):
         if self.mat_view is not None:
-            return self.mat_view.games_brooks_total
+            return self.mat_view.games_total_bbref
+
+    @hybrid_property
+    def games_total_brooks(self):
+        if self.mat_view is not None:
+            return self.mat_view.games_total_brooks
+
+    @hybrid_property
+    def pitch_app_total_bbref(self):
+        if self.mat_view is not None:
+            return self.mat_view.pitch_app_total_bbref
+
+    @hybrid_property
+    def pitch_app_total_brooks(self):
+        if self.mat_view is not None:
+            return self.mat_view.pitch_app_total_brooks
 
     @hybrid_property
     def boxscores_scraped_total(self):
@@ -104,16 +126,6 @@ class Season(Base):
         if self.mat_view is not None:
             return self.mat_view.pitch_logs_missing_total
 
-    @hybrid_property
-    def pitchfx_scraped_total(self):
-        if self.mat_view is not None:
-            return self.mat_view.pitchfx_scraped_total
-
-    @hybrid_property
-    def pitchfx_missing_total(self):
-        if self.mat_view is not None:
-            return self.mat_view.pitchfx_missing_total
-
     def __repr__(self):
         return (f'<Season(name="{self.name}", id={self.id})>')
 
@@ -122,15 +134,17 @@ class Season(Base):
         d['name'] = self.name
         d['days_total'] = self.days_total
         d['days_scraped_bbref_total'] = self.days_scraped_bbref_total
+        d['percent_complete_bbref_games_for_date'] = self.percent_complete_bbref_games_for_date
         d['days_scraped_brooks_total'] = self.days_scraped_brooks_total
-        d['games_bbref_total'] = self.games_bbref_total
-        d['games_brooks_total'] = self.games_brooks_total
+        d['percent_complete_brooks_games_for_date'] = self.percent_complete_brooks_games_for_date
+        d['games_total_bbref'] = self.games_total_bbref
+        d['games_total_brooks'] = self.games_total_brooks
+        d['pitch_app_total_bbref'] = self.pitch_app_total_bbref
+        d['pitch_app_total_brooks'] = self.pitch_app_total_brooks
         d['boxscores_scraped_total'] = self.boxscores_scraped_total
         d['boxscores_missing_total'] = self.boxscores_missing_total
         d['pitch_logs_scraped_total'] = self.pitch_logs_scraped_total
         d['pitch_logs_missing_total'] = self.pitch_logs_missing_total
-        d['pitchfx_scraped_total'] = self.pitchfx_scraped_total
-        d['pitchfx_missing_total'] = self.pitchfx_missing_total
         return d
 
     def display(self):
@@ -179,14 +193,14 @@ class SeasonStatusMV(MaterializedView):
             func.count(DateScrapeStatus.id).label('days_total'),
             func.sum(DateScrapeStatus.scraped_daily_dash_bbref).label('days_scraped_bbref_total'),
             func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label('days_scraped_brooks_total'),
-            func.sum(DateScrapeStatus.game_count_bbref).label('games_bbref_total'),
-            func.sum(DateScrapeStatus.game_count_brooks).label('games_brooks_total'),
+            func.sum(DateScrapeStatus.game_count_bbref).label('games_total_bbref'),
+            func.sum(DateScrapeStatus.game_count_brooks).label('games_total_brooks'),
+            func.sum(DateScrapeStatus.pitch_app_count_bbref).label('pitch_app_total_bbref'),
+            func.sum(DateScrapeStatus.pitch_app_count_brooks).label('pitch_app_total_brooks'),
             func.sum(DateScrapeStatus.scraped_boxscore_count).label('boxscores_scraped_total'),
             func.sum(DateScrapeStatus.missing_boxscore_count).label('boxscores_missing_total'),
             func.sum(DateScrapeStatus.scraped_pitch_logs_count).label('pitch_logs_scraped_total'),
             func.sum(DateScrapeStatus.missing_pitch_logs_count).label('pitch_logs_missing_total'),
-            func.sum(DateScrapeStatus.scraped_pitchfx_count).label('pitchfx_scraped_total'),
-            func.sum(DateScrapeStatus.missing_pitchfx_count).label('pitchfx_missing_total'),
         ]).select_from(join(
             Season,
             DateScrapeStatus,

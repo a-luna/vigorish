@@ -27,6 +27,7 @@ class ScrapeConfig:
     get_input_function = None
     scrape_function = None
     persist_function = None
+    populate_function = None
 
 class BBRefGamesForDateScrapeConfig(ScrapeConfig):
     display_name = 'Games for date (bbref.com)'

@@ -1,6 +1,6 @@
 import time
 
-from halo import Halo
+from tqdm import tqdm
 
 from app.main.models.season import Season
 from app.main.models.status_date import DateScrapeStatus
@@ -13,53 +13,44 @@ from app.main.util.s3_helper import (
 from app.main.util.result import Result
 
 def update_status_for_mlb_season(session, year):
-    spinner = Halo(text='Updating bbref_games_for_date...', spinner='dots', color='magenta')
-    spinner.start()
-
     result = get_all_bbref_dates_scraped(year)
     if result.failure:
-        spinner.fail('Error occurred')
         return result
     scraped_bbref_dates = result.value
 
     result = update_status_bbref_games_for_date(session, scraped_bbref_dates)
     if result.failure:
-        spinner.fail('Error occurred')
         return result
     session.commit()
 
-    spinner.text = 'Updating brooks_games_for_date...'
-    spinner.color = 'yellow'
-
     result = get_all_brooks_dates_scraped(year)
     if result.failure:
-        spinner.fail('Error occurred')
         return result
     scraped_brooks_dates = result.value
 
     result = update_status_brooks_games_for_date(session, scraped_brooks_dates)
     if result.failure:
-        spinner.fail('Error occurred')
         return result
     session.commit()
 
-    spinner.text = 'Updating bbref_boxscores...'
-    spinner.color = 'cyan'
-
     result = get_all_bbref_boxscores_scraped(year)
     if result.failure:
-        spinner.fail('Error occurred')
         return result
     scraped_bbref_gameids = result.value
 
     time.sleep(10)
-
-    spinner.succeed('Successfully updated status of all data sets')
-    spinner.stop()
     return Result.Ok()
 
 def update_status_bbref_games_for_date(session, scraped_bbref_dates):
-    for d in scraped_bbref_dates:
+    for d in tqdm(
+        scraped_bbref_dates,
+        desc='Updating bbref_games_for_date',
+        ncols=100,
+        unit='day',
+        mininterval=0.12,
+        maxinterval=5,
+        unit_scale=True
+    ):
         date_id = d.strftime(DATE_ONLY_TABLE_ID)
         date_status = session.query(DateScrapeStatus).get(date_id)
         if not date_status:
@@ -75,11 +66,18 @@ def update_status_bbref_games_for_date(session, scraped_bbref_dates):
 
         setattr(date_status, 'scraped_daily_dash_bbref', 1)
         setattr(date_status, 'game_count_bbref', game_count)
-        setattr(date_status, 'missing_boxscore_count', game_count)
     return Result.Ok()
 
 def update_status_brooks_games_for_date(session, scraped_brooks_dates):
-    for d in scraped_brooks_dates:
+    for d in tqdm(
+        scraped_brooks_dates,
+        desc='Updating bbref_games_for_date',
+        ncols=100,
+        unit='day',
+        mininterval=0.12,
+        maxinterval=5,
+        unit_scale=True
+    ):
         date_id = d.strftime(DATE_ONLY_TABLE_ID)
         date_status = session.query(DateScrapeStatus).get(date_id)
         if not date_status:
@@ -93,11 +91,14 @@ def update_status_brooks_games_for_date(session, scraped_brooks_dates):
         games_for_date = result.value
         game_count = games_for_date.game_count
 
-        pitch_log_count = 0
+        pitch_app_count = 0
         for g in games_for_date.games:
-            pitch_log_count += g.pitcher_appearance_count
+            pitch_app_count += g.pitcher_appearance_count
 
         setattr(date_status, 'scraped_daily_dash_brooks', 1)
         setattr(date_status, 'game_count_brooks', game_count)
-        setattr(date_status, 'missing_pitch_logs_count', pitch_log_count)
+        setattr(date_status, 'pitch_app_count_brooks', pitch_app_count)
     return Result.Ok()
+
+#def update_status_bbref_boxscores(session, scraped_game_ids):
+    
