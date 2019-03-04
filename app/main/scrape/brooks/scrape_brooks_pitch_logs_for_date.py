@@ -81,7 +81,13 @@ def __parse_pitch_logs_for_date(game):
                     response = result.value
                     result = __parse_pitch_log(response, game, pitcher_id, url)
                     if result.failure:
-                        return result
+                        if game.might_be_postponed:
+                            time.sleep(random.uniform(2.5, 3.0))
+                            parsing_pitch_log = False
+                            pbar.update()
+                            continue
+                        else:
+                            return result
                     brooks_pitch_log = result.value
                     scraped_pitch_logs.append(brooks_pitch_log)
                     time.sleep(random.uniform(2.5, 3.0))
