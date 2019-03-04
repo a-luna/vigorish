@@ -1,7 +1,5 @@
 import datetime
-import errno
 import json
-import os
 import random
 import re
 import time
@@ -171,7 +169,6 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         for url in boxscore_urls:
             max_attempts = 10
             attempts = 1
-            error_occurred = False
             parsing_boxscore = True
             while(parsing_boxscore):
                 try:
@@ -209,14 +206,8 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
                         pbar.set_description('Page failed to load, retrying')
                     else:
                         error = 'Unable to retrive URL content after {m} failed attempts, aborting task\n'.format(m=max_attempts)
-                        result = Result.Fail(error)
-                        error_occurred = True
-                        parsing_boxscore = False
-            if error_occurred:
-                break
+                        return Result.Fail(error)
 
-    if error_occurred:
-        return result
     if player_name_match_logs:
         date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
         with open(f'player_match_log_{date_str}.json', 'w') as f:
