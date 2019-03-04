@@ -584,14 +584,11 @@ def _parse_attendance_from_strings(strings):
 
 def _parse_venue_from_strings(strings):
     venue_terms = ['stadium', 'park', 'field', 'coliseum', 'centre', 'estadio']
-    matches = []
     for i in range(0, len(strings)):
         for t in venue_terms:
             if t in strings[i].lower():
                 d = {"match": strings[i][2:], "index": i}
-                matches.append(d)
-    if len(matches) == 1:
-        return matches[0]
+                return d
     return None
 
 
