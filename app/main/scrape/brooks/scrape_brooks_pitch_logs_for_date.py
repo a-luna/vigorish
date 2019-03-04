@@ -38,7 +38,7 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
         unit='game',
         mininterval=0.12,
         maxinterval=10,
-        leave=True,
+        leave=False,
         position=1
     ) as pbar:
         for game in games_for_date.games:
@@ -65,7 +65,7 @@ def __parse_pitch_logs_for_date(game):
         unit='pitch_log',
         mininterval=0.12,
         maxinterval=10,
-        leave=True,
+        leave=False,
         position=2
     ) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
