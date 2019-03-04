@@ -1410,6 +1410,8 @@ def _parse_substitution_description(sub_description):
     parsed_sub = {}
     parsed_sub['description'] = sub_description
     split = None
+    pre_split = [s.strip() for s in sub_description.split('(change occurred mid-batter)')]
+    sub_description = pre_split[0]
     if 'replaces' in sub_description:
         split = [s.strip() for s in sub_description.split('replaces')]
     elif 'pinch hit for' and 'and is now' in sub_description:
