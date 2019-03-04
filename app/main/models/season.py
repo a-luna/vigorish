@@ -97,6 +97,11 @@ class Season(Base):
             return self.mat_view.games_total_brooks
 
     @hybrid_property
+    def might_be_postponed_total_brooks(self):
+        if self.mat_view is not None:
+            return self.mat_view.might_be_postponed_total_brooks
+
+    @hybrid_property
     def pitch_app_total_bbref(self):
         if self.mat_view is not None:
             return self.mat_view.pitch_app_total_bbref
@@ -139,6 +144,7 @@ class Season(Base):
         d['percent_complete_brooks_games_for_date'] = self.percent_complete_brooks_games_for_date
         d['games_total_bbref'] = self.games_total_bbref
         d['games_total_brooks'] = self.games_total_brooks
+        d['might_be_postponed_total_brooks'] = self.might_be_postponed_total_brooks
         d['pitch_app_total_bbref'] = self.pitch_app_total_bbref
         d['pitch_app_total_brooks'] = self.pitch_app_total_brooks
         d['boxscores_scraped_total'] = self.boxscores_scraped_total
@@ -195,6 +201,7 @@ class SeasonStatusMV(MaterializedView):
             func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label('days_scraped_brooks_total'),
             func.sum(DateScrapeStatus.game_count_bbref).label('games_total_bbref'),
             func.sum(DateScrapeStatus.game_count_brooks).label('games_total_brooks'),
+            func.sum(DateScrapeStatus.might_be_postponed_count_brooks).label('might_be_postponed_total_brooks'),
             func.sum(DateScrapeStatus.pitch_app_count_bbref).label('pitch_app_total_bbref'),
             func.sum(DateScrapeStatus.pitch_app_count_brooks).label('pitch_app_total_brooks'),
             func.sum(DateScrapeStatus.scraped_boxscore_count).label('boxscores_scraped_total'),

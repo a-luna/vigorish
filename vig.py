@@ -170,7 +170,7 @@ def scrape(ctx, data_set, start, end):
     success = (
         'Requested data was successfully scraped:\n'
         f'data set....: {scrape_config.display_name}\n'
-        f'date range..: {start_str} - {end_str}'
+        f'date range..: {start_str} - {end_str}\n'
     )
     click.secho(success, fg='green')
     return 0
@@ -189,7 +189,6 @@ def status(ctx):
     refresh_all_mat_views(engine, session)
     mlb = Season.find_by_year(session, 2018)
     mlb.display()
-
     session.close()
     return 0
 

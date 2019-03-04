@@ -39,6 +39,7 @@ def decode_brooks_game_info(json_dict):
     if '__brooks_game_info__' in json_dict:
         try:
             gameinfo = BrooksGameInfo()
+            gameinfo.might_be_postponed = json_dict['might_be_postponed']
             gameinfo.game_date_year = json_dict['game_date_year']
             gameinfo.game_date_month = json_dict['game_date_month']
             gameinfo.game_date_day = json_dict['game_date_day']
@@ -46,6 +47,7 @@ def decode_brooks_game_info(json_dict):
             gameinfo.game_time_minute = json_dict['game_time_minute']
             gameinfo.time_zone_name = json_dict['time_zone_name']
             gameinfo.bb_game_id = json_dict['bb_game_id']
+            gameinfo.bbref_game_id = json_dict['bbref_game_id']
             gameinfo.away_team_id_bb = json_dict['away_team_id_bb']
             gameinfo.home_team_id_bb = json_dict['home_team_id_bb']
             gameinfo.game_number_this_day = json_dict['game_number_this_day']

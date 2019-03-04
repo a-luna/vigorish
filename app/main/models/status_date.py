@@ -16,6 +16,7 @@ class DateScrapeStatus(Base):
     scraped_daily_dash_brooks = Column(Integer, default=0)
     game_count_bbref = Column(Integer, default=0)
     game_count_brooks = Column(Integer, default=0)
+    might_be_postponed_count_brooks = Column(Integer, default=0)
     pitch_app_count_bbref = Column(Integer, default=0)
     pitch_app_count_brooks = Column(Integer, default=0)
     scraped_all_boxscores = Column(Boolean, default=False)

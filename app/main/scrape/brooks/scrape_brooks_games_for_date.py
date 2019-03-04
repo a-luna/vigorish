@@ -12,7 +12,7 @@ from app.main.constants import (
 from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.models.season import Season
-from app.main.util.dt_format_strings import DATE_ONLY
+from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import parse_timestamp
@@ -24,6 +24,10 @@ TEMPL_XPATH_GAMEINFO = (
 TEMPL_XPATH_PITCHLOG_URLS = (
     '//table//tr[${r}]//td[@class="dashcell"][${g}]'
     '//a[text()="Game Log"]/@href'
+)
+TEMPL_XPATH_K_ZONE_URL = (
+    '//table//tr[${r}]//td[@class="dashcell"][${g}]'
+    '//a[text()="Strikezone Map"]/@href'
 )
 
 def scrape_brooks_games_for_date(scrape_dict):
@@ -39,6 +43,8 @@ def scrape_brooks_games_for_date(scrape_dict):
     url = __get_dashboard_url_for_date(scrape_date)
     driver.get(url)
     page = driver.page_source
+    with open('test.xml', 'w') as f:
+        f.write(page)
     response = html.fromstring(page, base_url=url)
     return __parse_daily_dash_page(response, scrape_date, url)
 
@@ -70,6 +76,10 @@ def __parse_daily_dash_page(response, scrape_date, url):
                 .substitute(r=row, g=game)
             pitchlog_urls = response.xpath(xpath_pitchlog_urls)
             if not pitchlog_urls:
+                result = __game_with_no_pitch_logs(response, g, row, game)
+                g.might_be_postponed = True
+                g.pitcher_appearance_count = 0
+                games_for_date.games.append(g)
                 continue
 
             result = __parse_pitch_log_dict(g, pitchlog_urls)
@@ -79,10 +89,13 @@ def __parse_daily_dash_page(response, scrape_date, url):
             games_for_date.games.append(g)
 
     games_for_date.game_count = len(games_for_date.games)
+    __update_game_ids(games_for_date)
+
     return Result.Ok(games_for_date)
 
 def __init_gameinfo(timestamp_str, scrape_date):
     gameinfo = BrooksGameInfo()
+    gameinfo.might_be_postponed = False
     gameinfo.game_date_year = scrape_date.year
     gameinfo.game_date_month = scrape_date.month
     gameinfo.game_date_day = scrape_date.day
@@ -97,8 +110,16 @@ def __init_gameinfo(timestamp_str, scrape_date):
         gameinfo.game_time_minute = 0
     return Result.Ok(gameinfo)
 
+def __game_with_no_pitch_logs(response, gameinfo, row , game):
+    xpath_k_zone_urls = Template(TEMPL_XPATH_K_ZONE_URL)\
+        .substitute(r=row, g=game)
+    k_zone_urls = response.xpath(xpath_k_zone_urls)
+    return __parse_gameinfo_from_url(gameinfo, k_zone_urls[0])
+
 def __parse_pitch_log_dict(gameinfo, pitchlog_url_list):
     gameinfo.pitcher_appearance_count = len(pitchlog_url_list)
+    if len(pitchlog_url_list) == 2:
+        gameinfo.might_be_postponed = True
     url = pitchlog_url_list[0]
     result = __parse_gameinfo_from_url(gameinfo, url)
     if result.failure:
@@ -168,3 +189,25 @@ def __parse_pitcherid_from_url(url):
     if not pitcherid.endswith(".xml"):
         return None
     return pitcherid[:-4]
+
+def __update_game_ids(games_for_date):
+    game_dict = {g.bb_game_id:g for g in games_for_date.games}
+    tracker = {g.bb_game_id:False for g in games_for_date.games}
+    ids_ordered = sorted(game_dict.keys(), reverse=True)
+    for bb_gid in ids_ordered:
+        if tracker[bb_gid]:
+            continue
+        g = game_dict[bb_gid]
+        game_date = datetime(g.game_date_year, g.game_date_month, g.game_date_day)
+        date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
+
+        if g.game_number_this_day == '2':
+            g.bbref_game_id = f'{g.home_team_id_bb}{date_str}2'
+            game_1_bb_id = f'{bb_gid[:-1]}{1}'
+            game_1 = game_dict[game_1_bb_id]
+            game_1.bbref_game_id = f'{g.home_team_id_bb}{date_str}1'
+            tracker[bb_gid] = True
+            tracker[game_1_bb_id] = True
+        else:
+            g.bbref_game_id = f'{g.home_team_id_bb}{date_str}0'
+            tracker[bb_gid] = True
