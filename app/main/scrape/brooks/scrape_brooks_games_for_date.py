@@ -43,8 +43,6 @@ def scrape_brooks_games_for_date(scrape_dict):
     url = __get_dashboard_url_for_date(scrape_date)
     driver.get(url)
     page = driver.page_source
-    with open('test.xml', 'w') as f:
-        f.write(page)
     response = html.fromstring(page, base_url=url)
     return __parse_daily_dash_page(response, scrape_date, url)
 

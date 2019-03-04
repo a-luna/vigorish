@@ -23,7 +23,7 @@ class BrooksGamesForDate():
 
     def as_json(self):
         """Convert daily game list to JSON."""
-        return json.dumps(self.as_dict(), indent=2, sort_keys=True)
+        return json.dumps(self.as_dict(), indent=2)
 
     @staticmethod
     def _flatten(objects):

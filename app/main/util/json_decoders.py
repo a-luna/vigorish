@@ -16,6 +16,8 @@ from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineu
 from app.main.scrape.bbref.models.umpire import BBRefUmpire
 from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.scrape.brooks.models.game_info import BrooksGameInfo
+from app.main.scrape.brooks.models.pitch_log import BrooksPitchLog
+from app.main.scrape.brooks.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from app.main.util.result import Result
 
 
@@ -359,6 +361,46 @@ def decode_bbref_pbp_substitution(json_dict):
             substitution.outgoing_player_pos = json_dict['outgoing_player_pos']
             substitution.lineup_slot = json_dict['lineup_slot']
             return Result.Ok(substitution)
+        except Exception as e:
+            error = f'Error: {repr(e)}'
+            return Result.Fail(error)
+
+def decode_brooks_pitch_logs_for_game(json_dict):
+    if '__brooks_pitch_logs_for_game__' in json_dict:
+        try:
+            pitch_logs_for_game = BrooksPitchLogsForGame()
+            pitch_logs_for_game.bb_game_id = json_dict['bb_game_id']
+            pitch_logs_for_game.bbref_game_id = json_dict['bbref_game_id']
+            pitch_logs_for_game.pitch_log_count = json_dict['pitch_log_count']
+
+            pitch_logs_for_game.pitch_logs = []
+            for log in json_dict['pitch_logs']:
+                result = decode_brooks_pitch_log(log)
+                if result.failure:
+                    return result
+                pitch_logs_for_game.pitch_logs.append(result.value)
+
+            return Result.Ok(pitch_logs_for_game)
+        except Exception as e:
+            error = f'Error: {repr(e)}'
+            return Result.Fail(error)
+
+def decode_brooks_pitch_log(json_dict):
+    if '__brooks_pitch_log__' in json_dict:
+        try:
+            pitch_log = BrooksPitchLog()
+            pitch_log.pitcher_name = json_dict['pitcher_name']
+            pitch_log.pitcher_id_mlb = json_dict['pitcher_id_mlb']
+            pitch_log.pitch_app_id = json_dict['pitch_app_id']
+            pitch_log.total_pitch_count = json_dict['total_pitch_count']
+            pitch_log.pitch_count_by_inning = json_dict['total_pitch_count']
+            pitch_log.pitcher_team_id_bb = json_dict['pitcher_team_id_bb']
+            pitch_log.opponent_team_id_bb = json_dict['opponent_team_id_bb']
+            pitch_log.bb_game_id = json_dict['bb_game_id']
+            pitch_log.bbref_game_id = json_dict['bbref_game_id']
+            pitch_log.pitchfx_url = json_dict['pitchfx_url']
+            pitch_log.pitch_log_url = json_dict['pitch_log_url']
+            return Result.Ok(pitch_log)
         except Exception as e:
             error = f'Error: {repr(e)}'
             return Result.Fail(error)

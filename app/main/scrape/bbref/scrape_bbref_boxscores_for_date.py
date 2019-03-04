@@ -163,7 +163,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         unit='boxscore',
         mininterval=0.12,
         maxinterval=10,
-        leave=False,
+        leave=True,
         position=1
     ) as pbar:
         for url in boxscore_urls:
