@@ -1515,6 +1515,9 @@ def _parse_substitution_description(sub_description):
     elif 'pinch hit' in sub_description:
         parsed_sub['outgoing_player_name'] = remaining_description
         parsed_sub['outgoing_player_pos'] = 'PH'
+    elif 'pinch run' in sub_description:
+        parsed_sub['outgoing_player_name'] = remaining_description
+        parsed_sub['outgoing_player_pos'] = 'PR'
 
     if 'outgoing_player_pos' not in parsed_sub:
         parsed_sub['outgoing_player_pos'] = parsed_sub['incoming_player_pos']
