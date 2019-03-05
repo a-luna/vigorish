@@ -43,7 +43,7 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
     ) as pbar:
         for game in games_for_date.games:
             pbar.set_description(f'Processing {game.bbref_game_id}..')
-            result = __parse_pitch_logs_for_date(game)
+            result = __parse_pitch_logs_for_game(game)
             if result.failure:
                 return result
             brooks_pitch_logs = result.value
@@ -51,7 +51,7 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
             pbar.update()
     return Result.Ok(scraped_games)
 
-def __parse_pitch_logs_for_date(game):
+def __parse_pitch_logs_for_game(game):
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game.bb_game_id
     pitch_logs_for_game.bbref_game_id = game.bbref_game_id
@@ -112,13 +112,6 @@ def __parse_pitch_log(response, game, pitcher_id, url):
     pitch_log.bbref_game_id = game.bbref_game_id
     pitch_log.pitch_log_url = url
 
-    parsed = response.xpath(PITCHFX_URL_XPATH)
-    if not parsed:
-        error = 'Failed to parse pitchfx URL from game log page.'
-        return Result.Fail(error)
-    rel_url = parsed[0]
-    pitch_log.pitchfx_url = Template(T_PITCHFX_URL).substitute(rel_url=rel_url)
-
     result = __parse_pitcher_details(response, game, pitcher_id)
     if result.failure:
         return result
@@ -127,9 +120,15 @@ def __parse_pitch_log(response, game, pitcher_id, url):
     pitch_log.pitcher_team_id_bb = pitcher_dict['team_id']
     pitch_log.opponent_team_id_bb = pitcher_dict['opponent_id']
 
+    parsed = response.xpath(PITCHFX_URL_XPATH)
+    if not parsed:
+        return Result.Ok(pitch_log)
+    rel_url = parsed[0]
+    pitch_log.pitchfx_url = Template(T_PITCHFX_URL).substitute(rel_url=rel_url)
+
     result = __parse_pitch_counts(response)
     if result.failure:
-        return result
+        return Result.Ok(pitch_log)
     pitch_log.pitch_count_by_inning = result.value
 
     total_pitches = 0
