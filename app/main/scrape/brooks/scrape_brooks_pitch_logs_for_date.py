@@ -114,7 +114,7 @@ def __parse_pitch_log(response, game, pitcher_id, url):
 
     result = __parse_pitcher_details(response, game, pitcher_id)
     if result.failure:
-        return result
+        return Result.Ok(pitch_log)
     pitcher_dict = result.value
     pitch_log.pitcher_name = pitcher_dict['name']
     pitch_log.pitcher_team_id_bb = pitcher_dict['team_id']
@@ -164,7 +164,7 @@ def __parse_pitcher_details(response, game, pitcher_id):
         return result
     id_dict = result.value
     pitcher_dict = dict(
-        name=name, 
+        name=name,
         team_id=id_dict['team_id'],
         opponent_id=id_dict['opponent_id'],
     )
