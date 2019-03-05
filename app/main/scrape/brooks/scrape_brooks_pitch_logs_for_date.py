@@ -106,6 +106,7 @@ def __parse_pitch_logs_for_game(game):
 
 def __parse_pitch_log(response, game, pitcher_id, url):
     pitch_log = BrooksPitchLog()
+    pitch_log.parsed_all_info = False
     pitch_log.pitcher_id_mlb = pitcher_id
     pitch_log.pitch_app_id = str(uuid.uuid4())
     pitch_log.bb_game_id = game.bb_game_id
@@ -135,6 +136,7 @@ def __parse_pitch_log(response, game, pitcher_id, url):
     for count in pitch_log.pitch_count_by_inning.values():
             total_pitches += count
     pitch_log.total_pitch_count = total_pitches
+    pitch_log.parsed_all_info = True
 
     return Result.Ok(pitch_log)
 

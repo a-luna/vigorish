@@ -3,6 +3,7 @@
 class BrooksPitchLog():
     """A single pitching appearance scraped from brooksbaseball.com."""
 
+    parsed_all_info = None
     pitcher_name = ""
     pitcher_id_mlb = ""
     pitch_app_id = ""
@@ -19,6 +20,7 @@ class BrooksPitchLog():
         """Convert pitch log to a dictionary."""
         dict = {
             "__brooks_pitch_log__": True,
+            "parsed_all_info": self.parsed_all_info,
             "pitcher_name": "{}".format(self.pitcher_name),
             "pitcher_id_mlb": int(self.pitcher_id_mlb),
             "pitch_app_id": "{}".format(self.pitch_app_id),

@@ -389,6 +389,7 @@ def decode_brooks_pitch_log(json_dict):
     if '__brooks_pitch_log__' in json_dict:
         try:
             pitch_log = BrooksPitchLog()
+            pitch_log.parsed_all_info = json_dict['parsed_all_info']
             pitch_log.pitcher_name = json_dict['pitcher_name']
             pitch_log.pitcher_id_mlb = json_dict['pitcher_id_mlb']
             pitch_log.pitch_app_id = json_dict['pitch_app_id']
