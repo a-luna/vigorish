@@ -105,14 +105,7 @@ def __parse_pitch_logs_for_game(game):
     return Result.Ok(pitch_logs_for_game)
 
 def __parse_pitch_log(response, game, pitcher_id, url):
-    pitch_log = BrooksPitchLog()
-    pitch_log.parsed_all_info = False
-    pitch_log.pitcher_id_mlb = pitcher_id
-    pitch_log.pitch_app_id = str(uuid.uuid4())
-    pitch_log.bb_game_id = game.bb_game_id
-    pitch_log.bbref_game_id = game.bbref_game_id
-    pitch_log.pitch_log_url = url
-
+    pitch_log = __initialize_pitch_log(game, pitcher_id, url)
     result = __parse_pitcher_details(response, game, pitcher_id)
     if result.failure:
         return Result.Ok(pitch_log)
@@ -140,6 +133,21 @@ def __parse_pitch_log(response, game, pitcher_id, url):
 
     return Result.Ok(pitch_log)
 
+def __initialize_pitch_log(game, pitcher_id, url):
+    pitch_log = BrooksPitchLog()
+    pitch_log.parsed_all_info = False
+    pitch_log.pitcher_id_mlb = pitcher_id
+    pitch_log.pitch_app_id = str(uuid.uuid4())
+    pitch_log.bb_game_id = game.bb_game_id
+    pitch_log.bbref_game_id = game.bbref_game_id
+    pitch_log.pitch_log_url = url
+    pitch_log.pitcher_name = ''
+    pitch_log.pitcher_team_id_bb = ''
+    pitch_log.opponent_team_id_bb = ''
+    pitch_log.pitchfx_url = ''
+    pitch_log.pitch_count_by_inning = {}
+    pitch_log.total_pitch_count = 0
+    return pitch_log
 
 def __parse_pitcher_details(response, game, pitcher_id):
     query = Template(T_PITCHER_NAME_XPATH).substitute(id=pitcher_id)
