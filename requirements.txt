@@ -1,4 +1,4 @@
 --index-url https://pypi.python.org/simple/
 
--e git+https://aaronluna:5afsdcxtnwxezejvrifv2q5ypl5sagk6gcc72rao4mwc6mn3i2aq@dev.azure.com/aaronluna/vigorish/_git/vigorish#egg=vigorish
+-e git+https://dev.azure.com/aaronluna/vigorish/_git/vigorish#egg=vigorish
 -e .

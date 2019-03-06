@@ -17,6 +17,7 @@ from app.main.models.season import Season
 from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
+from app.main.util.click_params import DateString, MlbSeason
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.result import Result
@@ -29,21 +30,6 @@ from config import scrape_config_by_data_set
 
 APP_ROOT = Path.cwd()
 DOTENV_PATH = APP_ROOT / '.env'
-
-class DateString(click.ParamType):
-    name = 'date-string'
-    def convert(self, value, param, ctx):
-        try:
-            date = parser.parse(value)
-            return date
-        except Exception:
-            error = (
-                f'"{value}" could not be parsed as a valid date. You can use '
-                'any format recognized by dateutil.parser. For example, all '
-                'of the strings below represent the same date and are valid\n'
-                '"2018-5-13" -or- "05/13/2018" -or- "May 13 2018"'
-            )
-            self.fail(error, param, ctx)
 
 
 @click.group()
@@ -60,7 +46,6 @@ def cli(ctx):
         'session': session
     }
 
-@cli.command()
 def clean():
     """Remove *.pyc and *.pyo files recursively starting at current directory."""
     for dirpath, _, filenames in os.walk('.'):
@@ -176,13 +161,19 @@ def scrape(ctx, data_set, start, end):
     return 0
 
 @cli.command()
+@click.option(
+    '--year',
+    type=MlbSeason(),
+    prompt=True,
+    help=(
+        'Year of the MLB Season to report scrape progress.'))
 @click.pass_context
-def status(ctx):
-    """Scrape status of mlb data sets."""
+def status(ctx, year):
+    """Report progress of scraped mlb data sets."""
     engine = ctx.obj['engine']
     session = ctx.obj['session']
 
-    result = update_status_for_mlb_season(session, 2018)
+    result = update_status_for_mlb_season(session, year)
     if result.failure:
         click.secho(str(result), fg='red')
         return 1
