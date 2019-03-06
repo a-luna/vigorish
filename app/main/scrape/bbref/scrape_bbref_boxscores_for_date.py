@@ -118,16 +118,16 @@ _PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = './tbody//tr[@class="pbp_summary_bottom"
 _PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
 _T_PBP_IN_GAME_SUBSTITUTION_XPATH = './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]//td[@data-stat="inning_summary_3"]//div/text()'
 _PBP_INNING_XPATH = './tbody//th[@data-stat="inning"]/text()'
-_PBP_SCORE_XPATH = './tbody//td[@data-stat="score_batting_team"]/text()'
-_PBP_OUTS_XPATH = './tbody//td[@data-stat="outs"]/text()'
-_PBP_RUNNERS_ON_BASE_XPATH = './tbody//td[@data-stat="runners_on_bases_pbp"]/text()'
-_PBP_PITCH_SEQUENCE_XPATH = './tbody//span[@class="pitch_sequence"]/text()'
-_PBP_TEAM_BATTING_XPATH = './tbody//td[@data-stat="batting_team_id"]/text()'
-_PBP_BATTER_NAME_XPATH = './tbody//td[@data-stat="batter"]/text()'
-_PBP_PITCHER_NAME_XPATH = './tbody//td[@data-stat="pitcher"]/text()'
-_PBP_PLAY_DESC_XPATH = './tbody//td[@data-stat="play_desc"]/text()'
-_PBP_RUNS_OUTS_XPATH = './tbody//tr[@id="event_{n}"]/td[@data-stat="runs_outs_result"]/text()'
-_T_PBP_ROW_NUMBER_XPATH = './tbody//tr[@id="event_${n}"]/@data-row'
+PBP_STAT_NAMES = dict(
+    pbp_table_row_number='data-row',
+    score='score_batting_team',
+    outs_before_play='outs',
+    runners_on_base='runners_on_bases_pbp',
+    team_batting_id_br='batting_team_id',
+    play_description='play_desc',
+    pitch_sequence='pitches_pbp',
+    runs_outs_result='runs_outs_result'
+)
 
 _GAME_ID_PATTERN = r'[A-Z][A-Z][A-Z]\d{9,9}'
 _TEAM_ID_PATTERN = r'[A-Z][A-Z][A-Z]'
@@ -513,7 +513,6 @@ def __parse_bbref_boxscore(response, url, silent=False):
 
     result = _parse_play_by_play(
         play_by_play_table,
-        game_id,
         batter_name_dict,
         pitcher_name_dict,
         away_team_id,
@@ -522,8 +521,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
     if result.failure:
         error = f'rescrape_did_not_parse_play_by_play:\n{result.error}'
         return Result.Fail(error)
-    result_dict = result.value
-    play_by_play_events = result_dict['play_by_play']
+    play_by_play_events = result.value
     boxscore.player_id_match_log.extend(result_dict['player_id_match_log'])
 
     result = _create_innings_list(
@@ -984,99 +982,92 @@ def _parse_pitching_stats(team_pitching_table, player_team_id, opponent_team_id)
         pitch_appearances.append(pitch_app)
     return pitch_appearances
 
-def _parse_play_by_play(response, game_id, batter_id_dict, pitcher_id_dict, away_team_id, home_team_id):
-    pbp_inning_list = response.xpath(_PBP_INNING_XPATH)
-    pbp_score_list = response.xpath(_PBP_SCORE_XPATH)
-    pbp_outs_before_play_list = response.xpath(_PBP_OUTS_XPATH)
-    pbp_runners_on_base_list = response.xpath(_PBP_RUNNERS_ON_BASE_XPATH)
-    pbp_pitch_sequence = response.xpath(_PBP_PITCH_SEQUENCE_XPATH)
-    pbp_team_batting = response.xpath(_PBP_TEAM_BATTING_XPATH)
-    pbp_batter_name = response.xpath(_PBP_BATTER_NAME_XPATH)
-    pbp_pitcher_name = response.xpath(_PBP_PITCHER_NAME_XPATH)
-    pbp_play_description = response.xpath(_PBP_PLAY_DESC_XPATH)
+def _parse_play_by_play(pbp_table, batter_id_dict, pitcher_id_dict, away_team_id, home_team_id):
+    pbp_event_list = []
+    batter_names = []
+    pitcher_names = []
+    inning_list = pbp_table.xpath(_PBP_INNING_XPATH)
+    for i in range(0, len(inning_list)):
+        event_num = i + 1
+        event = _get_values_for_pbp_event_number(pbp_table, event_num)
+        event['inning_label'] = inning_list[i]
+        pbp_event_list.append(event)
 
-    pbp_runs_outs_result = []
-    pbp_row_numbers = []
-    for i in range(0, len(pbp_inning_list)):
-        play_num = i + 1
-        runs_outs_query = _PBP_RUNS_OUTS_XPATH.format(n=play_num)
-        row_number_query = Template(_T_PBP_ROW_NUMBER_XPATH).substitute(n=play_num)
-
-        runs_outs = ""
-        result = response.xpath(runs_outs_query)
-        if result is not None and len(result) > 0:
-            runs_outs = result[0]
-        pbp_runs_outs_result.append(runs_outs)
-
-        row_num = 0
-        result = response.xpath(row_number_query)
-        if result:
-            row_num = int(result[0])
-        pbp_row_numbers.append(row_num)
+        batter = _get_value_from_pbp_table(pbp_table, 'batter', event_num)
+        batter_names.append(batter.replace(u'\xa0', u' '))
+        pitcher = _get_value_from_pbp_table(pbp_table, 'pitcher', event_num)
+        pitcher_names.append(pitcher.replace(u'\xa0', u' '))
 
     play_by_play = []
-    player_id_match_log = []
-    for i in range(0, len(pbp_inning_list)):
+    for i in range(0, len(inning_list)):
         try:
-            play = BBRefPlayByPlayEvent()
-            play.scrape_success = True
-            play.pbp_table_row_number = pbp_row_numbers[i]
-            play.inning_label = pbp_inning_list[i]
-            play.score = pbp_score_list[i]
-            play.outs_before_play = pbp_outs_before_play_list[i]
-            play.runners_on_base = pbp_runners_on_base_list[i]
-            play.pitch_sequence = pbp_pitch_sequence[i]
-            play.runs_outs_result = pbp_runs_outs_result[i]
-            play.team_batting_id_br = pbp_team_batting[i]
-            play.play_description = pbp_play_description[i]
-
-            if pbp_team_batting[i] == away_team_id:
-                play.team_pitching_id_br = home_team_id
+            pbp_event = pbp_event_list[i]
+            if pbp_event['team_batting_id_br'] == away_team_id:
+                pbp_event['team_pitching_id_br'] = home_team_id
             else:
-                play.team_pitching_id_br = away_team_id
+                pbp_event['team_pitching_id_br'] = away_team_id
         except IndexError as e:
             error = f'Error: {repr(e)}'
             return Result.Fail(error)
 
         try:
-            pitcher_name = pbp_pitcher_name[i].replace(u'\xa0', u' ')
-            result = _match_player_name_to_player_id(pitcher_name, pitcher_id_dict)
+            result = _match_player_name_to_player_id(pitcher_names[i], pitcher_id_dict)
             if result.failure:
                 return result
             match_dict = result.value
-            if match_dict['match_type'] != 'Exact match':
-                player_id_match_log.append(match_dict['match_details'])
-            play.pitcher_id_br = match_dict['player_id']
+            pbp_event['pitcher_id_br'] = match_dict['player_id']
         except Exception as e:
             error = f"""
-            Exception occurred trying to match '{pitcher_name}' with a player_id:
+            Exception occurred trying to match '{pitcher_names[i]}' with a player_id:
             Error: {repr(e)}
             """
             return Result.Fail(error)
 
         try:
-            batter_name = pbp_batter_name[i].replace(u'\xa0', u' ')
-            result = _match_player_name_to_player_id(batter_name, batter_id_dict)
+            result = _match_player_name_to_player_id(batter_names[i], batter_id_dict)
             if result.failure:
                 return result
             match_dict = result.value
-            if match_dict['match_type'] != 'Exact match':
-                player_id_match_log.append(match_dict['match_details'])
-            play.batter_id_br = match_dict['player_id']
+            pbp_event['batter_id_br'] = match_dict['player_id']
         except Exception as e:
             error = f"""
-            Exception occurred trying to match '{batter_name}' with a player_id:
+            Exception occurred trying to match '{batter_names[i]}' with a player_id:
             Error: {repr(e)}
             """
             return Result.Fail(error)
 
+        play = BBRefPlayByPlayEvent(**pbp_event)
         play_by_play.append(play)
 
-    result_dict = dict(
-        play_by_play=play_by_play,
-        player_id_match_log=player_id_match_log
-    )
-    return Result.Ok(result_dict)
+    return Result.Ok(play_by_play)
+
+def _get_values_for_pbp_event_number(pbp_table, event_number):
+    pbp_event = {}
+    for k,v in PBP_STAT_NAMES.items():
+        value = _get_value_from_pbp_table(pbp_table, v, event_number)
+        pbp_event[k] = value
+    return pbp_event
+
+def _get_value_from_pbp_table(pbp_table, stat_name, event_number):
+    templ_xpath = './tbody//tr[@id="event_${n}"]/td[@data-stat="${s}"]/text()'
+    query = Template(templ_xpath).substitute(n=event_number, s=stat_name)
+
+    if stat_name == 'pitches_pbp':
+        templ_xpath = (
+            './tbody//tr[@id="event_${n}"]/td[@data-stat="pitches_pbp"]'
+            '/span[@class="pitch_sequence"]/text()'
+        )
+        query = Template(templ_xpath).substitute(n=event_number)
+
+    if stat_name == 'data-row':
+        templ_xpath = './tbody//tr[@id="event_${n}"]/@data-row'
+        query = Template(templ_xpath).substitute(n=event_number)
+
+    pbp_value = ""
+    result = pbp_table.xpath(query)
+    if result is not None and len(result) > 0:
+        pbp_value = result[0]
+    return pbp_value
 
 def _match_player_name_to_player_id(name, id_dict):
     try:
