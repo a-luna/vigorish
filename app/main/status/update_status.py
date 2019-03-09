@@ -38,13 +38,10 @@ def update_status_for_mlb_season(session, year):
     if result.failure:
         return result
     session.commit()
-    scraped_bbref_game_ids.extend(result.value)
+    game_id_dict = result.value
+    scraped_bbref_game_ids.extend(game_id_dict.keys())
 
-    result = create_status_records_for_newly_scraped_game_ids(
-        session,
-        year,
-        scraped_bbref_game_ids
-    )
+    result = create_status_records_for_newly_scraped_game_ids(session, year, game_id_dict)
     if result.failure:
         return result
     session.commit()
@@ -102,7 +99,7 @@ def update_status_bbref_games_for_date(session, scraped_bbref_dates):
     return Result.Ok(all_game_ids)
 
 def update_status_brooks_games_for_date(session, scraped_brooks_dates):
-    all_game_ids = []
+    game_id_dict = {}
     for d in tqdm(
         scraped_brooks_dates,
         desc='Updating brooks_games_for_date..',
@@ -123,24 +120,25 @@ def update_status_brooks_games_for_date(session, scraped_brooks_dates):
         if result.failure:
             return result
         games_for_date = result.value
-        game_ids = [g.bbref_game_id
+        game_ids = [(g.bb_game_id, g.bbref_game_id)
                     for g
                     in games_for_date.games
                     if not g.might_be_postponed]
         game_count = len(game_ids)
-        all_game_ids.extend(game_ids)
+        for tuple in game_ids:
+            game_id_dict[tuple[1]] = tuple[0]
 
         setattr(date_status, 'scraped_daily_dash_brooks', 1)
         setattr(date_status, 'game_count_brooks', game_count)
-    return Result.Ok(all_game_ids)
+    return Result.Ok(game_id_dict)
 
-def create_status_records_for_newly_scraped_game_ids(session, year, scraped_bbref_game_ids):
+def create_status_records_for_newly_scraped_game_ids(session, year, game_id_dict):
     prev_bbref_game_ids = [
         g.bbref_game_id
         for g
         in session.query(GameScrapeStatus).all()
     ]
-    new_bbref_game_ids = set(scraped_bbref_game_ids).\
+    new_bbref_game_ids = set(game_id_dict.keys()).\
         difference(set(prev_bbref_game_ids))
     if not new_bbref_game_ids:
         return Result.Ok()
@@ -168,6 +166,7 @@ def create_status_records_for_newly_scraped_game_ids(session, year, scraped_bbre
             date_status = DateScrapeStatus.find_by_date(session, game_date)
             game_scrape_status = GameScrapeStatus()
             setattr(game_scrape_status, 'bbref_game_id', gid)
+            setattr(game_scrape_status, 'bb_game_id', game_id_dict[gid])
             setattr(game_scrape_status, 'game_date', game_date)
             setattr(game_scrape_status, 'scrape_status_date_id', date_status.id)
             setattr(game_scrape_status, 'season_id', season.id)
@@ -232,19 +231,19 @@ def update_status_brooks_pitch_logs(session, scraped_brooks_gameids):
             game_dict = result.value
             game_date = game_dict['game_date']
 
+            game_status = GameScrapeStatus.find_by_bb_game_id(session, gid)
+            if not game_status:
+                error = (
+                    'scrape_status_game does not contain an entry for '
+                    f'bb_game_id: {gid}'
+                )
+                return Result.Fail(error)
+
             result = get_brooks_games_for_date_from_s3(game_date)
             if result.failure:
                 return result
             games_for_date = result.value
             this_game = [g for g in games_for_date.games if g.bb_game_id == gid][0]
-
-            game_status = GameScrapeStatus.find_by_bbref_game_id(session, this_game.bbref_game_id)
-            if not game_status:
-                error = (
-                    'scrape_status_game does not contain an entry for '
-                    f'bbref_game_id: {gid}'
-                )
-                return Result.Fail(error)
 
             result = get_all_brooks_pitch_logs_scraped(gid)
             if result.failure:
@@ -254,7 +253,6 @@ def update_status_brooks_pitch_logs(session, scraped_brooks_gameids):
             setattr(game_status, 'scraped_brooks_pitch_logs_for_game', 1)
             setattr(game_status, 'pitch_app_count_brooks', pitch_logs_for_game.pitch_log_count)
             setattr(game_status, 'total_pitch_count_brooks', total_pitches)
-            setattr(game_status, 'bb_game_id', gid)
             setattr(game_status, 'game_time_hour', this_game.game_time_hour)
             setattr(game_status, 'game_time_minute', this_game.game_time_minute)
             setattr(game_status, 'game_time_zone', this_game.time_zone_name)
