@@ -226,14 +226,6 @@ def update_status_brooks_pitch_logs(session, scraped_brooks_gameids):
         unit_scale=True
     ):
         try:
-            game_status = GameScrapeStatus.find_by_bb_game_id(session, gid)
-            if not game_status:
-                error = (
-                    'scrape_status_game does not contain an entry for '
-                    f'bbref_game_id: {gid}'
-                )
-                return Result.Fail(error)
-
             result = validate_bb_game_id(gid)
             if result.failure:
                 return result
@@ -245,6 +237,14 @@ def update_status_brooks_pitch_logs(session, scraped_brooks_gameids):
                 return result
             games_for_date = result.value
             this_game = [g for g in games_for_date.games if g.bb_game_id == gid][0]
+
+            game_status = GameScrapeStatus.find_by_bbref_game_id(session, this_game.bbref_game_id)
+            if not game_status:
+                error = (
+                    'scrape_status_game does not contain an entry for '
+                    f'bbref_game_id: {gid}'
+                )
+                return Result.Fail(error)
 
             result = get_all_brooks_pitch_logs_scraped(gid)
             if result.failure:
