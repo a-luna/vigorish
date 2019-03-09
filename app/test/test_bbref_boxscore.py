@@ -79,5 +79,12 @@ class TestBBRefBoxscore(BaseTestCase):
         self.assertEqual(boxscore.home_team_data.total_errors_by_team, 0)
         self.assertEqual(boxscore.home_team_data.total_errors_by_opponent, 1)
 
+        away_team_pitch_stats = boxscore.away_team_data.pitching_stats
+        home_team_pitch_stats = boxscore.home_team_data.pitching_stats
+        away_team_total_pitches = sum(pitch_stats.pitch_count for pitch_stats in away_team_pitch_stats)
+        home_team_total_pitches = sum(pitch_stats.pitch_count for pitch_stats in home_team_pitch_stats)
+        total_pitches = away_team_total_pitches + home_team_total_pitches
+        total_pitch_appearances = len(away_team_pitch_stats) + len(home_team_pitch_stats)
+
         filepath.unlink()
         self.assertFalse(filepath.exists())

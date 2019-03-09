@@ -5,13 +5,14 @@ from pathlib import Path
 HERE = Path(__file__).parent
 README = (HERE / "README.md").read_text()
 DESCRIPTION = (
-    'Vigorish scrapes and stores MLB data, including detailed boxscores, '
+    'Web scraper for various MLB data sets, including detailed boxscores, '
     'pitchfx measurements and player biographical info.'
 )
 
 setup(
     name='vigorish',
-    version='0.1.0',
+    version='0.1.1',
+    py_modules=['vig'],
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
@@ -25,7 +26,6 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    py_modules=['vig'],
     install_requires=[
         'alembic',
         'boto3',

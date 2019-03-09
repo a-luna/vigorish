@@ -2,7 +2,7 @@
 
 class BBRefBoxscoreMeta():
     """Weather conditions at game start time and other descriptive info."""
-    
+
     park_name = ""
     field_type = ""
     day_night = ""

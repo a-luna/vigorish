@@ -1,9 +1,15 @@
-from sqlalchemy import Column, Boolean, Integer, String, DateTime, ForeignKey
+from sqlalchemy import (
+    Index, Column, Boolean, Integer, String, DateTime, ForeignKey, select, func, join
+)
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app.main.constants import MLB_DATA_SETS
 from app.main.models.base import Base
+from app.main.models.boxscore import Boxscore
+from app.main.models.status_game import GameScrapeStatus
+from app.main.models.views.materialized_view import MaterializedView
+from app.main.models.views.materialized_view_factory import create_mat_view
 from app.main.util.list_functions import display_dict
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 
@@ -16,23 +22,69 @@ class DateScrapeStatus(Base):
     scraped_daily_dash_brooks = Column(Integer, default=0)
     game_count_bbref = Column(Integer, default=0)
     game_count_brooks = Column(Integer, default=0)
-    might_be_postponed_count_brooks = Column(Integer, default=0)
-    pitch_app_count_bbref = Column(Integer, default=0)
-    pitch_app_count_brooks = Column(Integer, default=0)
-    scraped_all_boxscores = Column(Boolean, default=False)
-    scraped_boxscore_count = Column(Integer, default=0)
-    missing_boxscore_count = Column(Integer, default=0)
-    scraped_all_pitch_logs = Column(Boolean, default=False)
-    scraped_pitch_logs_count = Column(Integer, default=0)
-    missing_pitch_logs_count = Column(Integer, default=0)
     season_id = Column(Integer, ForeignKey('season.id'))
+
+    boxscores = relationship('Boxscore', backref='scrape_status_date')
+    scrape_status_games = relationship('GameScrapeStatus', backref='scrape_status_date')
+    mat_view = relationship(
+        'DateScrapeStatusMV', backref='original',
+        uselist=False,
+        primaryjoin='DateScrapeStatus.id==DateScrapeStatusMV.id',
+        foreign_keys='DateScrapeStatusMV.id'
+    )
 
     @hybrid_property
     def game_date_str(self):
         return self.game_date.strftime(DATE_ONLY)
 
-    #season = relationship('Season', back_populates='dates')
-    #boxscores = relationship('Boxscore', back_populates='date')
+    @hybrid_property
+    def total_games(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_games
+
+    @hybrid_property
+    def total_bbref_boxscores_scraped(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_bbref_boxscores_scraped
+
+    @hybrid_property
+    def percent_complete_bbref_boxscores(self):
+        if self.mat_view is not None:
+            if self.total_games and self.total_games > 0:
+                perc = self.total_bbref_boxscores_scraped/float(self.total_games)
+                return f'{perc*100:02.0f}%'
+
+    @hybrid_property
+    def total_brooks_games_scraped(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_brooks_pitch_logs_scraped
+
+    @hybrid_property
+    def percent_complete_brooks_games(self):
+        if self.mat_view is not None:
+            if self.total_games and self.total_games > 0:
+                perc = self.total_brooks_games_scraped/float(self.total_games)
+                return f'{perc*100:02.0f}%'
+
+    @hybrid_property
+    def total_pitch_appearances_bbref(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_bbref_boxscores_scraped
+
+    @hybrid_property
+    def total_pitch_appearances_brooks(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_brooks_pitch_logs_scraped
+
+    @hybrid_property
+    def total_pitch_count_bbref(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_bbref_boxscores_scraped
+
+    @hybrid_property
+    def total_pitch_count_brooks(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_brooks_pitch_logs_scraped
 
     def __init__(self, game_date, season_id):
         date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
@@ -48,5 +100,34 @@ class DateScrapeStatus(Base):
 
     def display(self):
         season_dict = self.as_dict()
-        title = f'SCRAPE STATUS FOR {self.game_date_str}'
+        title = f'SCRAPE STATUS FOR DATE: {self.game_date_str}'
         display_dict(season_dict, title=title)
+
+    @classmethod
+    def find_by_date(cls, session, game_date):
+        date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
+        return session.query(cls).get(int(date_str))
+
+
+class DateScrapeStatusMV(MaterializedView):
+    __table__ = create_mat_view(
+        Base.metadata,
+        "date_status_mv",
+        select([
+            DateScrapeStatus.id.label('id'),
+            func.count(GameScrapeStatus.id).label('total_games'),
+            func.sum(GameScrapeStatus.scraped_bbref_boxscore).label('total_bbref_boxscores_scraped'),
+            func.sum(GameScrapeStatus.scraped_brooks_pitch_logs_for_game).label('total_brooks_games_scraped'),
+            func.sum(GameScrapeStatus.pitch_app_count_bbref).label('total_pitch_appearances_bbref'),
+            func.sum(GameScrapeStatus.pitch_app_count_brooks).label('total_pitch_appearances_brooks'),
+            func.sum(GameScrapeStatus.total_pitch_count_bbref).label('total_pitch_count_bbref'),
+            func.sum(GameScrapeStatus.total_pitch_count_brooks).label('total_pitch_count_brooks'),
+        ]).select_from(join(
+            DateScrapeStatus,
+            GameScrapeStatus,
+            DateScrapeStatus.id == GameScrapeStatus.scrape_status_date_id,
+            isouter=True)
+        ).group_by(DateScrapeStatus.id)
+    )
+
+Index('date_status_mv_id_idx', DateScrapeStatusMV.id, unique=True)

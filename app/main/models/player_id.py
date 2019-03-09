@@ -28,8 +28,6 @@ class PlayerId(Base):
     rotowire_name = Column(String)
     db_player_id = Column(Integer, ForeignKey('player.id'))
 
-    player = relationship('Player', back_populates='id_map')
-
     def __repr__(self):
         return (f'<PlayerId('
                     f'bbref_id="{self.bbref_id}", '

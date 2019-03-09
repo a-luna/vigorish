@@ -34,15 +34,15 @@ class Season(Base):
         ), default='None'
     )
 
-    #status = relationship('SeasonStatus', back_populates='season')
-    dates = relationship('DateScrapeStatus')
-    #boxscores = relationship('Boxscore', back_populates='season')
-    #pitching_stats = relationship('PitchingStats', back_populates='season')
-    #batting_stats = relationship('BattingStats', back_populates='season')
+    scrape_status_dates = relationship('DateScrapeStatus', backref='season')
+    scrape_status_games = relationship('GameScrapeStatus', backref='season')
+    boxscores = relationship('Boxscore', backref='season')
+    pitching_stats = relationship('GamePitchStats', backref='season')
+    batting_stats = relationship('GameBatStats', backref='season')
 
     mat_view = relationship(
         'SeasonStatusMV', backref='original',
-        uselist=False, # makes it a one-to-one relationship
+        uselist=False,
         primaryjoin='Season.id==SeasonStatusMV.id',
         foreign_keys='SeasonStatusMV.id'
     )
@@ -60,97 +60,105 @@ class Season(Base):
         return self.end_date.strftime(DATE_ONLY)
 
     @hybrid_property
-    def days_total(self):
+    def total_days(self):
         if self.mat_view is not None: # if None, mat_view needs refreshing
-            return self.mat_view.days_total
+            return self.mat_view.total_days
 
     @hybrid_property
-    def days_scraped_bbref_total(self):
+    def total_days_scraped_bbref(self):
         if self.mat_view is not None:
-            return self.mat_view.days_scraped_bbref_total
+            return self.mat_view.total_days_scraped_bbref
 
     @hybrid_property
     def percent_complete_bbref_games_for_date(self):
         if self.mat_view is not None:
-            if self.days_total and self.days_total > 0:
-                return self.days_scraped_bbref_total/float(self.days_total)
+            if self.total_days and self.total_days > 0:
+                perc = self.total_days_scraped_bbref/float(self.total_days)
+                return f'{perc*100:02.0f}%'
 
     @hybrid_property
-    def days_scraped_brooks_total(self):
+    def total_days_scraped_brooks(self):
         if self.mat_view is not None:
-            return self.mat_view.days_scraped_brooks_total
+            return self.mat_view.total_days_scraped_brooks
 
     @hybrid_property
     def percent_complete_brooks_games_for_date(self):
         if self.mat_view is not None:
-            if self.days_total and self.days_total > 0:
-                return self.days_scraped_brooks_total/float(self.days_total)
+            if self.total_days and self.total_days > 0:
+                return self.total_days_scraped_brooks/float(self.total_days)
 
     @hybrid_property
-    def games_total_bbref(self):
+    def total_games_bbref(self):
         if self.mat_view is not None:
-            return self.mat_view.games_total_bbref
+            return self.mat_view.total_games_bbref
 
     @hybrid_property
-    def games_total_brooks(self):
+    def total_games_brooks(self):
         if self.mat_view is not None:
-            return self.mat_view.games_total_brooks
+            return self.mat_view.total_games_brooks
 
-    @hybrid_property
-    def might_be_postponed_total_brooks(self):
-        if self.mat_view is not None:
-            return self.mat_view.might_be_postponed_total_brooks
+    #@hybrid_property
+    #def total_games_tracked(self):
+    #    if self.mat_view is not None:
+    #        return self.mat_view.total_games_tracked
 
-    @hybrid_property
-    def pitch_app_total_bbref(self):
-        if self.mat_view is not None:
-            return self.mat_view.pitch_app_total_bbref
+    #@hybrid_property
+    #def total_bbref_boxscores_scraped(self):
+    #    if self.mat_view is not None:
+    #        return self.mat_view.total_bbref_boxscores_scraped
 
-    @hybrid_property
-    def pitch_app_total_brooks(self):
-        if self.mat_view is not None:
-            return self.mat_view.pitch_app_total_brooks
+    #@hybrid_property
+    #def percent_complete_bbref_boxscores_scraped(self):
+    #    if self.mat_view is not None:
+    #        if self.total_games_tracked and self.total_games_tracked > 0:
+    #            perc = self.total_bbref_boxscores_scraped/float(self.total_games_tracked)
+    #            return f'{perc*100:02.0f}%'
 
-    @hybrid_property
-    def boxscores_scraped_total(self):
-        if self.mat_view is not None:
-            return self.mat_view.boxscores_scraped_total
+    #@hybrid_property
+    #def total_brooks_games_scraped(self):
+    #    if self.mat_view is not None:
+    #        return self.mat_view.total_bbref_boxscores_scraped
 
-    @hybrid_property
-    def boxscores_missing_total(self):
-        if self.mat_view is not None:
-            return self.mat_view.boxscores_missing_total
+    #@hybrid_property
+    #def percent_complete_brooks_games_scraped(self):
+    #    if self.mat_view is not None:
+    #       if self.total_games_tracked and self.total_games_tracked > 0:
+    #           perc = self.total_brooks_games_scraped/float(self.total_games_tracked)
+     #           return f'{perc*100:02.0f}%'
 
-    @hybrid_property
-    def pitch_logs_scraped_total(self):
-        if self.mat_view is not None:
-            return self.mat_view.pitch_logs_scraped_total
+    #@hybrid_property
+    #def total_pitch_appearances_bbref(self):
+    #    if self.mat_view is not None:
+    #        return self.mat_view.total_games_bbref
 
-    @hybrid_property
-    def pitch_logs_missing_total(self):
-        if self.mat_view is not None:
-            return self.mat_view.pitch_logs_missing_total
+    #@hybrid_property
+    #def total_pitch_appearances_brooks(self):
+    #   if self.mat_view is not None:
+    #        return self.mat_view.total_games_brooks
 
-    def __repr__(self):
-        return (f'<Season(name="{self.name}", id={self.id})>')
+    #@hybrid_property
+    #def total_pitch_count_bbref(self):
+    #    if self.mat_view is not None:
+    #        return self.mat_view.total_games_bbref
+
+    #@hybrid_property
+    #def total_pitch_count_brooks(self):
+    #    if self.mat_view is not None:
+    #        return self.mat_view.total_games_brooks
+
+    #def __repr__(self):
+    #    return f'<Season(name="{self.name}", id={self.id})>'
 
     def as_dict(self):
         d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         d['name'] = self.name
-        d['days_total'] = self.days_total
-        d['days_scraped_bbref_total'] = self.days_scraped_bbref_total
+        d['total_days'] = self.total_days
+        d['total_days_scraped_bbref'] = self.total_days_scraped_bbref
         d['percent_complete_bbref_games_for_date'] = self.percent_complete_bbref_games_for_date
-        d['days_scraped_brooks_total'] = self.days_scraped_brooks_total
+        d['total_days_scraped_brooks'] = self.total_days_scraped_brooks
         d['percent_complete_brooks_games_for_date'] = self.percent_complete_brooks_games_for_date
-        d['games_total_bbref'] = self.games_total_bbref
-        d['games_total_brooks'] = self.games_total_brooks
-        d['might_be_postponed_total_brooks'] = self.might_be_postponed_total_brooks
-        d['pitch_app_total_bbref'] = self.pitch_app_total_bbref
-        d['pitch_app_total_brooks'] = self.pitch_app_total_brooks
-        d['boxscores_scraped_total'] = self.boxscores_scraped_total
-        d['boxscores_missing_total'] = self.boxscores_missing_total
-        d['pitch_logs_scraped_total'] = self.pitch_logs_scraped_total
-        d['pitch_logs_missing_total'] = self.pitch_logs_missing_total
+        d['total_games_bbref'] = self.total_games_bbref
+        d['total_games_brooks'] = self.total_games_brooks
         return d
 
     def display(self):
@@ -196,18 +204,18 @@ class SeasonStatusMV(MaterializedView):
         "season_status_mv",
         select([
             Season.id.label('id'),
-            func.count(DateScrapeStatus.id).label('days_total'),
-            func.sum(DateScrapeStatus.scraped_daily_dash_bbref).label('days_scraped_bbref_total'),
-            func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label('days_scraped_brooks_total'),
-            func.sum(DateScrapeStatus.game_count_bbref).label('games_total_bbref'),
-            func.sum(DateScrapeStatus.game_count_brooks).label('games_total_brooks'),
-            func.sum(DateScrapeStatus.might_be_postponed_count_brooks).label('might_be_postponed_total_brooks'),
-            func.sum(DateScrapeStatus.pitch_app_count_bbref).label('pitch_app_total_bbref'),
-            func.sum(DateScrapeStatus.pitch_app_count_brooks).label('pitch_app_total_brooks'),
-            func.sum(DateScrapeStatus.scraped_boxscore_count).label('boxscores_scraped_total'),
-            func.sum(DateScrapeStatus.missing_boxscore_count).label('boxscores_missing_total'),
-            func.sum(DateScrapeStatus.scraped_pitch_logs_count).label('pitch_logs_scraped_total'),
-            func.sum(DateScrapeStatus.missing_pitch_logs_count).label('pitch_logs_missing_total'),
+            func.count(DateScrapeStatus.id).label('total_days'),
+            func.sum(DateScrapeStatus.scraped_daily_dash_bbref).label('total_days_scraped_bbref'),
+            func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label('total_days_scraped_brooks'),
+            func.sum(DateScrapeStatus.game_count_bbref).label('total_games_bbref'),
+            func.sum(DateScrapeStatus.game_count_brooks).label('total_games_brooks'),
+            #func.sum(DateScrapeStatus.total_games).label('total_games_tracked'),
+            #func.sum(DateScrapeStatus.total_bbref_boxscores_scraped).label('total_bbref_boxscores_scraped'),
+            #unc.sum(DateScrapeStatus.total_brooks_games_scraped).label('total_brooks_games_scraped'),
+            #func.sum(DateScrapeStatus.total_pitch_appearances_bbref).label('total_pitch_appearances_bbref'),
+            #func.sum(DateScrapeStatus.total_pitch_appearances_brooks).label('total_pitch_appearances_brooks'),
+            #func.sum(DateScrapeStatus.total_pitch_count_bbref).label('total_pitch_count_bbref'),
+            #func.sum(DateScrapeStatus.total_brooks_games_scraped).label('total_pitch_count_brooks'),
         ]).select_from(join(
             Season,
             DateScrapeStatus,

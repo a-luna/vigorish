@@ -19,7 +19,7 @@ from app.main.util.s3_helper import (
     upload_brooks_games_for_date, get_brooks_games_for_date_from_s3,
     upload_bbref_games_for_date, get_bbref_games_for_date_from_s3,
     upload_bbref_boxscore, get_bbref_boxscore_from_s3,
-    upload_brooks_pitch_logs_for_game, get_pitch_logs_for_game_from_s3
+    upload_brooks_pitch_logs_for_game, get_brooks_pitch_logs_for_game_from_s3
 )
 
 

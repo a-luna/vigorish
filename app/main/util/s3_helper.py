@@ -25,6 +25,7 @@ from app.main.util.file_util import (
     write_brooks_pitch_logs_for_game_to_file
 )
 from app.main.util.result import Result
+from app.main.util.string_functions import validate_bb_game_id
 
 S3_BUCKET = 'vig-data'
 T_BROOKS_GAMESFORDATE_FOLDER = '${year}/brooks_games_for_date'
@@ -126,8 +127,14 @@ def upload_brooks_pitch_logs_for_game(pitch_logs_for_game, scrape_date):
         error = 'Error: {error}'.format(error=repr(e))
         return Result.Fail(error)
 
-def download_brooks_pitch_logs_for_game(scrape_date, bb_game_id, folderpath=None):
+def download_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
     """Download a file from S3 containing json encoded BrooksPitchLogsForGame object."""
+    result = validate_bb_game_id(bb_game_id)
+    if result.failure:
+        return result
+    game_dict = result.value
+    scrape_date = game_dict['game_date']
+
     folderpath = folderpath if folderpath else Path.cwd()
     filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME)\
         .substitute(gid=bb_game_id)
@@ -145,10 +152,10 @@ def download_brooks_pitch_logs_for_game(scrape_date, bb_game_id, folderpath=None
             error = repr(e)
         return Result.Fail(error)
 
-def get_pitch_logs_for_game_from_s3(scrape_date, bb_game_id, folderpath=None, delete_file=True):
+def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_file=True):
     """Retrieve BrooksPitchLogsForGame object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
-    result = download_brooks_pitch_logs_for_game(scrape_date, bb_game_id, folderpath)
+    result = download_brooks_pitch_logs_for_game(bb_game_id, folderpath)
     if result.failure:
         return result
     filepath = result.value
@@ -158,7 +165,7 @@ def get_pitch_logs_for_game_from_s3(scrape_date, bb_game_id, folderpath=None, de
         delete_file=True
     )
 
-def get_all_pitch_logs_for_game_scraped(year):
+def get_all_brooks_pitch_logs_scraped(year):
     s3_brooks_pitch_logs_folder = Template(T_BROOKS_PITCHLOGSFORGAME_FOLDER).\
         substitute(year=year)
     bucket = boto3.resource('s3').Bucket(S3_BUCKET)

@@ -1,6 +1,6 @@
 """Biographical information for a single player."""
 from sqlalchemy import Column, Boolean, Integer, String, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from app.main.models.base import Base
 from app.main.models.player_id import PlayerId
@@ -33,13 +33,13 @@ class Player(Base):
     minor_league_player = Column(Boolean, default=False)
     missing_mlb_id = Column(Boolean, default=True)
 
-    id_map = relationship('PlayerId', back_populates='player')
+    id_map = relationship('PlayerId', backref=backref("player", uselist=False))
 
     #game_events_as_pitcher = relationship('GameEvent', primaryjoin='Player.id==GameEvent.pitcher_id', back_populates='pitcher')
     #game_events_as_batter = relationship('GameEvent', primaryjoin='Player.id==GameEvent.batter_id', back_populates='batter')
-    #pitching_stats = relationship('PitchingStats', back_populates='player')
-    #batting_stats = relationship('BattingStats', back_populates='player')
-    #lineup_appearances = relationship('StartingLineup', back_populates='player')
+    pitching_stats = relationship('GamePitchStats', backref='player')
+    batting_stats = relationship('GameBatStats', backref='player')
+    lineup_appearances = relationship('GameStartingLineupSlot', backref='player')
     #transactions = relationship(
     #    'PlayerTransaction',
     #    secondary='player_transaction_link',

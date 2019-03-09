@@ -11,6 +11,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
+from app.main.config import scrape_config_by_data_set
 from app.main.constants import MLB_DATA_SETS
 from app.main.models.base import Base
 from app.main.models.season import Season
@@ -22,7 +23,6 @@ from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
-from config import scrape_config_by_data_set
 
 #TODO New cli command: vig status [YEAR, MONTH+YEAR, GAMEID, PLAYER]: generate a status report with completion percentages and total #s scraped,missing,imported for daily_game_totals, boxscores, pitchlogs, pitchfx, etc.
 #TODO Create unit tests for all substitution parsing scenarios

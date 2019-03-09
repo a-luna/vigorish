@@ -24,6 +24,7 @@ class BaseTestCase(TestCase):
     def setUp(self):
         Base.metadata.drop_all(self.engine)
         Base.metadata.create_all(self.engine)
+        satan = 666
 
     def tearDown(self):
         self.session.close()
