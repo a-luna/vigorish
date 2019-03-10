@@ -306,6 +306,8 @@ def __update_status_brooks_pitch_logs_for_game(session, pitch_logs_for_game):
         if result.failure:
             return result
         game_info = result.value
+        if game_info.might_be_postponed:
+            return Result.Ok()
         return __update_db_status_brooks_pitch_logs(session, game_info, pitch_logs_for_game )
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
