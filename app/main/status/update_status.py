@@ -233,15 +233,7 @@ def update_status_brooks_pitch_logs(session, scraped_brooks_gameids, game_id_dic
 
             game_status = GameScrapeStatus.find_by_bb_game_id(session, gid)
             if not game_status:
-                season = Season.find_by_year(session, game_date.year)
-                date_status = DateScrapeStatus.find_by_date(session, game_date)
-                game_status = GameScrapeStatus()
-                setattr(game_status, 'bbref_game_id', game_id_dict[gid])
-                setattr(game_status, 'bb_game_id', gid)
-                setattr(game_status, 'game_date', game_date)
-                setattr(game_status, 'scrape_status_date_id', date_status.id)
-                setattr(game_status, 'season_id', season.id)
-                session.add(game_status)
+                continue
 
             result = get_brooks_games_for_date_from_s3(game_date)
             if result.failure:
