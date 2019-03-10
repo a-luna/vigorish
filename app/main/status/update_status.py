@@ -72,7 +72,7 @@ def update_status_bbref_games_for_date(session, scraped_bbref_dates):
     all_game_ids = []
     for d in tqdm(
         scraped_bbref_dates,
-        desc='Updating bbref_games_for_date...',
+        desc='Updating bbref_games_for_date........',
         ncols=100,
         unit='day',
         mininterval=0.12,
@@ -102,7 +102,7 @@ def update_status_brooks_games_for_date(session, scraped_brooks_dates):
     game_id_dict = {}
     for d in tqdm(
         scraped_brooks_dates,
-        desc='Updating brooks_games_for_date..',
+        desc='Updating brooks_games_for_date.......',
         ncols=100,
         unit='day',
         mininterval=0.12,
@@ -150,7 +150,7 @@ def create_status_records_for_newly_scraped_game_ids(session, year, game_id_dict
 
     for gid in tqdm(
         new_bbref_game_ids,
-        desc='Populating scrape_status_game..',
+        desc='Populating scrape_status_game........',
         ncols=100,
         unit='day',
         mininterval=0.12,
@@ -179,9 +179,9 @@ def create_status_records_for_newly_scraped_game_ids(session, year, game_id_dict
 def update_status_bbref_boxscores(session, scraped_bbref_gameids):
     for gid in tqdm(
         scraped_bbref_gameids,
-        desc='Updating bbref_boxscores..',
+        desc='Updating bbref_boxscores.............',
         ncols=100,
-        unit='day',
+        unit='game',
         mininterval=0.12,
         maxinterval=5,
         unit_scale=True
@@ -219,7 +219,7 @@ def update_status_brooks_pitch_logs(session, scraped_brooks_gameids):
         scraped_brooks_gameids,
         desc='Updating brooks_pitch_logs_for_game..',
         ncols=100,
-        unit='day',
+        unit='game',
         mininterval=0.12,
         maxinterval=5,
         unit_scale=True
@@ -245,7 +245,7 @@ def update_status_brooks_pitch_logs(session, scraped_brooks_gameids):
             games_for_date = result.value
             this_game = [g for g in games_for_date.games if g.bb_game_id == gid][0]
 
-            result = get_all_brooks_pitch_logs_scraped(gid)
+            result = get_brooks_pitch_logs_for_game_from_s3(gid)
             if result.failure:
                 return result
             pitch_logs_for_game = result.value
