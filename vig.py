@@ -178,8 +178,8 @@ def status(ctx, year):
         click.secho(str(result), fg='red')
         return 1
     refresh_all_mat_views(engine, session)
-    mlb = Season.find_by_year(session, 2018)
-    mlb.display()
+    mlb = Season.find_by_year(session, year)
+    print(mlb.status_report())
     session.close()
     return 0
 
@@ -194,9 +194,9 @@ def __validate_date_range(session, start, end):
         start_str = start.strftime(DATE_ONLY)
         end_str = end.strftime(DATE_ONLY)
         error = (
-            '"Start" must be before or the same date as "end":\n'
-            f'start_date: {start_str}\n'
-            f'end_date: {end_str}'
+            '"start" must be a date before (or the same date as) "end":\n'
+            f'start: {start_str}\n'
+            f'end: {end_str}'
         )
         return Result.Fail(error)
     season = Season.find_by_year(session, start.year)

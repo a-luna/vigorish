@@ -57,7 +57,7 @@ class DateScrapeStatus(Base):
     @hybrid_property
     def total_brooks_games_scraped(self):
         if self.mat_view is not None:
-            return self.mat_view.total_brooks_pitch_logs_scraped
+            return self.mat_view.total_brooks_games_scraped
 
     @hybrid_property
     def percent_complete_brooks_games(self):
@@ -69,22 +69,22 @@ class DateScrapeStatus(Base):
     @hybrid_property
     def total_pitch_appearances_bbref(self):
         if self.mat_view is not None:
-            return self.mat_view.total_bbref_boxscores_scraped
+            return self.mat_view.total_pitch_appearances_bbref
 
     @hybrid_property
     def total_pitch_appearances_brooks(self):
         if self.mat_view is not None:
-            return self.mat_view.total_brooks_pitch_logs_scraped
+            return self.mat_view.total_pitch_appearances_brooks
 
     @hybrid_property
     def total_pitch_count_bbref(self):
         if self.mat_view is not None:
-            return self.mat_view.total_bbref_boxscores_scraped
+            return self.mat_view.total_pitch_count_bbref
 
     @hybrid_property
     def total_pitch_count_brooks(self):
         if self.mat_view is not None:
-            return self.mat_view.total_brooks_pitch_logs_scraped
+            return self.mat_view.total_pitch_count_brooks
 
     def __init__(self, game_date, season_id):
         date_str = game_date.strftime(DATE_ONLY_TABLE_ID)

@@ -98,11 +98,18 @@ class Season(Base):
             return self.mat_view.total_games_brooks
 
     @hybrid_property
+    def total_games_diff(self):
+        diff = self.total_games_bbref - \
+            self.total_games_brooks
+        return abs(diff)
+
+    @hybrid_property
     def total_games_tracked(self):
         return sum(
             date_status.total_games
             for date_status
             in self.scrape_status_dates
+            if date_status.total_games
         )
 
     @hybrid_property
@@ -111,6 +118,7 @@ class Season(Base):
             date_status.total_bbref_boxscores_scraped
             for date_status
             in self.scrape_status_dates
+            if date_status.total_bbref_boxscores_scraped
         )
 
     @hybrid_property
@@ -126,6 +134,7 @@ class Season(Base):
             date_status.total_brooks_games_scraped
             for date_status
             in self.scrape_status_dates
+            if date_status.total_brooks_games_scraped
         )
 
     @hybrid_property
@@ -141,6 +150,7 @@ class Season(Base):
             date_status.total_pitch_appearances_bbref
             for date_status
             in self.scrape_status_dates
+            if date_status.total_pitch_appearances_bbref
         )
 
     @hybrid_property
@@ -149,12 +159,14 @@ class Season(Base):
             date_status.total_pitch_appearances_brooks
             for date_status
             in self.scrape_status_dates
+            if date_status.total_pitch_appearances_brooks
         )
 
     @hybrid_property
     def pitch_appearance_diff(self):
-        return self.total_pitch_appearances_bbref - \
+        diff = self.total_pitch_appearances_bbref - \
             self.total_pitch_appearances_brooks
+        return abs(diff)
 
     @hybrid_property
     def total_pitch_count_bbref(self):
@@ -162,6 +174,7 @@ class Season(Base):
             date_status.total_pitch_count_bbref
             for date_status
             in self.scrape_status_dates
+            if date_status.total_pitch_count_bbref
         )
 
     @hybrid_property
@@ -170,12 +183,14 @@ class Season(Base):
             date_status.total_brooks_games_scraped
             for date_status
             in self.scrape_status_dates
+            if date_status.total_brooks_games_scraped
         )
 
     @hybrid_property
     def total_pitch_count_diff(self):
-        return self.total_pitch_appearances_bbref - \
+        diff = self.total_pitch_appearances_bbref - \
             self.total_pitch_appearances_brooks
+        return abs(diff)
 
     def __repr__(self):
         return f'<Season(name="{self.name}", id={self.id})>'
@@ -190,6 +205,7 @@ class Season(Base):
         d['percent_complete_brooks_games_for_date'] = self.percent_complete_brooks_games_for_date
         d['total_games_bbref'] = self.total_games_bbref
         d['total_games_brooks'] = self.total_games_brooks
+        d['total_games_diff'] = self.total_games_diff
         d['total_games_tracked'] = self.total_games_tracked
         d['total_bbref_boxscores_scraped'] = self.total_bbref_boxscores_scraped
         d['percent_complete_bbref_boxscores_scraped'] = self.percent_complete_bbref_boxscores_scraped
@@ -207,6 +223,17 @@ class Season(Base):
         season_dict = self.as_dict()
         title = self.name
         display_dict(season_dict, title=title)
+
+    def status_report(self):
+        return f"""
+            BBRef Dates Scraped..........: {self.percent_complete_bbref_games_for_date} ({self.total_days_scraped_bbref}/{self.total_days})
+            Brooks Dates Scraped.........: {self.percent_complete_brooks_games_for_date} ({self.total_days_scraped_brooks}/{self.total_days})\n
+            Total Games Comparison.......: Diff={self.total_games_diff} (BBref={self.total_games_bbref}, Brooks={self.total_games_brooks})
+            BBRef Games Scraped..........: {self.percent_complete_bbref_boxscores_scraped} ({self.total_bbref_boxscores_scraped}/{self.total_games_tracked})
+            Brooks Games Scraped.........: {self.percent_complete_brooks_games_scraped} ({self.total_brooks_games_scraped}/{self.total_games_tracked})\n
+            Pitch Appearance Comparison..: Diff={self.pitch_appearance_diff} (BBref={self.total_pitch_appearances_bbref}, Brooks={self.total_pitch_appearances_brooks})
+            Pitch Count Comparison.......: Diff={self.total_pitch_count_diff} (BBref={self.total_pitch_count_bbref}, Brooks={self.total_pitch_count_brooks})
+        """
 
     def get_date_range(self):
         return get_date_range(self.start_date, self.end_date)
@@ -238,6 +265,11 @@ class Season(Base):
                 for season
                 in session.query(cls).filter_by(
                     season_type=SEASON_TYPE_DICT['reg'])]
+
+    @classmethod
+    def is_this_the_asg_date(cls, session, game_date):
+        season = cls.find_by_year(session, game_date.year)
+        return game_date == season.asg_date if season else None
 
 
 class SeasonStatusMV(MaterializedView):

@@ -44,17 +44,20 @@ def scrape_brooks_games_for_date(scrape_dict):
     driver.get(url)
     page = driver.page_source
     response = html.fromstring(page, base_url=url)
-    return __parse_daily_dash_page(response, scrape_date, url)
+    return __parse_daily_dash_page(session, response, scrape_date, url)
 
 def __get_dashboard_url_for_date(scrape_date):
     date_str = scrape_date.strftime(BROOKS_DASHBOARD_DATE_FORMAT)
     return Template(T_BROOKS_DASH_URL).substitute(date=date_str)
 
-def __parse_daily_dash_page(response, scrape_date, url):
+def __parse_daily_dash_page(session, response, scrape_date, url):
     games_for_date = BrooksGamesForDate()
     games_for_date.game_date_str = scrape_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
     games_for_date.games = []
+
+    if Season.is_this_the_asg_date(session, scrape_date):
+        return Result.Ok(games_for_date)
 
     for row in range(2,10):
         for game in range(1,5):
