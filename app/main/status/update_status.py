@@ -47,7 +47,8 @@ def update_status_for_mlb_season(session, year):
     scraped_bbref_game_ids.extend(game_id_dict.keys())
 
     result = __create_status_records_for_newly_scraped_game_ids(
-        session, year,
+        session,
+        year,
         game_id_dict
     )
     if result.failure:
@@ -286,10 +287,12 @@ def __update_status_all_brooks_pitch_logs(session, scraped_brooks_gameids):
             if result.failure:
                 return result
             pitch_logs_for_game = result.value
-            return __update_status_brooks_pitch_logs_for_game(
+            result = __update_status_brooks_pitch_logs_for_game(
                 session,
                 pitch_logs_for_game
             )
+            if result.failure:
+                return result
         except Exception as e:
             error = 'Error: {error}'.format(error=repr(e))
             return Result.Fail(error)
@@ -303,11 +306,7 @@ def __update_status_brooks_pitch_logs_for_game(session, pitch_logs_for_game):
         if result.failure:
             return result
         game_info = result.value
-        return __update_db_status_brooks_pitch_logs(
-            session,
-            game_info,
-            pitch_logs_for_game
-        )
+        return __update_db_status_brooks_pitch_logs(session, game_info, pitch_logs_for_game )
     except Exception as e:
         error = 'Error: {error}'.format(error=repr(e))
         return Result.Fail(error)
