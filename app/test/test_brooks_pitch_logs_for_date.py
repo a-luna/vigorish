@@ -35,7 +35,7 @@ class TestBrooksPitchLogsForDate(BaseTestCase):
     def test_scrape_brooks_games_for_date(self):
         """Verify BrooksGameInfo objects are correctly parsed from webpage."""
         response = html.parse(str(self.DASH_HTML))
-        result = parse_daily_dash_page(response, self.GAME_DATE, self.DASH_URL)
+        result = parse_daily_dash_page(self.session, response, self.GAME_DATE, self.DASH_URL)
         self.assertTrue(result.success)
         games_for_date = result.value
         game = games_for_date.games[11]
@@ -65,4 +65,3 @@ class TestBrooksPitchLogsForDate(BaseTestCase):
         )
         self.assertTrue(result.success)
         pitch_logs_for_game_out = result.value
-        satan = 666

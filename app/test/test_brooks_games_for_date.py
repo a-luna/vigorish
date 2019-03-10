@@ -28,7 +28,7 @@ class TestBrooksGamesForDate(BaseTestCase):
     def test_scrape_brooks_games_for_date(self):
         """Verify BrooksGameInfo objects are correctly parsed from webpage."""
         response = html.parse(str(self.DAILY_DASH_HTML))
-        result = parse_daily_dash_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
+        result = parse_daily_dash_page(self.session, response, self.GAME_DATE, self.DAILY_DASH_URL)
         self.assertTrue(result.success)
 
         games_for_date = result.value
@@ -127,7 +127,7 @@ class TestBrooksGamesForDate(BaseTestCase):
     def test_persist_brooks_games_for_date(self):
         """Verify BrooksGamesForDate and BrooksGameInfo objects can be written to file and read from file."""
         response = html.parse(str(self.DAILY_DASH_HTML))
-        result = parse_daily_dash_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
+        result = parse_daily_dash_page(self.session, response, self.GAME_DATE, self.DAILY_DASH_URL)
         self.assertTrue(result.success)
 
         games_for_date_in = result.value

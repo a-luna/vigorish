@@ -167,16 +167,18 @@ def scrape(ctx, data_set, start, end):
     prompt=True,
     help=(
         'Year of the MLB Season to report scrape progress.'))
+@click.option('--refresh/--no-refresh', default=False)
 @click.pass_context
-def status(ctx, year):
+def status(ctx, year, refresh):
     """Report progress of scraped mlb data sets."""
     engine = ctx.obj['engine']
     session = ctx.obj['session']
 
-    result = update_status_for_mlb_season(session, year)
-    if result.failure:
-        click.secho(str(result), fg='red')
-        return 1
+    if refresh:
+        result = update_status_for_mlb_season(session, year)
+        if result.failure:
+            click.secho(str(result), fg='red')
+            return 1
     refresh_all_mat_views(engine, session)
     mlb = Season.find_by_year(session, year)
     print(mlb.status_report())
