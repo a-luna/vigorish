@@ -52,6 +52,10 @@ class BBRefBoxscore():
         bb_game_id = f'gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_{away_team_id}mlb_{home_team_id}mlb_{game_number}'
         return {f'{self.bbref_game_id}': f'{bb_game_id}'}
 
+    def get_game_date(self):
+        result = validate_bbref_game_id(self.bbref_game_id)
+        return result.value['game_date']
+
     @staticmethod
     def __get_bb_team_id(br_team_id):
         if br_team_id in TEAM_ID_DICT:

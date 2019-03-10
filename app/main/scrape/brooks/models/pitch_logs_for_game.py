@@ -1,6 +1,8 @@
 """Pitch logs and pitchfx URLs for a single game."""
 import json
 
+from app.main.util.string_functions import validate_bb_game_id
+
 class BrooksPitchLogsForGame():
     """Pitch logs and pitchfx URLs for a single game."""
 
@@ -27,6 +29,16 @@ class BrooksPitchLogsForGame():
     def as_json(self):
         """Convert pitch logs for game to JSON."""
         return json.dumps(self.as_dict(), indent=2)
+
+    def get_game_id_dict(self):
+        return {f'{self.bbref_game_id}': f'{self.bb_game_id}'}
+
+    def get_game_date(self):
+        result = validate_bb_game_id(self.bb_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return game_dict['game_date']
 
     @staticmethod
     def _flatten(objects):

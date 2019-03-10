@@ -257,6 +257,14 @@ def update_status_bbref_boxscores_list(session, boxscores):
     ) as pbar:
         for b in boxscores:
             pbar.set_description(f'Updating {b.bbref_game_id}...')
+            game_date = b.get_game_date()
+            result = __create_status_records_for_newly_scraped_game_ids(
+                session,
+                game_date.year,
+                b.get_game_id_dict()
+            )
+            if result.failure:
+                return result
             result = __update_status_bbref_boxscore(session, b)
             if result.failure:
                 return result
@@ -351,9 +359,17 @@ def update_status_brooks_pitch_logs_for_game_list(session, game_list):
         leave=False,
         position=1
     ) as pbar:
-        for g in game_list:
-            pbar.set_description(f'Updating {g.bbref_game_id}...')
-            result = __update_status_brooks_pitch_logs_for_game(session, g)
+        for logs in game_list:
+            pbar.set_description(f'Updating {logs.bbref_game_id}...')
+            game_date = logs.get_game_date()
+            result = __create_status_records_for_newly_scraped_game_ids(
+                session,
+                game_date.year,
+                logs.get_game_id_dict()
+            )
+            if result.failure:
+                return result
+            result = __update_status_brooks_pitch_logs_for_game(session, logs)
             if result.failure:
                 return result
             pbar.update()
