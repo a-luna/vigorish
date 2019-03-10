@@ -54,6 +54,7 @@ def __parse_daily_dash_page(session, response, scrape_date, url):
     games_for_date = BrooksGamesForDate()
     games_for_date.game_date_str = scrape_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
+    games_for_date.game_count = 0
     games_for_date.games = []
 
     if Season.is_this_the_asg_date(session, scrape_date):
