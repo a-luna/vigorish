@@ -28,13 +28,12 @@ def update_status_for_mlb_season(session, year):
     session.commit()
     scraped_bbref_game_ids = result.value
 
-
     result = get_all_brooks_dates_scraped(year)
     if result.failure:
         return result
     scraped_brooks_dates = result.value
-
-    result = update_status_brooks_games_for_date(session, scraped_brooks_dates)
+    
+    result = update_status_brooks_games_for_date(session, scraped_brooks_dates, scraped_bbref_game_ids)
     if result.failure:
         return result
     session.commit()
@@ -98,7 +97,7 @@ def update_status_bbref_games_for_date(session, scraped_bbref_dates):
         setattr(date_status, 'game_count_bbref', game_count)
     return Result.Ok(all_game_ids)
 
-def update_status_brooks_games_for_date(session, scraped_brooks_dates):
+def update_status_brooks_games_for_date(session, scraped_brooks_dates, scraped_bbref_game_ids):
     game_id_dict = {}
     for d in tqdm(
         scraped_brooks_dates,
@@ -126,7 +125,8 @@ def update_status_brooks_games_for_date(session, scraped_brooks_dates):
                     if not g.might_be_postponed]
         game_count = len(game_ids)
         for tuple in game_ids:
-            game_id_dict[tuple[1]] = tuple[0]
+            if tuple[1] in scraped_bbref_game_ids:
+                game_id_dict[tuple[1]] = tuple[0]
 
         setattr(date_status, 'scraped_daily_dash_brooks', 1)
         setattr(date_status, 'game_count_brooks', game_count)

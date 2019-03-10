@@ -96,7 +96,18 @@ class DateScrapeStatus(Base):
         return f'<DateScrapeStatus(date={self.game_date_str}, season_id={self.season_id})>'
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        d['game_date_str'] = self.game_date_str
+        d['total_games'] = self.total_games
+        d['total_bbref_boxscores_scraped'] = self.total_bbref_boxscores_scraped
+        d['percent_complete_bbref_boxscores'] = self.percent_complete_bbref_boxscores
+        d['total_brooks_games_scraped'] = self.total_brooks_games_scraped
+        d['percent_complete_brooks_games'] = self.percent_complete_brooks_games
+        d['total_pitch_appearances_bbref'] = self.total_pitch_appearances_bbref
+        d['total_pitch_appearances_brooks'] = self.total_pitch_appearances_brooks
+        d['total_pitch_count_bbref'] = self.total_pitch_count_bbref
+        d['total_pitch_count_brooks'] = self.total_pitch_count_brooks
+        return d
 
     def display(self):
         season_dict = self.as_dict()
