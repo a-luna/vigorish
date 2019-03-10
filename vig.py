@@ -18,15 +18,17 @@ from app.main.models.season import Season
 from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
-from app.main.util.click_params import DateString, MlbSeason
+from app.main.util.click_params import DateString, MlbSeason, MlbDataSet
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
+from app.main.util.list_functions import print_list
 from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
 
-#TODO New cli command: vig status [YEAR, MONTH+YEAR, GAMEID, PLAYER]: generate a status report with completion percentages and total #s scraped,missing,imported for daily_game_totals, boxscores, pitchlogs, pitchfx, etc.
 #TODO Create unit tests for all substitution parsing scenarios
 #TODO Track lineup changes to avoid the various name,pos=N/A and lineupslot=0 hacks introduced in order to get boxscores parsing successfully
+#TODO Create config file and config.example with settings for AWS auth, S3 bucket name/local folder path, DB URL, chrome/chromedriver binaries
+#TODO Create vig config command which prompts user for values listed above and writes to config file.
 
 APP_ROOT = Path.cwd()
 DOTENV_PATH = APP_ROOT / '.env'
@@ -84,10 +86,13 @@ def setup(ctx):
 @cli.command()
 @click.option(
     '--data-set',
-    type=click.Choice(MLB_DATA_SETS),
+    type=MlbDataSet(),
     prompt=True,
-    show_choices=True,
-    help='Data set to scrape from website.')
+    help=(
+        'Data set to scrape, must be a value from the following list:\n'
+        f'{print_list(MLB_DATA_SETS)}'
+    )
+)
 @click.option(
     '--start',
     type=DateString(),
@@ -139,8 +144,7 @@ def scrape(ctx, data_set, start, end):
             )
             if result.failure:
                 break
-            delay_ms = (randint(150, 250)/100.0)
-            time.sleep(delay_ms)
+            time.sleep(randint(250, 300)/100.0)
             pbar.update()
 
     session.close()
@@ -167,7 +171,15 @@ def scrape(ctx, data_set, start, end):
     prompt=True,
     help=(
         'Year of the MLB Season to report scrape progress.'))
-@click.option('--refresh/--no-refresh', default=False)
+@click.option(
+    '--refresh/--no-refresh',
+    default=False,
+    help=(
+        'Determines if all scraped data is examined before producing status '
+        'report. By default, data is not refreshed. Refresh process requires '
+        'approximately 25 minutes to complete.'
+    )
+)
 @click.pass_context
 def status(ctx, year, refresh):
     """Report progress of scraped mlb data sets."""
@@ -227,15 +239,22 @@ def __scrape_data_for_date(session, scrape_date, scrape_config, driver):
         if result.failure:
             return result
         input_dict['input_data'] = result.value
+
     if scrape_config.requires_selenium:
         input_dict['driver'] = driver
     result = scrape_config.scrape_function(input_dict)
     if result.failure:
         return result
     scraped_data = result.value
+
     if scrape_config.produces_list:
-        return __upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
-    return scrape_config.persist_function(scraped_data, scrape_date)
+        result =  __upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
+    else:
+        result = scrape_config.persist_function(scraped_data, scrape_date)
+    if result.failure:
+        return result
+
+    return scrape_config.update_status_function(session, scraped_data)
 
 
 def __upload_scraped_data_list(scraped_data, scrape_date, scrape_config):

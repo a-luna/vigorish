@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, Float, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.main.models.base import Base
+from app.main.models.player import Player
 from app.main.models.team import Team
 from app.main.util.list_functions import display_dict
 

@@ -39,3 +39,6 @@ class BrooksGameInfo():
             "pitcher_appearance_dict": self.pitcher_appearance_dict
         }
         return dict
+
+    def get_game_id_dict(self):
+        return {f'{self.bbref_game_id}': f'{self.bb_game_id}'}

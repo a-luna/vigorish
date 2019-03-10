@@ -30,6 +30,7 @@ def __get_dashboard_url_for_date(scrape_date):
 
 def __parse_dashboard_page(response, scrape_date, url):
     games_for_date = BBRefGamesForDate()
+    games_for_date.game_date = scrape_date
     games_for_date.game_date_str = scrape_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
 

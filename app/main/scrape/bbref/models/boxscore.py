@@ -3,6 +3,9 @@ import json
 from app.main.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
 from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
 
+from app.main.constants import TEAM_ID_DICT
+from app.main.util.string_functions import validate_bbref_game_id
+
 class BBRefBoxscore():
     """Batting and pitching statistics for a single MLB game."""
 
@@ -37,6 +40,24 @@ class BBRefBoxscore():
             "player_name_dict": self.player_name_dict
         }
         return boxscore_dict
+
+    def get_game_id_dict(self):
+        result = validate_bbref_game_id(self.bbref_game_id)
+        game_date = result.value['game_date']
+        game_number = result.value['game_number']
+        away_team_id = self.__get_bb_team_id(self.away_team_data.team_id_br)\
+            .lower()
+        home_team_id = self.__get_bb_team_id(self.home_team_data.team_id_br)\
+            .lower()
+        bb_game_id = f'gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_{away_team_id}mlb_{home_team_id}mlb_{game_number}'
+        return {f'{self.bbref_game_id}': f'{bb_game_id}'}
+
+    @staticmethod
+    def __get_bb_team_id(br_team_id):
+        if br_team_id in TEAM_ID_DICT:
+            return TEAM_ID_DICT[br_team_id]
+        return br_team_id
+
 
     def as_json(self):
         """Convert boxscore to JSON."""

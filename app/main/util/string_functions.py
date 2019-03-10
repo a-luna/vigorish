@@ -71,7 +71,11 @@ def validate_bbref_game_id(input_str):
         year = int(year_str)
         month = int(month_str)
         day = int(day_str)
-        game_number = int(game_number_str)
+        parsed = int(game_number_str)
+        if parsed < 2:
+            game_number = 1
+        else:
+            game_number = parsed
     except ValueError as e:
         error = f'Failed to parse int value from bbref_game_id:\n{repr(e)}'
         return Result.Fail(error)

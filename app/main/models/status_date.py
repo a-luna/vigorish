@@ -39,8 +39,8 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_games(self):
-        if self.mat_view is not None:
-            return self.mat_view.total_games
+        if self.scrape_status_games:
+            return len(self.scrape_status_games)
 
     @hybrid_property
     def total_bbref_boxscores_scraped(self):
@@ -126,7 +126,6 @@ class DateScrapeStatusMV(MaterializedView):
         "date_status_mv",
         select([
             DateScrapeStatus.id.label('id'),
-            func.count(GameScrapeStatus.id).label('total_games'),
             func.sum(GameScrapeStatus.scraped_bbref_boxscore).label('total_bbref_boxscores_scraped'),
             func.sum(GameScrapeStatus.scraped_brooks_pitch_logs_for_game).label('total_brooks_games_scraped'),
             func.sum(GameScrapeStatus.pitch_app_count_bbref).label('total_pitch_appearances_bbref'),

@@ -1,9 +1,9 @@
 import datetime
 import json
-import random
 import re
 import time
 from pathlib import Path
+from random import randint
 from string import Template
 
 from lxml import html
@@ -197,7 +197,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
                     if player_match_log:
                         player_name_match_logs.extend(player_match_log)
 
-                    time.sleep(random.uniform(2.5, 3.0))
+                    time.sleep(randint(250, 300)/100.0)
                     parsing_boxscore = False
                     pbar.update()
                 except Exception:

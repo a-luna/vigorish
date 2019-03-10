@@ -78,3 +78,12 @@ def compare_lists(list1, list2):
     check1 = not list(set(sorted(list1)) - set(sorted(list2)))
     check2 = not list(set(sorted(list2)) - set(sorted(list1)))
     return check1 and check2
+
+def print_list(l):
+    s = ''
+    for i in range(0, len(l)):
+        if i != len(l) - 1:
+            s += f'{l[i]},\n'
+        else:
+            s += f'{l[i]}'
+    return s

@@ -146,6 +146,8 @@ class TestBrooksGamesForDate(BaseTestCase):
         self.assertTrue(result.success)
         games_for_date_out = result.value
 
+        d = games_for_date_out.get_game_id_dict()
+
         self.assertTrue(isinstance(games_for_date_out, BrooksGamesForDate))
         self.assertEqual(games_for_date_out.dashboard_url, self.DAILY_DASH_URL)
         self.assertEqual(games_for_date_out.game_date, self.GAME_DATE)

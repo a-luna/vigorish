@@ -41,6 +41,7 @@ class TestBBRefBoxscore(BaseTestCase):
         )
         self.assertTrue(result.success)
         boxscore = result.value
+        game_id_dict = boxscore.get_game_id_dict()
 
         self.assertEqual(boxscore.boxscore_url, self.BOXSCORE_URL)
         self.assertEqual(boxscore.bbref_game_id, 'ATL201803290')

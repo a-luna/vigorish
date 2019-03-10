@@ -1,5 +1,6 @@
 """Boxscore URLs for all games that took place on a single day."""
 import json
+from collections import ChainMap
 
 class BrooksGamesForDate():
     """Boxscore URLs for all games that took place on a single day."""
@@ -9,6 +10,16 @@ class BrooksGamesForDate():
     game_date_str = ""
     game_count = ""
     games = []
+
+
+    def get_game_id_dict(self):
+        dict_list = [
+            g.get_game_id_dict()
+            for g
+            in self.games
+            if not g.might_be_postponed
+        ]
+        return dict(ChainMap(*dict_list))
 
     def as_dict(self):
         """Convert daily boxscore URL values to a dictionary."""

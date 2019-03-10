@@ -51,6 +51,21 @@ MLB_DATA_SETS = [
     'brooks_pitchfx'
 ]
 
+TEAM_ID_DICT = {
+    "CHW":"CHA",
+    "CHC":"CHN",
+    "KCR":"KCA",
+    "LAA":"ANA",
+    "LAD":"LAN",
+    "NYY":"NYA",
+    "NYM":"NYN",
+    "SDP":"SDN",
+    "SFG":"SFN",
+    "STL":"SLN",
+    "TBR":"TBA",
+    "WSN":"WAS"
+}
+
 BROOKS_DASHBOARD_DATE_FORMAT = '%m/%d/%Y'
 T_BROOKS_DASH_URL = 'http://www.brooksbaseball.net/dashboard.php?dts=${date}'
 T_BBREF_DASH_URL = "https://www.baseball-reference.com/boxes/?month=${m}&day=${d}&year=${y}"

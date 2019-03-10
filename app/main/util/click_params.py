@@ -2,7 +2,9 @@ from dateutil import parser
 
 import click
 
+from app.main.constants import MLB_DATA_SETS
 from app.main.models.season import Season
+from app.main.util.list_functions import print_list
 
 class DateString(click.ParamType):
     name = 'date-string'
@@ -21,7 +23,7 @@ class DateString(click.ParamType):
             self.fail(error, param, ctx)
 
 class MlbSeason(click.ParamType):
-    name = 'number-year'
+    name = 'year-number'
     def convert(self, value, param, ctx):
         session = ctx.obj['session']
         try:
@@ -48,6 +50,20 @@ class MlbSeason(click.ParamType):
                 f'the range {year_min}-{year_max} are supported in this '
                 'version of vig.'
             )
+            self.fail(error, param, ctx)
+        except Exception:
+            self.fail(error, param, ctx)
+
+class MlbDataSet(click.ParamType):
+    name = 'data-set'
+    def convert(self, value, param, ctx):
+        try:
+            if value in MLB_DATA_SETS:
+                return value
+            error = f"""
+            {value} is invalid, you must provide a value from the following list:
+            {print_list(MLB_DATA_SETS)}
+            """
             self.fail(error, param, ctx)
         except Exception:
             self.fail(error, param, ctx)
