@@ -180,16 +180,16 @@ class Season(Base):
     @hybrid_property
     def total_pitch_count_brooks(self):
         return sum(
-            date_status.total_brooks_games_scraped
+            date_status.total_pitch_count_brooks
             for date_status
             in self.scrape_status_dates
-            if date_status.total_brooks_games_scraped
+            if date_status.total_pitch_count_brooks
         )
 
     @hybrid_property
     def total_pitch_count_diff(self):
-        diff = self.total_pitch_appearances_bbref - \
-            self.total_pitch_appearances_brooks
+        diff = self.total_pitch_count_bbref - \
+            self.total_pitch_count_brooks
         return abs(diff)
 
     def __repr__(self):

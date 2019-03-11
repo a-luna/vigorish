@@ -7,6 +7,7 @@ from random import randint
 import click
 from dateutil import parser
 from dotenv import load_dotenv
+from halo import Halo
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
@@ -185,13 +186,18 @@ def status(ctx, year, refresh):
     """Report progress of scraped mlb data sets."""
     engine = ctx.obj['engine']
     session = ctx.obj['session']
-
     if refresh:
         result = update_status_for_mlb_season(session, year)
         if result.failure:
             click.secho(str(result), fg='red')
             return 1
+    else:
+        spinner = Halo(text='Loading', spinner='noise')
+        spinner.start()
     refresh_all_mat_views(engine, session)
+    if spinner:
+        spinner.stop()
+
     mlb = Season.find_by_year(session, year)
     print(mlb.status_report())
     session.close()
