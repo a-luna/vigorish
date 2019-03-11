@@ -149,7 +149,7 @@ def update_status_brooks_games_for_date(session, games_for_date):
     setattr(date_status, 'game_count_brooks', games_for_date.game_count)
     return Result.Ok()
 
-def __create_status_records_for_newly_scraped_game_ids(session, year, game_id_dict):
+def __create_status_records_for_newly_scraped_game_ids(session, year, game_id_dict, disable_pbar=False):
     prev_bbref_game_ids = [
         g.bbref_game_id
         for g
@@ -172,7 +172,8 @@ def __create_status_records_for_newly_scraped_game_ids(session, year, game_id_di
         unit='day',
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
+        unit_scale=True,
+        disable=disable_pbar
     ):
         try:
             result = validate_bbref_game_id(gid)
@@ -366,7 +367,8 @@ def update_status_brooks_pitch_logs_for_game_list(session, game_list):
             result = __create_status_records_for_newly_scraped_game_ids(
                 session,
                 game_date.year,
-                logs.get_game_id_dict()
+                logs.get_game_id_dict(),
+                disable_pbar=True
             )
             if result.failure:
                 return result

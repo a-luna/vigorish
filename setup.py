@@ -31,6 +31,7 @@ setup(
         'boto3',
         'Click',
         'fuzzywuzzy',
+        'halo',
         'lxml',
         'pandas',
         'psycopg2-binary',

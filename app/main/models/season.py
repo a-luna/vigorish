@@ -85,7 +85,8 @@ class Season(Base):
     def percent_complete_brooks_games_for_date(self):
         if self.mat_view is not None:
             if self.total_days and self.total_days > 0:
-                return self.total_days_scraped_brooks/float(self.total_days)
+                perc = self.total_days_scraped_brooks/float(self.total_days)
+                return f'{perc*100:02.0f}%'
 
     @hybrid_property
     def total_games_bbref(self):
@@ -228,11 +229,11 @@ class Season(Base):
         return f"""
         BBRef Dates Scraped..........: {self.percent_complete_bbref_games_for_date} ({self.total_days_scraped_bbref}/{self.total_days})
         Brooks Dates Scraped.........: {self.percent_complete_brooks_games_for_date} ({self.total_days_scraped_brooks}/{self.total_days})\n
-        Total Games Comparison.......: Diff={self.total_games_diff} (BBref={self.total_games_bbref}, Brooks={self.total_games_brooks})
-        BBRef Games Scraped..........: {self.percent_complete_bbref_boxscores_scraped} ({self.total_bbref_boxscores_scraped}/{self.total_games_tracked})
-        Brooks Games Scraped.........: {self.percent_complete_brooks_games_scraped} ({self.total_brooks_games_scraped}/{self.total_games_tracked})\n
-        Pitch Appearance Comparison..: Diff={self.pitch_appearance_diff} (BBref={self.total_pitch_appearances_bbref}, Brooks={self.total_pitch_appearances_brooks})
-        Pitch Count Comparison.......: Diff={self.total_pitch_count_diff} (BBref={self.total_pitch_count_bbref}, Brooks={self.total_pitch_count_brooks})
+        Total Games Comparison.......: Diff={self.total_games_diff} (BBref={self.total_games_bbref:,}, Brooks={self.total_games_brooks:,})
+        BBRef Games Scraped..........: {self.percent_complete_bbref_boxscores_scraped} ({self.total_bbref_boxscores_scraped:,}/{self.total_games_tracked:,})
+        Brooks Games Scraped.........: {self.percent_complete_brooks_games_scraped} ({self.total_brooks_games_scraped:,}/{self.total_games_tracked:,})\n
+        Pitch Appearance Comparison..: Diff={self.pitch_appearance_diff} (BBref={self.total_pitch_appearances_bbref:,}, Brooks={self.total_pitch_appearances_brooks:,})
+        Pitch Count Comparison.......: Diff={self.total_pitch_count_diff} (BBref={self.total_pitch_count_bbref:,}, Brooks={self.total_pitch_count_brooks:,})
         """
 
     def get_date_range(self):
