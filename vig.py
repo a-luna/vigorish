@@ -186,16 +186,19 @@ def status(ctx, year, refresh):
     """Report progress of scraped mlb data sets."""
     engine = ctx.obj['engine']
     session = ctx.obj['session']
+    spinner = Halo(text='Loading', spinner='noise')
+    spinner_started = False
+
     if refresh:
         result = update_status_for_mlb_season(session, year)
         if result.failure:
             click.secho(str(result), fg='red')
             return 1
     else:
-        spinner = Halo(text='Loading', spinner='noise')
+        spinner_started = True
         spinner.start()
     refresh_all_mat_views(engine, session)
-    if spinner:
+    if spinner_started:
         spinner.stop()
 
     mlb = Season.find_by_year(session, year)
