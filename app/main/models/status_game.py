@@ -58,3 +58,31 @@ class GameScrapeStatus(Base):
     @classmethod
     def find_by_bb_game_id(cls, session, bb_game_id):
         return session.query(cls).filter_by(bb_game_id=bb_game_id).first()
+
+    @classmethod
+    def get_all_scraped_bbref_game_ids_for_season(cls, session, season_id):
+        return [game_status.bbref_game_id
+                for game_status
+                in session.query(cls).filter_by(season_id=season_id).all()
+                if game_status.scraped_bbref_boxscore == 1]
+
+    @classmethod
+    def get_all_unscraped_bbref_game_ids_for_season(cls, session, season_id):
+        return [game_status.bbref_game_id
+                for game_status
+                in session.query(cls).filter_by(season_id=season_id).all()
+                if game_status.scraped_bbref_boxscore == 0]
+
+    @classmethod
+    def get_all_scraped_brooks_game_ids_for_season(cls, session, season_id):
+        return [game_status.bb_game_id
+                for game_status
+                in session.query(cls).filter_by(season_id=season_id).all()
+                if game_status.scraped_brooks_pitch_logs_for_game == 1]
+
+    @classmethod
+    def get_all_unscraped_brooks_game_ids_for_season(cls, session, season_id):
+        return [game_status.bb_game_id
+                for game_status
+                in session.query(cls).filter_by(season_id=season_id).all()
+                if game_status.scraped_brooks_pitch_logs_for_game == 0]

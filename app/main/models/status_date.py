@@ -119,6 +119,34 @@ class DateScrapeStatus(Base):
         date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
         return session.query(cls).get(int(date_str))
 
+    @classmethod
+    def get_all_bbref_scraped_dates_for_season(cls, session, season_id):
+        return [date_status.game_date
+                for date_status
+                in session.query(cls).filter_by(season_id=season_id).all()
+                if date_status.scraped_daily_dash_bbref == 1]
+
+    @classmethod
+    def get_all_bbref_unscraped_dates_for_season(cls, session, season_id):
+        return [date_status.game_date
+                for date_status
+                in session.query(cls).filter_by(season_id=season_id).all()
+                if date_status.scraped_daily_dash_bbref == 0]
+
+    @classmethod
+    def get_all_brooks_scraped_dates_for_season(cls, session, season_id):
+        return [date_status.game_date
+                for date_status
+                in session.query(cls).filter_by(season_id=season_id).all()
+                if date_status.scraped_daily_dash_brooks == 1]
+
+    @classmethod
+    def get_all_brooks_unscraped_dates_for_season(cls, session, season_id):
+        return [date_status.game_date
+                for date_status
+                in session.query(cls).filter_by(season_id=season_id).all()
+                if date_status.scraped_daily_dash_brooks == 0]
+
 
 class DateScrapeStatusMV(MaterializedView):
     __table__ = create_mat_view(

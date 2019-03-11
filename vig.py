@@ -111,6 +111,7 @@ def setup(ctx):
 @click.pass_context
 def scrape(ctx, data_set, start, end):
     """Scrape MLB data from websites."""
+    engine = ctx.obj['engine']
     session = ctx.obj['session']
     result = __validate_date_range(session, start, end)
     if result.failure:
@@ -145,6 +146,9 @@ def scrape(ctx, data_set, start, end):
             )
             if result.failure:
                 break
+
+            session.commit()
+            refresh_all_mat_views(engine, session)
             time.sleep(randint(250, 300)/100.0)
             pbar.update()
 
