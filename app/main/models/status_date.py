@@ -79,7 +79,7 @@ class DateScrapeStatus(Base):
     @hybrid_property
     def pitch_appearance_count_differs(self):
         if self.mat_view is not None:
-            return self.mat_view.total_pitch_appearances_bbref == \
+            return self.mat_view.total_pitch_appearances_bbref != \
                 self.mat_view.total_pitch_appearances_brooks
 
     @hybrid_property

@@ -175,35 +175,21 @@ def scrape(ctx, data_set, start, end):
     type=MlbSeason(),
     prompt=True,
     help=(
-        'Year of the MLB Season to report scrape progress.'))
-@click.option(
-    '--refresh/--no-refresh',
-    default=False,
-    help=(
-        'Determines if all scraped data is examined before producing status '
-        'report. By default, data is not refreshed. Refresh process requires '
-        'approximately 25 minutes to complete.'
-    )
-)
+        'Year of the MLB Season to report progress of scraped data sets.'))
 @click.pass_context
-def status(ctx, year, refresh):
+def status(ctx, year):
     """Report progress of scraped mlb data sets."""
     engine = ctx.obj['engine']
     session = ctx.obj['session']
     spinner = Halo(text='Loading', spinner='noise')
-    spinner_started = False
 
-    if refresh:
-        result = update_status_for_mlb_season(session, year)
-        if result.failure:
-            click.secho(str(result), fg='red')
-            return 1
-    else:
-        spinner_started = True
-        spinner.start()
+    spinner.start()
+    result = update_status_for_mlb_season(session, year)
+    if result.failure:
+        click.secho(str(result), fg='red')
+        return 1
     refresh_all_mat_views(engine, session)
-    if spinner_started:
-        spinner.stop()
+    spinner.stop()
 
     mlb = Season.find_by_year(session, year)
     print(mlb.status_report())
@@ -285,8 +271,7 @@ def __upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
             result = scrape_config.persist_function(data, scrape_date)
             if result.failure:
                 return result
-            delay_ms = (randint(50, 100)/100.0)
-            time.sleep(delay_ms)
+            time.sleep(randint(50, 100)/100.0)
             pbar.update()
     return Result.Ok()
 

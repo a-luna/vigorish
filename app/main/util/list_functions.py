@@ -83,7 +83,7 @@ def print_list(l):
     s = ''
     for i in range(0, len(l)):
         if i != len(l) - 1:
-            s += f'{l[i]},\n'
+            s += f'{i+1}) {l[i]},\n'
         else:
-            s += f'{l[i]}'
+            s += f'{i+1}) {l[i]}'
     return s
