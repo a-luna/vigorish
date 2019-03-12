@@ -22,49 +22,12 @@ def update_status_for_mlb_season(session, year):
         error = f'Error occurred retrieving season for year={year}'
         return Result.Fail(error)
 
-    result = get_all_bbref_dates_scraped(year)
+    result = update_data_set_bbref_games_for_date(session, season)
     if result.failure:
         return result
-    scraped_bbref_dates = result.value
-    unscraped_bbref_dates = DateScrapeStatus.get_all_bbref_unscraped_dates_for_season(session, season.id)
+    scraped_bbref_game_ids = result.value
 
-    update_bbref_dates = set(scraped_bbref_dates) & set(unscraped_bbref_dates)
-    if update_bbref_dates:
-        result = __update_status_all_bbref_games_for_date(
-            session,
-            update_bbref_dates
-        )
-        if result.failure:
-            return result
-        session.commit()
-    scraped_bbref_game_ids = DateScrapeStatus.get_all_bbref_scraped_dates_for_season(session, season.id)
-
-    result = get_all_brooks_dates_scraped(year)
-    if result.failure:
-        return result
-    scraped_brooks_dates = result.value
-    unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(session, season.id)
-
-    update_brooks_dates = set(scraped_brooks_dates) & set(unscraped_brooks_dates)
-    if update_brooks_dates:
-        result = __update_status_all_brooks_games_for_date(
-            session,
-            update_brooks_dates
-        )
-        if result.failure:
-            return result
-        session.commit()
-        game_id_dict = result.value
-        scraped_bbref_game_ids.extend(game_id_dict.keys())
-
-        result = __create_status_records_for_newly_scraped_game_ids(
-            session,
-            year,
-            game_id_dict
-        )
-        if result.failure:
-            return result
-        session.commit()
+    
 
     result = get_all_bbref_boxscores_scraped(year)
     if result.failure:
@@ -91,6 +54,53 @@ def update_status_for_mlb_season(session, year):
         session.commit()
 
     return Result.Ok()
+
+def update_data_set_bbref_games_for_date(session, season):
+    result = get_all_bbref_dates_scraped(season.year)
+    if result.failure:
+        return result
+    scraped_bbref_dates = result.value
+    unscraped_bbref_dates = DateScrapeStatus.get_all_bbref_unscraped_dates_for_season(session, season.id)
+
+    update_bbref_dates = set(scraped_bbref_dates) & set(unscraped_bbref_dates)
+    if update_bbref_dates:
+        result = __update_status_all_bbref_games_for_date(
+            session,
+            update_bbref_dates
+        )
+        if result.failure:
+            return result
+        session.commit()
+    scraped_bbref_game_ids = DateScrapeStatus.get_all_bbref_scraped_dates_for_season(session, season.id)
+    return Result.Ok(scraped_bbref_game_ids)
+
+def update_data_set_brooks_games_for_date(session, season):
+    result = get_all_brooks_dates_scraped(season.year)
+    if result.failure:
+        return result
+    scraped_brooks_dates = result.value
+    unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(session, season.id)
+
+    update_brooks_dates = set(scraped_brooks_dates) & set(unscraped_brooks_dates)
+    if update_brooks_dates:
+        result = __update_status_all_brooks_games_for_date(
+            session,
+            update_brooks_dates
+        )
+        if result.failure:
+            return result
+        session.commit()
+        game_id_dict = result.value
+        scraped_bbref_game_ids.extend(game_id_dict.keys())
+
+        result = __create_status_records_for_newly_scraped_game_ids(
+            session,
+            year,
+            game_id_dict
+        )
+        if result.failure:
+            return result
+        session.commit()
 
 def __update_status_all_bbref_games_for_date(session, scraped_bbref_dates):
     all_game_ids = []
@@ -377,17 +387,25 @@ def update_status_brooks_pitch_logs_for_game_list(session, game_list):
         position=1
     ) as pbar:
         for logs in game_list:
+            result = __get_brooks_game_info_for_game_id(logs.bb_game_id)
+            if result.failure:
+                return result
+            game_info = result.value
+            if game_info.might_be_postponed:
+                continue
+
             pbar.set_description(f'Updating {logs.bbref_game_id}...')
             game_date = logs.get_game_date()
+            game_id_dict = logs.get_game_id_dict()
             result = __create_status_records_for_newly_scraped_game_ids(
                 session,
                 game_date.year,
-                logs.get_game_id_dict(),
+                game_id_dict,
                 disable_pbar=True
             )
             if result.failure:
                 return result
-            result = __update_status_brooks_pitch_logs_for_game(session, logs)
+            result = __update_db_status_brooks_pitch_logs(session, game_info, logs)
             if result.failure:
                 return result
             pbar.update()

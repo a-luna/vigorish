@@ -42,6 +42,8 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
         position=1
     ) as pbar:
         for game in games_for_date.games:
+            if game.might_be_postponed:
+                continue
             pbar.set_description(f'Processing {game.bbref_game_id}..')
             result = __parse_pitch_logs_for_game(game)
             if result.failure:
@@ -81,12 +83,6 @@ def __parse_pitch_logs_for_game(game):
                     response = result.value
                     result = __parse_pitch_log(response, game, pitcher_id, url)
                     if result.failure:
-                        if game.might_be_postponed:
-                            time.sleep(random.uniform(2.5, 3.0))
-                            parsing_pitch_log = False
-                            pbar.update()
-                            continue
-                        else:
                             return result
                     brooks_pitch_log = result.value
                     scraped_pitch_logs.append(brooks_pitch_log)

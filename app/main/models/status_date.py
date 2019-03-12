@@ -77,6 +77,12 @@ class DateScrapeStatus(Base):
             return self.mat_view.total_pitch_appearances_brooks
 
     @hybrid_property
+    def pitch_appearance_count_differs(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_pitch_appearances_bbref == \
+                self.mat_view.total_pitch_appearances_brooks
+
+    @hybrid_property
     def total_pitch_count_bbref(self):
         if self.mat_view is not None:
             return self.mat_view.total_pitch_count_bbref
@@ -85,6 +91,12 @@ class DateScrapeStatus(Base):
     def total_pitch_count_brooks(self):
         if self.mat_view is not None:
             return self.mat_view.total_pitch_count_brooks
+
+    @hybrid_property
+    def total_pitch_count_differs(self):
+        if self.mat_view is not None:
+            return self.mat_view.total_pitch_count_bbref == \
+                self.mat_view.total_pitch_count_brooks
 
     def __init__(self, game_date, season_id):
         date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
