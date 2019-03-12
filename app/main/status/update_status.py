@@ -27,7 +27,13 @@ def update_status_for_mlb_season(session, year):
         return result
     scraped_bbref_game_ids = result.value
 
-    
+    result = update_data_set_brooks_games_for_date(
+        session,
+        season,
+        scraped_bbref_game_ids
+    )
+    if result.failure:
+        return result
 
     result = get_all_bbref_boxscores_scraped(year)
     if result.failure:
@@ -74,7 +80,7 @@ def update_data_set_bbref_games_for_date(session, season):
     scraped_bbref_game_ids = DateScrapeStatus.get_all_bbref_scraped_dates_for_season(session, season.id)
     return Result.Ok(scraped_bbref_game_ids)
 
-def update_data_set_brooks_games_for_date(session, season):
+def update_data_set_brooks_games_for_date(session, season, scraped_bbref_game_ids):
     result = get_all_brooks_dates_scraped(season.year)
     if result.failure:
         return result
@@ -82,25 +88,28 @@ def update_data_set_brooks_games_for_date(session, season):
     unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(session, season.id)
 
     update_brooks_dates = set(scraped_brooks_dates) & set(unscraped_brooks_dates)
-    if update_brooks_dates:
-        result = __update_status_all_brooks_games_for_date(
-            session,
-            update_brooks_dates
-        )
-        if result.failure:
-            return result
-        session.commit()
-        game_id_dict = result.value
-        scraped_bbref_game_ids.extend(game_id_dict.keys())
+    if not update_brooks_dates:
+        return Result.Ok()
 
-        result = __create_status_records_for_newly_scraped_game_ids(
-            session,
-            year,
-            game_id_dict
-        )
-        if result.failure:
-            return result
-        session.commit()
+    result = __update_status_all_brooks_games_for_date(
+        session,
+        update_brooks_dates
+    )
+    if result.failure:
+        return result
+    session.commit()
+    game_id_dict = result.value
+
+    scraped_bbref_game_ids.extend(game_id_dict.keys())
+    result = __create_status_records_for_newly_scraped_game_ids(
+        session,
+        season.year,
+        game_id_dict
+    )
+    if result.failure:
+        return result
+    session.commit()
+    return Result.Ok()
 
 def __update_status_all_bbref_games_for_date(session, scraped_bbref_dates):
     all_game_ids = []
