@@ -12,7 +12,8 @@ DESCRIPTION = (
 setup(
     name='vigorish',
     version='0.1.1',
-    py_modules=['vig'],
+    packages=find_packages(),
+    include_package_data=True,
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
@@ -47,6 +48,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        vig=vig:cli
+        vig=app.cli.vig:cli
     ''',
 )
