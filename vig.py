@@ -12,7 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
-from app.main.config import scrape_config_by_data_set
+from app.main.config import get_config
 from app.main.constants import MLB_DATA_SETS
 from app.main.models.base import Base
 from app.main.models.season import Season
@@ -24,7 +24,6 @@ from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.list_functions import print_list
 from app.main.util.result import Result
-from app.main.util.scrape_functions import get_chromedriver
 
 #TODO Create unit tests for all substitution parsing scenarios
 #TODO Track lineup changes to avoid the various name,pos=N/A and lineupslot=0 hacks introduced in order to get boxscores parsing successfully
@@ -91,9 +90,7 @@ def setup(ctx):
     prompt=True,
     help=(
         'Data set to scrape, must be a value from the following list:\n'
-        f'{", ".join(MLB_DATA_SETS)}'
-    )
-)
+        f'{", ".join(MLB_DATA_SETS)}'))
 @click.option(
     '--start',
     type=DateString(),
@@ -118,16 +115,15 @@ def scrape(ctx, data_set, start, end):
         click.secho(str(result), fg='red')
         session.close()
         return 1
+    date_range = get_date_range(start, end)
 
-    scrape_config = scrape_config_by_data_set[data_set]
-    result = __get_driver(scrape_config)
+    result = get_config(data_set)
     if result.failure:
         click.secho(str(result), fg='red')
         session.close()
         return 1
-    driver = result.value
+    scrape_config = result.value
 
-    date_range = get_date_range(start, end)
     with tqdm(
         total=len(date_range),
         ncols=100,
@@ -141,8 +137,7 @@ def scrape(ctx, data_set, start, end):
             result = __scrape_data_for_date(
                 session,
                 scrape_date,
-                scrape_config,
-                driver
+                scrape_config
             )
             if result.failure:
                 break
@@ -154,8 +149,8 @@ def scrape(ctx, data_set, start, end):
 
     session.close()
     if scrape_config.requires_selenium:
-        driver.close()
-        driver.quit()
+        scrape_config.driver.close()
+        scrape_config.driver.quit()
     if result.failure:
         click.secho(str(result), fg='red')
         return 1
@@ -181,7 +176,7 @@ def status(ctx, year):
     """Report progress of scraped mlb data sets."""
     engine = ctx.obj['engine']
     session = ctx.obj['session']
-    spinner = Halo(text='Loading', spinner='noise')
+    spinner = Halo(text='Updating...', spinner='dots12')
 
     spinner.start()
     result = update_status_for_mlb_season(session, year)
@@ -189,7 +184,7 @@ def status(ctx, year):
         click.secho(str(result), fg='red')
         return 1
     refresh_all_mat_views(engine, session)
-    spinner.stop()
+    spinner.succeed('')
 
     mlb = Season.find_by_year(session, year)
     print(mlb.status_report())
@@ -225,13 +220,7 @@ def __validate_date_range(session, start, end):
     return Result.Ok()
 
 
-def __get_driver(scrape_config):
-    if not scrape_config.requires_selenium:
-        return Result.Ok()
-    return get_chromedriver()
-
-
-def __scrape_data_for_date(session, scrape_date, scrape_config, driver):
+def __scrape_data_for_date(session, scrape_date, scrape_config):
     input_dict = dict(date=scrape_date, session=session)
     if scrape_config.requires_input:
         result = scrape_config.get_input_function(scrape_date)
@@ -240,7 +229,7 @@ def __scrape_data_for_date(session, scrape_date, scrape_config, driver):
         input_dict['input_data'] = result.value
 
     if scrape_config.requires_selenium:
-        input_dict['driver'] = driver
+        input_dict['driver'] = scrape_config.driver
     result = scrape_config.scrape_function(input_dict)
     if result.failure:
         return result

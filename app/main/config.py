@@ -21,12 +21,14 @@ from app.main.status.update_status import (
     update_status_bbref_boxscores_list,
     update_status_brooks_pitch_logs_for_game_list
 )
+from app.main.util.result import Result
 from app.main.util.s3_helper import (
     upload_brooks_games_for_date, get_brooks_games_for_date_from_s3,
     upload_bbref_games_for_date, get_bbref_games_for_date_from_s3,
     upload_bbref_boxscore, get_bbref_boxscore_from_s3,
     upload_brooks_pitch_logs_for_game, get_brooks_pitch_logs_for_game_from_s3
 )
+from app.main.util.scrape_functions import get_chromedriver
 
 
 class ScrapeConfig:
@@ -39,6 +41,7 @@ class ScrapeConfig:
     persist_function = None
     populate_function = None
     update_status_function = None
+    driver = None
 
 class BBRefGamesForDateScrapeConfig(ScrapeConfig):
     display_name = 'Games for date (bbref.com)'
@@ -81,7 +84,7 @@ class BrooksPitchFxScrapeConfig(ScrapeConfig):
     display_name = 'PitchFX for pitching appearance (brooksbaseball.com)'
     requires_input = True
 
-scrape_config_by_data_set = dict(
+SCRAPE_CONFIG_DICT = dict(
     bbref_games_for_date=BBRefGamesForDateScrapeConfig,
     bbref_boxscore=BBRefBoxscoreScrapeConfig,
     bbref_player=BBRefPlayerScrapeConfig,
@@ -90,3 +93,14 @@ scrape_config_by_data_set = dict(
     brooks_pitchfx=BrooksPitchFxScrapeConfig
 )
 
+def get_config(data_set):
+    if not data_set in SCRAPE_CONFIG_DICT:
+        error = f'Invalid value for data-set: "{data_set}"'
+        return Result.Fail(error)
+    config = SCRAPE_CONFIG_DICT[data_set]
+    if config.requires_selenium:
+        result = get_chromedriver()
+        if result.failure:
+            return result
+        config.driver = result.value
+    return Result.Ok(config)
