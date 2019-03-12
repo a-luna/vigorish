@@ -91,7 +91,7 @@ def setup(ctx):
     prompt=True,
     help=(
         'Data set to scrape, must be a value from the following list:\n'
-        f'{print_list(MLB_DATA_SETS)}'
+        f'{", ".join(MLB_DATA_SETS)}'
     )
 )
 @click.option(

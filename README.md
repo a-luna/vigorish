@@ -46,11 +46,8 @@ Usage: vig scrape [OPTIONS]
 Options:
   --data-set DATA-SET  Data set to scrape, must be a value from the following
                        list:
-                       bbref_games_for_date,
-                       bbref_boxscore,
-                       bbref_player,
-                       brooks_games_for_date,
-                       brooks_pitch_log,
+                       bbref_games_for_date, bbref_boxscore,
+                       bbref_player, brooks_games_for_date, brooks_pitch_log,
                        brooks_pitchfx
   --start DATE-STRING  Date to start scraping data, string can be in any
                        format that is recognized by dateutil.parser.
@@ -66,10 +63,7 @@ Usage: vig status [OPTIONS]
   Report progress of scraped mlb data sets.
 
 Options:
-  --year NUMBER-YEAR        Year of the MLB Season to report scrape progress.
-  --refresh / --no-refresh  Determines if all scraped data is examined before
-                            producing status report. By default, data is not
-                            refreshed. Refresh process requires approximately
-                            25 minutes to complete.
-  --help                    Show this message and exit.
+  --year YEAR-NUMBER  Year of the MLB Season to report progress of scraped
+                      data sets.
+  --help              Show this message and exit.
 ```
