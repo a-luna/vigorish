@@ -39,7 +39,6 @@ class ScrapeConfig:
     get_input_function = None
     scrape_function = None
     persist_function = None
-    populate_function = None
     update_status_function = None
     driver = None
 
@@ -83,6 +82,8 @@ class BrooksPitchLogScrapeConfig(ScrapeConfig):
 class BrooksPitchFxScrapeConfig(ScrapeConfig):
     display_name = 'PitchFX for pitching appearance (brooksbaseball.com)'
     requires_input = True
+    produces_list = True
+    get_input_function = get_brooks_pitch_logs_for_game_from_s3
 
 SCRAPE_CONFIG_DICT = dict(
     bbref_games_for_date=BBRefGamesForDateScrapeConfig,
