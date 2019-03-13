@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 
 from app.main.constants import DEFENSE_POSITIONS
 from app.main.models.base import Base
+from app.main.models.game_substitution import GameSubstitution
 from app.main.util.list_functions import display_dict
 
 class GameStartingLineupSlot(Base):
@@ -17,10 +18,8 @@ class GameStartingLineupSlot(Base):
     def_position = Column(
         postgresql.ENUM(
             'None', 'P', 'C', '1B', '2B', '3B', 'SS', 'RF', 'CF', 'LF', 'DH',
-            name='def_position_enum'
-        ),
-        default='None'
-    )
+            name='def_position_enum'),
+        default='None')
     player_team_id_br = Column(String)
     opponent_team_id_br = Column(String)
     bbref_game_id = Column(String)
@@ -31,6 +30,7 @@ class GameStartingLineupSlot(Base):
 
     team = relationship('Team', foreign_keys=[player_team_id])
     opponent_team = relationship('Team', foreign_keys=[opponent_team_id])
+    substitutions = relationship('GameSubstitution', backref='starting_lineup')
 
     def __repr__(self):
         return f"""

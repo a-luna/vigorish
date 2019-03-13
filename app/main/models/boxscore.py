@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship, backref
 
 from app.main.models.base import Base
 from app.main.models.game_bat_stats import GameBatStats
+from app.main.models.game_inning import GameHalfInning
 from app.main.models.game_pitch_stats import GamePitchStats
 from app.main.models.game_starting_lineup import GameStartingLineupSlot
 from app.main.models.game_meta import GameMetaInformation
@@ -32,19 +33,18 @@ class Boxscore(Base):
         'GameTeamTotals',
         primaryjoin=('and_('
             'Boxscore.id==GameTeamTotals.boxscore_id, '
-            'Boxscore.away_team_id==GameTeamTotals.away_team_id)'
-        )
-    )
+            'Boxscore.away_team_id==GameTeamTotals.away_team_id)'))
     home_team_totals = relationship(
         'GameTeamTotals',
         primaryjoin=('and_('
             'Boxscore.id==GameTeamTotals.boxscore_id, '
-            'Boxscore.home_team_id==GameTeamTotals.home_team_id)'
-        )
-    )
+            'Boxscore.home_team_id==GameTeamTotals.home_team_id)'))
     starting_lineups = relationship('GameStartingLineupSlot', backref='boxscore')
     batting_stats = relationship('GameBatStats', backref='boxscore')
     pitching_stats = relationship('GamePitchStats', backref='boxscore')
+    innings = relationship('GameHalfInning', backref='boxscore')
+    game_events = relationship('GameEvent', backref='boxscore')
+    substitutions = relationship('GameSubstitution', backref='boxscore')
 
     def __repr__(self):
         return f'<Boxscore(bbref_game_id="{self.bbref_game_id}", id={self.id})>'

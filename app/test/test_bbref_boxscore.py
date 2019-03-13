@@ -1,8 +1,11 @@
 import json
 import unittest
+import time
+from random import randint
 from pathlib import Path
 
 from lxml import html
+from halo import Halo
 
 from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import (
     __parse_bbref_boxscore as parse_bbref_boxscore
@@ -89,3 +92,6 @@ class TestBBRefBoxscore(BaseTestCase):
 
         filepath.unlink()
         self.assertFalse(filepath.exists())
+
+    
+        

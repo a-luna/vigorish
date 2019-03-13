@@ -3,6 +3,7 @@ from sqlalchemy import Column, Boolean, Integer, String, DateTime
 from sqlalchemy.orm import relationship, backref
 
 from app.main.models.base import Base
+from app.main.models.game_event import GameEvent
 from app.main.models.player_id import PlayerId
 from app.main.util.list_functions import display_dict
 
@@ -35,8 +36,8 @@ class Player(Base):
 
     id_map = relationship('PlayerId', backref=backref("player", uselist=False))
 
-    #game_events_as_pitcher = relationship('GameEvent', primaryjoin='Player.id==GameEvent.pitcher_id', back_populates='pitcher')
-    #game_events_as_batter = relationship('GameEvent', primaryjoin='Player.id==GameEvent.batter_id', back_populates='batter')
+    game_events_as_pitcher = relationship('GameEvent', primaryjoin='Player.id==GameEvent.pitcher_id', back_populates='pitcher')
+    game_events_as_batter = relationship('GameEvent', primaryjoin='Player.id==GameEvent.batter_id', back_populates='batter')
     pitching_stats = relationship('GamePitchStats', backref='player')
     batting_stats = relationship('GameBatStats', backref='player')
     lineup_appearances = relationship('GameStartingLineupSlot', backref='player')

@@ -30,8 +30,7 @@ from app.main.util.result import Result
 #TODO Create config file and config.example with settings for AWS auth, S3 bucket name/local folder path, DB URL, chrome/chromedriver binaries
 #TODO Create vig config command which prompts user for values listed above and writes to config file.
 
-APP_ROOT = Path.cwd()
-DOTENV_PATH = APP_ROOT / '.env'
+DOTENV_PATH = Path.cwd() / '.env'
 
 
 @click.group()
@@ -176,15 +175,15 @@ def status(ctx, year):
     """Report progress of scraped mlb data sets."""
     engine = ctx.obj['engine']
     session = ctx.obj['session']
-    spinner = Halo(text='Updating...', spinner='dots12')
-
+    spinner = Halo(text='Updating...', color='yellow', spinner='dots3')
     spinner.start()
+
     result = update_status_for_mlb_season(session, year)
     if result.failure:
         click.secho(str(result), fg='red')
         return 1
     refresh_all_mat_views(engine, session)
-    spinner.succeed('')
+    spinner.succeed('Complete!')
 
     mlb = Season.find_by_year(session, year)
     print(mlb.status_report())
