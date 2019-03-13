@@ -6,54 +6,25 @@ from tqdm import tqdm
 
 from app.cli.vig import cli
 from app.main.config import get_config
-from app.main.constants import MLB_DATA_SETS
 from app.main.models.season import Season
 from app.main.models.views.materialized_view import refresh_all_mat_views
-from app.main.util.click_params import DateString, MlbDataSet
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.result import Result
 
 
-@cli.command()
-@click.option(
-    '--data-set',
-    type=MlbDataSet(),
-    prompt=True,
-    help=(
-        'Data set to scrape, must be a value from the following list:\n'
-        f'{", ".join(MLB_DATA_SETS)}'))
-@click.option(
-    '--start',
-    type=DateString(),
-    prompt=True,
-    help=(
-        'Date to start scraping data, string can be in any format that is '
-        'recognized by dateutil.parser.'))
-@click.option(
-    '--end',
-    type=DateString(),
-    prompt=True,
-    help=(
-        'Date to stop scraping data, string can be in any format that is '
-        'recognized by dateutil.parser.'))
-@click.pass_context
 def scrape(ctx, data_set, start, end):
     """Scrape MLB data from websites."""
     engine = ctx.obj['engine']
     session = ctx.obj['session']
     result = __validate_date_range(session, start, end)
     if result.failure:
-        click.secho(str(result), fg='red')
-        session.close()
-        return 1
+        return result
     date_range = get_date_range(start, end)
 
     result = get_config(data_set)
     if result.failure:
-        click.secho(str(result), fg='red')
-        session.close()
-        return 1
+        return result
     scrape_config = result.value
 
     with tqdm(
@@ -84,8 +55,7 @@ def scrape(ctx, data_set, start, end):
         scrape_config.driver.close()
         scrape_config.driver.quit()
     if result.failure:
-        click.secho(str(result), fg='red')
-        return 1
+        return result
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
@@ -94,7 +64,7 @@ def scrape(ctx, data_set, start, end):
         f'date range..: {start_str} - {end_str}\n'
     )
     click.secho(success, fg='green')
-    return 0
+    return Result.Ok()
 
 def __validate_date_range(session, start, end):
     if start.year != end.year:

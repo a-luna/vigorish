@@ -12,12 +12,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
+from app.cli.vig_scrape import scrape as scrape_command
+from app.main.constants import MLB_DATA_SETS
 from app.main.models.base import Base
 from app.main.models.season import Season
 from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
-from app.main.util.click_params import MlbSeason
+from app.main.util.click_params import DateString, MlbDataSet, MlbSeason
 from app.main.util.datetime_util import get_date_range
 from app.main.util.list_functions import print_list
 from app.main.util.result import Result
@@ -81,6 +83,40 @@ def setup(ctx):
 
 @cli.command()
 @click.option(
+    '--data-set',
+    type=MlbDataSet(),
+    prompt=True,
+    help=(
+        'Data set to scrape, must be a value from the following list:\n'
+        f'{", ".join(MLB_DATA_SETS)}'))
+@click.option(
+    '--start',
+    type=DateString(),
+    prompt=True,
+    help=(
+        'Date to start scraping data, string can be in any format that is '
+        'recognized by dateutil.parser.'))
+@click.option(
+    '--end',
+    type=DateString(),
+    prompt=True,
+    help=(
+        'Date to stop scraping data, string can be in any format that is '
+        'recognized by dateutil.parser.'))
+@click.pass_context
+def scrape(ctx, data_set, start, end):
+    """Scrape MLB data from websites."""
+    session = ctx.obj['session']
+    result = scrape_command(ctx, data_set, start, end)
+    if result.failure:
+        click.secho(str(result), fg='red')
+        session.close()
+        return 1
+    return 0
+
+
+@cli.command()
+@click.option(
     '--year',
     type=MlbSeason(),
     prompt=True,
@@ -99,7 +135,7 @@ def status(ctx, year):
         click.secho(str(result), fg='red')
         return 1
     refresh_all_mat_views(engine, session)
-    spinner.succeed('Complete!\n')
+    spinner.stop()
 
     mlb = Season.find_by_year(session, year)
     print(mlb.status_report())
