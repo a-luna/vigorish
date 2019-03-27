@@ -26,11 +26,8 @@ def get_chromedriver(page_load_timeout=6000):
             options.add_argument('--no-sandbox')
             options.add_argument('--remote-debugging-port=9222')
             driver_path = os.getenv('CHROMEDRIVER_PATH')
-
-            print('Initializing chromedriver/selenium...')
             driver = webdriver.Chrome(executable_path=driver_path, chrome_options=options)
             driver.set_page_load_timeout(page_load_timeout)
-            print('Chromedriver was successfully initialized!')
             break
         except Exception as e:
             attempts += 1
