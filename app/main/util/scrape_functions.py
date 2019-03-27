@@ -34,14 +34,13 @@ def get_chromedriver(page_load_timeout=6000):
             break
         except Exception as e:
             attempts += 1
-            print('\nError: {r}'.format(r=repr(e)))
+            print(f'\nError: {repr(e)}')
             if (attempts < max_attempts):
                 continue
             else:
-                error = repr(e)
                 message = (
                     f'Unable to initialize chromedriver after {max_attempts} '
-                    f'failed attempts, aborting task.\nError: {error}'
+                    f'failed attempts, aborting task.\nError: {repr(e)}'
                 )
                 return Result.Fail(message)
     return Result.Ok(driver)

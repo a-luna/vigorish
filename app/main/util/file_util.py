@@ -41,14 +41,14 @@ def write_bbref_boxscore_to_file(boxscore, folderpath=None):
     return write_json_dict_to_file(json_dict, filename, folderpath)
 
 def write_json_dict_to_file(json_dict, filename, folderpath=None):
-    """Write BrooksGamesForDate object to a file in json format."""
+    """Write object in json format to file."""
     folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     try:
         filepath.write_text(json_dict)
         return Result.Ok(filepath)
     except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
+        error = f'Error: {repr(e)}'
         return Result.Fail(error)
 
 def read_brooks_games_for_date_from_file(game_date, folderpath=None, delete_file=False):
@@ -63,7 +63,7 @@ def read_brooks_games_for_date_from_file(game_date, folderpath=None, delete_file
             filepath.unlink()
         return decode_brooks_games_for_date(json.loads(contents))
     except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
+        error = f'Error: {repr(e)}'
         return Result.Fail(error)
 
 def read_brooks_pitch_logs_for_game_from_file(bb_game_id, folderpath=None, delete_file=False):
@@ -77,7 +77,7 @@ def read_brooks_pitch_logs_for_game_from_file(bb_game_id, folderpath=None, delet
             filepath.unlink()
         return decode_brooks_pitch_logs_for_game(json.loads(contents))
     except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
+        error = f'Error: {repr(e)}'
         return Result.Fail(error)
 
 def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=False):
@@ -92,7 +92,7 @@ def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=
             filepath.unlink()
         return decode_bbref_games_for_date(json.loads(contents))
     except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
+        error = f'Error: {repr(e)}'
         return Result.Fail(error)
 
 def read_bbref_boxscore_from_file(bbref_game_id, folderpath=None, delete_file=False):
@@ -106,5 +106,5 @@ def read_bbref_boxscore_from_file(bbref_game_id, folderpath=None, delete_file=Fa
             filepath.unlink()
         return decode_bbref_boxscore(json.loads(contents))
     except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
+        error = f'Error: {repr(e)}'
         return Result.Fail(error)
