@@ -98,7 +98,7 @@ def decode_bbref_boxscore(json_dict):
             boxscore = BBRefBoxscore()
             boxscore.boxscore_url = json_dict['boxscore_url']
             boxscore.bbref_game_id = json_dict['bbref_game_id']
-            
+
             result = decode_bbref_boxscore_meta(json_dict['game_meta_info'])
             if result.failure:
                 return result
@@ -229,7 +229,7 @@ def decode_bbref_boxscore_half_inning(json_dict):
 
 def decode_bbref_batting_stats(json_dict):
     try:
-        bat_stats = BBRefBatStats()
+        bat_stats = BBRefBatStats(details=[])
         bat_stats.player_id_br = json_dict['player_id_br']
         bat_stats.at_bats = int(json_dict['at_bats'])
         bat_stats.runs_scored = int(json_dict['runs_scored'])

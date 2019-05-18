@@ -5,10 +5,11 @@ from sqlalchemy.orm import relationship
 from app.main.models.base import Base
 from app.main.util.list_functions import display_dict
 
+
 class GameHalfInning(Base):
     """Db model that describes a half-inning of a MLB game."""
 
-    __tablename__ = 'game_inning'
+    __tablename__ = "game_inning"
     id = Column(Integer, primary_key=True)
     inning_id = Column(String)
     inning_label = Column(String)
@@ -24,18 +25,18 @@ class GameHalfInning(Base):
     team_pitching_id_br = Column(String)
     bbref_game_id = Column(String)
     bb_game_id = Column(String)
-    boxscore_id = Column(Integer, ForeignKey('boxscore.id'))
+    boxscore_id = Column(Integer, ForeignKey("boxscore.id"))
 
-    game_events = relationship('GameEvent', backref='inning')
-    substitutions = relationship('GameSubstitution', backref='inning')
+    game_events = relationship("GameEvent", backref="inning")
+    substitutions = relationship("GameSubstitution", backref="inning")
 
     def __repr__(self):
-        return f'<GameHalfInning(inning_id="{self.inning_id}")>'
+        return f"<GameHalfInning inning_id={self.inning_id}>"
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def display(self):
         inning_dict = self.as_dict()
-        title = f'Details for inning: {self.inning_id}'
+        title = f"Details for inning: {self.inning_id}"
         display_dict(inning_dict, title=title)

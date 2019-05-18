@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from tqdm import tqdm
 
-from app.main.constants import DEFENSE_POSITIONS
+from app.main.constants import DEFENSE_POSITIONS, VENUE_TERMS
 from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
@@ -46,60 +46,14 @@ _LINESCORE_HOME_VALS_XPATH = '//table[contains(@class, "linescore")]//tbody/tr[2
 _BATTING_STATS_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]'
 _BATTER_IDS_XPATH = './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]/@data-append-csv'
 _BATTER_NAMES_XPATH = './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]//a/text()'
-_BATTER_STATS_ROW = './tbody//th[@data-append-csv="{pid}"]/..'
-
-_BATTER_AB_XPATH = './td[@data-stat="AB"]/text()'
-_BATTER_R_XPATH = './td[@data-stat="R"]/text()'
-_BATTER_H_XPATH = './td[@data-stat="H"]/text()'
-_BATTER_RBI_XPATH = './td[@data-stat="RBI"]/text()'
-_BATTER_BB_XPATH = './td[@data-stat="BB"]/text()'
-_BATTER_SO_XPATH = './td[@data-stat="SO"]/text()'
-_BATTER_PA_XPATH = './td[@data-stat="PA"]/text()'
-
-_BATTER_AVG_TO_DATE_XPATH = './td[@data-stat="batting_avg"]/text()'
-_BATTER_OBP_TO_DATE_XPATH = './td[@data-stat="onbase_perc"]/text()'
-_BATTER_SLG_TO_DATE_XPATH = './td[@data-stat="slugging_perc"]/text()'
-_BATTER_OPS_TO_DATE_XPATH = './td[@data-stat="onbase_plus_slugging"]/text()'
-_BATTER_TOTAL_PITCHES_XPATH = './td[@data-stat="pitches"]/text()'
-_BATTER_TOTAL_STRIKES_XPATH = './td[@data-stat="strikes_total"]/text()'
-
-_BATTER_WPA_XPATH = './td[@data-stat="wpa_bat"]/text()'
-_BATTER_ALI_XPATH = './td[@data-stat="leverage_index_avg"]/text()'
-_BATTER_WPA_POS_XPATH = './td[@data-stat="wpa_bat_pos"]/text()'
-_BATTER_WPA_NEG_XPATH = './td[@data-stat="wpa_bat_neg"]/text()'
-_BATTER_RE24_XPATH = './td[@data-stat="re24_bat"]/text()'
-_BATTER_DETAILS_XPATH = './td[@data-stat="details"]/text()'
+_T_BAT_STATS_ROW = './tbody//th[@data-append-csv="${pid}"]/..'
+_T_BAT_STATS_XPATH = './td[@data-stat="${stat}"]/text()'
 
 _PITCHING_STATS_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]'
 _PITCHER_IDS_XPATH = './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]/@data-append-csv'
 _PITCHER_NAMES_XPATH = './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]//a/text()'
-_PITCHER_STATS_ROW = './tbody//th[@data-append-csv="{pid}"]/..'
-
-_PITCHER_IP_XPATH = './td[@data-stat="IP"]/text()'
-_PITCHER_H_XPATH = './td[@data-stat="H"]/text()'
-_PITCHER_R_XPATH = './td[@data-stat="R"]/text()'
-_PITCHER_ER_XPATH = './td[@data-stat="ER"]/text()'
-_PITCHER_BB_XPATH = './td[@data-stat="BB"]/text()'
-_PITCHER_SO_XPATH = './td[@data-stat="SO"]/text()'
-_PITCHER_HR_XPATH = './td[@data-stat="HR"]/text()'
-_PITCHER_BATTERS_FACED_XPATH = './td[@data-stat="batters_faced"]/text()'
-_PITCHER_PITCH_COUNT_XPATH = './td[@data-stat="pitches"]/text()'
-_PITCHER_STRIKES_TOTAL_XPATH = './td[@data-stat="strikes_total"]/text()'
-_PITCHER_STRIKES_CONTACT_XPATH = './td[@data-stat="strikes_contact"]/text()'
-_PITCHER_STRIKES_SWINGING_XPATH = './td[@data-stat="strikes_swinging"]/text()'
-_PITCHER_STRIKES_LOOKING_XPATH = './td[@data-stat="strikes_looking"]/text()'
-
-_PITCHER_GB_XPATH = './td[@data-stat="inplay_gb_total"]/text()'
-_PITCHER_FB_XPATH = './td[@data-stat="inplay_fb_total"]/text()'
-_PITCHER_LD_XPATH = './td[@data-stat="inplay_ld"]/text()'
-_PITCHER_UNK_XPATH = './td[@data-stat="inplay_unk"]/text()'
-
-_PITCHER_GSC_XPATH = './td[@data-stat="game_score"]/text()'
-_PITCHER_IR_XPATH = './td[@data-stat="inherited_runners"]/text()'
-_PITCHER_IS_XPATH = './td[@data-stat="inherited_score"]/text()'
-_PITCHER_WPA_XPATH = './td[@data-stat="wpa_def"]/text()'
-_PITCHER_ALI_XPATH = './td[@data-stat="leverage_index_avg"]/text()'
-_PITCHER_RE24_XPATH = './td[@data-stat="re24_def"]/text()'
+_T_PITCH_STATS_ROW = './tbody//th[@data-append-csv="${pid}"]/..'
+_T_PITCH_STAT_XPATH = './td[@data-stat="${stat}"]/text()'
 
 _UMPIRES_XPATH = '//div[@id="content"]/div[9]/div[3]/div[1]/text()'
 _FIRST_PITCH_WEATHER_XPATH = '//div[@id="content"]/div[9]/div[3]/div[4]/text()'
@@ -109,6 +63,7 @@ _AWAY_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_1"]//table//tbody//tr//td[3]/te
 _HOME_LINEUP_ORDER_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[1]/text()'
 _HOME_LINEUP_PLAYER_XPATH = '//div[@id="lineups_2"]//table//tbody//a/@href'
 _HOME_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[3]/text()'
+
 _PLAY_BY_PLAY_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]'
 _PBP_INNING_SUMMARY_TOP_XPATH = './tbody//th[@data-stat="inning_summary_12"]/text()'
 _PBP_INNING_SUMMARY_TOP_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_top"]/@data-row'
@@ -118,7 +73,56 @@ _PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = './tbody//tr[@class="pbp_summary_bottom"
 _PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
 _T_PBP_IN_GAME_SUBSTITUTION_XPATH = './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]//td[@data-stat="inning_summary_3"]//div/text()'
 _PBP_INNING_XPATH = './tbody//th[@data-stat="inning"]/text()'
-PBP_STAT_NAMES = dict(
+
+BAT_STATS = dict(
+    at_bats='AB',
+    runs_scored='R',
+    hits='H',
+    rbis='RBI',
+    bases_on_balls='BB',
+    strikeouts='SO',
+    plate_appearances='PA',
+    avg_to_date='batting_avg',
+    obp_to_date='onbase_perc',
+    slg_to_date='slugging_perc',
+    ops_to_date='onbase_plus_slugging',
+    total_pitches='pitches',
+    total_strikes='strikes_total',
+    wpa_bat='wpa_bat',
+    avg_lvg_index='leverage_index_avg',
+    wpa_bat_pos='wpa_bat_pos',
+    wpa_bat_neg='wpa_bat_neg',
+    re24_bat='re24_bat',
+    details='details'
+)
+
+PITCH_STATS = dict(
+    innings_pitched='IP',
+    hits='H',
+    runs='R',
+    earned_runs='ER',
+    bases_on_balls='BB',
+    strikeouts='SO',
+    homeruns='HR',
+    batters_faced='batters_faced',
+    pitch_count='pitches',
+    strikes='strikes_total',
+    strikes_contact='strikes_contact',
+    strikes_swinging='strikes_swinging',
+    strikes_looking='strikes_looking',
+    ground_balls='inplay_gb_total',
+    fly_balls='inplay_fb_total',
+    line_drives='inplay_ld',
+    unknown_type='inplay_unk',
+    game_score='game_score',
+    inherited_runners='inherited_runners',
+    inherited_scored='inherited_score',
+    wpa_pitch='wpa_def',
+    avg_lvg_index='leverage_index_avg',
+    re24_pitch='re24_def'
+)
+
+PBP_STATS = dict(
     pbp_table_row_number='data-row',
     score='score_batting_team',
     outs_before_play='outs',
@@ -401,7 +405,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         error = 'Failed to parse away team batter name dictionary'
         return Result.Fail(error)
 
-    away_team_batting_stats = _parse_batting_stats(away_team_bat_table, away_team_id, home_team_id)
+    away_team_batting_stats = _parse_bat_data(away_team_bat_table, away_team_id, home_team_id)
     if not away_team_batting_stats:
         error = 'Failed to parse away team batting stats'
         return Result.Fail(error)
@@ -412,7 +416,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         error = 'Failed to parse home team batter name dictionary'
         return Result.Fail(error)
 
-    home_team_batting_stats = _parse_batting_stats(home_team_bat_table, home_team_id, away_team_id)
+    home_team_batting_stats = _parse_bat_data(home_team_bat_table, home_team_id, away_team_id)
     if not home_team_batting_stats:
         error = 'Failed to parse home team batting stats'
         return Result.Fail(error)
@@ -435,7 +439,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         error = 'Failed to parse away team pitcher name dictionary'
         return Result.Fail(error)
 
-    away_team_pitching_stats =  _parse_pitching_stats(away_team_pitch_table, away_team_id, home_team_id)
+    away_team_pitching_stats =  _parse_pitch_data(away_team_pitch_table, away_team_id, home_team_id)
     if not away_team_pitching_stats:
         error = 'Failed to parse away team pitching stats'
         return Result.Fail(error)
@@ -449,7 +453,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
     pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
     player_name_dict = {**batter_name_dict, **pitcher_name_dict}
 
-    home_team_pitching_stats =  _parse_pitching_stats(home_team_pitch_table, home_team_id, away_team_id)
+    home_team_pitching_stats =  _parse_pitch_data(home_team_pitch_table, home_team_id, away_team_id)
     if not home_team_pitching_stats:
         error = 'Failed to parse home team pitching stats'
         return Result.Fail(error)
@@ -572,9 +576,8 @@ def _parse_attendance_from_strings(strings):
 
 
 def _parse_venue_from_strings(strings):
-    venue_terms = ['stadium', 'park', 'field', 'coliseum', 'centre', 'estadio']
     for i in range(0, len(strings)):
-        for t in venue_terms:
+        for t in VENUE_TERMS:
             if t in strings[i].lower():
                 d = {"match": strings[i][2:], "index": i}
                 return d
@@ -607,405 +610,108 @@ def _parse_day_night_field_type_from_strings(strings):
     return None
 
 
-def _parse_batting_stats(team_batting_table, player_team_id, opponent_team_id):
-    batting_stats = []
+def _parse_bat_data(team_batting_table, player_team_id, opponent_team_id):
+    bat_data = []
     for player_id in team_batting_table.xpath(_BATTER_IDS_XPATH):
-        stats_row = team_batting_table.xpath(_BATTER_STATS_ROW.format(pid=player_id))
-        if not stats_row:
-            return None
-        player_stats = stats_row[0]
-
-        at_bats = ""
-        result = player_stats.xpath(_BATTER_AB_XPATH)
-        if result is not None and len(result) > 0:
-            at_bats = result[0]
-        else:
-            at_bats = "0"
-
-        runs_scored = ""
-        result = player_stats.xpath(_BATTER_R_XPATH)
-        if result is not None and len(result) > 0:
-            runs_scored = result[0]
-        else:
-            runs_scored = "0"
-
-        hits = ""
-        result = player_stats.xpath(_BATTER_H_XPATH)
-        if result is not None and len(result) > 0:
-            hits = result[0]
-        else:
-            hits = "0"
-
-        rbis = ""
-        result = player_stats.xpath(_BATTER_RBI_XPATH)
-        if result is not None and len(result) > 0:
-            rbis = result[0]
-        else:
-            rbis = "0"
-
-        bases_on_balls = ""
-        result = player_stats.xpath(_BATTER_BB_XPATH)
-        if result is not None and len(result) > 0:
-            bases_on_balls = result[0]
-        else:
-            bases_on_balls = "0"
-
-        strikeouts = ""
-        result = player_stats.xpath(_BATTER_SO_XPATH)
-        if result is not None and len(result) > 0:
-            strikeouts = result[0]
-        else:
-            strikeouts = "0"
-
-        plate_appearances = ""
-        result = player_stats.xpath(_BATTER_PA_XPATH)
-        if result is not None and len(result) > 0:
-            plate_appearances = result[0]
-        else:
-            plate_appearances = "0"
-
-        avg_to_date = ""
-        result = player_stats.xpath(_BATTER_AVG_TO_DATE_XPATH)
-        if result is not None and len(result) > 0:
-            avg_to_date = result[0]
-        else:
-            avg_to_date = "0"
-
-        obp_to_date = ""
-        result = player_stats.xpath(_BATTER_OBP_TO_DATE_XPATH)
-        if result is not None and len(result) > 0:
-            obp_to_date = result[0]
-        else:
-            obp_to_date = "0"
-
-        slg_to_date = ""
-        result = player_stats.xpath(_BATTER_SLG_TO_DATE_XPATH)
-        if result is not None and len(result) > 0:
-            slg_to_date = result[0]
-        else:
-            slg_to_date = "0"
-
-        ops_to_date = ""
-        result = player_stats.xpath(_BATTER_OPS_TO_DATE_XPATH)
-        if result is not None and len(result) > 0:
-            ops_to_date = result[0]
-        else:
-            ops_to_date = "0"
-
-        total_pitches = ""
-        result = player_stats.xpath(_BATTER_TOTAL_PITCHES_XPATH)
-        if result is not None and len(result) > 0:
-            total_pitches = result[0]
-        else:
-            total_pitches = "0"
-
-        total_strikes = ""
-        result = player_stats.xpath(_BATTER_TOTAL_STRIKES_XPATH)
-        if result is not None and len(result) > 0:
-            total_strikes = result[0]
-        else:
-            total_strikes = "0"
-
-        wpa_bat = ""
-        result = player_stats.xpath(_BATTER_WPA_XPATH)
-        if result is not None and len(result) > 0:
-            wpa_bat = result[0]
-        else:
-            wpa_bat = "0"
-
-        avg_lvg_index = ""
-        result = player_stats.xpath(_BATTER_ALI_XPATH)
-        if result is not None and len(result) > 0:
-            avg_lvg_index = result[0]
-        else:
-            avg_lvg_index = "0"
-
-        wpa_bat_pos = ""
-        result = player_stats.xpath(_BATTER_WPA_POS_XPATH)
-        if result is not None and len(result) > 0:
-            wpa_bat_pos = result[0]
-        else:
-            wpa_bat_pos = "0"
-
-        wpa_bat_neg = ""
-        result = player_stats.xpath(_BATTER_WPA_NEG_XPATH)
-        if result is not None and len(result) > 0:
-            wpa_bat_neg = result[0]
-        else:
-            wpa_bat_neg = "0"
-
-        re24_bat = ""
-        result = player_stats.xpath(_BATTER_RE24_XPATH)
-        if result is not None and len(result) > 0:
-            re24_bat = result[0]
-        else:
-            re24_bat = "0"
-
-        details = []
-        result = player_stats.xpath(_BATTER_DETAILS_XPATH)
-        if result is not None and len(result) > 0:
-            for s in result[0].split(','):
-                d = BBRefBatStatsDetail()
-                t = s.split('\u00b7')
-                if len(t) == 1:
-                    d.count = "1"
-                    d.stat = t[0].strip('\n')
-                    details.append(d)
-                if len(t) == 2:
-                    d.count = t[0]
-                    d.stat = t[1].strip('\n')
-                    details.append(d)
-
-        player_batting_stats = BBRefBatStats()
-        player_batting_stats.player_id_br = player_id
-        player_batting_stats.player_team_id_br = player_team_id
-        player_batting_stats.opponent_team_id_br = opponent_team_id
-        player_batting_stats.at_bats = at_bats
-        player_batting_stats.runs_scored = runs_scored
-        player_batting_stats.hits = hits
-        player_batting_stats.rbis = rbis
-        player_batting_stats.bases_on_balls = bases_on_balls
-        player_batting_stats.strikeouts = strikeouts
-        player_batting_stats.plate_appearances = plate_appearances
-        player_batting_stats.avg_to_date = avg_to_date
-        player_batting_stats.obp_to_date = obp_to_date
-        player_batting_stats.slg_to_date = slg_to_date
-        player_batting_stats.ops_to_date = ops_to_date
-        player_batting_stats.total_pitches = total_pitches
-        player_batting_stats.total_strikes = total_strikes
-        player_batting_stats.wpa_bat = wpa_bat
-        player_batting_stats.avg_lvg_index = avg_lvg_index
-        player_batting_stats.wpa_bat_pos = wpa_bat_pos
-        player_batting_stats.wpa_bat_neg = wpa_bat_neg
-        player_batting_stats.re24_bat = re24_bat
-        player_batting_stats.details = details
-        batting_stats.append(player_batting_stats)
-    return batting_stats
+        player_bat_stats_xpath = Template(_T_BAT_STATS_ROW).substitute(pid=player_id)
+        results = team_batting_table.xpath(player_bat_stats_xpath)
+        if not results:
+            return []
+        stat_dict = {
+            attr:_get_bat_stat_value(results[0], stat_name)
+            for attr,stat_name in BAT_STATS.items()
+        }
+        stat_dict['player_id_br'] = player_id
+        stat_dict['player_team_id_br'] = player_team_id
+        stat_dict['opponent_team_id_br'] = opponent_team_id
+        stat_dict['details'] = _parse_batting_details(stat_dict)
+        player_data = BBRefBatStats(**stat_dict)
+        bat_data.append(player_data)
+    return bat_data
 
 
-def _parse_pitching_stats(team_pitching_table, player_team_id, opponent_team_id):
-    pitch_appearances = []
+def _get_bat_stat_value(player_bat_data_html, stat_name):
+    bat_stat_xpath = Template(_T_BAT_STATS_XPATH).substitute(stat=stat_name)
+    bat_stat_value = "0"
+    if stat_name == "details":
+        bat_stat_value = []
+    result = player_bat_data_html.xpath(bat_stat_xpath)
+    if result and len(result) > 0:
+        bat_stat_value = result[0]
+    return bat_stat_value
+
+
+def _parse_batting_details(stat_dict):
+    details_str = stat_dict['details']
+    if not details_str:
+        return []
+    details = []
+    for s in details_str.split(','):
+        d = BBRefBatStatsDetail()
+        t = s.split('\u00b7')
+        if len(t) == 1:
+            d.count = "1"
+            d.stat = t[0].strip('\n')
+            details.append(d)
+        if len(t) == 2:
+            d.count = t[0]
+            d.stat = t[1].strip('\n')
+            details.append(d)
+    return details
+
+
+def _parse_pitch_data(team_pitching_table, player_team_id, opponent_team_id):
+    pitch_data = []
     for player_id in team_pitching_table.xpath(_PITCHER_IDS_XPATH):
-        stats_row = team_pitching_table.xpath(_PITCHER_STATS_ROW.format(pid=player_id))
-        if not stats_row:
+        player_pitch_stats_xpath = Template(_T_PITCH_STATS_ROW).substitute(pid=player_id)
+        results = team_pitching_table.xpath(player_pitch_stats_xpath)
+        if not results:
             return None
-        player_stats = stats_row[0]
+        stat_dict = {
+            attr:_get_pitch_stat_value(results[0], stat_name)
+            for attr,stat_name in PITCH_STATS.items()
+        }
+        stat_dict['player_id_br'] = player_id
+        stat_dict['player_team_id_br'] = player_team_id
+        stat_dict['opponent_team_id_br'] = opponent_team_id
+        player_data = BBRefPitchStats(**stat_dict)
+        pitch_data.append(player_data)
+    return pitch_data
 
-        innings_pitched = ""
-        result = player_stats.xpath(_PITCHER_IP_XPATH)
-        if result is not None and len(result) > 0:
-            innings_pitched = result[0]
-        else:
-            innings_pitched = "0"
 
-        hits = ""
-        result = player_stats.xpath(_PITCHER_H_XPATH)
-        if result is not None and len(result) > 0:
-            hits = result[0]
-        else:
-            hits = "0"
+def _get_pitch_stat_value(player_pitch_data_html, stat_name):
+    pitch_stat_xpath = Template(_T_PITCH_STAT_XPATH).substitute(stat=stat_name)
+    pitch_stat_value = "0"
+    result = player_pitch_data_html.xpath(pitch_stat_xpath)
+    if result and len(result) > 0:
+        pitch_stat_value = result[0]
+    return pitch_stat_value
 
-        runs =  ""
-        result = player_stats.xpath(_PITCHER_R_XPATH)
-        if result is not None and len(result) > 0:
-            runs = result[0]
-        else:
-            runs = "0"
-
-        earned_runs = ""
-        result = player_stats.xpath(_PITCHER_ER_XPATH)
-        if result is not None and len(result) > 0:
-            earned_runs = result[0]
-        else:
-            earned_runs = "0"
-
-        bases_on_balls = ""
-        result = player_stats.xpath(_PITCHER_BB_XPATH)
-        if result is not None and len(result) > 0:
-            bases_on_balls = result[0]
-        else:
-            bases_on_balls = "0"
-
-        strikeouts = ""
-        result = player_stats.xpath(_PITCHER_SO_XPATH)
-        if result is not None and len(result) > 0:
-            strikeouts = result[0]
-        else:
-            strikeouts = "0"
-
-        homeruns = ""
-        result = player_stats.xpath(_PITCHER_HR_XPATH)
-        if result is not None and len(result) > 0:
-            homeruns = result[0]
-        else:
-            homeruns = "0"
-
-        batters_faced = ""
-        result = player_stats.xpath(_PITCHER_BATTERS_FACED_XPATH)
-        if result is not None and len(result) > 0:
-            batters_faced = result[0]
-        else:
-            batters_faced = "0"
-
-        pitch_count = ""
-        result = player_stats.xpath(_PITCHER_PITCH_COUNT_XPATH)
-        if result is not None and len(result) > 0:
-            pitch_count = result[0]
-        else:
-            pitch_count = "0"
-
-        strikes = ""
-        result = player_stats.xpath(_PITCHER_STRIKES_TOTAL_XPATH)
-        if result is not None and len(result) > 0:
-            strikes = result[0]
-        else:
-            strikes = "0"
-
-        strikes_contact = ""
-        result = player_stats.xpath(_PITCHER_STRIKES_CONTACT_XPATH)
-        if result is not None and len(result) > 0:
-            strikes_contact = result[0]
-        else:
-            strikes_contact = "0"
-
-        strikes_swinging = ""
-        result = player_stats.xpath(_PITCHER_STRIKES_SWINGING_XPATH)
-        if result is not None and len(result) > 0:
-            strikes_swinging = result[0]
-        else:
-            strikes_swinging = "0"
-
-        strikes_looking = ""
-        result = player_stats.xpath(_PITCHER_STRIKES_LOOKING_XPATH)
-        if result is not None and len(result) > 0:
-            strikes_looking = result[0]
-        else:
-            strikes_looking = "0"
-
-        ground_balls = ""
-        result = player_stats.xpath(_PITCHER_GB_XPATH)
-        if result is not None and len(result) > 0:
-            ground_balls = result[0]
-        else:
-            ground_balls = "0"
-
-        fly_balls = ""
-        result = player_stats.xpath(_PITCHER_FB_XPATH)
-        if result is not None and len(result) > 0:
-            fly_balls = result[0]
-        else:
-            fly_balls = "0"
-
-        line_drives = ""
-        result = player_stats.xpath(_PITCHER_LD_XPATH)
-        if result is not None and len(result) > 0:
-            line_drives = result[0]
-        else:
-            line_drives = "0"
-
-        unknown_type = ""
-        result = player_stats.xpath(_PITCHER_UNK_XPATH)
-        if result is not None and len(result) > 0:
-            unknown_type = result[0]
-        else:
-            unknown_type = "0"
-
-        game_score = ""
-        result = player_stats.xpath(_PITCHER_GSC_XPATH)
-        if result is not None and len(result) > 0:
-            game_score = result[0]
-        else:
-            game_score = "0"
-
-        inherited_runners = ""
-        result = player_stats.xpath(_PITCHER_IR_XPATH)
-        if result is not None and len(result) > 0:
-            inherited_runners = result[0]
-        else:
-            inherited_runners = "0"
-
-        inherited_scored = ""
-        result = player_stats.xpath(_PITCHER_IS_XPATH)
-        if result is not None and len(result) > 0:
-            inherited_scored = result[0]
-        else:
-            inherited_scored = "0"
-
-        wpa_pitch = ""
-        result = player_stats.xpath(_PITCHER_WPA_XPATH)
-        if result is not None and len(result) > 0:
-            wpa_pitch = result[0]
-        else:
-            wpa_pitch = "0"
-
-        avg_lvg_index = ""
-        result = player_stats.xpath(_PITCHER_ALI_XPATH)
-        if result is not None and len(result) > 0:
-            avg_lvg_index = result[0]
-        else:
-            avg_lvg_index = "0"
-
-        re24_pitch = ""
-        result = player_stats.xpath(_PITCHER_RE24_XPATH)
-        if result is not None and len(result) > 0:
-            re24_pitch = result[0]
-        else:
-            re24_pitch  = "0"
-
-        pitch_app = BBRefPitchStats()
-        pitch_app.player_id_br = player_id
-        pitch_app.player_team_id_br = player_team_id
-        pitch_app.opponent_team_id_br = opponent_team_id
-        pitch_app.innings_pitched = innings_pitched
-        pitch_app.hits = hits
-        pitch_app.runs = runs
-        pitch_app.earned_runs = earned_runs
-        pitch_app.bases_on_balls = bases_on_balls
-        pitch_app.strikeouts = strikeouts
-        pitch_app.homeruns = homeruns
-        pitch_app.batters_faced = batters_faced
-        pitch_app.pitch_count = pitch_count
-        pitch_app.strikes = strikes
-        pitch_app.strikes_contact = strikes_contact
-        pitch_app.strikes_swinging = strikes_swinging
-        pitch_app.strikes_looking = strikes_looking
-        pitch_app.ground_balls = ground_balls
-        pitch_app.fly_balls = fly_balls
-        pitch_app.line_drives = line_drives
-        pitch_app.unknown_type = unknown_type
-        pitch_app.game_score = game_score
-        pitch_app.inherited_runners = inherited_runners
-        pitch_app.inherited_scored = inherited_scored
-        pitch_app.wpa_pitch = wpa_pitch
-        pitch_app.avg_lvg_index = avg_lvg_index
-        pitch_app.re24_pitch = re24_pitch
-        pitch_appearances.append(pitch_app)
-    return pitch_appearances
 
 def _parse_play_by_play(pbp_table, batter_id_dict, pitcher_id_dict, away_team_id, home_team_id):
-    pbp_event_list = []
+    pbp_events = []
     batter_names = []
     pitcher_names = []
     inning_list = pbp_table.xpath(_PBP_INNING_XPATH)
     for i in range(0, len(inning_list)):
         event_num = i + 1
-        event = _get_values_for_pbp_event_number(pbp_table, event_num)
+        event = _parse_pbp_event(pbp_table, event_num)
         event['inning_label'] = inning_list[i]
-        pbp_event_list.append(event)
+        pbp_events.append(event)
 
-        batter = _get_value_from_pbp_table(pbp_table, 'batter', event_num)
+        batter = _get_pbp_event_stat_value(pbp_table, 'batter', event_num)
         batter_names.append(batter.replace(u'\xa0', u' '))
-        pitcher = _get_value_from_pbp_table(pbp_table, 'pitcher', event_num)
+        pitcher = _get_pbp_event_stat_value(pbp_table, 'pitcher', event_num)
         pitcher_names.append(pitcher.replace(u'\xa0', u' '))
 
     play_by_play = []
     for i in range(0, len(inning_list)):
         try:
-            pbp_event = pbp_event_list[i]
-            if pbp_event['team_batting_id_br'] == away_team_id:
-                pbp_event['team_pitching_id_br'] = home_team_id
+            event_dict = pbp_events[i]
+            if event_dict['team_batting_id_br'] == away_team_id:
+                event_dict['team_pitching_id_br'] = home_team_id
             else:
-                pbp_event['team_pitching_id_br'] = away_team_id
+                event_dict['team_pitching_id_br'] = away_team_id
         except IndexError as e:
             error = f'Error: {repr(e)}'
             return Result.Fail(error)
@@ -1015,7 +721,7 @@ def _parse_play_by_play(pbp_table, batter_id_dict, pitcher_id_dict, away_team_id
             if result.failure:
                 return result
             match_dict = result.value
-            pbp_event['pitcher_id_br'] = match_dict['player_id']
+            event_dict['pitcher_id_br'] = match_dict['player_id']
         except Exception as e:
             error = f"""
             Exception occurred trying to match '{pitcher_names[i]}' with a player_id:
@@ -1028,7 +734,7 @@ def _parse_play_by_play(pbp_table, batter_id_dict, pitcher_id_dict, away_team_id
             if result.failure:
                 return result
             match_dict = result.value
-            pbp_event['batter_id_br'] = match_dict['player_id']
+            event_dict['batter_id_br'] = match_dict['player_id']
         except Exception as e:
             error = f"""
             Exception occurred trying to match '{batter_names[i]}' with a player_id:
@@ -1036,19 +742,19 @@ def _parse_play_by_play(pbp_table, batter_id_dict, pitcher_id_dict, away_team_id
             """
             return Result.Fail(error)
 
-        play = BBRefPlayByPlayEvent(**pbp_event)
-        play_by_play.append(play)
+        pbp_event = BBRefPlayByPlayEvent(**event_dict)
+        play_by_play.append(pbp_event)
 
     return Result.Ok(play_by_play)
 
-def _get_values_for_pbp_event_number(pbp_table, event_number):
-    pbp_event = {}
-    for k,v in PBP_STAT_NAMES.items():
-        value = _get_value_from_pbp_table(pbp_table, v, event_number)
-        pbp_event[k] = value
-    return pbp_event
+def _parse_pbp_event(pbp_table, event_number):
+    return {
+        attr:_get_pbp_event_stat_value(pbp_table, stat_name, event_number)
+        for attr,stat_name
+        in PBP_STATS.items()
+    }
 
-def _get_value_from_pbp_table(pbp_table, stat_name, event_number):
+def _get_pbp_event_stat_value(pbp_table, stat_name, event_number):
     templ_xpath = './tbody//tr[@id="event_${n}"]/td[@data-stat="${s}"]/text()'
     query = Template(templ_xpath).substitute(n=event_number, s=stat_name)
 
@@ -1065,7 +771,7 @@ def _get_value_from_pbp_table(pbp_table, stat_name, event_number):
 
     pbp_value = ""
     result = pbp_table.xpath(query)
-    if result is not None and len(result) > 0:
+    if result and len(result) > 0:
         pbp_value = result[0]
     return pbp_value
 
@@ -1253,7 +959,7 @@ def _parse_away_team_lineup(response):
     bat_orders = response.xpath(_AWAY_LINEUP_ORDER_XPATH)
     player_links = response.xpath(_AWAY_LINEUP_PLAYER_XPATH)
     def_positions = response.xpath(_AWAY_LINEUP_DEF_POS_XPATH)
-    if bat_orders is None or player_links is None or def_positions is None:
+    if not bat_orders or not player_links or not def_positions:
         return None
 
     lineup = []
@@ -1272,7 +978,7 @@ def _parse_home_team_lineup(response):
     bat_orders = response.xpath(_HOME_LINEUP_ORDER_XPATH)
     player_links = response.xpath(_HOME_LINEUP_PLAYER_XPATH)
     def_positions = response.xpath(_HOME_LINEUP_DEF_POS_XPATH)
-    if bat_orders is None or player_links is None or def_positions is None:
+    if not bat_orders or not player_links or not def_positions:
         return None
 
     lineup = []

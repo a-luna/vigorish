@@ -7,21 +7,25 @@ from pathlib import Path
 from lxml import html
 
 from app.main.scrape.bbref.scrape_bbref_games_for_date import (
-    __parse_dashboard_page as parse_dashboard_page
+    __parse_dashboard_page as parse_dashboard_page,
 )
 from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.file_util import (
-    write_bbref_games_for_date_to_file, read_bbref_games_for_date_from_file
+    write_bbref_games_for_date_to_file,
+    read_bbref_games_for_date_from_file,
 )
 from app.main.util.json_decoders import decode_bbref_games_for_date
 from app.test.base import BaseTestCase
 
+
 class TestBBRefGamesForDate(BaseTestCase):
     GAME_DATE = datetime(2018, 7, 26)
-    GAME_DATE_STR = '2018-07-26'
-    APP_TEST_FOLDER = Path.cwd() / 'app' / 'test'
-    DAILY_DASH_URL = 'https://www.baseball-reference.com/boxes/?month=7&day=26&year=2018'
-    DAILY_DASH_HTML = APP_TEST_FOLDER / 'test_files' / 'bbref_daily_dash.xml'
+    GAME_DATE_STR = "2018-07-26"
+    APP_TEST_FOLDER = Path.cwd() / "app" / "test"
+    DAILY_DASH_URL = (
+        "https://www.baseball-reference.com/boxes/?month=7&day=26&year=2018"
+    )
+    DAILY_DASH_HTML = APP_TEST_FOLDER / "test_files" / "bbref_daily_dash.html"
 
     def test_scrape_bbref_games_for_date(self):
         """Verify BBRefGameInfo object is correctly parsed from webpage."""
@@ -38,17 +42,17 @@ class TestBBRefGamesForDate(BaseTestCase):
         boxscore_urls = games_for_date.boxscore_urls
         self.assertEqual(len(boxscore_urls), 11)
 
-        url0 = 'https://www.baseball-reference.com/boxes/ANA/ANA201807260.shtml'
-        url1 = 'https://www.baseball-reference.com/boxes/ATL/ATL201807260.shtml'
-        url2 = 'https://www.baseball-reference.com/boxes/BAL/BAL201807260.shtml'
-        url3 = 'https://www.baseball-reference.com/boxes/BOS/BOS201807260.shtml'
-        url4 = 'https://www.baseball-reference.com/boxes/CHN/CHN201807260.shtml'
-        url5 = 'https://www.baseball-reference.com/boxes/CIN/CIN201807260.shtml'
-        url6 = 'https://www.baseball-reference.com/boxes/MIA/MIA201807260.shtml'
-        url7 = 'https://www.baseball-reference.com/boxes/NYA/NYA201807260.shtml'
-        url8 = 'https://www.baseball-reference.com/boxes/PIT/PIT201807260.shtml'
-        url9 = 'https://www.baseball-reference.com/boxes/SFN/SFN201807260.shtml'
-        url10 = 'https://www.baseball-reference.com/boxes/TEX/TEX201807260.shtml'
+        url0 = "https://www.baseball-reference.com/boxes/ANA/ANA201807260.shtml"
+        url1 = "https://www.baseball-reference.com/boxes/ATL/ATL201807260.shtml"
+        url2 = "https://www.baseball-reference.com/boxes/BAL/BAL201807260.shtml"
+        url3 = "https://www.baseball-reference.com/boxes/BOS/BOS201807260.shtml"
+        url4 = "https://www.baseball-reference.com/boxes/CHN/CHN201807260.shtml"
+        url5 = "https://www.baseball-reference.com/boxes/CIN/CIN201807260.shtml"
+        url6 = "https://www.baseball-reference.com/boxes/MIA/MIA201807260.shtml"
+        url7 = "https://www.baseball-reference.com/boxes/NYA/NYA201807260.shtml"
+        url8 = "https://www.baseball-reference.com/boxes/PIT/PIT201807260.shtml"
+        url9 = "https://www.baseball-reference.com/boxes/SFN/SFN201807260.shtml"
+        url10 = "https://www.baseball-reference.com/boxes/TEX/TEX201807260.shtml"
 
         self.assertEqual(boxscore_urls[0], url0)
         self.assertEqual(boxscore_urls[1], url1)
@@ -70,16 +74,14 @@ class TestBBRefGamesForDate(BaseTestCase):
 
         games_for_date_in = result.value
         result = write_bbref_games_for_date_to_file(
-            games_for_date_in,
-            folderpath=self.APP_TEST_FOLDER
+            games_for_date_in, folderpath=self.APP_TEST_FOLDER
         )
         self.assertTrue(result.success)
         filepath = result.value
 
-        self.assertEqual(filepath.name, 'bbref_games_for_date_2018-07-26.json')
+        self.assertEqual(filepath.name, "bbref_games_for_date_2018-07-26.json")
         result = read_bbref_games_for_date_from_file(
-            self.GAME_DATE,
-            folderpath=self.APP_TEST_FOLDER
+            self.GAME_DATE, folderpath=self.APP_TEST_FOLDER
         )
         self.assertTrue(result.success)
         games_for_date_out = result.value
@@ -93,17 +95,17 @@ class TestBBRefGamesForDate(BaseTestCase):
         boxscore_urls = games_for_date_out.boxscore_urls
         self.assertEqual(len(boxscore_urls), 11)
 
-        url0 = 'https://www.baseball-reference.com/boxes/ANA/ANA201807260.shtml'
-        url1 = 'https://www.baseball-reference.com/boxes/ATL/ATL201807260.shtml'
-        url2 = 'https://www.baseball-reference.com/boxes/BAL/BAL201807260.shtml'
-        url3 = 'https://www.baseball-reference.com/boxes/BOS/BOS201807260.shtml'
-        url4 = 'https://www.baseball-reference.com/boxes/CHN/CHN201807260.shtml'
-        url5 = 'https://www.baseball-reference.com/boxes/CIN/CIN201807260.shtml'
-        url6 = 'https://www.baseball-reference.com/boxes/MIA/MIA201807260.shtml'
-        url7 = 'https://www.baseball-reference.com/boxes/NYA/NYA201807260.shtml'
-        url8 = 'https://www.baseball-reference.com/boxes/PIT/PIT201807260.shtml'
-        url9 = 'https://www.baseball-reference.com/boxes/SFN/SFN201807260.shtml'
-        url10 = 'https://www.baseball-reference.com/boxes/TEX/TEX201807260.shtml'
+        url0 = "https://www.baseball-reference.com/boxes/ANA/ANA201807260.shtml"
+        url1 = "https://www.baseball-reference.com/boxes/ATL/ATL201807260.shtml"
+        url2 = "https://www.baseball-reference.com/boxes/BAL/BAL201807260.shtml"
+        url3 = "https://www.baseball-reference.com/boxes/BOS/BOS201807260.shtml"
+        url4 = "https://www.baseball-reference.com/boxes/CHN/CHN201807260.shtml"
+        url5 = "https://www.baseball-reference.com/boxes/CIN/CIN201807260.shtml"
+        url6 = "https://www.baseball-reference.com/boxes/MIA/MIA201807260.shtml"
+        url7 = "https://www.baseball-reference.com/boxes/NYA/NYA201807260.shtml"
+        url8 = "https://www.baseball-reference.com/boxes/PIT/PIT201807260.shtml"
+        url9 = "https://www.baseball-reference.com/boxes/SFN/SFN201807260.shtml"
+        url10 = "https://www.baseball-reference.com/boxes/TEX/TEX201807260.shtml"
 
         self.assertEqual(boxscore_urls[0], url0)
         self.assertEqual(boxscore_urls[1], url1)

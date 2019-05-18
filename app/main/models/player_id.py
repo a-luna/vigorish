@@ -8,7 +8,7 @@ from app.main.models.base import Base
 class PlayerId(Base):
     """Values used to identify a single player in various websites and databases."""
 
-    __tablename__ = 'player_id'
+    __tablename__ = "player_id"
     mlb_id = Column(Integer, primary_key=True)
     mlb_name = Column(String)
     bp_id = Column(Integer)
@@ -26,13 +26,10 @@ class PlayerId(Base):
     ottoneu_id = Column(Integer)
     rotowire_id = Column(Integer)
     rotowire_name = Column(String)
-    db_player_id = Column(Integer, ForeignKey('player.id'))
+    db_player_id = Column(Integer, ForeignKey("player.id"))
 
     def __repr__(self):
-        return (f'<PlayerId('
-                    f'bbref_id="{self.bbref_id}", '
-                    f'mlb_id="{self.mlb_id}"'
-                f')>')
+        return f"<PlayerId bbref_id={self.bbref_id}, mlb_id={self.mlb_id}>"
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

@@ -8,8 +8,8 @@ from sqlalchemy.orm import sessionmaker
 
 from app.main.models.base import Base
 
-APP_ROOT = Path.cwd()
-DOTENV_PATH = APP_ROOT / '.env'
+
+DOTENV_PATH = Path.cwd() / ".env"
 
 
 class BaseTestCase(TestCase):
@@ -17,7 +17,7 @@ class BaseTestCase(TestCase):
 
     if DOTENV_PATH.is_file():
         load_dotenv(DOTENV_PATH)
-    engine = create_engine(os.getenv('DATABASE_URL_TEST'))
+    engine = create_engine(os.getenv("DATABASE_URL_TEST"))
     sessionmaker = sessionmaker(bind=engine)
     session = sessionmaker()
 

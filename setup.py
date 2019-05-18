@@ -48,6 +48,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        vig=app.cli.vig:cli
+        vig=vig:cli
     ''',
 )

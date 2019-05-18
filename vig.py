@@ -6,7 +6,6 @@ from random import randint
 
 import click
 from dateutil import parser
-from dotenv import load_dotenv
 from halo import Halo
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -25,40 +24,33 @@ from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.list_functions import print_list
 from app.main.util.result import Result
 
-#TODO Create unit tests for all substitution parsing scenarios
-#TODO Track lineup changes to avoid the various name,pos=N/A and lineupslot=0 hacks introduced in order to get boxscores parsing successfully
-#TODO Create config file and config.example with settings for AWS auth, S3 bucket name/local folder path, DB URL, chrome/chromedriver binaries
-#TODO Create vig config command which prompts user for values listed above and writes to config file.
-
-DOTENV_PATH = Path.cwd() / '.env'
+# TODO Create unit tests for all substitution parsing scenarios
+# TODO Track lineup changes to avoid the various name,pos=N/A and lineupslot=0 hacks introduced in order to get boxscores parsing successfully
+# TODO Create config file and config.example with settings for AWS auth, S3 bucket name/local folder path, DB URL, chrome/chromedriver binaries
+# TODO Create vig config command which prompts user for values listed above and writes to config file.
 
 
 @click.group()
 @click.pass_context
 def cli(ctx):
-    if DOTENV_PATH.is_file():
-        load_dotenv(DOTENV_PATH)
-    engine = create_engine(os.getenv('DATABASE_URL'))
+    engine = create_engine(os.getenv("DATABASE_URL"))
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
-    ctx.obj = {
-        'engine': engine,
-        'session': session
-    }
+    ctx.obj = {"engine": engine, "session": session}
+
 
 def clean():
     """Remove *.pyc and *.pyo files recursively starting at current directory."""
-    for dirpath, _, filenames in os.walk('.'):
+    for dirpath, _, filenames in os.walk("."):
         for filename in filenames:
-            if filename.endswith('.pyc') or filename.endswith('.pyo'):
+            if filename.endswith(".pyc") or filename.endswith(".pyo"):
                 full_pathname = os.path.join(dirpath, filename)
-                click.echo('Removing {}'.format(full_pathname))
+                click.echo(f"Removing {full_pathname}")
                 os.remove(full_pathname)
 
 
 @cli.command()
-@click.confirmation_option(
-    prompt='Are you sure you want to delete all existing data?')
+@click.confirmation_option(prompt="Are you sure you want to delete all existing data?")
 @click.pass_context
 def setup(ctx):
     """Populate database with initial Player, Team and Season data.
@@ -66,49 +58,55 @@ def setup(ctx):
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
     """
-    engine = ctx.obj['engine']
-    session = ctx.obj['session']
+    engine = ctx.obj["engine"]
+    session = ctx.obj["session"]
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     result = initialize_database(session)
     if result.failure:
-        click.secho(str(result), fg='red')
+        click.secho(str(result), fg="red")
         session.close()
         return 1
     refresh_all_mat_views(engine, session)
-    click.secho('Successfully populated database with initial data.\n', fg='green')
+    click.secho("Successfully populated database with initial data.\n", fg="green")
     session.close()
     return 0
 
 
 @cli.command()
 @click.option(
-    '--data-set',
+    "--data-set",
     type=MlbDataSet(),
     prompt=True,
     help=(
-        'Data set to scrape, must be a value from the following list:\n'
-        f'{", ".join(MLB_DATA_SETS)}'))
+        "Data set to scrape, must be a value from the following list:\n"
+        f'{", ".join(MLB_DATA_SETS)}'
+    ),
+)
 @click.option(
-    '--start',
+    "--start",
     type=DateString(),
     prompt=True,
     help=(
-        'Date to start scraping data, string can be in any format that is '
-        'recognized by dateutil.parser.'))
+        "Date to start scraping data, string can be in any format that is "
+        "recognized by dateutil.parser."
+    ),
+)
 @click.option(
-    '--end',
+    "--end",
     type=DateString(),
     prompt=True,
     help=(
-        'Date to stop scraping data, string can be in any format that is '
-        'recognized by dateutil.parser.'))
+        "Date to stop scraping data, string can be in any format that is "
+        "recognized by dateutil.parser."
+    ),
+)
 @click.pass_context
 def scrape(ctx, data_set, start, end):
     """Scrape MLB data from websites."""
-    engine = ctx.obj['engine']
-    session = ctx.obj['session']
-    result = __validate_date_range(session, start, end)
+    engine = ctx.obj["engine"]
+    session = ctx.obj["session"]
+    result = _validate_date_range(session, start, end)
     if result.failure:
         return result
     date_range = get_date_range(start, end)
@@ -121,60 +119,60 @@ def scrape(ctx, data_set, start, end):
     with tqdm(
         total=len(date_range),
         ncols=100,
-        unit='day',
+        unit="day",
         mininterval=0.12,
         maxinterval=5,
-        position=0
+        position=0,
     ) as pbar:
         for scrape_date in date_range:
-            pbar.set_description(f'Processing {scrape_date.strftime(DATE_ONLY)}....')
-            result = __scrape_data_for_date(
-                session,
-                scrape_date,
-                scrape_config
+            pbar.set_description(
+                f"Processing {scrape_date.strftime(MONTH_NAME_SHORT)}...."
             )
+            result = _scrape_data_for_date(session, scrape_date, scrape_config)
             if result.failure:
                 break
 
             session.commit()
             refresh_all_mat_views(engine, session)
-            time.sleep(randint(250, 300)/100.0)
+            time.sleep(randint(250, 300) / 100.0)
             pbar.update()
 
     session.close()
     if scrape_config.requires_selenium:
         scrape_config.driver.close()
         scrape_config.driver.quit()
+        scrape_config.driver = None
     if result.failure:
         return result
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
-        'Requested data was successfully scraped:\n'
-        f'data set....: {scrape_config.display_name}\n'
-        f'date range..: {start_str} - {end_str}\n'
+        "Requested data was successfully scraped:\n"
+        f"data set....: {scrape_config.display_name}\n"
+        f"date range..: {start_str} - {end_str}\n"
     )
-    click.secho(success, fg='green')
+    click.secho(success, fg="green")
     return Result.Ok()
+
 
 @cli.command()
 @click.option(
-    '--year',
+    "--year",
     type=MlbSeason(),
     prompt=True,
-    help=(
-        'Year of the MLB Season to report progress of scraped data sets.'))
+    help=("Year of the MLB Season to report progress of scraped data sets."),
+)
 @click.pass_context
 def status(ctx, year):
     """Report progress of scraped mlb data sets."""
-    engine = ctx.obj['engine']
-    session = ctx.obj['session']
-    spinner = Halo(text='Updating...', color='yellow', spinner='dots3')
+    engine = ctx.obj["engine"]
+    session = ctx.obj["session"]
+    spinner = Halo(text="Updating...", color="yellow", spinner="dots3")
     spinner.start()
 
     result = update_status_for_mlb_season(session, year)
     if result.failure:
-        click.secho(str(result), fg='red')
+        click.secho(str(result), fg="red")
         return 1
     refresh_all_mat_views(engine, session)
     spinner.stop()
@@ -184,7 +182,8 @@ def status(ctx, year):
     session.close()
     return 0
 
-def __validate_date_range(session, start, end):
+
+def _validate_date_range(session, start, end):
     if start.year != end.year:
         error = (
             "Start and end dates must both be in the same year and within "
@@ -196,8 +195,8 @@ def __validate_date_range(session, start, end):
         end_str = end.strftime(DATE_ONLY)
         error = (
             '"start" must be a date before (or the same date as) "end":\n'
-            f'start: {start_str}\n'
-            f'end: {end_str}'
+            f"start: {start_str}\n"
+            f"end: {end_str}"
         )
         return Result.Fail(error)
     season = Season.find_by_year(session, start.year)
@@ -212,23 +211,24 @@ def __validate_date_range(session, start, end):
         return Result.Fail(error)
     return Result.Ok()
 
-def __scrape_data_for_date(session, scrape_date, scrape_config):
+
+def _scrape_data_for_date(session, scrape_date, scrape_config):
     input_dict = dict(date=scrape_date, session=session)
     if scrape_config.requires_input:
         result = scrape_config.get_input_function(scrape_date)
         if result.failure:
             return result
-        input_dict['input_data'] = result.value
+        input_dict["input_data"] = result.value
 
     if scrape_config.requires_selenium:
-        input_dict['driver'] = scrape_config.driver
+        input_dict["driver"] = scrape_config.driver
     result = scrape_config.scrape_function(input_dict)
     if result.failure:
         return result
     scraped_data = result.value
 
     if scrape_config.produces_list:
-        result =  __upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
+        result = _upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
     else:
         result = scrape_config.persist_function(scraped_data, scrape_date)
     if result.failure:
@@ -236,24 +236,26 @@ def __scrape_data_for_date(session, scrape_date, scrape_config):
 
     return scrape_config.update_status_function(session, scraped_data)
 
-def __upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
+
+def _upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
     with tqdm(
         total=len(scraped_data),
         ncols=100,
-        unit='file',
+        unit="file",
         mininterval=0.12,
         maxinterval=5,
         leave=False,
-        position=1
+        position=1,
     ) as pbar:
         for data in scraped_data:
-            pbar.set_description(f'Uploading {data.upload_id}...')
+            pbar.set_description(f"Uploading {data.upload_id}...")
             result = scrape_config.persist_function(data, scrape_date)
             if result.failure:
                 return result
-            time.sleep(randint(50, 100)/100.0)
+            time.sleep(randint(50, 100) / 100.0)
             pbar.update()
     return Result.Ok()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     cli({})

@@ -7,10 +7,11 @@ from app.main.models.player import Player
 from app.main.models.team import Team
 from app.main.util.list_functions import display_dict
 
+
 class GameBatStats(Base):
     """Total batting statistics for a single player in a single game."""
 
-    __tablename__ = 'game_bat_stats'
+    __tablename__ = "game_bat_stats"
     id = Column(Integer, primary_key=True)
     at_bats = Column(Integer)
     runs_scored = Column(Integer)
@@ -45,35 +46,28 @@ class GameBatStats(Base):
     opponent_team_id_br = Column(String)
     bbref_game_id = Column(String)
     bb_game_id = Column(String)
-    player_id = Column(Integer, ForeignKey('player.id'))
-    player_team_id = Column(Integer, ForeignKey('team.id'))
-    opponent_team_id = Column(Integer, ForeignKey('team.id'))
-    boxscore_id = Column(Integer, ForeignKey('boxscore.id'))
-    season_id = Column(Integer, ForeignKey('season.id'))
+    player_id = Column(Integer, ForeignKey("player.id"))
+    player_team_id = Column(Integer, ForeignKey("team.id"))
+    opponent_team_id = Column(Integer, ForeignKey("team.id"))
+    boxscore_id = Column(Integer, ForeignKey("boxscore.id"))
+    season_id = Column(Integer, ForeignKey("season.id"))
 
     player_team = relationship(
-        'Team',
-        foreign_keys=[player_team_id],
-        back_populates='team_batting_stats'
+        "Team", foreign_keys=[player_team_id], back_populates="team_batting_stats"
     )
     opponent_team = relationship(
-        'Team',
-        foreign_keys=[opponent_team_id],
-        back_populates='opponent_batting_stats'
+        "Team", foreign_keys=[opponent_team_id], back_populates="opponent_batting_stats"
     )
 
     def __repr__(self):
-        return f"""
-            <GameBatStats(
-                bbref_game_id={self.bbref_game_id},
-                player_id_br={self.player_id_br},
-            )>
-        """
+        return f"<GameBatStats bbref_game_id={self.bbref_game_id}, player_id_br={self.player_id_br}>"
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def display(self):
         bat_stats_dict = self.as_dict()
-        title = f'Batting stats for player {self.player_id_br}, game: {self.bbref_game_id}'
+        title = (
+            f"Batting stats for player {self.player_id_br}, game: {self.bbref_game_id}"
+        )
         display_dict(bat_stats_dict, title=title)
