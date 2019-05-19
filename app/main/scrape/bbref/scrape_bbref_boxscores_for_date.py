@@ -220,7 +220,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
             f.write(matches)
     return Result.Ok(scraped_boxscores)
 
-def __parse_bbref_boxscore(response, url, silent=False):
+def __parse_bbref_boxscore(response, url, silent=True):
     """Parse boxscore data from the page source."""
     boxscore = BBRefBoxscore()
     boxscore.boxscore_url = url
@@ -235,7 +235,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.bbref_game_id = game_id
 
-    #print('\nBBRef Game ID..........: {gid}'.format(gid=game_id))
+    print('\nBBRef Game ID..........: {gid}'.format(gid=game_id))
 
     boxscore.away_team_data = BBRefBoxscoreTeamData()
     boxscore.home_team_data = BBRefBoxscoreTeamData()
@@ -246,7 +246,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.away_team_data.team_id_br = away_team_id
 
-    #print('Away Team ID...........: {at}'.format(at=away_team_id))
+    print('Away Team ID...........: {at}'.format(at=away_team_id))
 
     home_team_id = _parse_home_team_id(response)
     if not home_team_id:
@@ -254,7 +254,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.home_team_data.team_id_br = home_team_id
 
-    #print('Home Team ID...........: {ht}'.format(ht=home_team_id))
+    print('Home Team ID...........: {ht}'.format(ht=home_team_id))
 
     away_team_runs = _parse_away_team_runs(response)
     if not away_team_runs:
@@ -263,7 +263,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
     boxscore.away_team_data.total_runs_scored_by_team = away_team_runs
     boxscore.home_team_data.total_runs_scored_by_opponent = away_team_runs
 
-    #print('Away Team Runs Scored..: {ar}'.format(ar=away_team_runs))
+    print('Away Team Runs Scored..: {ar}'.format(ar=away_team_runs))
 
     home_team_runs = _parse_home_team_runs(response)
     if not home_team_runs:
@@ -272,7 +272,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
     boxscore.home_team_data.total_runs_scored_by_team = home_team_runs
     boxscore.away_team_data.total_runs_scored_by_opponent = home_team_runs
 
-    #print('Home Team Runs Scored..: {hr}'.format(hr=home_team_runs))
+    print('Home Team Runs Scored..: {hr}'.format(hr=home_team_runs))
 
     away_team_record = _parse_away_team_record(response)
     if not away_team_record:
@@ -281,8 +281,8 @@ def __parse_bbref_boxscore(response, url, silent=False):
     boxscore.away_team_data.total_wins_before_game = away_team_record[0]
     boxscore.away_team_data.total_losses_before_game = away_team_record[1]
 
-    #away_team_record_before_game = '{w}-{l}'.format(w=away_team_record[0], l=away_team_record[1])
-    #print('Away Team Record.......: {at}'.format(at=away_team_record_before_game))
+    away_team_record_before_game = '{w}-{l}'.format(w=away_team_record[0], l=away_team_record[1])
+    print('Away Team Record.......: {at}'.format(at=away_team_record_before_game))
 
     home_team_record = _parse_home_team_record(response)
     if not home_team_record:
@@ -291,8 +291,8 @@ def __parse_bbref_boxscore(response, url, silent=False):
     boxscore.home_team_data.total_wins_before_game = home_team_record[0]
     boxscore.home_team_data.total_losses_before_game = home_team_record[1]
 
-    #home_team_record_before_game = '{w}-{l}'.format(w=home_team_record[0], l=home_team_record[1])
-    #print('Home Team Record.......: {ht}'.format(ht=home_team_record_before_game))
+    home_team_record_before_game = '{w}-{l}'.format(w=home_team_record[0], l=home_team_record[1])
+    print('Home Team Record.......: {ht}'.format(ht=home_team_record_before_game))
 
     boxscore.game_meta_info = BBRefBoxscoreMeta()
     scorebox_meta_strings = response.xpath(_SCOREBOX_META_XPATH)
@@ -302,10 +302,10 @@ def __parse_bbref_boxscore(response, url, silent=False):
         boxscore.game_meta_info.attendance = attendance_matches['match']
         attendance_index = attendance_matches['index']
         del scorebox_meta_strings[attendance_index]
-        #print('Attendance.............: {a}'.format(a=item.attendance))
+        print('Attendance.............: {a}'.format(a=item.attendance))
     else:
         boxscore.game_meta_info.attendance = "0"
-        #print('Attendance.............: Was not found on page')
+        print('Attendance.............: Was not found on page')
 
     venue_matches = _parse_venue_from_strings(scorebox_meta_strings)
     if venue_matches is None:
@@ -316,7 +316,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
     venue_index = venue_matches['index']
     del scorebox_meta_strings[venue_index]
 
-    #print('Park Name..............: {p}'.format(p=item.park_name))
+    print('Park Name..............: {p}'.format(p=item.park_name))
 
     game_duration_matches = _parse_game_duration_from_strings(scorebox_meta_strings)
     if game_duration_matches is None:
@@ -327,7 +327,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
     game_duration_index = game_duration_matches['index']
     del scorebox_meta_strings[game_duration_index]
 
-    #print('Game Duration..........: {d}'.format(d=item.game_duration))
+    print('Game Duration..........: {d}'.format(d=item.game_duration))
 
     day_night_field = _parse_day_night_field_type_from_strings(scorebox_meta_strings)
     if day_night_field is None:
@@ -345,8 +345,8 @@ def __parse_bbref_boxscore(response, url, silent=False):
     boxscore.game_meta_info.day_night = split[0].strip()
     boxscore.game_meta_info.field_type = split[1].strip().title()
 
-    #print('Day/Night..............: {f}'.format(f=item.day_night))
-    #print('Field Type.............: {f}'.format(f=item.field_type))
+    print('Day/Night..............: {f}'.format(f=item.day_night))
+    print('Field Type.............: {f}'.format(f=item.field_type))
 
     first_pitch_weather = response.xpath(_FIRST_PITCH_WEATHER_XPATH)
     if not first_pitch_weather:
@@ -361,13 +361,13 @@ def __parse_bbref_boxscore(response, url, silent=False):
     boxscore.game_meta_info.first_pitch_wind = split2[1].strip()
     boxscore.game_meta_info.first_pitch_clouds = split2[2].strip().strip('.')
 
-    #print('Temperature............: {f}'.format(f=item.first_pitch_temperature))
-    #print('Wind Speed.............: {f}'.format(f=item.first_pitch_wind))
-    #print('Cloud Cover............: {f}'.format(f=item.first_pitch_clouds))
+    print('Temperature............: {f}'.format(f=item.first_pitch_temperature))
+    print('Wind Speed.............: {f}'.format(f=item.first_pitch_wind))
+    print('Cloud Cover............: {f}'.format(f=item.first_pitch_clouds))
 
     if len(split2) > 3:
         boxscore.game_meta_info.first_pitch_precipitation = split2[3].strip().strip('.')
-        #print('Precipitation..........: {f}'.format(f=item.first_pitch_precipitation))
+        print('Precipitation..........: {f}'.format(f=item.first_pitch_precipitation))
 
     away_team_linescore_totals = _parse_linescore_totals(response, away_team_id, False)
     if not away_team_linescore_totals:
@@ -421,7 +421,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.home_team_data.batting_stats = home_team_batting_stats
 
-    #print('Successfully parsed batting stats from BBRef boxscore page ({n} players total)'.format(n=len(batting_stats)))
+    print('Successfully parsed batting stats from BBRef boxscore page ({n} players total)'.format(n=len(batting_stats)))
     if not silent:
         pbar.update()
         pbar.set_description(f'Parsing pitch stats......')
@@ -459,7 +459,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
     pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
     player_name_dict = {**batter_name_dict, **pitcher_name_dict}
 
-    #print('Successfully parsed pitching stats from BBRef boxscore page ({n} players total)'.format(n=len(pitching_stats)))
+    print('Successfully parsed pitching stats from BBRef boxscore page ({n} players total)'.format(n=len(pitching_stats)))
     if not silent:
         pbar.update()
         pbar.set_description(f'Parsing play-by-play.....')
@@ -470,7 +470,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.umpires = umpires
 
-    #_print_umpires(umpires)
+    _print_umpires(umpires)
 
     away_team_lineup = _parse_away_team_lineup(response)
     if not away_team_lineup:
@@ -478,8 +478,8 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.away_team_data.starting_lineup = away_team_lineup
 
-    #print('\n{at} Starting Lineup:'.format(at=away_team_id))
-    #_print_lineup(away_team_lineup)
+    print('\n{at} Starting Lineup:'.format(at=away_team_id))
+    _print_lineup(away_team_lineup)
 
     home_team_lineup = _parse_home_team_lineup(response)
     if not home_team_lineup:
@@ -487,8 +487,8 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.home_team_data.starting_lineup = home_team_lineup
 
-    #print('\n{ht} Starting Lineup:'.format(ht=home_team_id))
-    #_print_lineup(home_team_lineup)
+    print('\n{ht} Starting Lineup:'.format(ht=home_team_id))
+    _print_lineup(home_team_lineup)
 
     result = response.xpath(_PLAY_BY_PLAY_TABLE)
     if not result:
@@ -545,7 +545,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.innings_list = result.value
 
-    #print('Sucessfully parsed play-by-play data from BBRef boxscore page ({n} events total)'.format(n=len(play_by_play)))
+    print('Sucessfully parsed play-by-play data from BBRef boxscore page ({n} events total)'.format(n=len(play_by_play)))
     if not silent:
         pbar.update()
         pbar.set_description(f'Finished parsing.........')
