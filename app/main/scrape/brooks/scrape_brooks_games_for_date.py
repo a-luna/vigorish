@@ -1,6 +1,7 @@
 """Scrape brooksbaseball daily dashboard page."""
 from datetime import datetime, date
 from string import Template
+from pathlib import Path
 
 import requests
 import w3lib.url
