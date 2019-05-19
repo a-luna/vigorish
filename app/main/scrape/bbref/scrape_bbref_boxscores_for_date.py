@@ -14,13 +14,6 @@ from selenium.webdriver.support import expected_conditions as ec
 from tqdm import tqdm
 
 from app.main.constants import DEFENSE_POSITIONS, VENUE_TERMS
-from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
-from app.main.util.list_functions import display_dict
-from app.main.util.numeric_functions import is_even
-from app.main.util.result import Result
-from app.main.util.scrape_functions import request_url, get_chromedriver
-from app.main.util.string_functions import fuzzy_match, normalize
-
 from app.main.scrape.bbref.models.bat_stats import BBRefBatStats
 from app.main.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
 from app.main.scrape.bbref.models.boxscore import BBRefBoxscore
@@ -33,6 +26,12 @@ from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
 from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
 from app.main.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
 from app.main.scrape.bbref.models.umpire import BBRefUmpire
+from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
+from app.main.util.list_functions import display_dict
+from app.main.util.numeric_functions import is_even
+from app.main.util.result import Result
+from app.main.util.scrape_functions import request_url, get_chromedriver
+from app.main.util.string_functions import fuzzy_match, normalize
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _TEAM_RUNS_XPATH = '//div[@class="score"]/text()'
@@ -449,15 +448,16 @@ def __parse_bbref_boxscore(response, url, silent=False):
     if not home_team_pitcher_name_dict:
         error = 'Failed to parse home team pitcher name dictionary'
         return Result.Fail(error)
-    batter_name_dict = {**away_team_batter_name_dict, **home_team_batter_name_dict}
-    pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
-    player_name_dict = {**batter_name_dict, **pitcher_name_dict}
 
     home_team_pitching_stats =  _parse_pitch_data(home_team_pitch_table, home_team_id, away_team_id)
     if not home_team_pitching_stats:
         error = 'Failed to parse home team pitching stats'
         return Result.Fail(error)
     boxscore.home_team_data.pitching_stats = home_team_pitching_stats
+
+    batter_name_dict = {**away_team_batter_name_dict, **home_team_batter_name_dict}
+    pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
+    player_name_dict = {**batter_name_dict, **pitcher_name_dict}
 
     #print('Successfully parsed pitching stats from BBRef boxscore page ({n} players total)'.format(n=len(pitching_stats)))
     if not silent:
@@ -507,7 +507,11 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
 
     boxscore.player_id_match_log = []
-    result = _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict)
+    result = _parse_in_game_substitutions(
+        play_by_play_table,
+        game_id,
+        player_name_dict
+    )
     if result.failure:
         error = f'Failed to parse in game substitutions:\n{result.error}'
         return Result.Fail(error)
@@ -525,7 +529,8 @@ def __parse_bbref_boxscore(response, url, silent=False):
     if result.failure:
         error = f'rescrape_did_not_parse_play_by_play:\n{result.error}'
         return Result.Fail(error)
-    play_by_play_events = result.value
+    result_dict = result.value
+    play_by_play_events = result_dict['play-by-play']
     boxscore.player_id_match_log.extend(result_dict['player_id_match_log'])
 
     result = _create_innings_list(
@@ -689,63 +694,38 @@ def _get_pitch_stat_value(player_pitch_data_html, stat_name):
 
 
 def _parse_play_by_play(pbp_table, batter_id_dict, pitcher_id_dict, away_team_id, home_team_id):
-    pbp_events = []
-    batter_names = []
-    pitcher_names = []
+    play_by_play = []
+    player_id_match_log = []
     inning_list = pbp_table.xpath(_PBP_INNING_XPATH)
     for i in range(0, len(inning_list)):
         event_num = i + 1
-        event = _parse_pbp_event(pbp_table, event_num)
-        event['inning_label'] = inning_list[i]
-        pbp_events.append(event)
-
-        batter = _get_pbp_event_stat_value(pbp_table, 'batter', event_num)
-        batter_names.append(batter.replace(u'\xa0', u' '))
-        pitcher = _get_pbp_event_stat_value(pbp_table, 'pitcher', event_num)
-        pitcher_names.append(pitcher.replace(u'\xa0', u' '))
-
-    play_by_play = []
-    for i in range(0, len(inning_list)):
-        try:
-            event_dict = pbp_events[i]
-            if event_dict['team_batting_id_br'] == away_team_id:
-                event_dict['team_pitching_id_br'] = home_team_id
-            else:
-                event_dict['team_pitching_id_br'] = away_team_id
-        except IndexError as e:
-            error = f'Error: {repr(e)}'
-            return Result.Fail(error)
-
-        try:
-            result = _match_player_name_to_player_id(pitcher_names[i], pitcher_id_dict)
-            if result.failure:
-                return result
-            match_dict = result.value
-            event_dict['pitcher_id_br'] = match_dict['player_id']
-        except Exception as e:
-            error = f"""
-            Exception occurred trying to match '{pitcher_names[i]}' with a player_id:
-            Error: {repr(e)}
-            """
-            return Result.Fail(error)
-
-        try:
-            result = _match_player_name_to_player_id(batter_names[i], batter_id_dict)
-            if result.failure:
-                return result
-            match_dict = result.value
-            event_dict['batter_id_br'] = match_dict['player_id']
-        except Exception as e:
-            error = f"""
-            Exception occurred trying to match '{batter_names[i]}' with a player_id:
-            Error: {repr(e)}
-            """
-            return Result.Fail(error)
-
-        pbp_event = BBRefPlayByPlayEvent(**event_dict)
-        play_by_play.append(pbp_event)
-
-    return Result.Ok(play_by_play)
+        event_dict = _parse_pbp_event(pbp_table, event_num)
+        event_dict['inning_label'] = inning_list[i]
+        if event_dict['team_batting_id_br'] == away_team_id:
+            event_dict['team_pitching_id_br'] = home_team_id
+        else:
+            event_dict['team_pitching_id_br'] = away_team_id 
+        
+        batter = _get_pbp_event_stat_value(pbp_table, 'batter', event_num).replace(u'\xa0', u' ')
+        match = _match_player_id(batter, batter_id_dict)
+        if match['type'] != 'Exact match':
+            player_id_match_log.append(match)
+        event_dict['batter_id_br'] = match['id']
+        
+        pitcher = _get_pbp_event_stat_value(pbp_table, 'pitcher', event_num).replace(u'\xa0', u' ')
+        match = _match_player_id(pitcher, pitcher_id_dict)
+        if match['type'] != 'Exact match':
+            player_id_match_log.append(match)
+        event_dict['pitcher_id_br'] = match['id']
+        
+        event = BBRefPlayByPlayEvent(**event_dict)
+        play_by_play.append(event)
+        
+    result = dict(
+        play_by_play=play_by_play,
+        player_id_match_log=player_id_match_log
+    )
+    return Result.Ok(result)
 
 def _parse_pbp_event(pbp_table, event_number):
     return {
@@ -774,37 +754,6 @@ def _get_pbp_event_stat_value(pbp_table, stat_name, event_number):
     if result and len(result) > 0:
         pbp_value = result[0]
     return pbp_value
-
-def _match_player_name_to_player_id(name, id_dict):
-    try:
-        result = _match_player_id(name, id_dict)
-        if result.failure:
-            return result
-        match_dict = result.value
-        player_id = match_dict['player_id']
-        match_type = match_dict['match_type']
-        match_details = None
-        if match_type != 'Exact match':
-            dict_swapped = {v:k for k,v in id_dict.items()}
-            matched_name = dict_swapped[player_id]
-            match_details = dict(
-                player_name=name,
-                match_type=match_type,
-                matched_id=player_id,
-                matched_name=matched_name
-            )
-        result = dict(
-            player_id=player_id,
-            match_type=match_type,
-            match_details=match_details
-        )
-        return Result.Ok(result)
-    except Exception as e:
-        error = f"""
-        Exception occurred trying to match '{name}' with a player_id:
-        Error: {repr(e)}
-        """
-        return Result.Fail(error)
 
 def _create_player_team_dict(play_by_play):
     ids = []
@@ -994,19 +943,22 @@ def _parse_home_team_lineup(response):
     return lineup
 
 def _match_player_id(name, id_dict):
+    match = {}
     if name in id_dict:
-        result = dict(
-            match_type='Exact match',
-            player_id=id_dict[name]
-        )
+        match["type"] = "Exact match"
+        match["name"] = name
+        match["id"] = id_dict[name]
+        match["score"] = 1
     else:
-        (best_match, _) = fuzzy_match(name, id_dict.keys())
-        result = dict(
-            match_type='Fuzzy match',
-            player_id=id_dict[best_match]
-        )
-
-    return Result.Ok(result)
+        (best_match, score) = fuzzy_match(name, id_dict.keys())
+        name_dict = {v:k for k,v in id_dict.items()}
+        match["type"] = "Fuzzy match"
+        match["name"] = name
+        match["best_match"] = name_dict[player_id]
+        match["id"] = id_dict[best_match]
+        match["score"] = score
+    return match
+    
 
 def _parse_inning_summary_top(response):
     summaries = response.xpath(_PBP_INNING_SUMMARY_TOP_XPATH)
@@ -1223,46 +1175,19 @@ def _parse_substitution_description(sub_description):
 def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_dict):
     player_id_match_log = []
     if outgoing_player_name != 'N/A':
-        try:
-            result = _match_player_name_to_player_id(
-                outgoing_player_name,
-                player_name_dict
-            )
-            if result.failure:
-                return result
-            match_dict = result.value
-            if match_dict['match_type'] != 'Exact match':
-                player_id_match_log.append(match_dict['match_details'])
-            outgoing_player_id_br = match_dict['player_id']
-        except Exception as e:
-            error = f"""
-            Exception occurred trying to match '{outgoing_player_name}' with a player_id:
-            Error: {repr(e)}
-            """
-            return Result.Fail(error)
-
-    if incoming_player_name != 'N/A':
-        try:
-            result = _match_player_name_to_player_id(
-                incoming_player_name,
-                player_name_dict
-            )
-            if result.failure:
-                return result
-            match_dict = result.value
-            if match_dict['match_type'] != 'Exact match':
-                player_id_match_log.append(match_dict['match_details'])
-            incoming_player_id_br = match_dict['player_id']
-        except Exception as e:
-            error = f"""
-            Exception occurred trying to match '{incoming_player_name}' with a player_id:
-            Error: {repr(e)}
-            """
-            return Result.Fail(error)
-
-    if incoming_player_name == 'N/A':
+        match = _match_player_id(outgoing_player_name, player_name_dict)
+        outgoing_player_id_br = match['id']
+        if match['type'] != 'Exact match':
+            player_id_match_log.append(match)
+    else:
         incoming_player_id_br = 'N/A'
-    if outgoing_player_name == 'N/A':
+        
+    if incoming_player_name != 'N/A':
+        match = _match_player_id(incoming_player_name, player_name_dict)
+        incoming_player_id_br = match['id']
+        if match['type'] != 'Exact match':
+            player_id_match_log.append(match)
+    else:
         outgoing_player_id_br = 'N/A'
 
     result = dict(

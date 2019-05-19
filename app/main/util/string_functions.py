@@ -15,7 +15,8 @@ def string_is_null_or_blank(s):
 
 
 def fuzzy_match(s, choices):
-    return process.extractOne(s, choices)
+    (match, score) = process.extractOne(s, choices)
+    return dict(best_match=match, score=score)
 
 
 def normalize(s):
