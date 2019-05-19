@@ -5,6 +5,15 @@ from signal import signal, alarm, SIGALRM
 from time import sleep
 
 
+def handle_failed_attempt(func, remaining, e, delay):
+    message = (
+        f"Function name: {func.__name__}\n"
+        f"Error: {repr(e)}\n"
+        f"{remaining} attempts remaining, retrying in {delay} seconds..."
+    )
+    print(message)
+
+
 class RetryLimitExceededError(Exception):
     """Custom exception raised by retry decorator when max_attempts limit is reached."""
 

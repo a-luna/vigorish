@@ -26,7 +26,7 @@ from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
 from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
 from app.main.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
 from app.main.scrape.bbref.models.umpire import BBRefUmpire
-from app.main.util.decorators import timeout, retry, RetryLimitExceededError
+from app.main.util.decorators import timeout, retry, RetryLimitExceededError, handle_failed_attempt
 from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
@@ -201,14 +201,6 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
                 matches += str(log) + '\n'
             f.write(matches)
     return Result.Ok(scraped_boxscores)
-
-def handle_failed_attempt(func, remaining, e, delay):
-    message = (
-        f"Function name: {func.__name__}\n"
-        f"Error: {repr(e)}\n"
-        f"{remaining} attempts remaining, retrying in {delay} seconds..."
-    )
-    print(message)
 
 @retry(
     max_attempts=5,
@@ -426,7 +418,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         return Result.Fail(error)
     boxscore.home_team_data.batting_stats = home_team_batting_stats
 
-    print('Successfully parsed batting stats from BBRef boxscore page')
+    #print('Successfully parsed batting stats from BBRef boxscore page')
     if not silent:
         pbar.update()
         pbar.set_description(f'Parsing pitch stats......')
@@ -956,11 +948,12 @@ def _match_player_id(name, id_dict):
         match["score"] = 1
     else:
         (best_match, score) = fuzzy_match(name, id_dict.keys())
+        player_id = id_dict[best_match]
         name_dict = {v:k for k,v in id_dict.items()}
         match["type"] = "Fuzzy match"
         match["name"] = name
         match["best_match"] = name_dict[player_id]
-        match["id"] = id_dict[best_match]
+        match["id"] = player_id
         match["score"] = score
     return match
 

@@ -8,39 +8,47 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 
+from app.main.util.decorators import (
+    timeout,
+    retry,
+    RetryLimitExceededError,
+    handle_failed_attempt,
+)
 from app.main.util.result import Result
+
 
 def get_chromedriver(page_load_timeout=6000):
     """Initialize a Chrome webdriver instance with user-specified value for page load timeout."""
-    max_attempts = 10
-    attempts = 1
-    while(attempts < max_attempts):
-        try:
-            options = webdriver.ChromeOptions()
-            options.binary_location = os.getenv('GOOGLE_CHROME_BIN')
-            options.add_argument('--ignore-certificate-errors')
-            options.add_argument("--test-type")
-            options.add_argument('--pageLoadStrategy=none')
-            options.add_argument('--headless')
-            options.add_argument('--disable-gpu')
-            options.add_argument('--no-sandbox')
-            options.add_argument('--remote-debugging-port=9222')
-            driver_path = os.getenv('CHROMEDRIVER_PATH')
-            driver = webdriver.Chrome(executable_path=driver_path, chrome_options=options)
-            driver.set_page_load_timeout(page_load_timeout)
-            break
-        except Exception as e:
-            attempts += 1
-            print(f'\nError: {repr(e)}')
-            if (attempts < max_attempts):
-                continue
-            else:
-                message = (
-                    f'Unable to initialize chromedriver after {max_attempts} '
-                    f'failed attempts, aborting task.\nError: {repr(e)}'
-                )
-                return Result.Fail(message)
-    return Result.Ok(driver)
+    try:
+        driver = _get_chromedriver(page_load_timeout)
+        return Result.Ok(driver)
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
+
+
+@retry(
+    max_attempts=5,
+    delay=5,
+    exceptions=(TimeoutError, Exception),
+    on_failure=handle_failed_attempt,
+)
+@timeout(seconds=5)
+def _get_chromedriver(page_load_timeout):
+    options = webdriver.ChromeOptions()
+    options.binary_location = os.getenv("GOOGLE_CHROME_BIN")
+    options.add_argument("--ignore-certificate-errors")
+    options.add_argument("--test-type")
+    options.add_argument("--pageLoadStrategy=none")
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--remote-debugging-port=9222")
+    driver_path = os.getenv("CHROMEDRIVER_PATH")
+    driver = webdriver.Chrome(executable_path=driver_path, chrome_options=options)
+    driver.set_page_load_timeout(page_load_timeout)
+    return driver
 
 
 def request_url(url):
@@ -50,27 +58,29 @@ def request_url(url):
         response = html.fromstring(page.content, base_url=url)
         return Result.Ok(response)
     except Exception as e:
-        error = 'Error: {error}'.format(error=repr(e))
+        error = "Error: {error}".format(error=repr(e))
         return Result.Fail(error)
 
 
 def render_url(driver, url, max_attempts=100):
     """Fully render the URL (including JS), return the page content."""
-    attempts = 1
-    while(attempts < max_attempts):
-        try:
-            driver.get(url)
-            page = driver.page_source
-            response = html.fromstring(page, base_url=url)
-            return Result.Ok(response)
-        except Exception as e:
-            attempts += 1
-            exception_detail = 'Error: {r}'.format(r=repr(e))
-            if (attempts < max_attempts):
-                continue
-            else:
-                error = (
-                    'Maximum number of attempts reached, unable to retrieve '
-                    f'URL content\n{exception_detail}'
-                )
-                return Result.Fail(error)
+    try:
+        response = _render_url(url)
+        return Result.Ok(response)
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
+
+
+@retry(
+    max_attempts=5,
+    delay=5,
+    exceptions=(TimeoutError, Exception),
+    on_failure=handle_failed_attempt,
+)
+@timeout(seconds=30)
+def _render_url(url):
+    driver.get(url)
+    page = driver.page_source
+    return html.fromstring(page, base_url=url)
