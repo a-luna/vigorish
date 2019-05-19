@@ -72,7 +72,7 @@ _PBP_INNING_SUMMARY_BOTTOM_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_bott
 _PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = './tbody//tr[@class="pbp_summary_bottom"]//span[@class="half_inning_summary"]/text()'
 _PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
 _T_PBP_IN_GAME_SUBSTITUTION_XPATH = './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]//td[@data-stat="inning_summary_3"]//div/text()'
-_PBP_INNING_XPATH = './tbody//th[@data-stat="inning"]/text()'
+_PBP_INNING_XPATH = './tbody//tr[not(contains(@class, "thead"))]/th[@data-stat="inning"]/text()'
 
 BAT_STATS = dict(
     at_bats='AB',
@@ -535,7 +535,7 @@ def __parse_bbref_boxscore(response, url, silent=False):
         error = f'rescrape_did_not_parse_play_by_play:\n{result.error}'
         return Result.Fail(error)
     result_dict = result.value
-    play_by_play_events = result_dict['play-by-play']
+    play_by_play_events = result_dict['play_by_play']
     boxscore.player_id_match_log.extend(result_dict['player_id_match_log'])
 
     result = _create_innings_list(
