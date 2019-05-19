@@ -366,7 +366,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     split2 = first_pitch_weather[0].split(',')
     if len(split2) < 3:
-        error = 'Failed to parse first pitch weather info'
+        error = f'First pitch weather info is not in expected format:\n{first_pitch_weather}'
         return Result.Fail(error)
 
     boxscore.game_meta_info.first_pitch_temperature = split2[0].strip()[:2]
