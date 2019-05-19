@@ -433,7 +433,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.home_team_data.batting_stats = home_team_batting_stats
 
-    print('Successfully parsed batting stats from BBRef boxscore page'))
+    print('Successfully parsed batting stats from BBRef boxscore page')
     if not silent:
         pbar.update()
         pbar.set_description(f'Parsing pitch stats......')
@@ -471,7 +471,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
     pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
     player_name_dict = {**batter_name_dict, **pitcher_name_dict}
 
-    print('Successfully parsed pitching stats from BBRef boxscore page'))
+    print('Successfully parsed pitching stats from BBRef boxscore page')
     if not silent:
         pbar.update()
         pbar.set_description(f'Parsing play-by-play.....')
