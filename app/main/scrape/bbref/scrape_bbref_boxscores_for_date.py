@@ -55,8 +55,8 @@ _PITCHER_NAMES_XPATH = './tbody//td[@data-stat="earned_run_avg"]/../th[@data-sta
 _T_PITCH_STATS_ROW = './tbody//th[@data-append-csv="${pid}"]/..'
 _T_PITCH_STAT_XPATH = './td[@data-stat="${stat}"]/text()'
 
-_UMPIRES_XPATH = '//div[@id="content"]/div[9]/div[3]/div[1]/text()'
-_FIRST_PITCH_WEATHER_XPATH = '//div[@id="content"]/div[9]/div[3]/div[4]/text()'
+_UMPIRES_XPATH = '//strong[contains(text(), "Umpires")]/../text()'
+_FIRST_PITCH_WEATHER_XPATH = '//strong[contains(text(), "Start Time Weather")]/../text()'
 _AWAY_LINEUP_ORDER_XPATH = '//div[@id="lineups_1"]//table//tbody//tr//td[1]/text()'
 _AWAY_LINEUP_PLAYER_XPATH = '//div[@id="lineups_1"]//table//tbody//a/@href'
 _AWAY_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_1"]//table//tbody//tr//td[3]/text()'
@@ -171,7 +171,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         for url in boxscore_urls:
             uri = Path(url)
             pbar.set_description(f'Processing {uri.stem}..')
-                    
+
             try:
                 response = render_webpage(driver, url)
                 result = __parse_bbref_boxscore(response, url)
@@ -181,7 +181,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
                 return Result.Fail(repr(e))
             except Exception as e:
                 return Result.Fail(f"Error: {repr(e)}")
-                    
+
             bbref_boxscore = result.value
             scraped_boxscores.append(bbref_boxscore)
             player_match_log = bbref_boxscore.player_id_match_log
@@ -192,14 +192,16 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
             pbar.update()
 
     if player_name_match_logs:
+        unique = {tuple(d.items()) for d in player_name_match_logs}
+        match_logs = [dict(t) for t in unique]
         date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
         with open(f'player_match_log_{date_str}.json', 'w') as f:
             matches = ''
-            for log in player_name_match_logs:
+            for log in match_logs:
                 matches += str(log) + '\n'
             f.write(matches)
     return Result.Ok(scraped_boxscores)
-    
+
 def handle_failed_attempt(func, remaining, e, delay):
     message = (
         f"Function name: {func.__name__}\n"
@@ -207,7 +209,7 @@ def handle_failed_attempt(func, remaining, e, delay):
         f"{remaining} attempts remaining, retrying in {delay} seconds..."
     )
     print(message)
-    
+
 @retry(
     max_attempts=5,
     delay=5,
@@ -232,7 +234,7 @@ def render_webpage(driver, url):
     response = html.fromstring(page, base_url=url)
     return response
 
-def __parse_bbref_boxscore(response, url, silent=True):
+def __parse_bbref_boxscore(response, url, silent=False):
     """Parse boxscore data from the page source."""
     boxscore = BBRefBoxscore()
     boxscore.boxscore_url = url
@@ -246,8 +248,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         error = 'Failed to parse game ID'
         return Result.Fail(error)
     boxscore.bbref_game_id = game_id
-
-    print('\nBBRef Game ID..........: {gid}'.format(gid=game_id))
+    #print(f'\nBBRef Game ID..........: {game_id}')
 
     boxscore.away_team_data = BBRefBoxscoreTeamData()
     boxscore.home_team_data = BBRefBoxscoreTeamData()
@@ -257,16 +258,14 @@ def __parse_bbref_boxscore(response, url, silent=True):
         error = 'Failed to parse away team ID'
         return Result.Fail(error)
     boxscore.away_team_data.team_id_br = away_team_id
-
-    print('Away Team ID...........: {at}'.format(at=away_team_id))
+    #print(f'Away Team ID...........: {away_team_id}')
 
     home_team_id = _parse_home_team_id(response)
     if not home_team_id:
         error = 'Failed to parse home team ID'
         return Result.Fail(error)
     boxscore.home_team_data.team_id_br = home_team_id
-
-    print('Home Team ID...........: {ht}'.format(ht=home_team_id))
+    #print(f'Home Team ID...........: {home_team_id}')
 
     away_team_runs = _parse_away_team_runs(response)
     if not away_team_runs:
@@ -274,8 +273,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.away_team_data.total_runs_scored_by_team = away_team_runs
     boxscore.home_team_data.total_runs_scored_by_opponent = away_team_runs
-
-    print('Away Team Runs Scored..: {ar}'.format(ar=away_team_runs))
+    #print(f'Away Team Runs Scored..: {away_team_runs}')
 
     home_team_runs = _parse_home_team_runs(response)
     if not home_team_runs:
@@ -283,8 +281,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.home_team_data.total_runs_scored_by_team = home_team_runs
     boxscore.away_team_data.total_runs_scored_by_opponent = home_team_runs
-
-    print('Home Team Runs Scored..: {hr}'.format(hr=home_team_runs))
+    #print(f'Home Team Runs Scored..: {home_team_runs}')
 
     away_team_record = _parse_away_team_record(response)
     if not away_team_record:
@@ -292,9 +289,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.away_team_data.total_wins_before_game = away_team_record[0]
     boxscore.away_team_data.total_losses_before_game = away_team_record[1]
-
-    away_team_record_before_game = '{w}-{l}'.format(w=away_team_record[0], l=away_team_record[1])
-    print('Away Team Record.......: {at}'.format(at=away_team_record_before_game))
+    #print(f'Away Team Record.......: {away_team_record[0]}-{away_team_record[1]}')
 
     home_team_record = _parse_home_team_record(response)
     if not home_team_record:
@@ -302,9 +297,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.home_team_data.total_wins_before_game = home_team_record[0]
     boxscore.home_team_data.total_losses_before_game = home_team_record[1]
-
-    home_team_record_before_game = '{w}-{l}'.format(w=home_team_record[0], l=home_team_record[1])
-    print('Home Team Record.......: {ht}'.format(ht=home_team_record_before_game))
+    #print(f'Home Team Record.......: {home_team_record[0]}-{home_team_record[1]}')
 
     boxscore.game_meta_info = BBRefBoxscoreMeta()
     scorebox_meta_strings = response.xpath(_SCOREBOX_META_XPATH)
@@ -314,10 +307,10 @@ def __parse_bbref_boxscore(response, url, silent=True):
         boxscore.game_meta_info.attendance = attendance_matches['match']
         attendance_index = attendance_matches['index']
         del scorebox_meta_strings[attendance_index]
-        print('Attendance.............: {a}'.format(a=attendance_matches['match']))
+        #print(f'Attendance.............: {attendance_matches['match']}'
     else:
         boxscore.game_meta_info.attendance = "0"
-        print('Attendance.............: Was not found on page')
+        #print('Attendance.............: Was not found on page')
 
     venue_matches = _parse_venue_from_strings(scorebox_meta_strings)
     if venue_matches is None:
@@ -328,7 +321,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
     venue_index = venue_matches['index']
     del scorebox_meta_strings[venue_index]
 
-    print('Park Name..............: {p}'.format(p=venue_matches['match']))
+    #print(f'Park Name..............: {venue_matches['match']}'
 
     game_duration_matches = _parse_game_duration_from_strings(scorebox_meta_strings)
     if game_duration_matches is None:
@@ -339,7 +332,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
     game_duration_index = game_duration_matches['index']
     del scorebox_meta_strings[game_duration_index]
 
-    print('Game Duration..........: {d}'.format(d=game_duration_matches['match']))
+    #print(f'Game Duration..........: {game_duration_matches['match']}')
 
     day_night_field = _parse_day_night_field_type_from_strings(scorebox_meta_strings)
     if day_night_field is None:
@@ -357,8 +350,8 @@ def __parse_bbref_boxscore(response, url, silent=True):
     boxscore.game_meta_info.day_night = split[0].strip()
     boxscore.game_meta_info.field_type = split[1].strip().title()
 
-    print('Day/Night..............: {f}'.format(f=split[0].strip()))
-    print('Field Type.............: {f}'.format(f=split[1].strip().title()))
+    #print(f'Day/Night..............: {split[0].strip()}'
+    #print(f'Field Type.............: {split[1].strip().title()}'
 
     first_pitch_weather = response.xpath(_FIRST_PITCH_WEATHER_XPATH)
     if not first_pitch_weather:
@@ -373,13 +366,13 @@ def __parse_bbref_boxscore(response, url, silent=True):
     boxscore.game_meta_info.first_pitch_wind = split2[1].strip()
     boxscore.game_meta_info.first_pitch_clouds = split2[2].strip().strip('.')
 
-    print('Temperature............: {f}'.format(f=split2[0].strip()[:2]))
-    print('Wind Speed.............: {f}'.format(f=split2[1].strip()))
-    print('Cloud Cover............: {f}'.format(f=split2[2].strip().strip('.')))
+    #print(f'Temperature............: {split2[0].strip()[:2]}')
+    #print(f'Wind Speed.............: {split2[1].strip()}')
+    #print(f'Cloud Cover............: {split2[2].strip().strip('.')}'
 
     if len(split2) > 3:
         boxscore.game_meta_info.first_pitch_precipitation = split2[3].strip().strip('.')
-        print('Precipitation..........: {f}'.format(f=split2[3].strip().strip('.')))
+        #print(f'Precipitation..........: {split2[3].strip().strip('.')}')
 
     away_team_linescore_totals = _parse_linescore_totals(response, away_team_id, False)
     if not away_team_linescore_totals:
@@ -471,7 +464,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
     pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
     player_name_dict = {**batter_name_dict, **pitcher_name_dict}
 
-    print('Successfully parsed pitching stats from BBRef boxscore page')
+    #print('Successfully parsed pitching stats from BBRef boxscore page')
     if not silent:
         pbar.update()
         pbar.set_description(f'Parsing play-by-play.....')
@@ -482,7 +475,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.umpires = umpires
 
-    _print_umpires(umpires)
+    #_print_umpires(umpires)
 
     away_team_lineup = _parse_away_team_lineup(response)
     if not away_team_lineup:
@@ -490,8 +483,8 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.away_team_data.starting_lineup = away_team_lineup
 
-    print('\n{at} Starting Lineup:'.format(at=away_team_id))
-    _print_lineup(away_team_lineup)
+    #print(f'\n{away_team_id} Starting Lineup:'
+    #_print_lineup(away_team_lineup)
 
     home_team_lineup = _parse_home_team_lineup(response)
     if not home_team_lineup:
@@ -499,8 +492,8 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.home_team_data.starting_lineup = home_team_lineup
 
-    print('\n{ht} Starting Lineup:'.format(ht=home_team_id))
-    _print_lineup(home_team_lineup)
+    #print(f'\n{home_team_id} Starting Lineup:'
+    #_print_lineup(home_team_lineup)
 
     result = response.xpath(_PLAY_BY_PLAY_TABLE)
     if not result:
@@ -557,7 +550,7 @@ def __parse_bbref_boxscore(response, url, silent=True):
         return Result.Fail(error)
     boxscore.innings_list = result.value
 
-    print('Sucessfully parsed play-by-play data from BBRef boxscore page ({n} events total)'.format(n=len(play_by_play_events)))
+    #print(f'Sucessfully parsed play-by-play data from BBRef boxscore page ({len(play_by_play_events)} events total)'
     if not silent:
         pbar.update()
         pbar.set_description(f'Finished parsing.........')
@@ -716,23 +709,23 @@ def _parse_play_by_play(pbp_table, batter_id_dict, pitcher_id_dict, away_team_id
         if event_dict['team_batting_id_br'] == away_team_id:
             event_dict['team_pitching_id_br'] = home_team_id
         else:
-            event_dict['team_pitching_id_br'] = away_team_id 
-        
+            event_dict['team_pitching_id_br'] = away_team_id
+
         batter = _get_pbp_event_stat_value(pbp_table, 'batter', event_num).replace(u'\xa0', u' ')
         match = _match_player_id(batter, batter_id_dict)
         if match['type'] != 'Exact match':
             player_id_match_log.append(match)
         event_dict['batter_id_br'] = match['id']
-        
+
         pitcher = _get_pbp_event_stat_value(pbp_table, 'pitcher', event_num).replace(u'\xa0', u' ')
         match = _match_player_id(pitcher, pitcher_id_dict)
         if match['type'] != 'Exact match':
             player_id_match_log.append(match)
         event_dict['pitcher_id_br'] = match['id']
-        
+
         event = BBRefPlayByPlayEvent(**event_dict)
         play_by_play.append(event)
-        
+
     result = dict(
         play_by_play=play_by_play,
         player_id_match_log=player_id_match_log
@@ -970,7 +963,7 @@ def _match_player_id(name, id_dict):
         match["id"] = id_dict[best_match]
         match["score"] = score
     return match
-    
+
 
 def _parse_inning_summary_top(response):
     summaries = response.xpath(_PBP_INNING_SUMMARY_TOP_XPATH)
@@ -1193,7 +1186,7 @@ def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_
             player_id_match_log.append(match)
     else:
         incoming_player_id_br = 'N/A'
-        
+
     if incoming_player_name != 'N/A':
         match = _match_player_id(incoming_player_name, player_name_dict)
         incoming_player_id_br = match['id']

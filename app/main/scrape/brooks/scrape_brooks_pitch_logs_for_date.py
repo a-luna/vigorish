@@ -44,7 +44,7 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
         for game in games_for_date.games:
             if game.might_be_postponed:
                 continue
-            pbar.set_description(f"Processing {game.bbref_game_id}..")
+            pbar.set_description(f"Processing {game.bbref_game_id}...")
             result = parse_pitch_logs_for_game(game)
             if result.failure:
                 return result
@@ -77,7 +77,7 @@ def parse_pitch_logs_for_game(game):
             parsing_pitch_log = True
             while parsing_pitch_log:
                 try:
-                    pbar.set_description(f"Processing {pitcher_id}........")
+                    pbar.set_description(f"Processing {pitcher_id}.........")
                     result = request_url(url)
                     if result.failure:
                         return result
