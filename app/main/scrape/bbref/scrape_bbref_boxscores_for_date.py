@@ -158,7 +158,6 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
     scrape_date = scrape_dict['date']
     boxscore_urls = scrape_dict['input_data'].boxscore_urls
     scraped_boxscores = []
-    player_name_match_logs = []
     with tqdm(
         total=len(boxscore_urls),
         ncols=100,
@@ -169,37 +168,21 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         position=1
     ) as pbar:
         for url in boxscore_urls:
-            uri = Path(url)
-            pbar.set_description(f'Processing {uri.stem}..')
-
             try:
+                uri = Path(url)
+                pbar.set_description(f'Processing {uri.stem}...')
                 response = render_webpage(driver, url)
                 result = __parse_bbref_boxscore(response, url)
                 if result.failure:
                     return result
+                bbref_boxscore = result.value
+                scraped_boxscores.append(bbref_boxscore)
+                time.sleep(randint(250, 300)/100.0)
+                pbar.update()
             except RetryLimitExceededError as e:
                 return Result.Fail(repr(e))
             except Exception as e:
                 return Result.Fail(f"Error: {repr(e)}")
-
-            bbref_boxscore = result.value
-            scraped_boxscores.append(bbref_boxscore)
-            player_match_log = bbref_boxscore.player_id_match_log
-            if player_match_log:
-                player_name_match_logs.extend(player_match_log)
-            time.sleep(randint(250, 300)/100.0)
-            parsing_boxscore = False
-            pbar.update()
-
-    if player_name_match_logs:
-        unique = {tuple(d.items()) for d in player_name_match_logs}
-        match_logs = [dict(t) for t in unique]
-        date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
-        with open(f'player_match_log_{date_str}.json', 'w') as f:
-            matches = ''
-            for log in match_logs:
-                matches += str(log) + '\n'
-            f.write(matches)
     return Result.Ok(scraped_boxscores)
 
 @retry(
@@ -529,6 +512,9 @@ def __parse_bbref_boxscore(response, url, silent=False):
     result_dict = result.value
     play_by_play_events = result_dict['play_by_play']
     boxscore.player_id_match_log.extend(result_dict['player_id_match_log'])
+    if boxscore.player_id_match_log:
+        unique = {tuple(d.items()) for d in boxscore.player_id_match_log}
+        boxscore.player_id_match_log = [dict(t) for t in unique]
 
     result = _create_innings_list(
         game_id,
@@ -947,14 +933,15 @@ def _match_player_id(name, id_dict):
         match["id"] = id_dict[name]
         match["score"] = 1
     else:
-        (best_match, score) = fuzzy_match(name, id_dict.keys())
+        match_dict = fuzzy_match(name, id_dict.keys())
+        best_match = match_dict['best_match']
         player_id = id_dict[best_match]
         name_dict = {v:k for k,v in id_dict.items()}
         match["type"] = "Fuzzy match"
         match["name"] = name
         match["best_match"] = name_dict[player_id]
         match["id"] = player_id
-        match["score"] = score
+        match["score"] = match_dict['score']
     return match
 
 
@@ -1270,4 +1257,3 @@ def _print_umpires(umpires):
     print('\nUmpires:')
     for i in range(0, len(umpires)):
         print('{pos}: {ump}'.format(pos=umpires[i].field_location, ump=umpires[i].umpire_name))
-
