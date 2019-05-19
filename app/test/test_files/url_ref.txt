@@ -1,7 +1,0 @@
-bbref_boxscore: https://www.baseball-reference.com/boxes/ATL/ATL201803290.shtml
-bbref_daily_dash: https://www.baseball-reference.com/boxes/?month=7&day=26&year=2018
-bbref_player: https://www.baseball-reference.com/players/g/glasnty01.shtml
-
-brooks_daily_dash: http://www.brooksbaseball.net/dashboard.php?dts=09/03/2018
-brooks_game_log: http://www.brooksbaseball.net/pfxVB/pfx.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=28&pitchSel=612434.xml&game=gid_2018_04_28_detmlb_balmlb_1/&prevGame=gid_2018_04_28_detmlb_balmlb_1/
-brooks_pitchfx: http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=612434&game=gid_2018_04_28_detmlb_balmlb_1/&s_type=3&h_size=700&v_size=500

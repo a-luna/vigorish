@@ -33,6 +33,7 @@ from app.main.util.result import Result
 @click.group()
 @click.pass_context
 def cli(ctx):
+    """vig CLI entry point."""
     engine = create_engine(os.getenv("DATABASE_URL"))
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
@@ -106,14 +107,19 @@ def scrape(ctx, data_set, start, end):
     """Scrape MLB data from websites."""
     engine = ctx.obj["engine"]
     session = ctx.obj["session"]
+    
     result = _validate_date_range(session, start, end)
     if result.failure:
-        return result
+        click.secho(str(result), fg="red")
+        session.close()
+        return 1
     date_range = get_date_range(start, end)
-
+    
     result = get_config(data_set)
     if result.failure:
-        return result
+        click.secho(str(result), fg="red")
+        session.close()
+        return 1
     scrape_config = result.value
 
     with tqdm(
@@ -137,13 +143,14 @@ def scrape(ctx, data_set, start, end):
             time.sleep(randint(250, 300) / 100.0)
             pbar.update()
 
-    session.close()
     if scrape_config.requires_selenium:
         scrape_config.driver.close()
         scrape_config.driver.quit()
         scrape_config.driver = None
     if result.failure:
-        return result
+        click.secho(str(result), fg="red")
+        session.close()
+        return 1
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
@@ -152,7 +159,8 @@ def scrape(ctx, data_set, start, end):
         f"date range..: {start_str} - {end_str}\n"
     )
     click.secho(success, fg="green")
-    return Result.Ok()
+    session.close()
+    return 0
 
 
 @cli.command()
@@ -160,23 +168,22 @@ def scrape(ctx, data_set, start, end):
     "--year",
     type=MlbSeason(),
     prompt=True,
-    help=("Year of the MLB Season to report progress of scraped data sets."),
+    help=("Year of MLB Season to report progress of scraped data sets."),
 )
 @click.pass_context
 def status(ctx, year):
-    """Report progress of scraped mlb data sets."""
+    """Report progress (per-season) of scraped mlb data sets."""
     engine = ctx.obj["engine"]
     session = ctx.obj["session"]
     spinner = Halo(text="Updating...", color="yellow", spinner="dots3")
     spinner.start()
-
     result = update_status_for_mlb_season(session, year)
     if result.failure:
         click.secho(str(result), fg="red")
+        session.close()
         return 1
     refresh_all_mat_views(engine, session)
     spinner.stop()
-
     mlb = Season.find_by_year(session, year)
     print(mlb.status_report())
     session.close()
@@ -219,21 +226,18 @@ def _scrape_data_for_date(session, scrape_date, scrape_config):
         if result.failure:
             return result
         input_dict["input_data"] = result.value
-
     if scrape_config.requires_selenium:
         input_dict["driver"] = scrape_config.driver
     result = scrape_config.scrape_function(input_dict)
     if result.failure:
         return result
     scraped_data = result.value
-
     if scrape_config.produces_list:
         result = _upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
     else:
         result = scrape_config.persist_function(scraped_data, scrape_date)
     if result.failure:
         return result
-
     return scrape_config.update_status_function(session, scraped_data)
 
 

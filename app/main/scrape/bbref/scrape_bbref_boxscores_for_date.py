@@ -26,6 +26,7 @@ from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
 from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
 from app.main.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
 from app.main.scrape.bbref.models.umpire import BBRefUmpire
+from app.main.util.decorators import timeout, retry, RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
@@ -155,9 +156,7 @@ NUM_REGEX = re.compile(r'[1-9]{1}')
 def scrape_bbref_boxscores_for_date(scrape_dict):
     driver = scrape_dict['driver']
     scrape_date = scrape_dict['date']
-    games_for_date = scrape_dict['input_data']
-    boxscore_urls = games_for_date.boxscore_urls
-
+    boxscore_urls = scrape_dict['input_data'].boxscore_urls
     scraped_boxscores = []
     player_name_match_logs = []
     with tqdm(
@@ -170,46 +169,27 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         position=1
     ) as pbar:
         for url in boxscore_urls:
-            max_attempts = 10
-            attempts = 1
-            parsing_boxscore = True
-            while(parsing_boxscore):
-                try:
-                    uri = Path(url)
-                    pbar.set_description(f'Processing {uri.stem}..')
-                    driver.get(url)
-
-                    WebDriverWait(driver, 6000).until(
-                        ec.presence_of_element_located((By.XPATH, _BATTING_STATS_TABLE))
-                    )
-                    WebDriverWait(driver, 6000).until(
-                        ec.presence_of_element_located((By.XPATH, _PITCHING_STATS_TABLE))
-                    )
-                    WebDriverWait(driver, 6000).until(
-                        ec.presence_of_element_located((By.XPATH, _PLAY_BY_PLAY_TABLE))
-                    )
-
-                    page = driver.page_source
-                    response = html.fromstring(page, base_url=url)
-                    result = __parse_bbref_boxscore(response, url)
-                    if result.failure:
-                        return result
-                    bbref_boxscore = result.value
-                    scraped_boxscores.append(bbref_boxscore)
-                    player_match_log = bbref_boxscore.player_id_match_log
-                    if player_match_log:
-                        player_name_match_logs.extend(player_match_log)
-
-                    time.sleep(randint(250, 300)/100.0)
-                    parsing_boxscore = False
-                    pbar.update()
-                except Exception:
-                    attempts += 1
-                    if (attempts < max_attempts):
-                        pbar.set_description('Page failed to load, retrying')
-                    else:
-                        error = 'Unable to retrive URL content after {m} failed attempts, aborting task\n'.format(m=max_attempts)
-                        return Result.Fail(error)
+            uri = Path(url)
+            pbar.set_description(f'Processing {uri.stem}..')
+                    
+            try:
+                response = render_webpage(driver, url)
+                result = __parse_bbref_boxscore(response, url)
+                if result.failure:
+                    return result
+            except RetryLimitExceededError as e:
+                return Result.Fail(repr(e))
+            except Exception as e:
+                return Result.Fail(f"Error: {repr(e)}")
+                    
+            bbref_boxscore = result.value
+            scraped_boxscores.append(bbref_boxscore)
+            player_match_log = bbref_boxscore.player_id_match_log
+            if player_match_log:
+                player_name_match_logs.extend(player_match_log)
+            time.sleep(randint(250, 300)/100.0)
+            parsing_boxscore = False
+            pbar.update()
 
     if player_name_match_logs:
         date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
@@ -219,6 +199,38 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
                 matches += str(log) + '\n'
             f.write(matches)
     return Result.Ok(scraped_boxscores)
+    
+def handle_failed_attempt(func, remaining, e, delay):
+    message = (
+        f"Function name: {func.__name__}\n"
+        f"Error: {repr(e)}\n"
+        f"{remaining} attempts remaining, retrying in {delay} seconds..."
+    )
+    print(message)
+    
+@retry(
+    max_attempts=5,
+    delay=5,
+    exceptions=(TimeoutError,Exception),
+    on_failure=handle_failed_attempt
+)
+@timeout(seconds=30)
+def render_webpage(driver, url):
+    driver.get(url)
+
+    WebDriverWait(driver, 6000).until(
+        ec.presence_of_element_located((By.XPATH, _BATTING_STATS_TABLE))
+    )
+    WebDriverWait(driver, 6000).until(
+        ec.presence_of_element_located((By.XPATH, _PITCHING_STATS_TABLE))
+    )
+    WebDriverWait(driver, 6000).until(
+        ec.presence_of_element_located((By.XPATH, _PLAY_BY_PLAY_TABLE))
+    )
+
+    page = driver.page_source
+    response = html.fromstring(page, base_url=url)
+    return response
 
 def __parse_bbref_boxscore(response, url, silent=True):
     """Parse boxscore data from the page source."""

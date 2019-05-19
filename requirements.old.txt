@@ -1,4 +1,0 @@
---index-url https://pypi.python.org/simple/
-
--e git://github.com/a-luna/vigorish.git#egg=vigorish
--e .

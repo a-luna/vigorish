@@ -11,7 +11,7 @@ DESCRIPTION = (
 
 setup(
     name='vigorish',
-    version='0.1.1',
+    version='0.1.2',
     packages=find_packages(),
     include_package_data=True,
     description=DESCRIPTION,
@@ -24,8 +24,7 @@ setup(
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
     install_requires=[
         'alembic',
