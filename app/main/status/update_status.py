@@ -222,7 +222,7 @@ def fix_missing_brooks_game_ids(session, season, game_id_dict):
     session.commit()
     return Result.Ok()
 
-def create_game_status_records_from_brooks_ids(session, season, game_id_dict):
+def create_game_status_records_from_brooks_ids(session, season, game_id_dict, disable_pbar=False):
     game_status_bbref_ids = GameScrapeStatus.get_all_bbref_game_ids(session, season.id)
     missing_bbref_game_ids = set(game_id_dict.keys()).difference(set(game_status_bbref_ids))
     if not missing_bbref_game_ids:
@@ -235,6 +235,7 @@ def create_game_status_records_from_brooks_ids(session, season, game_id_dict):
         mininterval=0.12,
         maxinterval=5,
         unit_scale=True,
+        disable=disable_pbar
     ) as pbar:
         pbar.set_description('Populating scrape_status_game........')
         for game_dict in validate_bbref_game_id_list(missing_bbref_game_ids):
@@ -408,6 +409,12 @@ def __update_db_status_brooks_pitch_logs(session, game_info, pitch_logs_for_game
         return Result.Fail(error)
 
 def update_status_brooks_pitch_logs_for_game_list(session, game_list):
+    if not game_list:
+        return Result.Ok()
+    pitch_logs_for_game = game_list[0]
+    game_year = pitch_logs_for_game.get_game_date().year
+    season = Season.find_by_year(session, game_year)
+
     with tqdm(
         total=len(game_list),
         ncols=100,
@@ -428,7 +435,7 @@ def update_status_brooks_pitch_logs_for_game_list(session, game_list):
             pbar.set_description(f'Updating {logs.bbref_game_id}...')
             game_date = logs.get_game_date()
             game_id_dict = logs.get_game_id_dict()
-            result = create_game_status_records(session, game_date.year, game_id_dict, disable_pbar=True)
+            result = create_game_status_records_from_brooks_ids(session, season, game_id_dict, disable_pbar=True)
             if result.failure:
                 return result
             result = __update_db_status_brooks_pitch_logs(session, game_info, logs)
