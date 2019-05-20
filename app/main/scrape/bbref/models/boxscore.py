@@ -6,19 +6,21 @@ from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamDat
 from app.main.constants import TEAM_ID_DICT
 from app.main.util.string_functions import validate_bbref_game_id
 
-class BBRefBoxscore():
+
+class BBRefBoxscore:
     """Batting and pitching statistics for a single MLB game."""
 
-    boxscore_url = ""
-    bbref_game_id = ""
-    game_meta_info = BBRefBoxscoreMeta()
-    away_team_data = BBRefBoxscoreTeamData()
-    home_team_data = BBRefBoxscoreTeamData()
-    innings_list = []
-    player_id_match_log = {}
-    umpires = []
-    player_team_dict = {}
-    player_name_dict = {}
+    def __init__(self, url=None):
+        self.boxscore_url = url
+        self.bbref_game_id = ""
+        self.game_meta_info = BBRefBoxscoreMeta()
+        self.away_team_data = None
+        self.home_team_data = None
+        self.innings_list = []
+        self.player_id_match_log = []
+        self.umpires = []
+        self.player_team_dict = {}
+        self.player_name_dict = {}
 
     @property
     def upload_id(self):
@@ -37,31 +39,28 @@ class BBRefBoxscore():
             "player_id_match_log": self.player_id_match_log,
             "umpires": self._flatten(self.umpires),
             "player_team_dict": self.player_team_dict,
-            "player_name_dict": self.player_name_dict
+            "player_name_dict": self.player_name_dict,
         }
         return boxscore_dict
 
     def get_game_id_dict(self):
         result = validate_bbref_game_id(self.bbref_game_id)
-        game_date = result.value['game_date']
-        game_number = result.value['game_number']
-        away_team_id = self.__get_bb_team_id(self.away_team_data.team_id_br)\
-            .lower()
-        home_team_id = self.__get_bb_team_id(self.home_team_data.team_id_br)\
-            .lower()
-        bb_game_id = f'gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_{away_team_id}mlb_{home_team_id}mlb_{game_number}'
-        return {f'{self.bbref_game_id}': f'{bb_game_id}'}
+        game_date = result.value["game_date"]
+        game_number = result.value["game_number"]
+        away_team_id = self.__get_bb_team_id(self.away_team_data.team_id_br).lower()
+        home_team_id = self.__get_bb_team_id(self.home_team_data.team_id_br).lower()
+        bb_game_id = f"gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_{away_team_id}mlb_{home_team_id}mlb_{game_number}"
+        return {f"{self.bbref_game_id}": f"{bb_game_id}"}
 
     def get_game_date(self):
         result = validate_bbref_game_id(self.bbref_game_id)
-        return result.value['game_date']
+        return result.value["game_date"]
 
     @staticmethod
     def __get_bb_team_id(br_team_id):
         if br_team_id in TEAM_ID_DICT:
             return TEAM_ID_DICT[br_team_id]
         return br_team_id
-
 
     def as_json(self):
         """Convert boxscore to JSON."""

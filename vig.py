@@ -107,14 +107,12 @@ def scrape(ctx, data_set, start, end):
     """Scrape MLB data from websites."""
     engine = ctx.obj["engine"]
     session = ctx.obj["session"]
-    
     result = _validate_date_range(session, start, end)
     if result.failure:
         click.secho(str(result), fg="red")
         session.close()
         return 1
     date_range = get_date_range(start, end)
-    
     result = get_config(data_set)
     if result.failure:
         click.secho(str(result), fg="red")
@@ -137,12 +135,10 @@ def scrape(ctx, data_set, start, end):
             result = _scrape_data_for_date(session, scrape_date, scrape_config)
             if result.failure:
                 break
-
             session.commit()
             refresh_all_mat_views(engine, session)
             time.sleep(randint(250, 300) / 100.0)
             pbar.update()
-
     if scrape_config.requires_selenium:
         scrape_config.driver.close()
         scrape_config.driver.quit()

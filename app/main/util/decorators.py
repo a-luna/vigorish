@@ -18,10 +18,7 @@ class RetryLimitExceededError(Exception):
     """Custom exception raised by retry decorator when max_attempts limit is reached."""
 
     def __init__(self, func, max_attempts):
-        message = (
-            f"Function name: {func.__name__}\n"
-            f"Retry limit exceeded! (max attempts: {max_attempts})"
-        )
+        message = f"Retry limit exceeded! (function: {func.__name__}, max attempts: {max_attempts})"
         super().__init__(message)
 
 

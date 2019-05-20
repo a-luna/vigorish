@@ -7,9 +7,7 @@ from pathlib import Path
 from lxml import html
 from halo import Halo
 
-from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import (
-    __parse_bbref_boxscore as parse_bbref_boxscore,
-)
+from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import parse_bbref_boxscore
 from app.main.scrape.bbref.models.boxscore import BBRefBoxscore
 from app.main.util.file_util import (
     write_bbref_boxscore_to_file,
@@ -28,7 +26,7 @@ class TestBBRefBoxscore(BaseTestCase):
     def test_scrape_bbref_boxscore(self):
         """Verify BBRefBoxscore object is correctly parsed from webpage."""
         response = html.parse(str(self.BOXSCORE_HTML))
-        result = parse_bbref_boxscore(response, self.BOXSCORE_URL, silent=True)
+        result = parse_bbref_boxscore(response, self.BOXSCORE_URL)
         self.assertTrue(result.success)
         boxscore_parsed = result.value
 
@@ -47,7 +45,7 @@ class TestBBRefBoxscore(BaseTestCase):
         game_id_dict = boxscore.get_game_id_dict()
 
         self.assertEqual(boxscore.boxscore_url, self.BOXSCORE_URL)
-        self.assertEqual(boxscore.bbref_game_id, "ATL201803290")
+        self.assertEqual(boxscore.bbref_game_id, self.GAME_ID)
         self.assertEqual(boxscore.away_team_data.team_id_br, "PHI")
         self.assertEqual(boxscore.home_team_data.team_id_br, "ATL")
         self.assertEqual(boxscore.away_team_data.total_runs_scored_by_team, 5)

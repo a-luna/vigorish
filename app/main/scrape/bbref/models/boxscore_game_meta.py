@@ -1,6 +1,7 @@
 """Weather conditions at game start time and other descriptive info."""
 
-class BBRefBoxscoreMeta():
+
+class BBRefBoxscoreMeta:
     """Weather conditions at game start time and other descriptive info."""
 
     park_name = ""
@@ -25,6 +26,6 @@ class BBRefBoxscoreMeta():
             "first_pitch_wind": "{}".format(self.first_pitch_wind),
             "first_pitch_clouds": "{}".format(self.first_pitch_clouds),
             "game_duration": "{}".format(self.game_duration),
-            "attendance": int(self.attendance)
+            "attendance": int(self.attendance),
         }
         return dict
