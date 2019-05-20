@@ -13,7 +13,11 @@ from app.main.util.s3_helper import (
     get_bbref_boxscore_from_s3, get_bbref_games_for_date_from_s3,
     get_brooks_games_for_date_from_s3, get_brooks_pitch_logs_for_game_from_s3
 )
-from app.main.util.string_functions import validate_bbref_game_id, validate_bb_game_id
+from app.main.util.string_functions import (
+    validate_bbref_game_id,
+    validate_bbref_game_id_list,
+    validate_bb_game_id
+)
 from app.main.util.result import Result
 
 def update_status_for_mlb_season(session, year):
@@ -25,13 +29,8 @@ def update_status_for_mlb_season(session, year):
     result = update_data_set_bbref_games_for_date(session, season)
     if result.failure:
         return result
-    scraped_bbref_game_ids = result.value
 
-    result = update_data_set_brooks_games_for_date(
-        session,
-        season,
-        scraped_bbref_game_ids
-    )
+    result = update_data_set_brooks_games_for_date(session, season)
     if result.failure:
         return result
 
@@ -67,71 +66,37 @@ def update_data_set_bbref_games_for_date(session, season):
         return result
     scraped_bbref_dates = result.value
     unscraped_bbref_dates = DateScrapeStatus.get_all_bbref_unscraped_dates_for_season(session, season.id)
-
     update_bbref_dates = set(scraped_bbref_dates) & set(unscraped_bbref_dates)
-    if update_bbref_dates:
-        result = __update_status_all_bbref_games_for_date(
-            session,
-            update_bbref_dates
-        )
-        if result.failure:
-            return result
-        session.commit()
-    scraped_bbref_game_ids = DateScrapeStatus.get_all_bbref_scraped_dates_for_season(session, season.id)
-    return Result.Ok(scraped_bbref_game_ids)
-
-def update_data_set_brooks_games_for_date(session, season, scraped_bbref_game_ids):
-    result = get_all_brooks_dates_scraped(season.year)
+    if not update_bbref_dates:
+        return Result.Ok([])
+    result = update_status_bbref_games_for_date_list(session, update_bbref_dates)
     if result.failure:
         return result
-    scraped_brooks_dates = result.value
-    unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(session, season.id)
+    new_bbref_game_ids = result.value
+    result = create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids)
 
-    update_brooks_dates = set(scraped_brooks_dates) & set(unscraped_brooks_dates)
-    if not update_brooks_dates:
-        return Result.Ok()
-
-    result = __update_status_all_brooks_games_for_date(
-        session,
-        update_brooks_dates
-    )
-    if result.failure:
-        return result
-    session.commit()
-    game_id_dict = result.value
-
-    scraped_bbref_game_ids.extend(game_id_dict.keys())
-    result = __create_status_records_for_newly_scraped_game_ids(
-        session,
-        season.year,
-        game_id_dict
-    )
-    if result.failure:
-        return result
-    session.commit()
-    return Result.Ok()
-
-def __update_status_all_bbref_games_for_date(session, scraped_bbref_dates):
+def update_status_bbref_games_for_date_list(session, scraped_bbref_dates):
     all_game_ids = []
-    for d in tqdm(
-        scraped_bbref_dates,
-        desc='Updating bbref_games_for_date........',
+    with tqdm(
+        total=len(scraped_bbref_dates),
         ncols=100,
-        unit='day',
+        unit="day",
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
-    ):
-        result = get_bbref_games_for_date_from_s3(d)
-        if result.failure:
-            return result
-        games_for_date = result.value
-
-        game_ids = [Path(url).stem for url in games_for_date.boxscore_urls]
-        all_game_ids.extend(game_ids)
-        result = update_status_bbref_games_for_date(session, games_for_date)
-        if result.failure:
-            return result
+        leave=True
+    ) as pbar:
+        for game_date in scraped_bbref_dates:
+            pbar.set_description("Updating bbref_games_for_date........")
+            result = get_bbref_games_for_date_from_s3(game_date)
+            if result.failure:
+                return result
+            games_for_date = result.value
+            result = update_status_bbref_games_for_date(session, games_for_date)
+            if result.failure:
+                return result
+            game_ids = [Path(url).stem for url in games_for_date.boxscore_urls]
+            all_game_ids.extend(game_ids)
+            pbar.update()
     return Result.Ok(all_game_ids)
 
 def update_status_bbref_games_for_date(session, games_for_date):
@@ -141,34 +106,85 @@ def update_status_bbref_games_for_date(session, games_for_date):
         date_str = games_for_date.game_date.strftime(DATE_ONLY)
         error = f'scrape_status_date does not contain an entry for date: {date_str}'
         return Result.Fail(error)
-
     game_count = games_for_date.game_count
     setattr(date_status, 'scraped_daily_dash_bbref', 1)
     setattr(date_status, 'game_count_bbref', game_count)
+    session.commit()
     return Result.Ok()
 
-def __update_status_all_brooks_games_for_date(session, scraped_brooks_dates):
-    game_id_dict = {}
-    for d in tqdm(
-        scraped_brooks_dates,
-        desc='Updating brooks_games_for_date.......',
+def create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids):
+    game_status_bbref_ids = GameScrapeStatus.get_all_bbref_game_ids(session, season.id)
+    missing_bbref_game_ids = set(new_bbref_game_ids).difference(set(game_status_bbref_ids))
+    if not missing_bbref_game_ids:
+        return Result.Ok()
+
+    with tqdm(
+        total=len(missing_bbref_game_ids),
         ncols=100,
-        unit='day',
+        unit="game",
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
-    ):
-        result = get_brooks_games_for_date_from_s3(d)
-        if result.failure:
-            return result
-        games_for_date = result.value
-        game_id_dict = games_for_date.get_game_id_dict()
-        if not game_id_dict or len(game_id_dict) == 0:
-            continue
+        unit_scale=True,
+    ) as pbar:
+        pbar.set_description('Populating scrape_status_game........')
+        for game_dict in validate_bbref_game_id_list(missing_bbref_game_ids):
+            try:
+                bbref_game_id = game_dict['game_id']
+                game_date = game_dict['game_date']
+                date_status = DateScrapeStatus.find_by_date(session, game_date)
+                game_status = GameScrapeStatus()
+                setattr(game_status, 'game_date', game_date)
+                setattr(game_status, 'bbref_game_id', bbref_game_id)
+                setattr(game_status, 'scrape_status_date_id', date_status.id)
+                setattr(game_status, 'season_id', season.id)
+                session.add(game_status)
+                pbar.update()
+            except Exception as e:
+                error = 'Error: {error}'.format(error=repr(e))
+                return Result.Fail(error)
+    session.commit()
+    return Result.Ok()
 
-        result = update_status_brooks_games_for_date(session, games_for_date)
-        if result.failure:
-            return result
+def update_data_set_brooks_games_for_date(session, season):
+    result = get_all_brooks_dates_scraped(season.year)
+    if result.failure:
+        return result
+    scraped_brooks_dates = result.value
+    unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(session, season.id)
+    update_brooks_dates = set(scraped_brooks_dates) & set(unscraped_brooks_dates)
+    if not update_brooks_dates:
+        return Result.Ok()
+    result = update_status_brooks_games_for_date_list(session, update_brooks_dates)
+    if result.failure:
+        return result
+    game_id_dict = result.value
+    result = fix_missing_brooks_game_ids(session, season, game_id_dict)
+    if result.failure:
+        return result
+    return create_game_status_records_from_brooks_ids(session, season, game_id_dict)
+
+def update_status_brooks_games_for_date_list(session, scraped_brooks_dates):
+    game_id_dict = {}
+    with tqdm(
+        total=len(scraped_brooks_dates),
+        ncols=100,
+        unit="day",
+        mininterval=0.12,
+        maxinterval=5,
+        leave=True
+    ) as pbar:
+        for game_date in scraped_brooks_dates:
+            pbar.set_description("Updating brooks_games_for_date.......")
+            result = get_brooks_games_for_date_from_s3(game_date)
+            if result.failure:
+                return result
+            games_for_date = result.value
+            result = update_status_brooks_games_for_date(session, games_for_date)
+            if result.failure:
+                return result
+            game_id_dict_for_date = games_for_date.get_game_id_dict()
+            game_id_dict.update(game_id_dict_for_date)
+            pbar.update()
     return Result.Ok(game_id_dict)
 
 def update_status_brooks_games_for_date(session, games_for_date):
@@ -178,55 +194,65 @@ def update_status_brooks_games_for_date(session, games_for_date):
         date_str = games_for_date.game_date.strftime(DATE_ONLY)
         error = f'scrape_status_date does not contain an entry for date: {date_str}'
         return Result.Fail(error)
-
     setattr(date_status, 'scraped_daily_dash_brooks', 1)
     setattr(date_status, 'game_count_brooks', games_for_date.game_count)
+    session.commit()
     return Result.Ok()
 
-def __create_status_records_for_newly_scraped_game_ids(session, year, game_id_dict, disable_pbar=False):
-    prev_bbref_game_ids = [
-        g.bbref_game_id
-        for g
-        in session.query(GameScrapeStatus).all()
-    ]
-    new_bbref_game_ids = set(game_id_dict.keys()).\
-        difference(set(prev_bbref_game_ids))
-    if not new_bbref_game_ids:
+def fix_missing_brooks_game_ids(session, season, game_id_dict):
+    missing_brooks_game_ids = GameScrapeStatus.get_missing_brooks_game_ids(session, season.id)
+    if not missing_brooks_game_ids:
+        return Result.Ok()
+    with tqdm(
+        total=len(missing_brooks_game_ids),
+        ncols=100,
+        unit="game",
+        mininterval=0.12,
+        maxinterval=5,
+        leave=True
+    ) as pbar:
+        for game_status in missing_brooks_game_ids:
+            try:
+                pbar.set_description("Fixing missing brooks_game_ids........")
+                bbref_game_id = getattr(game_status, 'bbref_game_id')
+                setattr(game_status, 'bb_game_id', game_id_dict[bbref_game_id])
+                pbar.update()
+            except Exception as e:
+                return Result.Fail(f'Error: {repr(e)}')
+    session.commit()
+    return Result.Ok()
+
+def create_game_status_records_from_brooks_ids(session, season, game_id_dict):
+    game_status_bbref_ids = GameScrapeStatus.get_all_bbref_game_ids(session, season.id)
+    missing_bbref_game_ids = set(game_id_dict.keys()).difference(set(game_status_bbref_ids))
+    if not missing_bbref_game_ids:
         return Result.Ok()
 
-    season = Season.find_by_year(session, year)
-    if not season:
-        error = f'Error occurred retrieving season for year={year}'
-        return Result.Fail(error)
-
-    for gid in tqdm(
-        new_bbref_game_ids,
-        desc='Populating scrape_status_game........',
+    with tqdm(
+        total=len(missing_bbref_game_ids),
         ncols=100,
-        unit='day',
+        unit="game",
         mininterval=0.12,
         maxinterval=5,
         unit_scale=True,
-        disable=disable_pbar
-    ):
-        try:
-            result = validate_bbref_game_id(gid)
-            if result.failure:
-                return result
-            game_dict = result.value
-            game_date = game_dict['game_date']
-            date_status = DateScrapeStatus.find_by_date(session, game_date)
-            game_status = GameScrapeStatus()
-            setattr(game_status, 'game_date', game_date)
-            setattr(game_status, 'bbref_game_id', gid)
-            setattr(game_status, 'bb_game_id', game_id_dict[gid])
-            setattr(game_status, 'scrape_status_date_id', date_status.id)
-            setattr(game_status, 'season_id', season.id)
-            session.add(game_status)
-        except Exception as e:
-            error = 'Error: {error}'.format(error=repr(e))
-            return Result.Fail(error)
-    return Result.Ok()
+    ) as pbar:
+        pbar.set_description('Populating scrape_status_game........')
+        for game_dict in validate_bbref_game_id_list(missing_bbref_game_ids):
+            try:
+                bbref_game_id = game_dict['game_id']
+                game_date = game_dict['game_date']
+                date_status = DateScrapeStatus.find_by_date(session, game_date)
+                game_status = GameScrapeStatus()
+                setattr(game_status, 'game_date', game_date)
+                setattr(game_status, 'bbref_game_id', bbref_game_id)
+                setattr(game_status, 'bb_game_id', game_id_dict[bbref_game_id])
+                setattr(game_status, 'scrape_status_date_id', date_status.id)
+                setattr(game_status, 'season_id', season.id)
+                session.add(game_status)
+            except Exception as e:
+                error = 'Error: {error}'.format(error=repr(e))
+                return Result.Fail(error)
+        return Result.Ok()
 
 def __update_status_all_bbref_boxscores(session, scraped_bbref_gameids):
     for gid in tqdm(
@@ -294,11 +320,7 @@ def update_status_bbref_boxscores_list(session, boxscores):
         for b in boxscores:
             pbar.set_description(f'Updating {b.bbref_game_id}...')
             game_date = b.get_game_date()
-            result = __create_status_records_for_newly_scraped_game_ids(
-                session,
-                game_date.year,
-                b.get_game_id_dict()
-            )
+            result = create_game_status_records(session, game_date.year, b.get_game_id_dict())
             if result.failure:
                 return result
             result = __update_status_bbref_boxscore(session, b)
@@ -406,12 +428,7 @@ def update_status_brooks_pitch_logs_for_game_list(session, game_list):
             pbar.set_description(f'Updating {logs.bbref_game_id}...')
             game_date = logs.get_game_date()
             game_id_dict = logs.get_game_id_dict()
-            result = __create_status_records_for_newly_scraped_game_ids(
-                session,
-                game_date.year,
-                game_id_dict,
-                disable_pbar=True
-            )
+            result = create_game_status_records(session, game_date.year, game_id_dict, disable_pbar=True)
             if result.failure:
                 return result
             result = __update_db_status_brooks_pitch_logs(session, game_info, logs)

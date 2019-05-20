@@ -88,7 +88,22 @@ class GameScrapeStatus(Base):
     @classmethod
     def get_all_unscraped_brooks_game_ids_for_season(cls, session, season_id):
         return [
-            game_status.bb_game_id
-            for game_status in session.query(cls).filter_by(season_id=season_id).all()
+            game_status.bb_game_id for game_status
+            in session.query(cls).filter_by(season_id=season_id).all()
             if game_status.scraped_brooks_pitch_logs_for_game == 0
         ]
+
+    @classmethod
+    def get_all_bbref_game_ids(cls, session, season_id):
+        return {
+            game_status.bbref_game_id for game_status
+            in session.query(cls).filter_by(season_id=season_id).all()
+        }
+
+    @classmethod
+    def get_missing_brooks_game_ids(cls, session, season_id):
+        return {
+            game_status for game_status
+            in session.query(cls).filter_by(season_id=season_id).all()
+            if not game_status.bb_game_id and game_status.bbref_game_id
+        }

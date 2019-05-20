@@ -147,9 +147,7 @@ def decode_bbref_boxscore_meta(json_dict):
             boxscore_meta.field_type = json_dict["field_type"]
             boxscore_meta.day_night = json_dict["day_night"]
             boxscore_meta.first_pitch_temperature = json_dict["first_pitch_temperature"]
-            boxscore_meta.first_pitch_precipitation = json_dict[
-                "first_pitch_precipitation"
-            ]
+            boxscore_meta.first_pitch_precipitation = json_dict["first_pitch_precipitation"]
             boxscore_meta.first_pitch_wind = json_dict["first_pitch_wind"]
             boxscore_meta.first_pitch_clouds = json_dict["first_pitch_clouds"]
             boxscore_meta.game_duration = json_dict["game_duration"]
@@ -217,12 +215,8 @@ def decode_bbref_boxscore_half_inning(json_dict):
             inning.inning_total_hits = json_dict["inning_total_hits"]
             inning.inning_total_errors = json_dict["inning_total_errors"]
             inning.inning_total_left_on_base = json_dict["inning_total_left_on_base"]
-            inning.away_team_runs_after_inning = json_dict[
-                "away_team_runs_after_inning"
-            ]
-            inning.home_team_runs_after_inning = json_dict[
-                "home_team_runs_after_inning"
-            ]
+            inning.away_team_runs_after_inning = json_dict["away_team_runs_after_inning"]
+            inning.home_team_runs_after_inning = json_dict["home_team_runs_after_inning"]
 
             inning.game_events = []
             for e in json_dict["game_events"]:

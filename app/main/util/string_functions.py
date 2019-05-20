@@ -26,12 +26,6 @@ def normalize(s):
     return re.sub("\s+", " ", s)
 
 
-def convert_job_status_for_display(job_status):
-    if "rq" in job_status:
-        return "RQ Fetch Error"
-    return " ".join([s.title() for s in job_status.split("_")])
-
-
 def parse_timestamp(input):
     if string_is_null_or_blank(input):
         return dict(hour=0, minute=0)

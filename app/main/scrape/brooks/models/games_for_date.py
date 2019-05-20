@@ -39,4 +39,3 @@ class BrooksGamesForDate():
     @staticmethod
     def _flatten(objects):
         return [obj.as_dict() for obj in objects]
-

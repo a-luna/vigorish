@@ -206,9 +206,7 @@ class Season(Base):
 
     @hybrid_property
     def total_pitch_count_diff_percent(self):
-        total_pitch_count = max(
-            self.total_pitch_count_bbref, self.total_pitch_count_brooks
-        )
+        total_pitch_count = max(self.total_pitch_count_bbref, self.total_pitch_count_brooks)
         if total_pitch_count == 0:
             return 0.0
         perc = self.total_pitch_count_diff / float(total_pitch_count)
@@ -222,26 +220,18 @@ class Season(Base):
         d["name"] = self.name
         d["total_days"] = self.total_days
         d["total_days_scraped_bbref"] = self.total_days_scraped_bbref
-        d[
-            "percent_complete_bbref_games_for_date"
-        ] = self.percent_complete_bbref_games_for_date
+        d["percent_complete_bbref_games_for_date"] = self.percent_complete_bbref_games_for_date
         d["total_days_scraped_brooks"] = self.total_days_scraped_brooks
-        d[
-            "percent_complete_brooks_games_for_date"
-        ] = self.percent_complete_brooks_games_for_date
+        d["percent_complete_brooks_games_for_date"] = self.percent_complete_brooks_games_for_date
         d["total_games_bbref"] = self.total_games_bbref
         d["total_games_brooks"] = self.total_games_brooks
         d["total_games_diff"] = self.total_games_diff
         d["total_games_diff_percent"] = self.total_games_diff_percent
         d["total_games_tracked"] = self.total_games_tracked
         d["total_bbref_boxscores_scraped"] = self.total_bbref_boxscores_scraped
-        d[
-            "percent_complete_bbref_boxscores_scraped"
-        ] = self.percent_complete_bbref_boxscores_scraped
+        d["percent_complete_bbref_boxscores_scraped"] = self.percent_complete_bbref_boxscores_scraped
         d["total_brooks_games_scraped"] = self.total_brooks_games_scraped
-        d[
-            "percent_complete_brooks_games_scraped"
-        ] = self.percent_complete_brooks_games_scraped
+        d["percent_complete_brooks_games_scraped"] = self.percent_complete_brooks_games_scraped
         d["total_pitch_appearances_bbref"] = self.total_pitch_appearances_bbref
         d["total_pitch_appearances_brooks"] = self.total_pitch_appearances_brooks
         d["pitch_appearance_diff"] = self.pitch_appearance_diff
@@ -284,10 +274,7 @@ class Season(Base):
     def is_date_in_season(cls, session, check_date, season_type="Regular Season"):
         season = cls.find_by_year(session, check_date.year)
         if not season:
-            error = (
-                f"Database does not contain info for MLB {season_type} "
-                f"{check_date.year}"
-            )
+            error = f"Database does not contain info for MLB {season_type} {check_date.year}"
             return Result.Fail(error)
 
         date_str = check_date.strftime(DATE_ONLY)
@@ -298,12 +285,8 @@ class Season(Base):
 
     @classmethod
     def all_regular_seasons(cls, session):
-        return [
-            season
-            for season in session.query(cls).filter_by(
-                season_type=SEASON_TYPE_DICT["reg"]
-            )
-        ]
+        matching_seasons = session.query(cls).filter_by(season_type=SEASON_TYPE_DICT["reg"])
+        return [season for season in matching_seasons]
 
     @classmethod
     def is_this_the_asg_date(cls, session, game_date):
@@ -315,30 +298,20 @@ class SeasonStatusMV(MaterializedView):
     __table__ = create_mat_view(
         Base.metadata,
         "season_status_mv",
-        select(
-            [
-                Season.id.label("id"),
-                func.count(DateScrapeStatus.id).label("total_days"),
-                func.sum(DateScrapeStatus.scraped_daily_dash_bbref).label(
-                    "total_days_scraped_bbref"
-                ),
-                func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label(
-                    "total_days_scraped_brooks"
-                ),
-                func.sum(DateScrapeStatus.game_count_bbref).label("total_games_bbref"),
-                func.sum(DateScrapeStatus.game_count_brooks).label(
-                    "total_games_brooks"
-                ),
-            ]
-        )
-        .select_from(
-            join(
-                Season,
-                DateScrapeStatus,
-                Season.id == DateScrapeStatus.season_id,
-                isouter=True,
-            )
-        )
+        select([
+            Season.id.label("id"),
+            func.count(DateScrapeStatus.id).label("total_days"),
+            func.sum(DateScrapeStatus.scraped_daily_dash_bbref).label("total_days_scraped_bbref"),
+            func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label("total_days_scraped_brooks"),
+            func.sum(DateScrapeStatus.game_count_bbref).label("total_games_bbref"),
+            func.sum(DateScrapeStatus.game_count_brooks).label("total_games_brooks"),
+        ])
+        .select_from(join(
+            Season,
+            DateScrapeStatus,
+            Season.id == DateScrapeStatus.season_id,
+            isouter=True,
+        ))
         .where(Season.season_type == SEASON_TYPE_DICT["reg"])
         .group_by(Season.id),
     )

@@ -172,14 +172,14 @@ def status(ctx, year):
     engine = ctx.obj["engine"]
     session = ctx.obj["session"]
     spinner = Halo(text="Updating...", color="yellow", spinner="dots3")
-    spinner.start()
+    #spinner.start()
     result = update_status_for_mlb_season(session, year)
     if result.failure:
         click.secho(str(result), fg="red")
         session.close()
         return 1
     refresh_all_mat_views(engine, session)
-    spinner.stop()
+    #spinner.stop()
     mlb = Season.find_by_year(session, year)
     print(mlb.status_report())
     session.close()

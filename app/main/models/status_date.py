@@ -185,37 +185,33 @@ class DateScrapeStatusMV(MaterializedView):
     __table__ = create_mat_view(
         Base.metadata,
         "date_status_mv",
-        select(
-            [
-                DateScrapeStatus.id.label("id"),
-                func.sum(GameScrapeStatus.scraped_bbref_boxscore).label(
-                    "total_bbref_boxscores_scraped"
-                ),
-                func.sum(GameScrapeStatus.scraped_brooks_pitch_logs_for_game).label(
-                    "total_brooks_games_scraped"
-                ),
-                func.sum(GameScrapeStatus.pitch_app_count_bbref).label(
-                    "total_pitch_appearances_bbref"
-                ),
-                func.sum(GameScrapeStatus.pitch_app_count_brooks).label(
-                    "total_pitch_appearances_brooks"
-                ),
-                func.sum(GameScrapeStatus.total_pitch_count_bbref).label(
-                    "total_pitch_count_bbref"
-                ),
-                func.sum(GameScrapeStatus.total_pitch_count_brooks).label(
-                    "total_pitch_count_brooks"
-                ),
-            ]
-        )
-        .select_from(
-            join(
-                DateScrapeStatus,
-                GameScrapeStatus,
-                DateScrapeStatus.id == GameScrapeStatus.scrape_status_date_id,
-                isouter=True,
-            )
-        )
+        select([
+            DateScrapeStatus.id.label("id"),
+            func.sum(GameScrapeStatus.scraped_bbref_boxscore).label(
+                "total_bbref_boxscores_scraped"
+            ),
+            func.sum(GameScrapeStatus.scraped_brooks_pitch_logs_for_game).label(
+                "total_brooks_games_scraped"
+            ),
+            func.sum(GameScrapeStatus.pitch_app_count_bbref).label(
+                "total_pitch_appearances_bbref"
+            ),
+            func.sum(GameScrapeStatus.pitch_app_count_brooks).label(
+                "total_pitch_appearances_brooks"
+            ),
+            func.sum(GameScrapeStatus.total_pitch_count_bbref).label(
+                "total_pitch_count_bbref"
+            ),
+            func.sum(GameScrapeStatus.total_pitch_count_brooks).label(
+                "total_pitch_count_brooks"
+            ),
+        ])
+        .select_from(join(
+            DateScrapeStatus,
+            GameScrapeStatus,
+            DateScrapeStatus.id == GameScrapeStatus.scrape_status_date_id,
+            isouter=True,
+        ))
         .group_by(DateScrapeStatus.id),
     )
 

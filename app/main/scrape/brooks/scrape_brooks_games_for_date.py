@@ -16,15 +16,9 @@ from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import parse_timestamp, validate_bbref_game_id_list
 
-_T_GAMEINFO_XPATH = (
-    '//table//tr[${r}]//td[@class="dashcell"][${g}]//table//tr[1]//td[1]//text()'
-)
-_T_PLOG_URLS_XPATH = (
-    '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Game Log"]/@href'
-)
-_T_K_ZONE_URL_XPATH = (
-    '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'
-)
+_T_GAMEINFO_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//table//tr[1]//td[1]//text()'
+_T_PLOG_URLS_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Game Log"]/@href'
+_T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'
 
 
 def scrape_brooks_games_for_date(scrape_dict):
@@ -44,9 +38,7 @@ def scrape_brooks_games_for_date(scrape_dict):
     response = html.fromstring(page, base_url=url)
     game_ids = [Path(url).stem for url in games_for_date.boxscore_urls]
     required_game_data = validate_bbref_game_id_list(game_ids)
-    return parse_daily_dash_page(
-        session, response, scrape_date, url, required_game_data
-    )
+    return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
 
 
 def _get_dashboard_url_for_date(scrape_date):
@@ -155,8 +147,6 @@ def _parse_gameinfo_from_url(gameinfo, url):
 
 def _parse_pitch_log_dict(gameinfo, pitchlog_url_list):
     gameinfo.pitcher_appearance_count = len(pitchlog_url_list)
-    if len(pitchlog_url_list) == 2:
-        gameinfo.might_be_postponed = True
     gameinfo.pitcher_appearance_dict = {}
     for url in pitchlog_url_list:
         pitcher_id = _parse_pitcherid_from_url(url)
