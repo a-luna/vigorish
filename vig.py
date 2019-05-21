@@ -11,7 +11,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
-from app.main.config import get_config
+from app.main.config import get_config_list
 from app.main.constants import MLB_DATA_SETS, CLI_COLORS
 from app.main.models.base import Base
 from app.main.models.season import Season
@@ -23,6 +23,7 @@ from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.list_functions import print_list
 from app.main.util.result import Result
+from app.main.util.scrape_functions import get_chromedriver
 
 # TODO Create unit tests for all substitution parsing scenarios
 # TODO Track lineup changes to avoid the various name,pos=N/A and lineupslot=0 hacks introduced in order to get boxscores parsing successfully
@@ -85,6 +86,7 @@ def setup(db):
 @click.option(
     "-s",
     "--start",
+    "start_date",
     type=DateString(),
     prompt=True,
     help="Date to start scraping data, string can be in any format that is recognized by dateutil.parser."
@@ -92,25 +94,17 @@ def setup(db):
 @click.option(
     "-e",
     "--end",
+    "end_date",
     type=DateString(),
     prompt=True,
     help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser."
 )
 @click.pass_obj
-def scrape(db, data_set, start, end):
+def scrape(db, data_set, start_date, end_date):
     """Scrape MLB data from websites."""
     engine = db["engine"]
     session = db["session"]
-
-    result = _validate_date_range(session, start, end)
-    if result.failure:
-        return exit_app_error(session, result)
-    season = result.value
-    date_range = get_date_range(start, end)
-    result = get_config(data_set)
-    if result.failure:
-        return exit_app_error(session, result)
-    scrape_config = result.value
+    (date_range, driver, config_list) = get_prerequisites(session, data_set, start_date, end_date)
 
     with tqdm(
         total=len(date_range),
@@ -122,11 +116,12 @@ def scrape(db, data_set, start, end):
     ) as pbar:
         for scrape_date in date_range:
             pbar.set_description(f"Processing {scrape_date.strftime(MONTH_NAME_SHORT)}....")
-            result = _scrape_data_for_date(session, scrape_date, scrape_config)
-            if result.failure:
-                break
-            time.sleep(randint(250, 300) / 100.0)
-            pbar.update()
+            for config in config_list
+                result = scrape_data_for_date(session, scrape_date, scrape_config)
+                if result.failure:
+                    break
+                time.sleep(randint(250, 300) / 100.0)
+                pbar.update()
 
     if scrape_config.requires_selenium:
         scrape_config.driver.close()
@@ -165,7 +160,25 @@ def status(db, year):
     return exit_app_success(session)
 
 
-def _validate_date_range(session, start, end):
+def get_prerequisites(session, data_set, start_date, end_date):
+    result = validate_date_range(session, start_date, end_date)
+    if result.failure:
+        return exit_app_error(session, result)
+    date_range = get_date_range(start_date, end_date)
+
+    result = get_chromedriver()
+    if result.failure:
+        return result
+    driver = result.value
+
+    result = get_config_list(data_set)
+    if result.failure:
+        return exit_app_error(session, result)
+    config_list = result.value
+
+    return (date_range, driver, config_list)
+
+def validate_date_range(session, start, end):
     if start.year != end.year:
         error = (
             "Start and end dates must both be in the same year and within "
@@ -194,7 +207,7 @@ def _validate_date_range(session, start, end):
     return Result.Ok(season)
 
 
-def _scrape_data_for_date(session, scrape_date, scrape_config):
+def scrape_data_for_date(session, scrape_date, scrape_config):
     input_dict = dict(date=scrape_date, session=session)
     if scrape_config.requires_input:
         result = scrape_config.get_input_function(scrape_date)
@@ -208,13 +221,13 @@ def _scrape_data_for_date(session, scrape_date, scrape_config):
         return result
     scraped_data = result.value
     if scrape_config.produces_list:
-        result = _upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
+        result = upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
     else:
         result = scrape_config.persist_function(scraped_data, scrape_date)
     return result
 
 
-def _upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
+def upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
     with tqdm(
         total=len(scraped_data),
         ncols=100,

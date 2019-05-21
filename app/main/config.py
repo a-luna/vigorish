@@ -5,23 +5,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-
-DOTENV_PATH = Path.cwd() / ".env"
-if DOTENV_PATH.is_file():
-    load_dotenv(DOTENV_PATH)
-
-from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import (
-    scrape_bbref_boxscores_for_date,
-)
-from app.main.scrape.bbref.scrape_bbref_games_for_date import (
-    scrape_bbref_games_for_date,
-)
-from app.main.scrape.brooks.scrape_brooks_games_for_date import (
-    scrape_brooks_games_for_date,
-)
-from app.main.scrape.brooks.scrape_brooks_pitch_logs_for_date import (
-    scrape_brooks_pitch_logs_for_date,
-)
+from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import scrape_bbref_boxscores_for_date
+from app.main.scrape.bbref.scrape_bbref_games_for_date import scrape_bbref_games_for_date
+from app.main.scrape.brooks.scrape_brooks_games_for_date import scrape_brooks_games_for_date
+from app.main.scrape.brooks.scrape_brooks_pitch_logs_for_date import scrape_brooks_pitch_logs_for_date
 from app.main.util.result import Result
 from app.main.util.s3_helper import (
     upload_brooks_games_for_date,
@@ -33,8 +20,11 @@ from app.main.util.s3_helper import (
     upload_brooks_pitch_logs_for_game,
     get_brooks_pitch_logs_for_game_from_s3,
 )
-from app.main.util.scrape_functions import get_chromedriver
 
+
+DOTENV_PATH = Path.cwd() / ".env"
+if DOTENV_PATH.is_file():
+    load_dotenv(DOTENV_PATH)
 
 class ScrapeConfig:
     display_name = ""
@@ -94,24 +84,25 @@ class BrooksPitchFxScrapeConfig(ScrapeConfig):
     get_input_function = get_brooks_pitch_logs_for_game_from_s3
 
 
-SCRAPE_CONFIG_DICT = dict(
-    bbref_games_for_date=BBRefGamesForDateScrapeConfig,
-    bbref_boxscore=BBRefBoxscoreScrapeConfig,
-    bbref_player=BBRefPlayerScrapeConfig,
-    brooks_games_for_date=BrooksGamesForDateScrapeConfig,
-    brooks_pitch_log=BrooksPitchLogScrapeConfig,
-    brooks_pitchfx=BrooksPitchFxScrapeConfig,
+SCRAPE_CONFIG = dict(
+    bbref_games_for_date=[BBRefGamesForDateScrapeConfig],
+    bbref_boxscore=[BBRefBoxscoreScrapeConfig],
+    bbref_player=[BBRefPlayerScrapeConfig],
+    brooks_games_for_date=[BrooksGamesForDateScrapeConfig],
+    brooks_pitch_log=[BrooksPitchLogScrapeConfig],
+    brooks_pitchfx=[BrooksPitchFxScrapeConfig],
+    all=[
+        BBRefGamesForDateScrapeConfig,
+        BrooksGamesForDateScrapeConfig,
+        BBRefBoxscoreScrapeConfig,
+        BrooksPitchLogScrapeConfig
+    ]
 )
 
 
-def get_config(data_set):
-    config = SCRAPE_CONFIG_DICT.get(data_set, None)
+def get_config_list(data_set):
+    config = SCRAPE_CONFIG.get(data_set, None)
     if not config:
         error = f'Invalid value for data-set: "{data_set}"'
         return Result.Fail(error)
-    if config.requires_selenium:
-        result = get_chromedriver()
-        if result.failure:
-            return result
-        config.driver = result.value
     return Result.Ok(config)

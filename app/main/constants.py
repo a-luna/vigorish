@@ -45,6 +45,7 @@ MLB_DATA_SETS = [
     "brooks_games_for_date",
     "brooks_pitch_log",
     "brooks_pitchfx",
+    "all"
 ]
 
 TEAM_ID_DICT = {
