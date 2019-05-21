@@ -34,7 +34,6 @@ class ScrapeConfig:
     get_input_function = None
     scrape_function = None
     persist_function = None
-    driver = None
 
 
 class BBRefGamesForDateScrapeConfig(ScrapeConfig):

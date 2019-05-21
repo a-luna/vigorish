@@ -120,7 +120,7 @@ def scrape(db, data_set, start_date, end_date):
         for scrape_date in date_range:
             pbar.set_description(f"Processing {scrape_date.strftime(MONTH_NAME_SHORT)}....")
             for config in config_list:
-                result = scrape_data_for_date(session, scrape_date, scrape_config)
+                result = scrape_data_for_date(session, scrape_date, driver, config)
                 if result.failure:
                     break
                 time.sleep(randint(250, 300) / 100.0)
@@ -210,23 +210,23 @@ def validate_date_range(session, start, end):
     return Result.Ok(season)
 
 
-def scrape_data_for_date(session, scrape_date, scrape_config):
+def scrape_data_for_date(session, scrape_date, driver, config):
     input_dict = dict(date=scrape_date, session=session)
-    if scrape_config.requires_input:
-        result = scrape_config.get_input_function(scrape_date)
+    if config.requires_input:
+        result = config.get_input_function(scrape_date)
         if result.failure:
             return result
         input_dict["input_data"] = result.value
-    if scrape_config.requires_selenium:
-        input_dict["driver"] = scrape_config.driver
-    result = scrape_config.scrape_function(input_dict)
+    if config.requires_selenium:
+        input_dict["driver"] = driver
+    result = config.scrape_function(input_dict)
     if result.failure:
         return result
     scraped_data = result.value
-    if scrape_config.produces_list:
+    if config.produces_list:
         result = upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
     else:
-        result = scrape_config.persist_function(scraped_data, scrape_date)
+        result = config.persist_function(scraped_data, scrape_date)
     return result
 
 
