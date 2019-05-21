@@ -116,7 +116,7 @@ def scrape(db, data_set, start_date, end_date):
     ) as pbar:
         for scrape_date in date_range:
             pbar.set_description(f"Processing {scrape_date.strftime(MONTH_NAME_SHORT)}....")
-            for config in config_list
+            for config in config_list:
                 result = scrape_data_for_date(session, scrape_date, scrape_config)
                 if result.failure:
                     break
