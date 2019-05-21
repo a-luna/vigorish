@@ -73,7 +73,7 @@ def update_data_set_bbref_games_for_date(session, season):
     if result.failure:
         return result
     new_bbref_game_ids = result.value
-    result = create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids)
+    return create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids)
 
 def update_status_bbref_games_for_date_list(session, scraped_bbref_dates):
     all_game_ids = []
@@ -100,17 +100,21 @@ def update_status_bbref_games_for_date_list(session, scraped_bbref_dates):
     return Result.Ok(all_game_ids)
 
 def update_status_bbref_games_for_date(session, games_for_date):
-    date_id = games_for_date.game_date.strftime(DATE_ONLY_TABLE_ID)
-    date_status = session.query(DateScrapeStatus).get(date_id)
-    if not date_status:
-        date_str = games_for_date.game_date.strftime(DATE_ONLY)
-        error = f'scrape_status_date does not contain an entry for date: {date_str}'
-        return Result.Fail(error)
-    game_count = games_for_date.game_count
-    setattr(date_status, 'scraped_daily_dash_bbref', 1)
-    setattr(date_status, 'game_count_bbref', game_count)
-    session.commit()
-    return Result.Ok()
+    try:
+        date_id = games_for_date.game_date.strftime(DATE_ONLY_TABLE_ID)
+        date_status = session.query(DateScrapeStatus).get(date_id)
+        if not date_status:
+            date_str = games_for_date.game_date.strftime(DATE_ONLY)
+            error = f'scrape_status_date does not contain an entry for date: {date_str}'
+            return Result.Fail(error)
+        game_count = games_for_date.game_count
+        setattr(date_status, 'scraped_daily_dash_bbref', 1)
+        setattr(date_status, 'game_count_bbref', game_count)
+        session.commit()
+        return Result.Ok()
+    except Exception as e:
+        return Result.Fail(f'Error: {repr(e)}')
+
 
 def create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids):
     game_status_bbref_ids = GameScrapeStatus.get_all_bbref_game_ids(session, season.id)
@@ -140,8 +144,7 @@ def create_game_status_records_from_bbref_ids(session, season, new_bbref_game_id
                 session.add(game_status)
                 pbar.update()
             except Exception as e:
-                error = 'Error: {error}'.format(error=repr(e))
-                return Result.Fail(error)
+                return Result.Fail(f'Error: {repr(e)}')
     session.commit()
     return Result.Ok()
 
@@ -188,16 +191,19 @@ def update_status_brooks_games_for_date_list(session, scraped_brooks_dates):
     return Result.Ok(game_id_dict)
 
 def update_status_brooks_games_for_date(session, games_for_date):
-    date_id = games_for_date.game_date.strftime(DATE_ONLY_TABLE_ID)
-    date_status = session.query(DateScrapeStatus).get(date_id)
-    if not date_status:
-        date_str = games_for_date.game_date.strftime(DATE_ONLY)
-        error = f'scrape_status_date does not contain an entry for date: {date_str}'
-        return Result.Fail(error)
-    setattr(date_status, 'scraped_daily_dash_brooks', 1)
-    setattr(date_status, 'game_count_brooks', games_for_date.game_count)
-    session.commit()
-    return Result.Ok()
+    try:
+        date_id = games_for_date.game_date.strftime(DATE_ONLY_TABLE_ID)
+        date_status = session.query(DateScrapeStatus).get(date_id)
+        if not date_status:
+            date_str = games_for_date.game_date.strftime(DATE_ONLY)
+            error = f'scrape_status_date does not contain an entry for date: {date_str}'
+            return Result.Fail(error)
+        setattr(date_status, 'scraped_daily_dash_brooks', 1)
+        setattr(date_status, 'game_count_brooks', games_for_date.game_count)
+        session.commit()
+        return Result.Ok()
+    except Exception as e:
+                return Result.Fail(f'Error: {repr(e)}')
 
 def fix_missing_brooks_game_ids(session, season, game_id_dict):
     missing_brooks_game_ids = GameScrapeStatus.get_missing_brooks_game_ids(session, season.id)
@@ -253,7 +259,8 @@ def create_game_status_records_from_brooks_ids(session, season, game_id_dict, di
             except Exception as e:
                 error = 'Error: {error}'.format(error=repr(e))
                 return Result.Fail(error)
-        return Result.Ok()
+    session.commit()
+    return Result.Ok()
 
 def __update_status_all_bbref_boxscores(session, scraped_bbref_gameids):
     for gid in tqdm(

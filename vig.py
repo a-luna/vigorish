@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
 from app.main.config import get_config
-from app.main.constants import MLB_DATA_SETS
+from app.main.constants import MLB_DATA_SETS, CLI_COLORS
 from app.main.models.base import Base
 from app.main.models.season import Season
 from app.main.models.views.materialized_view import refresh_all_mat_views
@@ -33,7 +33,9 @@ from app.main.util.result import Result
 @click.group()
 @click.pass_context
 def cli(ctx):
-    """vig CLI entry point."""
+    """Web scraper for various MLB data sets, including detailed boxscores, pitchfx measurements
+    and player biographical info.
+    """
     engine = create_engine(os.getenv("DATABASE_URL"))
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
@@ -52,30 +54,27 @@ def clean():
 
 @cli.command()
 @click.confirmation_option(prompt="Are you sure you want to delete all existing data?")
-@click.pass_context
-def setup(ctx):
+@click.pass_obj
+def setup(db):
     """Populate database with initial Player, Team and Season data.
 
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
     """
-    engine = ctx.obj["engine"]
-    session = ctx.obj["session"]
+    engine = db["engine"]
+    session = db["session"]
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     result = initialize_database(session)
     if result.failure:
-        click.secho(str(result), fg="red")
-        session.close()
-        return 1
+        return exit_app_error(session, result)
     refresh_all_mat_views(engine, session)
-    click.secho("Successfully populated database with initial data.\n", fg="green")
-    session.close()
-    return 0
+    return exit_app_success(session, "Successfully populated database with initial data.")
 
 
 @cli.command()
 @click.option(
+    "-d",
     "--data-set",
     type=MlbDataSet(),
     prompt=True,
@@ -85,6 +84,7 @@ def setup(ctx):
     ),
 )
 @click.option(
+    "-s",
     "--start",
     type=DateString(),
     prompt=True,
@@ -94,6 +94,7 @@ def setup(ctx):
     ),
 )
 @click.option(
+    "-e",
     "--end",
     type=DateString(),
     prompt=True,
@@ -102,22 +103,18 @@ def setup(ctx):
         "recognized by dateutil.parser."
     ),
 )
-@click.pass_context
-def scrape(ctx, data_set, start, end):
+@click.pass_obj
+def scrape(db, data_set, start, end):
     """Scrape MLB data from websites."""
-    engine = ctx.obj["engine"]
-    session = ctx.obj["session"]
+    engine = db["engine"]
+    session = db["session"]
     result = _validate_date_range(session, start, end)
     if result.failure:
-        click.secho(str(result), fg="red")
-        session.close()
-        return 1
+        return exit_app_error(session, result)
     date_range = get_date_range(start, end)
     result = get_config(data_set)
     if result.failure:
-        click.secho(str(result), fg="red")
-        session.close()
-        return 1
+        return exit_app_error(session, result)
     scrape_config = result.value
 
     with tqdm(
@@ -144,19 +141,15 @@ def scrape(ctx, data_set, start, end):
         scrape_config.driver.quit()
         scrape_config.driver = None
     if result.failure:
-        click.secho(str(result), fg="red")
-        session.close()
-        return 1
+        return exit_app_error(session, result)
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
         "Requested data was successfully scraped:\n"
         f"data set....: {scrape_config.display_name}\n"
-        f"date range..: {start_str} - {end_str}\n"
+        f"date range..: {start_str} - {end_str}"
     )
-    click.secho(success, fg="green")
-    session.close()
-    return 0
+    return exit_app_success(session, success)
 
 
 @cli.command()
@@ -166,24 +159,41 @@ def scrape(ctx, data_set, start, end):
     prompt=True,
     help=("Year of MLB Season to report progress of scraped data sets."),
 )
-@click.pass_context
-def status(ctx, year):
+@click.pass_obj
+def status(db, year):
     """Report progress (per-season) of scraped mlb data sets."""
-    engine = ctx.obj["engine"]
-    session = ctx.obj["session"]
-    spinner = Halo(text="Updating...", color="yellow", spinner="dots3")
+    engine = db["engine"]
+    session = db["session"]
+    #spinner = Halo(text="Updating...", color="yellow", spinner="dots3")
     #spinner.start()
     result = update_status_for_mlb_season(session, year)
     if result.failure:
-        click.secho(str(result), fg="red")
-        session.close()
-        return 1
+        return exit_app_error(session, result)
     refresh_all_mat_views(engine, session)
     #spinner.stop()
     mlb = Season.find_by_year(session, year)
-    print(mlb.status_report())
+    print_message(mlb.status_report(), fg="cyan")
+    return exit_app_success(session)
+
+
+def exit_app_success(session, message=None):
+    if message:
+        print_message(message, fg="green")
     session.close()
     return 0
+
+
+def exit_app_error(session, result):
+    print_message(str(result), fg="red")
+    session.close()
+    return 1
+
+
+def print_message(message, fg=None,  bg=None, bold=None, underline=None, blink=None):
+    if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
+        fg = None
+        bg = None
+    click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline, blink=blink)
 
 
 def _validate_date_range(session, start, end):
