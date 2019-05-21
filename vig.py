@@ -104,7 +104,10 @@ def scrape(db, data_set, start_date, end_date):
     """Scrape MLB data from websites."""
     engine = db["engine"]
     session = db["session"]
-    (date_range, driver, config_list) = get_prerequisites(session, data_set, start_date, end_date)
+    result = get_prerequisites(session, data_set, start_date, end_date)
+    if result.failure:
+        return exit_app_error(session, result)
+    (date_range, driver, config_list) = result.value
 
     with tqdm(
         total=len(date_range),
@@ -163,7 +166,7 @@ def status(db, year):
 def get_prerequisites(session, data_set, start_date, end_date):
     result = validate_date_range(session, start_date, end_date)
     if result.failure:
-        return exit_app_error(session, result)
+        return result
     date_range = get_date_range(start_date, end_date)
 
     result = get_chromedriver()
@@ -173,10 +176,10 @@ def get_prerequisites(session, data_set, start_date, end_date):
 
     result = get_config_list(data_set)
     if result.failure:
-        return exit_app_error(session, result)
+        return result
     config_list = result.value
 
-    return (date_range, driver, config_list)
+    return Result.Ok((date_range, driver, config_list))
 
 def validate_date_range(session, start, end):
     if start.year != end.year:
