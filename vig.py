@@ -79,8 +79,7 @@ def setup(db):
     type=MlbDataSet(),
     prompt=True,
     help=(
-        "Data set to scrape, must be a value from the following list:\n"
-        f'{", ".join(MLB_DATA_SETS)}'
+        f'Data set to scrape, must be a value from the following list:\n{", ".join(MLB_DATA_SETS)}'
     ),
 )
 @click.option(
@@ -88,29 +87,25 @@ def setup(db):
     "--start",
     type=DateString(),
     prompt=True,
-    help=(
-        "Date to start scraping data, string can be in any format that is "
-        "recognized by dateutil.parser."
-    ),
+    help="Date to start scraping data, string can be in any format that is recognized by dateutil.parser."
 )
 @click.option(
     "-e",
     "--end",
     type=DateString(),
     prompt=True,
-    help=(
-        "Date to stop scraping data, string can be in any format that is "
-        "recognized by dateutil.parser."
-    ),
+    help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser."
 )
 @click.pass_obj
 def scrape(db, data_set, start, end):
     """Scrape MLB data from websites."""
     engine = db["engine"]
     session = db["session"]
+
     result = _validate_date_range(session, start, end)
     if result.failure:
         return exit_app_error(session, result)
+    season = result.value
     date_range = get_date_range(start, end)
     result = get_config(data_set)
     if result.failure:
@@ -126,16 +121,13 @@ def scrape(db, data_set, start, end):
         position=0,
     ) as pbar:
         for scrape_date in date_range:
-            pbar.set_description(
-                f"Processing {scrape_date.strftime(MONTH_NAME_SHORT)}...."
-            )
+            pbar.set_description(f"Processing {scrape_date.strftime(MONTH_NAME_SHORT)}....")
             result = _scrape_data_for_date(session, scrape_date, scrape_config)
             if result.failure:
                 break
-            session.commit()
-            refresh_all_mat_views(engine, session)
             time.sleep(randint(250, 300) / 100.0)
             pbar.update()
+
     if scrape_config.requires_selenium:
         scrape_config.driver.close()
         scrape_config.driver.quit()
@@ -164,36 +156,13 @@ def status(db, year):
     """Report progress (per-season) of scraped mlb data sets."""
     engine = db["engine"]
     session = db["session"]
-    #spinner = Halo(text="Updating...", color="yellow", spinner="dots3")
-    #spinner.start()
     result = update_status_for_mlb_season(session, year)
     if result.failure:
         return exit_app_error(session, result)
     refresh_all_mat_views(engine, session)
-    #spinner.stop()
     mlb = Season.find_by_year(session, year)
     print_message(mlb.status_report(), fg="cyan")
     return exit_app_success(session)
-
-
-def exit_app_success(session, message=None):
-    if message:
-        print_message(message, fg="green")
-    session.close()
-    return 0
-
-
-def exit_app_error(session, result):
-    print_message(str(result), fg="red")
-    session.close()
-    return 1
-
-
-def print_message(message, fg=None,  bg=None, bold=None, underline=None, blink=None):
-    if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
-        fg = None
-        bg = None
-    click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline, blink=blink)
 
 
 def _validate_date_range(session, start, end):
@@ -222,7 +191,7 @@ def _validate_date_range(session, start, end):
             f"season_end_date: {season.end_date_str}"
         )
         return Result.Fail(error)
-    return Result.Ok()
+    return Result.Ok(season)
 
 
 def _scrape_data_for_date(session, scrape_date, scrape_config):
@@ -242,9 +211,7 @@ def _scrape_data_for_date(session, scrape_date, scrape_config):
         result = _upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
     else:
         result = scrape_config.persist_function(scraped_data, scrape_date)
-    if result.failure:
-        return result
-    return scrape_config.update_status_function(session, scraped_data)
+    return result
 
 
 def _upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
@@ -265,6 +232,26 @@ def _upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
             time.sleep(randint(50, 100) / 100.0)
             pbar.update()
     return Result.Ok()
+
+
+def exit_app_success(session, message=None):
+    if message:
+        print_message(message, fg="green")
+    session.close()
+    return 0
+
+
+def exit_app_error(session, result):
+    print_message(str(result), fg="red")
+    session.close()
+    return 1
+
+
+def print_message(message, fg=None,  bg=None, bold=None, underline=None, blink=None):
+    if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
+        fg = None
+        bg = None
+    click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline, blink=blink)
 
 
 if __name__ == "__main__":

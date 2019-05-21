@@ -22,12 +22,6 @@ from app.main.scrape.brooks.scrape_brooks_games_for_date import (
 from app.main.scrape.brooks.scrape_brooks_pitch_logs_for_date import (
     scrape_brooks_pitch_logs_for_date,
 )
-from app.main.status.update_status import (
-    update_status_bbref_games_for_date,
-    update_status_brooks_games_for_date,
-    update_status_bbref_boxscores_list,
-    update_status_brooks_pitch_logs_for_game_list,
-)
 from app.main.util.result import Result
 from app.main.util.s3_helper import (
     upload_brooks_games_for_date,
@@ -50,7 +44,6 @@ class ScrapeConfig:
     get_input_function = None
     scrape_function = None
     persist_function = None
-    update_status_function = None
     driver = None
 
 
@@ -58,7 +51,6 @@ class BBRefGamesForDateScrapeConfig(ScrapeConfig):
     display_name = "Games for date (bbref.com)"
     scrape_function = scrape_bbref_games_for_date
     persist_function = upload_bbref_games_for_date
-    update_status_function = update_status_bbref_games_for_date
 
 
 class BBRefBoxscoreScrapeConfig(ScrapeConfig):
@@ -69,7 +61,6 @@ class BBRefBoxscoreScrapeConfig(ScrapeConfig):
     get_input_function = get_bbref_games_for_date_from_s3
     scrape_function = scrape_bbref_boxscores_for_date
     persist_function = upload_bbref_boxscore
-    update_status_function = update_status_bbref_boxscores_list
 
 
 class BBRefPlayerScrapeConfig(ScrapeConfig):
@@ -85,7 +76,6 @@ class BrooksGamesForDateScrapeConfig(ScrapeConfig):
     get_input_function = get_bbref_games_for_date_from_s3
     scrape_function = scrape_brooks_games_for_date
     persist_function = upload_brooks_games_for_date
-    update_status_function = update_status_brooks_games_for_date
 
 
 class BrooksPitchLogScrapeConfig(ScrapeConfig):
@@ -95,7 +85,6 @@ class BrooksPitchLogScrapeConfig(ScrapeConfig):
     get_input_function = get_brooks_games_for_date_from_s3
     scrape_function = scrape_brooks_pitch_logs_for_date
     persist_function = upload_brooks_pitch_logs_for_game
-    update_status_function = update_status_brooks_pitch_logs_for_game_list
 
 
 class BrooksPitchFxScrapeConfig(ScrapeConfig):
