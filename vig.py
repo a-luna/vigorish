@@ -126,17 +126,16 @@ def scrape(db, data_set, start_date, end_date):
                 time.sleep(randint(250, 300) / 100.0)
                 pbar.update()
 
-    if scrape_config.requires_selenium:
-        scrape_config.driver.close()
-        scrape_config.driver.quit()
-        scrape_config.driver = None
+    driver.close()
+    driver.quit()
+    driver = None
     if result.failure:
         return exit_app_error(session, result)
-    start_str = start.strftime(MONTH_NAME_SHORT)
-    end_str = end.strftime(MONTH_NAME_SHORT)
+    start_str = start_date.strftime(MONTH_NAME_SHORT)
+    end_str = end_date.strftime(MONTH_NAME_SHORT)
     success = (
         "Requested data was successfully scraped:\n"
-        f"data set....: {scrape_config.display_name}\n"
+        f"data set....: {data_set}\n"
         f"date range..: {start_str} - {end_str}"
     )
     return exit_app_success(session, success)
@@ -224,13 +223,13 @@ def scrape_data_for_date(session, scrape_date, driver, config):
         return result
     scraped_data = result.value
     if config.produces_list:
-        result = upload_scraped_data_list(scraped_data, scrape_date, scrape_config)
+        result = upload_scraped_data_list(scraped_data, scrape_date, config)
     else:
         result = config.persist_function(scraped_data, scrape_date)
     return result
 
 
-def upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
+def upload_scraped_data_list(scraped_data, scrape_date, config):
     with tqdm(
         total=len(scraped_data),
         ncols=100,
@@ -242,7 +241,7 @@ def upload_scraped_data_list(scraped_data, scrape_date, scrape_config):
     ) as pbar:
         for data in scraped_data:
             pbar.set_description(f"Uploading {data.upload_id}...")
-            result = scrape_config.persist_function(data, scrape_date)
+            result = config.persist_function(data, scrape_date)
             if result.failure:
                 return result
             time.sleep(randint(50, 100) / 100.0)
