@@ -108,7 +108,7 @@ def setup(db):
     help="Update statistics for scraped dates and games after scraping is complete."
 )
 @click.pass_obj
-def scrape(db, data_set, start_date, end_date, update_status):
+def scrape(db, data_set, start_date, end_date, update):
     """Scrape MLB data from websites."""
     engine = db["engine"]
     session = db["session"]
@@ -200,7 +200,7 @@ def get_prerequisites(session, data_set, start_date, end_date):
 
 
 def get_pbar_date_description(date, req_len=42):
-    pre =f"Processing {.strftime(MONTH_NAME_SHORT)}"
+    pre =f"Processing {date.strftime(MONTH_NAME_SHORT)}"
     pad_len = req_len - len(pre)
     return f"{pre}{'.'*pad_len}"
 
