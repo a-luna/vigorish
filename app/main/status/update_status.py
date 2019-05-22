@@ -38,7 +38,7 @@ def update_status_for_mlb_season(session, year):
     if result.failure:
         return result
 
-    result = update_data_set_brooks_pitch_logs_scraped(session, season)
+    result = update_data_set_brooks_pitch_logs(session, season)
     if result.failure:
         return result
 
@@ -68,8 +68,7 @@ def update_status_bbref_games_for_date_list(session, scraped_bbref_dates):
         mininterval=0.12,
         maxinterval=5,
         unit_scale=True,
-        position=0,
-        leave=False
+        position=0
     ) as pbar:
         for game_date in scraped_bbref_dates:
             pbar.set_description("Updating bbref_games_for_date........")
@@ -155,8 +154,7 @@ def update_status_brooks_games_for_date_list(session, scraped_brooks_dates):
         mininterval=0.12,
         maxinterval=5,
         unit_scale=True,
-        position=0,
-        leave=False
+        position=0
     ) as pbar:
         for game_date in scraped_brooks_dates:
             pbar.set_description("Updating brooks_games_for_date.......")
@@ -220,7 +218,7 @@ def update_game_status_records(session, season, new_brooks_games):
     return Result.Ok()
 
 def update_data_set_bbref_boxscores(session, season):
-    result = get_all_bbref_boxscores_scraped(year)
+    result = get_all_bbref_boxscores_scraped(season.year)
     if result.failure:
         return result
     scraped_bbref_gameids = result.value
@@ -240,8 +238,7 @@ def update_status_bbref_boxscore_list(session, new_bbref_game_ids):
         mininterval=0.12,
         maxinterval=5,
         unit_scale=True,
-        position=0,
-        leave=False
+        position=0
     ) as pbar:
         pbar.set_description("Updating bbref_boxscores.............")
         for bbref_game_id in new_bbref_game_ids:
@@ -252,6 +249,7 @@ def update_status_bbref_boxscore_list(session, new_bbref_game_ids):
             result = update_status_bbref_boxscore(session, boxscore)
             if result.failure:
                 return result
+            pbar.update()
     return Result.Ok()
 
 def update_status_bbref_boxscore(session, boxscore):
@@ -268,7 +266,7 @@ def update_status_bbref_boxscore(session, boxscore):
         return Result.Fail(f'Error: {repr(e)}')
 
 def update_data_set_brooks_pitch_logs(session, season):
-    result = get_all_brooks_pitch_logs_scraped(year)
+    result = get_all_brooks_pitch_logs_scraped(season.year)
     if result.failure:
         return result
     scraped_brooks_game_ids = result.value
@@ -276,7 +274,7 @@ def update_data_set_brooks_pitch_logs(session, season):
     new_brooks_game_ids = set(scraped_brooks_game_ids) & set(unscraped_brooks_game_ids)
     if not new_brooks_game_ids:
         return Result.Ok()
-    result = update_status_brooks_pitch_logs_for_game_list(session, update_brooks_ids)
+    result = update_status_brooks_pitch_logs_for_game_list(session, new_brooks_game_ids)
     if result.failure:
         return result
     return Result.Ok()
@@ -288,18 +286,18 @@ def update_status_brooks_pitch_logs_for_game_list(session, new_brooks_game_ids):
         mininterval=0.12,
         maxinterval=5,
         unit_scale=True,
-        position=0,
-        leave=False
+        position=0
     ) as pbar:
         pbar.set_description("Updating brooks_pitch_logs_for_game..")
         for brooks_game_id in new_brooks_game_ids:
-            result = get_brooks_pitch_logs_for_game_from_s3(gid)
+            result = get_brooks_pitch_logs_for_game_from_s3(brooks_game_id)
             if result.failure:
                 return result
             pitch_logs_for_game = result.value
             result = update_status_brooks_pitch_logs_for_game(session, pitch_logs_for_game)
             if result.failure:
                 return result
+            pbar.update()
     return Result.Ok()
 
 def update_status_brooks_pitch_logs_for_game(session, pitch_logs_for_game):

@@ -63,7 +63,7 @@ class BBRefBoxscore:
         return len(self.home_team_data.pitching_stats)
 
     def get_pitch_appearance_count(self):
-        return self.get_away_team_pitch_appearance_count + self.get_home_team_pitch_appearance_count
+        return self.get_away_team_pitch_appearance_count() + self.get_home_team_pitch_appearance_count()
 
     def get_away_team_pitch_count(self):
         return sum(pitch_stats.pitch_count for pitch_stats in self.away_team_data.pitching_stats)
@@ -72,7 +72,7 @@ class BBRefBoxscore:
         return sum(pitch_stats.pitch_count for pitch_stats in self.home_team_data.pitching_stats)
 
     def get_pitch_count(self):
-        return self.get_away_team_pitch_count + self.get_home_team_pitch_count
+        return self.get_away_team_pitch_count() + self.get_home_team_pitch_count()
 
     @staticmethod
     def __get_bb_team_id(br_team_id):
