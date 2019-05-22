@@ -64,11 +64,12 @@ def update_status_bbref_games_for_date_list(session, scraped_bbref_dates):
     all_game_ids = []
     with tqdm(
         total=len(scraped_bbref_dates),
-        ncols=100,
         unit="day",
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
+        unit_scale=True,
+        position=0,
+        leave=False
     ) as pbar:
         for game_date in scraped_bbref_dates:
             pbar.set_description("Updating bbref_games_for_date........")
@@ -108,11 +109,12 @@ def create_game_status_records_from_bbref_ids(session, season, new_bbref_game_id
 
     with tqdm(
         total=len(missing_bbref_game_ids),
-        ncols=100,
         unit="game",
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
+        unit_scale=True,
+        position=1,
+        leave=False
     ) as pbar:
         pbar.set_description('Populating scrape_status_game........')
         for game_dict in validate_bbref_game_id_list(missing_bbref_game_ids):
@@ -147,14 +149,15 @@ def update_data_set_brooks_games_for_date(session, season):
     return update_game_status_records(session, season, new_brooks_games)
 
 def update_status_brooks_games_for_date_list(session, scraped_brooks_dates):
-    new_brooks_games = {}
+    new_brooks_games = []
     with tqdm(
         total=len(scraped_brooks_dates),
-        ncols=100,
         unit="day",
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
+        unit_scale=True,
+        position=0,
+        leave=False
     ) as pbar:
         for game_date in scraped_brooks_dates:
             pbar.set_description("Updating brooks_games_for_date.......")
@@ -186,11 +189,12 @@ def update_status_brooks_games_for_date(session, games_for_date):
 def update_game_status_records(session, season, new_brooks_games):
     with tqdm(
         total=len(new_brooks_games),
-        ncols=100,
         unit="game",
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
+        unit_scale=True,
+        position=1,
+        leave=False
     ) as pbar:
         pbar.set_description('Updating scrape_status_game..........')
         for brooks_game_info in new_brooks_games:
@@ -233,11 +237,12 @@ def update_data_set_bbref_boxscores(session, season):
 def update_status_bbref_boxscore_list(session, new_bbref_game_ids):
     with tqdm(
         total=len(new_bbref_game_ids),
-        ncols=100,
         unit="game",
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
+        unit_scale=True,
+        position=0,
+        leave=False
     ) as pbar:
         pbar.set_description("Updating bbref_boxscores.............")
         for bbref_game_id in new_bbref_game_ids:
@@ -280,11 +285,12 @@ def update_data_set_brooks_pitch_logs(session, season):
 def update_status_brooks_pitch_logs_for_game_list(session, new_brooks_game_ids):
     with tqdm(
         total=len(new_brooks_game_ids),
-        ncols=100,
         unit="game",
         mininterval=0.12,
         maxinterval=5,
-        unit_scale=True
+        unit_scale=True,
+        position=0,
+        leave=False
     ) as pbar:
         pbar.set_description("Updating brooks_pitch_logs_for_game..")
         for brooks_game_id in new_brooks_game_ids:

@@ -21,17 +21,12 @@ _T_PLOG_URLS_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="
 _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'
 
 
+@measure_time
 def scrape_brooks_games_for_date(scrape_dict):
     driver = scrape_dict["driver"]
     scrape_date = scrape_dict["date"]
     session = scrape_dict["session"]
     games_for_date = scrape_dict["input_data"]
-    if not scrape_date:
-        scrape_date = date.now()
-    result = Season.is_date_in_season(session, scrape_date)
-    if result.failure:
-        return result
-
     url = _get_dashboard_url_for_date(scrape_date)
     driver.get(url)
     page = driver.page_source
@@ -46,6 +41,7 @@ def _get_dashboard_url_for_date(scrape_date):
     return Template(T_BROOKS_DASH_URL).substitute(date=date_str)
 
 
+@measure_time
 def parse_daily_dash_page(session, response, scrape_date, url, required_game_data):
     games_for_date = BrooksGamesForDate()
     games_for_date.game_date = scrape_date
@@ -145,6 +141,7 @@ def _parse_gameinfo_from_url(gameinfo, url):
     return Result.Ok(gameinfo)
 
 
+@measure_time
 def _parse_pitch_log_dict(gameinfo, pitchlog_url_list):
     gameinfo.pitcher_appearance_count = len(pitchlog_url_list)
     gameinfo.pitcher_appearance_dict = {}
@@ -200,6 +197,7 @@ def _parse_pitcherid_from_url(url):
     return pitcherid[:-4]
 
 
+@measure_time
 def _update_game_ids(games_for_date):
     game_dict = {g.bb_game_id: g for g in games_for_date.games}
     tracker = {g.bb_game_id: False for g in games_for_date.games}

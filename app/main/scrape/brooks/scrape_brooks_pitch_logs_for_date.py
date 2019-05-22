@@ -29,17 +29,18 @@ TEAM_ID_PATTERN = r"\((?P<team_id>[\w]{3})\)"
 TEAM_ID_REGEX = re.compile(TEAM_ID_PATTERN)
 
 
+@measure_time
 def scrape_brooks_pitch_logs_for_date(scrape_dict):
     games_for_date = scrape_dict["input_data"]
     scraped_games = []
     with tqdm(
         total=len(games_for_date.games),
-        #ncols=100,
         unit="game",
         mininterval=0.12,
         maxinterval=10,
         leave=False,
-        position=2,
+        position=2,,
+        disable=True
     ) as pbar:
         for game in games_for_date.games:
             if game.might_be_postponed:
@@ -54,12 +55,13 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
     return Result.Ok(scraped_games)
 
 
-def get_pbar_game_description(game_id, req_len=42):
+def get_pbar_game_description(game_id, req_len=32):
     pre =f"Scraping {game_id}"
     pad_len = req_len - len(pre)
     return f"{pre}{'.'*pad_len}"
 
 
+@measure_time
 def parse_pitch_logs_for_game(game):
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game.bb_game_id
@@ -70,12 +72,12 @@ def parse_pitch_logs_for_game(game):
     scraped_pitch_logs = []
     with tqdm(
         total=len(pitch_app_dict),
-        #ncols=100,
         unit="pitch_log",
         mininterval=0.12,
         maxinterval=10,
         leave=False,
         position=3,
+        disable=True
     ) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
             max_attempts = 10
@@ -110,12 +112,13 @@ def parse_pitch_logs_for_game(game):
     return Result.Ok(pitch_logs_for_game)
 
 
-def get_pbar_pitch_log_description(player_id, req_len=42):
+def get_pbar_pitch_log_description(player_id, req_len=32):
     pre =f"Pitch Log {player_id}"
     pad_len = req_len - len(pre)
     return f"{pre}{'.'*pad_len}"
 
 
+@measure_time
 def parse_pitch_log(response, game, pitcher_id, url):
     pitch_log = _initialize_pitch_log(game, pitcher_id, url)
     result = _parse_pitcher_details(response, game, pitcher_id)
@@ -163,6 +166,7 @@ def _initialize_pitch_log(game, pitcher_id, url):
     return pitch_log
 
 
+@measure_time
 def _parse_pitcher_details(response, game, pitcher_id):
     query = Template(T_PITCHER_NAME_XPATH).substitute(id=pitcher_id)
     parsed = response.xpath(query)
@@ -190,6 +194,7 @@ def _parse_pitcher_details(response, game, pitcher_id):
     return Result.Ok(pitcher_dict)
 
 
+@measure_time
 def _parse_team_ids(game, selected_pitcher):
     match = TEAM_ID_REGEX.search(selected_pitcher)
     if not match:
@@ -204,6 +209,7 @@ def _parse_team_ids(game, selected_pitcher):
     return Result.Ok(id_dict)
 
 
+@measure_time
 def _parse_pitch_counts(response):
     rows = response.xpath(PITCH_COUNTS_XPATH)
     if not rows:

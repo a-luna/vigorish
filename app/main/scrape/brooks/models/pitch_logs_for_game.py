@@ -13,7 +13,7 @@ class BrooksPitchLogsForGame():
 
     @property
     def upload_id(self):
-        return self.bb_game_id
+        return self.bbref_game_id
 
     def as_dict(self):
         """Convert pitch logs for game to a dictionary."""

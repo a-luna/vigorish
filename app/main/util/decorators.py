@@ -1,5 +1,7 @@
 """Custom decorators."""
+import inspect
 import sys
+import time
 from functools import wraps
 from signal import signal, alarm, SIGALRM
 from time import sleep
@@ -38,9 +40,7 @@ def timeout(*, seconds=3, error_message="Function call timed out"):
             finally:
                 alarm(0)
             return result
-
         return wraps(func)(wrapper_timeout)
-
     return decorated
 
 
@@ -63,7 +63,20 @@ def retry(*, max_attempts=2, delay=1, exceptions=(Exception,), on_failure=None):
                         raise RetryLimitExceededError(func, max_attempts) from e
                 else:
                     break
-
         return wrapper_retry
-
     return decorated
+
+
+def measure_time(func):
+    """Measure the execution time of the wrapped method."""
+
+    @wraps(func)
+    def wrapper_measure_time(*args, **kwargs):
+        func_args = inspect.signature(func).bind(*args, **kwargs).arguments
+        func_args_str =  ', '.join('{}={!r}'.format(*item) for item in func_args.items())
+        ts = time.time()
+        result = func(*args,**kwargs)
+        te = time.time()
+        print(f"{func.__name__} ({func_args_str}) {te-ts:0.2f} sec")
+        return result
+    return wrapper_measure_time

@@ -119,21 +119,23 @@ def scrape(db, data_set, start_date, end_date, update):
 
     with tqdm(
         total=len(date_range),
-        #ncols=100,
         unit="day",
         mininterval=0.12,
         maxinterval=5,
         position=0,
+        leave=False,
+        disable=True
     ) as pbar_date:
         for scrape_date in date_range:
             pbar_date.set_description(get_pbar_date_description(scrape_date))
             with tqdm(
                 total=len(config_list),
-                #ncols=100,
                 unit="data-set",
                 mininterval=0.12,
                 maxinterval=5,
                 position=1,
+                leave=False,
+                disable=True
             ) as pbar_data_set:
                 for config in config_list:
                     pbar_data_set.set_description(get_pbar_data_set_description(config.key_name))
@@ -199,24 +201,6 @@ def get_prerequisites(session, data_set, start_date, end_date):
     return Result.Ok((date_range, driver, config_list))
 
 
-def get_pbar_date_description(date, req_len=42):
-    pre =f"Processing {date.strftime(MONTH_NAME_SHORT)}"
-    pad_len = req_len - len(pre)
-    return f"{pre}{'.'*pad_len}"
-
-
-def get_pbar_data_set_description(config_name, req_len=42):
-    pre = f"Data Set {config_name}"
-    pad_len = req_len - len(pre)
-    return f"{pre}{'.'*pad_len}"
-
-
-def get_pbar_upload_description(game_id, req_len=42):
-    pre = f"Uploading {game_id}"
-    pad_len = req_len - len(pre)
-    return f"{pre}{'.'*pad_len}"
-
-
 def validate_date_range(session, start, end):
     if start.year != end.year:
         error = (
@@ -246,6 +230,7 @@ def validate_date_range(session, start, end):
     return Result.Ok(season)
 
 
+@measure_time
 def scrape_data_for_date(session, scrape_date, driver, config):
     input_dict = dict(date=scrape_date, session=session)
     if config.requires_input:
@@ -269,15 +254,15 @@ def scrape_data_for_date(session, scrape_date, driver, config):
 def upload_scraped_data_list(scraped_data, scrape_date, config):
     with tqdm(
         total=len(scraped_data),
-        #ncols=100,
         unit="file",
         mininterval=0.12,
         maxinterval=5,
         leave=False,
-        position=2,
+        position=2,,
+        disable=True
     ) as pbar:
         for data in scraped_data:
-            pbar.set_description(f"Uploading {data.upload_id}...")
+            pbar.set_description(get_pbar_upload_description(data.upload_id))
             result = config.persist_function(data, scrape_date)
             if result.failure:
                 return result
@@ -304,6 +289,24 @@ def print_message(message, fg=None,  bg=None, bold=None, underline=None, blink=N
         fg = None
         bg = None
     click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline, blink=blink)
+
+
+def get_pbar_date_description(date, req_len=32):
+    pre =f"Processing {date.strftime(MONTH_NAME_SHORT)}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
+def get_pbar_data_set_description(config_name, req_len=32):
+    pre = f"Data Set {config_name}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
+def get_pbar_upload_description(game_id, req_len=32):
+    pre = f"Uploading {game_id}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
 if __name__ == "__main__":

@@ -21,6 +21,7 @@ from app.main.scrape.brooks.models.pitch_logs_for_game import BrooksPitchLogsFor
 from app.main.util.result import Result
 
 
+@measure_time
 def decode_bbref_games_for_date(json_dict):
     """Convert json dictionary to BbrefGamesForDate"""
     if "__bbref_games_for_date__" in json_dict:
@@ -71,6 +72,7 @@ def decode_brooks_game_info(json_dict):
             return Result.Fail(error)
 
 
+@measure_time
 def decode_brooks_games_for_date(json_dict):
     """Convert json dictionary to BrooksGamesForDate object."""
     if "__brooks_games_for_date__" in json_dict:
@@ -94,6 +96,7 @@ def decode_brooks_games_for_date(json_dict):
             return Result.Fail(error)
 
 
+@measure_time
 def decode_bbref_boxscore(json_dict):
     """Convert json dictionary to BBRefBoxscore object."""
     if "__bbref_boxscore__" in json_dict:
@@ -383,6 +386,7 @@ def decode_bbref_pbp_substitution(json_dict):
             return Result.Fail(error)
 
 
+@measure_time
 def decode_brooks_pitch_logs_for_game(json_dict):
     if "__brooks_pitch_logs_for_game__" in json_dict:
         try:
