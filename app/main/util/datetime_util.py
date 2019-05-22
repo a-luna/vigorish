@@ -110,3 +110,16 @@ def get_date_range(start, end, inc=timedelta(days=1)):
         result.append(current)
         current += inc
     return result
+
+
+def format_timedelta_precise(td):
+    td_sec = td.seconds % 60
+    td_min = (td.seconds - td_sec) / 60
+    td_ms = td.microseconds / 1000
+    if td_min > 0:
+        return '{:.0f}m {}s'.format(td_min, td_sec)
+    else:
+        return '{}s {:.0f}ms'.format(td.seconds, td_ms)
+    #elif td_sec > 0:
+    #    return '{}s {:.0f}ms'.format(td.seconds, td_ms)
+    #return '{:.0f}ms'.format(td_ms)

@@ -44,6 +44,12 @@ def cli(ctx):
     ctx.obj = {"engine": engine, "session": session}
 
 
+@cli.command()
+@measure_time
+def test():
+    time.sleep(1.74)
+
+
 def clean():
     """Remove *.pyc and *.pyo files recursively starting at current directory."""
     for dirpath, _, filenames in os.walk("."):

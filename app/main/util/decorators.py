@@ -1,10 +1,13 @@
 """Custom decorators."""
 import inspect
 import sys
-import time
+from datetime import datetime
 from functools import wraps
 from signal import signal, alarm, SIGALRM
-from time import sleep
+from time import sleep, time
+
+from app.main.util.datetime_util import format_timedelta_precise
+from app.main.util.dt_format_strings import DT_FORMAT_ISO
 
 
 def handle_failed_attempt(func, remaining, e, delay):
@@ -74,9 +77,11 @@ def measure_time(func):
     def wrapper_measure_time(*args, **kwargs):
         func_args = inspect.signature(func).bind(*args, **kwargs).arguments
         func_args_str =  ', '.join('{}={!r}'.format(*item) for item in func_args.items())
-        ts = time.time()
+        exec_start = datetime.now()
         result = func(*args,**kwargs)
-        te = time.time()
-        print(f"{func.__name__} ({func_args_str}) {te-ts:0.2f} sec")
+        exec_finish = datetime.now()
+        exec_time = exec_finish - exec_start
+        #print(f"{func.__name__} ({func_args_str}) {te-ts:0.2f} sec")
+        print(f"{exec_start.strftime(DT_FORMAT_ISO)} | {func.__name__} | {format_timedelta_precise(exec_time)}")
         return result
     return wrapper_measure_time
