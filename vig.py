@@ -6,7 +6,6 @@ from random import randint
 
 import click
 from dateutil import parser
-from halo import Halo
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
@@ -176,7 +175,7 @@ def status(db, year):
         return exit_app_error(session, result)
     refresh_all_mat_views(engine, session)
     mlb = Season.find_by_year(session, year)
-    print_message(mlb.status_report(), fg="cyan")
+    print_message(mlb.status_report(), fg="bright_yellow")
     return exit_app_success(session)
 
 
@@ -280,11 +279,11 @@ def exit_app_error(session, result):
     return 1
 
 
-def print_message(message, fg=None,  bg=None, bold=None, underline=None, blink=None):
+def print_message(message, fg=None,  bg=None, bold=None, underline=None):
     if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
         fg = None
         bg = None
-    click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline, blink=blink)
+    click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline)
 
 
 def get_pbar_date_description(date, req_len=32):

@@ -1,9 +1,9 @@
 """Scrape brooksbaseball daily dashboard page."""
-import random
 import re
 import time
 import uuid
 from datetime import datetime, date
+from random import randint
 from string import Template
 
 import requests
@@ -76,33 +76,20 @@ def parse_pitch_logs_for_game(game):
         position=3
     ) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
-            max_attempts = 10
-            attempts = 1
-            parsing_pitch_log = True
-            while parsing_pitch_log:
-                try:
-                    pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
-                    result = request_url(url)
-                    if result.failure:
-                        return result
-                    response = result.value
-                    result = parse_pitch_log(response, game, pitcher_id, url)
-                    if result.failure:
-                        return result
-                    brooks_pitch_log = result.value
-                    scraped_pitch_logs.append(brooks_pitch_log)
-                    time.sleep(random.uniform(2.5, 3.0))
-                    parsing_pitch_log = False
-                    pbar.update()
-                except Exception:
-                    attempts += 1
-                    if attempts < max_attempts:
-                        pbar.set_description("Page failed to load, retrying")
-                    else:
-                        error = "Unable to retrive URL content after {m} failed attempts, aborting task\n".format(
-                            m=max_attempts
-                        )
-                        return Result.Fail(error)
+            try:
+                pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
+                response = request_url(url)
+                result = parse_pitch_log(response, game, pitcher_id, url)
+                if result.failure:
+                    return result
+                brooks_pitch_log = result.value
+                scraped_pitch_logs.append(brooks_pitch_log)
+                time.sleep(randint(250, 300) / 100.0)
+                pbar.update()
+            except RetryLimitExceededError as e:
+                return Result.Fail(repr(e))
+            except Exception as e:
+                return Result.Fail(f"Error: {repr(e)}")
 
     pitch_logs_for_game.pitch_logs = scraped_pitch_logs
     return Result.Ok(pitch_logs_for_game)

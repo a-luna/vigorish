@@ -51,18 +51,20 @@ def _get_chromedriver(page_load_timeout):
     return driver
 
 
+@retry(
+    max_attempts=5,
+    delay=5,
+    exceptions=(TimeoutError, Exception),
+    on_failure=handle_failed_attempt,
+)
+@timeout(seconds=10)
 def request_url(url):
     """Send a HTTP request for URL, return the response if successful."""
-    try:
-        page = requests.get(url)
-        response = html.fromstring(page.content, base_url=url)
-        return Result.Ok(response)
-    except Exception as e:
-        error = "Error: {error}".format(error=repr(e))
-        return Result.Fail(error)
+    page = requests.get(url)
+    return html.fromstring(page.content, base_url=url)
 
 
-def render_url(driver, url, max_attempts=100):
+def render_url(driver, url):
     """Fully render the URL (including JS), return the page content."""
     try:
         response = _render_url(url)
@@ -79,7 +81,7 @@ def render_url(driver, url, max_attempts=100):
     exceptions=(TimeoutError, Exception),
     on_failure=handle_failed_attempt,
 )
-@timeout(seconds=30)
+@timeout(seconds=10)
 def _render_url(url):
     driver.get(url)
     page = driver.page_source

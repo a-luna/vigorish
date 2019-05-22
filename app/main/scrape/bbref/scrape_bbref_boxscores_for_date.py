@@ -204,13 +204,13 @@ def get_pbar_description(game_id, req_len=32):
 @timeout(seconds=10)
 def render_webpage(driver, url):
     driver.get(url)
-    WebDriverWait(driver, 6000).until(
+    WebDriverWait(driver, 1000).until(
         ec.presence_of_element_located((By.XPATH, _BATTING_STATS_TABLE))
     )
-    WebDriverWait(driver, 6000).until(
+    WebDriverWait(driver, 1000).until(
         ec.presence_of_element_located((By.XPATH, _PITCHING_STATS_TABLE))
     )
-    WebDriverWait(driver, 6000).until(
+    WebDriverWait(driver, 1000).until(
         ec.presence_of_element_located((By.XPATH, _PLAY_BY_PLAY_TABLE))
     )
     page = driver.page_source
