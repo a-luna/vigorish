@@ -141,7 +141,7 @@ def scrape(db, data_set, start_date, end_date, update):
                     if result.failure:
                         break
                     time.sleep(randint(250, 300) / 100.0)
-                pbar_data_set.update()
+                    pbar_data_set.update()
             pbar_date.update()
 
     driver.close()
