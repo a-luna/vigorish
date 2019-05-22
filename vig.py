@@ -123,8 +123,7 @@ def scrape(db, data_set, start_date, end_date, update):
         mininterval=0.12,
         maxinterval=5,
         position=0,
-        leave=False,
-        disable=True
+        leave=False
     ) as pbar_date:
         for scrape_date in date_range:
             pbar_date.set_description(get_pbar_date_description(scrape_date))
@@ -134,8 +133,7 @@ def scrape(db, data_set, start_date, end_date, update):
                 mininterval=0.12,
                 maxinterval=5,
                 position=1,
-                leave=False,
-                disable=True
+                leave=False
             ) as pbar_data_set:
                 for config in config_list:
                     pbar_data_set.set_description(get_pbar_data_set_description(config.key_name))
@@ -257,8 +255,7 @@ def upload_scraped_data_list(scraped_data, scrape_date, config):
         mininterval=0.12,
         maxinterval=5,
         leave=False,
-        position=2,
-        disable=True
+        position=2
     ) as pbar:
         for data in scraped_data:
             pbar.set_description(get_pbar_upload_description(data.upload_id))

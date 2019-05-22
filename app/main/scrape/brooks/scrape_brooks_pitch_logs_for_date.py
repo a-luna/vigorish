@@ -38,8 +38,7 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
         mininterval=0.12,
         maxinterval=10,
         leave=False,
-        position=2,
-        disable=True
+        position=2
     ) as pbar:
         for game in games_for_date.games:
             if game.might_be_postponed:
@@ -74,8 +73,7 @@ def parse_pitch_logs_for_game(game):
         mininterval=0.12,
         maxinterval=10,
         leave=False,
-        position=3,
-        disable=True
+        position=3
     ) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
             max_attempts = 10
