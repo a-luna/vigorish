@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 from app.main.scrape.brooks.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from app.main.scrape.brooks.models.pitch_log import BrooksPitchLog
+from app.main.util.decorators import measure_time
 from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 
@@ -39,7 +40,7 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
         mininterval=0.12,
         maxinterval=10,
         leave=False,
-        position=2,,
+        position=2,
         disable=True
     ) as pbar:
         for game in games_for_date.games:

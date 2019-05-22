@@ -29,6 +29,7 @@ from app.main.scrape.bbref.models.umpire import BBRefUmpire
 from app.main.util.decorators import (
     timeout,
     retry,
+    measure_time,
     RetryLimitExceededError,
     handle_failed_attempt,
 )
@@ -169,7 +170,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         mininterval=0.12,
         maxinterval=10,
         leave=False,
-        position=2,,
+        position=2,
         disable=True
     ) as pbar:
         for url in boxscore_urls:

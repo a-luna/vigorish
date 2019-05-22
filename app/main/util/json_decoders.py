@@ -18,6 +18,7 @@ from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.scrape.brooks.models.pitch_log import BrooksPitchLog
 from app.main.scrape.brooks.models.pitch_logs_for_game import BrooksPitchLogsForGame
+from app.main.util.decorators import measure_time
 from app.main.util.result import Result
 
 
