@@ -57,7 +57,7 @@ def __add_mlb_seasons(session):
             ),
             Season(
                 year=2019,
-                start_date='2019-03-20',
+                start_date='2019-03-28',
                 end_date='2019-09-29',
                 asg_date='2019-07-09',
                 season_type=SEASON_TYPE_DICT['reg']

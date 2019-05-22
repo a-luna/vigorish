@@ -34,17 +34,17 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
     scraped_games = []
     with tqdm(
         total=len(games_for_date.games),
-        ncols=100,
+        #ncols=100,
         unit="game",
         mininterval=0.12,
         maxinterval=10,
         leave=False,
-        position=1,
+        position=2,
     ) as pbar:
         for game in games_for_date.games:
             if game.might_be_postponed:
                 continue
-            pbar.set_description(f"Processing {game.bbref_game_id}...")
+            pbar.set_description(get_pbar_game_description(game.bbref_game_id))
             result = parse_pitch_logs_for_game(game)
             if result.failure:
                 return result
@@ -52,6 +52,12 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
             scraped_games.append(brooks_pitch_logs)
             pbar.update()
     return Result.Ok(scraped_games)
+
+
+def get_pbar_game_description(game_id, req_len=42):
+    pre =f"Scraping {game_id}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
 def parse_pitch_logs_for_game(game):
@@ -64,12 +70,12 @@ def parse_pitch_logs_for_game(game):
     scraped_pitch_logs = []
     with tqdm(
         total=len(pitch_app_dict),
-        ncols=100,
+        #ncols=100,
         unit="pitch_log",
         mininterval=0.12,
         maxinterval=10,
         leave=False,
-        position=2,
+        position=3,
     ) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
             max_attempts = 10
@@ -77,7 +83,7 @@ def parse_pitch_logs_for_game(game):
             parsing_pitch_log = True
             while parsing_pitch_log:
                 try:
-                    pbar.set_description(f"Processing {pitcher_id}.........")
+                    pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
                     result = request_url(url)
                     if result.failure:
                         return result
@@ -102,6 +108,12 @@ def parse_pitch_logs_for_game(game):
 
     pitch_logs_for_game.pitch_logs = scraped_pitch_logs
     return Result.Ok(pitch_logs_for_game)
+
+
+def get_pbar_pitch_log_description(player_id, req_len=42):
+    pre =f"Pitch Log {player_id}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
 def parse_pitch_log(response, game, pitcher_id, url):

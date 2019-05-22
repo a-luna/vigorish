@@ -27,6 +27,7 @@ if DOTENV_PATH.is_file():
     load_dotenv(DOTENV_PATH)
 
 class ScrapeConfig:
+    key_name = ""
     display_name = ""
     requires_input = False
     requires_selenium = False
@@ -37,12 +38,14 @@ class ScrapeConfig:
 
 
 class BBRefGamesForDateScrapeConfig(ScrapeConfig):
+    key_name = "bbref_games_for_date"
     display_name = "Games for date (bbref.com)"
     scrape_function = scrape_bbref_games_for_date
     persist_function = upload_bbref_games_for_date
 
 
 class BBRefBoxscoreScrapeConfig(ScrapeConfig):
+    key_name = "bbref_boxscore"
     display_name = "Boxscores for date (bbref.com)"
     requires_input = True
     requires_selenium = True
@@ -53,12 +56,14 @@ class BBRefBoxscoreScrapeConfig(ScrapeConfig):
 
 
 class BBRefPlayerScrapeConfig(ScrapeConfig):
+    key_name = "bbref_player"
     display_name = "Player bio (bbref.com)"
     requires_input = True
     requires_selenium = True
 
 
 class BrooksGamesForDateScrapeConfig(ScrapeConfig):
+    key_name = "brooks_games_for_date"
     display_name = "Games for date (brooksbaseball.com)"
     requires_input = True
     requires_selenium = True
@@ -68,6 +73,7 @@ class BrooksGamesForDateScrapeConfig(ScrapeConfig):
 
 
 class BrooksPitchLogScrapeConfig(ScrapeConfig):
+    key_name = "brooks_pitch_log"
     display_name = "Pitch logs for date (brooksbaseball.com)"
     requires_input = True
     produces_list = True
@@ -77,6 +83,7 @@ class BrooksPitchLogScrapeConfig(ScrapeConfig):
 
 
 class BrooksPitchFxScrapeConfig(ScrapeConfig):
+    key_name = "brooks_pitchfx"
     display_name = "PitchFX for pitching appearance (brooksbaseball.com)"
     requires_input = True
     produces_list = True

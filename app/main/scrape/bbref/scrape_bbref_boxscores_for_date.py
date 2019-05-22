@@ -164,17 +164,17 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
     scraped_boxscores = []
     with tqdm(
         total=len(boxscore_urls),
-        ncols=100,
+        #ncols=100,
         unit="boxscore",
         mininterval=0.12,
         maxinterval=10,
-        leave=True,
-        position=1,
+        leave=False,
+        position=2,
     ) as pbar:
         for url in boxscore_urls:
             try:
                 uri = Path(url)
-                pbar.set_description(f"Processing {uri.stem}...")
+                pbar.set_description(get_pbar_description(uri.stem))
                 response = render_webpage(driver, url)
                 result = parse_bbref_boxscore(response, url)
                 if result.failure:
@@ -188,6 +188,12 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
             except Exception as e:
                 return Result.Fail(f"Error: {repr(e)}")
     return Result.Ok(scraped_boxscores)
+
+
+def get_pbar_description(game_id, req_len=42):
+    pre =f"Scraping {game_id}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
 @retry(

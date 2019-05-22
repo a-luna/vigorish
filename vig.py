@@ -78,6 +78,8 @@ def setup(db):
     "-d",
     "--data-set",
     type=MlbDataSet(),
+    default="all",
+    show_default=True,
     prompt=True,
     help=(
         f'Data set to scrape, must be a value from the following list:\n{", ".join(MLB_DATA_SETS)}'
@@ -99,8 +101,14 @@ def setup(db):
     prompt=True,
     help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser."
 )
+@click.option(
+    "--update/--no-update",
+    default=False,
+    show_default=True,
+    help="Update statistics for scraped dates and games after scraping is complete."
+)
 @click.pass_obj
-def scrape(db, data_set, start_date, end_date):
+def scrape(db, data_set, start_date, end_date, update_status):
     """Scrape MLB data from websites."""
     engine = db["engine"]
     session = db["session"]
@@ -111,20 +119,30 @@ def scrape(db, data_set, start_date, end_date):
 
     with tqdm(
         total=len(date_range),
-        ncols=100,
+        #ncols=100,
         unit="day",
         mininterval=0.12,
         maxinterval=5,
         position=0,
-    ) as pbar:
+    ) as pbar_date:
         for scrape_date in date_range:
-            pbar.set_description(f"Processing {scrape_date.strftime(MONTH_NAME_SHORT)}....")
-            for config in config_list:
-                result = scrape_data_for_date(session, scrape_date, driver, config)
-                if result.failure:
-                    break
-                time.sleep(randint(250, 300) / 100.0)
-            pbar.update()
+            pbar_date.set_description(get_pbar_date_description(scrape_date))
+            with tqdm(
+                total=len(config_list),
+                #ncols=100,
+                unit="data-set",
+                mininterval=0.12,
+                maxinterval=5,
+                position=1,
+            ) as pbar_data_set:
+                for config in config_list:
+                    pbar_data_set.set_description(get_pbar_data_set_description(config.key_name))
+                    result = scrape_data_for_date(session, scrape_date, driver, config)
+                    if result.failure:
+                        break
+                    time.sleep(randint(250, 300) / 100.0)
+                pbar_data_set.update()
+            pbar_date.update()
 
     driver.close()
     driver.quit()
@@ -180,6 +198,25 @@ def get_prerequisites(session, data_set, start_date, end_date):
 
     return Result.Ok((date_range, driver, config_list))
 
+
+def get_pbar_date_description(date, req_len=42):
+    pre =f"Processing {.strftime(MONTH_NAME_SHORT)}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
+def get_pbar_data_set_description(config_name, req_len=42):
+    pre = f"Data Set {config_name}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
+def get_pbar_upload_description(game_id, req_len=42):
+    pre = f"Uploading {game_id}"
+    pad_len = req_len - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
 def validate_date_range(session, start, end):
     if start.year != end.year:
         error = (
@@ -232,12 +269,12 @@ def scrape_data_for_date(session, scrape_date, driver, config):
 def upload_scraped_data_list(scraped_data, scrape_date, config):
     with tqdm(
         total=len(scraped_data),
-        ncols=100,
+        #ncols=100,
         unit="file",
         mininterval=0.12,
         maxinterval=5,
         leave=False,
-        position=1,
+        position=2,
     ) as pbar:
         for data in scraped_data:
             pbar.set_description(f"Uploading {data.upload_id}...")
