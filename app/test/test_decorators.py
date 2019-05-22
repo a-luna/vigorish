@@ -14,13 +14,13 @@ def sleep():
 @retry(max_attempts=2, delay=1, exceptions=(TimeoutError,))
 @timeout(seconds=1)
 def retry_with_timeout():
-    time.sleep(4)
+    time.sleep(2)
 
 
 @measure_time
 def rand_time():
     time.sleep(1)
-    time.sleep(randint(250, 750) / 100.0)
+    time.sleep(randint(100, 150) / 100.0)
 
 
 class TestDecorators(TestCase):

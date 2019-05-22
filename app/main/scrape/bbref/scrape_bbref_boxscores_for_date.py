@@ -29,7 +29,6 @@ from app.main.scrape.bbref.models.umpire import BBRefUmpire
 from app.main.util.decorators import (
     timeout,
     retry,
-    measure_time,
     RetryLimitExceededError,
     handle_failed_attempt,
 )
@@ -158,7 +157,6 @@ POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
 NUM_REGEX = re.compile(r"[1-9]{1}")
 
 
-@measure_time
 def scrape_bbref_boxscores_for_date(scrape_dict):
     driver = scrape_dict["driver"]
     scrape_date = scrape_dict["date"]
@@ -198,7 +196,6 @@ def get_pbar_description(game_id, req_len=32):
     return f"{pre}{'.'*pad_len}"
 
 
-@measure_time
 @retry(
     max_attempts=5,
     delay=5,
@@ -222,7 +219,6 @@ def render_webpage(driver, url):
     return response
 
 
-@measure_time
 def parse_bbref_boxscore(response, url):
     """Parse boxscore data from the page source."""
     boxscore = BBRefBoxscore(url=url)
@@ -340,7 +336,6 @@ def _parse_home_team_id(response):
     return matches[0] if matches else None
 
 
-@measure_time
 def _parse_team_data(
     response,
     team_batting_table,
@@ -548,7 +543,6 @@ def _parse_starting_lineup_for_team(response, team_id, is_home_team):
     return Result.Ok(lineup)
 
 
-@measure_time
 def _parse_game_meta_info(response):
     game_info = BBRefBoxscoreMeta()
     scorebox_meta_strings = response.xpath(_SCOREBOX_META_XPATH)
@@ -726,7 +720,6 @@ def _parse_pitcher_name_dict(team_pitching_table):
     return dict(zip(pitcher_names, pitcher_ids))
 
 
-@measure_time
 def _parse_all_game_events(
     response,
     game_id,

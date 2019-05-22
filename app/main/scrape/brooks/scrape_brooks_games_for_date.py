@@ -11,7 +11,6 @@ from app.main.constants import T_BROOKS_DASH_URL, BROOKS_DASHBOARD_DATE_FORMAT
 from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.models.season import Season
-from app.main.util.decorators import measure_time
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
@@ -22,7 +21,6 @@ _T_PLOG_URLS_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="
 _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'
 
 
-@measure_time
 def scrape_brooks_games_for_date(scrape_dict):
     driver = scrape_dict["driver"]
     scrape_date = scrape_dict["date"]
@@ -42,7 +40,6 @@ def _get_dashboard_url_for_date(scrape_date):
     return Template(T_BROOKS_DASH_URL).substitute(date=date_str)
 
 
-@measure_time
 def parse_daily_dash_page(session, response, scrape_date, url, required_game_data):
     games_for_date = BrooksGamesForDate()
     games_for_date.game_date = scrape_date
@@ -96,6 +93,11 @@ def _no_pitch_logs(response, row, game, scrape_date, timestamp_str):
     if result.failure:
         return result
     gameinfo = result.value
+    game_is_required = any(
+        [gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data]
+    )
+    if not game_is_required:
+        return Result.Fail("Game not found in bbref parsed game list.")
     gameinfo.might_be_postponed = True
     gameinfo.pitcher_appearance_count = 0
     return Result.Ok(gameinfo)
@@ -142,7 +144,6 @@ def _parse_gameinfo_from_url(gameinfo, url):
     return Result.Ok(gameinfo)
 
 
-@measure_time
 def _parse_pitch_log_dict(gameinfo, pitchlog_url_list):
     gameinfo.pitcher_appearance_count = len(pitchlog_url_list)
     gameinfo.pitcher_appearance_dict = {}
@@ -198,7 +199,6 @@ def _parse_pitcherid_from_url(url):
     return pitcherid[:-4]
 
 
-@measure_time
 def _update_game_ids(games_for_date):
     game_dict = {g.bb_game_id: g for g in games_for_date.games}
     tracker = {g.bb_game_id: False for g in games_for_date.games}

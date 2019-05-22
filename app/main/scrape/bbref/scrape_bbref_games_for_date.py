@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 
 from app.main.constants import T_BBREF_DASH_URL
 from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
-from app.main.util.decorators import measure_time
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
@@ -14,7 +13,6 @@ XPATH_BOXSCORE_URL = (
     '//div[contains(@class, "game_summary")]//a[text()="Final"]/@href'
 )
 
-@measure_time
 def scrape_bbref_games_for_date(scrape_dict):
     scrape_date = scrape_dict['date']
     url = __get_dashboard_url_for_date(scrape_date)
@@ -30,7 +28,6 @@ def __get_dashboard_url_for_date(scrape_date):
     y = scrape_date.year
     return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
 
-@measure_time
 def __parse_dashboard_page(response, scrape_date, url):
     games_for_date = BBRefGamesForDate()
     games_for_date.game_date = scrape_date

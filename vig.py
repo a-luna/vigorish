@@ -19,7 +19,6 @@ from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
 from app.main.util.click_params import DateString, MlbDataSet, MlbSeason
-from app.main.util.decorators import measure_time
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.list_functions import print_list
@@ -42,12 +41,6 @@ def cli(ctx):
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
     ctx.obj = {"engine": engine, "session": session}
-
-
-@cli.command()
-@measure_time
-def test():
-    time.sleep(1.74)
 
 
 def clean():
@@ -237,7 +230,6 @@ def validate_date_range(session, start, end):
     return Result.Ok(season)
 
 
-@measure_time
 def scrape_data_for_date(session, scrape_date, driver, config):
     input_dict = dict(date=scrape_date, session=session)
     if config.requires_input:

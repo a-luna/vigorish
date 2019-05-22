@@ -23,6 +23,11 @@ class TestBBRefBoxscore(BaseTestCase):
     BOXSCORE_HTML = APP_TEST_FOLDER / "test_files" / "ATL201803290.html"
     GAME_ID = "ATL201803290"
 
+    def test_status(self):
+        from app.main.status.update_status import update_status_for_mlb_season
+        result = update_status_for_mlb_season(self.session, 2019)
+        self.assertTrue(result.success)
+
     def test_scrape_bbref_boxscore(self):
         """Verify BBRefBoxscore object is correctly parsed from webpage."""
         response = html.parse(str(self.BOXSCORE_HTML))

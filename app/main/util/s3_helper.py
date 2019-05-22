@@ -9,7 +9,6 @@ from string import Template
 import boto3
 import botocore
 
-from app.main.util.decorators import measure_time
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.file_util import (
     T_BROOKS_GAMESFORDATE_FILENAME,
@@ -41,7 +40,6 @@ T_BR_GAME_KEY = "${year}/bbref_boxscore/${filename}"
 s3_client = boto3.client("s3")
 s3_resource = boto3.resource("s3")
 
-@measure_time
 def upload_brooks_games_for_date(games_for_date, scrape_date):
     """Upload a file to S3 containing json encoded BrooksGamesForDate object."""
     result = write_brooks_games_for_date_to_file(games_for_date)
@@ -60,7 +58,6 @@ def upload_brooks_games_for_date(games_for_date, scrape_date):
         return Result.Fail(f"Error: {repr(e)}")
 
 
-@measure_time
 def download_brooks_games_for_date(scrape_date, folderpath=None):
     """Download a file from S3 containing json encoded BrooksGamesForDate object."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -82,7 +79,6 @@ def download_brooks_games_for_date(scrape_date, folderpath=None):
         return Result.Fail(error)
 
 
-@measure_time
 def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=True):
     """Retrieve BrooksGamesForDate object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -95,7 +91,6 @@ def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=
     )
 
 
-@measure_time
 def get_all_brooks_dates_scraped(year):
     s3_brooks_games_folder = Template(T_BB_DATE_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)
@@ -114,7 +109,6 @@ def get_all_brooks_dates_scraped(year):
     return Result.Ok(scraped_dates)
 
 
-@measure_time
 def upload_brooks_pitch_logs_for_game(pitch_logs_for_game, scrape_date):
     """Upload a file to S3 containing json encoded BrooksPitchLogsForGame object."""
     result = write_brooks_pitch_logs_for_game_to_file(pitch_logs_for_game)
@@ -133,7 +127,6 @@ def upload_brooks_pitch_logs_for_game(pitch_logs_for_game, scrape_date):
         return Result.Fail(f"Error: {repr(e)}")
 
 
-@measure_time
 def download_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
     """Download a file from S3 containing json encoded BrooksPitchLogsForGame object."""
     result = validate_bb_game_id(bb_game_id)
@@ -158,7 +151,6 @@ def download_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
         return Result.Fail(error)
 
 
-@measure_time
 def get_brooks_pitch_logs_for_game_from_s3(
     bb_game_id, folderpath=None, delete_file=True
 ):
@@ -173,7 +165,6 @@ def get_brooks_pitch_logs_for_game_from_s3(
     )
 
 
-@measure_time
 def get_all_brooks_pitch_logs_scraped(year):
     s3_folder = Template(T_BB_LOG_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)
@@ -182,7 +173,6 @@ def get_all_brooks_pitch_logs_scraped(year):
     return Result.Ok(scraped_gameids)
 
 
-@measure_time
 def upload_bbref_games_for_date(games_for_date, scrape_date):
     """Upload a file to S3 containing json encoded BBRefGamesForDate object."""
     result = write_bbref_games_for_date_to_file(games_for_date)
@@ -199,7 +189,6 @@ def upload_bbref_games_for_date(games_for_date, scrape_date):
         return Result.Fail(f"Error: {repr(e)}")
 
 
-@measure_time
 def download_bbref_games_for_date(scrape_date, folderpath=None):
     """Download a file from S3 containing json encoded BBRefGamesForDate object."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -219,7 +208,6 @@ def download_bbref_games_for_date(scrape_date, folderpath=None):
         return Result.Fail(error)
 
 
-@measure_time
 def get_bbref_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=True):
     """Retrieve BBRefGamesForDate object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -230,7 +218,6 @@ def get_bbref_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=T
     return read_bbref_games_for_date_from_file(scrape_date, folderpath=filepath.parent, delete_file=True)
 
 
-@measure_time
 def get_all_bbref_dates_scraped(year):
     s3_folder = Template(T_BR_DATE_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)
@@ -246,7 +233,6 @@ def get_all_bbref_dates_scraped(year):
     return Result.Ok(scraped_dates)
 
 
-@measure_time
 def upload_bbref_boxscore(boxscore, scrape_date):
     """Upload a file to S3 containing json encoded BBRefBoxscore object."""
     result = write_bbref_boxscore_to_file(boxscore)
@@ -265,7 +251,6 @@ def upload_bbref_boxscore(boxscore, scrape_date):
         return Result.Fail(f"Error: {repr(e)}")
 
 
-@measure_time
 def download_bbref_boxscore(bbref_game_id, folderpath=None):
     """Download a file from S3 containing json encoded BBRefBoxscore object."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -288,7 +273,6 @@ def download_bbref_boxscore(bbref_game_id, folderpath=None):
         return Result.Fail(error)
 
 
-@measure_time
 def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True):
     """Retrieve BBRefBoxscore object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -301,7 +285,6 @@ def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True)
     )
 
 
-@measure_time
 def get_all_bbref_boxscores_scraped(year):
     s3_folder = Template(T_BR_GAME_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)

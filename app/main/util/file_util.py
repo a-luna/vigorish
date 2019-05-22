@@ -4,7 +4,6 @@ import os
 from pathlib import Path
 from string import Template
 
-from app.main.util.decorators import measure_time
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.json_decoders import (
     decode_brooks_games_for_date,
@@ -20,7 +19,6 @@ T_BBREF_GAMESFORDATE_FILENAME = "bbref_games_for_date_${date}.json"
 T_BBREF_BOXSCORE_FILENAME = "${gid}.json"
 
 
-@measure_time
 def write_brooks_games_for_date_to_file(games_for_date, folderpath=None):
     date_str = games_for_date.game_date_str
     filename = Template(T_BROOKS_GAMESFORDATE_FILENAME).substitute(date=date_str)
@@ -28,7 +26,6 @@ def write_brooks_games_for_date_to_file(games_for_date, folderpath=None):
     return write_json_dict_to_file(json_dict, filename, folderpath)
 
 
-@measure_time
 def write_brooks_pitch_logs_for_game_to_file(pitch_logs_for_game, folderpath=None):
     filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(
         gid=pitch_logs_for_game.bb_game_id
@@ -37,7 +34,6 @@ def write_brooks_pitch_logs_for_game_to_file(pitch_logs_for_game, folderpath=Non
     return write_json_dict_to_file(json_dict, filename, folderpath)
 
 
-@measure_time
 def write_bbref_games_for_date_to_file(games_for_date, folderpath=None):
     date_str = games_for_date.game_date_str
     filename = Template(T_BBREF_GAMESFORDATE_FILENAME).substitute(date=date_str)
@@ -45,7 +41,6 @@ def write_bbref_games_for_date_to_file(games_for_date, folderpath=None):
     return write_json_dict_to_file(json_dict, filename, folderpath)
 
 
-@measure_time
 def write_bbref_boxscore_to_file(boxscore, folderpath=None):
     game_id = boxscore.bbref_game_id
     filename = Template(T_BBREF_BOXSCORE_FILENAME).substitute(gid=game_id)
@@ -65,7 +60,6 @@ def write_json_dict_to_file(json_dict, filename, folderpath=None):
         return Result.Fail(error)
 
 
-@measure_time
 def read_brooks_games_for_date_from_file(game_date, folderpath=None, delete_file=False):
     """Decode BrooksGamesForDate object from json file."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -82,7 +76,6 @@ def read_brooks_games_for_date_from_file(game_date, folderpath=None, delete_file
         return Result.Fail(error)
 
 
-@measure_time
 def read_brooks_pitch_logs_for_game_from_file(
     bb_game_id, folderpath=None, delete_file=False
 ):
@@ -100,7 +93,6 @@ def read_brooks_pitch_logs_for_game_from_file(
         return Result.Fail(error)
 
 
-@measure_time
 def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=False):
     """Decode BBRefGamesForDate object from json file."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -117,7 +109,6 @@ def read_bbref_games_for_date_from_file(game_date, folderpath=None, delete_file=
         return Result.Fail(error)
 
 
-@measure_time
 def read_bbref_boxscore_from_file(bbref_game_id, folderpath=None, delete_file=False):
     """Decode BBRefBoxscore object from file."""
     folderpath = folderpath if folderpath else Path.cwd()
