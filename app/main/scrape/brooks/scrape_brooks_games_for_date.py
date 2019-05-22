@@ -61,7 +61,14 @@ def parse_daily_dash_page(session, response, scrape_date, url, required_game_dat
             pitchlog_urls_xpath = Template(_T_PLOG_URLS_XPATH).substitute(r=row, g=game)
             pitchlog_urls = response.xpath(pitchlog_urls_xpath)
             if not pitchlog_urls:
-                result = _no_pitch_logs(response, row, game, scrape_date, timestamp_str)
+                result = _no_pitch_logs(
+                    response,
+                    row,
+                    game,
+                    scrape_date,
+                    timestamp_str,
+                    required_game_data
+                )
                 if result.failure:
                     continue
                 gameinfo = result.value
@@ -70,7 +77,10 @@ def parse_daily_dash_page(session, response, scrape_date, url, required_game_dat
 
             url = pitchlog_urls[0]
             result = _is_game_required(
-                scrape_date, timestamp_str, url, required_game_data
+                scrape_date,
+                timestamp_str,
+                url,
+                required_game_data
             )
             if result.failure:
                 continue
@@ -86,7 +96,7 @@ def parse_daily_dash_page(session, response, scrape_date, url, required_game_dat
     return Result.Ok(games_for_date)
 
 
-def _no_pitch_logs(response, row, game, scrape_date, timestamp_str):
+def _no_pitch_logs(response, row, game, scrape_date, timestamp_str, required_game_data):
     xpath_k_zone_urls = Template(_T_K_ZONE_URL_XPATH).substitute(r=row, g=game)
     k_zone_urls = response.xpath(xpath_k_zone_urls)
     result = _parse_gameinfo(scrape_date, timestamp_str, k_zone_urls[0])
