@@ -34,11 +34,11 @@ def update_status_for_mlb_season(session, year):
     if result.failure:
         return result
 
-    result = update_data_set_bbref_boxscores(sesion, season)
+    result = update_data_set_bbref_boxscores(session, season)
     if result.failure:
         return result
 
-    result = update_data_set_brooks_pitch_logs_scraped(sesion, season)
+    result = update_data_set_brooks_pitch_logs_scraped(session, season)
     if result.failure:
         return result
 
