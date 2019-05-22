@@ -15,14 +15,16 @@ XPATH_BOXSCORE_URL = (
 
 def scrape_bbref_games_for_date(scrape_dict):
     scrape_date = scrape_dict['date']
-    url = __get_dashboard_url_for_date(scrape_date)
-    result = request_url(url)
-    if result.failure:
-        return result
-    response = result.value
-    return __parse_dashboard_page(response, scrape_date, url)
+    url = get_dashboard_url_for_date(scrape_date)
+    try:
+        response = request_url(url)
+        return __parse_dashboard_page(response, scrape_date, url)
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
 
-def __get_dashboard_url_for_date(scrape_date):
+def get_dashboard_url_for_date(scrape_date):
     m = scrape_date.month
     d = scrape_date.day
     y = scrape_date.year
