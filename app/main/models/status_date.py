@@ -19,7 +19,7 @@ from app.main.models.boxscore import Boxscore
 from app.main.models.status_game import GameScrapeStatus
 from app.main.models.views.materialized_view import MaterializedView
 from app.main.models.views.materialized_view_factory import create_mat_view
-from app.main.util.list_functions import display_dict
+from app.main.util.list_functions import display_dict, report_dict
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 
 
@@ -138,10 +138,10 @@ class DateScrapeStatus(Base):
         d["total_pitch_count_brooks"] = self.total_pitch_count_brooks
         return d
 
-    def display(self):
+    def status_report(self):
         season_dict = self.as_dict()
         title = f"SCRAPE STATUS FOR DATE: {self.game_date_str}"
-        display_dict(season_dict, title=title)
+        return report_dict(season_dict, title=title)
 
     @classmethod
     def find_by_date(cls, session, game_date):

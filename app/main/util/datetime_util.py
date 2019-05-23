@@ -8,7 +8,7 @@ from tzlocal import get_localzone
 from app.main.util.better_getattr import better_getattr
 from app.main.util.dt_format_strings import (
     DT_STR_FORMAT, DT_STR_FORMAT_NAIVE, DT_FORMAT_ISO, DT_FORMAT_SHORT,
-    DT_FORMAT_XML
+    DT_FORMAT_XML, DATE_ONLY_2
 )
 
 
@@ -123,3 +123,6 @@ def format_timedelta_precise(td):
     #elif td_sec > 0:
     #    return '{}s {:.0f}ms'.format(td.seconds, td_ms)
     #return '{:.0f}ms'.format(td_ms)
+
+def today_str():
+    return date.today().strftime(DATE_ONLY_2)

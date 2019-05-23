@@ -42,6 +42,37 @@ def display_dict(
         d = '.' * c
         print('{k}{d}: {v}'.format(k=k, d=d, v=v))
 
+def report_dict(
+    dict,
+    title='',
+    title_prefix='[',
+    title_suffix=']',
+    extra_dots=2
+):
+    """Pretty print all dict keys and values, title is optional."""
+    report = "\n"
+    max_length = 0
+    for k, v in dict.items():
+        if not v:
+            if type(v) is not int and type(v) is not bool:
+                continue
+        if len(k) > max_length:
+            max_length = len(k)
+    max_length += extra_dots
+
+    if title:
+        report += f'{title_prefix}{title}{title_suffix}'
+    for k, v in dict.items():
+        if not v:
+            if type(v) is not int and type(v) is not bool:
+                continue
+        if type(v) is datetime:
+            v = v.strftime(DT_STR_FORMAT_ALL)
+        c = max_length - len(k)
+        d = '.' * c
+        report += f'\n{k}{d}: {v}'
+    return report
+
 
 def filter_dict(source_dict, keys):
     """Create a dict which is a subset of source_dict."""
