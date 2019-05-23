@@ -323,8 +323,7 @@ def _parse_all_team_data(
         team_pitching_table=away_team_pitch_table,
         team_id=away_team_id,
         opponent_id=home_team_id,
-        is_home_team=False,
-    )
+        is_home_team=False)
     if result.failure:
         return result
     away_team_dict = result.value
@@ -336,8 +335,7 @@ def _parse_all_team_data(
         team_pitching_table=home_team_pitch_table,
         team_id=home_team_id,
         opponent_id=away_team_id,
-        is_home_team=True,
-    )
+        is_home_team=True)
     if result.failure:
         return result
     home_team_dict = result.value
@@ -389,8 +387,7 @@ def _parse_team_data(
         total_errors_by_opponent=opponent_totals.total_errors,
         batting_stats=batting_stats,
         pitching_stats=pitching_stats,
-        starting_lineup=starting_lineup,
-    )
+        starting_lineup=starting_lineup)
     return Result.Ok(team_dict)
 
 

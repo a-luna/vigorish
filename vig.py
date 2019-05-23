@@ -130,7 +130,7 @@ def scrape(db, data_set, start_date, end_date, update):
         if result.failure:
             return exit_app_error(session, result)
         refresh_all_mat_views(engine, session)
-        mlb = Season.find_by_year(session, year)
+        mlb = Season.find_by_year(session, start_date.year)
         print_message(mlb.status_report(), fg="bright_yellow")
     return exit_app_success(session)
 
