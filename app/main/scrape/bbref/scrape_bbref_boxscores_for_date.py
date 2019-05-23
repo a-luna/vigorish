@@ -598,19 +598,20 @@ def _parse_game_meta_info(response):
     first_pitch_wind = split2[1].strip()
     first_pitch_clouds = split2[2].strip().strip(".")
 
+    first_pitch_precipitation = ""
     if len(split2) > 3:
         first_pitch_precipitation = split2[3].strip().strip(".")
 
-    game_info = BBRefBoxscoreMeta()
-    game_info.attendance = attendance
-    game_info.park_name = park_name
-    game_info.game_duration = game_duration
-    game_info.day_night = day_night
-    game_info.field_type = field_type
-    game_info.first_pitch_temperature = first_pitch_temperature
-    game_info.first_pitch_wind = first_pitch_wind
-    game_info.first_pitch_clouds = first_pitch_clouds
-    game_info.first_pitch_precipitation = first_pitch_precipitation
+    game_info = BBRefBoxscoreMeta(
+        attendance=attendance
+        park_name=park_name
+        game_duration=game_duration
+        day_night=day_night
+        field_type=field_type
+        first_pitch_temperature=first_pitch_temperature
+        first_pitch_wind=first_pitch_wind
+        first_pitch_clouds=first_pitch_clouds
+        first_pitch_precipitation=first_pitch_precipitation)
     return Result.Ok(game_info)
 
 
