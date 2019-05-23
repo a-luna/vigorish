@@ -739,11 +739,7 @@ def _parse_all_game_events(
         return Result.Fail(error)
 
     result = _parse_play_by_play(
-        play_by_play_table,
-        player_name_dict,
-        away_team_id,
-        home_team_id,
-        game_id)
+        play_by_play_table, player_name_dict, away_team_id, home_team_id, game_id)
     if result.failure:
         error = f"rescrape_did_not_parse_play_by_play:\n{result.error}"
         return Result.Fail(error)
@@ -769,10 +765,7 @@ def _parse_all_game_events(
         player_id_match_log = [dict(t) for t in unique]
 
     result = _create_innings_list(
-        game_id,
-        inning_summaries_top,
-        inning_summaries_bottom,
-        play_by_play_events,
+        game_id, inning_summaries_top, inning_summaries_bottom, play_by_play_events,
         in_game_substitutions)
     if result.failure:
         error = f"Error occurred constructing inning list:\n{result.error}"
