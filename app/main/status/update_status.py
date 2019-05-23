@@ -27,35 +27,38 @@ def update_status_for_mlb_season(session, year):
 
     season = Season.find_by_year(session, year)
     if not season:
-        spinner.clear()
+        spinner.fail("Fail")
         error = f'Error occurred retrieving season for year={year}'
         return Result.Fail(error)
 
     spinner.text = f'Updating MLB {year} bbref_games_for_date...'
     result = update_data_set_bbref_games_for_date(session, season)
     if result.failure:
-        spinner.clear()
+        spinner.fail("Fail")
         return result
 
     spinner.text = f'Updating MLB {year} brooks_games_for_date...'
+    spinner.color = "bright_green"
     result = update_data_set_brooks_games_for_date(session, season)
     if result.failure:
-        spinner.clear()
+        spinner.fail("Fail")
         return result
 
     spinner.text = f'Updating MLB {year} bbref_boxscores...'
+    spinner.color = "bright_cyan"
     result = update_data_set_bbref_boxscores(session, season)
     if result.failure:
-        spinner.clear()
+        spinner.fail("Fail")
         return result
 
     spinner.text = f'Updating MLB {year} brooks_pitch_logs...'
+    spinner.color = "bright_magenta"
     result = update_data_set_brooks_pitch_logs(session, season)
     if result.failure:
-        spinner.clear()
+        spinner.fail("Fail")
         return result
 
-    spinner.clear()
+    spinner.succeed("Success")
     session.commit()
     return Result.Ok()
 
