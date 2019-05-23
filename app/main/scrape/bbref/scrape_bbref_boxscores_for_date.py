@@ -182,14 +182,14 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
     return Result.Ok(scraped_boxscores)
 
 
-def get_pbar_description(game_id, req_len=32):
-    pre =f"Scraping {game_id}"
+def get_pbar_description(game_id, req_len=35):
+    pre =f"Game ID.....: {game_id}"
     pad_len = req_len - len(pre)
-    return f"{pre}{'.'*pad_len}"
+    return f"{pre}{' '*pad_len}"
 
 
 @retry(
-    max_attempts=5,delay=5, exceptions=(TimeoutError, Exception))
+    max_attempts=15,delay=5, exceptions=(TimeoutError, Exception))
 @timeout(seconds=15)
 def render_webpage(driver, url):
     driver.get(url)

@@ -75,26 +75,27 @@ def setup(db):
 
 @cli.command()
 @click.option(
-    "-d", "--data-set", type=MlbDataSet(), default="all", show_default=True, prompt=True,
+    "--data-set", type=MlbDataSet(), default="all", show_default=True, prompt=True,
     help= f'Data set to scrape, must be a value from the following list:\n{", ".join(MLB_DATA_SETS)}')
 @click.option(
-    "-s", "--start", "start_date", type=DateString(), default=date.today(), show_default=True, prompt=True,
+    "--start", type=DateString(), default=date.today(), show_default=True, prompt=True,
     help="Date to start scraping data, string can be in any format that is recognized by dateutil.parser.")
 @click.option(
-    "-e", "--end", "end_date", type=DateString(), default=date.today(), show_default=True, prompt=True,
+    "--end", type=DateString(), default=date.today(), show_default=True, prompt=True,
     help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser.")
 @click.option(
     "--update/--no-update", default=False, show_default=True,
     help="Update statistics for scraped dates and games after scraping is complete.")
 @click.pass_obj
-def scrape(db, data_set, start_date, end_date, update):
+def scrape(db, data_set, start, end, update):
     """Scrape MLB data from websites."""
     engine = db["engine"]
     session = db["session"]
-    result = get_prerequisites(session, data_set, start_date, end_date)
+    result = get_prerequisites(session, data_set, start, end)
     if result.failure:
         return exit_app_error(session, result)
     (date_range, driver, config_list) = result.value
+    print_message('Current Task:', fg="bright_magenta")
     with tqdm(
         total=len(date_range), unit="day", mininterval=0.12,
         maxinterval=5, position=0, leave=False
@@ -118,19 +119,19 @@ def scrape(db, data_set, start_date, end_date, update):
     driver = None
     if result.failure:
         return exit_app_error(session, result)
-    start_str = start_date.strftime(MONTH_NAME_SHORT)
-    end_str = end_date.strftime(MONTH_NAME_SHORT)
+    start_str = start.strftime(MONTH_NAME_SHORT)
+    end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
         "Requested data was successfully scraped:\n"
         f"data set....: {data_set}\n"
         f"date range..: {start_str} - {end_str}")
     print_message(success, fg="green")
     if update:
-        result = update_status_for_mlb_season(session, start_date.year)
+        result = update_status_for_mlb_season(session, start.year)
         if result.failure:
             return exit_app_error(session, result)
         refresh_all_mat_views(engine, session)
-        mlb = Season.find_by_year(session, start_date.year)
+        mlb = Season.find_by_year(session, start.year)
         print_message(mlb.status_report(), fg="bright_yellow")
     return exit_app_success(session)
 
@@ -250,22 +251,22 @@ def print_message(message, fg=None,  bg=None, bold=None, underline=None):
     click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline)
 
 
-def get_pbar_date_description(date, req_len=32):
-    pre =f"Processing {date.strftime(MONTH_NAME_SHORT)}"
+def get_pbar_date_description(date, req_len=35):
+    pre =f"Game Date...: {date.strftime(MONTH_NAME_SHORT)}"
     pad_len = req_len - len(pre)
-    return f"{pre}{'.'*pad_len}"
+    return f"{pre}{' '*pad_len}"
 
 
-def get_pbar_data_set_description(config_name, req_len=32):
-    pre = f"Data Set {config_name}"
+def get_pbar_data_set_description(config_name, req_len=35):
+    pre = f"Data Set....: {config_name}"
     pad_len = req_len - len(pre)
-    return f"{pre}{'.'*pad_len}"
+    return f"{pre}{' '*pad_len}"
 
 
-def get_pbar_upload_description(game_id, req_len=32):
-    pre = f"Uploading {game_id}"
+def get_pbar_upload_description(game_id, req_len=35):
+    pre = f"Uploading...: {game_id}"
     pad_len = req_len - len(pre)
-    return f"{pre}{'.'*pad_len}"
+    return f"{pre}{' '*pad_len}"
 
 
 if __name__ == "__main__":

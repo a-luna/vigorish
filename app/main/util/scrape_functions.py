@@ -28,10 +28,7 @@ def get_chromedriver(page_load_timeout=6000):
 
 
 @retry(
-    max_attempts=5,
-    delay=5,
-    exceptions=(TimeoutError, Exception)
-)
+    max_attempts=5, delay=5, exceptions=(TimeoutError, Exception))
 @timeout(seconds=5)
 def _get_chromedriver(page_load_timeout):
     options = webdriver.ChromeOptions()
@@ -50,10 +47,7 @@ def _get_chromedriver(page_load_timeout):
 
 
 @retry(
-    max_attempts=5,
-    delay=5,
-    exceptions=(TimeoutError, Exception)
-)
+    max_attempts=15, delay=5, exceptions=(TimeoutError, Exception))
 @timeout(seconds=10)
 def request_url(url):
     """Send a HTTP request for URL, return the response if successful."""
@@ -62,10 +56,7 @@ def request_url(url):
 
 
 @retry(
-    max_attempts=5,
-    delay=5,
-    exceptions=(TimeoutError, Exception)
-)
+    max_attempts=15, delay=5, exceptions=(TimeoutError, Exception))
 @timeout(seconds=10)
 def render_url(url):
     """Fully render the URL (including JS), return the page content."""
