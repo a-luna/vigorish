@@ -603,14 +603,14 @@ def _parse_game_meta_info(response):
         first_pitch_precipitation = split2[3].strip().strip(".")
 
     game_info = BBRefBoxscoreMeta(
-        attendance=attendance
-        park_name=park_name
-        game_duration=game_duration
-        day_night=day_night
-        field_type=field_type
-        first_pitch_temperature=first_pitch_temperature
-        first_pitch_wind=first_pitch_wind
-        first_pitch_clouds=first_pitch_clouds
+        attendance=attendance,
+        park_name=park_name,
+        game_duration=game_duration,
+        day_night=day_night,
+        field_type=field_type,
+        first_pitch_temperature=first_pitch_temperature,
+        first_pitch_wind=first_pitch_wind,
+        first_pitch_clouds=first_pitch_clouds,
         first_pitch_precipitation=first_pitch_precipitation)
     return Result.Ok(game_info)
 
