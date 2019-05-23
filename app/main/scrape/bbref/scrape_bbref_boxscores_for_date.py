@@ -214,23 +214,87 @@ def render_webpage(driver, url):
 
 def parse_bbref_boxscore(response, url):
     """Parse boxscore data from the page source."""
+    (game_id, away_team_id, home_team_id) = _parse_game_and_team_ids(response, url)
+
+    (away_team_bat_table,
+    home_team_bat_table,
+    away_team_pitch_table,
+    home_team_pitch_table,
+    play_by_play_table) = _parse_data_tables(response)
+
+    (away_team_data,
+    home_team_data) = _parse_all_team_data(
+                            response,
+                            away_team_bat_table,
+                            home_team_bat_table,
+                            away_team_pitch_table,
+                            home_team_pitch_table,
+                            away_team_id,
+                            home_team_id
+                        )
+
+    result = _parse_game_meta_info(response)
+    if result.failure:
+        return result
+    game_meta_info = result.value
+
+    umpires = _parse_umpires(response)
+    if not umpires:
+        error = "Failed to parse umpire info"
+        return Result.Fail(error)
+
+    player_name_dict = _create_player_name_dict(
+        away_team_bat_table,
+        home_team_bat_table,
+        away_team_pitch_table,
+        home_team_pitch_table,
+    )
+
+    result = _parse_all_game_events(
+        play_by_play_table,
+        game_id,
+        away_team_id,
+        home_team_id,
+        player_name_dict
+    )
+    if result.failure:
+        error = f"Failed to parse innnings list:\n{result.error}"
+        return Result.Fail(error)
+    result_dict = result.value
+    innings_list = result_dict["innings_list"]
+    player_id_match_log = result_dict["player_id_match_log"]
+    player_team_dict = result_dict["player_team_dict"]
+
     boxscore = BBRefBoxscore(url=url)
+    boxscore.bbref_game_id = game_id
+    boxscore.away_team_data = away_team_data
+    boxscore.home_team_data = home_team_data
+    boxscore.game_meta_info = game_meta_info
+    boxscore.umpires = umpires
+    boxscore.innings_list = innings_list
+    boxscore.player_id_match_log = player_id_match_log
+    boxscore.player_team_dict = player_team_dict
+    boxscore.player_name_dict = player_name_dict
+    return Result.Ok(boxscore)
+
+
+def _parse_game_and_team_ids(response, url):
     game_id = _parse_bbref_gameid_from_url(url)
     if not game_id:
         error = "Failed to parse game ID"
         return Result.Fail(error)
-    boxscore.bbref_game_id = game_id
-
     away_team_id = _parse_away_team_id(response)
     if not away_team_id:
         error = "Failed to parse away team ID"
         return Result.Fail(error)
-
     home_team_id = _parse_home_team_id(response)
     if not home_team_id:
         error = "Failed to parse home team ID"
         return Result.Fail(error)
+    return (game_id, away_team_id, home_team_id)
 
+
+def _parse_data_tables(response):
     result = response.xpath(_BATTING_STATS_TABLE)
     if not result or len(result) != 2:
         error = "Failed to parse batting stats table"
@@ -245,67 +309,19 @@ def parse_bbref_boxscore(response, url):
     away_team_pitch_table = result[0]
     home_team_pitch_table = result[1]
 
-    result = _parse_team_data(
-        response,
-        team_batting_table=away_team_bat_table,
-        team_pitching_table=away_team_pitch_table,
-        team_id=away_team_id,
-        opponent_id=home_team_id,
-        is_home_team=False,
-    )
-    if result.failure:
-        return result
-    away_team_dict = result.value
-    boxscore.away_team_data = BBRefBoxscoreTeamData(**away_team_dict)
-
-    result = _parse_team_data(
-        response,
-        team_batting_table=home_team_bat_table,
-        team_pitching_table=home_team_pitch_table,
-        team_id=home_team_id,
-        opponent_id=away_team_id,
-        is_home_team=True,
-    )
-    if result.failure:
-        return result
-    home_team_dict = result.value
-    boxscore.home_team_data = BBRefBoxscoreTeamData(**home_team_dict)
-
-    result = _parse_game_meta_info(response)
-    if result.failure:
-        return result
-    boxscore.game_meta_info = result.value
-
-    umpires = _parse_umpires(response)
-    if not umpires:
-        error = "Failed to parse umpire info"
+    result = response.xpath(_PLAY_BY_PLAY_TABLE)
+    if not result:
+        error = "Failed to parse play by play table"
         return Result.Fail(error)
-    boxscore.umpires = umpires
+    play_by_play_table = result[0]
 
-    player_name_dict = _create_player_name_dict(
+    return (
         away_team_bat_table,
         home_team_bat_table,
         away_team_pitch_table,
         home_team_pitch_table,
+        play_by_play_table
     )
-
-    result = _parse_all_game_events(
-        response,
-        game_id,
-        away_team_id,
-        home_team_id,
-        player_name_dict
-    )
-    if result.failure:
-        error = f"Failed to parse innnings list:\n{result.error}"
-        return Result.Fail(error)
-    result_dict = result.value
-    boxscore.innings_list = result_dict["innings_list"]
-    boxscore.player_id_match_log = result_dict["player_id_match_log"]
-    boxscore.player_team_dict = result_dict["player_team_dict"]
-    boxscore.player_name_dict = player_name_dict
-
-    return Result.Ok(boxscore)
 
 
 def _parse_bbref_gameid_from_url(url):
@@ -327,6 +343,44 @@ def _parse_home_team_id(response):
         return None
     matches = re.findall(_TEAM_ID_PATTERN, name_urls[1])
     return matches[0] if matches else None
+
+
+def _parse_all_team_data(
+    response,
+    away_team_bat_table,
+    home_team_bat_table,
+    away_team_pitch_table,
+    home_team_pitch_table,
+    away_team_id,
+    home_team_id
+):
+    result = _parse_team_data(
+        response,
+        team_batting_table=away_team_bat_table,
+        team_pitching_table=away_team_pitch_table,
+        team_id=away_team_id,
+        opponent_id=home_team_id,
+        is_home_team=False,
+    )
+    if result.failure:
+        return result
+    away_team_dict = result.value
+    away_team_data = BBRefBoxscoreTeamData(**away_team_dict)
+
+    result = _parse_team_data(
+        response,
+        team_batting_table=home_team_bat_table,
+        team_pitching_table=home_team_pitch_table,
+        team_id=home_team_id,
+        opponent_id=away_team_id,
+        is_home_team=True,
+    )
+    if result.failure:
+        return result
+    home_team_dict = result.value
+    home_team_data = BBRefBoxscoreTeamData(**home_team_dict)
+
+    return (away_team_data, home_team_data)
 
 
 def _parse_team_data(
@@ -714,18 +768,12 @@ def _parse_pitcher_name_dict(team_pitching_table):
 
 
 def _parse_all_game_events(
-    response,
+    play_by_play_table,
     game_id,
     away_team_id,
     home_team_id,
     player_name_dict
 ):
-    result = response.xpath(_PLAY_BY_PLAY_TABLE)
-    if not result:
-        error = "Failed to parse play by play table"
-        return Result.Fail(error)
-    play_by_play_table = result[0]
-
     inning_summaries_top = _parse_inning_summary_top(play_by_play_table)
     if not inning_summaries_top:
         error = "Failed to parse inning start summaries"

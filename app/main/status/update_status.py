@@ -141,7 +141,6 @@ def update_data_set_brooks_games_for_date(session, season):
 def update_status_brooks_games_for_date_list(session, scraped_brooks_dates):
     new_brooks_games = []
     for game_date in scraped_brooks_dates:
-        pbar.set_description("Updating brooks_games_for_date.......")
         result = get_brooks_games_for_date_from_s3(game_date)
         if result.failure:
             return result
