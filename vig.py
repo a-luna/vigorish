@@ -141,7 +141,12 @@ def scrape(db, data_set, start, end, update):
 @click.pass_obj
 def status(db):
     """Report progress of scraped data, by date or MLB season."""
-    pass
+    engine = db["engine"]
+    session = db["session"]
+    result = update_status_for_mlb_season(session, year)
+    if result.failure:
+        return exit_app_error(session, result)
+    refresh_all_mat_views(engine, session)
 
 
 @status.command("date")
@@ -163,9 +168,8 @@ def status_date(db, date):
     date_status = DateScrapeStatus.find_by_date(session, date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
-    print_message(date_status.status_report(), fg="magenta")
-    session.close()
-    return 0
+    print_message(date_status.status_report(), fg="magenta", bold=True)
+    return exit_app_success(session)
 
 
 @status.command("season")
@@ -173,14 +177,8 @@ def status_date(db, date):
 @click.pass_obj
 def status_season(db, year):
     """Report progress (per-season) of scraped mlb data sets."""
-    engine = db["engine"]
-    session = db["session"]
-    result = update_status_for_mlb_season(session, year)
-    if result.failure:
-        return exit_app_error(session, result)
-    refresh_all_mat_views(engine, session)
     mlb = Season.find_by_year(session, year)
-    print_message(mlb.status_report(), fg="bright_yellow")
+    print_message(mlb.status_report(), fg="bright_yellow", bold=True)
     return exit_app_success(session)
 
 
