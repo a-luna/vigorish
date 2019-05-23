@@ -98,41 +98,47 @@ def decode_bbref_boxscore(json_dict):
     """Convert json dictionary to BBRefBoxscore object."""
     if "__bbref_boxscore__" in json_dict:
         try:
-            boxscore = BBRefBoxscore()
-            boxscore.boxscore_url = json_dict["boxscore_url"]
-            boxscore.bbref_game_id = json_dict["bbref_game_id"]
-
+            url = json_dict["boxscore_url"]
+            game_id = json_dict["bbref_game_id"]
             result = decode_bbref_boxscore_meta(json_dict["game_meta_info"])
             if result.failure:
                 return result
-            boxscore.game_meta_info = result.value
-
+            game_meta_info = result.value
             result = decode_boxscore_team_data(json_dict["away_team_data"])
             if result.failure:
                 return result
-            boxscore.away_team_data = result.value
-
+            away_team_data = result.value
             result = decode_boxscore_team_data(json_dict["home_team_data"])
             if result.failure:
                 return result
-            boxscore.home_team_data = result.value
-
-            boxscore.innings_list = []
+            home_team_data = result.value
+            innings_list = []
             for i in json_dict["innings_list"]:
                 result = decode_bbref_boxscore_half_inning(i)
                 if result.failure:
                     return result
-                boxscore.innings_list.append(result.value)
-
-            boxscore.umpires = []
+                innings_list.append(result.value)
+            umpires = []
             for u in json_dict["umpires"]:
                 result = decode_bbref_umpire(u)
                 if result.failure:
                     return result
-                boxscore.umpires.append(result.value)
+                umpires.append(result.value)
+            player_id_match_log = json_dict["player_id_match_log"]
+            player_team_dict = json_dict["player_team_dict"]
+            player_name_dict = json_dict["player_name_dict"]
 
-            boxscore.player_team_dict = json_dict["player_team_dict"]
-            boxscore.player_name_dict = json_dict["player_name_dict"]
+            boxscore = BBRefBoxscore(
+                boxscore_url=url,
+                bbref_game_id=game_id,
+                game_meta_info=game_meta_info,
+                away_team_data=away_team_data,
+                home_team_data=home_team_data,
+                innings_list=innings_list,
+                umpires=umpires,
+                player_id_match_log=player_id_match_log,
+                player_team_dict=player_team_dict,
+                player_name_dict=player_name_dict)
             return Result.Ok(boxscore)
         except Exception as e:
             error = f"Error: {repr(e)}"

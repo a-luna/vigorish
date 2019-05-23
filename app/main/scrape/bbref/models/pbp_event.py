@@ -1,42 +1,29 @@
+from dataclasses import dataclass
+from typing import Any
+
+
+@dataclass
 class BBRefPlayByPlayEvent():
     """Various numeric and string values that describe a plate appearance."""
 
-    inning_id = None
-
-    def __init__(
-        self,
-        event_id=None,
-        inning_label=None,
-        pbp_table_row_number=None,
-        score=None,
-        outs_before_play=None,
-        runners_on_base=None,
-        pitch_sequence=None,
-        runs_outs_result=None,
-        team_batting_id_br=None,
-        team_pitching_id_br=None,
-        play_description=None,
-        pitcher_id_br=None,
-        batter_id_br=None,
-        play_index_url=None
-    ):
-        self.event_id = event_id
-        self.inning_label = inning_label
-        self.pbp_table_row_number = int(pbp_table_row_number) if pbp_table_row_number else None
-        self.score = score
-        self.outs_before_play = outs_before_play
-        self.runners_on_base = runners_on_base
-        self.pitch_sequence = pitch_sequence
-        self.runs_outs_result = runs_outs_result
-        self.team_batting_id_br = team_batting_id_br
-        self.team_pitching_id_br = team_pitching_id_br
-        self.play_description = play_description
-        self.pitcher_id_br = pitcher_id_br
-        self.batter_id_br = batter_id_br
-        self.play_index_url = play_index_url
+    event_id: str = "0"
+    inning_id: str = "0"
+    inning_label: str = "0"
+    pbp_table_row_number: str = "0"
+    score: str = "0"
+    outs_before_play: str = "0"
+    runners_on_base: str = "0"
+    pitch_sequence: str = "0"
+    runs_outs_result: str = "0"
+    team_batting_id_br: str = "0"
+    team_pitching_id_br: str = "0"
+    play_description: str = "0"
+    pitcher_id_br: str = "0"
+    batter_id_br: str = "0"
+    play_index_url: str = "0"
 
     def as_dict(self):
-        """Convert play event values to a dictionary."""
+        """Convert game event values to a dictionary."""
         dict = {
             "__bbref_pbp_game_event__": True,
             "event_id": self.event_id,

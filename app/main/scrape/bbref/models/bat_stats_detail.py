@@ -1,13 +1,13 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class BBRefBatStatsDetail():
     """Additional details for important batting events."""
 
-    count = ""
-    stat = ""
+    count: str = ""
+    stat: str = ""
 
     def as_dict(self):
         """Convert detailed batting stats to a dictionary."""
-        dict = {
-            "count": int(self.count),
-            "stat": "{}".format(self.stat)
-        }
-        return dict
+        return dict(count=int(self.count), stat=self.stat)

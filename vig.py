@@ -1,6 +1,7 @@
 """CLI application entry point."""
 import os
 import time
+from datetime import datetime, date
 from pathlib import Path
 from random import randint
 
@@ -56,7 +57,7 @@ def clean():
 @click.confirmation_option(prompt="Are you sure you want to delete all existing data?")
 @click.pass_obj
 def setup(db):
-    """Populate database with initial Player, Team and Season data.
+    """Populate database with initial player, team and season data.
 
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
@@ -74,38 +75,17 @@ def setup(db):
 
 @cli.command()
 @click.option(
-    "-d",
-    "--data-set",
-    type=MlbDataSet(),
-    default="all",
-    show_default=True,
-    prompt=True,
-    help=(
-        f'Data set to scrape, must be a value from the following list:\n{", ".join(MLB_DATA_SETS)}'
-    ),
-)
+    "-d", "--data-set", type=MlbDataSet(), default="all", show_default=True, prompt=True,
+    help= f'Data set to scrape, must be a value from the following list:\n{", ".join(MLB_DATA_SETS)}')
 @click.option(
-    "-s",
-    "--start",
-    "start_date",
-    type=DateString(),
-    prompt=True,
-    help="Date to start scraping data, string can be in any format that is recognized by dateutil.parser."
-)
+    "-s", "--start", "start_date", type=DateString(), default=date.today(), show_default=True, prompt=True,
+    help="Date to start scraping data, string can be in any format that is recognized by dateutil.parser.")
 @click.option(
-    "-e",
-    "--end",
-    "end_date",
-    type=DateString(),
-    prompt=True,
-    help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser."
-)
+    "-e", "--end", "end_date", type=DateString(), default=date.today(), show_default=True, prompt=True,
+    help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser.")
 @click.option(
-    "--update/--no-update",
-    default=False,
-    show_default=True,
-    help="Update statistics for scraped dates and games after scraping is complete."
-)
+    "--update/--no-update", default=False, show_default=True,
+    help="Update statistics for scraped dates and games after scraping is complete.")
 @click.pass_obj
 def scrape(db, data_set, start_date, end_date, update):
     """Scrape MLB data from websites."""
@@ -115,24 +95,15 @@ def scrape(db, data_set, start_date, end_date, update):
     if result.failure:
         return exit_app_error(session, result)
     (date_range, driver, config_list) = result.value
-
     with tqdm(
-        total=len(date_range),
-        unit="day",
-        mininterval=0.12,
-        maxinterval=5,
-        position=0,
-        leave=False
+        total=len(date_range), unit="day", mininterval=0.12,
+        maxinterval=5, position=0, leave=False
     ) as pbar_date:
         for scrape_date in date_range:
             pbar_date.set_description(get_pbar_date_description(scrape_date))
             with tqdm(
-                total=len(config_list),
-                unit="data-set",
-                mininterval=0.12,
-                maxinterval=5,
-                position=1,
-                leave=False
+                total=len(config_list), unit="data-set", mininterval=0.12,
+                maxinterval=5, position=1, leave=False
             ) as pbar_data_set:
                 for config in config_list:
                     pbar_data_set.set_description(get_pbar_data_set_description(config.key_name))
@@ -142,7 +113,6 @@ def scrape(db, data_set, start_date, end_date, update):
                     time.sleep(randint(250, 300) / 100.0)
                     pbar_data_set.update()
             pbar_date.update()
-
     driver.close()
     driver.quit()
     driver = None
@@ -153,18 +123,22 @@ def scrape(db, data_set, start_date, end_date, update):
     success = (
         "Requested data was successfully scraped:\n"
         f"data set....: {data_set}\n"
-        f"date range..: {start_str} - {end_str}"
-    )
-    return exit_app_success(session, success)
+        f"date range..: {start_str} - {end_str}")
+    print_message(success, fg="green")
+    if update:
+        result = update_status_for_mlb_season(session, start_date.year)
+        if result.failure:
+            return exit_app_error(session, result)
+        refresh_all_mat_views(engine, session)
+        mlb = Season.find_by_year(session, year)
+        print_message(mlb.status_report(), fg="bright_yellow")
+    return exit_app_success(session)
 
 
 @cli.command()
 @click.option(
-    "--year",
-    type=MlbSeason(),
-    prompt=True,
-    help=("Year of MLB Season to report progress of scraped data sets."),
-)
+    "-y", "--year", type=MlbSeason(), default=datetime.now().year,
+    help="Year of MLB Season to report progress of scraped data sets.")
 @click.pass_obj
 def status(db, year):
     """Report progress (per-season) of scraped mlb data sets."""
@@ -184,17 +158,14 @@ def get_prerequisites(session, data_set, start_date, end_date):
     if result.failure:
         return result
     date_range = get_date_range(start_date, end_date)
-
     result = get_chromedriver()
     if result.failure:
         return result
     driver = result.value
-
     result = get_config_list(data_set)
     if result.failure:
         return result
     config_list = result.value
-
     return Result.Ok((date_range, driver, config_list))
 
 
@@ -202,8 +173,7 @@ def validate_date_range(session, start, end):
     if start.year != end.year:
         error = (
             "Start and end dates must both be in the same year and within "
-            "the scope of that year's MLB Regular Season."
-        )
+            "the scope of that year's MLB Regular Season.")
         return Result.Fail(error)
     if start > end:
         start_str = start.strftime(DATE_ONLY)
@@ -211,8 +181,7 @@ def validate_date_range(session, start, end):
         error = (
             '"start" must be a date before (or the same date as) "end":\n'
             f"start: {start_str}\n"
-            f"end: {end_str}"
-        )
+            f"end: {end_str}")
         return Result.Fail(error)
     season = Season.find_by_year(session, start.year)
     start_date_valid = Season.is_date_in_season(session, start).success
@@ -221,8 +190,7 @@ def validate_date_range(session, start, end):
         error = (
             f"Start and end date must both be within the {season.name}:\n"
             f"season_start_date: {season.start_date_str}\n"
-            f"season_end_date: {season.end_date_str}"
-        )
+            f"season_end_date: {season.end_date_str}")
         return Result.Fail(error)
     return Result.Ok(season)
 
@@ -249,12 +217,8 @@ def scrape_data_for_date(session, scrape_date, driver, config):
 
 def upload_scraped_data_list(scraped_data, scrape_date, config):
     with tqdm(
-        total=len(scraped_data),
-        unit="file",
-        mininterval=0.12,
-        maxinterval=5,
-        leave=False,
-        position=2
+        total=len(scraped_data), unit="file", mininterval=0.12,
+        maxinterval=5, leave=False, position=2
     ) as pbar:
         for data in scraped_data:
             pbar.set_description(get_pbar_upload_description(data.upload_id))
