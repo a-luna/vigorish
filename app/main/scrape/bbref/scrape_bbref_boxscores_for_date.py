@@ -12,6 +12,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from tqdm import tqdm
+from w3lib.url import url_query_parameter
 
 from app.main.constants import DEFENSE_POSITIONS, VENUE_TERMS
 from app.main.scrape.bbref.models.bat_stats import BBRefBatStats
@@ -29,14 +30,13 @@ from app.main.scrape.bbref.models.umpire import BBRefUmpire
 from app.main.util.decorators import (
     timeout,
     retry,
-    RetryLimitExceededError,
-    handle_failed_attempt,
+    RetryLimitExceededError
 )
 from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
 from app.main.util.result import Result
-from app.main.util.scrape_functions import request_url, get_chromedriver
+from app.main.util.scrape_functions import get_chromedriver
 from app.main.util.string_functions import fuzzy_match, normalize
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
@@ -135,6 +135,7 @@ PBP_STATS = dict(
     play_description="play_desc",
     pitch_sequence="pitches_pbp",
     runs_outs_result="runs_outs_result",
+    play_index_url="play_index_url"
 )
 
 _GAME_ID_PATTERN = r"[A-Z][A-Z][A-Z]\d{9,9}"
@@ -198,21 +199,14 @@ def get_pbar_description(game_id, req_len=32):
 @retry(
     max_attempts=5,
     delay=5,
-    exceptions=(TimeoutError, Exception),
-    on_failure=handle_failed_attempt,
+    exceptions=(TimeoutError, Exception)
 )
-@timeout(seconds=10)
+@timeout(seconds=15)
 def render_webpage(driver, url):
     driver.get(url)
-    WebDriverWait(driver, 1000).until(
-        ec.presence_of_element_located((By.XPATH, _BATTING_STATS_TABLE))
-    )
-    WebDriverWait(driver, 1000).until(
-        ec.presence_of_element_located((By.XPATH, _PITCHING_STATS_TABLE))
-    )
-    WebDriverWait(driver, 1000).until(
-        ec.presence_of_element_located((By.XPATH, _PLAY_BY_PLAY_TABLE))
-    )
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _BATTING_STATS_TABLE)))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _PITCHING_STATS_TABLE)))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _PLAY_BY_PLAY_TABLE)))
     page = driver.page_source
     response = html.fromstring(page, base_url=url)
     return response
@@ -857,6 +851,10 @@ def _parse_play_by_play(pbp_table, player_id_dict, away_team_id, home_team_id):
             player_id_match_log.append(match)
         event_dict["pitcher_id_br"] = match["id"]
 
+        if event_dict['play_index_url']:
+            event_dict['play_index_url'] = "https://www.baseball-reference.com" + event_dict['play_index_url']
+            event_dict['event_id'] = url_query_parameter(event_dict['play_index_url'], "game-event")
+
         event = BBRefPlayByPlayEvent(**event_dict)
         play_by_play.append(event)
 
@@ -884,6 +882,10 @@ def _get_pbp_event_stat_value(pbp_table, stat_name, event_number):
 
     if stat_name == "data-row":
         templ_xpath = './tbody//tr[@id="event_${n}"]/@data-row'
+        query = Template(templ_xpath).substitute(n=event_number)
+
+    if stat_name == "play_index_url":
+        templ_xpath = './tbody//tr[@id="event_${n}"]/td[@data-stat="runners_on_bases_pbp"]/@data-endpoint'
         query = Template(templ_xpath).substitute(n=event_number)
 
     pbp_value = ""

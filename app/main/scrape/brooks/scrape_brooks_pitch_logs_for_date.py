@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 from app.main.scrape.brooks.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from app.main.scrape.brooks.models.pitch_log import BrooksPitchLog
+from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 

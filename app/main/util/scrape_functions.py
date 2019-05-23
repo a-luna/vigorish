@@ -11,8 +11,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from app.main.util.decorators import (
     timeout,
     retry,
-    RetryLimitExceededError,
-    handle_failed_attempt,
+    RetryLimitExceededError
 )
 from app.main.util.result import Result
 
@@ -31,8 +30,7 @@ def get_chromedriver(page_load_timeout=6000):
 @retry(
     max_attempts=5,
     delay=5,
-    exceptions=(TimeoutError, Exception),
-    on_failure=handle_failed_attempt,
+    exceptions=(TimeoutError, Exception)
 )
 @timeout(seconds=5)
 def _get_chromedriver(page_load_timeout):
@@ -54,8 +52,7 @@ def _get_chromedriver(page_load_timeout):
 @retry(
     max_attempts=5,
     delay=5,
-    exceptions=(TimeoutError, Exception),
-    on_failure=handle_failed_attempt,
+    exceptions=(TimeoutError, Exception)
 )
 @timeout(seconds=10)
 def request_url(url):
@@ -64,25 +61,14 @@ def request_url(url):
     return html.fromstring(page.content, base_url=url)
 
 
-def render_url(driver, url):
-    """Fully render the URL (including JS), return the page content."""
-    try:
-        response = _render_url(url)
-        return Result.Ok(response)
-    except RetryLimitExceededError as e:
-        return Result.Fail(repr(e))
-    except Exception as e:
-        return Result.Fail(f"Error: {repr(e)}")
-
-
 @retry(
     max_attempts=5,
     delay=5,
-    exceptions=(TimeoutError, Exception),
-    on_failure=handle_failed_attempt,
+    exceptions=(TimeoutError, Exception)
 )
 @timeout(seconds=10)
-def _render_url(url):
+def render_url(url):
+    """Fully render the URL (including JS), return the page content."""
     driver.get(url)
     page = driver.page_source
     return html.fromstring(page, base_url=url)
