@@ -142,7 +142,7 @@ class DateScrapeStatus(Base):
         scraped_daily_bbref = "YES" if self.scraped_daily_dash_bbref == 1 else "NO"
         scraped_daily_brooks = "YES" if self.scraped_daily_dash_brooks == 1 else "NO"
         return (
-            f"\n### STATUS REPORT FOR {self.game_date_str} ###"
+            f"\n### STATUS REPORT FOR {self.game_date_str} ###\n"
             f"All Games Scraped.......................: {self.all_games_scraped}\n"
             f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
             f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games}/{self.total_bbref_boxscores_scraped}/{self.total_brooks_games_scraped}\n"
