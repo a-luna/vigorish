@@ -107,10 +107,12 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def all_games_scraped(self):
-        scraped_daily_dash = self.scraped_daily_dash_bbref and self.scraped_daily_dash_brooks
+        scraped_daily_dash_bbref = self.scraped_daily_dash_bbref == 1
+        scraped_daily_dash_brooks = self.scraped_daily_dash_brooks == 1
         scraped_bbref_boxscores = self.percent_complete_bbref_boxscores == 100
         scraped_brooks_games = self.percent_complete_brooks_games == 100
-        return scraped_daily_dash and scraped_bbref_boxscores and scraped_brooks_games
+        return scraped_daily_dash_bbref and scraped_daily_dash_brooks \
+            and scraped_bbref_boxscores and scraped_brooks_games
 
 
     def __init__(self, game_date, season_id):
@@ -141,10 +143,10 @@ class DateScrapeStatus(Base):
         scraped_daily_brooks = "YES" if self.scraped_daily_dash_brooks == 1 else "NO"
         return (
             f"\n### STATUS REPORT FOR {self.game_date_str} ###"
-            f"All Games Scraped.......................: {self.all_games_scraped}"
-            f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}"
-            f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games}/{self.total_bbref_boxscores_scraped}/{self.total_brooks_games_scraped}"
-            f"Pitch Apperances (BBRef/Brooks/Diff)....: {self.total_pitch_appearances_bbref}/{self.total_pitch_appearances_brooks}/{self.pitch_appearance_count_difference}"
+            f"All Games Scraped.......................: {self.all_games_scraped}\n"
+            f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
+            f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games}/{self.total_bbref_boxscores_scraped}/{self.total_brooks_games_scraped}\n"
+            f"Pitch Apperances (BBRef/Brooks/Diff)....: {self.total_pitch_appearances_bbref}/{self.total_pitch_appearances_brooks}/{self.pitch_appearance_count_difference}\n"
             f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.pitch_count_difference}")
 
     @classmethod

@@ -192,7 +192,7 @@ def status_date_range(db, start, end):
             error = f"scrape_status_date does not contain an entry for date: {d.strftime(DATE_ONLY)}"
         status_date_range.append(date_status)
     for status in status_date_range:
-        print_message(date_status.status_report(), fg="magenta", bold=True)
+        print_message(status.status_report(), fg="magenta", bold=True)
     return exit_app_success(session)
 
 
