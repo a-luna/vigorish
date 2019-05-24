@@ -126,3 +126,6 @@ def format_timedelta_precise(td):
 
 def today_str():
     return date.today().strftime(DATE_ONLY_2)
+
+def current_year():
+    return datetime.now().year

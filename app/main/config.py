@@ -101,9 +101,7 @@ SCRAPE_CONFIG = dict(
         BBRefGamesForDateScrapeConfig,
         BrooksGamesForDateScrapeConfig,
         BBRefBoxscoreScrapeConfig,
-        BrooksPitchLogScrapeConfig
-    ]
-)
+        BrooksPitchLogScrapeConfig])
 
 
 def get_config_list(data_set):

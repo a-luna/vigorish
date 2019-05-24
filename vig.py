@@ -20,7 +20,7 @@ from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
 from app.main.util.click_params import DateString, MlbDataSet, MlbSeason
-from app.main.util.datetime_util import get_date_range, today_str
+from app.main.util.datetime_util import get_date_range, today_str, current_year
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.list_functions import print_list
 from app.main.util.result import Result
@@ -96,11 +96,11 @@ def scrape(db, data_set, start, end, update):
     if result.failure:
         return exit_app_error(session, result)
     (date_range, driver, config_list) = result.value
+    print_message('\nCurrent Task:', fg="bright_magenta", bold=True)
     with tqdm(
         total=len(date_range), unit="day", mininterval=0.12,
         maxinterval=5, position=0, leave=False
     ) as pbar_date:
-        print_message('\nCurrent Task:', fg="bright_magenta", bold=True)
         for scrape_date in date_range:
             pbar_date.set_description(get_pbar_date_description(scrape_date))
             with tqdm(
@@ -145,25 +145,25 @@ def status(db):
 
 
 @status.command("date")
-@click.argument("date", type=DateString(), default=today_str)
+@click.argument("game_date", type=DateString(), default=today_str)
 @click.pass_obj
-def status_date(db, date):
+def status_date(db, game_date):
     """Report progress of scraped data sets for a single date."""
     engine = db["engine"]
     session = db["session"]
-    season = Season.find_by_year(session, date.year)
-    date_is_valid = Season.is_date_in_season(session, date).success
-    date_str = date.strftime(DATE_ONLY)
+    season = Season.find_by_year(session, game_date.year)
+    date_is_valid = Season.is_date_in_season(session, game_date).success
+    date_str = game_date.strftime(DATE_ONLY)
     if not date_is_valid:
         error = (
             f"'{date_str}' is not within the {season.name}:\n"
             f"season_start_date: {season.start_date_str}\n"
             f"season_end_date: {season.end_date_str}")
         return exit_app_error(session, error)
-    result = update_season_stats(engine, session, season.year)
-    if result.failure:
-        return exit_app_error(session, result.error)
-    date_status = DateScrapeStatus.find_by_date(session, date)
+    #result = update_season_stats(engine, session, season.year)
+    #if result.failure:
+    #    return exit_app_error(session, result.error)
+    date_status = DateScrapeStatus.find_by_date(session, game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
     print_message(date_status.status_report(), fg="magenta", bold=True)
@@ -171,7 +171,7 @@ def status_date(db, date):
 
 
 @status.command("season")
-@click.argument("year", type=MlbSeason(), default=datetime.now().year)
+@click.argument("year", type=MlbSeason(), default=current_year)
 @click.pass_obj
 def status_season(db, year):
     """Report progress (per-season) of scraped mlb data sets."""

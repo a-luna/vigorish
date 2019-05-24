@@ -40,14 +40,12 @@ class Season(Base):
     boxscores = relationship("Boxscore", backref="season")
     pitching_stats = relationship("GamePitchStats", backref="season")
     batting_stats = relationship("GameBatStats", backref="season")
-
     mat_view = relationship(
         "SeasonStatusMV",
         backref="original",
         uselist=False,
         primaryjoin="Season.id==SeasonStatusMV.id",
-        foreign_keys="SeasonStatusMV.id",
-    )
+        foreign_keys="SeasonStatusMV.id")
 
     @hybrid_property
     def name(self):
@@ -129,16 +127,15 @@ class Season(Base):
     def percent_complete_bbref_boxscores_scraped(self):
         if self.total_games_tracked == 0:
             return 0.0
-        perc = self.total_bbref_boxscores_scraped / float(self.total_games_tracked)
-        return perc * 100
+        percent_scraped = self.total_bbref_boxscores_scraped / float(self.total_games_tracked)
+        return percent_scraped * 100
 
     @hybrid_property
     def total_brooks_games_scraped(self):
         total_brooks_games_scraped = sum(
             date_status.total_brooks_games_scraped
             for date_status in self.scrape_status_dates
-            if date_status.total_brooks_games_scraped
-        )
+            if date_status.total_brooks_games_scraped)
         return total_brooks_games_scraped if total_brooks_games_scraped else 0
 
     @hybrid_property
@@ -186,8 +183,7 @@ class Season(Base):
         total_pitch_count_bbref = sum(
             date_status.total_pitch_count_bbref
             for date_status in self.scrape_status_dates
-            if date_status.total_pitch_count_bbref
-        )
+            if date_status.total_pitch_count_bbref)
         return total_pitch_count_bbref if total_pitch_count_bbref else 0
 
     @hybrid_property
@@ -195,8 +191,7 @@ class Season(Base):
         total_pitch_count_brooks = sum(
             date_status.total_pitch_count_brooks
             for date_status in self.scrape_status_dates
-            if date_status.total_pitch_count_brooks
-        )
+            if date_status.total_pitch_count_brooks)
         return total_pitch_count_brooks if total_pitch_count_brooks else 0
 
     @hybrid_property
@@ -249,7 +244,8 @@ class Season(Base):
 
     def status_report(self):
         return (
-            f"\nBBRef Dates Scraped..........: {self.percent_complete_bbref_games_for_date:01.0f}% ({self.total_days_scraped_bbref}/{self.total_days})\n"
+            f"\n### STATUS REPORT FOR {self.name} ###"
+            f"BBRef Dates Scraped..........: {self.percent_complete_bbref_games_for_date:01.0f}% ({self.total_days_scraped_bbref}/{self.total_days})\n"
             f"Brooks Dates Scraped.........: {self.percent_complete_brooks_games_for_date:01.0f}% ({self.total_days_scraped_brooks}/{self.total_days})\n"
             f"BBRef Games Scraped..........: {self.percent_complete_bbref_boxscores_scraped:01.0f}% ({self.total_bbref_boxscores_scraped:,}/{self.total_games_tracked:,})\n"
             f"Brooks Games Scraped.........: {self.percent_complete_brooks_games_scraped:01.0f}% ({self.total_brooks_games_scraped:,}/{self.total_games_tracked:,})\n"

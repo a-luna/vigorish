@@ -27,9 +27,7 @@ class Boxscore(Base):
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    meta = relationship(
-        "GameMetaInformation", backref=backref("boxscore", uselist=False)
-    )
+    meta = relationship("GameMetaInformation", backref=backref("boxscore", uselist=False))
     away_team = relationship("Team", foreign_keys=[away_team_id])
     home_team = relationship("Team", foreign_keys=[home_team_id])
     away_team_totals = relationship(
@@ -37,17 +35,13 @@ class Boxscore(Base):
         primaryjoin=(
             "and_("
             "Boxscore.id==GameTeamTotals.boxscore_id, "
-            "Boxscore.away_team_id==GameTeamTotals.away_team_id)"
-        ),
-    )
+            "Boxscore.away_team_id==GameTeamTotals.away_team_id)"))
     home_team_totals = relationship(
         "GameTeamTotals",
         primaryjoin=(
             "and_("
             "Boxscore.id==GameTeamTotals.boxscore_id, "
-            "Boxscore.home_team_id==GameTeamTotals.home_team_id)"
-        ),
-    )
+            "Boxscore.home_team_id==GameTeamTotals.home_team_id)"))
     starting_lineups = relationship("GameStartingLineupSlot", backref="boxscore")
     batting_stats = relationship("GameBatStats", backref="boxscore")
     pitching_stats = relationship("GamePitchStats", backref="boxscore")
