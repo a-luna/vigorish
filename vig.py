@@ -170,6 +170,32 @@ def status_date(db, game_date):
     return exit_app_success(session)
 
 
+@status.command("range")
+@click.option(
+    "--start", type=DateString(), prompt=True,
+    help="Start date for status report, string can be in any format that is recognized by dateutil.parser.")
+@click.option(
+    "--end", type=DateString(), prompt=True,
+    help="End date for status report, string can be in any format that is recognized by dateutil.parser.")
+@click.pass_obj
+def status_date_range(db, start, end):
+    engine = db["engine"]
+    session = db["session"]
+    result = validate_date_range(session, start, end)
+    if result.failure:
+        return result
+    date_range = get_date_range(start, end)
+    status_date_range = []
+    for d in date_range:
+        date_status = DateScrapeStatus.find_by_date(session, d)
+        if not date_status:
+            error = f"scrape_status_date does not contain an entry for date: {d.strftime(DATE_ONLY)}"
+        status_date_range.append(date_status)
+    for status in status_date_range:
+        print_message(date_status.status_report(), fg="magenta", bold=True)
+    return exit_app_success(session)
+
+
 @status.command("season")
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.pass_obj
