@@ -205,11 +205,11 @@ def status_date_range(db, start, end):
         status_date_range.append(date_status)
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
-    print_message(f"### STATUS REPORT FOR {start_str}-{end_str} ###", fg="blue", bold=True)
+    click.secho(f"### STATUS REPORT FOR {start_str} - {end_str} ###", fg="bright_magenta", bold=True)
     for status in status_date_range:
         date_str = status.game_date_str
         status_description = status.scrape_status_description
-        click.secho(f"{date_str}: {status_description}", fg="blue")
+        click.secho(f"{date_str}: {status_description}", fg="bright_magenta")
     return exit_app_success(session)
 
 
