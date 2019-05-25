@@ -138,17 +138,24 @@ def scrape(db, data_set, start, end, update):
 
 
 @cli.group()
+@click.option(
+    "--update/--no-update", default=False, show_default=True,
+    help="Update statistics for scraped dates and games before generating status report.")
 @click.pass_obj
-def status(db):
+def status(db, update):
     """Report progress of scraped data, by date or MLB season."""
-    pass
+    if update:
+        result = update_status_for_mlb_season(session, start.year)
+        if result.failure:
+            return exit_app_error(session, result)
+        refresh_all_mat_views(engine, session)
 
 
 @status.command("date")
 @click.argument("game_date", type=DateString(), default=today_str)
 @click.pass_obj
 def status_date(db, game_date):
-    """Report progress of scraped data sets for a single date."""
+    """Report status for a single date."""
     engine = db["engine"]
     session = db["session"]
     season = Season.find_by_year(session, game_date.year)
@@ -160,9 +167,6 @@ def status_date(db, game_date):
             f"season_start_date: {season.start_date_str}\n"
             f"season_end_date: {season.end_date_str}")
         return exit_app_error(session, error)
-    #result = update_season_stats(engine, session, season.year)
-    #if result.failure:
-    #    return exit_app_error(session, result.error)
     date_status = DateScrapeStatus.find_by_date(session, game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
@@ -179,6 +183,7 @@ def status_date(db, game_date):
     help="End date for status report, string can be in any format that is recognized by dateutil.parser.")
 @click.pass_obj
 def status_date_range(db, start, end):
+    """Report status for all dates in a defined range."""
     engine = db["engine"]
     session = db["session"]
     result = validate_date_range(session, start, end)
@@ -200,12 +205,9 @@ def status_date_range(db, start, end):
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.pass_obj
 def status_season(db, year):
-    """Report progress (per-season) of scraped mlb data sets."""
+    """Report status for a single MLB season."""
     engine = db["engine"]
     session = db["session"]
-    result = update_season_stats(engine, session, year)
-    if result.failure:
-        return exit_app_error(session, result.error)
     mlb = Season.find_by_year(session, year)
     print_message(mlb.status_report(), fg="bright_yellow")
     return exit_app_success(session)
