@@ -144,13 +144,8 @@ def scrape(db, data_set, start, end, update):
 @click.pass_obj
 def status(db, update):
     """Report progress of scraped data, by date or MLB season."""
-    engine = db["engine"]
-    session = db["session"]
-    if update:
-        result = update_status_for_mlb_season(session, start.year)
-        if result.failure:
-            return exit_app_error(session, result)
-        refresh_all_mat_views(engine, session)
+    db['update_status'] = update
+
 
 
 @status.command("date")
@@ -169,6 +164,11 @@ def status_date(db, game_date):
             f"season_start_date: {season.start_date_str}\n"
             f"season_end_date: {season.end_date_str}")
         return exit_app_error(session, error)
+    if db['update_status']:
+        result = update_status_for_mlb_season(session, season.year)
+        if result.failure:
+            return exit_app_error(session, result)
+        refresh_all_mat_views(engine, session)
     date_status = DateScrapeStatus.find_by_date(session, game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
@@ -191,6 +191,11 @@ def status_date_range(db, start, end):
     result = validate_date_range(session, start, end)
     if result.failure:
         return result
+    if db['update_status']:
+        result = update_status_for_mlb_season(session, start.year)
+        if result.failure:
+            return exit_app_error(session, result)
+        refresh_all_mat_views(engine, session)
     date_range = get_date_range(start, end)
     status_date_range = []
     for d in date_range:
@@ -210,8 +215,13 @@ def status_season(db, year):
     """Report status for a single MLB season."""
     engine = db["engine"]
     session = db["session"]
-    mlb = Season.find_by_year(session, year)
-    print_message(mlb.status_report(), fg="bright_yellow")
+    season = Season.find_by_year(session, year)
+    if db['update_status']:
+        result = update_status_for_mlb_season(session, season.year)
+        if result.failure:
+            return exit_app_error(session, result)
+        refresh_all_mat_views(engine, session)
+    print_message(season.status_report(), fg="bright_yellow")
     return exit_app_success(session)
 
 
