@@ -189,10 +189,10 @@ class DateScrapeStatus(Base):
         return (
             f"\n### STATUS REPORT FOR {self.game_date_str} ###\n"
             f"Overall Status For Date.................: {self.scrape_status_description}\n"
-            f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref} / {scraped_daily_brooks}\n"
-            f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games} / {self.total_bbref_boxscores_scraped} / {self.total_brooks_games_scraped}\n"
-            f"Pitch Apperances (BBRef/Brooks/Diff)....: {self.total_pitch_appearances_bbref} / {self.total_pitch_appearances_brooks} / {self.pitch_appearance_count_difference}\n"
-            f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref} / {self.total_pitch_count_brooks} / {self.pitch_count_difference}")
+            f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref} | {scraped_daily_brooks}\n"
+            f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games} | {self.total_bbref_boxscores_scraped} | {self.total_brooks_games_scraped}\n"
+            f"Pitch Apperances (BBRef/Brooks/Diff)....: {self.total_pitch_appearances_bbref} | {self.total_pitch_appearances_brooks} | {self.pitch_appearance_count_difference}\n"
+            f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref} | {self.total_pitch_count_brooks} | {self.pitch_count_difference}")
 
     @classmethod
     def find_by_date(cls, session, game_date):

@@ -45,6 +45,6 @@ def update_status_for_mlb_season(session, year):
         spinner.fail("Fail")
         return result
 
-    spinner.succeed("Success")
+    spinner.clear()
     session.commit()
     return Result.Ok()

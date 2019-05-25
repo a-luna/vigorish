@@ -203,13 +203,13 @@ def status_date_range(db, start, end):
         if not date_status:
             error = f"scrape_status_date does not contain an entry for date: {d.strftime(DATE_ONLY)}"
         status_date_range.append(date_status)
-    start_str = start.strftime(DATE_ONLY)
-    end_str = end.strftime(DATE_ONLY)
+    start_str = start.strftime(MONTH_NAME_SHORT)
+    end_str = end.strftime(MONTH_NAME_SHORT)
     print_message(f"### STATUS REPORT FOR {start_str}-{end_str} ###", fg="blue", bold=True)
     for status in status_date_range:
         date_str = status.game_date_str
         status_description = status.scrape_status_description
-        print_message(f"{date_str}: {status_description}", fg="blue")
+        click.secho(f"{date_str}: {status_description}", fg="blue")
     return exit_app_success(session)
 
 
