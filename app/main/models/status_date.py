@@ -53,7 +53,8 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_bbref_boxscores_scraped(self):
-        return self.mat_view.total_bbref_boxscores_scraped if self.mat_view else 0
+        return self.mat_view.total_bbref_boxscores_scraped if \
+            self.mat_view.total_bbref_boxscores_scraped else 0
 
     @hybrid_property
     def percent_complete_bbref_boxscores(self):
@@ -63,8 +64,13 @@ class DateScrapeStatus(Base):
         return perc * 100;
 
     @hybrid_property
+    def scraped_all_bbref_boxscores(self):
+        return self.percent_complete_bbref_boxscores == 100
+
+    @hybrid_property
     def total_brooks_games_scraped(self):
-        return self.mat_view.total_brooks_games_scraped if self.mat_view else 0
+        return self.mat_view.total_brooks_games_scraped if \
+            self.mat_view.total_brooks_games_scraped else 0
 
     @hybrid_property
     def percent_complete_brooks_games(self):
@@ -74,12 +80,18 @@ class DateScrapeStatus(Base):
         return perc * 100;
 
     @hybrid_property
+    def scraped_all_brooks_pitch_logs(self):
+        return self.percent_complete_brooks_games == 100
+
+    @hybrid_property
     def total_pitch_appearances_bbref(self):
-        return self.mat_view.total_pitch_appearances_bbref if self.mat_view else 0
+        return self.mat_view.total_pitch_appearances_bbref if \
+            self.mat_view.total_pitch_appearances_bbref else 0
 
     @hybrid_property
     def total_pitch_appearances_brooks(self):
-        return self.mat_view.total_pitch_appearances_brooks if self.mat_view else 0
+        return self.mat_view.total_pitch_appearances_brooks \
+            if self.mat_view.total_pitch_appearances_brooks else 0
 
     @hybrid_property
     def pitch_appearance_count_difference(self):
@@ -91,11 +103,13 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_count_bbref(self):
-        return self.mat_view.total_pitch_count_bbref if self.mat_view else 0
+        return self.mat_view.total_pitch_count_bbref if \
+            self.mat_view.total_pitch_count_bbref else 0
 
     @hybrid_property
     def total_pitch_count_brooks(self):
-        return self.mat_view.total_pitch_count_brooks if self.mat_view else 0
+        return self.mat_view.total_pitch_count_brooks if \
+            self.mat_view.total_pitch_count_brooks else 0
 
     @hybrid_property
     def pitch_count_difference(self):
@@ -106,13 +120,44 @@ class DateScrapeStatus(Base):
         return self.total_pitch_count_bbref != self.total_pitch_count_brooks
 
     @hybrid_property
-    def all_games_scraped(self):
-        scraped_daily_dash_bbref = self.scraped_daily_dash_bbref == 1
-        scraped_daily_dash_brooks = self.scraped_daily_dash_brooks == 1
-        scraped_bbref_boxscores = self.percent_complete_bbref_boxscores == 100
-        scraped_brooks_games = self.percent_complete_brooks_games == 100
-        return scraped_daily_dash_bbref and scraped_daily_dash_brooks \
-            and scraped_bbref_boxscores and scraped_brooks_games
+    def scraped_no_data(self):
+        return self.scraped_daily_dash_bbref == 0 and self.scraped_daily_dash_brooks == 0
+
+    @hybrid_property
+    def scraped_only_daily_dash(self):
+        return self.scraped_daily_dash_bbref == 1 and self.scraped_daily_dash_brooks == 1 \
+            and not self.scraped_all_bbref_boxscores and not self.scraped_all_brooks_pitch_logs
+
+    @hybrid_property
+    def scraped_only_bbref_boxscores(self):
+        if self.scraped_all_bbref_boxscores and not self.scraped_all_brooks_pitch_logs:
+            return True
+        return False
+
+    @hybrid_property
+    def scraped_only_brooks_pitch_logs(self):
+        if self.scraped_all_brooks_pitch_logs and not self.scraped_all_bbref_boxscores:
+            return True
+        return False
+
+    @hybrid_property
+    def scraped_all_game_data(self):
+        return self.scraped_all_bbref_boxscores and self.scraped_all_brooks_pitch_logs
+
+    @hybrid_property
+    def scrape_status_description(self):
+        if self.scraped_all_game_data:
+            return "Scraped All Game Data"
+        elif self.scraped_only_bbref_boxscores:
+            return "Scraped Only BBref Boxscores"
+        elif self.scraped_only_brooks_pitch_logs:
+            return "Scraped Only Brooks Pitch Logs"
+        elif self.scraped_only_daily_dash:
+            return "Scraped Only Daily Dashboards"
+        elif self.scraped_no_data:
+            return "No Data Has Been Scraped"
+        else:
+            return "N/A"
 
 
     def __init__(self, game_date, season_id):
@@ -143,11 +188,11 @@ class DateScrapeStatus(Base):
         scraped_daily_brooks = "YES" if self.scraped_daily_dash_brooks == 1 else "NO"
         return (
             f"\n### STATUS REPORT FOR {self.game_date_str} ###\n"
-            f"All Games Scraped.......................: {self.all_games_scraped}\n"
-            f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
-            f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games}/{self.total_bbref_boxscores_scraped}/{self.total_brooks_games_scraped}\n"
-            f"Pitch Apperances (BBRef/Brooks/Diff)....: {self.total_pitch_appearances_bbref}/{self.total_pitch_appearances_brooks}/{self.pitch_appearance_count_difference}\n"
-            f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.pitch_count_difference}")
+            f"Overall Status For Date.................: {self.scrape_status_description}\n"
+            f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref} / {scraped_daily_brooks}\n"
+            f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games} / {self.total_bbref_boxscores_scraped} / {self.total_brooks_games_scraped}\n"
+            f"Pitch Apperances (BBRef/Brooks/Diff)....: {self.total_pitch_appearances_bbref} / {self.total_pitch_appearances_brooks} / {self.pitch_appearance_count_difference}\n"
+            f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref} / {self.total_pitch_count_brooks} / {self.pitch_count_difference}")
 
     @classmethod
     def find_by_date(cls, session, game_date):

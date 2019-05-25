@@ -1,4 +1,6 @@
 """Db model that describes a MLB season and tracks data scraping progress."""
+from datetime import date
+
 from sqlalchemy import Column, Boolean, Index, Integer, DateTime, select, func, join
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -61,11 +63,15 @@ class Season(Base):
 
     @hybrid_property
     def total_days(self):
+        today = date.today()
+        if today.year == self.year and today < self.end_date.date():
+            return (today - self.start_date).days
         return self.mat_view.total_days if self.mat_view else 0
 
     @hybrid_property
     def total_days_scraped_bbref(self):
-        return self.mat_view.total_days_scraped_bbref if self.mat_view else 0
+        return self.mat_view.total_days_scraped_bbref if \
+            self.mat_view.total_days_scraped_bbref else 0
 
     @hybrid_property
     def percent_complete_bbref_games_for_date(self):
@@ -76,7 +82,8 @@ class Season(Base):
 
     @hybrid_property
     def total_days_scraped_brooks(self):
-        return self.mat_view.total_days_scraped_brooks if self.mat_view else 0
+        return self.mat_view.total_days_scraped_brooks if \
+            self.mat_view.total_days_scraped_brooks else 0
 
     @hybrid_property
     def percent_complete_brooks_games_for_date(self):
@@ -86,33 +93,17 @@ class Season(Base):
         return perc * 100
 
     @hybrid_property
-    def total_games_bbref(self):
-        return self.mat_view.total_games_bbref if self.mat_view else 0
+    def total_days_scraped_diff(self):
+        return abs(self.total_days_scraped_bbref - self.total_days_scraped_brooks)
 
     @hybrid_property
-    def total_games_brooks(self):
-        return self.mat_view.total_games_brooks if self.mat_view else 0
-
-    @hybrid_property
-    def total_games_tracked(self):
-        total_games_tracked = sum(
+    def total_games(self):
+        total_games = sum(
             date_status.total_games
             for date_status in self.scrape_status_dates
             if date_status.total_games
         )
-        return total_games_tracked if total_games_tracked else 0
-
-    @hybrid_property
-    def total_games_diff(self):
-        diff = self.total_games_bbref - self.total_games_brooks
-        return abs(diff)
-
-    @hybrid_property
-    def total_games_diff_percent(self):
-        if self.total_games_tracked == 0:
-            return 0.0
-        perc = self.total_games_diff / float(self.total_games_tracked)
-        return perc * 100
+        return total_games if total_games else 0
 
     @hybrid_property
     def total_bbref_boxscores_scraped(self):
@@ -146,6 +137,10 @@ class Season(Base):
         return perc * 100
 
     @hybrid_property
+    def total_games_scraped_diff(self):
+        return abs(self.total_bbref_boxscores_scraped - self.total_brooks_games_scraped)
+
+    @hybrid_property
     def total_pitch_appearances_bbref(self):
         total_pitch_appearances_bbref = sum(
             date_status.total_pitch_appearances_bbref
@@ -165,13 +160,13 @@ class Season(Base):
 
     @hybrid_property
     def pitch_appearance_diff(self):
-        diff = self.total_pitch_appearances_bbref - self.total_pitch_appearances_brooks
-        return abs(diff)
+        return abs(self.total_pitch_appearances_bbref - self.total_pitch_appearances_brooks)
 
     @hybrid_property
     def pitch_appearance_diff_percent(self):
         total_pitch_appearances = max(
-            self.total_pitch_appearances_bbref, self.total_pitch_appearances_brooks
+            self.total_pitch_appearances_bbref,
+            self.total_pitch_appearances_brooks
         )
         if total_pitch_appearances == 0:
             return 0.0
@@ -196,8 +191,7 @@ class Season(Base):
 
     @hybrid_property
     def total_pitch_count_diff(self):
-        diff = self.total_pitch_count_bbref - self.total_pitch_count_brooks
-        return abs(diff)
+        return abs(self.total_pitch_count_bbref - self.total_pitch_count_brooks)
 
     @hybrid_property
     def total_pitch_count_diff_percent(self):
@@ -245,13 +239,12 @@ class Season(Base):
     def status_report(self):
         return (
             f"\n### STATUS REPORT FOR {self.name} ###\n"
-            f"BBRef Dates Scraped..........: {self.percent_complete_bbref_games_for_date:01.0f}% ({self.total_days_scraped_bbref}/{self.total_days})\n"
-            f"Brooks Dates Scraped.........: {self.percent_complete_brooks_games_for_date:01.0f}% ({self.total_days_scraped_brooks}/{self.total_days})\n"
-            f"BBRef Games Scraped..........: {self.percent_complete_bbref_boxscores_scraped:01.0f}% ({self.total_bbref_boxscores_scraped:,}/{self.total_games_tracked:,})\n"
-            f"Brooks Games Scraped.........: {self.percent_complete_brooks_games_scraped:01.0f}% ({self.total_brooks_games_scraped:,}/{self.total_games_tracked:,})\n"
-            f"Total Games Comparison.......: Diff={self.total_games_diff:,} (BBref={self.total_games_bbref:,}, Brooks={self.total_games_brooks:,})\n"
-            f"Pitch Appearance Comparison..: Diff={self.pitch_appearance_diff:,} (BBref={self.total_pitch_appearances_bbref:,}, Brooks={self.total_pitch_appearances_brooks:,})\n"
-            f"Pitch Count Comparison.......: Diff={self.total_pitch_count_diff:,} (BBref={self.total_pitch_count_bbref:,}, Brooks={self.total_pitch_count_brooks:,})"
+            f"Total Days.........: {self.total_days}\n"
+            f"Total Games........: {self.total_games}\n"
+            f"Days Scraped.......: Diff{self.total_days_scraped_diff:,} (BBref={self.total_days_scraped_bbref:,}, Brooks={self.total_days_scraped_brooks:,})\n"
+            f"Games Scraped......: Diff={self.total_games_scraped_diff:,} (BBref={self.total_bbref_boxscores_scraped:,}, Brooks={self.total_brooks_games_scraped:,})\n"
+            f"Pitch Appearances..: Diff={self.pitch_appearance_diff:,} (BBref={self.total_pitch_appearances_bbref:,}, Brooks={self.total_pitch_appearances_brooks:,})\n"
+            f"Pitch Count........: Diff={self.total_pitch_count_diff:,} (BBref={self.total_pitch_count_bbref:,}, Brooks={self.total_pitch_count_brooks:,})"
         )
 
     def get_date_range(self):
