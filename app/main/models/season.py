@@ -65,7 +65,7 @@ class Season(Base):
     def total_days(self):
         today = date.today()
         if today.year == self.year and today < self.end_date.date():
-            return (today - self.start_date).days
+            return (today - self.start_date.date()).days
         return self.mat_view.total_days if self.mat_view else 0
 
     @hybrid_property
