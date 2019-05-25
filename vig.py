@@ -144,6 +144,8 @@ def scrape(db, data_set, start, end, update):
 @click.pass_obj
 def status(db, update):
     """Report progress of scraped data, by date or MLB season."""
+    engine = db["engine"]
+    session = db["session"]
     if update:
         result = update_status_for_mlb_season(session, start.year)
         if result.failure:
