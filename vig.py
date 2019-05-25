@@ -168,7 +168,7 @@ def status_date(db, game_date):
         result = update_status_for_mlb_season(session, season.year)
         if result.failure:
             return exit_app_error(session, result)
-        refresh_all_mat_views(engine, session)
+    refresh_all_mat_views(engine, session)
     date_status = DateScrapeStatus.find_by_date(session, game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
@@ -195,7 +195,7 @@ def status_date_range(db, start, end):
         result = update_status_for_mlb_season(session, start.year)
         if result.failure:
             return exit_app_error(session, result)
-        refresh_all_mat_views(engine, session)
+    refresh_all_mat_views(engine, session)
     date_range = get_date_range(start, end)
     status_date_range = []
     for d in date_range:
@@ -220,7 +220,7 @@ def status_season(db, year):
         result = update_status_for_mlb_season(session, season.year)
         if result.failure:
             return exit_app_error(session, result)
-        refresh_all_mat_views(engine, session)
+    refresh_all_mat_views(engine, session)
     print_message(season.status_report(), fg="bright_yellow")
     return exit_app_success(session)
 

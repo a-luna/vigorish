@@ -1,9 +1,9 @@
 from halo import Halo
 
 from app.main.models.season import Season
+from app.main.status.update_status_bbref_boxscores import update_data_set_bbref_boxscores
 from app.main.status.update_status_bbref_games_for_date import update_data_set_bbref_games_for_date
 from app.main.status.update_status_brooks_games_for_date import update_data_set_brooks_games_for_date
-from app.main.status.update_status_bbref_boxscores import update_data_set_bbref_boxscores
 from app.main.status.update_status_brooks_pitch_logs import update_data_set_brooks_pitch_logs
 from app.main.util.result import Result
 

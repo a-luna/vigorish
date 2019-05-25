@@ -244,7 +244,7 @@ class Season(Base):
 
     def status_report(self):
         return (
-            f"\n### STATUS REPORT FOR {self.name} ###"
+            f"\n### STATUS REPORT FOR {self.name} ###\n"
             f"BBRef Dates Scraped..........: {self.percent_complete_bbref_games_for_date:01.0f}% ({self.total_days_scraped_bbref}/{self.total_days})\n"
             f"Brooks Dates Scraped.........: {self.percent_complete_brooks_games_for_date:01.0f}% ({self.total_days_scraped_brooks}/{self.total_days})\n"
             f"BBRef Games Scraped..........: {self.percent_complete_bbref_boxscores_scraped:01.0f}% ({self.total_bbref_boxscores_scraped:,}/{self.total_games_tracked:,})\n"
