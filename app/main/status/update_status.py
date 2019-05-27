@@ -16,33 +16,33 @@ def update_status_for_mlb_season(session, year):
     if not season:
         spinner.fail("Fail")
         error = f'Error occurred retrieving season for year={year}'
-        return Result.Fail(error)
+        spinner.stop_and_persist("😢", "Fail")
 
     spinner.text = f'Updating MLB {year} bbref_games_for_date...'
     result = update_data_set_bbref_games_for_date(session, season)
     if result.failure:
-        spinner.fail("Fail")
+        spinner.stop_and_persist("😢", "Fail")
         return result
 
     spinner.text = f'Updating MLB {year} brooks_games_for_date...'
     spinner.color = "green"
     result = update_data_set_brooks_games_for_date(session, season)
     if result.failure:
-        spinner.fail("Fail")
+        spinner.stop_and_persist("😢", "Fail")
         return result
 
     spinner.text = f'Updating MLB {year} bbref_boxscores...'
     spinner.color = "cyan"
     result = update_data_set_bbref_boxscores(session, season)
     if result.failure:
-        spinner.fail("Fail")
+        spinner.stop_and_persist("😢", "Fail")
         return result
 
     spinner.text = f'Updating MLB {year} brooks_pitch_logs...'
     spinner.color = "magenta"
     result = update_data_set_brooks_pitch_logs(session, season)
     if result.failure:
-        spinner.fail("Fail")
+        spinner.stop_and_persist("😢", "Fail")
         return result
 
     spinner.text = ""
