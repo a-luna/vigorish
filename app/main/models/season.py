@@ -238,7 +238,6 @@ class Season(Base):
 
     def status_report(self):
         return (
-            f"\n### STATUS REPORT FOR {self.name} ###\n"
             f"Total Days.........: {self.total_days}\n"
             f"Total Games........: {self.total_games}\n"
             f"Days Scraped.......: Diff={self.total_days_scraped_diff:,} (BBref={self.total_days_scraped_bbref:,}, Brooks={self.total_days_scraped_brooks:,})\n"

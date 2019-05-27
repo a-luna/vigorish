@@ -20,7 +20,7 @@ class BBRefBoxscoreTeamData:
     def as_dict(self):
         return dict(
             __bbref_boxscore_team_data__=True,
-            team_id_br="{}".format(self.team_id_br),
+            team_id_br=self.team_id_br,
             total_wins_before_game=int(self.total_wins_before_game),
             total_losses_before_game=int(self.total_losses_before_game),
             total_runs_scored_by_team=int(self.total_runs_scored_by_team),

@@ -172,7 +172,11 @@ def status_date(db, game_date):
     date_status = DateScrapeStatus.find_by_date(session, game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
-    print_message(date_status.status_report(), fg="cyan")
+    click.secho(
+        f"### STATUS REPORT FOR {game_date.strftime(MONTH_NAME_SHORT)} ###",
+        fg="cyan",
+        bold=True)
+    click.secho(date_status.status_report(), fg="cyan")
     return exit_app_success(session)
 
 
@@ -226,7 +230,8 @@ def status_season(db, year):
         if result.failure:
             return exit_app_error(session, result)
     refresh_all_mat_views(engine, session)
-    print_message(season.status_report(), fg="bright_yellow")
+    click.secho(f"### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
+    click.secho(season.status_report(), fg="bright_yellow")
     return exit_app_success(session)
 
 
