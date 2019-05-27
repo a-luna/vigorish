@@ -96,7 +96,7 @@ def scrape(db, data_set, start, end, update):
     if result.failure:
         return exit_app_error(session, result)
     (date_range, driver, config_list) = result.value
-    print_message('\nCurrent Task:', fg="bright_magenta", bold=True)
+    click.secho('\nCurrent Task:', fg="bright_magenta", bold=True)
     with tqdm(
         total=len(date_range), unit="day", mininterval=0.12,
         maxinterval=5, position=0, leave=False
