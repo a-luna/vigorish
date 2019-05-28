@@ -169,7 +169,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         for url in boxscore_urls:
             try:
                 uri = Path(url)
-                pbar.set_description(get_pbar_description(uri.stem))
+                pbar.set_description(get_pbar_description(uri.stem, DATA_SET))
                 response = render_webpage(driver, url)
                 result = parse_bbref_boxscore(response, url)
                 if result.failure:
