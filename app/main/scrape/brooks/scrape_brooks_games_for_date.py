@@ -16,6 +16,9 @@ from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import parse_timestamp, validate_bbref_game_id_list
 
+
+DATA_SET = "brooks_games_for_date"
+
 _T_GAMEINFO_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//table//tr[1]//td[1]//text()'
 _T_PLOG_URLS_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Game Log"]/@href'
 _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'

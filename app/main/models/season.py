@@ -243,7 +243,7 @@ class Season(Base):
             f"Days Scraped.......: Diff={self.total_days_scraped_diff:,} (BBref={self.total_days_scraped_bbref:,}, Brooks={self.total_days_scraped_brooks:,})\n"
             f"Games Scraped......: Diff={self.total_games_scraped_diff:,} (BBref={self.total_bbref_boxscores_scraped:,}, Brooks={self.total_brooks_games_scraped:,})\n"
             f"Pitch Appearances..: Diff={self.pitch_appearance_diff:,} (BBref={self.total_pitch_appearances_bbref:,}, Brooks={self.total_pitch_appearances_brooks:,})\n"
-            f"Pitch Count........: Diff={self.total_pitch_count_diff:,} (BBref={self.total_pitch_count_bbref:,}, Brooks={self.total_pitch_count_brooks:,})"
+            f"Pitch Count........: Diff={self.total_pitch_count_diff:,} (BBref={self.total_pitch_count_bbref:,}, Brooks={self.total_pitch_count_brooks:,})\n"
         )
 
     def get_date_range(self):

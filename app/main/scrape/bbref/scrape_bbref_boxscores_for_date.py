@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from tqdm import tqdm
 from w3lib.url import url_query_parameter
 
-from app.main.constants import DEFENSE_POSITIONS, VENUE_TERMS
+from app.main.constants import DEFENSE_POSITIONS, VENUE_TERMS, PBAR_LEN_DICT
 from app.main.scrape.bbref.models.bat_stats import BBRefBatStats
 from app.main.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
 from app.main.scrape.bbref.models.boxscore import BBRefBoxscore
@@ -34,6 +34,9 @@ from app.main.util.numeric_functions import is_even
 from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
 from app.main.util.string_functions import fuzzy_match, normalize
+
+
+DATA_SET = "bbref_boxscore"
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _AWAY_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[1]/div[3]/text()'
@@ -182,10 +185,10 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
     return Result.Ok(scraped_boxscores)
 
 
-def get_pbar_description(game_id, req_len=35):
-    pre =f"Game ID.....: {game_id}"
-    pad_len = req_len - len(pre)
-    return f"{pre}{' '*pad_len}"
+def get_pbar_description(game_id, data_set):
+    pre =f"(Game ID)     {game_id}"
+    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
 @retry(

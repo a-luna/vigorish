@@ -11,12 +11,15 @@ import w3lib.url
 from lxml import html
 from tqdm import tqdm
 
+from app.main.constants import PBAR_LEN_DICT
 from app.main.scrape.brooks.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from app.main.scrape.brooks.models.pitch_log import BrooksPitchLog
 from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 
+
+DATA_SET = "brooks_pitch_log"
 
 PITCHFX_URL_XPATH = '//a[text()="Get Expanded Tabled Data"]/@href'
 PITCH_COUNTS_XPATH = '//div[@class="span9"]//table[2]//tr'
@@ -51,9 +54,9 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
 
 
 def get_pbar_game_description(game_id, req_len=35):
-    pre =f"Game ID.....: {game_id}"
-    pad_len = req_len - len(pre)
-    return f"{pre}{' '*pad_len}"
+    pre =f"(Game ID)     {game_id}"
+    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
 def parse_pitch_logs_for_game(game):
@@ -88,9 +91,9 @@ def parse_pitch_logs_for_game(game):
     return Result.Ok(pitch_logs_for_game)
 
 
-def get_pbar_pitch_log_description(player_id, req_len=35):
-    pre =f"Pitcher ID..: {player_id}"
-    pad_len = req_len - len(pre)
+def get_pbar_pitch_log_description(player_id, data_set):
+    pre =f"(Pitcher ID)  {player_id}"
+    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
     return f"{pre}{' '*pad_len}"
 
 

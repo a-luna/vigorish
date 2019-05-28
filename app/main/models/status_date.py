@@ -124,7 +124,17 @@ class DateScrapeStatus(Base):
         return self.scraped_daily_dash_bbref == 0 and self.scraped_daily_dash_brooks == 0
 
     @hybrid_property
-    def scraped_only_daily_dash(self):
+    def scraped_only_bbref_daily_dash(self):
+        return self.scraped_daily_dash_bbref == 1 and self.scraped_daily_dash_brooks == 0 \
+            and not self.scraped_all_bbref_boxscores and not self.scraped_all_brooks_pitch_logs
+
+    @hybrid_property
+    def scraped_only_brooks_daily_dash(self):
+        return self.scraped_daily_dash_bbref == 0 and self.scraped_daily_dash_brooks == 1 \
+            and not self.scraped_all_bbref_boxscores and not self.scraped_all_brooks_pitch_logs
+
+    @hybrid_property
+    def scraped_only_both_daily_dash(self):
         return self.scraped_daily_dash_bbref == 1 and self.scraped_daily_dash_brooks == 1 \
             and not self.scraped_all_bbref_boxscores and not self.scraped_all_brooks_pitch_logs
 
@@ -148,12 +158,16 @@ class DateScrapeStatus(Base):
     def scrape_status_description(self):
         if self.scraped_all_game_data:
             return "Scraped All Game Data"
-        elif self.scraped_only_bbref_boxscores:
-            return "Scraped Only BBref Boxscores"
         elif self.scraped_only_brooks_pitch_logs:
             return "Scraped Only Brooks Pitch Logs"
-        elif self.scraped_only_daily_dash:
-            return "Scraped Only Daily Dashboards"
+        elif self.scraped_only_bbref_boxscores:
+            return "Scraped Only BBref Boxscores"
+        elif self.scraped_only_both_daily_dash:
+            return "Scraped Only Both Daily Dashboards"
+        elif self.scraped_only_brooks_daily_dash:
+            return "Scraped Only Brooks Daily Dashboard"
+        elif self.scraped_only_bbref_daily_dash:
+            return "Scraped Only BBref Daily Dashboard"
         elif self.scraped_no_data:
             return "No Data Has Been Scraped"
         else:
@@ -191,7 +205,7 @@ class DateScrapeStatus(Base):
             f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref} | {scraped_daily_brooks}\n"
             f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games} | {self.total_bbref_boxscores_scraped} | {self.total_brooks_games_scraped}\n"
             f"Pitch Apperances (BBRef/Brooks/Diff)....: {self.total_pitch_appearances_bbref} | {self.total_pitch_appearances_brooks} | {self.pitch_appearance_count_difference}\n"
-            f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref} | {self.total_pitch_count_brooks} | {self.pitch_count_difference}")
+            f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref} | {self.total_pitch_count_brooks} | {self.pitch_count_difference}\n")
 
     @classmethod
     def find_by_date(cls, session, game_date):

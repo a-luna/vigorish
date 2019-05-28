@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
 from app.main.config import get_config_list
-from app.main.constants import MLB_DATA_SETS, CLI_COLORS
+from app.main.constants import MLB_DATA_SETS, CLI_COLORS, PBAR_LEN_DICT
 from app.main.models.base import Base
 from app.main.models.season import Season
 from app.main.models.status_date import DateScrapeStatus
@@ -102,12 +102,12 @@ def scrape(db, data_set, start, end, update):
         maxinterval=5, position=0, leave=False
     ) as pbar_date:
         for scrape_date in date_range:
-            pbar_date.set_description(get_pbar_date_description(scrape_date))
             with tqdm(
                 total=len(config_list), unit="data-set", mininterval=0.12,
                 maxinterval=5, position=1, leave=False
             ) as pbar_data_set:
                 for config in config_list:
+                    pbar_date.set_description(get_pbar_date_description(scrape_date, config.key_name))
                     pbar_data_set.set_description(get_pbar_data_set_description(config.key_name))
                     result = scrape_data_for_date(session, scrape_date, driver, config)
                     if result.failure:
@@ -340,22 +340,22 @@ def print_message(message, fg=None,  bg=None, bold=None, underline=None):
     click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline)
 
 
-def get_pbar_date_description(date, req_len=35):
-    pre =f"Game Date...: {date.strftime(MONTH_NAME_SHORT)}"
-    pad_len = req_len - len(pre)
-    return f"{pre}{' '*pad_len}"
+def get_pbar_date_description(date, data_set):
+    pre =f"(Game Date)   {date.strftime(MONTH_NAME_SHORT)}"
+    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
-def get_pbar_data_set_description(config_name, req_len=35):
-    pre = f"Data Set....: {config_name}"
-    pad_len = req_len - len(pre)
-    return f"{pre}{' '*pad_len}"
+def get_pbar_data_set_description(data_set):
+    pre = f"(Data Set)    {data_set}"
+    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
-def get_pbar_upload_description(game_id, req_len=35):
-    pre = f"Uploading...: {game_id}"
-    pad_len = req_len - len(pre)
-    return f"{pre}{' '*pad_len}"
+def get_pbar_upload_description(game_id, data_set):
+    pre = f"(Uploading)   {game_id}"
+    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+    return f"{pre}{'.'*pad_len}"
 
 
 if __name__ == "__main__":

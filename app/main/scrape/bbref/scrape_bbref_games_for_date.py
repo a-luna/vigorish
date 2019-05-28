@@ -9,6 +9,9 @@ from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 
+
+DATA_SET = "bbref_games_for_date"
+
 XPATH_BOXSCORE_URL = (
     '//div[@id="content"]//div[@class="game_summaries"]'
     '//div[contains(@class, "game_summary")]//a[text()="Final"]/@href'
