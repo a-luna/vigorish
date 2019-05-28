@@ -303,7 +303,7 @@ def upload_scraped_data_list(scraped_data, scrape_date, config):
         maxinterval=5, leave=False, position=2
     ) as pbar:
         for data in scraped_data:
-            pbar.set_description(get_pbar_upload_description(data.upload_id))
+            pbar.set_description(get_pbar_upload_description(data.upload_id, config.key_name))
             result = config.persist_function(data, scrape_date)
             if result.failure:
                 return result
