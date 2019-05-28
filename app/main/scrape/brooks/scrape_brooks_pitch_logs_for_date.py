@@ -91,7 +91,7 @@ def parse_pitch_logs_for_game(game):
     return Result.Ok(pitch_logs_for_game)
 
 
-def get_pbar_pitch_log_description(player_id, data_set):
+def get_pbar_pitch_log_description(player_id):
     pre =f"(Pitcher ID)  {player_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{' '*pad_len}"
