@@ -169,7 +169,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
         for url in boxscore_urls:
             try:
                 uri = Path(url)
-                pbar.set_description(get_pbar_description(uri.stem, DATA_SET))
+                pbar.set_description(get_pbar_description(uri.stem))
                 response = render_webpage(driver, url)
                 result = parse_bbref_boxscore(response, url)
                 if result.failure:
@@ -185,9 +185,9 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
     return Result.Ok(scraped_boxscores)
 
 
-def get_pbar_description(game_id, data_set):
+def get_pbar_description(game_id):
     pre =f"(Game ID)     {game_id}"
-    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
 

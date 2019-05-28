@@ -43,7 +43,7 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
         for game in games_for_date.games:
             if game.might_be_postponed:
                 continue
-            pbar.set_description(get_pbar_game_description(game.bbref_game_id, DATA_SET))
+            pbar.set_description(get_pbar_game_description(game.bbref_game_id))
             result = parse_pitch_logs_for_game(game)
             if result.failure:
                 return result
@@ -53,9 +53,9 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
     return Result.Ok(scraped_games)
 
 
-def get_pbar_game_description(game_id, req_len=35):
+def get_pbar_game_description(game_id):
     pre =f"(Game ID)     {game_id}"
-    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
 
@@ -73,7 +73,7 @@ def parse_pitch_logs_for_game(game):
     ) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
             try:
-                pbar.set_description(get_pbar_pitch_log_description(pitcher_id, DATA_SET))
+                pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
                 response = request_url(url)
                 result = parse_pitch_log(response, game, pitcher_id, url)
                 if result.failure:
@@ -93,7 +93,7 @@ def parse_pitch_logs_for_game(game):
 
 def get_pbar_pitch_log_description(player_id, data_set):
     pre =f"(Pitcher ID)  {player_id}"
-    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{' '*pad_len}"
 
 
