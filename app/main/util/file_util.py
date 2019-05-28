@@ -122,3 +122,13 @@ def read_bbref_boxscore_from_file(bbref_game_id, folderpath=None, delete_file=Fa
     except Exception as e:
         error = f"Error: {repr(e)}"
         return Result.Fail(error)
+
+
+def clean():
+    """Remove *.pyc and *.pyo files recursively starting at current directory."""
+    for dirpath, _, filenames in os.walk("."):
+        for filename in filenames:
+            if filename.endswith(".pyc") or filename.endswith(".pyo"):
+                full_pathname = os.path.join(dirpath, filename)
+                click.echo(f"Removing {full_pathname}")
+                os.remove(full_pathname)

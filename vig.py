@@ -44,16 +44,6 @@ def cli(ctx):
     ctx.obj = {"engine": engine, "session": session}
 
 
-def clean():
-    """Remove *.pyc and *.pyo files recursively starting at current directory."""
-    for dirpath, _, filenames in os.walk("."):
-        for filename in filenames:
-            if filename.endswith(".pyc") or filename.endswith(".pyo"):
-                full_pathname = os.path.join(dirpath, filename)
-                click.echo(f"Removing {full_pathname}")
-                os.remove(full_pathname)
-
-
 @cli.command()
 @click.confirmation_option(prompt="Are you sure you want to delete all existing data?")
 @click.pass_obj
@@ -181,15 +171,16 @@ def status_date(db, game_date):
 
 
 @status.command("range")
-@click.option(
-    "--start", type=DateString(), prompt=True,
-    help="Start date for status report, string can be in any format that is recognized by dateutil.parser.")
-@click.option(
-    "--end", type=DateString(), prompt=True,
-    help="End date for status report, string can be in any format that is recognized by dateutil.parser.")
+@click.option("--start", type=DateString(), prompt=True, help="First date to report status.")
+@click.option("--end", type=DateString(), prompt=True, help="Last date to report status.")
 @click.pass_obj
 def status_date_range(db, start, end):
-    """Report status for all dates in a defined range."""
+    """Report overall status for each date in the range (includes both START and END dates).
+
+    Dates can be provided in any format that is recognized by dateutil.parser.
+    For example, all of the following strings are valid ways to represent the same date:
+    "2018-5-13" -or- "05/13/2018" -or- "May 13 2018"
+    """
     engine = db["engine"]
     session = db["session"]
     result = validate_date_range(session, start, end)
