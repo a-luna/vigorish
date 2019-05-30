@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from tqdm import tqdm
 
 from app.main.constants import MLB_DATA_SETS, CLI_COLORS, PBAR_LEN_DICT
+from app.main.job import ScrapeJob
 from app.main.models.base import Base
 from app.main.models.season import Season
 from app.main.models.status_date import DateScrapeStatus
@@ -82,36 +83,15 @@ def scrape(db, data_set, start, end, update):
     """Scrape MLB data from websites."""
     engine = db["engine"]
     session = db["session"]
-    result = get_prerequisites(session, data_set, start, end)
+    job = ScrapeJob(data_set, start, end)
+    result = job.run()
     if result.failure:
         return exit_app_error(session, result)
-    (season, date_range, driver, task_list) = result.value
-    start_time = datetime.now()
-    print() # place an empty line between the command and the progress bars
-    with tqdm(total=len(date_range), unit="day", position=0, leave=False) as pbar_date:
-        for scrape_date in date_range:
-            with tqdm(total=len(task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
-                for task in task_list:
-                    daily_task = task(db, season, driver)
-                    pbar_date.set_description(get_pbar_date_description(scrape_date, daily_task.key_name))
-                    pbar_data_set.set_description(get_pbar_data_set_description(daily_task.key_name))
-                    result = daily_task.execute(scrape_date)
-                    if result.failure:
-                        break
-                    time.sleep(randint(250, 300) / 100.0)
-                    pbar_data_set.update()
-            pbar_date.update()
-    driver.close()
-    driver.quit()
-    driver = None
-    if result.failure:
-        return exit_app_error(session, result)
-    end_time = datetime.now()
     success = (
         "Requested data was successfully scraped:\n"
         f"data set....: {data_set}\n"
         f"date range..: {start.strftime(MONTH_NAME_SHORT)} - {end.strftime(MONTH_NAME_SHORT)}"
-        f"duration....: {format_timedelta(end_time - start_time)}")
+        f"duration....: {format_timedelta(job.duration)}")
     print_message(success, fg="green")
     if update:
         result = update_status_for_mlb_season(session, season.year)
@@ -219,23 +199,6 @@ def status_season(db, year):
     click.secho(f"### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
     click.secho(season.status_report(), fg="bright_yellow")
     return exit_app_success(session)
-
-
-def get_prerequisites(session, data_set, start_date, end_date):
-    result = Season.validate_date_range(session, start_date, end_date)
-    if result.failure:
-        return result
-    season = result.value
-    date_range = get_date_range(start_date, end_date)
-    result = get_chromedriver()
-    if result.failure:
-        return result
-    driver = result.value
-    result = get_task_list(data_set)
-    if result.failure:
-        return result
-    task_list = result.value
-    return Result.Ok((season, date_range, driver, task_list))
 
 
 def update_season_stats(engine, session, year):
