@@ -46,6 +46,6 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
 
 
     def get_pbar_upload_description(self, game_id):
-        pre = f"(Uploading) {game_id}"
+        pre = f"Uploading | {game_id}"
         pad_len = PBAR_LEN_DICT[self.key_name] - len(pre)
         return f"{pre}{'.'*pad_len}"

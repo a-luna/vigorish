@@ -53,7 +53,7 @@ def scrape_brooks_pitch_logs_for_date(games_for_date):
 
 
 def get_pbar_game_description(game_id):
-    pre =f"(Game ID)   {game_id}"
+    pre =f"Game ID   |   {game_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
@@ -91,9 +91,9 @@ def parse_pitch_logs_for_game(game):
 
 
 def get_pbar_pitch_log_description(player_id):
-    pre =f"(Player ID) {player_id}"
+    pre =f"Player ID | {player_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
-    return f"{pre}{' '*pad_len}"
+    return f"{pre}{'.'*pad_len}"
 
 
 def parse_pitch_log(response, game, pitcher_id, url):

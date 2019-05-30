@@ -182,7 +182,7 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
 
 
 def get_pbar_description(game_id):
-    pre =f"(Game ID)   {game_id}"
+    pre =f"Game ID   |   {game_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 

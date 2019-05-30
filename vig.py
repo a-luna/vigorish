@@ -87,7 +87,6 @@ def scrape(db, data_set, start, end, update):
         return exit_app_error(session, result)
     (season, date_range, driver, task_list) = result.value
     start_time = datetime.now()
-    click.secho('\nCurrent Task', bold=True)
     with tqdm(total=len(date_range), unit="day", position=0, leave=False) as pbar_date:
         for scrape_date in date_range:
             with tqdm(total=len(task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
@@ -114,12 +113,11 @@ def scrape(db, data_set, start, end, update):
         f"duration....: {format_timedelta(end_time - start_time)}")
     print_message(success, fg="green")
     if update:
-        result = update_status_for_mlb_season(session, start.year)
+        result = update_status_for_mlb_season(session, season.year)
         if result.failure:
             return exit_app_error(session, result)
         refresh_all_mat_views(engine, session)
-        mlb = Season.find_by_year(session, start.year)
-        print_message(mlb.status_report(), fg="bright_yellow")
+        print_message(season.status_report(), fg="bright_yellow")
     return exit_app_success(session)
 
 
@@ -268,13 +266,13 @@ def print_message(message, fg=None,  bg=None, bold=None, underline=None):
 
 
 def get_pbar_date_description(date, data_set):
-    pre =f"(Game Date) {date.strftime(MONTH_NAME_SHORT)}"
+    pre =f"Game Date | {date.strftime(MONTH_NAME_SHORT)}"
     pad_len = PBAR_LEN_DICT[data_set] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
 
 def get_pbar_data_set_description(data_set):
-    pre = f"(Data Set)  {data_set}"
+    pre = f"Data Set  |  {data_set}"
     pad_len = PBAR_LEN_DICT[data_set] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
