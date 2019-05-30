@@ -56,15 +56,6 @@ def decode_brooks_game_info(json_dict):
             gameinfo.game_number_this_day = json_dict["game_number_this_day"]
             gameinfo.pitcher_appearance_count = json_dict["pitcher_appearance_count"]
             gameinfo.pitcher_appearance_dict = json_dict["pitcher_appearance_dict"]
-
-            gameinfo.game_start_time = datetime(
-                year=json_dict["game_date_year"],
-                month=json_dict["game_date_month"],
-                day=json_dict["game_date_day"],
-                hour=json_dict["game_time_hour"],
-                minute=json_dict["game_time_minute"],
-                tzinfo=tz.gettz(json_dict["time_zone_name"]),
-            )
             return Result.Ok(gameinfo)
         except Exception as e:
             error = f"Error: {repr(e)}"

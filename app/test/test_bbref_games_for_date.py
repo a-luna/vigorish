@@ -6,9 +6,7 @@ from pathlib import Path
 
 from lxml import html
 
-from app.main.scrape.bbref.scrape_bbref_games_for_date import (
-    __parse_dashboard_page as parse_dashboard_page,
-)
+from app.main.scrape.bbref.scrape_bbref_games_for_date import parse_bbref_dashboard_page
 from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.file_util import (
     write_bbref_games_for_date_to_file,
@@ -30,7 +28,7 @@ class TestBBRefGamesForDate(BaseTestCase):
     def test_scrape_bbref_games_for_date(self):
         """Verify BBRefGameInfo object is correctly parsed from webpage."""
         response = html.parse(str(self.DAILY_DASH_HTML))
-        result = parse_dashboard_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
+        result = parse_bbref_dashboard_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
         self.assertTrue(result.success)
 
         games_for_date = result.value

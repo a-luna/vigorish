@@ -21,7 +21,7 @@ def scrape_bbref_games_for_date(scrape_date):
     try:
         url = get_dashboard_url_for_date(scrape_date)
         response = request_url(url)
-        return __parse_dashboard_page(response, scrape_date, url)
+        return parse_bbref_dashboard_page(response, scrape_date, url)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
     except Exception as e:
@@ -33,7 +33,7 @@ def get_dashboard_url_for_date(scrape_date):
     y = scrape_date.year
     return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
 
-def __parse_dashboard_page(response, scrape_date, url):
+def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date = BBRefGamesForDate()
     games_for_date.game_date = scrape_date
     games_for_date.game_date_str = scrape_date.strftime(DATE_ONLY)

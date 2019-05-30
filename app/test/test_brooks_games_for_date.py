@@ -30,9 +30,7 @@ class TestBrooksGamesForDate(BaseTestCase):
 
     def test_scrape_brooks_games_for_date(self):
         """Verify BrooksGameInfo objects are correctly parsed from webpage."""
-        result = read_bbref_games_for_date_from_file(
-            self.GAME_DATE, folderpath=self.TEST_FILES_FOLDER
-        )
+        result = read_bbref_games_for_date_from_file(self.GAME_DATE, folderpath=self.TEST_FILES_FOLDER)
         self.assertTrue(result.success)
         bbref_games_for_date = result.value
         game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
