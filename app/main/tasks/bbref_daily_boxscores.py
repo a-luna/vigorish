@@ -34,10 +34,10 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
         if result.failure:
             return result
         scraped_games = result.value
-            for scraped_boxscore in scraped_games:
-                result = update_status_bbref_boxscore(self.db['session'], scraped_boxscore)
-                if result.failure:
-                    return result
+        for scraped_boxscore in scraped_games:
+            result = update_status_bbref_boxscore(self.db['session'], scraped_boxscore)
+            if result.failure:
+                return result
         with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
             for scraped_boxscore in scraped_games:
                 pbar.set_description(self.get_pbar_upload_description(scraped_boxscore.bbref_game_id))
