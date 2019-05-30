@@ -14,7 +14,7 @@ def update_brooks_games_for_date_single_date(session, season, games_for_date):
     result = update_status_brooks_games_for_date(session, games_for_date)
     if result.failure:
         return result
-    result = update_game_status_records(session, season, games_for_date)
+    result = update_game_status_records(session, season, games_for_date.games)
     if result.failure:
         return result
     session.commit()
