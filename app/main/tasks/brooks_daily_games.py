@@ -31,4 +31,5 @@ class ScrapeBrooksDailyGames(BaseTask):
         result = upload_brooks_games_for_date(brooks_games_for_date)
         if result.failure:
             return result
-        return update_brooks_games_for_date_single_date(self.db['session'], self.season, brooks_games_for_date)
+        return update_brooks_games_for_date_single_date(
+            self.db['session'], self.season, brooks_games_for_date, scrape_date)

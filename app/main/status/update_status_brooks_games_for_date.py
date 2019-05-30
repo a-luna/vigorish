@@ -5,13 +5,12 @@ from app.main.util.s3_helper import get_all_brooks_dates_scraped, get_brooks_gam
 from app.main.util.result import Result
 
 
-def update_brooks_games_for_date_single_date(session, season, games_for_date):
-    game_date = games_for_date.game_date
+def update_brooks_games_for_date_single_date(session, season, games_for_date, game_date):
     unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(session, season.id)
     new_brooks_dates = set([game_date]) & set(unscraped_brooks_dates)
     if not new_brooks_dates:
         return Result.Ok()
-    result = update_status_brooks_games_for_date(session, games_for_date)
+    result = update_status_brooks_games_for_date(session, games_for_date, game_date)
     if result.failure:
         return result
     result = update_game_status_records(session, season, games_for_date.games)
@@ -42,15 +41,15 @@ def update_status_brooks_games_for_date_list(session, scraped_brooks_dates):
         if result.failure:
             return result
         games_for_date = result.value
-        result = update_status_brooks_games_for_date(session, games_for_date)
+        result = update_status_brooks_games_for_date(session, games_for_date, game_date)
         if result.failure:
             return result
         new_brooks_games.extend(games_for_date.games)
     return Result.Ok(new_brooks_games)
 
-def update_status_brooks_games_for_date(session, games_for_date):
+def update_status_brooks_games_for_date(session, games_for_date, game_date):
     try:
-        date_id = games_for_date.game_date.strftime(DATE_ONLY_TABLE_ID)
+        date_id = game_date.strftime(DATE_ONLY_TABLE_ID)
         date_status = session.query(DateScrapeStatus).get(date_id)
         if not date_status:
             date_str = games_for_date.game_date.strftime(DATE_ONLY)
