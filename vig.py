@@ -20,7 +20,7 @@ from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
 from app.main.task_list import get_task_list
 from app.main.util.click_params import DateString, MlbDataSet, MlbSeason
-from app.main.util.datetime_util import get_date_range, today_str, current_year
+from app.main.util.datetime_util import get_date_range, today_str, current_year, format_timedelta
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.list_functions import print_list
 from app.main.util.result import Result
@@ -86,6 +86,7 @@ def scrape(db, data_set, start, end, update):
     if result.failure:
         return exit_app_error(session, result)
     (season, date_range, driver, task_list) = result.value
+    start_time = datetime.now()
     click.secho('\nCurrent Task', bold=True)
     with tqdm(total=len(date_range), unit="day", position=0, leave=False) as pbar_date:
         for scrape_date in date_range:
@@ -105,12 +106,16 @@ def scrape(db, data_set, start, end, update):
     driver = None
     if result.failure:
         return exit_app_error(session, result)
+    end_time = datetime.now()
+    duration = end_time - start_time
+    dur_str = format_timedelta(duration)
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
         "Requested data was successfully scraped:\n"
         f"data set....: {data_set}\n"
         f"date range..: {start_str} - {end_str}")
+        f"duration....: {dur_str}"
     print_message(success, fg="green")
     if update:
         result = update_status_for_mlb_season(session, start.year)
@@ -274,12 +279,6 @@ def get_pbar_date_description(date, data_set):
 
 def get_pbar_data_set_description(data_set):
     pre = f"(Data Set)  {data_set}"
-    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
-    return f"{pre}{'.'*pad_len}"
-
-
-def get_pbar_upload_description(game_id, data_set):
-    pre = f"(Uploading) {game_id}"
     pad_len = PBAR_LEN_DICT[data_set] - len(pre)
     return f"{pre}{'.'*pad_len}"
 

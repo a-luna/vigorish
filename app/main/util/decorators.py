@@ -6,7 +6,7 @@ from functools import wraps
 from signal import signal, alarm, SIGALRM
 from time import sleep, time
 
-from app.main.util.datetime_util import format_timedelta_precise
+from app.main.util.datetime_util import format_timedelta
 from app.main.util.dt_format_strings import DT_FORMAT_ISO
 
 
@@ -82,6 +82,6 @@ def measure_time(func):
         exec_finish = datetime.now()
         exec_time = exec_finish - exec_start
         #print(f"{func.__name__} ({func_args_str}) {te-ts:0.2f} sec")
-        print(f"{exec_start.strftime(DT_FORMAT_ISO)} | {func.__name__} | {format_timedelta_precise(exec_time)}")
+        print(f"{exec_start.strftime(DT_FORMAT_ISO)} | {func.__name__} | {format_timedelta(exec_time)}")
         return result
     return wrapper_measure_time
