@@ -40,8 +40,11 @@ class GameScrapeStatus(Base):
             minute=self.game_time_minute,
             tzinfo=tz.gettz(self.game_time_zone))
 
+    @property
+    def game_date_time_str(self):
+        return self.game_date_time.strftime(DT_STR_FORMAT_ALL) if self.game_date_time else None
+
     def __repr__(self):
-        game_date_str = self.game_date.strftime(DT_STR_FORMAT_ALL)
         return f"<GameScrapeStatus bbref_game_id={self.bbref_game_id}>"
 
     def as_dict(self):
@@ -49,6 +52,7 @@ class GameScrapeStatus(Base):
 
     def display(self):
         season_dict = self.as_dict()
+        season_dict['game_date_time'] = self.game_date_time_str
         title = f"SCRAPE STATUS FOR GAME: {self.bbref_game_id}"
         display_dict(season_dict, title=title)
 

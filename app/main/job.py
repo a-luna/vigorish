@@ -53,17 +53,14 @@ class ScrapeJob:
                         pbar_data_set.set_description(self.get_pbar_data_set_description(scrape_task.key_name))
                         result = scrape_task.execute(scrape_date)
                         if result.failure:
-                            break
+                            self.free_resources()
+                            return result
                         time.sleep(randint(250, 300) / 100.0)
                         pbar_data_set.update()
                 pbar_date.update()
-        self.driver.close()
-        self.driver.quit()
-        self.driver = None
-        if result.failure:
-            return result
         end_time = datetime.now()
         self.duration = end_time - start_time
+        self.free_resources()
         return Result.Ok()
 
 
@@ -77,3 +74,9 @@ class ScrapeJob:
         pre = f"Data Set  | {data_set}"
         pad_len = PBAR_LEN_DICT[data_set] - len(pre)
         return f"{pre}{'.'*pad_len}"
+
+
+    def free_resources(self):
+        self.driver.close()
+        self.driver.quit()
+        self.driver = None

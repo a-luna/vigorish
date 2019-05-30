@@ -28,7 +28,7 @@ from app.main.util.result import Result
 @click.pass_context
 def cli(ctx):
     """Vigorish is a tool for scraping various MLB data sets from baseball-reference.com and
-    brooksbaseball.com, including detailed boxscores, pitchfx measurements and player biographical info.
+    brooksbaseball.com (e.g., detailed boxscores, pitchfx measurements, player biographical info).
     """
     engine = create_engine(os.getenv("DATABASE_URL"))
     session_maker = sessionmaker(bind=engine)
