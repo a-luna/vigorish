@@ -4,9 +4,11 @@ from random import randint
 
 from tqdm import tqdm
 
+from app.main.constants import PBAR_LEN_DICT
 from app.main.models.season import Season
 from app.main.task_list import get_task_list
 from app.main.util.datetime_util import get_date_range
+from app.main.util.dt_format_strings import MONTH_NAME_SHORT
 from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
 
@@ -47,8 +49,8 @@ class ScrapeJob:
                 with tqdm(total=len(self.task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
                     for task in self.task_list:
                         scrape_task = task(self.db, self.season, self.driver)
-                        pbar_date.set_description(get_pbar_date_description(scrape_date, scrape_task.key_name))
-                        pbar_data_set.set_description(get_pbar_data_set_description(scrape_task.key_name))
+                        pbar_date.set_description(self.get_pbar_date_description(scrape_date, scrape_task.key_name))
+                        pbar_data_set.set_description(self.get_pbar_data_set_description(scrape_task.key_name))
                         result = scrape_task.execute(scrape_date)
                         if result.failure:
                             break
@@ -63,3 +65,15 @@ class ScrapeJob:
         end_time = datetime.now()
         self.duration = end_time - start_time
         return Result.Ok()
+
+
+    def get_pbar_date_description(self, date, data_set):
+        pre =f"Game Date | {date.strftime(MONTH_NAME_SHORT)}"
+        pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+        return f"{pre}{'.'*pad_len}"
+
+
+    def get_pbar_data_set_description(self, data_set):
+        pre = f"Data Set  | {data_set}"
+        pad_len = PBAR_LEN_DICT[data_set] - len(pre)
+        return f"{pre}{'.'*pad_len}"

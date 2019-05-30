@@ -229,17 +229,5 @@ def print_message(message, fg=None,  bg=None, bold=None, underline=None):
     click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline)
 
 
-def get_pbar_date_description(date, data_set):
-    pre =f"Game Date | {date.strftime(MONTH_NAME_SHORT)}"
-    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
-    return f"{pre}{'.'*pad_len}"
-
-
-def get_pbar_data_set_description(data_set):
-    pre = f"Data Set  | {data_set}"
-    pad_len = PBAR_LEN_DICT[data_set] - len(pre)
-    return f"{pre}{'.'*pad_len}"
-
-
 if __name__ == "__main__":
     cli({})
