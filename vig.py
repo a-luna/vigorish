@@ -87,6 +87,7 @@ def scrape(db, data_set, start, end, update):
         return exit_app_error(session, result)
     (season, date_range, driver, task_list) = result.value
     start_time = datetime.now()
+    print() # place an empty line between the command and the progress bars
     with tqdm(total=len(date_range), unit="day", position=0, leave=False) as pbar_date:
         for scrape_date in date_range:
             with tqdm(total=len(task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
