@@ -25,12 +25,12 @@ class ScrapeJob:
         if result.failure:
             return result
         self.season = result.value
-        self.date_range = get_date_range(start_date, end_date)
+        self.date_range = get_date_range(self.start_date, self.end_date)
         result = get_chromedriver()
         if result.failure:
             return result
         self.driver = result.value
-        result = get_task_list(data_set)
+        result = get_task_list(self.data_set)
         if result.failure:
             return result
         self.task_list = result.value
