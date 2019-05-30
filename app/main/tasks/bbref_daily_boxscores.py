@@ -34,23 +34,11 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
         if result.failure:
             return result
         scraped_games = result.value
-        print(f"\n\nlen(scraped_games): {len(scraped_games)}")
-        time.sleep(2)
-        with tqdm(total=len(scraped_games), unit="file", leave=False, position=2, disable=True) as pbar:
             for scraped_boxscore in scraped_games:
-                print(f"updating boxscore: {scraped_boxscore}")
-                time.sleep(2)
-                pbar.set_description(self.get_pbar_updating_description(scraped_boxscore.bbref_game_id))
                 result = update_status_bbref_boxscore(self.db['session'], scraped_boxscore)
-                print(f"result: {str(result)}")
                 if result.failure:
                     return result
-                time.sleep(2)
-                time.sleep(randint(25, 75) / 100.0)
-                pbar.update()
-        print(f"\nsuccessfully updated all scraped boxscores")
-        time.sleep(2)
-        with tqdm(total=len(scraped_games), unit="file", leave=False, position=2, disable=True) as pbar:
+        with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
             for scraped_boxscore in scraped_games:
                 pbar.set_description(self.get_pbar_upload_description(scraped_boxscore.bbref_game_id))
                 result = upload_bbref_boxscore(scraped_boxscore, scrape_date)
@@ -59,12 +47,6 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
                 time.sleep(randint(50, 100) / 100.0)
                 pbar.update()
         return Result.Ok()
-
-
-    def get_pbar_updating_description(self, game_id):
-        pre = f"Updating  | {game_id}"
-        pad_len = PBAR_LEN_DICT[self.key_name] - len(pre)
-        return f"{pre}{'.'*pad_len}"
 
 
     def get_pbar_upload_description(self, game_id):

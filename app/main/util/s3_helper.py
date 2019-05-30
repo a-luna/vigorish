@@ -298,9 +298,7 @@ def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True)
     if result.failure:
         return result
     filepath = result.value
-    return read_bbref_boxscore_from_file(
-        bbref_game_id, folderpath=filepath.parent, delete_file=True
-    )
+    return read_bbref_boxscore_from_file(bbref_game_id, folderpath=filepath.parent, delete_file=True)
 
 
 def get_all_bbref_boxscores_scraped(year):

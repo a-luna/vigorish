@@ -1,5 +1,3 @@
-import time
-
 from app.main.util.s3_helper import get_all_bbref_boxscores_scraped, get_bbref_boxscore_from_s3
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.result import Result
@@ -33,18 +31,12 @@ def update_status_bbref_boxscore_list(session, new_bbref_game_ids):
 def update_status_bbref_boxscore(session, boxscore):
     try:
         game_status = GameScrapeStatus.find_by_bbref_game_id(session, boxscore.bbref_game_id)
-        print("### GAME STATUS BEFORE UPDATE ###")
-        game_status.display()
-        time.sleep(2)
         if not game_status:
             error = f'scrape_status_game does not contain an entry for bbref_game_id: {boxscore.bbref_game_id}'
             return Result.Fail(error)
         setattr(game_status, 'scraped_bbref_boxscore', 1)
         setattr(game_status, 'pitch_app_count_bbref', boxscore.pitch_appearance_count)
         setattr(game_status, 'total_pitch_count_bbref', boxscore.pitch_count)
-        print("\n### GAME STATUS AFTER UPDATE ###")
-        game_status.display()
-        time.sleep(2)
         return Result.Ok()
     except Exception as e:
         return Result.Fail(f'Error: {repr(e)}')

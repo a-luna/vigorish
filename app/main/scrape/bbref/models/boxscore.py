@@ -59,11 +59,11 @@ class BBRefBoxscore:
 
     @property
     def away_team_pitch_count(self):
-        return sum(pitch_stats.pitch_count for pitch_stats in self.away_team_data.pitching_stats)
+        return sum(int(pitch_stats.pitch_count) for pitch_stats in self.away_team_data.pitching_stats)
 
     @property
     def home_team_pitch_count(self):
-        return sum(pitch_stats.pitch_count for pitch_stats in self.home_team_data.pitching_stats)
+        return sum(int(pitch_stats.pitch_count) for pitch_stats in self.home_team_data.pitching_stats)
 
     @property
     def pitch_count(self):
