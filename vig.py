@@ -36,8 +36,8 @@ from app.main.util.scrape_functions import get_chromedriver
 @click.group()
 @click.pass_context
 def cli(ctx):
-    """Web scraper for various MLB data sets, including detailed boxscores, pitchfx measurements
-    and player biographical info.
+    """Vigorish is a tool for scraping various MLB data sets from baseball-reference.com and
+    brooksbaseball.com, including detailed boxscores, pitchfx measurements and player biographical info.
     """
     engine = create_engine(os.getenv("DATABASE_URL"))
     session_maker = sessionmaker(bind=engine)
@@ -83,7 +83,7 @@ def scrape(db, data_set, start, end, update):
     """Scrape MLB data from websites."""
     engine = db["engine"]
     session = db["session"]
-    job = ScrapeJob(data_set, start, end)
+    job = ScrapeJob(db, data_set, start, end)
     result = job.run()
     if result.failure:
         return exit_app_error(session, result)
