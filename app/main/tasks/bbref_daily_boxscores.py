@@ -33,15 +33,15 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
         result = scrape_bbref_boxscores_for_date(bbref_games_for_date, self.driver)
         if result.failure:
             return result
-        boxscores = result.value
-        for box in boxscores:
-            result = update_status_bbref_boxscore(self.db['session'], boxscore)
+        scraped_games = result.value
+        for scraped_boxscore in scraped_games:
+            result = update_status_bbref_boxscore(self.db['session'], scraped_boxscore)
             if result.failure:
                 return result
-        with tqdm(total=len(boxscores), unit="file", leave=False, position=2) as pbar:
-            for box in boxscores:
-                pbar.set_description(self.get_pbar_upload_description(box.bbref_game_id))
-                result = upload_bbref_boxscore(box, scrape_date)
+        with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
+            for scraped_boxscore in scraped_games:
+                pbar.set_description(self.get_pbar_upload_description(scraped_boxscore.bbref_game_id))
+                result = upload_bbref_boxscore(scraped_boxscore, scrape_date)
                 if result.failure:
                     return result
                 time.sleep(randint(50, 100) / 100.0)
