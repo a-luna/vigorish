@@ -32,9 +32,9 @@ class Result():
 
     def __repr__(self):
         if self.success:
-            return f'Result<(success={self.success}>'
+            return f'Result<success={self.success}>'
         else:
-            return f'Result<(success={self.success}, message="{self.error}")>'
+            return f'Result<success={self.success}, message="{self.error}">'
 
     @classmethod
     def Fail(cls, error):

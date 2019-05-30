@@ -1,17 +1,11 @@
 """CLI application entry point."""
 import os
-import time
-from datetime import datetime, date
-from pathlib import Path
-from random import randint
 
 import click
-from dateutil import parser
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from tqdm import tqdm
 
-from app.main.constants import MLB_DATA_SETS, CLI_COLORS, PBAR_LEN_DICT
+from app.main.constants import MLB_DATA_SETS, CLI_COLORS
 from app.main.job import ScrapeJob
 from app.main.models.base import Base
 from app.main.models.season import Season
@@ -19,13 +13,10 @@ from app.main.models.status_date import DateScrapeStatus
 from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
-from app.main.task_list import get_task_list
 from app.main.util.click_params import DateString, MlbDataSet, MlbSeason
 from app.main.util.datetime_util import get_date_range, today_str, current_year, format_timedelta
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
-from app.main.util.list_functions import print_list
 from app.main.util.result import Result
-from app.main.util.scrape_functions import get_chromedriver
 
 # TODO Create unit tests for all substitution parsing scenarios
 # TODO Track lineup changes to avoid the various name,pos=N/A and lineupslot=0 hacks introduced in order to get boxscores parsing successfully

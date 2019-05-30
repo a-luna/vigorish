@@ -69,6 +69,9 @@ class BBRefBoxscore:
     def pitch_count(self):
         return self.away_team_pitch_count + self.home_team_pitch_count
 
+    def __repr__(self):
+        return f"<BBRefBoxscore bbref_game_id={self.bbref_game_id}>"
+
     def as_dict(self):
         """Convert boxscore to a dictionary."""
         return dict(

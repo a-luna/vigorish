@@ -42,7 +42,7 @@ class GameScrapeStatus(Base):
 
     def __repr__(self):
         game_date_str = self.game_date.strftime(DT_STR_FORMAT_ALL)
-        return f"<GameScrapeStatus date={game_date_str}, season_id={self.season_id}>"
+        return f"<GameScrapeStatus bbref_game_id={self.bbref_game_id}>"
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
