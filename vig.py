@@ -107,15 +107,11 @@ def scrape(db, data_set, start, end, update):
     if result.failure:
         return exit_app_error(session, result)
     end_time = datetime.now()
-    duration = end_time - start_time
-    dur_str = format_timedelta(duration)
-    start_str = start.strftime(MONTH_NAME_SHORT)
-    end_str = end.strftime(MONTH_NAME_SHORT)
     success = (
         "Requested data was successfully scraped:\n"
         f"data set....: {data_set}\n"
-        f"date range..: {start_str} - {end_str}")
-        f"duration....: {dur_str}"
+        f"date range..: {start.strftime(MONTH_NAME_SHORT)} - {end.strftime(MONTH_NAME_SHORT)}"
+        f"duration....: {format_timedelta(end_time - start_time)}")
     print_message(success, fg="green")
     if update:
         result = update_status_for_mlb_season(session, start.year)
