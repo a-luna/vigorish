@@ -75,7 +75,7 @@ def setup(db):
     "--end", type=DateString(), default=today_str, show_default=True, prompt=True,
     help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser.")
 @click.option(
-    "--update/--no-update", default=False, show_default=True,
+    "--update/--no-update", default=True, show_default=True,
     help="Update statistics for scraped dates and games after scraping is complete.")
 @click.pass_obj
 def scrape(db, data_set, start, end, update):

@@ -1,3 +1,8 @@
+import time
+from random import randint
+
+from tqdm import tqdm
+
 from app.main.constants import PBAR_LEN_DICT
 from app.main.models.status_date import DateScrapeStatus
 from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import scrape_bbref_boxscores_for_date
