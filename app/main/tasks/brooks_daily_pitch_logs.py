@@ -1,6 +1,7 @@
 from app.main.models.status_date import DateScrapeStatus
 from app.main.scrape.brooks.scrape_brooks_pitch_logs_for_date import scrape_brooks_pitch_logs_for_date
 from app.main.tasks.base_task import BaseTask
+from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.s3_helper import get_brooks_games_for_date_from_s3, upload_brooks_pitch_logs_for_game
 
 

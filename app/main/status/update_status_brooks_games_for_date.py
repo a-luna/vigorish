@@ -5,6 +5,21 @@ from app.main.util.s3_helper import get_all_brooks_dates_scraped, get_brooks_gam
 from app.main.util.result import Result
 
 
+def update_brooks_games_for_date_single_date(session, season, games_for_date):
+    game_date = games_for_date.game_date
+    unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(session, season.id)
+    new_brooks_dates = set([game_date]) & set(unscraped_brooks_dates)
+    if not new_brooks_dates:
+        return Result.Ok()
+    result = update_status_brooks_games_for_date(session, games_for_date)
+    if result.failure:
+        return result
+    result = update_game_status_records(session, season, games_for_date)
+    if result.failure:
+        return result
+    session.commit()
+    return Result.Ok()
+
 def update_data_set_brooks_games_for_date(session, season):
     result = get_all_brooks_dates_scraped(season.year)
     if result.failure:

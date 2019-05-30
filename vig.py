@@ -85,13 +85,13 @@ def scrape(db, data_set, start, end, update):
     result = get_prerequisites(session, data_set, start, end)
     if result.failure:
         return exit_app_error(session, result)
-    (date_range, driver, task_list) = result.value
+    (season, date_range, driver, task_list) = result.value
     click.secho('\nCurrent Task', bold=True)
     with tqdm(total=len(date_range), unit="day", position=0, leave=False) as pbar_date:
         for scrape_date in date_range:
             with tqdm(total=len(task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
                 for task in task_list:
-                    daily_task = task(db, driver)
+                    daily_task = task(db, season, driver)
                     pbar_date.set_description(get_pbar_date_description(scrape_date, daily_task.key_name))
                     pbar_data_set.set_description(get_pbar_data_set_description(daily_task.key_name))
                     result = daily_task.execute(scrape_date)
@@ -225,6 +225,7 @@ def get_prerequisites(session, data_set, start_date, end_date):
     result = Season.validate_date_range(session, start_date, end_date)
     if result.failure:
         return result
+    season = result.value
     date_range = get_date_range(start_date, end_date)
     result = get_chromedriver()
     if result.failure:
@@ -234,7 +235,7 @@ def get_prerequisites(session, data_set, start_date, end_date):
     if result.failure:
         return result
     task_list = result.value
-    return Result.Ok((date_range, driver, task_list))
+    return Result.Ok((season, date_range, driver, task_list))
 
 
 def update_season_stats(engine, session, year):
