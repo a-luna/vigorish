@@ -35,7 +35,7 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
             return result
         scraped_games = result.value
         for scraped_pitch_logs in scraped_games:
-            result = update_status_brooks_pitch_logs_for_game(session, scraped_pitch_logs)
+            result = update_status_brooks_pitch_logs_for_game(self.db['session'], scraped_pitch_logs)
             if result.failure:
                 return result
         with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:

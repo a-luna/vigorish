@@ -35,7 +35,7 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
             return result
         boxscores = result.value
         for box in boxscores:
-            result = update_status_bbref_boxscore(session, boxscore)
+            result = update_status_bbref_boxscore(self.db['session'], boxscore)
             if result.failure:
                 return result
         with tqdm(total=len(boxscores), unit="file", leave=False, position=2) as pbar:

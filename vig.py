@@ -272,7 +272,7 @@ def get_pbar_date_description(date, data_set):
 
 
 def get_pbar_data_set_description(data_set):
-    pre = f"Data Set  |  {data_set}"
+    pre = f"Data Set  | {data_set}"
     pad_len = PBAR_LEN_DICT[data_set] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
