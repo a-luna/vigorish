@@ -54,15 +54,13 @@ def setup(db):
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
     """
-    engine = db["engine"]
-    session = db["session"]
-    Base.metadata.drop_all(engine)
-    Base.metadata.create_all(engine)
-    result = initialize_database(session)
+    Base.metadata.drop_all(db["engine"])
+    Base.metadata.create_all(db["engine"])
+    result = initialize_database(db["session"])
     if result.failure:
-        return exit_app_error(session, result)
-    refresh_all_mat_views(engine, session)
-    return exit_app_success(session, "Successfully populated database with initial data.")
+        return exit_app_error(db, result)
+    refresh_all_mat_views(db)
+    return exit_app_success(db, "Successfully populated database with initial data.")
 
 
 @cli.command()
@@ -81,25 +79,22 @@ def setup(db):
 @click.pass_obj
 def scrape(db, data_set, start, end, update):
     """Scrape MLB data from websites."""
-    engine = db["engine"]
-    session = db["session"]
+    db['update_s3'] = update
     job = ScrapeJob(db, data_set, start, end)
     result = job.run()
     if result.failure:
-        return exit_app_error(session, result)
+        return exit_app_error(db, result)
     success = (
         "Requested data was successfully scraped:\n"
         f"data set....: {data_set}\n"
         f"date range..: {start.strftime(MONTH_NAME_SHORT)} - {end.strftime(MONTH_NAME_SHORT)}"
         f"duration....: {format_timedelta(job.duration)}")
     print_message(success, fg="green")
-    if update:
-        result = update_status_for_mlb_season(session, season.year)
-        if result.failure:
-            return exit_app_error(session, result)
-        refresh_all_mat_views(engine, session)
-        print_message(season.status_report(), fg="bright_yellow")
-    return exit_app_success(session)
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
+    print_message(season.status_report(), fg="bright_yellow")
+    return exit_app_success(db)
 
 
 @cli.group()
@@ -109,8 +104,7 @@ def scrape(db, data_set, start, end, update):
 @click.pass_obj
 def status(db, update):
     """Report progress of scraped data, by date or MLB season."""
-    db['update_status'] = update
-
+    db['update_s3'] = update
 
 
 @status.command("date")
@@ -118,23 +112,19 @@ def status(db, update):
 @click.pass_obj
 def status_date(db, game_date):
     """Report status for a single date."""
-    engine = db["engine"]
-    session = db["session"]
-    season = Season.find_by_year(session, game_date.year)
-    date_is_valid = Season.is_date_in_season(session, game_date).success
+    season = Season.find_by_year(db["session"], game_date.year)
+    date_is_valid = Season.is_date_in_season(db["session"], game_date).success
     date_str = game_date.strftime(DATE_ONLY)
     if not date_is_valid:
         error = (
             f"'{date_str}' is not within the {season.name}:\n"
             f"season_start_date: {season.start_date_str}\n"
             f"season_end_date: {season.end_date_str}")
-        return exit_app_error(session, error)
-    if db['update_status']:
-        result = update_status_for_mlb_season(session, season.year)
-        if result.failure:
-            return exit_app_error(session, result)
-    refresh_all_mat_views(engine, session)
-    date_status = DateScrapeStatus.find_by_date(session, game_date)
+        return exit_app_error(db, error)
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
+    date_status = DateScrapeStatus.find_by_date(db["session"], game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
     click.secho(
@@ -142,7 +132,7 @@ def status_date(db, game_date):
         fg="cyan",
         bold=True)
     click.secho(date_status.status_report(), fg="cyan")
-    return exit_app_success(session)
+    return exit_app_success(db)
 
 
 @status.command("range")
@@ -156,20 +146,16 @@ def status_date_range(db, start, end):
     For example, all of the following strings are valid ways to represent the same date:
     "2018-5-13" -or- "05/13/2018" -or- "May 13 2018"
     """
-    engine = db["engine"]
-    session = db["session"]
-    result = Season.validate_date_range(session, start, end)
+    result = Season.validate_date_range(db["session"], start, end)
     if result.failure:
         return result
-    if db['update_status']:
-        result = update_status_for_mlb_season(session, start.year)
-        if result.failure:
-            return exit_app_error(session, result)
-    refresh_all_mat_views(engine, session)
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
     date_range = get_date_range(start, end)
     status_date_range = []
     for d in date_range:
-        date_status = DateScrapeStatus.find_by_date(session, d)
+        date_status = DateScrapeStatus.find_by_date(db["session"], d)
         if not date_status:
             error = f"scrape_status_date does not contain an entry for date: {d.strftime(DATE_ONLY)}"
         status_date_range.append(date_status)
@@ -180,7 +166,7 @@ def status_date_range(db, start, end):
         date_str = status.game_date_str
         status_description = status.scrape_status_description
         click.secho(f"{date_str}: {status_description}", fg="bright_magenta")
-    return exit_app_success(session)
+    return exit_app_success(db)
 
 
 @status.command("season")
@@ -188,37 +174,34 @@ def status_date_range(db, start, end):
 @click.pass_obj
 def status_season(db, year):
     """Report status for a single MLB season."""
-    engine = db["engine"]
-    session = db["session"]
-    season = Season.find_by_year(session, year)
-    if db['update_status']:
-        result = update_status_for_mlb_season(session, season.year)
-        if result.failure:
-            return exit_app_error(session, result)
-    refresh_all_mat_views(engine, session)
+    season = Season.find_by_year(db["session"], year)
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
     click.secho(f"### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
     click.secho(season.status_report(), fg="bright_yellow")
-    return exit_app_success(session)
+    return exit_app_success(db)
 
 
-def update_season_stats(engine, session, year):
-    result = update_status_for_mlb_season(session, year)
-    if result.failure:
-        return Result.Fail(error)
-    refresh_all_mat_views(engine, session)
+def refresh_season_data(db, year):
+    if db['update_s3']:
+        result = update_status_for_mlb_season(db['session'], year)
+        if result.failure:
+            return result
+    refresh_all_mat_views(db)
     return Result.Ok()
 
 
-def exit_app_success(session, message=None):
+def exit_app_success(db, message=None):
     if message:
         print_message(message, fg="green")
-    session.close()
+    db['session'].close()
     return 0
 
 
-def exit_app_error(session, result):
+def exit_app_error(db, result):
     print_message(str(result), fg="red")
-    session.close()
+    db['session'].close()
     return 1
 
 
