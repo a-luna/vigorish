@@ -35,8 +35,8 @@ def update_status_bbref_boxscore(session, boxscore):
             error = f'scrape_status_game does not contain an entry for bbref_game_id: {boxscore.bbref_game_id}'
             return Result.Fail(error)
         setattr(game_status, 'scraped_bbref_boxscore', 1)
-        setattr(game_status, 'pitch_app_count_bbref', boxscore.get_pitch_appearance_count())
-        setattr(game_status, 'total_pitch_count_bbref', boxscore.get_pitch_count())
+        setattr(game_status, 'pitch_app_count_bbref', boxscore.pitch_appearance_count)
+        setattr(game_status, 'total_pitch_count_bbref', boxscore.pitch_count)
         return Result.Ok()
     except Exception as e:
         return Result.Fail(f'Error: {repr(e)}')

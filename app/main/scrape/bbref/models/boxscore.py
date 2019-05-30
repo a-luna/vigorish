@@ -27,6 +27,48 @@ class BBRefBoxscore:
     def upload_id(self):
         return self.bbref_game_id
 
+    @property
+    def brooks_game_id(self):
+        result = validate_bbref_game_id(self.bbref_game_id)
+        game_date = result.value["game_date"]
+        game_number = result.value["game_number"]
+        away_team_id = self._get_brooks_team_id(self.away_team_data.team_id_br).lower()
+        home_team_id = self._get_brooks_team_id(self.home_team_data.team_id_br).lower()
+        return f"gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_{away_team_id}mlb_{home_team_id}mlb_{game_number}"
+
+    @property
+    def game_id_dict(self):
+        return {f"{self.bbref_game_id}": f"{self.brooks_game_id}"}
+
+    @property
+    def game_date(self):
+        result = validate_bbref_game_id(self.bbref_game_id)
+        return result.value["game_date"]
+
+    @property
+    def away_team_pitch_appearance_count(self):
+        return len(self.away_team_data.pitching_stats)
+
+    @property
+    def home_team_pitch_appearance_count(self):
+        return len(self.home_team_data.pitching_stats)
+
+    @property
+    def pitch_appearance_count(self):
+        return self.away_team_pitch_appearance_count + self.home_team_pitch_appearance_count
+
+    @property
+    def away_team_pitch_count(self):
+        return sum(pitch_stats.pitch_count for pitch_stats in self.away_team_data.pitching_stats)
+
+    @property
+    def home_team_pitch_count(self):
+        return sum(pitch_stats.pitch_count for pitch_stats in self.home_team_data.pitching_stats)
+
+    @property
+    def pitch_count(self):
+        return self.away_team_pitch_count + self.home_team_pitch_count
+
     def as_dict(self):
         """Convert boxscore to a dictionary."""
         return dict(
@@ -46,39 +88,8 @@ class BBRefBoxscore:
         """Convert boxscore to JSON."""
         return json.dumps(self.as_dict(), indent=2, sort_keys=False)
 
-    def get_game_id_dict(self):
-        result = validate_bbref_game_id(self.bbref_game_id)
-        game_date = result.value["game_date"]
-        game_number = result.value["game_number"]
-        away_team_id = self._get_bb_team_id(self.away_team_data.team_id_br).lower()
-        home_team_id = self._get_bb_team_id(self.home_team_data.team_id_br).lower()
-        bb_game_id = f"gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_{away_team_id}mlb_{home_team_id}mlb_{game_number}"
-        return {f"{self.bbref_game_id}": f"{bb_game_id}"}
-
-    def get_game_date(self):
-        result = validate_bbref_game_id(self.bbref_game_id)
-        return result.value["game_date"]
-
-    def get_away_team_pitch_appearance_count(self):
-        return len(self.away_team_data.pitching_stats)
-
-    def get_home_team_pitch_appearance_count(self):
-        return len(self.home_team_data.pitching_stats)
-
-    def get_pitch_appearance_count(self):
-        return self.get_away_team_pitch_appearance_count() + self.get_home_team_pitch_appearance_count()
-
-    def get_away_team_pitch_count(self):
-        return sum(pitch_stats.pitch_count for pitch_stats in self.away_team_data.pitching_stats)
-
-    def get_home_team_pitch_count(self):
-        return sum(pitch_stats.pitch_count for pitch_stats in self.home_team_data.pitching_stats)
-
-    def get_pitch_count(self):
-        return self.get_away_team_pitch_count() + self.get_home_team_pitch_count()
-
     @staticmethod
-    def _get_bb_team_id(br_team_id):
+    def _get_brooks_team_id(br_team_id):
         if br_team_id in TEAM_ID_DICT:
             return TEAM_ID_DICT[br_team_id]
         return br_team_id

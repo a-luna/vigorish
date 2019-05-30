@@ -12,6 +12,18 @@ class BrooksPitchLogsForGame():
     pitch_logs = []
 
     @property
+    def game_id_dict(self):
+        return {f'{self.bbref_game_id}': f'{self.bb_game_id}'}
+
+    @property
+    def game_date(self):
+        result = validate_bb_game_id(self.bb_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return game_dict['game_date']
+
+    @property
     def upload_id(self):
         return self.bbref_game_id
 
@@ -29,16 +41,6 @@ class BrooksPitchLogsForGame():
     def as_json(self):
         """Convert pitch logs for game to JSON."""
         return json.dumps(self.as_dict(), indent=2)
-
-    def get_game_id_dict(self):
-        return {f'{self.bbref_game_id}': f'{self.bb_game_id}'}
-
-    def get_game_date(self):
-        result = validate_bb_game_id(self.bb_game_id)
-        if result.failure:
-            return result
-        game_dict = result.value
-        return game_dict['game_date']
 
     @staticmethod
     def _flatten(objects):

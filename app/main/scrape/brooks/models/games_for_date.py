@@ -12,9 +12,10 @@ class BrooksGamesForDate():
     games = []
 
 
-    def get_game_id_dict(self):
+    @property
+    def game_id_dict(self):
         dict_list = [
-            g.get_game_id_dict()
+            g.game_id_dict
             for g
             in self.games
             if not g.might_be_postponed

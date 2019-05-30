@@ -67,7 +67,7 @@ class TestBBRefGamesForDate(BaseTestCase):
     def test_persist_bbref_games_for_date(self):
         """Verify BBRefGamesForDate object can be written to file and read from file."""
         response = html.parse(str(self.DAILY_DASH_HTML))
-        result = parse_dashboard_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
+        result = parse_bbref_dashboard_page(response, self.GAME_DATE, self.DAILY_DASH_URL)
         self.assertTrue(result.success)
 
         games_for_date_in = result.value

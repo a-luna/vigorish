@@ -22,6 +22,10 @@ class BrooksGameInfo():
     pitcher_appearance_dict = {}
 
     @property
+    def game_id_dict(self):
+        return {f'{self.bbref_game_id}': f'{self.bb_game_id}'}
+
+    @property
     def game_start_time(self):
         return datetime(
             year=self.game_date_year,
@@ -50,6 +54,3 @@ class BrooksGameInfo():
             pitcher_appearance_count=int(self.pitcher_appearance_count),
             pitcher_appearance_dict=self.pitcher_appearance_dict
         )
-
-    def get_game_id_dict(self):
-        return {f'{self.bbref_game_id}': f'{self.bb_game_id}'}

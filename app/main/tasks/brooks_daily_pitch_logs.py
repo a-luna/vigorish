@@ -34,10 +34,14 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
         if result.failure:
             return result
         scraped_games = result.value
-        for scraped_pitch_logs in scraped_games:
-            result = update_status_brooks_pitch_logs_for_game(self.db['session'], scraped_pitch_logs)
-            if result.failure:
-                return result
+        with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
+            for scraped_pitch_logs in scraped_games:
+                pbar.set_description(self.get_pbar_updating_description(scraped_pitch_logs.bbref_game_id))
+                result = update_status_brooks_pitch_logs_for_game(self.db['session'], scraped_pitch_logs)
+                if result.failure:
+                    return result
+                time.sleep(randint(25, 75) / 100.0)
+                pbar.update()
         with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
             for scraped_pitch_logs in scraped_games:
                 pbar.set_description(self.get_pbar_upload_description(scraped_pitch_logs.bbref_game_id))
@@ -47,6 +51,12 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
                 time.sleep(randint(50, 100) / 100.0)
                 pbar.update()
         return Result.Ok()
+
+
+    def get_pbar_updating_description(self, game_id):
+        pre = f"Updating  | {game_id}"
+        pad_len = PBAR_LEN_DICT[self.key_name] - len(pre)
+        return f"{pre}{'.'*pad_len}"
 
 
     def get_pbar_upload_description(self, game_id):
