@@ -76,9 +76,7 @@ def read_brooks_games_for_date_from_file(game_date, folderpath=None, delete_file
         return Result.Fail(error)
 
 
-def read_brooks_pitch_logs_for_game_from_file(
-    bb_game_id, folderpath=None, delete_file=False
-):
+def read_brooks_pitch_logs_for_game_from_file(bb_game_id, folderpath=None, delete_file=False):
     """Decode BBRefBoxscore object from file."""
     folderpath = folderpath if folderpath else Path.cwd()
     filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(gid=bb_game_id)

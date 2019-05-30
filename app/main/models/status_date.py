@@ -240,6 +240,46 @@ class DateScrapeStatus(Base):
             for date_status in session.query(cls).filter_by(season_id=season_id).all()
             if date_status.scraped_daily_dash_brooks == 0]
 
+    @classmethod
+    def verify_bbref_daily_dashboard_scraped_for_date(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        return date_status.scraped_daily_dash_bbref == 1 if date_status else False
+
+    @classmethod
+    def verify_brooks_daily_dashboard_scraped_for_date(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        return date_status.scraped_daily_dash_brooks == 1 if date_status else False
+
+    @classmethod
+    def verify_all_bbref_boxscores_scraped_for_date(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        return date_status.scraped_all_bbref_boxscores if date_status else False
+
+    @classmethod
+    def verify_all_brooks_pitch_logs_scraped_for_date(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        return date_status.scraped_all_brooks_pitch_logs if date_status else False
+
+    @classmethod
+    def get_all_bbref_game_ids_for_date(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        if not date_status:
+            return None
+        return [
+            game_status.bbref_game_id
+            for game_status
+            in date_status.scrape_status_games]
+
+    @classmethod
+    def get_all_brooks_game_ids_for_date(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        if not date_status:
+            return None
+        return [
+            game_status.bb_game_id
+            for game_status
+            in date_status.scrape_status_games]
+
 
 class DateScrapeStatusMV(MaterializedView):
     __table__ = create_mat_view(

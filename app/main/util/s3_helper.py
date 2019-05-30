@@ -9,7 +9,8 @@ from string import Template
 import boto3
 import botocore
 
-from app.main.util.dt_format_strings import DATE_ONLY
+from app.main.models.status_date import DateScrapeStatus
+from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.file_util import (
     T_BROOKS_GAMESFORDATE_FILENAME,
     read_brooks_games_for_date_from_file,
@@ -40,12 +41,13 @@ T_BR_GAME_KEY = "${year}/bbref_boxscore/${filename}"
 s3_client = boto3.client("s3")
 s3_resource = boto3.resource("s3")
 
-def upload_brooks_games_for_date(games_for_date, scrape_date):
+def upload_brooks_games_for_date(games_for_date):
     """Upload a file to S3 containing json encoded BrooksGamesForDate object."""
     result = write_brooks_games_for_date_to_file(games_for_date)
     if result.failure:
         return result
     filepath = result.value
+    scrape_date = games_for_date.game_date
     s3_key = Template(T_BB_DATE_KEY).substitute(
         year=scrape_date.year, filename=filepath.name
     )
@@ -151,9 +153,7 @@ def download_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
         return Result.Fail(error)
 
 
-def get_brooks_pitch_logs_for_game_from_s3(
-    bb_game_id, folderpath=None, delete_file=True
-):
+def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_file=True):
     """Retrieve BrooksPitchLogsForGame object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
     result = download_brooks_pitch_logs_for_game(bb_game_id, folderpath)
@@ -161,8 +161,25 @@ def get_brooks_pitch_logs_for_game_from_s3(
         return result
     filepath = result.value
     return read_brooks_pitch_logs_for_game_from_file(
-        bb_game_id, folderpath=filepath.parent, delete_file=True
-    )
+        bb_game_id,
+        folderpath=filepath.parent,
+        delete_file=True)
+
+
+def get_all_brooks_pitch_logs_for_date_from_s3(session, game_date, folderpath=None, delete_file=True):
+    """Retrieve a list of BrooksPitchLogsForGame objects for all games that occurred on a date."""
+    all_pitch_logs_scraped = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(session, game_date)
+    if not all_pitch_logs_scraped:
+        error = f"Brooks pitch logs HAVE NOT been scraped for date: {game_date.strftime(DATE_ONLY_2)}"
+        return Result.Fail(error)
+    brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(session, game_date)
+    pitch_logs = []
+    for game_id in brooks_game_ids:
+        result = get_brooks_pitch_logs_for_game_from_s3(game_id, folderpath, delete_file)
+        if result.failure:
+            return result
+        pitch_logs.append(result.value)
+    return Result.Ok(pitch_logs)
 
 
 def get_all_brooks_pitch_logs_scraped(year):
@@ -173,12 +190,13 @@ def get_all_brooks_pitch_logs_scraped(year):
     return Result.Ok(scraped_gameids)
 
 
-def upload_bbref_games_for_date(games_for_date, scrape_date):
+def upload_bbref_games_for_date(games_for_date):
     """Upload a file to S3 containing json encoded BBRefGamesForDate object."""
     result = write_bbref_games_for_date_to_file(games_for_date)
     if result.failure:
         return result
     filepath = result.value
+    scrape_date = games_for_date.game_date
     s3_key = Template(T_BR_DATE_KEY).substitute(year=scrape_date.year, filename=filepath.name)
 
     try:

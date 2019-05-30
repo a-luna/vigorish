@@ -17,10 +17,9 @@ XPATH_BOXSCORE_URL = (
     '//div[contains(@class, "game_summary")]//a[text()="Final"]/@href'
 )
 
-def scrape_bbref_games_for_date(scrape_dict):
-    scrape_date = scrape_dict['date']
-    url = get_dashboard_url_for_date(scrape_date)
+def scrape_bbref_games_for_date(scrape_date):
     try:
+        url = get_dashboard_url_for_date(scrape_date)
         response = request_url(url)
         return __parse_dashboard_page(response, scrape_date, url)
     except RetryLimitExceededError as e:

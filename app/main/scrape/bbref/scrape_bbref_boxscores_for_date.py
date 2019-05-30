@@ -146,8 +146,8 @@ _INNING_TOTALS_PATTERN = (
     r"(?P<runs>\d{1,2})\s\b\w+\b,\s"
     r"(?P<hits>\d{1,2})\s\b\w+\b,\s"
     r"(?P<errors>\d{1,2})\s\b\w+\b,\s"
-    r"(?P<left_on_base>\d{1,2})\s\b\w+\b.\s(\b\w+\b){1,1}(\s\b\w+\b){0,1}\s"
-    r"(?P<away_team_runs>\d{1,2}),\s(\b\w+\b){1,1}(\s\b\w+\b){0,1}\s"
+    r"(?P<left_on_base>\d{1,2})\s\b\w+\b.\s(\b\w+\b)(\s\b\w+\b)?\s"
+    r"(?P<away_team_runs>\d{1,2}),\s(\b\w+\b)(\s\b\w+\b)?\s"
     r"(?P<home_team_runs>\d{1,2})"
 )
 INNING_TOTALS_REGEX = re.compile(_INNING_TOTALS_PATTERN)
@@ -157,15 +157,11 @@ POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
 NUM_REGEX = re.compile(r"[1-9]{1}")
 
 
-def scrape_bbref_boxscores_for_date(scrape_dict):
-    driver = scrape_dict["driver"]
-    scrape_date = scrape_dict["date"]
-    boxscore_urls = scrape_dict["input_data"].boxscore_urls
+def scrape_bbref_boxscores_for_date(games_for_date, driver):
+    scrape_date = games_for_date.game_date
+    boxscore_urls = games_for_date.boxscore_urls
     scraped_boxscores = []
-    with tqdm(
-        total=len(boxscore_urls), unit="boxscore", mininterval=0.12, maxinterval=10,
-        leave=False, position=2
-    ) as pbar:
+    with tqdm(total=len(boxscore_urls), unit="boxscore", leave=False, position=2) as pbar:
         for url in boxscore_urls:
             try:
                 uri = Path(url)
@@ -186,7 +182,7 @@ def scrape_bbref_boxscores_for_date(scrape_dict):
 
 
 def get_pbar_description(game_id):
-    pre =f"(Game ID)     {game_id}"
+    pre =f"(Game ID)   {game_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
@@ -207,16 +203,27 @@ def render_webpage(driver, url):
 def parse_bbref_boxscore(response, url):
     """Parse boxscore data from the page source."""
     (game_id, away_team_id, home_team_id) = _parse_game_and_team_ids(response, url)
+
     (away_team_bat_table,
         home_team_bat_table,
         away_team_pitch_table,
         home_team_pitch_table,
         play_by_play_table) = _parse_data_tables(response)
+
     (away_team_data, home_team_data) = _parse_all_team_data(
-        response, away_team_bat_table, home_team_bat_table, away_team_pitch_table,
-        home_team_pitch_table, away_team_id, home_team_id)
+        response,
+        away_team_bat_table,
+        home_team_bat_table,
+        away_team_pitch_table,
+        home_team_pitch_table,
+        away_team_id,
+        home_team_id)
+
     player_name_dict = _create_player_name_dict(
-        away_team_bat_table, home_team_bat_table, away_team_pitch_table, home_team_pitch_table)
+        away_team_bat_table,
+        home_team_bat_table,
+        away_team_pitch_table,
+        home_team_pitch_table)
 
     result = _parse_game_meta_info(response)
     if result.failure:

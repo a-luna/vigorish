@@ -33,8 +33,7 @@ TEAM_ID_PATTERN = r"\((?P<team_id>[\w]{3})\)"
 TEAM_ID_REGEX = re.compile(TEAM_ID_PATTERN)
 
 
-def scrape_brooks_pitch_logs_for_date(scrape_dict):
-    games_for_date = scrape_dict["input_data"]
+def scrape_brooks_pitch_logs_for_date(games_for_date):
     scraped_games = []
     with tqdm(
         total=len(games_for_date.games), unit="game", mininterval=0.12,
@@ -54,7 +53,7 @@ def scrape_brooks_pitch_logs_for_date(scrape_dict):
 
 
 def get_pbar_game_description(game_id):
-    pre =f"(Game ID)     {game_id}"
+    pre =f"(Game ID)   {game_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
@@ -92,7 +91,7 @@ def parse_pitch_logs_for_game(game):
 
 
 def get_pbar_pitch_log_description(player_id):
-    pre =f"(Pitcher ID)  {player_id}"
+    pre =f"(Player ID) {player_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{' '*pad_len}"
 
