@@ -40,8 +40,7 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
                 return result
         with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
             for scraped_pitch_logs in scraped_games:
-                des = self.get_pbar_upload_description(scraped_pitch_logs.bbref_game_id)
-                pbar.set_description(des)
+                pbar.set_description(self.get_pbar_upload_description(scraped_pitch_logs.bbref_game_id))
                 result = upload_brooks_pitch_logs_for_game(scraped_pitch_logs, scrape_date)
                 if result.failure:
                     return result

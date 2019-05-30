@@ -6,6 +6,7 @@ from tqdm import tqdm
 from app.main.constants import PBAR_LEN_DICT
 from app.main.models.status_date import DateScrapeStatus
 from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import scrape_bbref_boxscores_for_date
+from app.main.status.update_status_bbref_boxscores import update_status_bbref_boxscore
 from app.main.tasks.base_task import BaseTask
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.s3_helper import get_bbref_games_for_date_from_s3, upload_bbref_boxscore
@@ -33,10 +34,13 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
         if result.failure:
             return result
         boxscores = result.value
+        for box in boxscores:
+            result = update_status_bbref_boxscore(session, boxscore)
+            if result.failure:
+                return result
         with tqdm(total=len(boxscores), unit="file", leave=False, position=2) as pbar:
             for box in boxscores:
-                des = self.get_pbar_upload_description(box.bbref_game_id)
-                pbar.set_description(des)
+                pbar.set_description(self.get_pbar_upload_description(box.bbref_game_id))
                 result = upload_bbref_boxscore(box, scrape_date)
                 if result.failure:
                     return result
