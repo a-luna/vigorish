@@ -78,10 +78,10 @@ def scrape(db, data_set, start, end, update):
     success = (
         "Requested data was successfully scraped:\n"
         f"data set....: {data_set}\n"
-        f"date range..: {start.strftime(MONTH_NAME_SHORT)} - {end.strftime(MONTH_NAME_SHORT)}"
+        f"date range..: {start.strftime(MONTH_NAME_SHORT)} - {end.strftime(MONTH_NAME_SHORT)}\n"
         f"duration....: {format_timedelta(job.duration)}")
     print_message(success, fg="green")
-    result = refresh_season_data(db, season.year)
+    result = refresh_season_data(db, start.year)
     if result.failure:
         return exit_app_error(db, result)
     print_message(season.status_report(), fg="bright_yellow")

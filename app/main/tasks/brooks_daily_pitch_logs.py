@@ -48,7 +48,7 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
                 result = upload_brooks_pitch_logs_for_game(scraped_pitch_logs, scrape_date)
                 if result.failure:
                     return result
-                time.sleep(randint(50, 100) / 100.0)
+                time.sleep(randint(25, 75) / 100.0)
                 pbar.update()
         return Result.Ok()
 
