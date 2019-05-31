@@ -46,7 +46,7 @@ class BBRefBoxscore:
         return result.value["game_date"]
 
     @property
-    def away_team_pitch_appearance_count(self):.../,
+    def away_team_pitch_appearance_count(self):
         return len(self.away_team_data.pitching_stats)
 
     @property
@@ -58,7 +58,7 @@ class BBRefBoxscore:
         return self.away_team_pitch_appearance_count + self.home_team_pitch_appearance_count
 
     @property
-    def away_team_pitch_count(self):.....................................................................................................................m
+    def away_team_pitch_count(self):
         return sum(int(pitch_stats.pitch_count) for pitch_stats in self.away_team_data.pitching_stats)
 
     @property
