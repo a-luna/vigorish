@@ -7,6 +7,7 @@ from app.main.setup.populate_teams import populate_teams
 from app.main.util.result import Result
 
 def initialize_database(session):
+    print() # place an empty line between the command and the progress bars
     result = populate_base_tables(session)
     if result.failure:
         return result

@@ -7,7 +7,7 @@ from tqdm import tqdm
 from app.main.constants import PBAR_LEN_DICT
 from app.main.models.season import Season
 from app.main.task_list import get_task_list
-from app.main.util.datetime_util import get_date_range
+from app.main.util.datetime_util import get_date_range, format_timedelta
 from app.main.util.dt_format_strings import MONTH_NAME_SHORT
 from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
@@ -20,30 +20,32 @@ class ScrapeJob:
         self.data_set = data_set
         self.start_date = start_date
         self.end_date = end_date
+        self.status = "Not Started"
 
 
     def initialize(self):
         result = Season.validate_date_range(self.db['session'], self.start_date, self.end_date)
         if result.failure:
-            return result
+            return self.job_failed(result)
         self.season = result.value
         self.date_range = get_date_range(self.start_date, self.end_date)
         result = get_chromedriver()
         if result.failure:
-            return result
+            return self.job_failed(result)
         self.driver = result.value
         result = get_task_list(self.data_set)
         if result.failure:
-            return result
+            return self.job_failed(result)
         self.task_list = result.value
         return Result.Ok()
 
     def run(self):
         result = self.initialize()
         if result.failure:
-            return result
+            return self.job_failed(result)
         print() # place an empty line between the command and the progress bars
-        start_time = datetime.now()
+        self.status = "In Progress"
+        self.start_time = datetime.now()
         with tqdm(total=len(self.date_range), unit="day", position=0, leave=False) as pbar_date:
             for scrape_date in self.date_range:
                 with tqdm(total=len(self.task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
@@ -53,15 +55,11 @@ class ScrapeJob:
                         pbar_data_set.set_description(self.get_pbar_data_set_description(scrape_task.key_name))
                         result = scrape_task.execute(scrape_date)
                         if result.failure:
-                            self.free_resources()
-                            return result
+                            return self.job_failed(result)
                         time.sleep(randint(250, 300) / 100.0)
                         pbar_data_set.update()
                 pbar_date.update()
-        end_time = datetime.now()
-        self.duration = end_time - start_time
-        self.free_resources()
-        return Result.Ok()
+        return self.job_succeeded()
 
 
     def get_pbar_date_description(self, date, data_set):
@@ -76,7 +74,38 @@ class ScrapeJob:
         return f"{pre}{'.'*pad_len}"
 
 
-    def free_resources(self):
-        self.driver.close()
-        self.driver.quit()
-        self.driver = None
+    def job_failed(self, result):
+        self.tear_down()
+        self.status = "Failed"
+        self.result = result
+        return self.result
+
+
+    def job_succeeded(self):
+        self.tear_down()
+        self.status = "Succeeded"
+        return Result.Ok()
+
+
+    def tear_down(self):
+        if self.driver:
+            self.driver.close()
+            self.driver.quit()
+            self.driver = None
+        self.end_time = datetime.now()
+        self.duration = end_time - start_time
+
+
+    def status_report(self):
+        if self.status == "Succeeded":
+            start_str = self.start_date.strftime(MONTH_NAME_SHORT)
+            end_str = self.end_date.strftime(MONTH_NAME_SHORT)
+            return (
+                "Requested data was successfully scraped:\n"
+                f"data set....: {self.data_set}\n"
+                f"date range..: {start_str} - {end_str}\n"
+                f"duration....: {format_timedelta(self.duration)}")
+        elif self.status == "Failed":
+            return str(self.result)
+        else:
+            return self.status
