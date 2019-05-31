@@ -93,7 +93,7 @@ class ScrapeJob:
             self.driver.quit()
             self.driver = None
         self.end_time = datetime.now()
-        self.duration = end_time - start_time
+        self.duration = self.end_time - self.start_time
 
 
     def status_report(self):

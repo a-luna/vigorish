@@ -116,7 +116,7 @@ def status_date(db, game_date):
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
     click.secho(
-        f"### STATUS REPORT FOR {game_date.strftime(MONTH_NAME_SHORT)} ###",
+        f"\n### STATUS REPORT FOR {game_date.strftime(MONTH_NAME_SHORT)} ###",
         fg="cyan",
         bold=True)
     click.secho(date_status.status_report(), fg="cyan")
@@ -150,7 +150,7 @@ def status_date_range(db, start, end):
         status_date_range.append(date_status)
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
-    click.secho(f"### STATUS REPORT FOR {start_str} - {end_str} ###", fg="bright_magenta", bold=True)
+    click.secho(f"\n### STATUS REPORT FOR {start_str} - {end_str} ###", fg="bright_magenta", bold=True)
     for status in status_date_range:
         date_str = status.game_date_str
         status_description = status.scrape_status_description
@@ -167,7 +167,7 @@ def status_season(db, year):
     result = refresh_season_data(db, season.year)
     if result.failure:
         return exit_app_error(db, result)
-    click.secho(f"### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
+    click.secho(f"\n### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
     click.secho(season.status_report(), fg="bright_yellow")
     return exit_app_success(db)
 
