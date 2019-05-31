@@ -77,7 +77,7 @@ def scrape(db, data_set, start, end, update):
         return exit_app_error(db, result)
     print_message(job.status_report(), fg="green")
 
-    season = Season.find_by_year(session, start.year)
+    season = Season.find_by_year(db['session'], start.year)
     result = refresh_season_data(db, season.year)
     if result.failure:
         return exit_app_error(db, result)
