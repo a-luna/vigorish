@@ -70,8 +70,7 @@ class Season(Base):
 
     @hybrid_property
     def total_days_scraped_bbref(self):
-        return self.mat_view.total_days_scraped_bbref if \
-            self.mat_view.total_days_scraped_bbref else 0
+        return self.mat_view.total_days_scraped_bbref if self.mat_view else 0
 
     @hybrid_property
     def percent_complete_bbref_games_for_date(self):
@@ -82,8 +81,7 @@ class Season(Base):
 
     @hybrid_property
     def total_days_scraped_brooks(self):
-        return self.mat_view.total_days_scraped_brooks if \
-            self.mat_view.total_days_scraped_brooks else 0
+        return self.mat_view.total_days_scraped_brooks if self.mat_view else 0
 
     @hybrid_property
     def percent_complete_brooks_games_for_date(self):

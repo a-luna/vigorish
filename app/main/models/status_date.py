@@ -53,8 +53,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_bbref_boxscores_scraped(self):
-        return self.mat_view.total_bbref_boxscores_scraped if \
-            self.mat_view.total_bbref_boxscores_scraped else 0
+        return self.mat_view.total_bbref_boxscores_scraped if self.mat_view else 0
 
     @hybrid_property
     def percent_complete_bbref_boxscores(self):
@@ -69,8 +68,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_brooks_games_scraped(self):
-        return self.mat_view.total_brooks_games_scraped if \
-            self.mat_view.total_brooks_games_scraped else 0
+        return self.mat_view.total_brooks_games_scraped if self.mat_view else 0
 
     @hybrid_property
     def percent_complete_brooks_games(self):
@@ -85,13 +83,11 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_appearances_bbref(self):
-        return self.mat_view.total_pitch_appearances_bbref if \
-            self.mat_view.total_pitch_appearances_bbref else 0
+        return self.mat_view.total_pitch_appearances_bbref if self.mat_view else 0
 
     @hybrid_property
     def total_pitch_appearances_brooks(self):
-        return self.mat_view.total_pitch_appearances_brooks \
-            if self.mat_view.total_pitch_appearances_brooks else 0
+        return self.mat_view.total_pitch_appearances_brooks if self.mat_view else 0
 
     @hybrid_property
     def pitch_appearance_count_difference(self):
@@ -103,13 +99,11 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_count_bbref(self):
-        return self.mat_view.total_pitch_count_bbref if \
-            self.mat_view.total_pitch_count_bbref else 0
+        return self.mat_view.total_pitch_count_bbref if self.mat_view else 0
 
     @hybrid_property
     def total_pitch_count_brooks(self):
-        return self.mat_view.total_pitch_count_brooks if \
-            self.mat_view.total_pitch_count_brooks else 0
+        return self.mat_view.total_pitch_count_brooks if self.mat_view else 0
 
     @hybrid_property
     def pitch_count_difference(self):
