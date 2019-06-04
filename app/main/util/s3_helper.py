@@ -173,10 +173,6 @@ def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_f
 
 def get_all_brooks_pitch_logs_for_date_from_s3(session, game_date, folderpath=None, delete_file=True):
     """Retrieve a list of BrooksPitchLogsForGame objects for all games that occurred on a date."""
-    all_pitch_logs_scraped = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(session, game_date)
-    if not all_pitch_logs_scraped:
-        error = f"Brooks pitch logs HAVE NOT been scraped for date: {game_date.strftime(DATE_ONLY_2)}"
-        return Result.Fail(error)
     brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(session, game_date)
     pitch_logs = []
     for game_id in brooks_game_ids:
