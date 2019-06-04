@@ -73,8 +73,8 @@ def parse_pitchfx_table(response, pitch_log):
     pitchfx_data = []
     column_names = response.xpath(PITCHFX_COLUMN_NAMES)
     table_rows = response.xpath(PITCHFX_TABLE_ROWS)
-    for row in table_rows:
-        result = parse_pitchfx_data(column_names, row, pitch_log)
+    for i, row in enumerate(table_rows):
+        result = parse_pitchfx_data(column_names, row, i, pitch_log)
         if result.failure:
             return result
         pitchfx = result.value
@@ -82,7 +82,7 @@ def parse_pitchfx_table(response, pitch_log):
     return Result.Ok(pitchfx_data)
 
 
-def parse_pitchfx_data(column_names, table_row, pitch_log):
+def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     pitchfx_dict = {}
     for i, name in enumerate(column_names):
         if name.lower() in FILTER_NAMES:
@@ -90,9 +90,12 @@ def parse_pitchfx_data(column_names, table_row, pitch_log):
         query = Template(T_PITCHFX_MEASUREMENT).substitute(i=(i + 1))
         results = table_row.xpath(query)
         if not results:
+            if name == "zone_location":
+                pitchfx_dict['zone_location'] = 99
+                continue
             error = (
-                f"Error occurred attempting to parse '{name}' value from pitchfx table row #{i}.\n"
-                f"Game ID: {pitch_log.bbref_game_id}"
+                f"Error occurred attempting to parse '{name}' value from pitchfx table row #{row_num}.\n"
+                f"Game ID: {pitch_log.bbref_game_id}\n"
                 f"Pitcher: {pitch_log.pitcher_name} ({pitch_log.pitcher_id_mlb})")
             return Result.Fail(error)
         pitchfx_dict[name.lower()] = results[0]
@@ -104,8 +107,6 @@ def parse_pitchfx_data(column_names, table_row, pitch_log):
     pitchfx_dict['bbref_game_id'] = pitch_log.bbref_game_id
     if not pitchfx_dict['play_guid']:
         pitchfx_dict['play_guid'] = str(uuid.uuid4())
-    if not pitchfx_dict['zone_location']:
-        pitchfx_dict['zone_location'] = 99
     pitchfx = BrooksPitchFxData(**pitchfx_dict)
     return Result.Ok(pitchfx)
 

@@ -13,12 +13,17 @@ from app.main.util.file_util import (
 from app.test.base import BaseTestCase
 
 class TestBrooksPitchFxLog(BaseTestCase):
-    PITCH_APP_ID = "98147d5e-197c-457e-bc09-44cf5372f071"
-    GAME_ID = "gid_2018_04_22_houmlb_chamlb_1"
-    PITCHER_ID = "621121"
     APP_TEST_FOLDER = Path.cwd() / "app" / "test"
     TEST_FILES_FOLDER = APP_TEST_FOLDER / "test_files"
-    PITCHFX_HTML = TEST_FILES_FOLDER /  "CHA201804220_621121.html"
+    #PITCH_APP_ID = "98147d5e-197c-457e-bc09-44cf5372f071"
+    #GAME_ID = "gid_2018_04_22_houmlb_chamlb_1"
+    #PITCHER_ID = "621121"
+    #PITCHFX_HTML = TEST_FILES_FOLDER /  "CHA201804220_621121.html"
+
+    PITCH_APP_ID = "c7bb3db7-9be5-437c-b887-1655063a5bbc"
+    GAME_ID = "gid_2019_06_01_nynmlb_arimlb_1"
+    PITCHER_ID = "594798"
+    PITCHFX_HTML = TEST_FILES_FOLDER /  "ARI201906010_594798.html"
 
     def test_scrape_brooks_pitchfx_log(self):
         """Verify BrooksPitchFxLog objects are correctly parsed from webpage."""
