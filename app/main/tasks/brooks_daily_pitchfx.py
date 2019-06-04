@@ -53,14 +53,13 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
         return Result.Ok()
 
 
-
-    def get_pbar_game_id_description(game_id):
+    def get_pbar_game_id_description(self, game_id):
         pre =f"Game ID   | {game_id}"
         pad_len = PBAR_LEN_DICT[self.key_name] - len(pre)
         return f"{pre}{'.'*pad_len}"
 
 
-    def get_pbar_uploading_description(player_id):
+    def get_pbar_uploading_description(self, player_id):
         pre =f"Uploading | {player_id}"
         pad_len = PBAR_LEN_DICT[self.key_name] - len(pre)
         return f"{pre}{'.'*pad_len}"
