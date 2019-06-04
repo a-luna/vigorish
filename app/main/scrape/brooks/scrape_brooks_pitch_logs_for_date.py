@@ -2,12 +2,9 @@
 import re
 import time
 import uuid
-from datetime import datetime, date
 from random import randint
 from string import Template
 
-import requests
-import w3lib.url
 from lxml import html
 from tqdm import tqdm
 
@@ -35,10 +32,7 @@ TEAM_ID_REGEX = re.compile(TEAM_ID_PATTERN)
 
 def scrape_brooks_pitch_logs_for_date(games_for_date):
     scraped_games = []
-    with tqdm(
-        total=len(games_for_date.games), unit="game", mininterval=0.12,
-        maxinterval=10, leave=False, position=2
-    ) as pbar:
+    with tqdm(total=len(games_for_date.games), unit="game", leave=False, position=2) as pbar:
         for game in games_for_date.games:
             if game.might_be_postponed:
                 continue
@@ -66,10 +60,7 @@ def parse_pitch_logs_for_game(game):
     pitch_app_dict = game.pitcher_appearance_dict
 
     scraped_pitch_logs = []
-    with tqdm(
-        total=len(pitch_app_dict), unit="pitch_log", mininterval=0.12,
-        maxinterval=10, leave=False, position=3
-    ) as pbar:
+    with tqdm(total=len(pitch_app_dict), unit="pitch_log",  leave=False, position=3) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
             try:
                 pbar.set_description(get_pbar_pitch_log_description(pitcher_id))

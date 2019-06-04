@@ -52,7 +52,8 @@ PBAR_LEN_DICT = dict(
     bbref_games_for_date=34,
     bbref_boxscore=28,
     brooks_games_for_date=35,
-    brooks_pitch_log=30)
+    brooks_pitch_log=30,
+    brooks_pitchfx=28)
 
 TEAM_ID_DICT = {
     "CHW": "CHA",

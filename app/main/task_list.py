@@ -13,12 +13,13 @@ TASK_LIST_MENU = dict(
     bbref_player=[ScrapeBBrefPlayerBio],
     brooks_games_for_date=[ScrapeBrooksDailyGames],
     brooks_pitch_log=[ScrapeBrooksDailyPitchLogs],
-    brooks_pitchfx=[ScrapeBrooksDailyPitchFx],
+    brooks_pitchfx=[ScrapeBrooksDailyPitchFxLogs],
     all=[
         ScrapeBBRefDailyGames,
         ScrapeBrooksDailyGames,
         ScrapeBBRefDailyBoxscores,
-        ScrapeBrooksDailyPitchLogs])
+        ScrapeBrooksDailyPitchLogs,
+        ScrapeBrooksDailyPitchFxLogs])
 
 
 def get_task_list(data_set):

@@ -24,6 +24,9 @@ from app.main.util.file_util import (
     T_BROOKS_PITCHLOGSFORGAME_FILENAME,
     read_brooks_pitch_logs_for_game_from_file,
     write_brooks_pitch_logs_for_game_to_file,
+    T_BROOKS_PITCHFXLOG_FILENAME,
+    read_brooks_pitchfx_log_from_file,
+    write_brooks_pitchfx_log_to_file
 )
 from app.main.util.result import Result
 from app.main.util.string_functions import validate_bb_game_id
@@ -31,10 +34,12 @@ from app.main.util.string_functions import validate_bb_game_id
 S3_BUCKET = "vig-data"
 T_BB_DATE_FOLDER = "${year}/brooks_games_for_date"
 T_BB_LOG_FOLDER = "${year}/brooks_pitch_logs"
+T_BB_PFX_FOLDER = "${year}/brooks_pitchfx"
 T_BR_DATE_FOLDER = "${year}/bbref_games_for_date"
 T_BR_GAME_FOLDER = "${year}/bbref_boxscore"
 T_BB_DATE_KEY = "${year}/brooks_games_for_date/${filename}"
 T_BB_LOG_KEY = "${year}/brooks_pitch_logs/${filename}"
+T_BB_PFX_KEY = "${year}/brooks_pitchfx/${filename}"
 T_BR_DATE_KEY = "${year}/bbref_games_for_date/${filename}"
 T_BR_GAME_KEY = "${year}/bbref_boxscore/${filename}"
 
@@ -188,6 +193,62 @@ def get_all_brooks_pitch_logs_scraped(year):
     scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
     scraped_gameids = [Path(key).stem for key in scraped_keys]
     return Result.Ok(scraped_gameids)
+
+
+def upload_brooks_pitchfx_log(pitchfx_log):
+    """Upload a file to S3 containing json encoded BrooksPitchFxLog object."""
+    result = write_brooks_pitchfx_log_to_file(pitchfx_log)
+    if result.failure:
+        return result
+    filepath = result.value
+    game_date = pitchfx_log.game_date
+    s3_key = Template(T_BB_PFX_KEY).substitute(year=game_date.year, filename=filepath.name)
+
+    try:
+        s3_client.upload_file(str(filepath), S3_BUCKET, s3_key)
+        filepath.unlink()
+        return Result.Ok()
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
+
+
+def download_brooks_pitchfx_log(pitch_app_id, folderpath=None):
+    """Download a file from S3 containing json encoded BrooksPitchFxLog object."""
+    folderpath = folderpath if folderpath else Path.cwd()
+    filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=pitch_app_id)
+    filepath = folderpath / filename
+    s3_key = Template(T_BB_PFX_KEY).substitute(year=game_date.year, filename=filepath.name)
+
+    try:
+        s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
+        return Result.Ok(filepath)
+    except botocore.exceptions.ClientError as e:
+        if e.response["Error"]["Code"] == "404":
+            error = f'The object "{s3_key}" does not exist.'
+        else:
+            error = repr(e)
+        return Result.Fail(error)
+
+
+def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=True):
+    """Retrieve BrooksPitchFxLog object from json encoded file stored in S3."""
+    folderpath = folderpath if folderpath else Path.cwd()
+    result = download_brooks_pitchfx_log(pitch_app_id, folderpath)
+    if result.failure:
+        return result
+    filepath = result.value
+    return read_brooks_pitchfx_log_from_file(
+        pitch_app_id,
+        folderpath=filepath.parent,
+        delete_file=True)
+
+
+def get_all_brooks_pitchfx_log_ids_scraped(year):
+    s3_folder = Template(T_BB_PFX_FOLDER).substitute(year=year)
+    bucket = boto3.resource("s3").Bucket(S3_BUCKET)
+    scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
+    scraped_pitch_app_ids = [Path(key).stem for key in scraped_keys]
+    return Result.Ok(scraped_pitch_app_ids)
 
 
 def upload_bbref_games_for_date(games_for_date):

@@ -18,6 +18,8 @@ from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.scrape.brooks.models.pitch_log import BrooksPitchLog
 from app.main.scrape.brooks.models.pitch_logs_for_game import BrooksPitchLogsForGame
+from app.main.scrape.brooks.models.pitchfx import BrooksPitchFxData
+from app.main.scrape.brooks.models.pitchfx_log import BrooksPitchFxLog
 from app.main.util.result import Result
 
 
@@ -418,6 +420,45 @@ def decode_brooks_pitch_log(json_dict):
             pitch_log.pitchfx_url = json_dict["pitchfx_url"]
             pitch_log.pitch_log_url = json_dict["pitch_log_url"]
             return Result.Ok(pitch_log)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+
+def decode_brooks_pitchfx_log(json_dict):
+    if "__brooks_pitchfx_log__" in json_dict:
+        try:
+            all_pitchfx_data = []
+            for pitchfx in json_dict['pitchfx_log']:
+                result = decode_brooks_pitchfx_data(pitchfx)
+                if result.failure:
+                    return result
+                all_pitchfx_data.append(result.value)
+            pitchfx_log = BrooksPitchFxLog(
+                pitchfx_log=all_pitchfx_data,
+                pitch_count_by_inning=json_dict['pitch_count_by_inning'],
+                pitcher_name=json_dict['pitcher_name'],
+                pitcher_id_mlb=json_dict['pitcher_id_mlb'],
+                pitch_app_id=json_dict['pitch_app_id'],
+                total_pitch_count=json_dict['total_pitch_count'],
+                pitcher_team_id_bb=json_dict['pitcher_team_id_bb'],
+                opponent_team_id_bb=json_dict['opponent_team_id_bb'],
+                bb_game_id=json_dict['bb_game_id'],
+                bbref_game_id=json_dict['bbref_game_id'],
+                pitchfx_url=json_dict['pitchfx_url']
+            )
+            return Result.Ok(pitchfx_log)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+
+def decode_brooks_pitchfx_data(json_dict):
+    if "__brooks_pitchfx_data__" in json_dict:
+        try:
+            del json_dict["__brooks_pitchfx_data__"]
+            pitchfx = BrooksPitchFxData(**json_dict)
+            return Result.Ok(pitchfx)
         except Exception as e:
             error = f"Error: {repr(e)}"
             return Result.Fail(error)

@@ -1,7 +1,9 @@
 """CLI application entry point."""
 import os
+from pathlib import Path
 
 import click
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -23,6 +25,7 @@ from app.main.util.result import Result
 # TODO Create config file and config.example with settings for AWS auth, S3 bucket name/local folder path, DB URL, chrome/chromedriver binaries
 # TODO Create vig config command which prompts user for values listed above and writes to config file.
 
+DOTENV_PATH = Path.cwd() / ".env"
 
 @click.group()
 @click.pass_context
@@ -30,6 +33,8 @@ def cli(ctx):
     """Vigorish is a tool for scraping various MLB data sets from baseball-reference.com and
     brooksbaseball.com (e.g., detailed boxscores, pitchfx measurements, player biographical info).
     """
+    if DOTENV_PATH.is_file():
+        load_dotenv(DOTENV_PATH)
     engine = create_engine(os.getenv("DATABASE_URL"))
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
@@ -75,7 +80,7 @@ def scrape(db, data_set, start, end, update):
     result = job.run()
     if result.failure:
         return exit_app_error(db, result)
-    print_message(job.status_report(), fg="green")
+    print_message(job.status_report, fg="green")
 
     season = Season.find_by_year(db['session'], start.year)
     result = refresh_season_data(db, season.year)

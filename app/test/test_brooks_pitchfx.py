@@ -1,0 +1,45 @@
+from pathlib import Path
+
+from lxml import html
+
+from app.main.scrape.brooks.scrape_brooks_pitchfx import parse_pitchfx_log
+from app.main.scrape.brooks.models.pitchfx_log import BrooksPitchFxLog
+from app.main.scrape.brooks.models.pitchfx import BrooksPitchFxData
+from app.main.util.file_util import (
+    read_brooks_pitch_logs_for_game_from_file,
+    write_brooks_pitchfx_log_to_file,
+    read_brooks_pitchfx_log_from_file
+)
+from app.test.base import BaseTestCase
+
+class TestBrooksPitchFxLog(BaseTestCase):
+    PITCH_APP_ID = "98147d5e-197c-457e-bc09-44cf5372f071"
+    GAME_ID = "gid_2018_04_22_houmlb_chamlb_1"
+    PITCHER_ID = "621121"
+    APP_TEST_FOLDER = Path.cwd() / "app" / "test"
+    TEST_FILES_FOLDER = APP_TEST_FOLDER / "test_files"
+    PITCHFX_HTML = TEST_FILES_FOLDER /  "CHA201804220_621121.html"
+
+    def test_scrape_brooks_pitchfx_log(self):
+        """Verify BrooksPitchFxLog objects are correctly parsed from webpage."""
+        result = read_brooks_pitch_logs_for_game_from_file(self.GAME_ID, folderpath=self.TEST_FILES_FOLDER)
+        self.assertTrue(result.success)
+        pitch_logs_for_game = result.value
+        pitch_log = pitch_logs_for_game.pitch_logs[0]
+
+        response = html.parse(str(self.PITCHFX_HTML))
+        result = parse_pitchfx_log(response, pitch_log)
+        self.assertTrue(result.success)
+        pitchfx_log = result.value
+
+        result = write_brooks_pitchfx_log_to_file(pitchfx_log, folderpath=self.APP_TEST_FOLDER)
+        self.assertTrue(result.success)
+        filepath = result.value
+        self.assertEqual(filepath.name, f"{self.PITCH_APP_ID}.json")
+
+        result = read_brooks_pitchfx_log_from_file(self.PITCH_APP_ID, folderpath=self.APP_TEST_FOLDER)
+        self.assertTrue(result.success)
+        pitchfx_log_out = result.value
+
+        filepath.unlink()
+        self.assertFalse(filepath.exists())

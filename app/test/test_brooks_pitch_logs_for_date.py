@@ -1,7 +1,4 @@
-import json
-import unittest
 from datetime import datetime
-from dateutil import tz
 from pathlib import Path
 
 from lxml import html
@@ -15,7 +12,6 @@ from app.main.util.file_util import (
     read_brooks_pitch_logs_for_game_from_file,
     write_brooks_pitch_logs_for_game_to_file,
 )
-from app.main.util.result import Result
 from app.main.util.string_functions import validate_bbref_game_id_list
 from app.test.base import BaseTestCase
 

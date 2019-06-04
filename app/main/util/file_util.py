@@ -10,11 +10,13 @@ from app.main.util.json_decoders import (
     decode_bbref_games_for_date,
     decode_bbref_boxscore,
     decode_brooks_pitch_logs_for_game,
+    decode_brooks_pitchfx_log
 )
 from app.main.util.result import Result
 
 T_BROOKS_GAMESFORDATE_FILENAME = "brooks_games_for_date_${date}.json"
 T_BROOKS_PITCHLOGSFORGAME_FILENAME = "${gid}.json"
+T_BROOKS_PITCHFXLOG_FILENAME = "${pid}.json"
 T_BBREF_GAMESFORDATE_FILENAME = "bbref_games_for_date_${date}.json"
 T_BBREF_BOXSCORE_FILENAME = "${gid}.json"
 
@@ -32,6 +34,11 @@ def write_brooks_pitch_logs_for_game_to_file(pitch_logs_for_game, folderpath=Non
     )
     json_dict = pitch_logs_for_game.as_json()
     return write_json_dict_to_file(json_dict, filename, folderpath)
+
+
+def write_brooks_pitchfx_log_to_file(pitchfx_log, folderpath=None):
+    filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=pitchfx_log.pitch_app_id)
+    return write_json_dict_to_file(pitchfx_log.as_json(), filename, folderpath)
 
 
 def write_bbref_games_for_date_to_file(games_for_date, folderpath=None):
@@ -86,6 +93,21 @@ def read_brooks_pitch_logs_for_game_from_file(bb_game_id, folderpath=None, delet
         if delete_file:
             filepath.unlink()
         return decode_brooks_pitch_logs_for_game(json.loads(contents))
+    except Exception as e:
+        error = f"Error: {repr(e)}"
+        return Result.Fail(error)
+
+
+def read_brooks_pitchfx_log_from_file(pitch_app_id, folderpath=None, delete_file=False):
+    """Decode BrooksPitchFxLog object from json file."""
+    folderpath = folderpath if folderpath else Path.cwd()
+    filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=pitch_app_id)
+    filepath = folderpath / filename
+    try:
+        contents = filepath.read_text()
+        if delete_file:
+            filepath.unlink()
+        return decode_brooks_pitchfx_log(json.loads(contents))
     except Exception as e:
         error = f"Error: {repr(e)}"
         return Result.Fail(error)
