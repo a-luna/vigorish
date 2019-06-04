@@ -1,6 +1,14 @@
+import time
+from random import randint
+
+from tqdm import tqdm
+
+from app.main.constants import PBAR_LEN_DICT
 from app.main.models.status_date import DateScrapeStatus
 from app.main.scrape.brooks.scrape_brooks_pitchfx import scrape_brooks_pitchfx_logs_for_game
 from app.main.tasks.base_task import BaseTask
+from app.main.util.dt_format_strings import DATE_ONLY_2
+from app.main.util.result import Result
 from app.main.util.s3_helper import get_brooks_pitch_logs_for_game_from_s3, upload_brooks_pitchfx_log
 
 
@@ -12,7 +20,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
         all_pitch_logs_scraped = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
             self.db['session'], scrape_date)
         if not all_pitch_logs_scraped:
-            error = f"Brooks pitch logs HAVE NOT been scraped for date: {game_date.strftime(DATE_ONLY_2)}"
+            error = f"Brooks pitch logs HAVE NOT been scraped for date: {scrape_date.strftime(DATE_ONLY_2)}"
             return Result.Fail(error)
         brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(
             self.db['session'], scrape_date)
