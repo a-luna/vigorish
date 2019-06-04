@@ -9,7 +9,7 @@ from app.main.scrape.brooks.scrape_brooks_pitchfx import scrape_brooks_pitchfx_l
 from app.main.tasks.base_task import BaseTask
 from app.main.util.dt_format_strings import DATE_ONLY_2
 from app.main.util.result import Result
-from app.main.util.s3_helper import get_brooks_pitch_logs_for_game_from_s3, upload_brooks_pitchfx_log
+from app.main.util.s3_helper import get_all_brooks_pitch_logs_for_date_from_s3, upload_brooks_pitchfx_log
 
 
 class ScrapeBrooksDailyPitchFxLogs(BaseTask):
@@ -22,14 +22,13 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
         #if not all_pitch_logs_scraped:
         #    error = f"Brooks pitch logs HAVE NOT been scraped for date: {scrape_date.strftime(DATE_ONLY_2)}"
         #    return Result.Fail(error)
-        brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(self.db['session'], scrape_date)
-        with tqdm(total=len(brooks_game_ids), unit="game", leave=False, position=2) as pbar_game_id:
-            for brooks_game_id in brooks_game_ids:
-                pbar_game_id.set_description(self.get_pbar_game_id_description(brooks_game_id))
-                result = get_brooks_pitch_logs_for_game_from_s3(brooks_game_id)
-                if result.failure:
-                    return result
-                pitch_logs_for_game = result.value
+        result = get_all_brooks_pitch_logs_for_date_from_s3(self.db['session'], scrape_date)
+        if result.failure:
+            return result
+        pitch_logs_for_date = result.value
+        with tqdm(total=len(pitch_logs_for_date), unit="game", leave=False, position=2) as pbar_game_id:
+            for pitch_logs_for_game in pitch_logs_for_date:
+                pbar_game_id.set_description(self.get_pbar_game_id_description(pitch_logs_for_game.bbref_game_id))
                 result = scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game)
                 if result.failure:
                     return result

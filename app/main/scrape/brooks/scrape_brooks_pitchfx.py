@@ -95,8 +95,10 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
                 continue
             error = (
                 f"Error occurred attempting to parse '{name}' value from pitchfx table row #{row_num}.\n"
-                f"Game ID: {pitch_log.bbref_game_id}\n"
-                f"Pitcher: {pitch_log.pitcher_name} ({pitch_log.pitcher_id_mlb})")
+                f"Game ID.......: {pitch_log.bbref_game_id}\n"
+                f"Pitcher.......: {pitch_log.pitcher_name} ({pitch_log.pitcher_id_mlb})\n"
+                f"PitchFX URL...: {pitch_log.pitchfx_url}\n"
+                f"Partial Data..: {pitchfx_dict}")
             return Result.Fail(error)
         pitchfx_dict[name.lower()] = results[0]
     pitchfx_dict['pitcher_name'] = pitch_log.pitcher_name
