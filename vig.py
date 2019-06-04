@@ -194,7 +194,7 @@ def exit_app_success(db, message=None):
 
 
 def exit_app_error(db, result):
-    print_message(str(result), fg="red")
+    print_message(result.error, fg="red")
     db['session'].close()
     return 1
 

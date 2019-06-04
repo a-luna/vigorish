@@ -94,7 +94,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
                 pitchfx_dict['zone_location'] = 99
                 continue
             error = (
-                f"Error occurred attempting to parse '{name}' from pitchfx table:\n"
+                f"Error occurred attempting to parse '{name}' (column #{i}) from pitchfx table:\n"
                 f"Game ID.......: {pitch_log.bbref_game_id}\n"
                 f"Pitcher.......: {pitch_log.pitcher_name} ({pitch_log.pitcher_id_mlb})\n"
                 f"Row Number....: {row_num}\n"
