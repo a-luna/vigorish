@@ -9,11 +9,13 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
     display_name = "PitchFX for pitching appearance (brooksbaseball.com)"
 
     def execute(self, scrape_date):
-        all_pitch_logs_scraped = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(session, scrape_date)
+        all_pitch_logs_scraped = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
+            self.db['session'], scrape_date)
         if not all_pitch_logs_scraped:
             error = f"Brooks pitch logs HAVE NOT been scraped for date: {game_date.strftime(DATE_ONLY_2)}"
             return Result.Fail(error)
-        brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(session, scrape_date)
+        brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(
+            self.db['session'], scrape_date)
         with tqdm(total=len(brooks_game_ids), unit="game", leave=False, position=2) as pbar_game_id:
             for brooks_game_id in brooks_game_ids:
                 pbar_game_id.set_description(self.get_pbar_game_id_description(brooks_game_id))
@@ -47,17 +49,17 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
 
     def get_pbar_game_id_description(game_id):
         pre =f"Game ID   | {game_id}"
-        pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
+        pad_len = PBAR_LEN_DICT[self.key_name] - len(pre)
         return f"{pre}{'.'*pad_len}"
 
 
     def get_pbar_uploading_description(player_id):
         pre =f"Uploading | {player_id}"
-        pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
+        pad_len = PBAR_LEN_DICT[self.key_name] - len(pre)
         return f"{pre}{'.'*pad_len}"
 
 
     def get_pbar_updating_description(player_id):
         pre =f"Updating | {player_id}"
-        pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
+        pad_len = PBAR_LEN_DICT[self.key_name] - len(pre)
         return f"{pre}{'.'*pad_len}"
