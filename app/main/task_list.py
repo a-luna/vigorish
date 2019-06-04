@@ -3,7 +3,7 @@ from app.main.tasks.bbref_daily_games import ScrapeBBRefDailyGames
 from app.main.tasks.bbref_player_bio import ScrapeBBrefPlayerBio
 from app.main.tasks.brooks_daily_games import ScrapeBrooksDailyGames
 from app.main.tasks.brooks_daily_pitch_logs import ScrapeBrooksDailyPitchLogs
-from app.main.tasks.brooks_daily_pitchfx import ScrapeBrooksDailyPitchFx
+from app.main.tasks.brooks_daily_pitchfx import ScrapeBrooksDailyPitchFxLogs
 from app.main.util.result import Result
 
 
