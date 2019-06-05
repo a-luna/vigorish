@@ -39,7 +39,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
                 scraped_count += len(pitchfx_logs_for_game)
                 scraped_pitchfx_logs[bbref_game_id] = pitchfx_logs_for_game
                 pbar_game_id.update()
-        with tqdm(total=len(scraped_count), unit="file", leave=False, position=2) as pbar_uploading:
+        with tqdm(total=scraped_count, unit="file", leave=False, position=2) as pbar_uploading:
             for bbref_game_id, pitchfx_logs_for_game in scraped_pitchfx_logs.items():
                 pbar_uploading.set_description(self.get_pbar_uploading_description(bbref_game_id))
                 for pitchfx_log in pitchfx_logs_for_game:
