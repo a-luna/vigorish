@@ -48,7 +48,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
                 #            self.get_pbar_updating_description(pitchfx_log.pitcher_id_mlb))
                 #        time.sleep(randint(25, 75) / 100.0)
                 #        pbar_uploading.update()
-                #pbar_game_id.update()
+                pbar_game_id.update()
         return Result.Ok()
 
 
