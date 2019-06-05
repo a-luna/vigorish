@@ -26,29 +26,34 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
         if result.failure:
             return result
         pitch_logs_for_date = result.value
+        scraped_count = 0
+        scraped_pitchfx_logs = {}
         with tqdm(total=len(pitch_logs_for_date), unit="game", leave=False, position=2) as pbar_game_id:
             for pitch_logs_for_game in pitch_logs_for_date:
-                pbar_game_id.set_description(self.get_pbar_game_id_description(pitch_logs_for_game.bbref_game_id))
+                bbref_game_id = pitch_logs_for_game.bbref_game_id
+                pbar_game_id.set_description(self.get_pbar_game_id_description(bbref_game_id))
                 result = scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game)
                 if result.failure:
                     return result
                 pitchfx_logs_for_game = result.value
-                with tqdm(total=len(pitchfx_logs_for_game), unit="file", leave=False, position=3) as pbar_uploading:
-                    for pitchfx_log in pitchfx_logs_for_game:
-                        pbar_uploading.set_description(
-                            self.get_pbar_uploading_description(pitchfx_log.pitcher_id_mlb))
-                        result = upload_brooks_pitchfx_log(pitchfx_log)
-                        if result.failure:
-                            return result
-                        time.sleep(randint(25, 75) / 100.0)
-                        pbar_uploading.update()
-                #with tqdm(total=len(pitchfx_logs_for_game), unit="pitchfx", leave=False, position=3) as pbar_updating:
-                #    for pitchfx_log in pitchfx_logs_for_game:
-                #        pbar_updating.set_description(
-                #            self.get_pbar_updating_description(pitchfx_log.pitcher_id_mlb))
-                #        time.sleep(randint(25, 75) / 100.0)
-                #        pbar_uploading.update()
+                scraped_count += len(pitchfx_logs_for_game)
+                scraped_pitchfx_logs[bbref_game_id] = pitchfx_logs_for_game
                 pbar_game_id.update()
+        with tqdm(total=len(scraped_count), unit="file", leave=False, position=2) as pbar_uploading:
+            for bbref_game_id, pitchfx_logs_for_game in scraped_pitchfx_logs.items():
+                pbar_uploading.set_description(self.get_pbar_uploading_description(bbref_game_id))
+                for pitchfx_log in pitchfx_logs_for_game:
+                    result = upload_brooks_pitchfx_log(pitchfx_log)
+                    if result.failure:
+                        return result
+                    time.sleep(randint(25, 75) / 100.0)
+                    pbar_uploading.update()
+        #with tqdm(total=len(pitchfx_logs_for_game), unit="pitchfx", leave=False, position=3) as pbar_updating:
+        #    for pitchfx_log in pitchfx_logs_for_game:
+        #        pbar_updating.set_description(
+        #            self.get_pbar_updating_description(pitchfx_log.pitcher_id_mlb))
+        #        time.sleep(randint(25, 75) / 100.0)
+        #        pbar_uploading.update()
         return Result.Ok()
 
 
