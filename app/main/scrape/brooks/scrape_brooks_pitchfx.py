@@ -25,6 +25,9 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game):
     pitchfx_logs_for_game = []
     with tqdm(total=len(pitch_logs_for_game.pitch_logs), unit="pitch_log", leave=False, position=3) as pbar:
         for pitch_log in pitch_logs_for_game.pitch_logs:
+            if not pitch_log.parsed_all_info:
+                pbar.update()
+                continue
             try:
                 pbar.set_description(get_pbar_description(pitch_log.pitcher_id_mlb))
                 response = request_url(pitch_log.pitchfx_url)
