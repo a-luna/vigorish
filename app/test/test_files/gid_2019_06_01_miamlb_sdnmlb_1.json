@@ -1,0 +1,171 @@
+{
+  "__brooks_pitch_logs_for_game__": true,
+  "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+  "bbref_game_id": "SDN201906010",
+  "pitch_log_count": 9,
+  "pitch_logs": [
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Jose Urena",
+      "pitcher_id_mlb": 570632,
+      "pitch_app_id": "d76fb3d2-45cb-41f3-9c02-ff97d95a4d7c",
+      "total_pitch_count": 95,
+      "pitch_count_by_inning": {
+        "1": 12,
+        "2": 25,
+        "3": 10,
+        "4": 11,
+        "5": 17,
+        "6": 20
+      },
+      "pitcher_team_id_bb": "MIA",
+      "opponent_team_id_bb": "SDN",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=570632&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=570632.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Tayron Guerrero",
+      "pitcher_id_mlb": 594027,
+      "pitch_app_id": "8db275e8-958a-44be-a0dc-7af88cb16f23",
+      "total_pitch_count": 13,
+      "pitch_count_by_inning": {
+        "7": 13
+      },
+      "pitcher_team_id_bb": "MIA",
+      "opponent_team_id_bb": "SDN",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=594027&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=594027.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Nick Anderson",
+      "pitcher_id_mlb": 623433,
+      "pitch_app_id": "30fe656d-660e-4882-8a46-9a7d35e3ba17",
+      "total_pitch_count": 13,
+      "pitch_count_by_inning": {
+        "8": 13
+      },
+      "pitcher_team_id_bb": "MIA",
+      "opponent_team_id_bb": "SDN",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=623433&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=623433.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Adam Conley",
+      "pitcher_id_mlb": 543045,
+      "pitch_app_id": "0db6e206-b171-41dc-85bf-794ed9bcf4de",
+      "total_pitch_count": 7,
+      "pitch_count_by_inning": {
+        "9": 7
+      },
+      "pitcher_team_id_bb": "MIA",
+      "opponent_team_id_bb": "SDN",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543045&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=543045.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Nick Margevicius",
+      "pitcher_id_mlb": 676606,
+      "pitch_app_id": "06f4c69f-4466-4e6f-bf39-da5645c83eb2",
+      "total_pitch_count": 53,
+      "pitch_count_by_inning": {
+        "1": 12,
+        "2": 10,
+        "3": 13,
+        "4": 18
+      },
+      "pitcher_team_id_bb": "SDN",
+      "opponent_team_id_bb": "MIA",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=676606&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=676606.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Luis Perdomo",
+      "pitcher_id_mlb": 606131,
+      "pitch_app_id": "26533e48-2947-4e3e-9490-fab86a117c08",
+      "total_pitch_count": 37,
+      "pitch_count_by_inning": {
+        "4": 25,
+        "5": 12
+      },
+      "pitcher_team_id_bb": "SDN",
+      "opponent_team_id_bb": "MIA",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=606131&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=606131.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Adam Warren",
+      "pitcher_id_mlb": 476589,
+      "pitch_app_id": "4f511c83-ce28-448e-a478-e3dffbb06210",
+      "total_pitch_count": 43,
+      "pitch_count_by_inning": {
+        "6": 27,
+        "7": 16
+      },
+      "pitcher_team_id_bb": "SDN",
+      "opponent_team_id_bb": "MIA",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=476589&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=476589.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Brad Wieck",
+      "pitcher_id_mlb": 623364,
+      "pitch_app_id": "3be3b365-25c4-47d5-b328-01088c95df42",
+      "total_pitch_count": 15,
+      "pitch_count_by_inning": {
+        "8": 15
+      },
+      "pitcher_team_id_bb": "SDN",
+      "opponent_team_id_bb": "MIA",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=623364&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=623364.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Robbie Erlin",
+      "pitcher_id_mlb": 572362,
+      "pitch_app_id": "5fd5d7f4-1277-41fd-9b56-afca904de36d",
+      "total_pitch_count": 19,
+      "pitch_count_by_inning": {
+        "9": 19
+      },
+      "pitcher_team_id_bb": "SDN",
+      "opponent_team_id_bb": "MIA",
+      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "bbref_game_id": "SDN201906010",
+      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=572362&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=572362.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
+    }
+  ]
+}

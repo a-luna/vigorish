@@ -14,6 +14,7 @@ class BrooksPitchFxData():
     opponent_team_id_bb: str = ""
     bb_game_id: str = ""
     bbref_game_id: str = ""
+    table_row_number: str = "0"
     park_sv_id: str = ""
     play_guid: str = ""
     ab_total: str = "0"
@@ -73,6 +74,7 @@ class BrooksPitchFxData():
             opponent_team_id_bb=self.opponent_team_id_bb,
             bb_game_id=self.bb_game_id,
             bbref_game_id=self.bbref_game_id,
+            table_row_number=int(self.table_row_number),
             park_sv_id=self.park_sv_id,
             play_guid=self.play_guid,
             ab_total=int(self.ab_total),

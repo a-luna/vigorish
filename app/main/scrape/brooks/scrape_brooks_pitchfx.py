@@ -79,7 +79,7 @@ def parse_pitchfx_table(response, pitch_log):
             return result
         pitchfx = result.value
         pitchfx_data.append(pitchfx)
-    return Result.Ok(pitchfx_data)
+    return fix_missing_des(pitchfx_data, pitch_log)
 
 
 def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
@@ -92,6 +92,12 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
         if not results:
             if name == "zone_location":
                 pitchfx_dict['zone_location'] = 99
+                continue
+            if name == "des":
+                pitchfx_dict['des'] = "missing_des"
+                continue
+            if name == "play_guid":
+                pitchfx_dict['play_guid'] = str(uuid.uuid4())
                 continue
             error = (
                 f"Error occurred attempting to parse '{name}' (column #{i}) from pitchfx table:\n"
@@ -108,10 +114,39 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     pitchfx_dict['opponent_team_id_bb'] = pitch_log.opponent_team_id_bb
     pitchfx_dict['bb_game_id'] = pitch_log.bb_game_id
     pitchfx_dict['bbref_game_id'] = pitch_log.bbref_game_id
-    if not pitchfx_dict['play_guid']:
-        pitchfx_dict['play_guid'] = str(uuid.uuid4())
+    pitchfx_dict['table_row_number'] = row_num
     pitchfx = BrooksPitchFxData(**pitchfx_dict)
     return Result.Ok(pitchfx)
+
+
+def fix_missing_des(pitchfx_data, pitch_log):
+    missing_des = any([pfx.des == "missing_des" for pfx in pitchfx_data])
+    if not missing_des:
+        return Result.Ok(pitchfx_data)
+    fix_ab_ids = list(set([pfx.ab_id for pfx in pitchfx_data if pfx.des == "missing_des"]))
+    for ab_id in fix_ab_ids:
+        missing_des_this_ab = [
+            pfx for pfx in pitchfx_data
+            if pfx.ab_id == ab_id
+            and pfx.des == "missing_des"]
+        valid_des_this_ab = list(set([
+            pfx.des for pfx in pitchfx_data
+            if pfx.ab_id == ab_id
+            and not pfx.des == "missing_des"]))
+        if len(valid_des_this_ab) == 0:
+            continue
+        if len(valid_des_this_ab) == 1:
+            for pfx in missing_des_this_ab:
+                pfx.des = valid_des_this_ab[0]
+            continue
+        error = (
+            f"Unable to fix missing description for pitchfx ab_id={ab_id}\n"
+            f"Game ID.......: {pitch_log.bbref_game_id}\n"
+            f"Pitcher.......: {pitch_log.pitcher_name} ({pitch_log.pitcher_id_mlb})\n"
+            f"PitchFX URL...: {pitch_log.pitchfx_url}\n"
+            f"des values....: {valid_des_this_ab}")
+        return Result.Fail(error)
+    return Result.Ok(pitchfx_data)
 
 
 def get_pitch_count_by_inning(pitchfx_data):
