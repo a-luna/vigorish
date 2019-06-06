@@ -208,12 +208,12 @@ def upload_brooks_pitchfx_log(pitchfx_log):
         return Result.Fail(f"Error: {repr(e)}")
 
 
-def download_brooks_pitchfx_log(pitch_app_id, folderpath=None):
+def download_brooks_pitchfx_log(pitch_app_id, year, folderpath=None):
     """Download a file from S3 containing json encoded BrooksPitchFxLog object."""
     folderpath = folderpath if folderpath else Path.cwd()
     filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=pitch_app_id)
     filepath = folderpath / filename
-    s3_key = Template(T_BB_PFX_KEY).substitute(year=game_date.year, filename=filepath.name)
+    s3_key = Template(T_BB_PFX_KEY).substitute(year=year, filename=filepath.name)
 
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))

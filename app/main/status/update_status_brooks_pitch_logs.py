@@ -1,4 +1,5 @@
 from app.main.models.season import Season
+from app.main.models.status_date import DateScrapeStatus
 from app.main.models.status_game import GameScrapeStatus
 from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
 from app.main.util.s3_helper import get_all_brooks_pitch_logs_scraped, get_brooks_pitch_logs_for_game_from_s3

@@ -100,6 +100,9 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
             if name == "des":
                 pitchfx_dict['des'] = "missing_des"
                 continue
+            if name == "pdes":
+                pitchfx_dict['pdes'] = "missing_pdes"
+                continue
             if name == "play_guid":
                 pitchfx_dict['play_guid'] = str(uuid.uuid4())
                 continue

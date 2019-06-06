@@ -13,15 +13,15 @@ def update_data_set_brooks_pitchfx(session, season):
     new_pitch_app_ids = set(scraped_pitch_app_ids) & set(unscraped_pitch_app_ids)
     if not new_pitch_app_ids:
         return Result.Ok()
-    result = update_status_brooks_pitchfx_log_list(session, new_pitch_app_ids)
+    result = update_status_brooks_pitchfx_log_list(session, season, new_pitch_app_ids)
     if result.failure:
         return result
     return Result.Ok()
 
 
-def update_status_brooks_pitchfx_log_list(session, new_pitch_app_ids):
+def update_status_brooks_pitchfx_log_list(session, season, new_pitch_app_ids):
     for pitch_app_id in new_pitch_app_ids:
-        result = get_brooks_pitchfx_log_from_s3(pitch_app_id)
+        result = get_brooks_pitchfx_log_from_s3(pitch_app_id, season.year)
         if result.failure:
             return result
         pitchfx_log = result.value
@@ -34,7 +34,7 @@ def update_status_brooks_pitchfx_log_list(session, new_pitch_app_ids):
 def update_pitch_appearance_status_records(session, pitchfx_log):
     try:
         pitch_app_id = pitchfx_log.pitch_app_id
-        pitch_app_status = PitchAppearanceScrapeStatus.find_by_pitch_app_id(pitch_app_id)
+        pitch_app_status = PitchAppearanceScrapeStatus.find_by_pitch_app_id(session, pitch_app_id)
         if not pitch_app_status:
             error = f'scrape_status_pitch_app does not contain an entry for pitch_app_id: {pitch_app_id}'
             return Result.Fail(error)
