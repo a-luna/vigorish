@@ -75,6 +75,6 @@ def create_pitch_appearance_status_records_for_game(session, season, pitch_logs_
             setattr(pitch_app_status, 'scrape_status_date_id', date_status.id)
             setattr(pitch_app_status, 'season_id', season.id)
             session.add(pitch_app_status)
-            return Result.Ok()
         except Exception as e:
             return Result.Fail(f'Error: {repr(e)}')
+    return Result.Ok()
