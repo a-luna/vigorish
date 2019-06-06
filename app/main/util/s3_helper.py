@@ -239,7 +239,7 @@ def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=Tr
         delete_file=True)
 
 
-def get_all_brooks_pitchfx_log_ids_scraped(year):
+def get_all_brooks_pitchfx_pitch_app_ids_scraped(year):
     s3_folder = Template(T_BB_PFX_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)
     scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]

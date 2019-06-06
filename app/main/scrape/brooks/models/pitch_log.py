@@ -1,4 +1,5 @@
 """A single pitching appearance scraped from brooksbaseball.com."""
+from app.main.util.string_functions import validate_bb_game_id
 
 class BrooksPitchLog():
     """A single pitching appearance scraped from brooksbaseball.com."""
@@ -15,6 +16,14 @@ class BrooksPitchLog():
     bbref_game_id = ""
     pitchfx_url = ""
     pitch_log_url = ""
+
+    @property
+    def game_date(self):
+        result = validate_bb_game_id(self.bb_game_id)
+        if result.failure:
+            return None
+        game_dict = result.value
+        return game_dict['game_date']
 
     def as_dict(self):
         """Convert pitch log to a dictionary."""

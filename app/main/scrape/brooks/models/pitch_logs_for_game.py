@@ -19,7 +19,7 @@ class BrooksPitchLogsForGame():
     def game_date(self):
         result = validate_bb_game_id(self.bb_game_id)
         if result.failure:
-            return result
+            return None
         game_dict = result.value
         return game_dict['game_date']
 

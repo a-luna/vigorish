@@ -70,6 +70,103 @@ TEAM_ID_DICT = {
     "WSN": "WAS",
 }
 
+PITCH_TYPE_DICT = dict(
+    CH="Changeup",
+    CU="Curveball",
+    EP="Eephus",
+    FA="Fastball",
+    FC="Cutter",
+    FF="Four-seam Fastball",
+    FS="Splitter",
+    FT="Two-seam Fastball",
+    FO="Forkball",
+    IN="Intent ball",
+    KC="Knuckle ball Curve",
+    KN="Knuckle ball",
+    PO="Pitch Out",
+    SC="Screwball",
+    SI="Sinker",
+    SL="Slider",
+)
+
+AT_BAT_RESULTS_ALL = [
+    "Bunt Groundout",
+    "Bunt Lineout",
+    "Bunt Pop Out",
+    "Double",
+    "Double Play",
+    "Field Error",
+    "Fielders Choice",
+    "Fielders Choice Out",
+    "Flyout",
+    "Forceout",
+    "Grounded Into DP",
+    "Groundout",
+    "Hit By Pitch",
+    "Home Run",
+    "Intent Walk",
+    "Lineout",
+    "Pop Out",
+    "Runner Out",
+    "Sac Bunt",
+    "Sac Fly",
+    "Sac Fly DP",
+    "Single",
+    "Strikeout",
+    "Strikeout - DP",
+    "Triple",
+    "Walk",
+]
+
+AT_BAT_RESULTS_HIT = [
+    "Double",
+    "Home Run",
+    "Single",
+    "Triple",
+]
+
+AT_BAT_RESULTS_K = [
+    "Strikeout",
+    "Strikeout - DP",
+]
+
+AT_BAT_RESULTS_BB = [
+    "Intent Walk",
+    "Walk",
+]
+
+AT_BAT_RESULTS_HBP = [
+    "Hit By Pitch",
+]
+
+AT_BAT_RESULTS_OUT = [
+    "Bunt Groundout",
+    "Bunt Lineout",
+    "Bunt Pop Out",
+    "Double Play",
+    "Field Error",
+    "Fielders Choice",
+    "Fielders Choice Out",
+    "Flyout",
+    "Forceout",
+    "Grounded Into DP",
+    "Groundout",
+    "Lineout",
+    "Pop Out",
+    "Runner Out",
+    "Sac Bunt",
+    "Sac Fly",
+    "Sac Fly DP",
+    "Strikeout",
+    "Strikeout - DP",
+]
+
+AT_BAT_RESULTS_DP = [
+    "Double Play",
+    "Grounded Into DP",
+    "Strikeout - DP",
+]
+
 VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dome"]
 
 BROOKS_DASHBOARD_DATE_FORMAT = "%m/%d/%Y"

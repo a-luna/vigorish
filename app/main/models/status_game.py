@@ -1,11 +1,26 @@
 from datetime import datetime
 from dateutil import tz
 
+from sqlalchemy import (
+    Index,
+    Column,
+    Boolean,
+    Integer,
+    String,
+    DateTime,
+    ForeignKey,
+    select,
+    func,
+    join,
+)
 from sqlalchemy import Column, Boolean, Integer, String, DateTime, ForeignKey
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app.main.models.base import Base
+from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
+from app.main.models.views.materialized_view import MaterializedView
+from app.main.models.views.materialized_view_factory import create_mat_view
 from app.main.util.dt_format_strings import DT_STR_FORMAT_ALL
 from app.main.util.list_functions import display_dict
 
@@ -26,9 +41,16 @@ class GameScrapeStatus(Base):
     pitch_app_count_brooks = Column(Integer, default=0)
     total_pitch_count_bbref = Column(Integer, default=0)
     total_pitch_count_brooks = Column(Integer, default=0)
-
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
+
+    scrape_status_pitchfx = relationship("PitchAppearanceScrapeStatus", backref="scrape_status_game")
+    mat_view = relationship(
+        "Game_PitchApp_ScrapeStatusMV",
+        backref="original",
+        uselist=False,
+        primaryjoin="GameScrapeStatus.id==Game_PitchApp_ScrapeStatusMV.id",
+        foreign_keys="Game_PitchApp_ScrapeStatusMV.id")
 
     @hybrid_property
     def game_date_time(self):
@@ -97,3 +119,23 @@ class GameScrapeStatus(Base):
         return [
             game_status.bbref_game_id for game_status
             in session.query(cls).filter_by(season_id=season_id).all()]
+
+
+class Game_PitchApp_ScrapeStatusMV(MaterializedView):
+    __table__ = create_mat_view(
+        Base.metadata,
+        "game_pitch_app_status_mv",
+        select([
+            GameScrapeStatus.id.label("id"),
+            func.sum(PitchAppearanceScrapeStatus.scraped_pitchfx).label("total_pitchfx_logs_scraped"),
+            func.sum(PitchAppearanceScrapeStatus.pitch_count_pitch_log).label("total_pitch_count_pitch_log"),
+            func.sum(PitchAppearanceScrapeStatus.pitch_count_pitchfx).label("total_pitch_count_pitchfx")])
+        .select_from(join(
+            GameScrapeStatus,
+            PitchAppearanceScrapeStatus,
+            GameScrapeStatus.id == PitchAppearanceScrapeStatus.scrape_status_game_id,
+            isouter=True))
+        .group_by(GameScrapeStatus.id))
+
+
+Index("game_pitch_app_status_mv_id_idx", Game_PitchApp_ScrapeStatusMV.id, unique=True)
