@@ -55,10 +55,9 @@ def update_game_status_records_for_game(session, pitch_logs_for_game):
         return Result.Fail(f'Error: {repr(e)}')
 
 def create_pitch_appearance_status_records_for_game(session, season, pitch_logs_for_game):
-    unscraped_pitch_app_ids = \
-        PitchAppearanceScrapeStatus.get_all_unscraped_pitch_app_ids_for_season(session, season.id)
+    all_pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids(session, season.id)
     scraped_pitch_app_ids = [plog.pitch_app_id for plog in pitch_logs_for_game.pitch_logs]
-    update_pitch_app_ids = set(scraped_pitch_app_ids) & set(unscraped_pitch_app_ids)
+    update_pitch_app_ids = set(scraped_pitch_app_ids).difference(set(all_pitch_app_ids))
     for pitch_log in pitch_logs_for_game.pitch_logs:
         if pitch_log.pitch_app_id not in update_pitch_app_ids:
             continue

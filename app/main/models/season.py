@@ -226,7 +226,7 @@ class Season(Base):
         return (
             f"Days Scraped (Total/BBref/Brooks)......: {self.total_days}/{self.total_days_scraped_bbref:,}/{self.total_days_scraped_brooks:,}\n"
             f"Games Scraped (Total/BBref/Brooks).....: {self.total_games}/{self.total_bbref_boxscores_scraped:,}/{self.total_brooks_games_scraped:,}\n"
-            f"PitchFX Scraped (Total/Brooks).........: {self.total_pitch_appearances_brooks}/{self.total_pitchfx_logs_scraped}"
+            f"PitchFX Scraped (Total/Brooks).........: {self.total_pitch_appearances_brooks}/{self.total_pitchfx_logs_scraped}\n"
             f"Pitch Appearances (Diff/BBref/Brooks)..: {self.pitch_appearance_diff:,}/{self.total_pitch_appearances_bbref:,}/{self.total_pitch_appearances_brooks:,})\n"
             f"Pitch Count (Diff/BBref/Brooks)........: {self.total_pitch_count_diff:,}/{self.total_pitch_count_bbref:,}/{self.total_pitch_count_brooks:,})\n"
         )
