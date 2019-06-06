@@ -5,6 +5,7 @@ from app.main.status.update_status_bbref_boxscores import update_data_set_bbref_
 from app.main.status.update_status_bbref_games_for_date import update_data_set_bbref_games_for_date
 from app.main.status.update_status_brooks_games_for_date import update_data_set_brooks_games_for_date
 from app.main.status.update_status_brooks_pitch_logs import update_data_set_brooks_pitch_logs
+from app.main.status.update_status_brooks_pitchfx import update_data_set_brooks_pitchfx
 from app.main.util.result import Result
 
 
@@ -25,22 +26,29 @@ def update_status_for_mlb_season(session, year):
         return result
 
     spinner.text = f'Updating MLB {year} brooks_games_for_date...'
-    spinner.color = "green"
+    spinner.color = "cyan"
     result = update_data_set_brooks_games_for_date(session, season)
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
         return result
 
     spinner.text = f'Updating MLB {year} bbref_boxscores...'
-    spinner.color = "cyan"
+    spinner.color = "green"
     result = update_data_set_bbref_boxscores(session, season)
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
         return result
 
     spinner.text = f'Updating MLB {year} brooks_pitch_logs...'
-    spinner.color = "magenta"
+    spinner.color = "blue"
     result = update_data_set_brooks_pitch_logs(session, season)
+    if result.failure:
+        spinner.stop_and_persist("😢", "Fail").clear()
+        return result
+
+    spinner.text = f'Updating MLB {year} brooks_pitchfx...'
+    spinner.color = "magenta"
+    result = update_data_set_brooks_pitchfx(session, season)
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
         return result

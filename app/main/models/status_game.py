@@ -45,7 +45,7 @@ class GameScrapeStatus(Base):
     season_id = Column(Integer, ForeignKey("season.id"))
 
     scrape_status_pitchfx = relationship("PitchAppearanceScrapeStatus", backref="scrape_status_game")
-    mat_view = relationship(
+    mat_view_scrape_status_pitch_app = relationship(
         "Game_PitchApp_ScrapeStatusMV",
         backref="original",
         uselist=False,
@@ -62,9 +62,25 @@ class GameScrapeStatus(Base):
             minute=self.game_time_minute,
             tzinfo=tz.gettz(self.game_time_zone))
 
-    @property
+    @hybrid_property
     def game_date_time_str(self):
         return self.game_date_time.strftime(DT_STR_FORMAT_ALL) if self.game_date_time else None
+
+    @hybrid_property
+    def total_pitchfx_logs_scraped(self):
+        return self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped \
+            if self.mat_view_scrape_status_pitch_app else 0
+
+    @hybrid_property
+    def percent_complete_pitchfx_logs(self):
+        if self.pitch_app_count_brooks == 0:
+            return 0.0
+        perc = self.total_pitchfx_logs_scraped / float(self.pitch_app_count_brooks)
+        return perc * 100;
+
+    @hybrid_property
+    def scraped_all_pitchfx_logs(self):
+        return self.percent_complete_pitchfx_logs == 100
 
     def __repr__(self):
         return f"<GameScrapeStatus bbref_game_id={self.bbref_game_id}>"

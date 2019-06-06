@@ -38,7 +38,7 @@ def update_status_brooks_pitch_logs_for_game(session, pitch_logs_for_game, game_
     if result.failure:
         return result
     season = Season.find_by_year(session, game_date.year)
-    return create_pitch_appearance_status_records_for_game(session, pitch_logs_for_game)
+    return create_pitch_appearance_status_records_for_game(session, season, pitch_logs_for_game)
 
 def update_game_status_records_for_game(session, pitch_logs_for_game):
     try:
