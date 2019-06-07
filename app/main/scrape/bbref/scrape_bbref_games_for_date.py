@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 from string import Template
 
@@ -14,10 +15,13 @@ from app.main.util.string_functions import validate_bbref_game_id
 
 DATA_SET = "bbref_games_for_date"
 
-XPATH_BOXSCORE_URL = (
-    '//div[@id="content"]//div[@class="game_summaries"]'
-    '//div[contains(@class, "game_summary")]//a[text()="Final"]/@href'
-)
+XPATH_BOXSCORE_URL_MAIN_CONTENT = (
+    '//div[@id="content"]//div[contains(@class, "game_summaries")]'
+    '//td[contains(@class, "gamelink")]/a/@href')
+
+XPATH_BOXSCORE_URL_HEADER_NAV = (
+    '//li[@id="header_scores"]//div[contains(@class, "game_summaries")]'
+    '//td[contains(@class, "gamelink")]/a/@href')
 
 def scrape_bbref_games_for_date(scrape_date):
     try:
@@ -40,24 +44,41 @@ def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date.game_date = scrape_date
     games_for_date.game_date_str = scrape_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
-
-    boxscore_urls = response.xpath(XPATH_BOXSCORE_URL)
+    boxscore_urls = response.xpath(XPATH_BOXSCORE_URL_MAIN_CONTENT)
     if not boxscore_urls:
         games_for_date.game_count = 0
         return Result.Ok(games_for_date)
+    result = verify_boxscore_urls(boxscore_urls, scrape_date, url)
+    if result.failure:
+        return result
+    boxscore_urls = result.value
     games_for_date.boxscore_urls = []
     for rel_url in boxscore_urls:
         if 'allstar' in rel_url:
             continue
-        box_url = urljoin(url, rel_url)
-        result = verify_boxscore_date(box_url, scrape_date)
-        if result.failure:
-            return result
-        games_for_date.boxscore_urls.append(box_url)
+        games_for_date.boxscore_urls.append(urljoin(url, rel_url))
     games_for_date.game_count = len(games_for_date.boxscore_urls)
     return Result.Ok(games_for_date)
 
-def verify_boxscore_date(box_url, scrape_date):
+def verify_boxscore_urls(boxscore_urls, scrape_date, url):
+    result = verify_boxscore_date(boxscore_urls, scrape_date)
+    if result.success:
+        return Result.Ok(boxscore_urls)
+    if date.today() != scrape_date:
+        return result
+    boxscore_urls = response.xpath(XPATH_BOXSCORE_URL_HEADER_NAV)
+    if not boxscore_urls:
+        error = (
+            "Unknown error occurred, failed to parse any boxscore URLs from BBref daily "
+            f"dashboard page ({url})")
+        return Result.Fail(error)
+    result = verify_boxscore_date(boxscore_urls, scrape_date)
+    if result.failure:
+        return result
+    return Result.Ok(boxscore_urls)
+
+def verify_boxscore_date(boxscore_urls, scrape_date):
+    box_url = urljoin(url, boxscore_urls[0])
     game_id = Path(box_url).stem
     result = validate_bbref_game_id(game_id)
     if result.failure:
