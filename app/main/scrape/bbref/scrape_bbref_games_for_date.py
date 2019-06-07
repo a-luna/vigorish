@@ -1,3 +1,4 @@
+from pathlib import Path
 from string import Template
 
 from urllib.parse import urljoin
@@ -5,9 +6,10 @@ from urllib.parse import urljoin
 from app.main.constants import T_BBREF_DASH_URL
 from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.decorators import RetryLimitExceededError
-from app.main.util.dt_format_strings import DATE_ONLY
+from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
+from app.main.util.string_functions import validate_bbref_game_id
 
 
 DATA_SET = "bbref_games_for_date"
@@ -43,12 +45,29 @@ def parse_bbref_dashboard_page(response, scrape_date, url):
     if not boxscore_urls:
         games_for_date.game_count = 0
         return Result.Ok(games_for_date)
-
     games_for_date.boxscore_urls = []
     for rel_url in boxscore_urls:
         if 'allstar' in rel_url:
             continue
         box_url = urljoin(url, rel_url)
+        result = verify_boxscore_date(box_url, scrape_date)
+        if result.failure:
+            return result
         games_for_date.boxscore_urls.append(box_url)
     games_for_date.game_count = len(games_for_date.boxscore_urls)
     return Result.Ok(games_for_date)
+
+def verify_boxscore_date(box_url, scrape_date):
+    game_id = Path(box_url).stem
+    result = validate_bbref_game_id(game_id)
+    if result.failure:
+        return result
+    game_dict = result.value
+    if not game_dict['game_date'] == scrape_date:
+        scrape_date_str = scrape_date.strftime(DATE_ONLY_2)
+        error = (
+            f"BBref boxscore dashboard URL for {scrape_date_str} redirected to game results "
+            f"for the previous day. Please try again when boxscores for {scrape_date_str} are available."
+        )
+        return Result.Fail(error)
+    return Result.Ok()
