@@ -73,7 +73,6 @@ def __add_mlb_seasons(session):
         for season in tqdm(
             mlb_seasons,
             desc='Populating mlb_season table..',
-            ncols=100,
             unit='row',
             mininterval=0.12,
             maxinterval=5,

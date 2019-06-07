@@ -54,7 +54,6 @@ def __import_idmap_csv(session):
         with tqdm(
             total=len(df_ids),
             desc='Populating player_id table...',
-            ncols=100,
             unit='row',
             mininterval=0.12,
             maxinterval=5,
@@ -125,7 +124,6 @@ def __import_people_csv(session):
         with tqdm(
             total=len(df_player),
             desc='Populating player table......',
-            ncols=100,
             unit='row',
             mininterval=0.12,
             maxinterval=5,
@@ -170,4 +168,3 @@ def __import_people_csv(session):
         error = 'Error: {error}'.format(error=repr(e))
         session.rollback()
         return Result.Fail(error)
-

@@ -10,7 +10,6 @@ def populate_status_tables(session):
         mlb_seasons = Season.all_regular_seasons(session)
         with tqdm(
             total=len(mlb_seasons),
-            ncols=100,
             unit='season',
             mininterval=0.12,
             maxinterval=5,

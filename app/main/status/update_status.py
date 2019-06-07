@@ -26,7 +26,7 @@ def update_status_for_mlb_season(session, year):
         return result
 
     spinner.text = f'Updating MLB {year} brooks_games_for_date...'
-    spinner.color = "cyan"
+    spinner.color = "white"
     result = update_data_set_brooks_games_for_date(session, season)
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
@@ -40,7 +40,7 @@ def update_status_for_mlb_season(session, year):
         return result
 
     spinner.text = f'Updating MLB {year} brooks_pitch_logs...'
-    spinner.color = "blue"
+    spinner.color = "cyan"
     result = update_data_set_brooks_pitch_logs(session, season)
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()

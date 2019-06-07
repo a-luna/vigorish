@@ -23,7 +23,6 @@ def __link_player_tables(session):
         for p in tqdm(
             session.query(Player).all(),
             desc='Linking player tables........',
-            ncols=100,
             unit='row',
             mininterval=0.12,
             maxinterval=5,
@@ -43,7 +42,6 @@ def __link_teams_and_seasons(session):
         for team in tqdm(
             session.query(Team).all(),
             desc='Linking team/season tables...',
-            ncols=100,
             unit='row',
             mininterval=0.12,
             maxinterval=5,
