@@ -61,7 +61,7 @@ def parse_bbref_dashboard_page(response, scrape_date, url):
     return Result.Ok(games_for_date)
 
 def verify_boxscore_urls(boxscore_urls, scrape_date, url):
-    result = verify_boxscore_date(boxscore_urls, scrape_date)
+    result = verify_boxscore_date(boxscore_urls, scrape_date, url)
     if result.success:
         return Result.Ok(boxscore_urls)
     if date.today() != scrape_date:
@@ -72,7 +72,7 @@ def verify_boxscore_urls(boxscore_urls, scrape_date, url):
             "Unknown error occurred, failed to parse any boxscore URLs from BBref daily "
             f"dashboard page ({url})")
         return Result.Fail(error)
-    result = verify_boxscore_date(boxscore_urls, scrape_date)
+    result = verify_boxscore_date(boxscore_urls, scrape_date, url)
     if result.failure:
         return result
     return Result.Ok(boxscore_urls)
