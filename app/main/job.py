@@ -64,6 +64,7 @@ class ScrapeJob:
                         result = scrape_task.execute(scrape_date)
                         if result.failure:
                             return self._job_failed(result)
+                        self.db['session'].commit()
                         time.sleep(randint(250, 300) / 100.0)
                         pbar_data_set.update()
                 pbar_date.update()

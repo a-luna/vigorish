@@ -77,7 +77,7 @@ def verify_boxscore_urls(boxscore_urls, scrape_date, url):
         return result
     return Result.Ok(boxscore_urls)
 
-def verify_boxscore_date(boxscore_urls, scrape_date):
+def verify_boxscore_date(boxscore_urls, scrape_date, url):
     box_url = urljoin(url, boxscore_urls[0])
     game_id = Path(box_url).stem
     result = validate_bbref_game_id(game_id)

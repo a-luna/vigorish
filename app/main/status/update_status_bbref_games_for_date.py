@@ -21,7 +21,6 @@ def update_bbref_games_for_date_single_date(session, season, games_for_date):
     result = create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids)
     if result.failure:
         return result
-    session.commit()
     return Result.Ok()
 
 def update_data_set_bbref_games_for_date(session, season):
