@@ -18,7 +18,7 @@ def update_bbref_games_for_date_single_date(session, season, games_for_date):
     if result.failure:
         return result
     new_bbref_game_ids = [Path(url).stem for url in games_for_date.boxscore_urls]
-    result = create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids)
+    result = create_game_status_records(session, season, new_bbref_game_ids)
     if result.failure:
         return result
     return Result.Ok()
@@ -32,13 +32,13 @@ def update_data_set_bbref_games_for_date(session, season):
     update_bbref_dates = set(scraped_bbref_dates) & set(unscraped_bbref_dates)
     if not update_bbref_dates:
         return Result.Ok()
-    result = update_status_bbref_games_for_date_list(session, update_bbref_dates)
+    result = update_bbref_games_for_date_list(session, update_bbref_dates)
     if result.failure:
         return result
     new_bbref_game_ids = result.value
-    return create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids)
+    return create_game_status_records(session, season, new_bbref_game_ids)
 
-def update_status_bbref_games_for_date_list(session, scraped_bbref_dates):
+def update_bbref_games_for_date_list(session, scraped_bbref_dates):
     all_game_ids = []
     for game_date in scraped_bbref_dates:
         result = get_bbref_games_for_date_from_s3(game_date)
@@ -66,7 +66,7 @@ def update_status_bbref_games_for_date(session, games_for_date):
     except Exception as e:
         return Result.Fail(f'Error: {repr(e)}')
 
-def create_game_status_records_from_bbref_ids(session, season, new_bbref_game_ids):
+def create_game_status_records(session, season, new_bbref_game_ids):
     game_status_bbref_ids = GameScrapeStatus.get_all_bbref_game_ids(session, season.id)
     missing_bbref_game_ids = set(new_bbref_game_ids).difference(set(game_status_bbref_ids))
     if not missing_bbref_game_ids:

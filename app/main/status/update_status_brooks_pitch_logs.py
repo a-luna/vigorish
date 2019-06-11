@@ -26,22 +26,22 @@ def update_status_brooks_pitch_logs_for_game_list(session, season, new_brooks_ga
         if result.failure:
             return result
         pitch_logs_for_game = result.value
-        result = update_game_status_records_for_game(session, pitch_logs_for_game)
+        result = update_game_status_records(session, pitch_logs_for_game)
         if result.failure:
             return result
-        result = create_pitch_appearance_status_records_for_game(session, season, pitch_logs_for_game)
+        result = create_pitch_appearance_status_records(session, season, pitch_logs_for_game)
         if result.failure:
             return result
     return Result.Ok()
 
 def update_status_brooks_pitch_logs_for_game(session, pitch_logs_for_game, game_date):
-    result = update_game_status_records_for_game(session, pitch_logs_for_game)
+    result = update_game_status_records(session, pitch_logs_for_game)
     if result.failure:
         return result
     season = Season.find_by_year(session, game_date.year)
-    return create_pitch_appearance_status_records_for_game(session, season, pitch_logs_for_game)
+    return create_pitch_appearance_status_records(session, season, pitch_logs_for_game)
 
-def update_game_status_records_for_game(session, pitch_logs_for_game):
+def update_game_status_records(session, pitch_logs_for_game):
     try:
         bb_game_id = pitch_logs_for_game.bb_game_id
         game_status = GameScrapeStatus.find_by_bb_game_id(session, bb_game_id)
@@ -55,7 +55,7 @@ def update_game_status_records_for_game(session, pitch_logs_for_game):
     except Exception as e:
         return Result.Fail(f'Error: {repr(e)}')
 
-def create_pitch_appearance_status_records_for_game(session, season, pitch_logs_for_game):
+def create_pitch_appearance_status_records(session, season, pitch_logs_for_game):
     all_pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids(session, season.id)
     scraped_pitch_app_ids = [plog.pitch_app_id for plog in pitch_logs_for_game.pitch_logs]
     update_pitch_app_ids = set(scraped_pitch_app_ids).difference(set(all_pitch_app_ids))

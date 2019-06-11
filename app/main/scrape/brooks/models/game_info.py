@@ -26,6 +26,10 @@ class BrooksGameInfo():
         return {f'{self.bbref_game_id}': f'{self.bb_game_id}'}
 
     @property
+    def game_date(self):
+        return datetime(self.game_date_year, self.game_date_month, self.game_date_day).date()
+
+    @property
     def game_start_time(self):
         return datetime(
             year=self.game_date_year,

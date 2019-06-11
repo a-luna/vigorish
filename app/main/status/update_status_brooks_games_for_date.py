@@ -10,7 +10,7 @@ def update_brooks_games_for_date_single_date(session, season, games_for_date, ga
     new_brooks_dates = set([game_date]) & set(unscraped_brooks_dates)
     if not new_brooks_dates:
         return Result.Ok()
-    result = update_status_brooks_games_for_date(session, games_for_date, game_date)
+    result = update_date_status_records(session, games_for_date, game_date)
     if result.failure:
         return result
     result = update_game_status_records(session, season, games_for_date.games)
@@ -40,13 +40,13 @@ def update_status_brooks_games_for_date_list(session, scraped_brooks_dates):
         if result.failure:
             return result
         games_for_date = result.value
-        result = update_status_brooks_games_for_date(session, games_for_date, game_date)
+        result = update_date_status_records(session, games_for_date, game_date)
         if result.failure:
             return result
         new_brooks_games.extend(games_for_date.games)
     return Result.Ok(new_brooks_games)
 
-def update_status_brooks_games_for_date(session, games_for_date, game_date):
+def update_date_status_records(session, games_for_date, game_date):
     try:
         date_id = game_date.strftime(DATE_ONLY_TABLE_ID)
         date_status = session.query(DateScrapeStatus).get(date_id)
@@ -64,7 +64,7 @@ def update_game_status_records(session, season, new_brooks_games):
     for brooks_game_info in new_brooks_games:
         try:
             bbref_game_id = brooks_game_info.bbref_game_id
-            game_date = brooks_game_info.game_start_time
+            game_date = brooks_game_info.game_date
             date_status = DateScrapeStatus.find_by_date(session, game_date)
             game_status = GameScrapeStatus.find_by_bbref_game_id(session, bbref_game_id)
             if not game_status:
