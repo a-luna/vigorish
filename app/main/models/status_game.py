@@ -2,16 +2,8 @@ from datetime import datetime
 from dateutil import tz
 
 from sqlalchemy import (
-    Index,
-    Column,
-    Boolean,
-    Integer,
-    String,
-    DateTime,
-    ForeignKey,
-    select,
-    func,
-    join,
+    Index, Column, Boolean, Integer, String, DateTime,
+    ForeignKey, select, func, join,
 )
 from sqlalchemy import Column, Boolean, Integer, String, DateTime, ForeignKey
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -36,7 +28,7 @@ class GameScrapeStatus(Base):
     bbref_game_id = Column(String)
     bb_game_id = Column(String)
     scraped_bbref_boxscore = Column(Integer, default=0)
-    scraped_brooks_pitch_logs_for_game = Column(Integer, default=0)
+    scraped_brooks_pitch_logs = Column(Integer, default=0)
     pitch_app_count_bbref = Column(Integer, default=0)
     pitch_app_count_brooks = Column(Integer, default=0)
     total_pitch_count_bbref = Column(Integer, default=0)
@@ -72,7 +64,7 @@ class GameScrapeStatus(Base):
             if self.mat_view_scrape_status_pitch_app else 0
 
     @hybrid_property
-    def percent_complete_pitchfx_logs(self):
+    def percent_complete_pitchfx_logs_scraped(self):
         if self.pitch_app_count_brooks == 0:
             return 0.0
         perc = self.total_pitchfx_logs_scraped / float(self.pitch_app_count_brooks)
@@ -80,13 +72,19 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
-        return self.percent_complete_pitchfx_logs == 100
+        return self.percent_complete_pitchfx_logs_scraped == 100
 
     def __repr__(self):
         return f"<GameScrapeStatus bbref_game_id={self.bbref_game_id}>"
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        d["game_date_time"] = d.game_date_time
+        d["game_date_time_str"] = d.game_date_time_str
+        d["total_pitchfx_logs_scraped"] = d.total_pitchfx_logs_scraped
+        d["percent_complete_pitchfx_logs_scraped"] = d.percent_complete_pitchfx_logs_scraped
+        d["scraped_all_pitchfx_logs"] = d.scraped_all_pitchfx_logs
+        return d
 
     def display(self):
         season_dict = self.as_dict()
@@ -121,20 +119,27 @@ class GameScrapeStatus(Base):
         return [
             game_status.bb_game_id for game_status
             in session.query(cls).filter_by(season_id=season_id).all()
-            if game_status.scraped_brooks_pitch_logs_for_game == 1]
+            if game_status.scraped_brooks_pitch_logs == 1]
 
     @classmethod
     def get_all_unscraped_brooks_game_ids_for_season(cls, session, season_id):
         return [
             game_status.bb_game_id for game_status
             in session.query(cls).filter_by(season_id=season_id).all()
-            if game_status.scraped_brooks_pitch_logs_for_game == 0]
+            if game_status.scraped_brooks_pitch_logs == 0]
 
     @classmethod
     def get_all_bbref_game_ids(cls, session, season_id):
         return [
             game_status.bbref_game_id for game_status
             in session.query(cls).filter_by(season_id=season_id).all()]
+
+    @classmethod
+    def get_game_id_dict(cls, session, season_id):
+        return {
+            game_status.bbref_game_id:game_status.id for game_status
+            in session.query(cls).filter_by(season_id=season_id).all()
+        }
 
 
 class Game_PitchApp_ScrapeStatusMV(MaterializedView):

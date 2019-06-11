@@ -88,7 +88,7 @@ def validate_bbref_game_id(input_str):
         return Result.Fail(error)
 
     try:
-        game_date = datetime(year, month, day)
+        game_date = datetime(year, month, day).date()
     except Exception as e:
         error = f"Failed to parse game_date from game_id:\n{repr(e)}"
         return Result.Fail(error)

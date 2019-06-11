@@ -49,7 +49,7 @@ def update_game_status_records_for_game(session, pitch_logs_for_game):
             error = f'scrape_status_game does not contain an entry for brooks_game_id: {bb_game_id}'
             return Result.Fail(error)
         total_pitches = sum(log.total_pitch_count for log in pitch_logs_for_game.pitch_logs)
-        setattr(game_status, 'scraped_brooks_pitch_logs_for_game', 1)
+        setattr(game_status, 'scraped_brooks_pitch_logs', 1)
         setattr(game_status, 'total_pitch_count_brooks', total_pitches)
         return Result.Ok()
     except Exception as e:
