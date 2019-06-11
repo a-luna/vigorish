@@ -84,7 +84,7 @@ def verify_boxscore_date(boxscore_urls, scrape_date, url):
     if result.failure:
         return result
     game_date = result.value['game_date']
-    if not game_date == scrape_date:
+    if not game_date == scrape_date.date():
         scrape_date_str = scrape_date.strftime(DATE_ONLY_2)
         error = (
             f"BBref daily dashboard URL for {scrape_date_str} redirected to game results "
