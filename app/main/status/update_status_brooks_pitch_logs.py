@@ -74,6 +74,9 @@ def create_pitch_appearance_status_records(session, season, pitch_logs_for_game)
             setattr(pitch_app_status, 'scrape_status_game_id', game_status.id)
             setattr(pitch_app_status, 'scrape_status_date_id', date_status.id)
             setattr(pitch_app_status, 'season_id', season.id)
+            if not pitch_log.parsed_all_info:
+                setattr(pitch_app_status, 'scraped_pitchfx', 1)
+                setattr(pitch_app_status, 'no_pitchfx_data', 1)
             session.add(pitch_app_status)
         except Exception as e:
             return Result.Fail(f'Error: {repr(e)}')

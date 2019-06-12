@@ -39,7 +39,6 @@ def update_pitch_appearance_status_records(session, pitchfx_log):
             error = f'scrape_status_pitch_app does not contain an entry for pitch_app_id: {pitch_app_id}'
             return Result.Fail(error)
         setattr(pitch_app_status, 'scraped_pitchfx', 1)
-        setattr(pitch_app_status, 'no_pitchfx_data', not pitchfx_log.parsed_all_info)
         setattr(pitch_app_status, 'pitch_count_pitchfx', pitchfx_log.total_pitch_count)
         return Result.Ok()
     except Exception as e:
