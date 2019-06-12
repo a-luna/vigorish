@@ -51,6 +51,13 @@ class PitchAppearanceScrapeStatus(Base):
             if pitch_app_status.scraped_pitchfx == 0]
 
     @classmethod
+    def get_pitch_app_ids_without_pitchfx_data(cls, session, season_id):
+        return [
+            pitch_app_status.pitch_app_id for pitch_app_status
+            in session.query(cls).filter_by(season_id=season_id).all()
+            if pitch_app_status.no_pitchfx_data == 1]
+
+    @classmethod
     def get_all_pitch_app_ids(cls, session, season_id):
         return [
             pitch_app_status.pitch_app_id for pitch_app_status

@@ -59,14 +59,26 @@ class GameScrapeStatus(Base):
         return self.game_date_time.strftime(DT_STR_FORMAT_ALL) if self.game_date_time else None
 
     @hybrid_property
+    def total_pitch_apps_no_pitchfx_data(self):
+        return self.mat_view_scrape_status_pitch_app.total_pitch_apps_no_pitchfx_data \
+            if self.mat_view_scrape_status_pitch_app \
+            and self.mat_view_scrape_status_pitch_app.total_pitch_apps_no_pitchfx_data else 0
+
+    @hybrid_property
     def total_pitchfx_logs_scraped(self):
-        return self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped \
-            if self.mat_view_scrape_status_pitch_app else 0
+        all_scraped = self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped \
+            if self.mat_view_scrape_status_pitch_app \
+            and self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped else 0
+        return all_scraped - self.total_pitch_apps_no_pitchfx_data
+
+    @hybrid_property
+    def total_pitch_apps_with_pitchfx_data(self):
+        return self.pitch_app_count_brooks - self.total_pitch_apps_no_pitchfx_data
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
-        return self.total_pitchfx_logs_scraped / float(self.pitch_app_count_brooks) \
-            if self.pitch_app_count_brooks > 0 else 0.0
+        return self.total_pitchfx_logs_scraped / float(self.total_pitch_apps_with_pitchfx_data) \
+            if self.total_pitch_apps_with_pitchfx_data > 0 else 0.0
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
@@ -147,6 +159,7 @@ class Game_PitchApp_ScrapeStatusMV(MaterializedView):
         select([
             GameScrapeStatus.id.label("id"),
             func.sum(PitchAppearanceScrapeStatus.scraped_pitchfx).label("total_pitchfx_logs_scraped"),
+            func.sum(PitchAppearanceScrapeStatus.no_pitchfx_data).label("total_pitch_apps_no_pitchfx_data"),
             func.sum(PitchAppearanceScrapeStatus.pitch_count_pitch_log).label("total_pitch_count_pitch_log"),
             func.sum(PitchAppearanceScrapeStatus.pitch_count_pitchfx).label("total_pitch_count_pitchfx")])
         .select_from(join(

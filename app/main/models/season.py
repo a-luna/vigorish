@@ -154,15 +154,30 @@ class Season(Base):
         return abs(self.pitch_appearance_count_bbref - self.pitch_appearance_count_brooks)
 
     @hybrid_property
+    def total_pitch_apps_no_pitchfx_data(self):
+        return self.mat_view_scrape_status_pitch_app.total_pitch_apps_no_pitchfx_data \
+            if self.mat_view_scrape_status_pitch_app \
+            and self.mat_view_scrape_status_pitch_app.total_pitch_apps_no_pitchfx_data else 0
+
+    @hybrid_property
     def total_pitchfx_logs_scraped(self):
-        return self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped \
+        all_scraped = self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped \
             if self.mat_view_scrape_status_pitch_app \
             and self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped else 0
+        return all_scraped - self.total_pitch_apps_no_pitchfx_data
+
+    @hybrid_property
+    def total_pitch_apps_with_pitchfx_data(self):
+        return self.pitch_app_count_brooks - self.total_pitch_apps_no_pitchfx_data
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
-        return self.total_pitchfx_logs_scraped / float(self.pitch_appearance_count_brooks) \
-            if self.pitch_appearance_count_brooks > 0 else 0.0
+        return self.total_pitchfx_logs_scraped / float(self.total_pitch_apps_with_pitchfx_data) \
+            if self.total_pitch_apps_with_pitchfx_data > 0 else 0.0
+
+    @hybrid_property
+    def scraped_all_pitchfx_logs(self):
+        return self.percent_complete_pitchfx_logs_scraped == 1
 
     @hybrid_property
     def total_pitch_count_bbref(self):
@@ -207,7 +222,9 @@ class Season(Base):
         d["pitch_appearance_count_bbref"] = self.pitch_appearance_count_bbref
         d["pitch_appearance_count_brooks"] = self.pitch_appearance_count_brooks
         d["pitch_appearance_count_difference"] = self.pitch_appearance_count_difference
+        d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
         d["total_pitchfx_logs_scraped"] = self.total_pitchfx_logs_scraped
+        d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
         d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
         d["total_pitch_count_bbref"] = self.total_pitch_count_bbref
         d["total_pitch_count_brooks"] = self.total_pitch_count_brooks
@@ -226,7 +243,7 @@ class Season(Base):
             f"Brooks Daily Dash Scraped..: {self.total_days_scraped_brooks:,}/{self.total_days:,} days ({self.percent_complete_brooks_games_for_date:.0%})\n"
             f"BBref Boxscores Scraped....: {self.total_bbref_boxscores_scraped:,}/{self.total_games:,} games ({self.percent_complete_bbref_boxscores_scraped:.0%})\n"
             f"Brooks Games Scraped.......: {self.total_brooks_games_scraped:,}/{self.total_games:,} games ({self.percent_complete_brooks_games_scraped:.0%})\n"
-            f"Brooks PitchFX Scraped.....: {self.total_pitchfx_logs_scraped:,}/{self.pitch_appearance_count_brooks:,} pitch apps ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
+            f"Brooks PitchFX Scraped.....: {self.total_pitchfx_logs_scraped:,}/{self.total_pitch_apps_with_pitchfx_data:,} pitch apps, {self.total_pitch_apps_no_pitchfx_data} no data ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
             f"Total Pitch Appearances....: {self.pitch_appearance_count_bbref:,} (BBref) {self.pitch_appearance_count_brooks:,} (Brooks) {self.total_pitchfx_logs_scraped:,} (PitchFX)\n"
             f"Total Pitch Count..........: {self.total_pitch_count_bbref:,} (BBref) {self.total_pitch_count_brooks:,} (Brooks) {self.total_pitch_count_pitchfx:,} (PitchFX)\n"
         )
@@ -339,6 +356,7 @@ class Season_PitchApp_ScrapeStatusMV(MaterializedView):
         select([
             Season.id.label("id"),
             func.sum(PitchAppearanceScrapeStatus.scraped_pitchfx).label("total_pitchfx_logs_scraped"),
+            func.sum(PitchAppearanceScrapeStatus.no_pitchfx_data).label("total_pitch_apps_no_pitchfx_data"),
             func.sum(PitchAppearanceScrapeStatus.pitch_count_pitch_log).label("total_pitch_count_pitch_log"),
             func.sum(PitchAppearanceScrapeStatus.pitch_count_pitchfx).label("total_pitch_count_pitchfx")])
         .select_from(join(

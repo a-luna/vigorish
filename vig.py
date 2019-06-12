@@ -131,8 +131,11 @@ def status_date(db, game_date):
 @status.command("range")
 @click.option("--start", type=DateString(), prompt=True, help="First date to report status.")
 @click.option("--end", type=DateString(), prompt=True, help="Last date to report status.")
+@click.option(
+    "--show-all/--show-only-missing", default=False, show_default=True,
+    help="Report includes dates where 100% of all data sets have been scraped.")
 @click.pass_obj
-def status_date_range(db, start, end):
+def status_date_range(db, start, end, show_all):
     """Report overall status for each date in the specified range (includes both START and END dates).
 
     Dates can be provided in any format that is recognized by dateutil.parser.
@@ -157,6 +160,8 @@ def status_date_range(db, start, end):
     end_str = end.strftime(MONTH_NAME_SHORT)
     click.secho(f"\n### STATUS REPORT FOR {start_str} - {end_str} ###", fg="bright_magenta", bold=True)
     for status in status_date_range:
+        if not show_all and status.scraped_all_game_data:
+            continue
         date_str = status.game_date_str
         status_description = status.scrape_status_description
         click.secho(f"{date_str}: {status_description}", fg="bright_magenta")
