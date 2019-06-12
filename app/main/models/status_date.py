@@ -144,7 +144,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_apps_with_pitchfx_data(self):
-        return self.pitch_app_count_brooks - self.total_pitch_apps_no_pitchfx_data
+        return self.pitch_appearance_count_brooks - self.total_pitch_apps_no_pitchfx_data
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
