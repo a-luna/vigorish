@@ -10,6 +10,7 @@ import boto3
 import botocore
 
 from app.main.models.status_date import DateScrapeStatus
+from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.file_util import (
     T_BROOKS_GAMESFORDATE_FILENAME,
@@ -183,7 +184,7 @@ def get_all_brooks_pitch_logs_for_date_from_s3(session, game_date, folderpath=No
     return Result.Ok(pitch_logs)
 
 
-def get_all_brooks_pitch_logs_scraped(year):
+def get_all_scraped_brooks_game_ids(year):
     s3_folder = Template(T_BB_LOG_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)
     scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
@@ -226,10 +227,10 @@ def download_brooks_pitchfx_log(pitch_app_id, year, folderpath=None):
         return Result.Fail(error)
 
 
-def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=True):
+def get_brooks_pitchfx_log_from_s3(pitch_app_id, year, folderpath=None, delete_file=True):
     """Retrieve BrooksPitchFxLog object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
-    result = download_brooks_pitchfx_log(pitch_app_id, folderpath)
+    result = download_brooks_pitchfx_log(pitch_app_id, year, folderpath)
     if result.failure:
         return result
     filepath = result.value
@@ -239,7 +240,7 @@ def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=Tr
         delete_file=True)
 
 
-def get_all_brooks_pitchfx_pitch_app_ids_scraped(year):
+def get_all_pitch_app_ids_scraped(year):
     s3_folder = Template(T_BB_PFX_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)
     scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
@@ -358,7 +359,7 @@ def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True)
     return read_bbref_boxscore_from_file(bbref_game_id, folderpath=filepath.parent, delete_file=True)
 
 
-def get_all_bbref_boxscores_scraped(year):
+def get_all_scraped_bbref_game_ids(year):
     s3_folder = Template(T_BR_GAME_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)
     scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]

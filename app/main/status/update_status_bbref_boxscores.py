@@ -1,10 +1,10 @@
-from app.main.util.s3_helper import get_all_bbref_boxscores_scraped, get_bbref_boxscore_from_s3
+from app.main.util.s3_helper import get_all_scraped_bbref_game_ids, get_bbref_boxscore_from_s3
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.result import Result
 
 
 def update_data_set_bbref_boxscores(session, season):
-    result = get_all_bbref_boxscores_scraped(season.year)
+    result = get_all_scraped_bbref_game_ids(season.year)
     if result.failure:
         return result
     scraped_bbref_gameids = result.value

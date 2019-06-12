@@ -206,7 +206,7 @@ class DateScrapeStatus(Base):
         if self.scraped_all_game_data:
             return "Scraped All Game Data"
         elif self.scraped_only_both_bbref_boxscores_and_brooks_pitch_logs:
-            return f"PitchFX Logs {self.percent_complete_pitchfx_logs_scraped:.0%} complete"
+            return f"Scraped {self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_brooks} PitchFX Logs ({self.percent_complete_pitchfx_logs_scraped:.0%} complete)"
         elif self.scraped_only_brooks_pitch_logs:
             return "Scraped Brooks pitch logs, missing BBref boxscores"
         elif self.scraped_only_bbref_boxscores:
@@ -307,6 +307,18 @@ class DateScrapeStatus(Base):
             date_status.game_date
             for date_status in session.query(cls).filter_by(season_id=season_id).all()
             if date_status.scraped_daily_dash_brooks == 0]
+
+    @classmethod
+    def get_unscraped_pitch_appearances_for_date(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        return [
+            pitch_app for pitch_app in date_status.scrape_status_pitchfx
+            if pitch_app.scraped_pitchfx == 0]
+
+    @classmethod
+    def get_game_ids_with_unscraped_pitch_apps_for_date(cls, session, game_date):
+        unscraped_pitch_apps = cls.get_unscraped_pitch_appearances_for_date(session, game_date)
+        return list(set([pitch_app.bb_game_id for pitch_app in unscraped_pitch_apps])
 
     @classmethod
     def verify_bbref_daily_dashboard_scraped_for_date(cls, session, game_date):

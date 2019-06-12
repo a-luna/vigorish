@@ -13,6 +13,7 @@ class PitchAppearanceScrapeStatus(Base):
     bbref_game_id = Column(String)
     bb_game_id = Column(String)
     scraped_pitchfx = Column(Integer, default=0)
+    no_pitchfx_data = Column(Integer, default=0)
     pitch_count_pitch_log = Column(Integer, default=0)
     pitch_count_pitchfx = Column(Integer, default=0)
     scrape_status_game_id = Column(Integer, ForeignKey("scrape_status_game.id"))
@@ -20,7 +21,7 @@ class PitchAppearanceScrapeStatus(Base):
     season_id = Column(Integer, ForeignKey("season.id"))
 
     def __repr__(self):
-        return f"<PitchAppearanceScrapeStatus pitch_app_id={self.pitch_app_id}>"
+        return f'<PitchAppearanceScrapeStatus pitch_app_id="{self.pitch_app_id}">'
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
