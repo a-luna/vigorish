@@ -318,7 +318,7 @@ class DateScrapeStatus(Base):
     @classmethod
     def get_game_ids_with_unscraped_pitch_apps_for_date(cls, session, game_date):
         unscraped_pitch_apps = cls.get_unscraped_pitch_appearances_for_date(session, game_date)
-        return list(set([pitch_app.bb_game_id for pitch_app in unscraped_pitch_apps])
+        return list(set([pitch_app.bb_game_id for pitch_app in unscraped_pitch_apps]))
 
     @classmethod
     def verify_bbref_daily_dashboard_scraped_for_date(cls, session, game_date):
