@@ -65,14 +65,12 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
-        if self.pitch_app_count_brooks == 0:
-            return 0.0
-        perc = self.total_pitchfx_logs_scraped / float(self.pitch_app_count_brooks)
-        return perc * 100;
+        return self.total_pitchfx_logs_scraped / float(self.pitch_app_count_brooks) \
+            if self.pitch_app_count_brooks > 0 else 0.0
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
-        return self.percent_complete_pitchfx_logs_scraped == 100
+        return self.percent_complete_pitchfx_logs_scraped == 1
 
     def __repr__(self):
         return f"<GameScrapeStatus bbref_game_id={self.bbref_game_id}>"

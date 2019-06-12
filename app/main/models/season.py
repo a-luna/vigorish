@@ -92,9 +92,8 @@ class Season(Base):
 
     @hybrid_property
     def percent_complete_bbref_games_for_date(self):
-        if self.total_days == 0:
-            return 0.0
-        return self.total_days_scraped_bbref / float(self.total_days)
+        return self.total_days_scraped_bbref / float(self.total_days) \
+            if self.total_days > 0 else 0.0
 
     @hybrid_property
     def total_days_scraped_brooks(self):
@@ -104,9 +103,8 @@ class Season(Base):
 
     @hybrid_property
     def percent_complete_brooks_games_for_date(self):
-        if self.total_days == 0:
-            return 0.0
-        return self.total_days_scraped_brooks / float(self.total_days)
+        return self.total_days_scraped_brooks / float(self.total_days) \
+            if self.total_days > 0 else 0.0
 
     @hybrid_property
     def total_games(self):
@@ -125,9 +123,8 @@ class Season(Base):
 
     @hybrid_property
     def percent_complete_bbref_boxscores_scraped(self):
-        if self.total_games == 0:
-            return 0.0
-        return self.total_bbref_boxscores_scraped / float(self.total_games)
+        return self.total_bbref_boxscores_scraped / float(self.total_games) \
+            if self.total_games > 0 else 0.0
 
     @hybrid_property
     def total_brooks_games_scraped(self):
@@ -137,9 +134,8 @@ class Season(Base):
 
     @hybrid_property
     def percent_complete_brooks_games_scraped(self):
-        if self.total_games == 0:
-            return 0.0
-        return self.total_brooks_games_scraped / float(self.total_games)
+        return self.total_brooks_games_scraped / float(self.total_games) \
+            if self.total_games > 0 else 0.0
 
     @hybrid_property
     def pitch_appearance_count_bbref(self):
@@ -165,9 +161,8 @@ class Season(Base):
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
-        if self.pitch_appearance_count_brooks == 0:
-            return 0.0
-        return self.total_pitchfx_logs_scraped / float(self.pitch_appearance_count_brooks)
+        return self.total_pitchfx_logs_scraped / float(self.pitch_appearance_count_brooks) \
+            if self.pitch_appearance_count_brooks > 0 else 0.0
 
     @hybrid_property
     def total_pitch_count_bbref(self):
