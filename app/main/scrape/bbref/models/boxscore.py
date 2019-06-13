@@ -69,6 +69,17 @@ class BBRefBoxscore:
     def pitch_count(self):
         return self.away_team_pitch_count + self.home_team_pitch_count
 
+    @property
+    def pitch_appearances(self):
+        mlb_id_name_dict = {v:k for k,v in self.player_name_dict.items()}
+        pitch_apps = self.away_team_data.pitching_stats.copy()
+        pitch_apps.extend(self.home_team_data.pitching_stats.copy())
+        pitch_apps_dicts = [pa.as_dict() for pa in pitch_apps]
+        for app_dict in pitch_apps_dicts:
+            player_id = app_dict['player_id_br']
+            app_dict['player_name'] = mlb_id_name_dict[player_id]
+        return pitch_apps_dicts
+
     def __repr__(self):
         return f"<BBRefBoxscore bbref_game_id={self.bbref_game_id}>"
 

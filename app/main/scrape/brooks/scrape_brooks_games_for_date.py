@@ -13,7 +13,7 @@ from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.models.season import Season
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from app.main.util.result import Result
-from app.main.util.scrape_functions import request_url
+from app.main.util.scrape_functions import render_url
 from app.main.util.string_functions import parse_timestamp, validate_bbref_game_id_list
 
 
@@ -25,13 +25,16 @@ _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()=
 
 
 def scrape_brooks_games_for_date(session, driver, scrape_date, bbref_games_for_date):
-    url = _get_dashboard_url_for_date(scrape_date)
-    driver.get(url)
-    page = driver.page_source
-    response = html.fromstring(page, base_url=url)
-    game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
-    required_game_data = validate_bbref_game_id_list(game_ids)
-    return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
+    try:
+        url = _get_dashboard_url_for_date(scrape_date)
+        response = render_url(driver, url)
+        game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
+        required_game_data = validate_bbref_game_id_list(game_ids)
+        return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
 
 
 def _get_dashboard_url_for_date(scrape_date):
@@ -49,7 +52,6 @@ def parse_daily_dash_page(session, response, scrape_date, url, required_game_dat
 
     if Season.is_this_the_asg_date(session, scrape_date):
         return Result.Ok(games_for_date)
-
     for row in range(2, 10):
         for game in range(1, 5):
             xpath_gameinfo = Template(_T_GAMEINFO_XPATH).substitute(r=row, g=game)

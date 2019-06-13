@@ -9,7 +9,7 @@ from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.result import Result
-from app.main.util.scrape_functions import request_url
+from app.main.util.scrape_functions import render_url
 from app.main.util.string_functions import validate_bbref_game_id
 
 
@@ -23,10 +23,10 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
     '//li[@id="header_scores"]//div[contains(@class, "game_summaries")]'
     '//td[contains(@class, "gamelink")]/a/@href')
 
-def scrape_bbref_games_for_date(scrape_date):
+def scrape_bbref_games_for_date(scrape_date, driver):
     try:
         url = get_dashboard_url_for_date(scrape_date)
-        response = request_url(url)
+        response = render_url(driver, url)
         return parse_bbref_dashboard_page(response, scrape_date, url)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
@@ -48,7 +48,7 @@ def parse_bbref_dashboard_page(response, scrape_date, url):
     if not boxscore_urls:
         games_for_date.game_count = 0
         return Result.Ok(games_for_date)
-    result = verify_boxscore_urls(boxscore_urls, scrape_date, url)
+    result = verify_boxscore_urls(boxscore_urls, response, scrape_date, url)
     if result.failure:
         return result
     boxscore_urls = result.value
@@ -60,12 +60,10 @@ def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date.game_count = len(games_for_date.boxscore_urls)
     return Result.Ok(games_for_date)
 
-def verify_boxscore_urls(boxscore_urls, scrape_date, url):
+def verify_boxscore_urls(boxscore_urls, response, scrape_date, url):
     result = verify_boxscore_date(boxscore_urls, scrape_date, url)
     if result.success:
         return Result.Ok(boxscore_urls)
-    if date.today() != scrape_date:
-        return result
     boxscore_urls = response.xpath(XPATH_BOXSCORE_URL_HEADER_NAV)
     if not boxscore_urls:
         error = (

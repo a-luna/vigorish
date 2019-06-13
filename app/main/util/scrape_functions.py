@@ -58,8 +58,7 @@ def request_url(url):
 @retry(
     max_attempts=15, delay=5, exceptions=(TimeoutError, Exception))
 @timeout(seconds=10)
-def render_url(url):
+def render_url(driver, url):
     """Fully render the URL (including JS), return the page content."""
     driver.get(url)
-    page = driver.page_source
-    return html.fromstring(page, base_url=url)
+    return html.fromstring(driver.page_source, base_url=url)

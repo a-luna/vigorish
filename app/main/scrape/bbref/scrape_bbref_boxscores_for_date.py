@@ -195,9 +195,7 @@ def render_webpage(driver, url):
     WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _BATTING_STATS_TABLE)))
     WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _PITCHING_STATS_TABLE)))
     WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _PLAY_BY_PLAY_TABLE)))
-    page = driver.page_source
-    response = html.fromstring(page, base_url=url)
-    return response
+    return html.fromstring(driver.page_source, base_url=url)
 
 
 def parse_bbref_boxscore(response, url):

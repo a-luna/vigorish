@@ -25,6 +25,13 @@ class TestBBRefGamesForDate(BaseTestCase):
     )
     DAILY_DASH_HTML = APP_TEST_FOLDER / "test_files" / "bbref_daily_dash.html"
 
+    #GAME_DATE = datetime(2019, 6, 12)
+    #GAME_DATE_STR = "2019-06-12"
+    #DAILY_DASH_URL = (
+    #    "https://www.baseball-reference.com/boxes/?year=2019&month=06&day=12"
+    #)
+    #DAILY_DASH_HTML = Path.cwd() / "early.html"
+
     def test_scrape_bbref_games_for_date(self):
         """Verify BBRefGameInfo object is correctly parsed from webpage."""
         response = html.parse(str(self.DAILY_DASH_HTML))
