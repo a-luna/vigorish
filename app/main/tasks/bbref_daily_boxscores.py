@@ -18,6 +18,8 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
     display_name = "Boxscores for date (bbref.com)"
 
     def execute(self, scrape_date):
+        if not self.driver:
+            return Result.Fail("Chromedriver was not instantiated, must abort.")
         scraped_bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db['session'], scrape_date)
         if not scraped_bbref_games_for_date:
@@ -31,6 +33,8 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
             return result
         bbref_games_for_date = result.value
         result = scrape_bbref_boxscores_for_date(bbref_games_for_date, self.driver)
+        self.driver.quit()
+        self.driver = None
         if result.failure:
             return result
         scraped_games = result.value

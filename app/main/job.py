@@ -85,13 +85,6 @@ class ScrapeJob:
             return result
         self.task_list = result.value
         self.date_range = get_date_range(self.start_date, self.end_date)
-        try:
-            self.driver = get_chromedriver()
-            return Result.Ok()
-        except RetryLimitExceededError as e:
-            return Result.Fail(repr(e))
-        except Exception as e:
-            return Result.Fail(f"Error: {repr(e)}")
 
 
     def _get_pbar_date_description(self, date, data_set):

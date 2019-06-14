@@ -9,7 +9,11 @@ class ScrapeBBRefDailyGames(BaseTask):
 
 
     def execute(self, scrape_date):
+        if not self.driver:
+            return Result.Fail("Chromedriver was not instantiated, must abort.")
         result = scrape_bbref_games_for_date(scrape_date, self.driver)
+        self.driver.quit()
+        self.driver = None
         if result.failure:
             return result
         bbref_games_for_date = result.value
