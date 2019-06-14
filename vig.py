@@ -149,19 +149,22 @@ def status_date_range(db, start, end, show_all):
     result = refresh_season_data(db, season.year)
     if result.failure:
         return exit_app_error(db, result)
-    date_range = get_date_range(start, end)
     status_date_range = []
-    for d in date_range:
+    for d in get_date_range(start, end):
         date_status = DateScrapeStatus.find_by_date(db["session"], d)
         if not date_status:
             error = f"scrape_status_date does not contain an entry for date: {d.strftime(DATE_ONLY)}"
+            return exit_app_error(db, Result.Fail(error))
+        if not show_all and date_status.scraped_all_game_data:
+            continue
         status_date_range.append(date_status)
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     click.secho(f"\n### STATUS REPORT FOR {start_str} - {end_str} ###", fg="bright_magenta", bold=True)
+    if not status_date_range:
+        click.secho("All data has been scraped for all dates in the requested range")
+        return exit_app_success(db)
     for status in status_date_range:
-        if not show_all and status.scraped_all_game_data:
-            continue
         date_str = status.game_date_str
         status_description = status.scrape_status_description
         click.secho(f"{date_str}: {status_description}", fg="bright_magenta")

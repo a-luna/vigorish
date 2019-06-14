@@ -9,7 +9,6 @@ from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.result import Result
-from app.main.util.scrape_functions import render_url
 from app.main.util.string_functions import validate_bbref_game_id
 
 
@@ -26,7 +25,7 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
 def scrape_bbref_games_for_date(scrape_date, driver):
     try:
         url = get_dashboard_url_for_date(scrape_date)
-        response = render_url(driver, url)
+        response = render_webpage(driver, url)
         return parse_bbref_dashboard_page(response, scrape_date, url)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
@@ -38,6 +37,15 @@ def get_dashboard_url_for_date(scrape_date):
     d = scrape_date.day
     y = scrape_date.year
     return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
+
+
+@retry(
+    max_attempts=15,delay=5, exceptions=(TimeoutError, Exception))
+@timeout(seconds=15)
+def render_webpage(driver, url):
+    driver.get(url)
+    return html.fromstring(driver.page_source, base_url=url)
+
 
 def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date = BBRefGamesForDate()
