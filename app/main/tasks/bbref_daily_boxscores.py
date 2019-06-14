@@ -18,8 +18,8 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
     key_name = "bbref_boxscore"
     display_name = "Boxscores for date (bbref.com)"
 
-    def __init__(self):
-        BaseTask.__init__(self)
+    def __init__(self, db, season):
+        BaseTask.__init__(self, db, season)
         try:
             self.driver = get_chromedriver()
         except RetryLimitExceededError as e:

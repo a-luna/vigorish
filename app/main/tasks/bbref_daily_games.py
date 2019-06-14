@@ -8,8 +8,8 @@ class ScrapeBBRefDailyGames(BaseTask):
     key_name = "bbref_games_for_date"
     display_name = "Games for date (bbref.com)"
 
-    def __init__(self):
-        BaseTask.__init__(self)
+    def __init__(self, db, season):
+        BaseTask.__init__(self, db, season)
         try:
             self.driver = get_chromedriver()
         except RetryLimitExceededError as e:
