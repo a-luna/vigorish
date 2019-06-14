@@ -85,6 +85,7 @@ class ScrapeJob:
             return result
         self.task_list = result.value
         self.date_range = get_date_range(self.start_date, self.end_date)
+        return Result.Ok()
 
 
     def _get_pbar_date_description(self, date, data_set):
