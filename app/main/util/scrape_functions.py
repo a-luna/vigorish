@@ -16,21 +16,11 @@ from app.main.util.decorators import (
 from app.main.util.result import Result
 
 
-def get_chromedriver(page_load_timeout=6000):
-    """Initialize a Chrome webdriver instance with user-specified value for page load timeout."""
-    try:
-        driver = _get_chromedriver(page_load_timeout)
-        return Result.Ok(driver)
-    except RetryLimitExceededError as e:
-        return Result.Fail(repr(e))
-    except Exception as e:
-        return Result.Fail(f"Error: {repr(e)}")
-
-
 @retry(
     max_attempts=5, delay=5, exceptions=(TimeoutError, Exception))
 @timeout(seconds=5)
-def _get_chromedriver(page_load_timeout):
+def get_chromedriver(page_load_timeout=60):
+    """Initialize a Chrome webdriver instance with user-specified value for page load timeout."""
     options = webdriver.ChromeOptions()
     options.binary_location = os.getenv("GOOGLE_CHROME_BIN")
     options.add_argument("--ignore-certificate-errors")
@@ -41,7 +31,7 @@ def _get_chromedriver(page_load_timeout):
     options.add_argument("--no-sandbox")
     options.add_argument("--remote-debugging-port=9222")
     driver_path = os.getenv("CHROMEDRIVER_PATH")
-    driver = webdriver.Chrome(executable_path=driver_path, chrome_options=options)
+    driver = webdriver.Chrome(executable_path=driver_path, options=options)
     driver.set_page_load_timeout(page_load_timeout)
     return driver
 

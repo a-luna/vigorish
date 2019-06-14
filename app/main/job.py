@@ -36,12 +36,16 @@ class ScrapeJob:
         if self.status == "Succeeded":
             start_str = self.start_date.strftime(MONTH_NAME_SHORT)
             end_str = self.end_date.strftime(MONTH_NAME_SHORT)
-            return (
+            report = (
                 "Requested data was successfully scraped:\n"
                 f"data set....: {self.data_set}\n"
                 f"date range..: {start_str} - {end_str}\n"
                 f"duration....: {format_timedelta(self.duration)}")
+            if self.errors:
+                report += '\nerrors......:' + '\n'.join(self.errors)
         elif self.status == "Failed":
+            if self.errors:
+                return 'Job Failed!\nErrors: ' + '\n'.join(self.errors)
             return str(self.result)
         else:
             return self.status
@@ -58,19 +62,13 @@ class ScrapeJob:
             for scrape_date in self.date_range:
                 with tqdm(total=len(self.task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
                     for task in self.task_list:
-                        result = get_chromedriver()
-                        if result.failure:
-                            return self._job_failed(result)
-                        driver = result.value
-                        scrape_task = task(self.db, self.season, driver)
+                        scrape_task = task(self.db, self.season, self.driver)
                         pbar_date.set_description(self._get_pbar_date_description(scrape_date, scrape_task.key_name))
                         pbar_data_set.set_description(self._get_pbar_data_set_description(scrape_task.key_name))
                         result = scrape_task.execute(scrape_date)
                         if result.failure:
                             return self._job_failed(result)
                         self.db['session'].commit()
-                        driver.quit()
-                        driver = None
                         time.sleep(randint(250, 300) / 100.0)
                         pbar_data_set.update()
                 pbar_date.update()
@@ -80,14 +78,20 @@ class ScrapeJob:
     def _initialize(self):
         result = Season.validate_date_range(self.db['session'], self.start_date, self.end_date)
         if result.failure:
-            return self._job_failed(result)
+            return result
         self.season = result.value
-        self.date_range = get_date_range(self.start_date, self.end_date)
         result = get_task_list(self.data_set)
         if result.failure:
-            return self._job_failed(result)
+            return result
         self.task_list = result.value
-        return Result.Ok()
+        self.date_range = get_date_range(self.start_date, self.end_date)
+        try:
+            self.driver = get_chromedriver()
+            return Result.Ok()
+        except RetryLimitExceededError as e:
+            return Result.Fail(repr(e))
+        except Exception as e:
+            return Result.Fail(f"Error: {repr(e)}")
 
 
     def _get_pbar_date_description(self, date, data_set):
@@ -101,14 +105,29 @@ class ScrapeJob:
         pad_len = PBAR_LEN_DICT[data_set] - len(pre)
         return f"{pre}{'.'*pad_len}"
 
-    def _job_succeeded(self):
-        return self._tear_down("Succeeded", Result.Ok())
+
+    def _tear_down(self, status, result):
+        self.status = status
+        self.errors = []
+        if result.failure:
+            self.errors.append(result.error)
+        try:
+            if self.driver:
+                self.driver.quit()
+                self.driver = None
+        except NoSuchWindowException as e:
+            self.errors.append(f"Error: {repr(e)}")
+        except Exception as e:
+            self.errors.append(f"Error: {repr(e)}")
+        finally:
+            self.end_time = datetime.now()
+            self.result = result
+            return self.result
+
 
     def _job_failed(self, result):
         return self._tear_down("Failed", result)
 
-    def _tear_down(self, status, result):
-        self.status = status
-        self.end_time = datetime.now()
-        self.result = result
-        return self.result
+
+    def _job_succeeded(self):
+        return self._tear_down("Succeeded", Result.Ok())

@@ -27,10 +27,10 @@ _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()=
 
 def scrape_brooks_games_for_date(session, driver, scrape_date, bbref_games_for_date):
     try:
-        url = _get_dashboard_url_for_date(scrape_date)
-        response = render_url(driver, url)
         game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
         required_game_data = validate_bbref_game_id_list(game_ids)
+        url = _get_dashboard_url_for_date(scrape_date)
+        response = render_url(driver, url)
         return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
