@@ -11,7 +11,6 @@ from app.main.task_list import get_task_list
 from app.main.util.datetime_util import get_date_range, format_timedelta
 from app.main.util.dt_format_strings import MONTH_NAME_SHORT
 from app.main.util.result import Result
-from app.main.util.scrape_functions import get_chromedriver
 
 
 class ScrapeJob:
@@ -41,11 +40,7 @@ class ScrapeJob:
                 f"data set....: {self.data_set}\n"
                 f"date range..: {start_str} - {end_str}\n"
                 f"duration....: {format_timedelta(self.duration)}")
-            if self.errors:
-                report += '\nerrors......:' + '\n'.join(self.errors)
         elif self.status == "Failed":
-            if self.errors:
-                return 'Job Failed!\nErrors: ' + '\n'.join(self.errors)
             return str(self.result)
         else:
             return self.status
@@ -62,7 +57,7 @@ class ScrapeJob:
             for scrape_date in self.date_range:
                 with tqdm(total=len(self.task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
                     for task in self.task_list:
-                        scrape_task = task(self.db, self.season, self.driver)
+                        scrape_task = task(self.db, self.season)
                         pbar_date.set_description(self._get_pbar_date_description(scrape_date, scrape_task.key_name))
                         pbar_data_set.set_description(self._get_pbar_data_set_description(scrape_task.key_name))
                         result = scrape_task.execute(scrape_date)
@@ -101,22 +96,10 @@ class ScrapeJob:
 
 
     def _tear_down(self, status, result):
+        self.end_time = datetime.now()
         self.status = status
-        self.errors = []
-        if result.failure:
-            self.errors.append(result.error)
-        try:
-            if self.driver:
-                self.driver.quit()
-                self.driver = None
-        except NoSuchWindowException as e:
-            self.errors.append(f"Error: {repr(e)}")
-        except Exception as e:
-            self.errors.append(f"Error: {repr(e)}")
-        finally:
-            self.end_time = datetime.now()
-            self.result = result
-            return self.result
+        self.result = result
+        return self.result
 
 
     def _job_failed(self, result):

@@ -5,11 +5,21 @@ from app.main.tasks.base_task import BaseTask
 from app.main.util.dt_format_strings import DATE_ONLY_2
 from app.main.util.result import Result
 from app.main.util.s3_helper import get_bbref_games_for_date_from_s3, upload_brooks_games_for_date
+from app.main.util.scrape_functions import get_chromedriver
 
 
 class ScrapeBrooksDailyGames(BaseTask):
     key_name = "brooks_games_for_date"
     display_name = "Games for date (brooksbaseball.com)"
+
+    def __init__(self):
+        BaseTask.__init__(self)
+        try:
+            self.driver = get_chromedriver()
+        except RetryLimitExceededError as e:
+            self.driver = None
+        except Exception as e:
+            self.driver = None
 
     def execute(self, scrape_date):
         if not self.driver:

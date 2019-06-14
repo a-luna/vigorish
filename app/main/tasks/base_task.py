@@ -3,15 +3,7 @@ class BaseTask:
     display_name = ""
 
 
-    def __init__(self, db, season, use_selenium=False):
+    def __init__(self, db, season):
         self.db = db
         self.season = season
-        if not use_selenium:
-            self.driver = None
-        else:
-            try:
-                self.driver = get_chromedriver()
-            except RetryLimitExceededError as e:
-                self.driver = None
-            except Exception as e:
-                self.driver = None
+        self.driver = None
