@@ -8,22 +8,9 @@ class ScrapeBBRefDailyGames(BaseTask):
     key_name = "bbref_games_for_date"
     display_name = "Games for date (bbref.com)"
 
-    def __init__(self, db, season):
-        BaseTask.__init__(self, db, season)
-        try:
-            self.driver = get_chromedriver()
-        except RetryLimitExceededError as e:
-            self.driver = None
-        except Exception as e:
-            self.driver = None
-
 
     def execute(self, scrape_date):
-        if not self.driver:
-            return Result.Fail("Chromedriver was not instantiated, must abort.")
-        result = scrape_bbref_games_for_date(scrape_date, self.driver)
-        self.driver.quit()
-        self.driver = None
+        result = scrape_bbref_games_for_date(scrape_date)
         if result.failure:
             return result
         bbref_games_for_date = result.value

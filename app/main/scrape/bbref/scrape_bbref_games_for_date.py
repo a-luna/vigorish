@@ -6,9 +6,10 @@ from urllib.parse import urljoin
 
 from app.main.constants import T_BBREF_DASH_URL
 from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
-from app.main.util.decorators import retry, timeout, RetryLimitExceededError
+from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.result import Result
+from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import validate_bbref_game_id
 
 
@@ -22,10 +23,10 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
     '//li[@id="header_scores"]//div[contains(@class, "game_summaries")]'
     '//td[contains(@class, "gamelink")]/a/@href')
 
-def scrape_bbref_games_for_date(scrape_date, driver):
+def scrape_bbref_games_for_date(scrape_date):
     try:
         url = get_dashboard_url_for_date(scrape_date)
-        response = render_webpage(driver, url)
+        response = request_url(url)
         return parse_bbref_dashboard_page(response, scrape_date, url)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
@@ -39,14 +40,6 @@ def get_dashboard_url_for_date(scrape_date):
     return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
 
 
-@retry(
-    max_attempts=15,delay=5, exceptions=(TimeoutError, Exception))
-@timeout(seconds=15)
-def render_webpage(driver, url):
-    driver.get(url)
-    return html.fromstring(driver.page_source, base_url=url)
-
-
 def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date = BBRefGamesForDate()
     games_for_date.game_date = scrape_date
@@ -56,10 +49,9 @@ def parse_bbref_dashboard_page(response, scrape_date, url):
     if not boxscore_urls:
         games_for_date.game_count = 0
         return Result.Ok(games_for_date)
-    result = verify_boxscore_urls(boxscore_urls, response, scrape_date, url)
+    result = verify_boxscore_date(boxscore_urls, scrape_date, url)
     if result.failure:
         return result
-    boxscore_urls = result.value
     games_for_date.boxscore_urls = []
     for rel_url in boxscore_urls:
         if 'allstar' in rel_url:
@@ -68,20 +60,6 @@ def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date.game_count = len(games_for_date.boxscore_urls)
     return Result.Ok(games_for_date)
 
-def verify_boxscore_urls(boxscore_urls, response, scrape_date, url):
-    result = verify_boxscore_date(boxscore_urls, scrape_date, url)
-    if result.success:
-        return Result.Ok(boxscore_urls)
-    boxscore_urls = response.xpath(XPATH_BOXSCORE_URL_HEADER_NAV)
-    if not boxscore_urls:
-        error = (
-            "Unknown error occurred, failed to parse any boxscore URLs from BBref daily "
-            f"dashboard page ({url})")
-        return Result.Fail(error)
-    result = verify_boxscore_date(boxscore_urls, scrape_date, url)
-    if result.failure:
-        return result
-    return Result.Ok(boxscore_urls)
 
 def verify_boxscore_date(boxscore_urls, scrape_date, url):
     box_url = urljoin(url, boxscore_urls[0])
