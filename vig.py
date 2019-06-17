@@ -194,9 +194,9 @@ def status_season(db, year, verbosity):
         click.secho(season.status_report(), fg="bright_yellow")
         return exit_app_success(db)
     elif verbosity == 2:
-        return scrape_status_date_range(db, season.start_date_str, season.end_date_str, False)
+        return scrape_status_date_range(db, season.start_date, season.end_date, False)
     elif verbosity > 2:
-        return scrape_status_date_range(db, season.start_date_str, season.end_date_str, True)
+        return scrape_status_date_range(db, season.start_date, season.end_date, True)
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(db, Result(error))
