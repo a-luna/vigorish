@@ -142,6 +142,10 @@ def status_date_range(db, start, end, show_all):
     For example, all of the following strings are valid ways to represent the same date:
     "2018-5-13" -or- "05/13/2018" -or- "May 13 2018"
     """
+    return scrape_status_date_range(db, start, end, show_all)
+
+
+def scrape_status_date_range(db, start, end, show_all):
     result = Season.validate_date_range(db["session"], start, end)
     if result.failure:
         return result
@@ -190,9 +194,9 @@ def status_season(db, year, verbosity):
         click.secho(season.status_report(), fg="bright_yellow")
         return exit_app_success(db)
     elif verbosity == 2:
-        return status_date_range(db, season.start_date_str, season.end_date_str, False)
+        return scrape_status_date_range(db, season.start_date_str, season.end_date_str, False)
     elif verbosity > 2:
-        return status_date_range(db, season.start_date_str, season.end_date_str, True)
+        return scrape_status_date_range(db, season.start_date_str, season.end_date_str, True)
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(db, Result(error))
