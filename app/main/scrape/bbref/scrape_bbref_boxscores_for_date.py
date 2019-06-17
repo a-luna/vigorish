@@ -27,7 +27,7 @@ from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
 from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
 from app.main.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
 from app.main.scrape.bbref.models.umpire import BBRefUmpire
-from app.main.util.decorators import  timeout, retry, RetryLimitExceededError
+from app.main.util.decorators import timeout, retry, RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
@@ -187,7 +187,7 @@ def get_pbar_description(game_id):
 
 
 @retry(
-    max_attempts=15,delay=5, exceptions=(TimeoutError, Exception))
+    max_attempts=5,delay=5, exceptions=(TimeoutError, Exception))
 @timeout(seconds=15)
 def render_webpage(driver, url):
     driver.get(url)
