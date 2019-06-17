@@ -15,7 +15,7 @@ from app.main.models.status_date import DateScrapeStatus
 from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
-from app.main.util.click_params import DateString, MlbDataSet, MlbSeason
+from app.main.util.click_params import DateString, MlbSeason
 from app.main.util.datetime_util import get_date_range, today_str, current_year, format_timedelta
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.result import Result
@@ -61,13 +61,13 @@ def setup(db):
 
 @cli.command()
 @click.option(
-    "--data-set", type=MlbDataSet(), default="all", show_default=True, prompt=True,
+    "--data-set", type=click.Choice(MLB_DATA_SETS), default="all", show_default=True, prompt=True,
     help= f'Data set to scrape, must be a value from the following list:\n{", ".join(MLB_DATA_SETS)}')
 @click.option(
-    "--start", type=DateString(), default=today_str, show_default=True, prompt=True,
+    "--start", type=DateString(), default=today_str, prompt=True,
     help="Date to start scraping data, string can be in any format that is recognized by dateutil.parser.")
 @click.option(
-    "--end", type=DateString(), default=today_str, show_default=True, prompt=True,
+    "--end", type=DateString(), default=today_str, prompt=True,
     help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser.")
 @click.option(
     "--update/--no-update", default=True, show_default=True,
@@ -173,16 +173,29 @@ def status_date_range(db, start, end, show_all):
 
 @status.command("season")
 @click.argument("year", type=MlbSeason(), default=current_year)
+@click.option('-v', 'verbosity', count=True, default=1,
+    help="Specify the level of detail to report (season summary, dates missing data, all dates in season)")
 @click.pass_obj
-def status_season(db, year):
+def status_season(db, year, verbosity):
     """Report status for a single MLB season."""
     season = Season.find_by_year(db["session"], year)
     result = refresh_season_data(db, season.year)
     if result.failure:
         return exit_app_error(db, result)
-    click.secho(f"\n### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
-    click.secho(season.status_report(), fg="bright_yellow")
-    return exit_app_success(db)
+    if verbosity <= 0:
+        error = f"Invalid value for verbosity: {verbosity}. Value must be greater than zero."
+        return exit_app_error(db, Result(error))
+    elif verbosity == 1:
+        click.secho(f"\n### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
+        click.secho(season.status_report(), fg="bright_yellow")
+        return exit_app_success(db)
+    elif verbosity == 2:
+        return status_date_range(db, season.start_date, season.end_date, False)
+    elif verbosity > 2:
+        return status_date_range(db, season.start_date, season.end_date, True)
+    else:
+        error = "Unknown error occurred, unable to display status report."
+        return exit_app_error(db, Result(error))
 
 
 def refresh_season_data(db, year):

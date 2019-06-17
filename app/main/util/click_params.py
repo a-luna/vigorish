@@ -49,16 +49,3 @@ class MlbSeason(click.ParamType):
             self.fail(error, param, ctx)
         except Exception:
             self.fail(error, param, ctx)
-
-class MlbDataSet(click.ParamType):
-    name = 'data-set'
-    def convert(self, value, param, ctx):
-        try:
-            if value in MLB_DATA_SETS:
-                return value
-            error = (
-                f'Invalid value: "{value}". Data set must be a value from the following list:\n'
-                f'{print_list(MLB_DATA_SETS)}')
-            self.fail(error, param, ctx)
-        except Exception:
-            self.fail(error, param, ctx)
