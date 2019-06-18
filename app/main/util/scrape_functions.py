@@ -30,7 +30,7 @@ def get_chromedriver(page_load_timeout=60):
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     driver_path = os.getenv("CHROMEDRIVER_PATH")
-    driver = Chrome(chrome_options=options, executable_path=driver_path)
+    driver = Chrome(options=options, executable_path=driver_path)
     driver.set_page_load_timeout(page_load_timeout)
     return driver
 

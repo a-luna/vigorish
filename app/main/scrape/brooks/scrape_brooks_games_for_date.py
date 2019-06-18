@@ -11,9 +11,10 @@ from app.main.constants import T_BROOKS_DASH_URL, BROOKS_DASHBOARD_DATE_FORMAT
 from app.main.scrape.brooks.models.games_for_date import BrooksGamesForDate
 from app.main.scrape.brooks.models.game_info import BrooksGameInfo
 from app.main.models.season import Season
-from app.main.util.decorators import timeout, retry, RetryLimitExceededError
+from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from app.main.util.result import Result
+from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import parse_timestamp, validate_bbref_game_id_list
 
 
@@ -24,25 +25,17 @@ _T_PLOG_URLS_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="
 _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'
 
 
-def scrape_brooks_games_for_date(session, driver, scrape_date, bbref_games_for_date):
+def scrape_brooks_games_for_date(session, scrape_date, bbref_games_for_date):
     try:
         game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
         required_game_data = validate_bbref_game_id_list(game_ids)
         url = _get_dashboard_url_for_date(scrape_date)
-        response = render_webpage(driver, url)
+        response = request_url(url)
         return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
-
-
-@retry(
-    max_attempts=5,delay=5, exceptions=(TimeoutError, Exception))
-@timeout(seconds=15)
-def render_webpage(driver, url):
-    driver.get(url)
-    return html.fromstring(driver.page_source, base_url=url)
 
 
 def _get_dashboard_url_for_date(scrape_date):
