@@ -2,6 +2,7 @@
 import os
 
 import requests
+from fake_useragent import UserAgent
 from lxml import html
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -21,17 +22,15 @@ from app.main.util.result import Result
 @timeout(seconds=5)
 def get_chromedriver(page_load_timeout=60):
     """Initialize a Chrome webdriver instance with user-specified value for page load timeout."""
+    ua = UserAgent()
     options = webdriver.ChromeOptions()
     options.binary_location = os.getenv("GOOGLE_CHROME_BIN")
-    options.add_argument("--ignore-certificate-errors")
-    options.add_argument("--test-type")
-    options.add_argument("--pageLoadStrategy=none")
+    options.add_argument(f'--user-agent={ua.random}')
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
-    options.add_argument("--remote-debugging-port=9222")
     driver_path = os.getenv("CHROMEDRIVER_PATH")
-    driver = webdriver.Chrome(executable_path=driver_path, options=options)
+    driver = webdriver.Chrome(chrome_options=options, executable_path=driver_path)
     driver.set_page_load_timeout(page_load_timeout)
     return driver
 
