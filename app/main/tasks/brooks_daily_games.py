@@ -5,25 +5,13 @@ from app.main.tasks.base_task import BaseTask
 from app.main.util.dt_format_strings import DATE_ONLY_2
 from app.main.util.result import Result
 from app.main.util.s3_helper import get_bbref_games_for_date_from_s3, upload_brooks_games_for_date
-from app.main.util.scrape_functions import get_chromedriver
 
 
 class ScrapeBrooksDailyGames(BaseTask):
     key_name = "brooks_games_for_date"
     display_name = "Games for date (brooksbaseball.com)"
 
-    def __init__(self, db, season):
-        BaseTask.__init__(self, db, season)
-        try:
-            self.driver = get_chromedriver()
-        except RetryLimitExceededError as e:
-            self.driver = None
-        except Exception as e:
-            self.driver = None
-
     def execute(self, scrape_date):
-        if not self.driver:
-            return Result.Fail("Chromedriver was not instantiated, must abort.")
         scraped_bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db['session'], scrape_date)
         if not scraped_bbref_games_for_date:
@@ -36,10 +24,7 @@ class ScrapeBrooksDailyGames(BaseTask):
         if result.failure:
             return result
         bbref_games_for_date = result.value
-        result = scrape_brooks_games_for_date(
-            self.db['session'], self.driver, scrape_date, bbref_games_for_date)
-        self.driver.quit()
-        self.driver = None
+        result = scrape_brooks_games_for_date(self.db['session'], scrape_date, bbref_games_for_date)
         if result.failure:
             return result
         brooks_games_for_date = result.value
