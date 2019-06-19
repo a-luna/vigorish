@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Any
 
+from app.main.util.list_functions import as_dict_list
+
 
 @dataclass
 class BBRefBoxscoreTeamData:
@@ -29,11 +31,6 @@ class BBRefBoxscoreTeamData:
             total_hits_by_opponent=int(self.total_hits_by_opponent),
             total_errors_by_team=int(self.total_errors_by_team),
             total_errors_by_opponent=int(self.total_errors_by_opponent),
-            starting_lineup=self._flatten(self.starting_lineup),
-            batting_stats=self._flatten(self.batting_stats),
-            pitching_stats=self._flatten(self.pitching_stats),
-        )
-
-    @staticmethod
-    def _flatten(objects):
-        return [obj.as_dict() for obj in objects]
+            starting_lineup=as_dict_list(self.starting_lineup),
+            batting_stats=as_dict_list(self.batting_stats),
+            pitching_stats=as_dict_list(self.pitching_stats))

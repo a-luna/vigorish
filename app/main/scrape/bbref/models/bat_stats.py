@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Any
 
+from app.main.util.list_functions import as_dict_list
+
 
 @dataclass
 class BBRefBatStats:
@@ -53,9 +55,4 @@ class BBRefBatStats:
             wpa_bat_pos=float(self.wpa_bat_pos),
             wpa_bat_neg=float(self.wpa_bat_neg),
             re24_bat=float(self.re24_bat),
-            details=self._flatten(self.details),
-        )
-
-    @staticmethod
-    def _flatten(objects):
-        return [obj.as_dict() for obj in objects]
+            details=as_dict_list(self.details))

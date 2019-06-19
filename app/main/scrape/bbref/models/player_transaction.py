@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from app.main.util.list_functions import as_dict_list
+
 
 class BBRefPlayerTransaction():
     """Detailed information describing teams, players and dates related to a MLB transaction such as a trade."""
@@ -10,14 +12,8 @@ class BBRefPlayerTransaction():
     details = []
 
     def as_dict(self):
-        dict = {
-            "category_id": self.category_id,
-            "date": "{}".format(self.date.strftime("%Y-%m-%d")),
-            "description": "{}".format(self.description),
-            "details": self._flatten(self.details)
-        }
-        return dict
-
-    @staticmethod
-    def _flatten(objects):
-        return [obj.as_dict() for obj in objects]
+        return dict(
+            category_id=self.category_id,
+            date=self.date.strftime("%Y-%m-%d"),
+            description=self.description,
+            details=as_dict_list(self.details))

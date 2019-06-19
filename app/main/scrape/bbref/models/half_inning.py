@@ -1,3 +1,6 @@
+from app.main.util.list_functions import as_dict_list
+
+
 class BBRefHalfInning():
     inning_id = ""
     inning_label = ""
@@ -26,9 +29,5 @@ class BBRefHalfInning():
             inning_total_left_on_base=int(self.inning_total_left_on_base),
             away_team_runs_after_inning=int(self.away_team_runs_after_inning),
             home_team_runs_after_inning=int(self.home_team_runs_after_inning),
-            game_events=self._flatten(self.game_events),
-            substitutions=self._flatten(self.substitutions))
-
-    @staticmethod
-    def _flatten(objects):
-        return [obj.as_dict() for obj in objects]
+            game_events=as_dict_list(self.game_events),
+            substitutions=as_dict_list(self.substitutions))

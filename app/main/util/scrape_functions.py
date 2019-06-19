@@ -2,30 +2,24 @@
 import os
 
 import requests
-from fake_useragent import UserAgent
 from lxml import html
 from selenium.webdriver import Chrome, ChromeOptions
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
 
-from app.main.util.decorators import (
-    timeout,
-    retry,
-    RetryLimitExceededError
-)
-from app.main.util.result import Result
+from app.main.util.decorators import timeout, retry
 
+
+USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) "
+    "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15")
 
 @retry(
     max_attempts=5, delay=5, exceptions=(TimeoutError, Exception))
 @timeout(seconds=5)
 def get_chromedriver(page_load_timeout=60):
     """Initialize a Chrome webdriver instance with user-specified value for page load timeout."""
-    #ua = UserAgent()
     options = ChromeOptions()
     options.binary_location = os.getenv("GOOGLE_CHROME_BIN")
-    #options.add_argument(f'--user-agent={ua.random}')
+    options.add_argument(f'--user-agent={USER_AGENT}')
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")

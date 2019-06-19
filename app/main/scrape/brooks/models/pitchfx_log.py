@@ -8,6 +8,7 @@ from app.main.constants import (
     AT_BAT_RESULTS_DP
 )
 from app.main.util.string_functions import validate_bb_game_id
+from app.main.util.list_functions import as_dict_list
 
 
 @dataclass
@@ -152,7 +153,7 @@ class BrooksPitchFxLog:
     def as_dict(self):
         return dict(
             __brooks_pitchfx_log__=True,
-            pitchfx_log=self._flatten(self.pitchfx_log),
+            pitchfx_log=as_dict_list(self.pitchfx_log),
             pitch_count_by_inning=self.pitch_count_by_inning,
             pitcher_name=self.pitcher_name,
             pitcher_id_mlb=int(self.pitcher_id_mlb),
@@ -167,7 +168,3 @@ class BrooksPitchFxLog:
     def as_json(self):
         """Convert pitchfx log to JSON."""
         return json.dumps(self.as_dict(), indent=2)
-
-    @staticmethod
-    def _flatten(objects):
-        return [obj.as_dict() for obj in objects]

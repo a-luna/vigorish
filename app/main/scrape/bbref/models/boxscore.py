@@ -5,6 +5,7 @@ from typing import Any
 from app.main.constants import TEAM_ID_DICT
 from app.main.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
 from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
+from app.main.util.list_functions import as_dict_list
 from app.main.util.string_functions import validate_bbref_game_id
 
 
@@ -92,9 +93,9 @@ class BBRefBoxscore:
             game_meta_info=self.game_meta_info.as_dict(),
             away_team_data=self.away_team_data.as_dict(),
             home_team_data=self.home_team_data.as_dict(),
-            innings_list=self._flatten(self.innings_list),
+            innings_list=as_dict_list(self.innings_list),
             player_id_match_log=self.player_id_match_log,
-            umpires=self._flatten(self.umpires),
+            umpires=as_dict_list(self.umpires),
             player_team_dict=self.player_team_dict,
             player_name_dict=self.player_name_dict)
 
@@ -107,7 +108,3 @@ class BBRefBoxscore:
         if br_team_id in TEAM_ID_DICT:
             return TEAM_ID_DICT[br_team_id]
         return br_team_id
-
-    @staticmethod
-    def _flatten(objects):
-        return [obj.as_dict() for obj in objects]

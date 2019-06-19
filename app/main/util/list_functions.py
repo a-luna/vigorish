@@ -3,12 +3,13 @@ import itertools
 from collections import defaultdict
 from datetime import datetime
 
+from app.main.util.check_functions import hasmethod
 from app.main.util.dt_format_strings import DT_STR_FORMAT_ALL
 
 
-def as_list_of_dicts(db_objects):
+def as_dict_list(db_objects):
     """Convert a list of model objects to a list of dicts."""
-    return [obj.as_dict() for obj in db_objects]
+    return [obj.as_dict() for obj in db_objects if hasmethod(obj, "as_dict")]
 
 
 def display_dict(

@@ -2,6 +2,8 @@
 import json
 from collections import ChainMap
 
+from app.main.util.list_functions import as_dict_list
+
 class BrooksGamesForDate():
     """Boxscore URLs for all games that took place on a single day."""
 
@@ -14,29 +16,18 @@ class BrooksGamesForDate():
 
     @property
     def game_id_dict(self):
-        dict_list = [
-            g.game_id_dict
-            for g
-            in self.games
-            if not g.might_be_postponed
-        ]
+        dict_list = [g.game_id_dict for g in self.games if not g.might_be_postponed]
         return dict(ChainMap(*dict_list))
 
     def as_dict(self):
         """Convert daily boxscore URL values to a dictionary."""
-        dict = {
-            "__brooks_games_for_date__": True,
-            "dashboard_url": "{}".format(self.dashboard_url),
-            "game_date_str": "{}".format(self.game_date_str),
-            "game_count": int(self.game_count),
-            "games": self._flatten(self.games)
-        }
-        return dict
+        return dict(
+            __brooks_games_for_date__=True,
+            dashboard_url=self.dashboard_url,
+            game_date_str=self.game_date_str,
+            game_count=int(self.game_count),
+            games=as_dict_list(self.games))
 
     def as_json(self):
         """Convert daily game list to JSON."""
         return json.dumps(self.as_dict(), indent=2)
-
-    @staticmethod
-    def _flatten(objects):
-        return [obj.as_dict() for obj in objects]

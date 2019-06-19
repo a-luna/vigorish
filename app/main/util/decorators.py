@@ -14,8 +14,7 @@ def handle_failed_attempt(func, remaining, e, delay):
     message = (
         f"Function name: {func.__name__}\n"
         f"Error: {repr(e)}\n"
-        f"{remaining} attempts remaining, retrying in {delay} seconds..."
-    )
+        f"{remaining} attempts remaining, retrying in {delay} seconds...")
     print(message)
 
 

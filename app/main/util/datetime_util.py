@@ -5,7 +5,7 @@ from email.utils import parsedate_to_datetime, format_datetime
 
 from tzlocal import get_localzone
 
-from app.main.util.better_getattr import better_getattr
+from app.main.util.check_functions import checkattr
 from app.main.util.dt_format_strings import (
     DT_STR_FORMAT, DT_STR_FORMAT_NAIVE, DT_FORMAT_ISO, DT_FORMAT_SHORT,
     DT_FORMAT_XML, DATE_ONLY_2
@@ -23,7 +23,7 @@ def convert_dt_for_display(obj, attr_name, user_tz=None, str_format=DT_STR_FORMA
     If 'attr_name' does not exist or if the value is not a datetime object,
     an empty string is returned.
     """
-    result = better_getattr(obj, attr_name)
+    result = checkattr(obj, attr_name)
     if result.failure:
         return result
     try:
@@ -52,7 +52,7 @@ def convert_dt_to_user_tz_str(dt, user_tz=None, str_format=DT_STR_FORMAT):
     return convert_dt_to_user_tz(dt, user_tz, str_format).strftime(str_format)
 
 def get_dt_iso_format_utc(obj, attr_name):
-    result = better_getattr(obj, attr_name)
+    result = checkattr(obj, attr_name)
     if result.failure:
         return result
     try:

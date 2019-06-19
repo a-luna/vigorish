@@ -49,6 +49,7 @@ MLB_DATA_SETS = [
 ]
 
 PBAR_LEN_DICT = dict(
+    find_games_for_date=33,
     bbref_games_for_date=34,
     bbref_boxscore=28,
     brooks_games_for_date=35,
