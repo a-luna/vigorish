@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 
 from app.main.constants import T_BBREF_DASH_URL
 from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
-from app.main.util.decorators import RetryLimitExceededError
+from app.main.util.decorators import timeout, retry, RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.result import Result
 from app.main.util.string_functions import validate_bbref_game_id
