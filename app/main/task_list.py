@@ -4,7 +4,6 @@ from app.main.tasks.bbref_player_bio import ScrapeBBrefPlayerBio
 from app.main.tasks.brooks_daily_games import ScrapeBrooksDailyGames
 from app.main.tasks.brooks_daily_pitch_logs import ScrapeBrooksDailyPitchLogs
 from app.main.tasks.brooks_daily_pitchfx import ScrapeBrooksDailyPitchFxLogs
-from app.main.tasks.daily_find_games import FindAllGamesForDateTask
 from app.main.util.result import Result
 
 
@@ -16,10 +15,11 @@ TASK_LIST_MENU = dict(
     brooks_pitch_log=[ScrapeBrooksDailyPitchLogs],
     brooks_pitchfx=[ScrapeBrooksDailyPitchFxLogs],
     all=[
-        FindAllGamesForDateTask,])
-        #ScrapeBBRefDailyBoxscores,
-        #ScrapeBrooksDailyPitchLogs,
-        #ScrapeBrooksDailyPitchFxLogs])
+        ScrapeBBRefDailyGames,
+        ScrapeBrooksDailyGames,
+        ScrapeBBRefDailyBoxscores,
+        ScrapeBrooksDailyPitchLogs,
+        ScrapeBrooksDailyPitchFxLogs])
 
 
 def get_task_list(data_set):

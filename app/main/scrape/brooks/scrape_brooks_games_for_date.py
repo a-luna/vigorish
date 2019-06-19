@@ -14,7 +14,6 @@ from app.main.models.season import Season
 from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from app.main.util.result import Result
-from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import parse_timestamp, validate_bbref_game_id_list
 
 
@@ -42,6 +41,13 @@ def _get_dashboard_url_for_date(scrape_date):
     date_str = scrape_date.strftime(BROOKS_DASHBOARD_DATE_FORMAT)
     return Template(T_BROOKS_DASH_URL).substitute(date=date_str)
 
+@retry(
+    max_attempts=15, delay=5, exceptions=(TimeoutError, Exception))
+@timeout(seconds=10)
+def request_url(url):
+    """Send a HTTP request for URL, return the response if successful."""
+    page = requests.get(url)
+    return html.fromstring(page.content, base_url=url)
 
 def parse_daily_dash_page(session, response, scrape_date, url, required_game_data):
     games_for_date = BrooksGamesForDate()

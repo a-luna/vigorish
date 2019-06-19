@@ -9,7 +9,6 @@ from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.result import Result
-from app.main.util.scrape_functions import request_url
 from app.main.util.string_functions import validate_bbref_game_id
 
 
@@ -39,6 +38,13 @@ def get_dashboard_url_for_date(scrape_date):
     y = scrape_date.year
     return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
 
+@retry(
+    max_attempts=15, delay=5, exceptions=(TimeoutError, Exception))
+@timeout(seconds=10)
+def request_url(url):
+    """Send a HTTP request for URL, return the response if successful."""
+    page = requests.get(url)
+    return html.fromstring(page.content, base_url=url)
 
 def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date = BBRefGamesForDate()
