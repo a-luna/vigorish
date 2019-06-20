@@ -11,6 +11,7 @@ from app.main.task_list import get_task_list
 from app.main.util.datetime_util import get_date_range, format_timedelta
 from app.main.util.dt_format_strings import MONTH_NAME_SHORT
 from app.main.util.result import Result
+from app.main.util.scrape_functions import get_chromedriver
 
 
 class ScrapeJob:
@@ -21,6 +22,7 @@ class ScrapeJob:
         self.start_date = start_date
         self.end_date = end_date
         self.status = "Not Started"
+        self.errors = []
 
 
     @property
@@ -40,6 +42,10 @@ class ScrapeJob:
                 f"data set....: {self.data_set}\n"
                 f"date range..: {start_str} - {end_str}\n"
                 f"duration....: {format_timedelta(self.duration)}")
+            if self.errors:
+                errors = "\n".join(self.errors)
+                report += f"\nerrors......: {errors}"
+            return report
         elif self.status == "Failed":
             return str(self.result)
         else:
@@ -57,7 +63,7 @@ class ScrapeJob:
             for scrape_date in self.date_range:
                 with tqdm(total=len(self.task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
                     for task in self.task_list:
-                        scrape_task = task(self.db, self.season)
+                        scrape_task = task(self.db, self.season, self.driver)
                         pbar_date.set_description(self._get_pbar_date_description(scrape_date, scrape_task.key_name))
                         pbar_data_set.set_description(self._get_pbar_data_set_description(scrape_task.key_name))
                         result = scrape_task.execute(scrape_date)
@@ -71,6 +77,12 @@ class ScrapeJob:
 
 
     def _initialize(self):
+        try:
+            self.driver = get_chromedriver()
+        except RetryLimitExceededError as e:
+            return Result.Fail(repr(e))
+        except Exception as e:
+            return Result.Fail(f"Error: {repr(e)}")
         result = Season.validate_date_range(self.db['session'], self.start_date, self.end_date)
         if result.failure:
             return result
@@ -99,10 +111,17 @@ class ScrapeJob:
         self.end_time = datetime.now()
         self.status = status
         self.result = result
+        if self.driver:
+            try:
+                self.driver.quit()
+                self.driver = None
+            except Exception as e:
+                self.errors += f"Error occurred quitting chromedriver: {repr(e)}"
         return self.result
 
 
     def _job_failed(self, result):
+        self.errors += result.error
         return self._tear_down("Failed", result)
 
 

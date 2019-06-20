@@ -24,12 +24,12 @@ _T_PLOG_URLS_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="
 _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'
 
 
-def scrape_brooks_games_for_date(session, scrape_date, bbref_games_for_date):
+def scrape_brooks_games_for_date(session, scrape_date, driver, bbref_games_for_date):
     try:
         game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
         required_game_data = validate_bbref_game_id_list(game_ids)
         url = _get_dashboard_url_for_date(scrape_date)
-        response = request_url(url)
+        response = render_webpage(driver, url)
         return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
@@ -42,12 +42,14 @@ def _get_dashboard_url_for_date(scrape_date):
     return Template(T_BROOKS_DASH_URL).substitute(date=date_str)
 
 @retry(
-    max_attempts=15, delay=5, exceptions=(TimeoutError, Exception))
-@timeout(seconds=10)
-def request_url(url):
-    """Send a HTTP request for URL, return the response if successful."""
-    page = requests.get(url)
-    return html.fromstring(page.content, base_url=url)
+    max_attempts=5,delay=5, exceptions=(TimeoutError, Exception))
+@timeout(seconds=15)
+def render_webpage(driver, url):
+    driver.get(url)
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_BAT_STATS_TABLE_LOC))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PITCH_STATS_TABLE_LOC))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PLAY_BY_PLAY_TABLE_LOC))
+    return html.fromstring(driver.page_source, base_url=url)
 
 def parse_daily_dash_page(session, response, scrape_date, url, required_game_data):
     games_for_date = BrooksGamesForDate()

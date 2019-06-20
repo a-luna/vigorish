@@ -22,10 +22,10 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
     '//li[@id="header_scores"]//div[contains(@class, "game_summaries")]'
     '//td[contains(@class, "gamelink")]/a/@href')
 
-def scrape_bbref_games_for_date(scrape_date):
+def scrape_bbref_games_for_date(scrape_date, driver):
     try:
         url = get_dashboard_url_for_date(scrape_date)
-        response = request_url(url)
+        response = render_webpage(driver, url)
         return parse_bbref_dashboard_page(response, scrape_date, url)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
@@ -39,12 +39,11 @@ def get_dashboard_url_for_date(scrape_date):
     return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
 
 @retry(
-    max_attempts=15, delay=5, exceptions=(TimeoutError, Exception))
-@timeout(seconds=10)
-def request_url(url):
-    """Send a HTTP request for URL, return the response if successful."""
-    page = requests.get(url)
-    return html.fromstring(page.content, base_url=url)
+    max_attempts=5,delay=5, exceptions=(TimeoutError, Exception))
+@timeout(seconds=15)
+def render_webpage(driver, url):
+    driver.get(url)
+    return html.fromstring(driver.page_source, base_url=url)
 
 def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date = BBRefGamesForDate()

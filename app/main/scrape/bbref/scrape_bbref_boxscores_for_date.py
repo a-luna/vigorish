@@ -95,8 +95,7 @@ BAT_STATS = dict(
     wpa_bat_pos="wpa_bat_pos",
     wpa_bat_neg="wpa_bat_neg",
     re24_bat="re24_bat",
-    details="details",
-)
+    details="details")
 
 PITCH_STATS = dict(
     innings_pitched="IP",
@@ -121,8 +120,7 @@ PITCH_STATS = dict(
     inherited_scored="inherited_score",
     wpa_pitch="wpa_def",
     avg_lvg_index="leverage_index_avg",
-    re24_pitch="re24_def",
-)
+    re24_pitch="re24_def")
 
 PBP_STATS = dict(
     pbp_table_row_number="data-row",
@@ -133,27 +131,31 @@ PBP_STATS = dict(
     play_description="play_desc",
     pitch_sequence="pitches_pbp",
     runs_outs_result="runs_outs_result",
-    play_index_url="play_index_url"
-)
+    play_index_url="play_index_url")
 
-_GAME_ID_PATTERN = r"[A-Z][A-Z][A-Z]\d{9,9}"
-_TEAM_ID_PATTERN = r"[A-Z][A-Z][A-Z]"
+_GAME_ID_PATTERN = r"[A-Z]{3,3}\d{9,9}"
+_TEAM_ID_PATTERN = r"[A-Z]{3,3}"
 _ATTENDANCE_PATTERN = r"\d{1,2},\d{3,3}"
-_GAME_DATE_PATTERN = r"[1-3]?[0-9], 20[0-1][0-9]"
 _GAME_DURATION_PATTERN = r"[1-9]:[0-5][0-9]"
 _INNING_TOTALS_PATTERN = (
-    r"(?P<runs>\d{1,2})\s\b\w+\b,\s"
-    r"(?P<hits>\d{1,2})\s\b\w+\b,\s"
-    r"(?P<errors>\d{1,2})\s\b\w+\b,\s"
-    r"(?P<left_on_base>\d{1,2})\s\b\w+\b.\s(\b\w+\b)(\s\b\w+\b)?\s"
-    r"(?P<away_team_runs>\d{1,2}),\s(\b\w+\b)(\s\b\w+\b)?\s"
-    r"(?P<home_team_runs>\d{1,2})"
-)
+    r"(?P<runs>\d{1,2}) (run|runs), "
+    r"(?P<hits>\d{1,2}) (hit|hits), "
+    r"(?P<errors>\d{1,2}) (error|errors), "
+    r"(?P<left_on_base>\d{1,2}) LOB."
+    r"(?P<away_team_name>\s\b\w+\b){1,2} "
+    r"(?P<away_team_runs>\d{1,2}),"
+    r"(?P<home_team_name>\s\b\w+\b){1,2} "
+    r"(?P<home_team_runs>\d{1,2})")
+
 INNING_TOTALS_REGEX = re.compile(_INNING_TOTALS_PATTERN)
 CHANGE_POS_PATTERN = r"from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b"
 CHANGE_POS_REGEX = re.compile(CHANGE_POS_PATTERN)
 POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
 NUM_REGEX = re.compile(r"[1-9]{1}")
+
+_BAT_STATS_TABLE_LOC = (By.XPATH, _BATTING_STATS_TABLE)
+_PITCH_STATS_TABLE_LOC = (By.XPATH, _PITCHING_STATS_TABLE)
+_PLAY_BY_PLAY_TABLE_LOC = (By.XPATH, _PLAY_BY_PLAY_TABLE)
 
 
 def scrape_bbref_boxscores_for_date(games_for_date, driver):
@@ -191,9 +193,9 @@ def get_pbar_description(game_id):
 @timeout(seconds=15)
 def render_webpage(driver, url):
     driver.get(url)
-    WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _BATTING_STATS_TABLE)))
-    WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _PITCHING_STATS_TABLE)))
-    WebDriverWait(driver, 1000).until(ec.presence_of_element_located((By.XPATH, _PLAY_BY_PLAY_TABLE)))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_BAT_STATS_TABLE_LOC))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PITCH_STATS_TABLE_LOC))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PLAY_BY_PLAY_TABLE_LOC))
     return html.fromstring(driver.page_source, base_url=url)
 
 

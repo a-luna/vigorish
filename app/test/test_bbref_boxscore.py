@@ -23,6 +23,10 @@ class TestBBRefBoxscore(BaseTestCase):
     BOXSCORE_HTML = APP_TEST_FOLDER / "test_files" / "ATL201803290.html"
     GAME_ID = "ATL201803290"
 
+    #BOXSCORE_URL = "https://www.baseball-reference.com/boxes/KCA/KCA201803290.shtml"
+    #BOXSCORE_HTML = APP_TEST_FOLDER / "test_files" / "KCA201803290.html"
+    #AME_ID = "KCA201803290"
+
     def test_scrape_bbref_boxscore(self):
         """Verify BBRefBoxscore object is correctly parsed from webpage."""
         response = html.parse(str(self.BOXSCORE_HTML))

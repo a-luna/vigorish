@@ -3,7 +3,7 @@ class BaseTask:
     display_name = ""
 
 
-    def __init__(self, db, season):
+    def __init__(self, db, season, driver):
         self.db = db
         self.season = season
-        self.driver = None
+        self.driver = driver
