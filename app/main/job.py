@@ -78,7 +78,7 @@ class ScrapeJob:
 
 
     def _initialize(self):
-        self.task_list = _get_driver().\
+        self.task_list = self._get_driver().\
             on_success(Season.validate_date_range, self.db['session'], self.start_date, self.end_date).\
             on_success(get_task_list, self.data_set)
         self.date_range = get_date_range(self.start_date, self.end_date)
