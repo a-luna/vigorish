@@ -9,6 +9,7 @@ from app.main.constants import PBAR_LEN_DICT
 from app.main.models.season import Season
 from app.main.task_list import get_task_list
 from app.main.util.datetime_util import get_date_range, format_timedelta
+from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.dt_format_strings import MONTH_NAME_SHORT
 from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
@@ -77,22 +78,21 @@ class ScrapeJob:
 
 
     def _initialize(self):
+        self.task_list = _get_driver().\
+            on_success(Season.validate_date_range, self.db['session'], self.start_date, self.end_date).\
+            on_success(get_task_list, self.data_set)
+        self.date_range = get_date_range(self.start_date, self.end_date)
+        return Result.Ok()
+
+
+    def _get_driver(self):
         try:
             self.driver = get_chromedriver()
+            return Result.Ok()
         except RetryLimitExceededError as e:
             return Result.Fail(repr(e))
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
-        result = Season.validate_date_range(self.db['session'], self.start_date, self.end_date)
-        if result.failure:
-            return result
-        self.season = result.value
-        result = get_task_list(self.data_set)
-        if result.failure:
-            return result
-        self.task_list = result.value
-        self.date_range = get_date_range(self.start_date, self.end_date)
-        return Result.Ok()
 
 
     def _get_pbar_date_description(self, date, data_set):

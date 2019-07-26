@@ -36,6 +36,25 @@ class Result():
         else:
             return f'Result<success={self.success}, message="{self.error}">'
 
+    def on_success(self, func, *args, **kwargs):
+        if self.failure:
+            return self
+        if self.value:
+            return func(self.value, *args, **kwargs)
+        return func(*args, **kwargs)
+
+    def on_failure(self, func, *args, **kwargs):
+        if self.success:
+            return self.value if self.value else None
+        if self.error:
+            return func(self.error, *args, **kwargs)
+        return func(*args, **kwargs)
+
+    def on_both(self, func, *args, **kwargs):
+        if self.value:
+            return func(self.value, *args, **kwargs)
+        return func(*args, **kwargs)
+
     @classmethod
     def Fail(cls, error):
         """Create a Result object for a failed operation."""
