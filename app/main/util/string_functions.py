@@ -5,11 +5,11 @@ from datetime import datetime
 from fuzzywuzzy import process
 
 from app.main.constants import TEAM_ID_DICT
-from app.main.util.regex import TIMESTAMP_REGEX
+from app.main.util.regex import TIMESTAMP_REGEX, PUNCTUATION_REGEX, WHITESPACE_REGEX
 from app.main.util.result import Result
 
 
-def string_is_null_or_blank(s):
+def string_is_null_or_blank(s: str) -> bool:
     """Check if a string is null or consists entirely of whitespace."""
     return not s or s.isspace()
 
@@ -19,11 +19,11 @@ def fuzzy_match(s, choices):
     return dict(best_match=match, score=score)
 
 
-def normalize(s):
-    for p in string.punctuation:
-        s = s.replace(p, "")
-    s = s.lower().strip()
-    return re.sub("\s+", " ", s)
+def normalize(input: str, sub_whitespace: str = "-") -> str:
+    output = list(input)
+    for punc in reversed([match for match in PUNCTUATION_REGEX.finditer(input)]):
+        output = output[:punc.start()] + output[punc.start() + 1:]
+    return WHITESPACE_REGEX.sub(sub_whitespace, "".join(output)).lower().strip()
 
 
 def parse_timestamp(input):

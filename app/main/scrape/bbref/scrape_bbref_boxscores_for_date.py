@@ -32,7 +32,7 @@ from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
 from app.main.util.result import Result
-from app.main.util.string_functions import fuzzy_match, normalize
+from app.main.util.string_functions import fuzzy_match
 
 
 DATA_SET = "bbref_boxscore"

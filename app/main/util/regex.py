@@ -16,6 +16,8 @@ GUID_REGEX = re.compile(
 DB_OBJECT_NAME_PATTERN = r'^[a-z0-9_-]+$'
 DB_OBJECT_NAME_REGEX = re.compile(DB_OBJECT_NAME_PATTERN)
 TIMESTAMP_REGEX = re.compile(r'\d?\d:\d\d')
+PUNCTUATION_REGEX = re.compile(r'[^\w\s_]')
+WHITESPACE_REGEX = re.compile(r'\s')
 
 
 def string_is_null_or_blank(string):

@@ -41,7 +41,7 @@ def display_dict(
             v = v.strftime(DT_STR_FORMAT_ALL)
         c = max_length - len(k)
         d = '.' * c
-        print('{k}{d}: {v}'.format(k=k, d=d, v=v))
+        print(f'{k}{d}: {v}')
 
 def report_dict(
     dict,
@@ -81,18 +81,18 @@ def filter_dict(source_dict, keys):
 
 
 def flatten_list2d(list2d):
-    """Product a normal list by flattenning a 2-dimensional list."""
+    """Produce a normal list by flattenning a 2-dimensional list."""
     return list(itertools.chain(*list2d))
 
 
-def group_and_sort_list(
+def group_and_sort(
     unsorted,
     group_attr,
     sort_attr,
     sort_groups_desc=False,
     sort_all_desc=False
 ):
-    """Product a list that is grouped and sorted by attributes specified."""
+    """Produce a list that is grouped and sorted by attributes specified."""
     list_sorted = sorted(
         unsorted,
         key=lambda x: getattr(x, sort_attr),
