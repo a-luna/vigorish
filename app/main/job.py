@@ -22,6 +22,7 @@ class ScrapeJob:
         self.data_set = data_set
         self.start_date = start_date
         self.end_date = end_date
+        self.deiver = None
         self.status = "Not Started"
         self.errors = []
 
@@ -64,7 +65,7 @@ class ScrapeJob:
             for scrape_date in self.date_range:
                 with tqdm(total=len(self.task_list), unit="data-set", position=1, leave=False) as pbar_data_set:
                     for task in self.task_list:
-                        scrape_task = task(self.db, self.season, self.driver)
+                        scrape_task = task(self.db, self.season, None)
                         pbar_date.set_description(self._get_pbar_date_description(scrape_date, scrape_task.key_name))
                         pbar_data_set.set_description(self._get_pbar_data_set_description(scrape_task.key_name))
                         result = scrape_task.execute(scrape_date)
@@ -78,12 +79,12 @@ class ScrapeJob:
 
 
     def _initialize(self):
-        try:
-            self.driver = get_chromedriver()
-        except RetryLimitExceededError as e:
-            return Result.Fail(repr(e))
-        except Exception as e:
-            return Result.Fail(f"Error: {repr(e)}")
+        #try:
+        #    self.driver = get_chromedriver()
+        #xcept RetryLimitExceededError as e:
+        #    return Result.Fail(repr(e))
+        #except Exception as e:
+        #    return Result.Fail(f"Error: {repr(e)}")
         result = Season.validate_date_range(self.db['session'], self.start_date, self.end_date)
         if result.failure:
             return result
@@ -112,12 +113,12 @@ class ScrapeJob:
         self.end_time = datetime.now()
         self.status = status
         self.result = result
-        if self.driver:
-            try:
-                self.driver.quit()
-                self.driver = None
-            except Exception as e:
-                self.errors += f"Error occurred quitting chromedriver: {repr(e)}"
+        #if self.driver:
+        #    try:
+        #        self.driver.quit()
+        #        self.driver = None
+        #    except Exception as e:
+        #        self.errors += f"Error occurred quitting chromedriver: {repr(e)}"
         return self.result
 
 

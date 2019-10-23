@@ -8,7 +8,7 @@ class ScrapeBBRefDailyGames(BaseTask):
     display_name = "Games for date (bbref.com)"
 
     def execute(self, scrape_date):
-        result = scrape_bbref_games_for_date(scrape_date)
+        result = scrape_bbref_games_for_date(scrape_date, self.driver)
         if result.failure:
             return result
         bbref_games_for_date = result.value

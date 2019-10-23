@@ -32,6 +32,7 @@ from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
 from app.main.util.list_functions import display_dict
 from app.main.util.numeric_functions import is_even
 from app.main.util.result import Result
+from app.main.util.s3_helper import download_html_bbref_boxscore
 from app.main.util.string_functions import fuzzy_match
 
 
@@ -166,14 +167,22 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
         for url in boxscore_urls:
             try:
                 uri = Path(url)
-                pbar.set_description(get_pbar_description(uri.stem))
-                response = render_webpage(driver, url)
+                game_id = uri.stem
+                pbar.set_description(get_pbar_description(game_id))
+                #response = render_webpage(driver, url)
+                result = download_html_bbref_boxscore(game_id)
+                if result.failure:
+                    return result
+                html_path = result.value
+                contents = html_path.read_text()
+                response = html.fromstring(contents)
                 result = parse_bbref_boxscore(response, url)
                 if result.failure:
                     return result
                 bbref_boxscore = result.value
                 scraped_boxscores.append(bbref_boxscore)
-                time.sleep(randint(250, 300) / 100.0)
+                html_path.unlink()
+                #time.sleep(randint(250, 300) / 100.0)
                 pbar.update()
             except RetryLimitExceededError as e:
                 return Result.Fail(repr(e))

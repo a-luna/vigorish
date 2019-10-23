@@ -2,6 +2,7 @@ from datetime import date
 from pathlib import Path
 from string import Template
 
+from lxml import html
 from urllib.parse import urljoin
 
 from app.main.constants import T_BBREF_DASH_URL
@@ -9,6 +10,7 @@ from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.util.decorators import timeout, retry, RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.result import Result
+from app.main.util.s3_helper import download_html_bbref_games_for_date
 from app.main.util.string_functions import validate_bbref_game_id
 
 
@@ -23,14 +25,29 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
     '//td[contains(@class, "gamelink")]/a/@href')
 
 def scrape_bbref_games_for_date(scrape_date, driver):
+    result = download_html_bbref_games_for_date(scrape_date)
+    if result.failure:
+        return result
+    html_path = result.value
+    contents = html_path.read_text()
+    response = html.fromstring(contents)
+    url = get_dashboard_url_for_date(scrape_date)
     try:
-        url = get_dashboard_url_for_date(scrape_date)
-        response = render_webpage(driver, url)
-        return parse_bbref_dashboard_page(response, scrape_date, url)
+        result = parse_bbref_dashboard_page(response, scrape_date, url)
+        html_path.unlink()
+        return result
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
+    #try:
+    #    url = get_dashboard_url_for_date(scrape_date)
+    #    response = render_webpage(driver, url)
+    #    return parse_bbref_dashboard_page(response, scrape_date, url)
+    #except RetryLimitExceededError as e:
+    #    return Result.Fail(repr(e))
+    #except Exception as e:
+    #    return Result.Fail(f"Error: {repr(e)}")
 
 def get_dashboard_url_for_date(scrape_date):
     m = scrape_date.month
@@ -67,7 +84,10 @@ def parse_bbref_dashboard_page(response, scrape_date, url):
 
 
 def verify_boxscore_date(boxscore_urls, scrape_date, url):
-    box_url = urljoin(url, boxscore_urls[0])
+    rel_url = boxscore_urls[0]
+    if 'allstar' in rel_url:
+        return Result.Ok()
+    box_url = urljoin(url, rel_url)
     game_id = Path(box_url).stem
     result = validate_bbref_game_id(game_id)
     if result.failure:

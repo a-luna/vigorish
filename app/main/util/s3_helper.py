@@ -2,6 +2,7 @@
 import errno
 import json
 import os
+from datetime import datetime
 from dateutil import parser
 from pathlib import Path
 from string import Template
@@ -11,7 +12,7 @@ import botocore
 
 from app.main.models.status_date import DateScrapeStatus
 from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
-from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
+from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2, DATE_ONLY_TABLE_ID
 from app.main.util.file_util import (
     T_BROOKS_GAMESFORDATE_FILENAME,
     read_brooks_games_for_date_from_file,
@@ -29,6 +30,7 @@ from app.main.util.file_util import (
     read_brooks_pitchfx_log_from_file,
     write_brooks_pitchfx_log_to_file
 )
+from app.main.util.regex import BR_DAILY_KEY_REGEX, BR_GAME_KEY_REGEX
 from app.main.util.result import Result
 from app.main.util.string_functions import validate_bb_game_id
 
@@ -42,7 +44,9 @@ T_BB_DATE_KEY = "${year}/brooks_games_for_date/${filename}"
 T_BB_LOG_KEY = "${year}/brooks_pitch_logs/${filename}"
 T_BB_PFX_KEY = "${year}/brooks_pitchfx/${filename}"
 T_BR_DATE_KEY = "${year}/bbref_games_for_date/${filename}"
+T_BR_DATE_HTML_KEY = "${year}/bbref_games_for_date/html/${filename}"
 T_BR_GAME_KEY = "${year}/bbref_boxscore/${filename}"
+T_BR_GAME_HTML_KEY = "${year}/bbref_boxscore/html/${filename}"
 
 s3_client = boto3.client("s3")
 s3_resource = boto3.resource("s3")
@@ -248,6 +252,25 @@ def get_all_pitch_app_ids_scraped(year):
     return Result.Ok(scraped_pitch_app_ids)
 
 
+def download_html_bbref_games_for_date(scrape_date, folderpath=None):
+    """Download raw HTML for bbref daily scoreboard page."""
+    folderpath = folderpath if folderpath else Path.cwd()
+    date_str = scrape_date.strftime(DATE_ONLY_TABLE_ID)
+    filename = f"{date_str}.html"
+    filepath = folderpath / filename
+    s3_key = Template(T_BR_DATE_HTML_KEY).substitute(year=scrape_date.year, filename=filename)
+
+    try:
+        s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
+        return Result.Ok(filepath)
+    except botocore.exceptions.ClientError as e:
+        if e.response["Error"]["Code"] == "404":
+            error = f'The object "{s3_key}" does not exist.'
+        else:
+            error = repr(e)
+        return Result.Fail(error)
+
+
 def upload_bbref_games_for_date(games_for_date):
     """Upload a file to S3 containing json encoded BBRefGamesForDate object."""
     result = write_bbref_games_for_date_to_file(games_for_date)
@@ -301,12 +324,34 @@ def get_all_bbref_dates_scraped(year):
     scraped_dates = []
     for key in scraped_keys:
         try:
-            date_str = Path(key).stem.split("_")[-1]
-            parsed_date = parser.parse(date_str)
-            scraped_dates.append(parsed_date)
+            match = BR_DAILY_KEY_REGEX.search(key)
+            if not match:
+                continue
+            group_dict = match.groupdict()
+            game_date = parser.parse(group_dict['date_str'])
+            scraped_dates.append(game_date)
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
     return Result.Ok(scraped_dates)
+
+
+def download_html_bbref_boxscore(bbref_game_id, folderpath=None):
+    """Download raw HTML for bbref daily scoreboard page."""
+    folderpath = folderpath if folderpath else Path.cwd()
+    filename = f"{bbref_game_id}.html"
+    filepath = folderpath / filename
+    year = bbref_game_id[3:7]
+    s3_key = Template(T_BR_GAME_HTML_KEY).substitute(year=year, filename=filename)
+
+    try:
+        s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
+        return Result.Ok(filepath)
+    except botocore.exceptions.ClientError as e:
+        if e.response["Error"]["Code"] == "404":
+            error = f'The object "{s3_key}" does not exist.'
+        else:
+            error = repr(e)
+        return Result.Fail(error)
 
 
 def upload_bbref_boxscore(boxscore, scrape_date):
@@ -363,6 +408,11 @@ def get_all_scraped_bbref_game_ids(year):
     s3_folder = Template(T_BR_GAME_FOLDER).substitute(year=year)
     bucket = boto3.resource("s3").Bucket(S3_BUCKET)
     scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
-
-    scraped_gameids = [Path(key).stem for key in scraped_keys]
+    scraped_gameids = []
+    for key in scraped_keys:
+        match = BR_GAME_KEY_REGEX.search(key)
+        if not match:
+            continue
+        group_dict = match.groupdict()
+        scraped_gameids.append(group_dict["game_id"])
     return Result.Ok(scraped_gameids)

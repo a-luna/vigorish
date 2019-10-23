@@ -19,9 +19,9 @@ from app.test.base import BaseTestCase
 
 class TestBBRefBoxscore(BaseTestCase):
     APP_TEST_FOLDER = Path.cwd() / "app" / "test"
-    BOXSCORE_URL = "https://www.baseball-reference.com/boxes/ATL/ATL201803290.shtml"
-    BOXSCORE_HTML = APP_TEST_FOLDER / "test_files" / "ATL201803290.html"
-    GAME_ID = "ATL201803290"
+    BOXSCORE_URL = "https://www.baseball-reference.com/boxes/KCA/KCA201905252.shtml"
+    BOXSCORE_HTML = APP_TEST_FOLDER / "test_files" / "KCA201905252.html"
+    GAME_ID = "KCA201905252"
 
     #BOXSCORE_URL = "https://www.baseball-reference.com/boxes/KCA/KCA201803290.shtml"
     #BOXSCORE_HTML = APP_TEST_FOLDER / "test_files" / "KCA201803290.html"
