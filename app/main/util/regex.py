@@ -18,6 +18,11 @@ BR_DAILY_KEY_PATTERN = (
     r'(?P<date_str>\d{4,4}-\d{2,2}-\d{2,2}).json'
 )
 BR_DAILY_KEY_REGEX = re.compile(BR_DAILY_KEY_PATTERN)
+BB_DAILY_KEY_PATTERN = (
+    r'^\d{4,4}/brooks_games_for_date/brooks_games_for_date'
+    r'(?P<date_str>\d{4,4}-\d{2,2}-\d{2,2}).json'
+)
+BB_DAILY_KEY_REGEX = re.compile(BR_DAILY_KEY_PATTERN)
 BR_GAME_KEY_PATTERN = r'^\d{4,4}/bbref_boxscore/(?P<game_id>[0-9A-Z]{12,12}).json'
 BR_GAME_KEY_REGEX = re.compile(BR_GAME_KEY_PATTERN)
 DB_OBJECT_NAME_PATTERN = r'^[a-z0-9_-]+$'

@@ -18,12 +18,10 @@ class FindAllGamesForDateTask(BaseTask):
         result = upload_bbref_games_for_date(bbref_games_for_date)
         if result.failure:
             return result
-        result =  update_bbref_games_for_date_single_date(
-            self.db['session'], self.season, bbref_games_for_date)
+        result =  update_bbref_games_for_date_single_date(self.db['session'], self.season, bbref_games_for_date)
         if result.failure:
             return result
-        result = scrape_brooks_games_for_date(
-            self.db['session'], scrape_date, self.driver, bbref_games_for_date)
+        result = scrape_brooks_games_for_date(self.db['session'], scrape_date, bbref_games_for_date)
         if result.failure:
             return result
         brooks_games_for_date = result.value
