@@ -58,7 +58,7 @@ def download_html_brooks_games_for_date(scrape_date, folderpath=None):
     date_str = scrape_date.strftime(DATE_ONLY_TABLE_ID)
     filename = f"{date_str}.html"
     filepath = folderpath / filename
-    s3_key = Template(T_BR_DATE_HTML_KEY).substitute(year=scrape_date.year, filename=filename)
+    s3_key = Template(T_BB_DATE_HTML_KEY).substitute(year=scrape_date.year, filename=filename)
 
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
