@@ -14,7 +14,7 @@ Click==7.0
 colorama==0.3.9
 cursor==1.2.0
 decorator==4.4.0
-docutils==0.14
+docutils==0.15.2
 entrypoints==0.3
 enum34==1.1.6
 fake-useragent==0.1.11
