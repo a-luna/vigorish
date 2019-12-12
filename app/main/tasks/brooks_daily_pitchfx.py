@@ -19,6 +19,18 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
     display_name = "PitchFX for pitching appearance (brooksbaseball.com)"
 
     def execute(self, scrape_date):
+        scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
+            self.db['session'], scrape_date)
+        if not scraped_brooks_pitch_logs:
+            date_str = scrape_date.strftime(DATE_ONLY_2)
+            error = (
+                f"Brooks pitch logs for date {date_str} have not been scraped, unable to scrape Brooks "
+                "pitchfx data until this has been done.")
+            return Result.Fail(error)
+        scraped_brooks_pitchfx = DateScrapeStatus.verify_all_brooks_pitchfx_scraped_for_date(
+            self.db['session'], scrape_date)
+        if scraped_brooks_pitchfx:
+            return Result.Ok()
         result = get_all_brooks_pitch_logs_for_date_from_s3(self.db['session'], scrape_date)
         if result.failure:
             return result

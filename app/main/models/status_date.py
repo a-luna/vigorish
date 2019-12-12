@@ -357,6 +357,11 @@ class DateScrapeStatus(Base):
         return date_status.scraped_all_brooks_pitch_logs if date_status else False
 
     @classmethod
+    def verify_all_brooks_pitchfx_scraped_for_date(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        return date_status.scraped_all_pitchfx_logs if date_status else False
+
+    @classmethod
     def get_all_bbref_game_ids_for_date(cls, session, game_date):
         date_status = cls.find_by_date(session, game_date)
         if not date_status:

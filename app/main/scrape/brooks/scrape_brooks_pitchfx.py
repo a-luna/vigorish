@@ -31,6 +31,7 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch
                 time.sleep(randint(25, 75) / 100.0)
                 pbar.update()
                 continue
+            pbar.set_description(get_pbar_description_requesting(pitch_log.pitcher_id_mlb))
             try:
                 response = request_url(pitch_log.pitchfx_url)
                 result = parse_pitchfx_log(response, pitch_log)
@@ -49,6 +50,12 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch
 
 def get_pbar_description(player_id):
     pre =f"Player ID | {player_id}"
+    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
+def get_pbar_description_requesting(player_id):
+    pre =f"FETCHING  | {player_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 

@@ -26,6 +26,10 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
                 f"BBref games for date {date_str} have not been scraped, unable to scrape BBref "
                 "boxscores until this has been done.")
             return Result.Fail(error)
+        scraped_bbref_boxscores = DateScrapeStatus.verify_all_bbref_boxscores_scraped_for_date(
+            self.db['session'], scrape_date)
+        if scraped_bbref_boxscores:
+            return Result.Ok()
         result = get_bbref_games_for_date_from_s3(scrape_date)
         if result.failure:
             return result
