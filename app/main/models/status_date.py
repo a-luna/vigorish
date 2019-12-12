@@ -215,7 +215,10 @@ class DateScrapeStatus(Base):
     @hybrid_property
     def scrape_status_description(self):
         if self.scraped_all_game_data:
-            return "Scraped all game data"
+            return (
+                f"Scraped all game data ({self.total_pitchfx_logs_scraped}/{self.total_pitch_apps_with_pitchfx_data} pitchfx logs, "
+                f"{self.total_pitch_apps_no_pitchfx_data} no data)"
+            )
         elif self.scraped_only_both_bbref_boxscores_and_brooks_pitch_logs:
             return (
                 f"Scraped {self.total_pitchfx_logs_scraped}/{self.total_pitch_apps_with_pitchfx_data} pitchfx logs, "
@@ -288,7 +291,7 @@ class DateScrapeStatus(Base):
             f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
             f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games}/{self.total_bbref_boxscores_scraped}/{self.total_brooks_games_scraped}\n"
             f"PitchFX Logs Scraped (Total/Brooks).....: {self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}\n"
-            f"Pitch Apperances (BBRef/Brooks/Diff)....: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.pitch_appearance_count_difference}\n"
+            f"Pitch Appearances (BBRef/Brooks/Diff)....: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.pitch_appearance_count_difference}\n"
             f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_difference}\n")
 
     @classmethod
