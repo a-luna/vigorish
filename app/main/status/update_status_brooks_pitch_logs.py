@@ -56,11 +56,12 @@ def update_game_status_records(session, pitch_logs_for_game):
         return Result.Fail(f'Error: {repr(e)}')
 
 def create_pitch_appearance_status_records(session, season, pitch_logs_for_game):
-    all_pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids(session, season.id)
-    scraped_pitch_app_ids = [plog.pitch_app_id for plog in pitch_logs_for_game.pitch_logs]
-    update_pitch_app_ids = set(scraped_pitch_app_ids).difference(set(all_pitch_app_ids))
+    bbref_game_id = pitch_logs_for_game.bbref_game_id
+    all_bbref_pitch_app_ids = PitchAppearanceScrapeStatus.get_all_bbref_pitch_app_ids_for_game(session, bbref_game_id)
+    scraped_bbref_pitch_app_ids = [plog.bbref_pitch_app_id for plog in pitch_logs_for_game.pitch_logs]
+    update_bbref_pitch_app_ids = set(scraped_bbref_pitch_app_ids).difference(set(all_bbref_pitch_app_ids))
     for pitch_log in pitch_logs_for_game.pitch_logs:
-        if pitch_log.pitch_app_id not in update_pitch_app_ids:
+        if pitch_log.bbref_pitch_app_id not in update_bbref_pitch_app_ids:
             continue
         try:
             date_status = DateScrapeStatus.find_by_date(session, pitch_log.game_date)

@@ -32,9 +32,24 @@ class PitchAppearanceScrapeStatus(Base):
         title = f"SCRAPE STATUS FOR PITCH APPEARANCE: {self.pitch_app_id}"
         display_dict(season_dict, title=title)
 
+    @hybrid_property
+    def bbref_pitch_app_id(self):
+        return f"{self.bbref_game_id}_{self.pitcher_id_mlb}"
+
     @classmethod
     def find_by_pitch_app_id(cls, session, pitch_app_id):
         return session.query(cls).filter_by(pitch_app_id=pitch_app_id).first()
+
+    @classmethod
+    def find_by_bbref_pitch_app_id(cls, session, bbref_pitch_app_id):
+        bbref_game_id = bbref_pitch_app_id.split("_")[0]
+        matching_pitch_app_status = [
+            pitch_app_status
+            for pitch_app_status
+            in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
+            if pitch_app_status.bbref_pitch_app_id == bbref_pitch_app_id
+        ]
+        return matching_pitch_app_status[0] if matching_pitch_app_status else None
 
     @classmethod
     def get_all_scraped_pitch_app_ids_for_season(cls, session, season_id):
@@ -60,5 +75,32 @@ class PitchAppearanceScrapeStatus(Base):
     @classmethod
     def get_all_pitch_app_ids(cls, session, season_id):
         return [
-            pitch_app_status.pitch_app_id for pitch_app_status
+            pitch_app_status.pitch_app_id
+            for pitch_app_status
             in session.query(cls).filter_by(season_id=season_id).all()]
+
+    @classmethod
+    def get_all_bbref_pitch_app_ids_for_game(cls, session, bbref_game_id):
+        return [
+            pitch_app_status.bbref_pitch_app_id
+            for pitch_app_status
+            in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
+        ]
+
+    @classmethod
+    def get_all_unscraped_bbref_pitch_app_ids_for_game(cls, session, bbref_game_id):
+        return [
+            pitch_app_status.bbref_pitch_app_id
+            for pitch_app_status
+            in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
+            if pitch_app_status.scraped_pitchfx == 0
+        ]
+
+    @classmethod
+    def get_all_scraped_bbref_pitch_app_ids_for_game(cls, session, bbref_game_id):
+        return [
+            pitch_app_status.bbref_pitch_app_id
+            for pitch_app_status
+            in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
+            if pitch_app_status.scraped_pitchfx == 1
+        ]

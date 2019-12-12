@@ -34,6 +34,10 @@ class BrooksPitchFxLog:
         return game_dict["game_date"]
 
     @property
+    def bbref_pitch_app_id(self):
+        return f"{self.bbref_game_id}_{self.pitcher_id_mlb}"
+
+    @property
     def pitch_types(self):
         pitch_type_dict = {ptype:0 for ptype in PITCH_TYPE_DICT.keys()}
         for pfx in self.pitchfx_log:

@@ -21,12 +21,13 @@ PITCHFX_TABLE_ROWS = '//tr[@style="white-space:nowrap"]'
 T_PITCHFX_MEASUREMENT = "td[${i}]//text()"
 FILTER_NAMES = ["datestamp", "gid", "pitcher_team"]
 
-def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game):
+def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch_app_ids):
     pitchfx_logs_for_game = []
     with tqdm(total=len(pitch_logs_for_game.pitch_logs), unit="pitch_log", leave=False, position=3) as pbar:
         for pitch_log in pitch_logs_for_game.pitch_logs:
             pbar.set_description(get_pbar_description(pitch_log.pitcher_id_mlb))
-            if not pitch_log.parsed_all_info:
+            scraped_pitchfx = pitch_log.bbref_pitch_app_id in scraped_bbref_pitch_app_ids
+            if scraped_pitchfx or not pitch_log.parsed_all_info:
                 time.sleep(randint(25, 75) / 100.0)
                 pbar.update()
                 continue

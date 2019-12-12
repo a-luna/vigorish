@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 from app.main.constants import PBAR_LEN_DICT
 from app.main.models.status_date import DateScrapeStatus
+from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
 from app.main.scrape.brooks.scrape_brooks_pitchfx import scrape_brooks_pitchfx_logs_for_game
 from app.main.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
 from app.main.tasks.base_task import BaseTask
@@ -28,7 +29,11 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
             for pitch_logs_for_game in pitch_logs_for_date:
                 bbref_game_id = pitch_logs_for_game.bbref_game_id
                 pbar.set_description(self.get_pbar_game_id_description(bbref_game_id))
-                result = scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game)
+                scraped_bbref_pitch_app_ids = \
+                    PitchAppearanceScrapeStatus.get_all_scraped_bbref_pitch_app_ids_for_game(
+                        self.db['session'], bbref_game_id
+                    )
+                result = scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch_app_ids)
                 if result.failure:
                     return result
                 pitchfx_logs_for_game = result.value

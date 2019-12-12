@@ -73,12 +73,11 @@ def create_game_status_records(session, season, new_bbref_game_ids):
         return Result.Ok()
     for game_dict in validate_bbref_game_id_list(missing_bbref_game_ids):
         try:
-            bbref_game_id = game_dict['game_id']
             game_date = game_dict['game_date']
             date_status = DateScrapeStatus.find_by_date(session, game_date)
             game_status = GameScrapeStatus()
             setattr(game_status, 'game_date', game_date)
-            setattr(game_status, 'bbref_game_id', bbref_game_id)
+            setattr(game_status, 'bbref_game_id', game_dict['game_id'])
             setattr(game_status, 'scrape_status_date_id', date_status.id)
             setattr(game_status, 'season_id', season.id)
             session.add(game_status)

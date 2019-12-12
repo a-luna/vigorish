@@ -26,6 +26,10 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
                 f"Brooks games for date {date_str} have not been scraped, unable to scrape Brooks "
                 "pitch logs until this has been done.")
             return Result.Fail(error)
+        scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
+            self.db['session'], scrape_date)
+        if scraped_brooks_pitch_logs:
+            return Result.Ok()
         result = get_brooks_games_for_date_from_s3(scrape_date)
         if result.failure:
             return result

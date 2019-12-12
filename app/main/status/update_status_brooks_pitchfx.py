@@ -33,10 +33,9 @@ def update_status_brooks_pitchfx_log_list(session, season, new_pitch_app_ids):
 
 def update_pitch_appearance_status_records(session, pitchfx_log):
     try:
-        pitch_app_id = pitchfx_log.pitch_app_id
-        pitch_app_status = PitchAppearanceScrapeStatus.find_by_pitch_app_id(session, pitch_app_id)
+        pitch_app_status = PitchAppearanceScrapeStatus.find_by_bbref_pitch_app_id(session, pitchfx_log.bbref_pitch_app_id)
         if not pitch_app_status:
-            error = f'scrape_status_pitch_app does not contain an entry for pitch_app_id: {pitch_app_id}'
+            error = f'scrape_status_pitch_app does not contain an entry for bbref_pitch_app_id: {pitchfx_log.bbref_pitch_app_id}'
             return Result.Fail(error)
         setattr(pitch_app_status, 'scraped_pitchfx', 1)
         setattr(pitch_app_status, 'pitch_count_pitchfx', pitchfx_log.total_pitch_count)

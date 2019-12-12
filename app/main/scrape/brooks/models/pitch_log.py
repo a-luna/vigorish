@@ -25,6 +25,10 @@ class BrooksPitchLog():
         game_dict = result.value
         return game_dict['game_date']
 
+    @property
+    def bbref_pitch_app_id(self):
+        return f"{self.bbref_game_id}_{self.pitcher_id_mlb}"
+
     def as_dict(self):
         """Convert pitch log to a dictionary."""
         dict = {

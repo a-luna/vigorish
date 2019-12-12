@@ -59,6 +59,12 @@ class GameScrapeStatus(Base):
         return self.game_date_time.strftime(DT_STR_FORMAT_ALL) if self.game_date_time else None
 
     @hybrid_property
+    def total_pitch_count_pitchfx(self):
+        return self.mat_view_scrape_status_pitch_app.total_pitch_count_pitchfx \
+            if self.mat_view_scrape_status_pitch_app \
+            and self.mat_view_scrape_status_pitch_app.total_pitch_count_pitchfx else 0
+
+    @hybrid_property
     def total_pitch_apps_no_pitchfx_data(self):
         return self.mat_view_scrape_status_pitch_app.total_pitch_apps_no_pitchfx_data \
             if self.mat_view_scrape_status_pitch_app \
