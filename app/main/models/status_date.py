@@ -147,6 +147,10 @@ class DateScrapeStatus(Base):
         return self.pitch_appearance_count_brooks - self.total_pitch_apps_no_pitchfx_data
 
     @hybrid_property
+    def pitch_appearance_count_difference_brooks(self):
+        return abs(self.pitch_appearance_count_brooks - self.total_pitch_apps_with_pitchfx_data)
+
+    @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
         return self.total_pitchfx_logs_scraped / float(self.total_pitch_apps_with_pitchfx_data) \
             if self.total_pitch_apps_with_pitchfx_data > 0 else 0.0
@@ -290,8 +294,8 @@ class DateScrapeStatus(Base):
             f"Overall Status For Date.................: {self.scrape_status_description}\n"
             f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
             f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games}/{self.total_bbref_boxscores_scraped}/{self.total_brooks_games_scraped}\n"
-            f"PitchFX Logs Scraped (Total/Brooks).....: {self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}\n"
-            f"Pitch Appearances (BBRef/Brooks/Diff)....: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.pitch_appearance_count_difference}\n"
+            f"Pitch App Counts (BBRef/Brooks/Diff)....: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.pitch_appearance_count_difference}\n"
+            f"Pitch App Counts (bb_log/bb_pfx/Diff)...: {self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}/{pitch_appearance_count_difference_brooks}\n"
             f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_difference}\n")
 
     @classmethod
