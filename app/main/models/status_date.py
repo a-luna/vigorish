@@ -290,7 +290,7 @@ class DateScrapeStatus(Base):
             f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games}/{self.total_bbref_boxscores_scraped}/{self.total_brooks_games_scraped}\n"
             f"Pitch App Counts (BBRef/Brooks/Diff)....: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.pitch_appearance_count_difference}\n"
             f"Pitch App Counts (bb_log/bb_pfx/Diff)...: {self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}/{self.pitch_appearance_count_difference_brooks}\n"
-            f"Pitch Apps Scraped......................: {self.percent_complete_pitchfx_logs_scraped:.0%} ({self.total_pitchfx_logs_scraped}/{self.total_pitch_apps_with_pitchfx_data}, {self.total_pitch_apps_no_pitchfx_data} no data)"
+            f"Pitch Apps Scraped......................: {self.percent_complete_pitchfx_logs_scraped:.0%} ({self.total_pitchfx_logs_scraped}/{self.total_pitch_apps_with_pitchfx_data}, {self.total_pitch_apps_no_pitchfx_data} no data)\n"
             f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_difference}\n")
 
     @classmethod
