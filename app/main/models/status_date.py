@@ -295,7 +295,7 @@ class DateScrapeStatus(Base):
             f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
             f"Games Scraped (Total/BBRef/Brooks)......: {self.total_games}/{self.total_bbref_boxscores_scraped}/{self.total_brooks_games_scraped}\n"
             f"Pitch App Counts (BBRef/Brooks/Diff)....: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.pitch_appearance_count_difference}\n"
-            f"Pitch App Counts (bb_log/bb_pfx/Diff)...: {self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}/{pitch_appearance_count_difference_brooks}\n"
+            f"Pitch App Counts (bb_log/bb_pfx/Diff)...: {self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}/{self.pitch_appearance_count_difference_brooks}\n"
             f"Pitch Count (BBRef/Brooks/Diff).........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_difference}\n")
 
     @classmethod
