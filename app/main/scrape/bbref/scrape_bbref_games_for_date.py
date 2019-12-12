@@ -25,29 +25,42 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
     '//td[contains(@class, "gamelink")]/a/@href')
 
 def scrape_bbref_games_for_date(scrape_date, driver):
+    url = get_dashboard_url_for_date(scrape_date)
+    result = get_bbref_games_for_date_html_from_s3(scrape_date)
+    if result.failure:
+        result = download_bbref_games_for_date_html(driver, url)
+        if result.failure:
+            return result
+    response = result.value
+    try:
+        result = parse_bbref_dashboard_page(response, scrape_date, url)
+        return result
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
+
+
+def get_bbref_games_for_date_html_from_s3(scrape_date):
     result = download_html_bbref_games_for_date(scrape_date)
     if result.failure:
         return result
     html_path = result.value
     contents = html_path.read_text()
     response = html.fromstring(contents)
-    url = get_dashboard_url_for_date(scrape_date)
+    html_path.unlink()
+    return Result.Ok(response)
+
+
+def download_bbref_games_for_date_html(driver, url):
     try:
-        result = parse_bbref_dashboard_page(response, scrape_date, url)
-        html_path.unlink()
-        return result
+        response = render_webpage(driver, url)
+        return Result.Ok(response)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
-    #try:
-    #    url = get_dashboard_url_for_date(scrape_date)
-    #    response = render_webpage(driver, url)
-    #    return parse_bbref_dashboard_page(response, scrape_date, url)
-    #except RetryLimitExceededError as e:
-    #    return Result.Fail(repr(e))
-    #except Exception as e:
-    #    return Result.Fail(f"Error: {repr(e)}")
+
 
 def get_dashboard_url_for_date(scrape_date):
     m = scrape_date.month

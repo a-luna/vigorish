@@ -166,23 +166,24 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
     with tqdm(total=len(boxscore_urls), unit="boxscore", leave=False, position=2) as pbar:
         for url in boxscore_urls:
             try:
+                needs_timeout = False
                 uri = Path(url)
                 game_id = uri.stem
                 pbar.set_description(get_pbar_description(game_id))
-                #response = render_webpage(driver, url)
-                result = download_html_bbref_boxscore(game_id)
+                result = get_boxscore_html_from_s3(game_id)
                 if result.failure:
-                    return result
-                html_path = result.value
-                contents = html_path.read_text()
-                response = html.fromstring(contents)
+                    result = download_boxscore_html(driver, url)
+                    if result.failure:
+                        return result
+                    needs_timeout = True
+                response = result.value
                 result = parse_bbref_boxscore(response, url)
                 if result.failure:
                     return result
                 bbref_boxscore = result.value
                 scraped_boxscores.append(bbref_boxscore)
-                html_path.unlink()
-                #time.sleep(randint(250, 300) / 100.0)
+                if needs_timeout:
+                    time.sleep(randint(250, 300) / 100.0)
                 pbar.update()
             except RetryLimitExceededError as e:
                 return Result.Fail(repr(e))
@@ -197,8 +198,29 @@ def get_pbar_description(game_id):
     return f"{pre}{'.'*pad_len}"
 
 
+def get_boxscore_html_from_s3(game_id):
+    result = download_html_bbref_boxscore(game_id)
+    if result.failure:
+        return result
+    html_path = result.value
+    contents = html_path.read_text()
+    response = html.fromstring(contents)
+    html_path.unlink()
+    return Result.Ok(response)
+
+
+def download_boxscore_html(driver, url):
+    try:
+        response =  render_webpage(driver, url)
+        return Result.Ok(response)
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
+
+
 @retry(
-    max_attempts=5,delay=5, exceptions=(TimeoutError, Exception))
+    max_attempts=3,delay=10, exceptions=(TimeoutError, Exception))
 @timeout(seconds=15)
 def render_webpage(driver, url):
     driver.get(url)

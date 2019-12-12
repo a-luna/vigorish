@@ -27,22 +27,45 @@ _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()=
 
 
 def scrape_brooks_games_for_date(session, scrape_date, bbref_games_for_date):
-    try:
-        game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
-        required_game_data = validate_bbref_game_id_list(game_ids)
-        #response = render_webpage(driver, url)
-        result = download_html_brooks_games_for_date(scrape_date)
+    game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
+    required_game_data = validate_bbref_game_id_list(game_ids)
+    url = _get_dashboard_url_for_date(scrape_date)
+    result = get_brooks_games_for_date_from_s3(scrape_date)
+    if result.failure:
+        result = download_brooks_games_for_date_html(driver, url)
         if result.failure:
             return result
-        html_path = result.value
-        contents = html_path.read_text()
-        response = html.fromstring(contents)
-        url = _get_dashboard_url_for_date(scrape_date)
-        return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
+    response = result.value
+    return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
+
+
+def get_brooks_games_for_date_from_s3(scrape_date):
+    result = download_html_brooks_games_for_date(scrape_date)
+    if result.failure:
+        return result
+    html_path = result.value
+    contents = html_path.read_text()
+    response = html.fromstring(contents)
+    html_path.unlink()
+    return Result.Ok(response)
+
+
+def download_brooks_games_for_date_html(driver, url):
+    try:
+        response =  render_webpage(driver, url)
+        return Result.Ok(response)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
+
+
+@retry(
+    max_attempts=5,delay=5, exceptions=(TimeoutError, Exception))
+@timeout(seconds=15)
+def render_webpage(driver, url):
+    driver.get(url)
+    return html.fromstring(driver.page_source, base_url=url)
 
 
 def _get_dashboard_url_for_date(scrape_date):
