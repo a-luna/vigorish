@@ -26,7 +26,7 @@ _T_PLOG_URLS_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="
 _T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'
 
 
-def scrape_brooks_games_for_date(session, scrape_date, bbref_games_for_date):
+def scrape_brooks_games_for_date(session, driver, scrape_date, bbref_games_for_date):
     game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
     required_game_data = validate_bbref_game_id_list(game_ids)
     url = _get_dashboard_url_for_date(scrape_date)

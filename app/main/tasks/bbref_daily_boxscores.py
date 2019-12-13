@@ -29,7 +29,7 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
         scraped_bbref_boxscores = DateScrapeStatus.verify_all_bbref_boxscores_scraped_for_date(
             self.db['session'], scrape_date)
         if scraped_bbref_boxscores:
-            return Result.Ok()
+            return Result.Ok("skipped")
         result = get_bbref_games_for_date_from_s3(scrape_date)
         if result.failure:
             return result
@@ -37,7 +37,7 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
         result = scrape_bbref_boxscores_for_date(bbref_games_for_date, self.driver)
         if result.failure:
             return result
-        scraped_games = result.value
+        (scraped_games, scrape_audit) = result.value
         with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
             for scraped_boxscore in scraped_games:
                 pbar.set_description(self.get_pbar_upload_description(scraped_boxscore.bbref_game_id))
@@ -54,7 +54,7 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
                     return result
                 time.sleep(randint(10, 30) / 100.0)
                 pbar.update()
-        return Result.Ok()
+        return Result.Ok(scrape_audit)
 
 
     def get_pbar_updating_description(self, game_id):

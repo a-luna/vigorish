@@ -43,6 +43,9 @@ def cli(ctx):
 
 @cli.command()
 @click.confirmation_option(prompt="Are you sure you want to delete all existing data?")
+@click.option(
+    "--update/--no-update", default=False, show_default=True,
+    help="Update statistics for scraped dates and games after setup is complete.")
 @click.pass_obj
 def setup(db):
     """Populate database with initial player, team and season data.
@@ -50,13 +53,17 @@ def setup(db):
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
     """
+    db['update_s3'] = update
     Base.metadata.drop_all(db["engine"])
     Base.metadata.create_all(db["engine"])
     result = initialize_database(db["session"])
     if result.failure:
         return exit_app_error(db, result)
-    refresh_all_mat_views(db)
-    return exit_app_success(db, "Successfully populated database with initial data.")
+    print_message("Successfully populated database with initial data.", fg="green")
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
+    return exit_app_success(db, "")
 
 
 @cli.command()

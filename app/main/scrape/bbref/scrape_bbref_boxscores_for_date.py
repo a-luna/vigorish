@@ -163,18 +163,21 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
     scrape_date = games_for_date.game_date
     boxscore_urls = games_for_date.boxscore_urls
     scraped_boxscores = []
+    scrape_audit = []
     with tqdm(total=len(boxscore_urls), unit="boxscore", leave=False, position=2) as pbar:
         for url in boxscore_urls:
             try:
                 needs_timeout = False
                 uri = Path(url)
                 game_id = uri.stem
+                audit_value = "skipped"
                 pbar.set_description(get_pbar_description(game_id))
                 result = get_boxscore_html_from_s3(game_id)
                 if result.failure:
                     result = download_boxscore_html(driver, url)
                     if result.failure:
                         return result
+                    audit_value = "scraped_bbref"
                     needs_timeout = True
                 response = result.value
                 result = parse_bbref_boxscore(response, url)
@@ -182,6 +185,7 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
                     return result
                 bbref_boxscore = result.value
                 scraped_boxscores.append(bbref_boxscore)
+                scrape_audit.append((game_id, audit_value))
                 if needs_timeout:
                     time.sleep(randint(250, 300) / 100.0)
                 pbar.update()
@@ -189,7 +193,7 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
                 return Result.Fail(repr(e))
             except Exception as e:
                 return Result.Fail(f"Error: {repr(e)}")
-    return Result.Ok(scraped_boxscores)
+    return Result.Ok((scraped_boxscores, scrape_audit))
 
 
 def get_pbar_description(game_id):

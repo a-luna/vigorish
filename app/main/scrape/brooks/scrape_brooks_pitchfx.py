@@ -23,11 +23,13 @@ FILTER_NAMES = ["datestamp", "gid", "pitcher_team"]
 
 def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch_app_ids):
     pitchfx_logs_for_game = []
+    scrape_audit = []
     with tqdm(total=len(pitch_logs_for_game.pitch_logs), unit="pitch_log", leave=False, position=3) as pbar:
         for pitch_log in pitch_logs_for_game.pitch_logs:
             pbar.set_description(get_pbar_description(pitch_log.pitcher_id_mlb))
             scraped_pitchfx = pitch_log.bbref_pitch_app_id in scraped_bbref_pitch_app_ids
             if scraped_pitchfx or not pitch_log.parsed_all_info:
+                scrape_audit.append((pitch_log.bbref_pitch_app_id, "skipped"))
                 time.sleep(randint(25, 75) / 100.0)
                 pbar.update()
                 continue
@@ -39,13 +41,14 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch
                     return result
                 pitchfx_log = result.value
                 pitchfx_logs_for_game.append(pitchfx_log)
+                scrape_audit.append((pitch_log.bbref_pitch_app_id, "scraped_brooks"))
                 time.sleep(randint(250, 300) / 100.0)
                 pbar.update()
             except RetryLimitExceededError as e:
                 return Result.Fail(repr(e))
             except Exception as e:
                 return Result.Fail(f"Error: {repr(e)}")
-    return Result.Ok(pitchfx_logs_for_game)
+    return Result.Ok((pitchfx_logs_for_game, scrape_audit))
 
 
 def get_pbar_description(player_id):

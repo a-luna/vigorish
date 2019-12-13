@@ -18,9 +18,9 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
     display_name = "Pitch logs for date (brooksbaseball.com)"
 
     def execute(self, scrape_date):
-        scraped_brooks_daily_dash = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
+        scraped_brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
             self.db['session'], scrape_date)
-        if not scraped_brooks_daily_dash:
+        if not scraped_brooks_games_for_date:
             date_str = scrape_date.strftime(DATE_ONLY_2)
             error = (
                 f"Brooks games for date {date_str} have not been scraped, unable to scrape Brooks "
@@ -29,7 +29,7 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
         scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
             self.db['session'], scrape_date)
         if scraped_brooks_pitch_logs:
-            return Result.Ok()
+            return Result.Ok("skipped")
         result = get_brooks_games_for_date_from_s3(scrape_date)
         if result.failure:
             return result
@@ -54,7 +54,7 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
                     return result
                 time.sleep(randint(10, 30) / 100.0)
                 pbar.update()
-        return Result.Ok()
+        return Result.Ok("scraped_brooks")
 
 
     def get_pbar_updating_description(self, game_id):

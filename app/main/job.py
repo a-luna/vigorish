@@ -1,3 +1,4 @@
+import pprint
 import time
 from datetime import datetime
 from random import randint
@@ -10,7 +11,7 @@ from app.main.models.season import Season
 from app.main.task_list import get_task_list
 from app.main.util.datetime_util import get_date_range, format_timedelta
 from app.main.util.decorators import RetryLimitExceededError
-from app.main.util.dt_format_strings import MONTH_NAME_SHORT
+from app.main.util.dt_format_strings import MONTH_NAME_SHORT, DATE_ONLY_UNDERSCORE
 from app.main.util.result import Result
 from app.main.util.scrape_functions import get_chromedriver
 
@@ -22,8 +23,9 @@ class ScrapeJob:
         self.data_set = data_set
         self.start_date = start_date
         self.end_date = end_date
-        self.deiver = None
+        self.driver = None
         self.status = "Not Started"
+        self.scrape_audit = {}
         self.errors = []
 
 
@@ -47,6 +49,7 @@ class ScrapeJob:
             if self.errors:
                 errors = "\n".join(self.errors)
                 report += f"\nerrors......: {errors}"
+            report += pprint.pformat(self.scrape_audit, indent=2)
             return report
         elif self.status == "Failed":
             return str(self.result)
@@ -71,6 +74,8 @@ class ScrapeJob:
                         result = scrape_task.execute(scrape_date)
                         if result.failure:
                             return self._job_failed(result)
+                        scrape_date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
+                        self.scrape_audit[scrape_task.key_name][scrape_date_str] = result.value
                         self.db['session'].commit()
                         time.sleep(randint(250, 300) / 100.0)
                         pbar_data_set.update()
@@ -79,12 +84,12 @@ class ScrapeJob:
 
 
     def _initialize(self):
-        #try:
-        #    self.driver = get_chromedriver()
-        #xcept RetryLimitExceededError as e:
-        #    return Result.Fail(repr(e))
-        #except Exception as e:
-        #    return Result.Fail(f"Error: {repr(e)}")
+        try:
+            self.driver = get_chromedriver()
+        except RetryLimitExceededError as e:
+            return Result.Fail(repr(e))
+        except Exception as e:
+            return Result.Fail(f"Error: {repr(e)}")
         result = Season.validate_date_range(self.db['session'], self.start_date, self.end_date)
         if result.failure:
             return result
@@ -113,12 +118,12 @@ class ScrapeJob:
         self.end_time = datetime.now()
         self.status = status
         self.result = result
-        #if self.driver:
-        #    try:
-        #        self.driver.quit()
-        #        self.driver = None
-        #    except Exception as e:
-        #        self.errors += f"Error occurred quitting chromedriver: {repr(e)}"
+        if self.driver:
+            try:
+                self.driver.quit()
+                self.driver = None
+            except Exception as e:
+                self.errors += f"Error occurred quitting chromedriver: {repr(e)}"
         return self.result
 
 

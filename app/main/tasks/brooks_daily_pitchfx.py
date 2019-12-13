@@ -30,7 +30,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
         scraped_brooks_pitchfx = DateScrapeStatus.verify_all_brooks_pitchfx_scraped_for_date(
             self.db['session'], scrape_date)
         if scraped_brooks_pitchfx:
-            return Result.Ok()
+            return Result.Ok("skipped")
         result = get_all_brooks_pitch_logs_for_date_from_s3(self.db['session'], scrape_date)
         if result.failure:
             return result
@@ -48,7 +48,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
                 result = scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch_app_ids)
                 if result.failure:
                     return result
-                pitchfx_logs_for_game = result.value
+                (pitchfx_logs_for_game, scrape_audit) = result.value
                 scraped_count += len(pitchfx_logs_for_game)
                 scraped_pitchfx_logs[bbref_game_id] = pitchfx_logs_for_game
                 pbar.update()
@@ -70,7 +70,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
                         return result
                     time.sleep(randint(10, 30) / 100.0)
                     pbar.update()
-        return Result.Ok()
+        return Result.Ok(scrape_audit)
 
 
     def get_pbar_game_id_description(self, game_id):

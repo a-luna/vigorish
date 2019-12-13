@@ -20,6 +20,10 @@ class ScrapeBrooksDailyGames(BaseTask):
                 f"BBref games for date ({date_str}) have not been scraped, unable to scrape Brooks "
                 f"games for date ({date_str}) until this has been done.")
             return Result.Fail(error)
+        scraped_brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
+            self.db['session'], scrape_date)
+        if scraped_brooks_games_for_date:
+            return Result.Ok("skipped")
         result = get_bbref_games_for_date_from_s3(scrape_date)
         if result.failure:
             return result
@@ -31,5 +35,9 @@ class ScrapeBrooksDailyGames(BaseTask):
         result = upload_brooks_games_for_date(brooks_games_for_date)
         if result.failure:
             return result
-        return update_brooks_games_for_date_single_date(
-            self.db['session'], self.season, brooks_games_for_date, scrape_date)
+        result = update_brooks_games_for_date_single_date(
+            self.db['session'], self.season, brooks_games_for_date, scrape_date
+        )
+        if result.failure:
+            return result
+        return Result.Ok("scraped_brooks")
