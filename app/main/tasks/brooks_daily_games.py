@@ -28,7 +28,7 @@ class ScrapeBrooksDailyGames(BaseTask):
         if result.failure:
             return result
         bbref_games_for_date = result.value
-        result = scrape_brooks_games_for_date(self.db['session'], scrape_date, bbref_games_for_date)
+        result = scrape_brooks_games_for_date(self.db['session'], self.driver, scrape_date, bbref_games_for_date)
         if result.failure:
             return result
         brooks_games_for_date = result.value
