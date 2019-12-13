@@ -43,9 +43,6 @@ def cli(ctx):
 
 @cli.command()
 @click.confirmation_option(prompt="Are you sure you want to delete all existing data?")
-@click.option(
-    "--update/--no-update", default=False, show_default=True,
-    help="Update statistics for scraped dates and games after setup is complete.")
 @click.pass_obj
 def setup(db):
     """Populate database with initial player, team and season data.
