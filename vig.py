@@ -50,7 +50,6 @@ def setup(db):
     WARNING! Before the setup process begins, all existing data will be
     deleted. This cannot be undone.
     """
-    db['update_s3'] = update
     Base.metadata.drop_all(db["engine"])
     Base.metadata.create_all(db["engine"])
     result = initialize_database(db["session"])
