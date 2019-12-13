@@ -47,7 +47,7 @@ def cli(ctx):
     "--update/--no-update", default=False, show_default=True,
     help="Update statistics for scraped dates and games after setup is complete.")
 @click.pass_obj
-def setup(db, update):
+def setup(db):
     """Populate database with initial player, team and season data.
 
     WARNING! Before the setup process begins, all existing data will be
@@ -59,11 +59,7 @@ def setup(db, update):
     result = initialize_database(db["session"])
     if result.failure:
         return exit_app_error(db, result)
-    print_message("Successfully populated database with initial data.", fg="green")
-    result = refresh_season_data(db, season.year)
-    if result.failure:
-        return exit_app_error(db, result)
-    return exit_app_success(db, "")
+    return exit_app_success(db, "Successfully populated database with initial data.")
 
 
 @cli.command()
