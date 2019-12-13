@@ -131,21 +131,45 @@ def status_date(db, game_date):
 @status.command("range")
 @click.option("--start", type=DateString(), prompt=True, help="First date to report status.")
 @click.option("--end", type=DateString(), prompt=True, help="Last date to report status.")
-@click.option(
-    "--show-all/--show-only-missing", default=False, show_default=True,
-    help="Report includes dates where 100% of all data sets have been scraped.")
+@click.option('-v', 'verbosity', count=True, default=1,
+    help=(
+        "Specify the level of detail to report:"
+        "   -v: summary report of only dates missing data"
+        "  -vv: summary report of all dates"
+        " -vvv: detailed report of only dates missing data"
+        "-vvvv: detailed report of all dates"
+    )
+)
 @click.pass_obj
-def status_date_range(db, start, end, show_all):
+def status_date_range(db, start, end, verbosity):
     """Report overall status for each date in the specified range (includes both START and END dates).
 
     Dates can be provided in any format that is recognized by dateutil.parser.
     For example, all of the following strings are valid ways to represent the same date:
     "2018-5-13" -or- "05/13/2018" -or- "May 13 2018"
     """
-    return scrape_status_date_range(db, start, end, show_all)
+    if verbosity <= 0:
+        error = f"Invalid value for verbosity: {verbosity}. Value must be greater than zero."
+        return exit_app_error(db, Result(error))
+    elif verbosity == 1:
+        detailed_report = False
+        show_all = False
+    elif verbosity == 2:
+        detailed_report = False
+        show_all = True
+    elif verbosity == 3:
+        detailed_report = True
+        show_all = False
+    elif verbosity > 3:
+        detailed_report = True
+        show_all = True
+    else:
+        error = "Unknown error occurred, unable to display status report."
+        return exit_app_error(db, Result(error))
+    return scrape_status_date_range(db, start, end, detailed_report, show_all)
 
 
-def scrape_status_date_range(db, start, end, show_all):
+def scrape_status_date_range(db, start, end, detailed_report, show_all):
     result = Season.validate_date_range(db["session"], start, end)
     if result.failure:
         return result
@@ -154,14 +178,30 @@ def scrape_status_date_range(db, start, end, show_all):
     if result.failure:
         return exit_app_error(db, result)
     status_date_range = []
-    for d in get_date_range(start, end):
-        date_status = DateScrapeStatus.find_by_date(db["session"], d)
+    for game_date in get_date_range(start, end):
+        date_status = DateScrapeStatus.find_by_date(db["session"], game_date)
         if not date_status:
-            error = f"scrape_status_date does not contain an entry for date: {d.strftime(DATE_ONLY)}"
+            error = f"scrape_status_date does not contain an entry for date: {game_date.strftime(DATE_ONLY)}"
             return exit_app_error(db, Result.Fail(error))
         if not show_all and date_status.scraped_all_game_data:
             continue
         status_date_range.append(date_status)
+    if detailed_report:
+        return display_detailed_report_for_date_range(db, status_date_range)
+    else:
+        return display_summary_report_for_date_range(db, start, end, status_date_range)
+    return exit_app_success(db)
+
+
+def display_detailed_report_for_date_range(db, status_date_range):
+    for date_status in status_date_range:
+        game_date_str = date_status.game_date.strftime(MONTH_NAME_SHORT)
+        click.secho(f"\n### STATUS REPORT FOR {game_date_str} ###", fg="cyan", bold=True)
+        click.secho(date_status.status_report(), fg="cyan")
+    return exit_app_success(db)
+
+
+def display_summary_report_for_date_range(db, start, end, status_date_range):
     start_str = start.strftime(MONTH_NAME_SHORT)
     end_str = end.strftime(MONTH_NAME_SHORT)
     click.secho(f"\n### STATUS REPORT FOR {start_str} - {end_str} ###", fg="bright_magenta", bold=True)
@@ -174,11 +214,16 @@ def scrape_status_date_range(db, start, end, show_all):
         click.secho(f"{date_str}: {status_description}", fg="bright_magenta")
     return exit_app_success(db)
 
-
 @status.command("season")
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option('-v', 'verbosity', count=True, default=1,
-    help="Specify the level of detail to report (season summary, dates missing data, all dates in season)")
+    help=(
+        "Specify the level of detail to report:"
+        "   -v: overall metrics for entire season"
+        "  -vv: summary report of dates in season that are missing data"
+        " -vvv: summary report of all dates in season"
+    )
+)
 @click.pass_obj
 def status_season(db, year, verbosity):
     """Report status for a single MLB season."""
@@ -194,9 +239,9 @@ def status_season(db, year, verbosity):
         click.secho(season.status_report(), fg="bright_yellow")
         return exit_app_success(db)
     elif verbosity == 2:
-        return scrape_status_date_range(db, season.start_date, season.end_date, False)
+        return scrape_status_date_range(db, season.start_date, season.end_date, False, False)
     elif verbosity > 2:
-        return scrape_status_date_range(db, season.start_date, season.end_date, True)
+        return scrape_status_date_range(db, season.start_date, season.end_date, False, True)
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(db, Result(error))
