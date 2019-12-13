@@ -47,7 +47,7 @@ def cli(ctx):
     "--update/--no-update", default=False, show_default=True,
     help="Update statistics for scraped dates and games after setup is complete.")
 @click.pass_obj
-def setup(db):
+def setup(db, update):
     """Populate database with initial player, team and season data.
 
     WARNING! Before the setup process begins, all existing data will be
