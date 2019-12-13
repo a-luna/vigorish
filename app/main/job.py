@@ -25,7 +25,7 @@ class ScrapeJob:
         self.end_date = end_date
         self.driver = None
         self.status = "Not Started"
-        self.scrape_audit = {}
+        self.scrape_audit = []
         self.errors = []
 
 
@@ -49,7 +49,7 @@ class ScrapeJob:
             if self.errors:
                 errors = "\n".join(self.errors)
                 report += f"\nerrors......: {errors}"
-            report += pprint.pformat(self.scrape_audit, indent=2)
+            report += str(self.scrape_audit)
             return report
         elif self.status == "Failed":
             return str(self.result)
@@ -75,7 +75,7 @@ class ScrapeJob:
                         if result.failure:
                             return self._job_failed(result)
                         scrape_date_str = scrape_date.strftime(DATE_ONLY_UNDERSCORE)
-                        self.scrape_audit[scrape_task.key_name][scrape_date_str] = result.value
+                        self.scrape_audit.append((scrape_task.key_name, scrape_date_str, result.value))
                         self.db['session'].commit()
                         time.sleep(randint(250, 300) / 100.0)
                         pbar_data_set.update()
