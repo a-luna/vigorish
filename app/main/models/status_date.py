@@ -284,9 +284,9 @@ class DateScrapeStatus(Base):
     def status_report(self):
         scraped_daily_bbref = "YES" if self.scraped_daily_dash_bbref == 1 else "NO"
         scraped_daily_brooks = "YES" if self.scraped_daily_dash_brooks == 1 else "NO"
-        scraped_bbref_boxscores = "YES" if self.scraped_all_bbref_boxscores else "NO"
-        scraped_brooks_pitch_logs = "YES" if self.scraped_all_brooks_pitch_logs else "NO"
-        scraped_brooks_pitchfx = "YES" if self.scraped_all_pitchfx_logs else "NO"
+        scraped_bbref_boxscores = "YES" if self.total_bbref_boxscores_scraped == self.total_games else "NO"
+        scraped_brooks_pitch_logs = "YES" if self.total_brooks_games_scraped == self.total_games else "NO"
+        scraped_brooks_pitchfx = "YES" if self.total_pitchfx_logs_scraped == self.total_pitch_apps_with_pitchfx_data else "NO"
         return (
             f"Overall Status For Date...................: {self.scrape_status_description}\n"
             f"Scraped Daily Dashboard (BBRef/Brooks)....: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
