@@ -66,10 +66,12 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
         for pitcher_id, url in pitch_app_dict.items():
             try:
                 pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
-                already_scraped = any([
-                    pitch_log.pitcher_id_mlb == pitcher_id and pitch_log.parsed_all_info
-                    for pitch_log in scraped_pitch_logs_for_game.pitch_logs
-                ])
+                already_scraped = False
+                if hasattr(scraped_pitch_logs_for_game, "pitch_logs"):
+                    already_scraped = any([
+                        pitch_log.pitcher_id_mlb == pitcher_id and pitch_log.parsed_all_info
+                        for pitch_log in scraped_pitch_logs_for_game.pitch_logs
+                    ])
                 if already_scraped:
                     time.sleep(randint(50, 75) / 100.0)
                     pbar.update()
