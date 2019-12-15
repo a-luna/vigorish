@@ -50,7 +50,7 @@ class ScrapeJob:
                 errors = "\n".join(self.errors)
                 report += f"\nerrors.........: {errors}"
             if self.scrape_audit:
-                report += f"\nscraped items..: {pprint.pformat(self.scrape_audit, indent=2)}"
+                report += f"\nscraped items....:\n{pprint.pformat(self.scrape_audit, indent=2)}"
             return report
         elif self.status == "Failed":
             return str(self.result)
