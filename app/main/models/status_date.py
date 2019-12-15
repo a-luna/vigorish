@@ -38,18 +38,6 @@ class DateScrapeStatus(Base):
     boxscores = relationship("Boxscore", backref="scrape_status_date")
     scrape_status_games = relationship("GameScrapeStatus", backref="scrape_status_date")
     scrape_status_pitchfx = relationship("PitchAppearanceScrapeStatus", backref="scrape_status_date")
-    mat_view_scrape_status_game = relationship(
-        "Date_Game_ScrapeStatusMV",
-        backref="original",
-        uselist=False,
-        primaryjoin="DateScrapeStatus.id==Date_Game_ScrapeStatusMV.id",
-        foreign_keys="Date_Game_ScrapeStatusMV.id")
-    mat_view_scrape_status_pitch_app = relationship(
-        "Date_PitchApp_ScrapeStatusMV",
-        backref="original",
-        uselist=False,
-        primaryjoin="DateScrapeStatus.id==Date_PitchApp_ScrapeStatusMV.id",
-        foreign_keys="Date_PitchApp_ScrapeStatusMV.id")
 
     @hybrid_property
     def game_date_str(self):
@@ -61,9 +49,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_bbref_boxscores_scraped(self):
-        return self.mat_view_scrape_status_game.total_bbref_boxscores_scraped \
-            if self.mat_view_scrape_status_game \
-            and self.mat_view_scrape_status_game.total_bbref_boxscores_scraped else 0
+        return sum(game.scraped_bbref_boxscore for game in scrape_status_games)
 
     @hybrid_property
     def percent_complete_bbref_boxscores_scraped(self):
@@ -72,13 +58,11 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def scraped_all_bbref_boxscores(self):
-        return self.total_bbref_boxscores_scraped == self.total_games
+        return all(game.scraped_bbref_boxscore == 1 for game in self.scrape_status_games)
 
     @hybrid_property
     def total_brooks_games_scraped(self):
-        return self.mat_view_scrape_status_game.total_brooks_games_scraped \
-            if self.mat_view_scrape_status_game \
-            and self.mat_view_scrape_status_game.total_brooks_games_scraped else 0
+        return sum(game.scraped_brooks_pitch_logs for game in self.scrape_status_games)
 
     @hybrid_property
     def percent_complete_brooks_games_scraped(self):
@@ -87,19 +71,15 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def scraped_all_brooks_pitch_logs(self):
-        return self.total_brooks_games_scraped == self.total_games
+        return all(game.scraped_brooks_pitch_logs == 1 for game in self.scrape_status_games)
 
     @hybrid_property
     def pitch_appearance_count_bbref(self):
-        return self.mat_view_scrape_status_game.pitch_appearance_count_bbref \
-            if self.mat_view_scrape_status_game \
-            and self.mat_view_scrape_status_game.pitch_appearance_count_bbref else 0
+        return sum(game.pitch_app_count_bbref for game in self.scrape_status_games)
 
     @hybrid_property
     def pitch_appearance_count_brooks(self):
-        return self.mat_view_scrape_status_game.pitch_appearance_count_brooks \
-            if self.mat_view_scrape_status_game \
-            and self.mat_view_scrape_status_game.pitch_appearance_count_brooks else 0
+        return sum(game.pitch_app_count_brooks for game in self.scrape_status_games)
 
     @hybrid_property
     def pitch_appearance_count_difference(self):
@@ -111,15 +91,11 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_count_bbref(self):
-        return self.mat_view_scrape_status_game.total_pitch_count_bbref \
-            if self.mat_view_scrape_status_game \
-            and self.mat_view_scrape_status_game.total_pitch_count_bbref else 0
+        return sum(game.total_pitch_count_bbref for game in self.scrape_status_games)
 
     @hybrid_property
     def total_pitch_count_brooks(self):
-        return self.mat_view_scrape_status_game.total_pitch_count_brooks \
-            if self.mat_view_scrape_status_game \
-            and self.mat_view_scrape_status_game.total_pitch_count_brooks else 0
+        return sum(game.total_pitch_count_brooks for game in self.scrape_status_games)
 
     @hybrid_property
     def total_pitch_count_difference(self):
@@ -131,33 +107,24 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_apps_no_pitchfx_data(self):
-        return self.mat_view_scrape_status_pitch_app.total_pitch_apps_no_pitchfx_data \
-            if self.mat_view_scrape_status_pitch_app \
-            and self.mat_view_scrape_status_pitch_app.total_pitch_apps_no_pitchfx_data else 0
+        return sum(pfx.no_pitchfx_data for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def total_pitchfx_logs_scraped(self):
-        all_scraped = self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped \
-            if self.mat_view_scrape_status_pitch_app \
-            and self.mat_view_scrape_status_pitch_app.total_pitchfx_logs_scraped else 0
-        return all_scraped - self.total_pitch_apps_no_pitchfx_data
+        return sum(pfx.scraped_pitchfx for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def total_pitch_apps_with_pitchfx_data(self):
         return self.pitch_appearance_count_brooks - self.total_pitch_apps_no_pitchfx_data
 
     @hybrid_property
-    def pitch_appearance_count_difference_brooks(self):
-        return abs(self.pitch_appearance_count_brooks - self.total_pitch_apps_with_pitchfx_data)
-
-    @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
-        return self.total_pitchfx_logs_scraped / float(self.total_pitch_apps_with_pitchfx_data) \
-            if self.total_pitch_apps_with_pitchfx_data > 0 else 0.0
+        return self.total_pitchfx_logs_scraped / float(self.pitch_appearance_count_brooks) \
+            if self.pitch_appearance_count_brooks > 0 else 0.0
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
-        return self.total_pitchfx_logs_scraped == self.total_pitch_apps_with_pitchfx_data
+        return self.total_pitchfx_logs_scraped == self.pitch_appearance_count_brooks
 
     @hybrid_property
     def scraped_no_data(self):
@@ -385,45 +352,3 @@ class DateScrapeStatus(Base):
             game_status.bb_game_id
             for game_status
             in date_status.scrape_status_games]
-
-
-class Date_Game_ScrapeStatusMV(MaterializedView):
-    __table__ = create_mat_view(
-        Base.metadata,
-        "date_game_status_mv",
-        select([
-            DateScrapeStatus.id.label("id"),
-            func.sum(GameScrapeStatus.scraped_bbref_boxscore).label("total_bbref_boxscores_scraped"),
-            func.sum(GameScrapeStatus.scraped_brooks_pitch_logs).label("total_brooks_games_scraped"),
-            func.sum(GameScrapeStatus.pitch_app_count_bbref).label("pitch_appearance_count_bbref"),
-            func.sum(GameScrapeStatus.pitch_app_count_brooks).label("pitch_appearance_count_brooks"),
-            func.sum(GameScrapeStatus.total_pitch_count_bbref).label("total_pitch_count_bbref"),
-            func.sum(GameScrapeStatus.total_pitch_count_brooks).label("total_pitch_count_brooks")])
-        .select_from(join(
-            DateScrapeStatus,
-            GameScrapeStatus,
-            DateScrapeStatus.id == GameScrapeStatus.scrape_status_date_id,
-            isouter=True))
-        .group_by(DateScrapeStatus.id))
-
-
-class Date_PitchApp_ScrapeStatusMV(MaterializedView):
-    __table__ = create_mat_view(
-        Base.metadata,
-        "date_pitch_app_status_mv",
-        select([
-            DateScrapeStatus.id.label("id"),
-            func.sum(PitchAppearanceScrapeStatus.scraped_pitchfx).label("total_pitchfx_logs_scraped"),
-            func.sum(PitchAppearanceScrapeStatus.no_pitchfx_data).label("total_pitch_apps_no_pitchfx_data"),
-            func.sum(PitchAppearanceScrapeStatus.pitch_count_pitch_log).label("total_pitch_count_pitch_log"),
-            func.sum(PitchAppearanceScrapeStatus.pitch_count_pitchfx).label("total_pitch_count_pitchfx")])
-        .select_from(join(
-            DateScrapeStatus,
-            PitchAppearanceScrapeStatus,
-            DateScrapeStatus.id == PitchAppearanceScrapeStatus.scrape_status_date_id,
-            isouter=True))
-        .group_by(DateScrapeStatus.id))
-
-
-Index("date_game_status_mv_id_idx", Date_Game_ScrapeStatusMV.id, unique=True)
-Index("date_pitch_app_status_mv_id_idx", Date_PitchApp_ScrapeStatusMV.id, unique=True)

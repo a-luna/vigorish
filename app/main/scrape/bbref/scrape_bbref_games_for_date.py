@@ -28,7 +28,7 @@ def scrape_bbref_games_for_date(scrape_date, driver):
     url = get_dashboard_url_for_date(scrape_date)
     result = get_bbref_games_for_date_html_from_s3(scrape_date)
     if result.failure:
-        result = download_bbref_games_for_date_html(driver, url)
+        result = request_bbref_games_for_date_html(driver, url)
         if result.failure:
             return result
     response = result.value
@@ -52,7 +52,7 @@ def get_bbref_games_for_date_html_from_s3(scrape_date):
     return Result.Ok(response)
 
 
-def download_bbref_games_for_date_html(driver, url):
+def request_bbref_games_for_date_html(driver, url):
     try:
         response = render_webpage(driver, url)
         return Result.Ok(response)

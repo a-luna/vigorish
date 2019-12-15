@@ -30,29 +30,28 @@ def scrape_brooks_games_for_date(session, driver, scrape_date, bbref_games_for_d
     game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
     required_game_data = validate_bbref_game_id_list(game_ids)
     url = _get_dashboard_url_for_date(scrape_date)
-    result = get_brooks_games_for_date_from_s3(scrape_date)
+    result = get_brooks_games_for_date_html_from_s3(scrape_date)
     if result.failure:
-        result = download_brooks_games_for_date_html(driver, url)
+        result = request_brooks_games_for_date_html(driver, url)
         if result.failure:
             return result
     response = result.value
     return parse_daily_dash_page(session, response, scrape_date, url, required_game_data)
 
 
-def get_brooks_games_for_date_from_s3(scrape_date):
+def get_brooks_games_for_date_html_from_s3(scrape_date):
     result = download_html_brooks_games_for_date(scrape_date)
     if result.failure:
         return result
     html_path = result.value
-    contents = html_path.read_text()
-    response = html.fromstring(contents)
+    response = html.fromstring(html_path.read_text())
     html_path.unlink()
     return Result.Ok(response)
 
 
-def download_brooks_games_for_date_html(driver, url):
+def request_brooks_games_for_date_html(driver, url):
     try:
-        response =  render_webpage(driver, url)
+        response = render_webpage(driver, url)
         return Result.Ok(response)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
@@ -244,8 +243,7 @@ def _parse_pitcherid_from_url(url):
 def _update_game_ids(games_for_date):
     game_dict = {g.bb_game_id: g for g in games_for_date.games}
     tracker = {g.bb_game_id: False for g in games_for_date.games}
-    ids_ordered = sorted(game_dict.keys(), reverse=True)
-    for bb_gid in ids_ordered:
+    for bb_gid in sorted(game_dict.keys(), reverse=True):
         if tracker[bb_gid]:
             continue
         g = game_dict[bb_gid]
