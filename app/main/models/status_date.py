@@ -186,9 +186,9 @@ class DateScrapeStatus(Base):
     @hybrid_property
     def scrape_status_description(self):
         if self.scraped_all_game_data:
-            return f"Scraped all game data ({self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_brooks},{self.percent_complete_pitchfx_logs_scraped:.0%})"
+            return "Scraped all game data"
         elif self.scraped_only_both_bbref_boxscores_and_brooks_pitch_logs:
-            return "Missing Brooks pitchfx logs"
+            return f"Missing Brooks pitchfx logs ({self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_brooks}, {self.percent_complete_pitchfx_logs_scraped:.0%})"
         elif self.scraped_only_brooks_pitch_logs:
             return "Scraped Brooks pitch logs, missing BBref boxscores"
         elif self.scraped_only_bbref_boxscores:
