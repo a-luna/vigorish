@@ -38,7 +38,7 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
         if result.failure:
             return result
         brooks_games_for_date = result.value
-        result = get_all_brooks_pitch_logs_for_date_from_s3()
+        result = get_all_brooks_pitch_logs_for_date_from_s3(self.db['session'], scrape_date)
         if result.failure:
             return result
         brooks_pitch_logs_for_date = result.value

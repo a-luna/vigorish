@@ -123,13 +123,18 @@ def status_date(db, game_date, missing_ids):
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
     if missing_ids:
-        missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
-            db["session"], game_date
-        )
-        missing_ids_str = (
-            f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
-            else "All PitchFX logs have been scraped"
-        )
+        if date_status.scraped_all_pitchfx_logs:
+            missing_ids_str = "All PitchFX logs have been scraped"
+        elif date_status.scraped_all_brooks_pitch_logs:
+            missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
+                db["session"], game_date
+            )
+            missing_ids_str = (
+                f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
+                else "All PitchFX logs have been scraped"
+            )
+        else:
+            missing_ids_str = "Missing IDs cannot be reported until all pitch logs have been scraped."
     click.secho(
         f"\n### STATUS REPORT FOR {game_date.strftime(MONTH_NAME_SHORT)} ###",
         fg="cyan",
@@ -218,13 +223,18 @@ def display_detailed_report_for_date_range(db, status_date_range, missing_ids):
     for date_status in status_date_range:
         game_date_str = date_status.game_date.strftime(MONTH_NAME_SHORT)
         if missing_ids:
-            missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
-                db["session"], date_status.game_date
-            )
-            missing_ids_str = (
-                f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
-                else "All PitchFX logs have been scraped"
-            )
+            if date_status.scraped_all_pitchfx_logs:
+                missing_ids_str = "All PitchFX logs have been scraped"
+            elif date_status.scraped_all_brooks_pitch_logs:
+                missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
+                    db["session"], date_status.game_date
+                )
+                missing_ids_str = (
+                    f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
+                    else "All PitchFX logs have been scraped"
+                )
+            else:
+                missing_ids_str = "Missing IDs cannot be reported until all pitch logs have been scraped."
         click.secho(f"\n### STATUS REPORT FOR {game_date_str} ###", fg="cyan", bold=True)
         click.secho(date_status.status_report(), fg="cyan")
         if missing_ids:
