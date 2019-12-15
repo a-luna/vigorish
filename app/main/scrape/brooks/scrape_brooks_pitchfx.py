@@ -29,8 +29,7 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch
             pbar.set_description(get_pbar_description(pitch_log.pitcher_id_mlb))
             scraped_pitchfx = pitch_log.bbref_pitch_app_id in scraped_bbref_pitch_app_ids
             if scraped_pitchfx or not pitch_log.parsed_all_info:
-                scrape_audit.append((pitch_log.bbref_pitch_app_id, "skipped"))
-                time.sleep(randint(25, 75) / 100.0)
+                time.sleep(randint(50, 75) / 100.0)
                 pbar.update()
                 continue
             pbar.set_description(get_pbar_description_requesting(pitch_log.pitcher_id_mlb))

@@ -89,8 +89,9 @@ class PitchAppearanceScrapeStatus(Base):
         return [
             pitch_app_status.bbref_pitch_app_id
             for pitch_app_status
-            in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
-            if pitch_app_status.scraped_pitchfx == 0
+            in session.query(cls)\
+                .filter_by(bbref_game_id=bbref_game_id)\
+                .filter_by(scraped_pitchfx=0).all()
         ]
 
     @classmethod
@@ -98,8 +99,9 @@ class PitchAppearanceScrapeStatus(Base):
         return [
             pitch_app_status.bbref_pitch_app_id
             for pitch_app_status
-            in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
-            if pitch_app_status.scraped_pitchfx == 1
+            in session.query(cls)\
+                .filter_by(bbref_game_id=bbref_game_id)\
+                .filter_by(scraped_pitchfx=1).all()
         ]
 
     @classmethod

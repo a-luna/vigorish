@@ -76,6 +76,7 @@ def parse_pitch_logs_for_game(scraped_pitch_logs, game):
                 if already_scraped:
                     time.sleep(randint(50, 75) / 100.0)
                     pbar.update()
+                pbar.set_description(get_pbar_description_requesting(pitcher_id))
                 response = request_url(url)
                 result = parse_pitch_log(response, game, pitcher_id, url)
                 if result.failure:
@@ -95,6 +96,12 @@ def parse_pitch_logs_for_game(scraped_pitch_logs, game):
 
 def get_pbar_pitch_log_description(player_id):
     pre =f"Player ID | {player_id}"
+    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
+def get_pbar_description_requesting(player_id):
+    pre =f"FETCHING  | {player_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 

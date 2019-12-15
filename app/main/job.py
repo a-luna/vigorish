@@ -43,13 +43,14 @@ class ScrapeJob:
             end_str = self.end_date.strftime(MONTH_NAME_SHORT)
             report = (
                 "Requested data was successfully scraped:\n"
-                f"data set....: {self.data_set}\n"
-                f"date range..: {start_str} - {end_str}\n"
-                f"duration....: {format_timedelta(self.duration)}")
+                f"data set.........: {self.data_set}\n"
+                f"date range.......: {start_str} - {end_str}\n"
+                f"duration.........: {format_timedelta(self.duration)}")
             if self.errors:
                 errors = "\n".join(self.errors)
-                report += f"\nerrors......: {errors}"
-            report += f"\n{pprint.pformat(self.scrape_audit, indent=2)}"
+                report += f"\nerrors.........: {errors}"
+            if self.scrape_audit:
+                report += f"\nscraped items..: {pprint.pformat(self.scrape_audit, indent=2)}"
             return report
         elif self.status == "Failed":
             return str(self.result)
