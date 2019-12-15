@@ -37,6 +37,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
         pitch_logs_for_date = result.value
         scraped_count = 0
         scraped_pitchfx_logs = {}
+        scrape_audit = []
         with tqdm(total=len(pitch_logs_for_date), unit="game", leave=False, position=2) as pbar:
             for pitch_logs_for_game in pitch_logs_for_date:
                 bbref_game_id = pitch_logs_for_game.bbref_game_id
@@ -48,9 +49,10 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
                 result = scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch_app_ids)
                 if result.failure:
                     return result
-                (pitchfx_logs_for_game, scrape_audit) = result.value
+                (pitchfx_logs_for_game, scrape_audit_for_game) = result.value
                 scraped_count += len(pitchfx_logs_for_game)
                 scraped_pitchfx_logs[bbref_game_id] = pitchfx_logs_for_game
+                scrape_audit.append(scrape_audit_for_game)
                 pbar.update()
         with tqdm(total=scraped_count, unit="file", leave=False, position=2) as pbar:
             for bbref_game_id, pitchfx_logs_for_game in scraped_pitchfx_logs.items():

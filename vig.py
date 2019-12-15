@@ -101,8 +101,11 @@ def status(db, update):
 
 @status.command("date")
 @click.argument("game_date", type=DateString(), default=today_str)
+@click.option(
+    "--missing-ids/--no-missing-ids", default=False, show_default=True,
+    help="Report includes bbref_pitch_app_ids that have not been scraped.")
 @click.pass_obj
-def status_date(db, game_date):
+def status_date(db, game_date, missing_ids):
     """Report status for a single date."""
     season = Season.find_by_year(db["session"], game_date.year)
     date_is_valid = Season.is_date_in_season(db["session"], game_date).success
@@ -119,11 +122,21 @@ def status_date(db, game_date):
     date_status = DateScrapeStatus.find_by_date(db["session"], game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
+    if missing_ids:
+        missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
+            db["session"], game_date
+        )
+        missing_ids_str = (
+            f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
+            else "All PitchFX logs have been scraped"
+        )
     click.secho(
         f"\n### STATUS REPORT FOR {game_date.strftime(MONTH_NAME_SHORT)} ###",
         fg="cyan",
         bold=True)
     click.secho(date_status.status_report(), fg="cyan")
+    if missing_ids:
+        click.secho(f"\n{missing_ids_str}", fg="cyan")
     return exit_app_success(db)
 
 
@@ -132,11 +145,12 @@ def status_date(db, game_date):
 @click.option("--end", type=DateString(), prompt=True, help="Last date to report status.")
 @click.option('-v', 'verbosity', count=True, default=1,
     help=(
-        "Specify the level of detail to report:"
-        "   -v: summary report of only dates missing data"
-        "  -vv: summary report of all dates"
-        " -vvv: detailed report of only dates missing data"
-        "-vvvv: detailed report of all dates"
+        "Specify the level of detail to report:\n"
+        "    -v: summary report of only dates missing data\n"
+        "   -vv: summary report of all dates\n"
+        "  -vvv: detailed report of only dates missing data\n"
+        " -vvvv: detailed report of all dates\n"
+        "-vvvvv: detailed report of all dates with missing bbref_pitch_app_ids"
     )
 )
 @click.pass_obj
@@ -153,22 +167,30 @@ def status_date_range(db, start, end, verbosity):
     elif verbosity == 1:
         detailed_report = False
         show_all = False
+        missing_ids = False
     elif verbosity == 2:
         detailed_report = False
         show_all = True
+        missing_ids = False
     elif verbosity == 3:
         detailed_report = True
         show_all = False
-    elif verbosity > 3:
+        missing_ids = False
+    elif verbosity == 4:
         detailed_report = True
         show_all = True
+        missing_ids = False
+    elif verbosity > 4:
+        detailed_report = True
+        show_all = True
+        missing_ids = True
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(db, Result(error))
-    return scrape_status_date_range(db, start, end, detailed_report, show_all)
+    return scrape_status_date_range(db, start, end, detailed_report, show_all, missing_ids)
 
 
-def scrape_status_date_range(db, start, end, detailed_report, show_all):
+def scrape_status_date_range(db, start, end, detailed_report, show_all, missing_ids):
     result = Season.validate_date_range(db["session"], start, end)
     if result.failure:
         return result
@@ -186,17 +208,27 @@ def scrape_status_date_range(db, start, end, detailed_report, show_all):
             continue
         status_date_range.append(date_status)
     if detailed_report:
-        return display_detailed_report_for_date_range(db, status_date_range)
+        return display_detailed_report_for_date_range(db, status_date_range, missing_ids)
     else:
         return display_summary_report_for_date_range(db, start, end, status_date_range)
     return exit_app_success(db)
 
 
-def display_detailed_report_for_date_range(db, status_date_range):
+def display_detailed_report_for_date_range(db, status_date_range, missing_ids):
     for date_status in status_date_range:
         game_date_str = date_status.game_date.strftime(MONTH_NAME_SHORT)
+        if missing_ids:
+            missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
+                db["session"], game_date
+            )
+            missing_ids_str = (
+                f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
+                else "All PitchFX logs have been scraped"
+            )
         click.secho(f"\n### STATUS REPORT FOR {game_date_str} ###", fg="cyan", bold=True)
         click.secho(date_status.status_report(), fg="cyan")
+        if missing_ids:
+            click.secho(f"\n{missing_ids_str}", fg="cyan")
     return exit_app_success(db)
 
 
