@@ -9,7 +9,11 @@ from app.main.scrape.brooks.scrape_brooks_pitch_logs_for_date import scrape_broo
 from app.main.status.update_status_brooks_pitch_logs import update_status_brooks_pitch_logs_for_game
 from app.main.tasks.base_task import BaseTask
 from app.main.util.dt_format_strings import DATE_ONLY_2
-from app.main.util.s3_helper import get_brooks_games_for_date_from_s3, upload_brooks_pitch_logs_for_game
+from app.main.util.s3_helper import (
+    get_brooks_games_for_date_from_s3,
+    get_all_brooks_pitch_logs_for_date_from_s3,
+    upload_brooks_pitch_logs_for_game,
+)
 from app.main.util.result import Result
 
 
@@ -34,7 +38,11 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
         if result.failure:
             return result
         brooks_games_for_date = result.value
-        result = scrape_brooks_pitch_logs_for_date(brooks_games_for_date)
+        result = get_all_brooks_pitch_logs_for_date_from_s3()
+        if result.failure:
+            return result
+        brooks_pitch_logs_for_date = result.value
+        result = scrape_brooks_pitch_logs_for_date(brooks_pitch_logs_for_date, brooks_games_for_date)
         if result.failure:
             return result
         scraped_games = result.value

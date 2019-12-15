@@ -30,14 +30,19 @@ TEAM_ID_PATTERN = r"\((?P<team_id>[\w]{3})\)"
 TEAM_ID_REGEX = re.compile(TEAM_ID_PATTERN)
 
 
-def scrape_brooks_pitch_logs_for_date(games_for_date):
+def scrape_brooks_pitch_logs_for_date(pitch_logs_for_date, games_for_date):
     scraped_games = []
+    scraped_pitch_logs_dict = {g.bb_game_id:g for g in pitch_logs_for_date}
     with tqdm(total=len(games_for_date.games), unit="game", leave=False, position=2) as pbar:
         for game in games_for_date.games:
             if game.might_be_postponed:
                 continue
             pbar.set_description(get_pbar_game_description(game.bbref_game_id))
-            result = parse_pitch_logs_for_game(game)
+            scraped_pitch_logs = (
+                scraped_pitch_logs_dict[game.bb_game_id]
+                if game.bb_game_id in scraped_pitch_logs_dict else None
+            )
+            result = parse_pitch_logs_for_game(scraped_pitch_logs, game)
             if result.failure:
                 return result
             brooks_pitch_logs = result.value
@@ -52,7 +57,7 @@ def get_pbar_game_description(game_id):
     return f"{pre}{'.'*pad_len}"
 
 
-def parse_pitch_logs_for_game(game):
+def parse_pitch_logs_for_game(scraped_pitch_logs, game):
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game.bb_game_id
     pitch_logs_for_game.bbref_game_id = game.bbref_game_id
@@ -64,6 +69,13 @@ def parse_pitch_logs_for_game(game):
         for pitcher_id, url in pitch_app_dict.items():
             try:
                 pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
+                already_scraped = any([
+                    pitch_log.pitcher_id_mlb == pitcher_id and pitch_log.parsed_all_info
+                    for pitch_log in scraped_pitch_logs.pitch_logs
+                ])
+                if already_scraped:
+                    time.sleep(randint(50, 75) / 100.0)
+                    pbar.update()
                 response = request_url(url)
                 result = parse_pitch_log(response, game, pitcher_id, url)
                 if result.failure:
