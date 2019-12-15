@@ -219,7 +219,7 @@ def display_detailed_report_for_date_range(db, status_date_range, missing_ids):
         game_date_str = date_status.game_date.strftime(MONTH_NAME_SHORT)
         if missing_ids:
             missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
-                db["session"], game_date
+                db["session"], date_status.game_date
             )
             missing_ids_str = (
                 f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
