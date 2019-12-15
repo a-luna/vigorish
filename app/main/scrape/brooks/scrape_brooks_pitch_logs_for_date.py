@@ -38,11 +38,8 @@ def scrape_brooks_pitch_logs_for_date(pitch_logs_for_date, games_for_date):
             if game.might_be_postponed:
                 continue
             pbar.set_description(get_pbar_game_description(game.bbref_game_id))
-            scraped_pitch_logs = (
-                scraped_pitch_logs_dict[game.bb_game_id]
-                if game.bb_game_id in scraped_pitch_logs_dict else None
-            )
-            result = parse_pitch_logs_for_game(scraped_pitch_logs, game)
+            scraped_pitch_logs_for_game = scraped_pitch_logs_dict.get(game.bb_game_id, None)
+            result = parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game)
             if result.failure:
                 return result
             brooks_pitch_logs = result.value
@@ -57,7 +54,7 @@ def get_pbar_game_description(game_id):
     return f"{pre}{'.'*pad_len}"
 
 
-def parse_pitch_logs_for_game(scraped_pitch_logs, game):
+def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game.bb_game_id
     pitch_logs_for_game.bbref_game_id = game.bbref_game_id
@@ -71,7 +68,7 @@ def parse_pitch_logs_for_game(scraped_pitch_logs, game):
                 pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
                 already_scraped = any([
                     pitch_log.pitcher_id_mlb == pitcher_id and pitch_log.parsed_all_info
-                    for pitch_log in scraped_pitch_logs.pitch_logs
+                    for pitch_log in scraped_pitch_logs_for_game.pitch_logs
                 ])
                 if already_scraped:
                     time.sleep(randint(50, 75) / 100.0)
