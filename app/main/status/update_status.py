@@ -50,13 +50,13 @@ def update_status_for_mlb_season(session, year):
         return result
     session.commit()
 
-    #spinner.text = f'Updating MLB {year} brooks_pitchfx...'
-    #spinner.color = "magenta"
-    #result = update_data_set_brooks_pitchfx(session, season)
-    #if result.failure:
-    #    spinner.stop_and_persist("😢", "Fail").clear()
-    #    return result
-    #session.commit()
+    spinner.text = f'Updating MLB {year} brooks_pitchfx...'
+    spinner.color = "magenta"
+    result = update_data_set_brooks_pitchfx(session, season)
+    if result.failure:
+        spinner.stop_and_persist("😢", "Fail").clear()
+        return result
+    session.commit()
 
     spinner.stop_and_persist("😎", "Success").clear()
     return Result.Ok()

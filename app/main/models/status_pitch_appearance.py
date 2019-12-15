@@ -43,11 +43,12 @@ class PitchAppearanceScrapeStatus(Base):
     @classmethod
     def find_by_bbref_pitch_app_id(cls, session, bbref_pitch_app_id):
         bbref_game_id = bbref_pitch_app_id.split("_")[0]
+        pitcher_id_mlb = bbref_pitch_app_id.split("_")[1]
         matching_pitch_app_status = [
             pitch_app_status
             for pitch_app_status
             in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
-            if pitch_app_status.bbref_pitch_app_id == bbref_pitch_app_id
+            if pitch_app_status.pitcher_id_mlb == pitcher_id_mlb
         ]
         return matching_pitch_app_status[0] if matching_pitch_app_status else None
 

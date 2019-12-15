@@ -12,9 +12,8 @@ def update_data_set_brooks_pitchfx(session, season):
     scraped_pitch_app_id_dict = PitchAppearanceScrapeStatus.get_pitch_app_id_dict_from_pitch_app_guids(
         session, scraped_pitch_app_ids
     )
-    unscraped_bbref_pitch_app_ids = \
-        Season.get_unscraped_bbref_pitch_app_ids_for_season(session, season.year)
-    new_bbref_pitch_app_ids = set(scraped_pitch_app_id_dict.items()) & set(unscraped_bbref_pitch_app_ids)
+    unscraped_bbref_pitch_app_ids = Season.get_unscraped_bbref_pitch_app_ids_for_season(session, season.year)
+    new_bbref_pitch_app_ids = set(scraped_pitch_app_id_dict.keys()) & set(unscraped_bbref_pitch_app_ids)
     if not new_bbref_pitch_app_ids:
         return Result.Ok()
     result = update_status_brooks_pitchfx_log_list(session, season, new_bbref_pitch_app_ids, scraped_pitch_app_id_dict)
