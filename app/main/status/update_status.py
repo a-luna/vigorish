@@ -24,6 +24,7 @@ def update_status_for_mlb_season(session, year):
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
         return result
+    session.commit()
 
     spinner.text = f'Updating MLB {year} brooks_games_for_date...'
     spinner.color = "white"
@@ -31,6 +32,7 @@ def update_status_for_mlb_season(session, year):
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
         return result
+    session.commit()
 
     spinner.text = f'Updating MLB {year} bbref_boxscores...'
     spinner.color = "green"
@@ -38,6 +40,7 @@ def update_status_for_mlb_season(session, year):
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
         return result
+    session.commit()
 
     spinner.text = f'Updating MLB {year} brooks_pitch_logs...'
     spinner.color = "cyan"
@@ -45,6 +48,7 @@ def update_status_for_mlb_season(session, year):
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
         return result
+    session.commit()
 
     spinner.text = f'Updating MLB {year} brooks_pitchfx...'
     spinner.color = "magenta"
@@ -52,7 +56,7 @@ def update_status_for_mlb_season(session, year):
     if result.failure:
         spinner.stop_and_persist("😢", "Fail").clear()
         return result
+    session.commit()
 
     spinner.stop_and_persist("😎", "Success").clear()
-    session.commit()
     return Result.Ok()

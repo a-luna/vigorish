@@ -105,6 +105,7 @@ class PitchAppearanceScrapeStatus(Base):
             if pitch_app_status.scraped_pitchfx == 1
         ]
 
+    @classmethod
     def get_pitch_app_id_dict_from_pitch_app_guids(cls, session, pitch_app_guids):
         return {
             pfx.bbref_pitch_app_id:pfx.pitch_app_id
