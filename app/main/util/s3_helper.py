@@ -202,7 +202,7 @@ def get_all_brooks_pitch_logs_for_date_from_s3(session, game_date, folderpath=No
     for game_id in brooks_game_ids:
         result = get_brooks_pitch_logs_for_game_from_s3(game_id, folderpath, delete_file)
         if result.failure:
-            return result
+            continue
         pitch_logs.append(result.value)
     return Result.Ok(pitch_logs)
 
