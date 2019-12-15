@@ -1,3 +1,4 @@
+from app.main.models.season import Season
 from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
 from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3
 from app.main.util.result import Result
@@ -8,19 +9,24 @@ def update_data_set_brooks_pitchfx(session, season):
     if result.failure:
         return result
     scraped_pitch_app_ids = result.value
-    unscraped_pitch_app_ids = \
-        PitchAppearanceScrapeStatus.get_all_unscraped_pitch_app_ids_for_season(session, season.id)
-    new_pitch_app_ids = set(scraped_pitch_app_ids) & set(unscraped_pitch_app_ids)
-    if not new_pitch_app_ids:
+    scraped_pitch_app_id_dict = \
+        PitchAppearanceScrapeStatus.get_pitch_app_id_dict_from_pitch_app_guids(
+            session, scraped_pitch_app_ids
+        )
+    unscraped_bbref_pitch_app_ids = \
+        Season.get_unscraped_bbref_pitch_app_ids_for_season(session, season.year)
+    new_bbref_pitch_app_ids = set(scraped_pitch_app_id_dict.items()) & set(unscraped_bbref_pitch_app_ids)
+    if not new_bbref_pitch_app_ids:
         return Result.Ok()
-    result = update_status_brooks_pitchfx_log_list(session, season, new_pitch_app_ids)
+    result = update_status_brooks_pitchfx_log_list(session, season, new_bbref_pitch_app_ids, scraped_pitch_app_id_dict)
     if result.failure:
         return result
     return Result.Ok()
 
 
-def update_status_brooks_pitchfx_log_list(session, season, new_pitch_app_ids):
-    for pitch_app_id in new_pitch_app_ids:
+def update_status_brooks_pitchfx_log_list(session, season, new_bbref_pitch_app_ids, scraped_pitch_app_id_dict):
+    for bbref_pitch_app_id in new_bbref_pitch_app_ids:
+        pitch_app_id = scraped_pitch_app_id_dict[bbref_pitch_app_id]
         result = get_brooks_pitchfx_log_from_s3(pitch_app_id, year=season.year)
         if result.failure:
             return result

@@ -104,3 +104,10 @@ class PitchAppearanceScrapeStatus(Base):
             in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
             if pitch_app_status.scraped_pitchfx == 1
         ]
+
+    def get_pitch_app_id_dict_from_pitch_app_guids(cls, session, pitch_app_guids):
+        return {
+            pfx.bbref_pitch_app_id:pfx.pitch_app_id
+            for pfx in session.query(cls).all()
+            if pfx.pitch_app_id in pitch_app_guids
+        }

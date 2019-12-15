@@ -141,7 +141,7 @@ def status_date(db, game_date, missing_ids):
         bold=True)
     click.secho(date_status.status_report(), fg="cyan")
     if missing_ids:
-        click.secho(f"\n{missing_ids_str}", fg="cyan")
+        click.secho(missing_ids_str, fg="cyan")
     return exit_app_success(db)
 
 
@@ -238,7 +238,7 @@ def display_detailed_report_for_date_range(db, status_date_range, missing_ids):
         click.secho(f"\n### STATUS REPORT FOR {game_date_str} ###", fg="cyan", bold=True)
         click.secho(date_status.status_report(), fg="cyan")
         if missing_ids:
-            click.secho(f"\n{missing_ids_str}", fg="cyan")
+            click.secho(missing_ids_str, fg="cyan")
     return exit_app_success(db)
 
 
