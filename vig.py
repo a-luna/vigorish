@@ -82,9 +82,9 @@ def scrape(db, data_set, start, end, update):
     print_message(job.status_report, fg="green")
 
     season = Season.find_by_year(db['session'], start.year)
-    #result = refresh_season_data(db, season.year)
-    #if result.failure:
-    #    return exit_app_error(db, result)
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
     print_message(season.status_report(), fg="bright_yellow")
     return exit_app_success(db)
 
@@ -116,9 +116,9 @@ def status_date(db, game_date, missing_ids):
             f"season_start_date: {season.start_date_str}\n"
             f"season_end_date: {season.end_date_str}")
         return exit_app_error(db, error)
-    #result = refresh_season_data(db, season.year)
-    #if result.failure:
-    #    return exit_app_error(db, result)
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
     date_status = DateScrapeStatus.find_by_date(db["session"], game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
@@ -200,9 +200,9 @@ def scrape_status_date_range(db, start, end, detailed_report, show_all, missing_
     if result.failure:
         return result
     season = result.value
-    #result = refresh_season_data(db, season.year)
-    #if result.failure:
-    #    return exit_app_error(db, result)
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
     status_date_range = []
     for game_date in get_date_range(start, end):
         date_status = DateScrapeStatus.find_by_date(db["session"], game_date)
@@ -269,9 +269,9 @@ def display_summary_report_for_date_range(db, start, end, status_date_range):
 def status_season(db, year, verbosity):
     """Report status for a single MLB season."""
     season = Season.find_by_year(db["session"], year)
-    #result = refresh_season_data(db, season.year)
-    #if result.failure:
-    #    return exit_app_error(db, result)
+    result = refresh_season_data(db, season.year)
+    if result.failure:
+        return exit_app_error(db, result)
     if verbosity <= 0:
         error = f"Invalid value for verbosity: {verbosity}. Value must be greater than zero."
         return exit_app_error(db, Result(error))
@@ -293,7 +293,7 @@ def refresh_season_data(db, year):
         result = update_status_for_mlb_season(db['session'], year)
         if result.failure:
             return result
-    refresh_all_mat_views(db)
+    #refresh_all_mat_views(db)
     return Result.Ok()
 
 
