@@ -49,7 +49,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_bbref_boxscores_scraped(self):
-        return sum(game.scraped_bbref_boxscore for game in scrape_status_games)
+        return sum(game.scraped_bbref_boxscore for game in self.scrape_status_games)
 
     @hybrid_property
     def percent_complete_bbref_boxscores_scraped(self):
