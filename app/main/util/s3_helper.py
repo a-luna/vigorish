@@ -282,6 +282,19 @@ def delete_brooks_pitchfx_log_from_s3(pitch_app_id, year):
         return Result.Fail(repr(e))
 
 
+def rename_brooks_pitchfx_log(old_pitch_app_id, new_pitch_app_id, year):
+    old_filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=old_pitch_app_id)
+    old_key = Template(T_BB_PFX_KEY).substitute(year=year, filename=old_filename)
+    new_filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=new_pitch_app_id)
+    new_key = Template(T_BB_PFX_KEY).substitute(year=year, filename=new_filename)
+    try:
+        s3_resource.Object(S3_BUCKET, new_key).copy_from(CopySource=f"{S3_BUCKET}/{old_key}")
+        s3_resource.Object(S3_BUCKET, old_key).delete()
+        return Result.Ok()
+    except botocore.exceptions.ClientError as e:
+        return Result.Fail(repr(e))
+
+
 def download_html_bbref_games_for_date(scrape_date, folderpath=None):
     """Download raw HTML for bbref daily scoreboard page."""
     folderpath = folderpath if folderpath else Path.cwd()

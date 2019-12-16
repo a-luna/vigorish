@@ -139,6 +139,47 @@ def fixdupes(db):
     return exit_app_success(db, "Successfully removed all duplicate pitchfx data.")
 
 
+@cli.command()
+@click.pass_obj
+def bulkrename(db):
+    from halo import Halo
+    from tqdm import tqdm
+    from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3, rename_brooks_pitchfx_log
+    from app.main.util.regex import GUID_REGEX
+
+    spinner = Halo(text=f'Gathering all scraped Pitchfx IDs for the {year} MLB season...', color='magenta', spinner='dots3')
+    spinner.start()
+    result = get_all_pitch_app_ids_scraped(2019)
+    if result.failure:
+        return result
+    scraped_pitch_app_ids = result.value
+    scraped_pitch_app_ids = [
+        pitch_app_id for pitch_app_id
+        in scraped_pitch_app_ids
+        if GUID_REGEX.search(pitch_app_id)
+    ]
+    spinner.stop();
+    error_dict = {}
+    with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
+            for pitch_app_id in scraped_pitch_app_ids:
+                pbar.set_description(pitch_app_id[:8])
+                result = get_brooks_pitchfx_log_from_s3(pitch_app_id, year=2019)
+                if result.failure:
+                    error_dict[pitch_app_id] = result.error
+                    pbar.update()
+                    continue
+                pitchfx_log = result.value
+                bbref_pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
+                result = rename_brooks_pitchfx_log(pitch_app_id, bbref_pitch_app_id, year=2019)
+                if result.failure:
+                    error_dict[pitch_app_id] = result.error
+                    pbar.update()
+                    continue
+                pbar.update()
+    print("The following errors occurred:")
+    pprint(error_dict, indent=4)
+    return exit_app_success(db, "Successfully removed all duplicate pitchfx data.")
+
 
 @cli.command()
 @click.option(
