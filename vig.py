@@ -59,6 +59,7 @@ def setup(db):
 
 
 @cli.command()
+@click.argument("year", type=MlbSeason(), default=current_year)
 @click.pass_obj
 def audit(db):
     from pprint import pformat
@@ -68,6 +69,7 @@ def audit(db):
     from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3
     from app.main.util.result import Result
 
+    season = Season.find_by_year(db["session"], year)
     result = get_all_pitch_app_ids_scraped(season.year)
     if result.failure:
         return result
