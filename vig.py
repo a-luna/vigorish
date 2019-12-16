@@ -62,7 +62,8 @@ def setup(db):
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.pass_obj
 def audit(db, year):
-    from pprint import pformat
+    from collections import Counter
+    from pprint import pprint
     from halo import Halo
     from tqdm import tqdm
     from app.main.models.season import Season
@@ -78,33 +79,30 @@ def audit(db, year):
         return result
     spinner.stop();
     scraped_pitch_app_ids = result.value
-    pitchfx_id_dict = {}
+    pitchfx_id_tuples = []
+    bbref_pitch_app_ids = []
     error_dict = {}
-    duplicate_ids = []
     with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
             for pitch_app_id in scraped_pitch_app_ids:
-                pbar.set_description(pitch_app_id)
+                pbar.set_description(pitch_app_id[:8])
                 result = get_brooks_pitchfx_log_from_s3(pitch_app_id, year=season.year)
                 if result.failure:
                     error_dict[pitch_app_id] = result.error
                 pitchfx_log = result.value
                 bbref_pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
-                if bbref_pitch_app_id in pitchfx_id_dict:
-                    pitchfx_id_dict[bbref_pitch_app_id].append(pitch_app_id)
-                else:
-                    pitchfx_id_dict[bbref_pitch_app_id] = [pitch_app_id]
-                    duplicate_ids.append(bbref_pitch_app_id)
+                pitchfx_id_tuples.append((bbref_pitch_app_id, pitch_app_id))
+                bbref_pitch_app_ids.append(bbref_pitch_app_id)
                 pbar.update()
-            duplicate_ids = list(set(duplicate_ids))
-    results = {}
-    total = 0
-    for dupe in duplicate_ids:
-        results[dupe] = pitchfx_id_dict[dupe]
-        total += len(pitchfx_id_dict[dupe])
-    extra_logs = total - len(duplicate_ids)
-    print(f"S3 bucket contains {len(scraped_pitch_app_ids)} PitchFX logs, containing {len(pitchfx_id_dict)} unique pitching appearances.")
-    print(f"{len(duplicate_ids)} pitch appearances were scraped more than once, resulting in {extra_logs} logs which must be removed from the bucket:\n")
-    pformat(results)
+    histogram = Counter(bbref_pitch_app_ids)
+    bbref_pitch_app_ids_set = Counter(list(set(bbref_pitch_app_ids)))
+    duplicate_ids = histogram - bbref_pitch_app_ids
+    total_duplicates = sum(duplicate_ids.values())
+    duplicate_map = {}
+    for bbref_pitch_app_id in duplicate_ids.keys():
+        duplicate_map[bbref_pitch_app_id] = [t[1] for t in pitchfx_id_tuples if t[0] == bbref_pitch_app_id]
+    print(f"S3 bucket contains {len(scraped_pitch_app_ids)} PitchFX logs, containing {len(bbref_pitch_app_ids_set)} unique pitching appearances.")
+    print(f"{len(duplicate_ids)} pitch appearances were scraped more than once, resulting in {total_duplicates} logs which must be removed from the bucket:\n\n")
+    pprint(duplicate_map, indent=2)
     return exit_app_success(db, "Successfully completed audit of pitchfx data.")
 
 
