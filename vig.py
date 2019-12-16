@@ -79,27 +79,31 @@ def audit(db, year):
     spinner.stop();
     scraped_pitch_app_ids = result.value
     pitchfx_id_dict = {}
+    error_dict = {}
     duplicate_ids = []
     with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
             for pitch_app_id in scraped_pitch_app_ids:
                 pbar.set_description(pitch_app_id)
                 result = get_brooks_pitchfx_log_from_s3(pitch_app_id, year=season.year)
                 if result.failure:
-                    return result
+                    error_dict[pitch_app_id] = result.error
                 pitchfx_log = result.value
                 bbref_pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
-                if pitch_app_id in pitchfx_id_dict:
+                if bbref_pitch_app_id in pitchfx_id_dict:
                     pitchfx_id_dict[bbref_pitch_app_id].append(pitch_app_id)
                 else:
                     pitchfx_id_dict[bbref_pitch_app_id] = [pitch_app_id]
                     duplicate_ids.append(bbref_pitch_app_id)
+                pbar.update()
             duplicate_ids = list(set(duplicate_ids))
     results = {}
     total = 0
     for dupe in duplicate_ids:
         results[dupe] = pitchfx_id_dict[dupe]
         total += len(pitchfx_id_dict[dupe])
-    print(f"Found {len(duplicate_ids)} pitch appearances scraped a total of {total} times:\n")
+    extra_logs = total - len(duplicate_ids)
+    print(f"S3 bucket contains {len(scraped_pitch_app_ids)} PitchFX logs, containing {len(pitchfx_id_dict)} unique pitching appearances.")
+    print(f"{len(duplicate_ids)} pitch appearances were scraped more than once, resulting in {extra_logs} logs which must be removed from the bucket:\n")
     pformat(results)
     return exit_app_success(db, "Successfully completed audit of pitchfx data.")
 
