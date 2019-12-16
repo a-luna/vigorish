@@ -59,6 +59,45 @@ def setup(db):
 
 
 @cli.command()
+def audit(db):
+    from pprint import pformat
+    from tqdm import tqdm
+    from app.main.models.season import Season
+    from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
+    from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3
+    from app.main.util.result import Result
+
+    result = get_all_pitch_app_ids_scraped(season.year)
+    if result.failure:
+        return result
+    scraped_pitch_app_ids = result.value
+    pitchfx_id_dict = {}
+    duplicate_ids = []
+    with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
+            for pitch_app_id in scraped_pitch_app_ids:
+                pbar.set_description(self._get_pbar_date_description(pitch_app_id))
+                result = get_brooks_pitchfx_log_from_s3(pitch_app_id, year=season.year)
+                if result.failure:
+                    return result
+                pitchfx_log = result.value
+                bbref_pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
+                if pitch_app_id in pitchfx_id_dict:
+                    pitchfx_id_dict[bbref_pitch_app_id].append(pitch_app_id)
+                else:
+                    pitchfx_id_dict[bbref_pitch_app_id] = [pitch_app_id]
+                    duplicate_ids.append(bbref_pitch_app_id)
+            duplicate_ids = list(set(duplicate_ids))
+    results = {}
+    total = 0
+    for dupe in duplicate_ids:
+        results[dupe] = pitchfx_id_dict[dupe]
+        total += len(pitchfx_id_dict[dupe])
+    print(f"Found {len(duplicate_ids)} pitch appearances scraped a total of {total} times:\n")
+    pformat(results)
+
+
+
+@cli.command()
 @click.option(
     "--data-set", type=click.Choice(MLB_DATA_SETS), default="all", show_default=True, prompt=True,
     help= f'Data set to scrape, must be a value from the following list:\n{", ".join(MLB_DATA_SETS)}')
