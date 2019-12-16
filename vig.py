@@ -113,6 +113,7 @@ def fixdupes(db):
     from tqdm import tqdm
     from pathlib import Path
     from app.main.util.s3_helper import get_brooks_pitchfx_log_from_s3, delete_brooks_pitchfx_log_from_s3
+
     audit_json = Path("audit_results.json").read_text()
     audit_results = json.loads(audit_json)
     audit_results_copy = json.loads(audit_json)
@@ -139,6 +140,9 @@ def fixdupes(db):
                 pbar.update()
                 continue
             audit_results_copy.pop(bbref_pitch_app_id)
+            pbar.update()
+    print("The following errors occurred:")
+    pprint(error_dict, indent=4)
     print("Remaining duplicate PitchFX logs:")
     pprint(audit_results_copy, indent=4)
     return exit_app_success(db, "Successfully removed all duplicate pitchfx data.")
