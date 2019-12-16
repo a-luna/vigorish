@@ -63,6 +63,7 @@ def setup(db):
 @click.pass_obj
 def audit(db, year):
     from pprint import pformat
+    from halo import Halo
     from tqdm import tqdm
     from app.main.models.season import Season
     from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
@@ -70,9 +71,12 @@ def audit(db, year):
     from app.main.util.result import Result
 
     season = Season.find_by_year(db["session"], year)
+    spinner = Halo(text=f'Gathering all scraped Pitchfx IDs for the {year} MLB season...', color='magenta', spinner='dots3')
+    spinner.start()
     result = get_all_pitch_app_ids_scraped(season.year)
     if result.failure:
         return result
+    spinner.stop();
     scraped_pitch_app_ids = result.value
     pitchfx_id_dict = {}
     duplicate_ids = []
