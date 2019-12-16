@@ -114,7 +114,13 @@ def bulkupdate(db):
         upload_brooks_pitchfx_log
     )
 
-    scraped_brooks_game_ids = ["gid_2018_05_19_detmlb_seamlb_1"]
+    spinner = Halo(text=f'Gathering all scraped brooksbaseball game ids for the 2019 MLB season...', color='cyan', spinner='dots3')
+    spinner.start()
+    result = get_all_scraped_brooks_game_ids(2019)
+    if result.failure:
+        return result
+    scraped_brooks_game_ids = result.value
+    spinner.stop();
     game_log_error_dict = {}
     with tqdm(total=len(scraped_brooks_game_ids), unit="game", position=0, leave=True) as pbar_game:
         for bb_game_id in scraped_brooks_game_ids:
@@ -137,7 +143,13 @@ def bulkupdate(db):
                 continue
             pbar_game.update()
 
-    scraped_pitch_app_ids = ["ANA201906100_571670"]
+    spinner = Halo(text=f'Gathering all scraped pitchfx ids for the 2019 MLB season...', color='magenta', spinner='dots3')
+    spinner.start()
+    result = get_all_pitch_app_ids_scraped(2019)
+    if result.failure:
+        return result
+    scraped_pitch_app_ids = result.value
+    spinner.stop();
     pfx_error_dict = {}
     with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
         for pitch_app_id in scraped_pitch_app_ids:
