@@ -78,7 +78,7 @@ def audit(db, year):
     duplicate_ids = []
     with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
             for pitch_app_id in scraped_pitch_app_ids:
-                pbar.set_description(self._get_pbar_date_description(pitch_app_id))
+                pbar.set_description(pitch_app_id)
                 result = get_brooks_pitchfx_log_from_s3(pitch_app_id, year=season.year)
                 if result.failure:
                     return result
