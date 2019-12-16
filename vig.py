@@ -59,6 +59,7 @@ def setup(db):
 
 
 @cli.command()
+@click.pass_obj
 def audit(db):
     from pprint import pformat
     from tqdm import tqdm
@@ -94,6 +95,7 @@ def audit(db):
         total += len(pitchfx_id_dict[dupe])
     print(f"Found {len(duplicate_ids)} pitch appearances scraped a total of {total} times:\n")
     pformat(results)
+    return exit_app_success(db, "Successfully completed audit of pitchfx data.")
 
 
 
