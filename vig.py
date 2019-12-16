@@ -133,7 +133,7 @@ def bulkupdate(db):
             pitch_logs_for_game = result.value
             for pitch_log in pitch_logs_for_game.pitch_logs:
                 with tqdm(total=len(pitch_logs_for_game.pitch_logs), unit="pitch_app", position=1, leave=True) as pbar_pitch_app:
-                    pbar_pitch_app.set_description(pitch_log.pitcher_id_mlb)
+                    pbar_pitch_app.set_description(f"{pitch_log.pitcher_id_mlb}")
                     pitch_log.pitch_app_id = f"{pitch_log.bbref_game_id}_{pitch_log.pitcher_id_mlb}"
                     pbar_pitch_app.update()
             result = upload_brooks_pitch_logs_for_game(pitch_logs_for_game)
