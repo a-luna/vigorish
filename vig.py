@@ -78,8 +78,7 @@ def audit(db, year):
         return result
     spinner.stop();
     scraped_pitch_app_ids = result.value
-    pitchfx_id_tuples = []
-    bbref_pitch_app_ids = []
+    pitch_app_ids = []
     error_dict = {}
     with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
             for pitch_app_id in scraped_pitch_app_ids:
@@ -88,18 +87,13 @@ def audit(db, year):
                 if result.failure:
                     error_dict[pitch_app_id] = result.error
                 pitchfx_log = result.value
-                bbref_pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
-                pitchfx_id_tuples.append((bbref_pitch_app_id, pitch_app_id))
-                bbref_pitch_app_ids.append(bbref_pitch_app_id)
+                pitch_app_ids.append(pitch_app_id)
                 pbar.update()
-    histogram = Counter(bbref_pitch_app_ids)
-    bbref_pitch_app_ids_set = Counter(list(set(bbref_pitch_app_ids)))
-    duplicate_ids = histogram - bbref_pitch_app_ids_set
+    histogram = Counter(pitch_app_ids)
+    pitch_app_ids_set = Counter(list(set(pitch_app_ids)))
+    duplicate_ids = histogram - pitch_app_ids_set
     total_duplicates = sum(duplicate_ids.values())
-    duplicate_map = {}
-    for bbref_pitch_app_id in duplicate_ids.keys():
-        duplicate_map[bbref_pitch_app_id] = [t[1] for t in pitchfx_id_tuples if t[0] == bbref_pitch_app_id]
-    print(f"S3 bucket contains {len(scraped_pitch_app_ids)} PitchFX logs, containing {len(bbref_pitch_app_ids_set)} unique pitching appearances.")
+    print(f"S3 bucket contains {len(scraped_pitch_app_ids)} PitchFX logs, containing {len(pitch_app_ids_set)} unique pitching appearances.")
     print(f"{len(duplicate_ids)} pitch appearances were scraped more than once, resulting in {total_duplicates} logs which must be removed from the bucket:\n\n")
     pprint(duplicate_map, indent=4)
     return exit_app_success(db, "Successfully completed audit of pitchfx data.")
@@ -107,41 +101,8 @@ def audit(db, year):
 
 @cli.command()
 @click.pass_obj
-def fixdupes(db):
-    import json
-    from pprint import pprint
-    from tqdm import tqdm
-    from pathlib import Path
-    from app.main.util.s3_helper import get_brooks_pitchfx_log_from_s3, delete_brooks_pitchfx_log_from_s3
-
-    audit_json = Path("audit_results.json").read_text()
-    audit_results = json.loads(audit_json)
-    audit_results_copy = json.loads(audit_json)
-    error_dict = {}
-    with tqdm(total=len(audit_results), unit="pitch_app", position=0, leave=True) as pbar:
-        for bbref_pitch_app_id, pitch_app_id_list in audit_results.items():
-            pbar.set_description(bbref_pitch_app_id)
-            result = delete_brooks_pitchfx_log_from_s3(pitch_app_id_list[0], 2019)
-            if result.failure:
-                error_dict[bbref_pitch_app_id] = f"Trying to delete '{pitch_app_id_list[0]}':\nERROR: {result.error}"
-            result = delete_brooks_pitchfx_log_from_s3(pitch_app_id_list[1], 2019)
-            if result.failure:
-                error_dict[bbref_pitch_app_id] = f"Trying to delete '{pitch_app_id_list[1]}':\nERROR: {result.error}"
-            result = delete_brooks_pitchfx_log_from_s3(pitch_app_id_list[2], 2019)
-            if result.failure:
-                error_dict[bbref_pitch_app_id] = f"Trying to delete '{pitch_app_id_list[2]}':\nERROR: {result.error}"
-            audit_results_copy.pop(bbref_pitch_app_id)
-            pbar.update()
-    print("The following errors occurred:")
-    pprint(error_dict, indent=4)
-    print("Remaining duplicate PitchFX logs:")
-    pprint(audit_results_copy, indent=4)
-    return exit_app_success(db, "Successfully removed all duplicate pitchfx data.")
-
-
-@cli.command()
-@click.pass_obj
 def bulkrename(db):
+    import pprint
     from halo import Halo
     from tqdm import tqdm
     from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3, rename_brooks_pitchfx_log
@@ -226,7 +187,7 @@ def status(db, update):
 @click.argument("game_date", type=DateString(), default=today_str)
 @click.option(
     "--missing-ids/--no-missing-ids", default=False, show_default=True,
-    help="Report includes bbref_pitch_app_ids that have not been scraped.")
+    help="Report includes pitch_app_ids that have not been scraped.")
 @click.pass_obj
 def status_date(db, game_date, missing_ids):
     """Report status for a single date."""
@@ -249,11 +210,11 @@ def status_date(db, game_date, missing_ids):
         if date_status.scraped_all_pitchfx_logs:
             missing_ids_str = "All PitchFX logs have been scraped"
         elif date_status.scraped_all_brooks_pitch_logs:
-            missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
+            missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
                 db["session"], game_date
             )
             missing_ids_str = (
-                f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
+                f"MISSING: {missing_pitch_app_ids}" if missing_pitch_app_ids
                 else "All PitchFX logs have been scraped"
             )
         else:
@@ -278,7 +239,7 @@ def status_date(db, game_date, missing_ids):
         "   -vv: summary report of all dates\n"
         "  -vvv: detailed report of only dates missing data\n"
         " -vvvv: detailed report of all dates\n"
-        "-vvvvv: detailed report of all dates with missing bbref_pitch_app_ids"
+        "-vvvvv: detailed report of all dates with missing pitch_app_ids"
     )
 )
 @click.pass_obj
@@ -349,11 +310,11 @@ def display_detailed_report_for_date_range(db, status_date_range, missing_ids):
             if date_status.scraped_all_pitchfx_logs:
                 missing_ids_str = "All PitchFX logs have been scraped"
             elif date_status.scraped_all_brooks_pitch_logs:
-                missing_bbref_pitch_app_ids = DateScrapeStatus.get_unscraped_bbref_pitch_app_ids_for_date(
-                    db["session"], date_status.game_date
+                missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
+                    db["session"], game_date
                 )
                 missing_ids_str = (
-                    f"MISSING: {missing_bbref_pitch_app_ids}" if missing_bbref_pitch_app_ids
+                    f"MISSING: {missing_pitch_app_ids}" if missing_pitch_app_ids
                     else "All PitchFX logs have been scraped"
                 )
             else:

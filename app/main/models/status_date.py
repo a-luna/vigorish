@@ -304,9 +304,9 @@ class DateScrapeStatus(Base):
             if pitch_app.scraped_pitchfx == 0]
 
     @classmethod
-    def get_unscraped_bbref_pitch_app_ids_for_date(cls, session, game_date):
+    def get_unscraped_pitch_app_ids_for_date(cls, session, game_date):
         unscraped_pitch_apps = cls.get_unscraped_pitch_appearances_for_date(session, game_date)
-        return [pitch_app.bbref_pitch_app_id for pitch_app in unscraped_pitch_apps]
+        return [pitch_app.pitch_app_id for pitch_app in unscraped_pitch_apps]
 
     @classmethod
     def verify_bbref_daily_dashboard_scraped_for_date(cls, session, game_date):

@@ -1,7 +1,6 @@
 """Scrape brooksbaseball daily dashboard page."""
 import re
 import time
-import uuid
 from random import randint
 from string import Template
 
@@ -139,7 +138,7 @@ def _initialize_pitch_log(game, pitcher_id, url):
     pitch_log = BrooksPitchLog()
     pitch_log.parsed_all_info = False
     pitch_log.pitcher_id_mlb = pitcher_id
-    pitch_log.pitch_app_id = str(uuid.uuid4())
+    pitch_log.pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
     pitch_log.bb_game_id = game.bb_game_id
     pitch_log.bbref_game_id = game.bbref_game_id
     pitch_log.pitch_log_url = url

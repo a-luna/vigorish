@@ -42,11 +42,11 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
             for pitch_logs_for_game in pitch_logs_for_date:
                 bbref_game_id = pitch_logs_for_game.bbref_game_id
                 pbar.set_description(self.get_pbar_game_id_description(bbref_game_id))
-                scraped_bbref_pitch_app_ids = \
-                    PitchAppearanceScrapeStatus.get_all_scraped_bbref_pitch_app_ids_for_game(
+                scraped_pitch_app_ids = \
+                    PitchAppearanceScrapeStatus.get_all_scraped_pitch_app_ids_for_game(
                         self.db['session'], bbref_game_id
                     )
-                result = scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_bbref_pitch_app_ids)
+                result = scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_ids)
                 if result.failure:
                     return result
                 (pitchfx_logs_for_game, scrape_audit_for_game) = result.value

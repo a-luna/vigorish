@@ -260,11 +260,3 @@ class Season(Base):
     def is_this_the_asg_date(cls, session, game_date):
         season = cls.find_by_year(session, game_date.year)
         return game_date == season.asg_date if season else None
-
-    @classmethod
-    def get_unscraped_bbref_pitch_app_ids_for_season(cls, session, year):
-        season = cls.find_by_year(session, year)
-        return [
-            pfx.bbref_pitch_app_id for pfx
-            in season.scrape_status_pitchfx if pfx.scraped_pitchfx == 0
-        ]

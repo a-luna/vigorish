@@ -29,30 +29,16 @@ class BrooksPitchLogsForGame():
         return self.bbref_game_id
 
     @property
-    def bbref_pitch_app_ids(self):
-        return [
-            pitch_log.bbref_pitch_app_id
-            for pitch_log
-            in self.pitch_logs
-        ]
+    def pitch_app_ids(self):
+        return [pitch_log.pitch_app_id for pitch_log in self.pitch_logs]
 
     @property
-    def bbref_pitch_app_ids_scraped_all_data(self):
-        return [
-            pitch_log.bbref_pitch_app_id
-            for pitch_log
-            in self.pitch_logs
-            if pitch_log.parsed_all_info
-        ]
+    def pitch_app_ids_scraped_all_data(self):
+        return [pitch_log.pitch_app_id for pitch_log in self.pitch_logs if pitch_log.parsed_all_info]
 
     @property
-    def bbref_pitch_app_ids_no_data(self):
-        return [
-            pitch_log.bbref_pitch_app_id
-            for pitch_log
-            in self.pitch_logs
-            if not pitch_log.parsed_all_info
-        ]
+    def pitch_app_ids_no_data(self):
+        return [pitch_log.pitch_app_id for pitch_log in self.pitch_logs if not pitch_log.parsed_all_info]
 
     def as_dict(self):
         """Convert pitch logs for game to a dictionary."""
