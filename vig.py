@@ -124,7 +124,7 @@ def fixdupes(db):
             if len(pitch_app_id_list) != 2:
                 pa1 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[0], 2019).value
                 pa2 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[1], 2019).value
-                pa3 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[3], 2019).value
+                pa3 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[2], 2019).value
                 pa1_dict = pa1.as_dict()
                 pa1_dict.pop("pitchfx_log")
                 pa2_dict = pa2.as_dict()
