@@ -154,6 +154,20 @@ class BrooksPitchFxLog:
         return hbps
 
 
+    def __eq__(self, other):
+        if not isinstance(other, BrooksPitchFxLog):
+            return NotImplemented
+        if self.bbref_game_id != other.bbref_game_id:
+            return False
+        if self.pitcher_id_mlb != other.pitcher_id_mlb:
+            return False
+        if self.total_pitch_count != other.total_pitch_count:
+            return False
+        if self.pitch_count_by_inning != other.pitch_count_by_inning:
+            return False
+        return True
+
+
     def as_dict(self):
         return dict(
             __brooks_pitchfx_log__=True,

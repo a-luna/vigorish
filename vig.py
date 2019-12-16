@@ -67,7 +67,6 @@ def audit(db, year):
     from halo import Halo
     from tqdm import tqdm
     from app.main.models.season import Season
-    from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
     from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3
     from app.main.util.result import Result
 
@@ -102,8 +101,47 @@ def audit(db, year):
         duplicate_map[bbref_pitch_app_id] = [t[1] for t in pitchfx_id_tuples if t[0] == bbref_pitch_app_id]
     print(f"S3 bucket contains {len(scraped_pitch_app_ids)} PitchFX logs, containing {len(bbref_pitch_app_ids_set)} unique pitching appearances.")
     print(f"{len(duplicate_ids)} pitch appearances were scraped more than once, resulting in {total_duplicates} logs which must be removed from the bucket:\n\n")
-    pprint(duplicate_map, indent=2)
+    pprint(duplicate_map, indent=4)
     return exit_app_success(db, "Successfully completed audit of pitchfx data.")
+
+
+@cli.command()
+@click.pass_obj
+def fixdupes(db):
+    import json
+    from pprint import pprint
+    from tqdm import tqdm
+    from pathlib import Path
+    from app.main.util.s3_helper import get_brooks_pitchfx_log_from_s3, delete_brooks_pitchfx_log_from_s3
+    audit_json = Path("audit_results.json").read_text()
+    audit_results = json.loads(audit_json)
+    audit_results_copy = json.loads(audit_json)
+    error_dict = {}
+    with tqdm(total=len(audit_results), unit="pitch_app", position=0, leave=True) as pbar:
+        for bbref_pitch_app_id, pitch_app_id_list in audit_results.items():
+            pbar.set_description(bbref_pitch_app_id)
+            if len(pitch_app_id_list) != 2:
+                pbar.update()
+                continue
+            pa1 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[0], 2019)
+            pa2 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[1], 2019)
+            if pa1 != pa2:
+                pa1_dict = pa1.as_dict()
+                pa1_dict.pop("pitchfx_log")
+                pa2_dict = pa2.as_dict()
+                pa2_dict.pop("pitchfx_log")
+                error_dict[bbref_pitch_app_id] = [pa1_dict, pa2_dict]
+                pbar.update()
+                continue
+            result = delete_brooks_pitchfx_log_from_s3(pitch_app_id_list[1], 2019)
+            if result.failure:
+                error_dict[bbref_pitch_app_id] = f"Trying to delete '{pitch_app_id_list[1]}':\nERROR: {result.error}"
+                pbar.update()
+                continue
+            audit_results_copy.pop(bbref_pitch_app_id)
+    print("Remaining duplicate PitchFX logs:")
+    pprint(audit_results_copy, indent=4)
+    return exit_app_success(db, "Successfully removed all duplicate pitchfx data.")
 
 
 

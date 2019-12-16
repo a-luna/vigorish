@@ -271,6 +271,17 @@ def get_all_pitch_app_ids_scraped(year):
     return Result.Ok(scraped_pitch_app_ids)
 
 
+def delete_brooks_pitchfx_log_from_s3(pitch_app_id, year):
+    """Delete a pitchfx log from s3 based on the pitch_app_id value."""
+    filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=pitch_app_id)
+    s3_key = Template(T_BB_PFX_KEY).substitute(year=year, filename=filename)
+    try:
+        s3_resource.Object(S3_BUCKET, s3_key).delete()
+        return Result.Ok()
+    except botocore.exceptions.ClientError as e:
+        return Result.Fail(repr(e))
+
+
 def download_html_bbref_games_for_date(scrape_date, folderpath=None):
     """Download raw HTML for bbref daily scoreboard page."""
     folderpath = folderpath if folderpath else Path.cwd()

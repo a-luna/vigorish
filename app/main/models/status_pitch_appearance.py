@@ -3,6 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app.main.models.base import Base
+from app.main.util.list_functions import display_dict
 
 class PitchAppearanceScrapeStatus(Base):
 
@@ -28,7 +29,7 @@ class PitchAppearanceScrapeStatus(Base):
 
     def display(self):
         season_dict = self.as_dict()
-        season_dict['game_date_time'] = self.game_date_time_str
+        season_dict['bbref_pitch_app_id'] = self.bbref_pitch_app_id
         title = f"SCRAPE STATUS FOR PITCH APPEARANCE: {self.pitch_app_id}"
         display_dict(season_dict, title=title)
 
