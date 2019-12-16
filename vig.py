@@ -147,7 +147,7 @@ def bulkrename(db):
     from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3, rename_brooks_pitchfx_log
     from app.main.util.regex import GUID_REGEX
 
-    spinner = Halo(text=f'Gathering all scraped Pitchfx IDs for the {year} MLB season...', color='magenta', spinner='dots3')
+    spinner = Halo(text=f'Gathering all scraped Pitchfx IDs for the 2019 MLB season...', color='magenta', spinner='dots3')
     spinner.start()
     result = get_all_pitch_app_ids_scraped(2019)
     if result.failure:
