@@ -95,7 +95,7 @@ def audit(db, year):
                 pbar.update()
     histogram = Counter(bbref_pitch_app_ids)
     bbref_pitch_app_ids_set = Counter(list(set(bbref_pitch_app_ids)))
-    duplicate_ids = histogram - bbref_pitch_app_ids
+    duplicate_ids = histogram - bbref_pitch_app_ids_set
     total_duplicates = sum(duplicate_ids.values())
     duplicate_map = {}
     for bbref_pitch_app_id in duplicate_ids.keys():
