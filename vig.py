@@ -121,27 +121,15 @@ def fixdupes(db):
     with tqdm(total=len(audit_results), unit="pitch_app", position=0, leave=True) as pbar:
         for bbref_pitch_app_id, pitch_app_id_list in audit_results.items():
             pbar.set_description(bbref_pitch_app_id)
-            if len(pitch_app_id_list) != 2:
-                pa1 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[0], 2019).value
-                pa2 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[1], 2019).value
-                pa3 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[2], 2019).value
-                pa1_dict = pa1.as_dict()
-                pa1_dict.pop("pitchfx_log")
-                pa2_dict = pa2.as_dict()
-                pa2_dict.pop("pitchfx_log")
-                pa3_dict = pa3.as_dict()
-                pa3_dict.pop("pitchfx_log")
-                error_dict[bbref_pitch_app_id] = [pa1_dict, pa2_dict, pa3_dict]
-                pbar.update()
-                continue
-            pa1 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[0], 2019).value
-            pa2 = get_brooks_pitchfx_log_from_s3(pitch_app_id_list[1], 2019).value
             result = delete_brooks_pitchfx_log_from_s3(pitch_app_id_list[0], 2019)
             if result.failure:
                 error_dict[bbref_pitch_app_id] = f"Trying to delete '{pitch_app_id_list[0]}':\nERROR: {result.error}"
             result = delete_brooks_pitchfx_log_from_s3(pitch_app_id_list[1], 2019)
             if result.failure:
                 error_dict[bbref_pitch_app_id] = f"Trying to delete '{pitch_app_id_list[1]}':\nERROR: {result.error}"
+            result = delete_brooks_pitchfx_log_from_s3(pitch_app_id_list[2], 2019)
+            if result.failure:
+                error_dict[bbref_pitch_app_id] = f"Trying to delete '{pitch_app_id_list[2]}':\nERROR: {result.error}"
             audit_results_copy.pop(bbref_pitch_app_id)
             pbar.update()
     print("The following errors occurred:")
