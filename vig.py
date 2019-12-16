@@ -101,45 +101,66 @@ def audit(db, year):
 
 @cli.command()
 @click.pass_obj
-def bulkrename(db):
+def bulkupdate(db):
     from pprint import pprint
     from halo import Halo
     from tqdm import tqdm
-    from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3, rename_brooks_pitchfx_log
-    from app.main.util.regex import GUID_REGEX
+    from app.main.util.s3_helper import (
+        get_all_scraped_brooks_game_ids,
+        get_brooks_pitch_logs_for_game_from_s3,
+        upload_brooks_pitch_logs_for_game,
+        get_all_pitch_app_ids_scraped,
+        get_brooks_pitchfx_log_from_s3,
+        upload_brooks_pitchfx_log
+    )
 
-    spinner = Halo(text=f'Gathering all scraped Pitchfx IDs for the 2019 MLB season...', color='magenta', spinner='dots3')
-    spinner.start()
-    result = get_all_pitch_app_ids_scraped(2019)
-    if result.failure:
-        return result
-    scraped_pitch_app_ids = result.value
-    scraped_pitch_app_ids = [
-        pitch_app_id for pitch_app_id
-        in scraped_pitch_app_ids
-        if GUID_REGEX.search(pitch_app_id)
-    ]
-    spinner.stop();
-    error_dict = {}
+    scraped_brooks_game_ids = ["gid_2018_05_19_detmlb_seamlb_1"]
+    game_log_error_dict = {}
+    with tqdm(total=len(scraped_brooks_game_ids), unit="game", position=0, leave=True) as pbar_game:
+        for bb_game_id in scraped_brooks_game_ids:
+            pbar_game.set_description(bb_game_id)
+            result = get_brooks_pitch_logs_for_game_from_s3(bb_game_id)
+            if result.failure:
+                game_log_error_dict[bb_game_id] = result.error
+                pbar_game.update()
+                continue
+            pitch_logs_for_game = result.value
+            for pitch_log in pitch_logs_for_game.pitch_logs:
+                with tqdm(total=len(pitch_logs_for_game.pitch_logs), unit="pitch_app", position=1, leave=True) as pbar_pitch_app:
+                    pbar_pitch_app.set_description(pitch_log.pitcher_id_mlb)
+                    pitch_log.pitch_app_id = f"{pitch_log.bbref_game_id}_{pitch_log.pitcher_id_mlb}"
+                    pbar_pitch_app.update()
+            result = upload_brooks_pitch_logs_for_game(pitch_logs_for_game)
+            if result.failure:
+                game_log_error_dict[bb_game_id] = result.error
+                pbar_game.update()
+                continue
+            pbar_game.update()
+
+    scraped_pitch_app_ids = ["ANA201906100_571670"]
+    pfx_error_dict = {}
     with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
-            for pitch_app_id in scraped_pitch_app_ids:
-                pbar.set_description(pitch_app_id[:8])
-                result = get_brooks_pitchfx_log_from_s3(pitch_app_id, year=2019)
-                if result.failure:
-                    error_dict[pitch_app_id] = result.error
-                    pbar.update()
-                    continue
-                pitchfx_log = result.value
-                bbref_pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
-                result = rename_brooks_pitchfx_log(pitch_app_id, bbref_pitch_app_id, year=2019)
-                if result.failure:
-                    error_dict[pitch_app_id] = result.error
-                    pbar.update()
-                    continue
+        for pitch_app_id in scraped_pitch_app_ids:
+            pbar.set_description(pitch_app_id)
+            result = get_brooks_pitchfx_log_from_s3(pitch_app_id, year=2019)
+            if result.failure:
+                pfx_error_dict[pitch_app_id] = result.error
                 pbar.update()
+                continue
+            pitchfx_log = result.value
+            pitchfx_log.pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
+            for pitchfx in pitchfx_log.pitchfx_log:
+                pitchfx.pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
+            result = upload_brooks_pitchfx_log(pitchfx_log)
+            if result.failure:
+                pfx_error_dict[pitch_app_id] = result.error
+                pbar.update()
+                continue
+            pbar.update()
     print("The following errors occurred:")
-    pprint(error_dict, indent=4)
-    return exit_app_success(db, "Successfully removed all duplicate pitchfx data.")
+    pprint(game_log_error_dict, indent=4)
+    pprint(pfx_error_dict, indent=4)
+    return exit_app_success(db, "Successfully updated all pitch logs with new id format.")
 
 
 @cli.command()

@@ -412,7 +412,7 @@ def decode_brooks_pitch_log(json_dict):
             pitch_log.pitcher_id_mlb = json_dict["pitcher_id_mlb"]
             pitch_log.pitch_app_id = json_dict["pitch_app_id"]
             pitch_log.total_pitch_count = json_dict["total_pitch_count"]
-            pitch_log.pitch_count_by_inning = json_dict["total_pitch_count"]
+            pitch_log.pitch_count_by_inning = json_dict["pitch_count_by_inning"]
             pitch_log.pitcher_team_id_bb = json_dict["pitcher_team_id_bb"]
             pitch_log.opponent_team_id_bb = json_dict["opponent_team_id_bb"]
             pitch_log.bb_game_id = json_dict["bb_game_id"]

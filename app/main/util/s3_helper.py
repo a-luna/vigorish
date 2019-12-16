@@ -140,14 +140,14 @@ def get_all_brooks_dates_scraped(year):
     return Result.Ok(scraped_dates)
 
 
-def upload_brooks_pitch_logs_for_game(pitch_logs_for_game, scrape_date):
+def upload_brooks_pitch_logs_for_game(pitch_logs_for_game):
     """Upload a file to S3 containing json encoded BrooksPitchLogsForGame object."""
     result = write_brooks_pitch_logs_for_game_to_file(pitch_logs_for_game)
     if result.failure:
         return result
     filepath = result.value
     s3_key = Template(T_BB_LOG_KEY).substitute(
-        year=scrape_date.year, filename=filepath.name
+        year=pitch_logs_for_game.game_date.year, filename=filepath.name
     )
 
     try:
