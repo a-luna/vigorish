@@ -102,7 +102,7 @@ def audit(db, year):
 @cli.command()
 @click.pass_obj
 def bulkrename(db):
-    import pprint
+    from pprint import pprint
     from halo import Halo
     from tqdm import tqdm
     from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3, rename_brooks_pitchfx_log
