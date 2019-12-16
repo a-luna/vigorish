@@ -61,7 +61,7 @@ def setup(db):
 @cli.command()
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.pass_obj
-def audit(db):
+def audit(db, year):
     from pprint import pformat
     from tqdm import tqdm
     from app.main.models.season import Season
