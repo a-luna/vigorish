@@ -16,7 +16,7 @@ from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from app.main.util.result import Result
 from app.main.util.s3_helper import download_html_brooks_games_for_date
 from app.main.util.scrape_functions import request_url
-from app.main.util.string_functions import parse_timestamp, validate_bbref_game_id_list
+from app.main.util.string_functions import parse_timestamp, validate_bbref_game_id_list, validate_bb_game_id
 
 
 DATA_SET = "brooks_games_for_date"
@@ -149,6 +149,12 @@ def _is_game_required(scrape_date, timestamp_str, url, required_game_data):
     if result.failure:
         return result
     gameinfo = result.value
+    result = validate_bb_game_id(gameinfo.bb_game_id)
+    if result.failure:
+        return result
+    game_date = result.value["game_date"]
+    if game_date != scrape_date:
+        return Result.Fail("Game did not occur on the current date.")
     game_is_required = any(
         [gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data]
     )

@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
@@ -35,10 +36,10 @@ class BrooksPitchFxLog:
 
     @property
     def pitch_types(self):
-        pitch_type_dict = {ptype:0 for ptype in PITCH_TYPE_DICT.keys()}
+        pitch_types = defaultdict(int)
         for pfx in self.pitchfx_log:
-            pitch_type_dict[pfx.mlbam_pitch_name] += 1
-        return {k:v for k,v in pitch_type_dict.items() if v > 0}
+            pitch_types[pfx.mlbam_pitch_name] += 1
+        return pitch_types
 
     @property
     def at_bats(self):
@@ -68,8 +69,7 @@ class BrooksPitchFxLog:
 
     @property
     def batters_faced(self):
-        ab_ids = sorted(list(set([pfx.ab_id for pfx in self.pitchfx_log])))
-        return len(ab_ids)
+        return len(list(set([pfx.ab_id for pfx in self.pitchfx_log])))
 
     @property
     def ab_results(self):

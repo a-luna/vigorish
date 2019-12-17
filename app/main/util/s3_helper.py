@@ -30,9 +30,14 @@ from app.main.util.file_util import (
     read_brooks_pitchfx_log_from_file,
     write_brooks_pitchfx_log_to_file
 )
-from app.main.util.regex import BR_DAILY_KEY_REGEX, BR_GAME_KEY_REGEX, BB_DAILY_KEY_REGEX
+from app.main.util.regex import (
+    BR_DAILY_KEY_REGEX,
+    BR_GAME_KEY_REGEX,
+    BB_DAILY_KEY_REGEX,
+    PITCH_APP_REGEX,
+)
 from app.main.util.result import Result
-from app.main.util.string_functions import validate_bb_game_id
+from app.main.util.string_functions import validate_bb_game_id, validate_bbref_game_id
 
 S3_BUCKET = "vig-data"
 T_BB_DATE_FOLDER = "${year}/brooks_games_for_date"
@@ -250,10 +255,19 @@ def download_brooks_pitchfx_log(pitch_app_id, year, folderpath=None):
         return Result.Fail(error)
 
 
-def get_brooks_pitchfx_log_from_s3(pitch_app_id, year, folderpath=None, delete_file=True):
+def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=True):
     """Retrieve BrooksPitchFxLog object from json encoded file stored in S3."""
+    match = PITCH_APP_REGEX.search(pitch_app_id)
+    if not match:
+        return Result.Fail(f"pitch_app_id: {pitch_app_id} is invalid")
+    id_dict = match.group_dict()
+    result = validate_bbref_game_id(id_dict["game_id"])
+    if result.value:
+        return result
+    game_id_dict = result.value
+    game_date = game_id_dict["game_date"]
     folderpath = folderpath if folderpath else Path.cwd()
-    result = download_brooks_pitchfx_log(pitch_app_id, year, folderpath)
+    result = download_brooks_pitchfx_log(pitch_app_id, game_date.year, folderpath)
     if result.failure:
         return result
     filepath = result.value
@@ -293,6 +307,18 @@ def rename_brooks_pitchfx_log(old_pitch_app_id, new_pitch_app_id, year):
         return Result.Ok()
     except botocore.exceptions.ClientError as e:
         return Result.Fail(repr(e))
+
+
+def get_all_pitchfx_logs_for_game_from_s3(session, bbref_game_id):
+    pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game(session, bbref_game_id)
+    fetch_tasks = [get_brooks_pitchfx_log_from_s3(pitch_app_id) for pitch_app_id in pitch_app_ids]
+    task_failed = any([result.failure for result in fetch_tasks])
+    if task_failed:
+        s3_errors = "\n".join([f"Error: {result.error}" for result in fetch_tasks])
+        error = f"One or more errors occurred attempting to retrieve pitchfx logs for game {bbref_game_id}:\n{s3_errors}"
+        return Result.Fail(error)
+    pitchfx_logs = [result.value for result in fetch_tasks]
+    return Result.Ok(pitchfx_logs)
 
 
 def download_html_bbref_games_for_date(scrape_date, folderpath=None):
