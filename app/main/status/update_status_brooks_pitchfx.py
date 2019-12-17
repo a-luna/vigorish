@@ -8,7 +8,7 @@ def update_data_set_brooks_pitchfx(session, season):
     if result.failure:
         return result
     scraped_pitch_app_ids = result.value
-    unscraped_pitch_app_ids = PitchAppearanceScrapeStatus.get_all_unscraped_pitch_app_ids_for_season(session, season.year)
+    unscraped_pitch_app_ids = PitchAppearanceScrapeStatus.get_all_unscraped_pitch_app_ids_for_season(session, season.id)
     new_pitch_app_ids = set(scraped_pitch_app_ids) & set(unscraped_pitch_app_ids)
     if not new_pitch_app_ids:
         return Result.Ok()
