@@ -18,6 +18,7 @@ from app.main.status.update_status import update_status_for_mlb_season
 from app.main.util.click_params import DateString, MlbSeason
 from app.main.util.datetime_util import get_date_range, today_str, current_year, format_timedelta
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
+from app.main.util.reset import reset_date
 from app.main.util.result import Result
 
 # TODO Create unit tests for all substitution parsing scenarios
@@ -286,6 +287,25 @@ def status_season(db, year, verbosity):
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(db, Result(error))
+
+@cli.command()
+@click.argument("game_date", type=DateString(), default=today_str)
+@click.option(
+    "--scrape/--no-scrape", default=False, show_default=True,
+    help="Scrape all datasets for the specified date after resetting database and s3.")
+@click.option(
+    "--update/--no-update", default=False, show_default=True,
+    help="Update statistics for specified date after scraping is complete.")
+@click.pass_obj
+def reset(db, game_date, scrape, update):
+    """Reset all database statistics and delete all data from s3 for a single date."""
+    result = reset_date(game_date)
+    if result.failure:
+        return exit_app_error(db, result)
+    if not scrape:
+        game_date_str = game_date.strftime(DATE_ONLY)
+        return exit_app_success(db, f"Successfully reset database and removed all s3 objects for {game_date_str}")
+    scrape(db, "all", game_date, game_date, update)
 
 
 def refresh_season_data(db, year):

@@ -8,7 +8,7 @@ from pathlib import Path
 from string import Template
 
 import boto3
-import botocore
+from botocore.exceptions import ClientError
 
 from app.main.models.status_date import DateScrapeStatus
 from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
@@ -68,7 +68,7 @@ def download_html_brooks_games_for_date(scrape_date, folderpath=None):
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
         return Result.Ok(filepath)
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             error = f'The object "{s3_key}" does not exist.'
         else:
@@ -100,14 +100,12 @@ def download_brooks_games_for_date(scrape_date, folderpath=None):
     date_str = scrape_date.strftime(DATE_ONLY)
     filename = Template(T_BROOKS_GAMESFORDATE_FILENAME).substitute(date=date_str)
     filepath = folderpath / filename
-    s3_key = Template(T_BB_DATE_KEY).substitute(
-        year=scrape_date.year, filename=filename
-    )
+    s3_key = Template(T_BB_DATE_KEY).substitute(year=scrape_date.year, filename=filename)
 
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
         return Result.Ok(filepath)
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             error = f'The object "{s3_key}" does not exist.'
         else:
@@ -145,6 +143,18 @@ def get_all_brooks_dates_scraped(year):
     return Result.Ok(scraped_dates)
 
 
+def delete_brooks_games_for_date_from_s3(date):
+    """Delete brooks_games_for_date from s3."""
+    date_str = date.strftime(DATE_ONLY)
+    filename = Template(T_BROOKS_GAMESFORDATE_FILENAME).substitute(date=date_str)
+    s3_key = Template(T_BB_DATE_KEY).substitute(year=date.year, filename=filename)
+    try:
+        s3_resource.Object(S3_BUCKET, s3_key).delete()
+        return Result.Ok()
+    except ClientError as e:
+        return Result.Fail(repr(e))
+
+
 def upload_brooks_pitch_logs_for_game(pitch_logs_for_game):
     """Upload a file to S3 containing json encoded BrooksPitchLogsForGame object."""
     result = write_brooks_pitch_logs_for_game_to_file(pitch_logs_for_game)
@@ -179,7 +189,7 @@ def download_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
         return Result.Ok(filepath)
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             error = f'The object "{s3_key}" does not exist.'
         else:
@@ -220,6 +230,21 @@ def get_all_scraped_brooks_game_ids(year):
     return Result.Ok(scraped_gameids)
 
 
+def delete_brooks_pitch_logs_for_game_from_s3(bb_game_id):
+    """Delete brooks pitch logs for game from s3."""
+    result = validate_bb_game_id(bb_game_id)
+    if result.failure:
+        return result
+    game_date = result.value["game_date"]
+    filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(gid=bb_game_id)
+    s3_key = Template(T_BB_LOG_KEY).substitute(year=game_date.year, filename=filename)
+    try:
+        s3_resource.Object(S3_BUCKET, s3_key).delete()
+        return Result.Ok()
+    except ClientError as e:
+        return Result.Fail(repr(e))
+
+
 def upload_brooks_pitchfx_log(pitchfx_log):
     """Upload a file to S3 containing json encoded BrooksPitchFxLog object."""
     result = write_brooks_pitchfx_log_to_file(pitchfx_log)
@@ -247,7 +272,7 @@ def download_brooks_pitchfx_log(pitch_app_id, year, folderpath=None):
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
         return Result.Ok(filepath)
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             error = f'The object "{s3_key}" does not exist.'
         else:
@@ -260,12 +285,11 @@ def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=Tr
     match = PITCH_APP_REGEX.search(pitch_app_id)
     if not match:
         return Result.Fail(f"pitch_app_id: {pitch_app_id} is invalid")
-    id_dict = match.group_dict()
+    id_dict = match.groupdict()
     result = validate_bbref_game_id(id_dict["game_id"])
-    if result.value:
+    if result.failure:
         return result
-    game_id_dict = result.value
-    game_date = game_id_dict["game_date"]
+    game_date = result.value["game_date"]
     folderpath = folderpath if folderpath else Path.cwd()
     result = download_brooks_pitchfx_log(pitch_app_id, game_date.year, folderpath)
     if result.failure:
@@ -285,14 +309,23 @@ def get_all_pitch_app_ids_scraped(year):
     return Result.Ok(scraped_pitch_app_ids)
 
 
-def delete_brooks_pitchfx_log_from_s3(pitch_app_id, year):
+def delete_brooks_pitchfx_log_from_s3(pitch_app_id):
     """Delete a pitchfx log from s3 based on the pitch_app_id value."""
+    match = PITCH_APP_REGEX.search(pitch_app_id)
+    if not match:
+        return Result.Fail(f"pitch_app_id: {pitch_app_id} is invalid")
+    id_dict = match.group_dict()
+    result = validate_bbref_game_id(id_dict["game_id"])
+    if result.value:
+        return result
+    game_id_dict = result.value
+    game_date = game_id_dict["game_date"]
     filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=pitch_app_id)
-    s3_key = Template(T_BB_PFX_KEY).substitute(year=year, filename=filename)
+    s3_key = Template(T_BB_PFX_KEY).substitute(year=game_date.year, filename=filename)
     try:
         s3_resource.Object(S3_BUCKET, s3_key).delete()
         return Result.Ok()
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         return Result.Fail(repr(e))
 
 
@@ -305,7 +338,7 @@ def rename_brooks_pitchfx_log(old_pitch_app_id, new_pitch_app_id, year):
         s3_resource.Object(S3_BUCKET, new_key).copy_from(CopySource=f"{S3_BUCKET}/{old_key}")
         s3_resource.Object(S3_BUCKET, old_key).delete()
         return Result.Ok()
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         return Result.Fail(repr(e))
 
 
@@ -332,7 +365,7 @@ def download_html_bbref_games_for_date(scrape_date, folderpath=None):
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
         return Result.Ok(filepath)
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             error = f'The object "{s3_key}" does not exist.'
         else:
@@ -368,7 +401,7 @@ def download_bbref_games_for_date(scrape_date, folderpath=None):
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
         return Result.Ok(filepath)
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             error = f'The object "{s3_key}" does not exist.'
         else:
@@ -404,6 +437,18 @@ def get_all_bbref_dates_scraped(year):
     return Result.Ok(scraped_dates)
 
 
+def delete_bbref_games_for_date_from_s3(scrape_date):
+    """Delete bbref_games_for_date from s3."""
+    date_str = scrape_date.strftime(DATE_ONLY)
+    filename = Template(T_BBREF_GAMESFORDATE_FILENAME).substitute(date=date_str)
+    s3_key = Template(T_BR_DATE_KEY).substitute(year=scrape_date.year, filename=filename)
+    try:
+        s3_resource.Object(S3_BUCKET, s3_key).delete()
+        return Result.Ok()
+    except ClientError as e:
+        return Result.Fail(repr(e))
+
+
 def download_html_bbref_boxscore(bbref_game_id, folderpath=None):
     """Download raw HTML for bbref daily scoreboard page."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -415,7 +460,7 @@ def download_html_bbref_boxscore(bbref_game_id, folderpath=None):
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
         return Result.Ok(filepath)
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             error = f'The object "{s3_key}" does not exist.'
         else:
@@ -455,7 +500,7 @@ def download_bbref_boxscore(bbref_game_id, folderpath=None):
     try:
         s3_resource.Bucket(S3_BUCKET).download_file(s3_key, str(filepath))
         return Result.Ok(filepath)
-    except botocore.exceptions.ClientError as e:
+    except ClientError as e:
         if e.response["Error"]["Code"] == "404":
             error = f'The object "{s3_key}" does not exist.'
         else:
@@ -485,3 +530,19 @@ def get_all_scraped_bbref_game_ids(year):
         group_dict = match.groupdict()
         scraped_gameids.append(group_dict["game_id"])
     return Result.Ok(scraped_gameids)
+
+
+def delete_bbref_boxscore_from_s3(bbref_game_id):
+    """Delete a bbref boxscore from s3."""
+    result = validate_bbref_game_id(game_id)
+    if result.failure:
+        return result
+    game_date = result.value['game_date']
+    date_str = scrape_date.strftime(DATE_ONLY)
+    filename = Template(T_BBREF_BOXSCORE_FILENAME).substitute(gid=bbref_game_id)
+    s3_key = Template(T_BR_GAME_KEY).substitute(year=game_date.year, filename=filename)
+    try:
+        s3_resource.Object(S3_BUCKET, s3_key).delete()
+        return Result.Ok()
+    except ClientError as e:
+        return Result.Fail(repr(e))

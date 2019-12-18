@@ -13,7 +13,7 @@ from app.main.models.base import Base
 from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
 from app.main.models.views.materialized_view import MaterializedView
 from app.main.models.views.materialized_view_factory import create_mat_view
-from app.main.util.dt_format_strings import DT_STR_FORMAT_ALL
+from app.main.util.dt_format_strings import DT_STR_FORMAT_ALL, DATE_ONLY_TABLE_ID
 from app.main.util.list_functions import display_dict
 
 
@@ -157,3 +157,19 @@ class GameScrapeStatus(Base):
             game_status.bbref_game_id:game_status.id for game_status
             in session.query(cls).filter_by(season_id=season_id).all()
         }
+
+    @classmethod
+    def get_all_bbref_game_ids_for_date(cls, session, date):
+        date_id = date.strftime(DATE_ONLY_TABLE_ID)
+        return [
+            game.bbref_game_id for game
+            in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
+        ]
+
+    @classmethod
+    def get_all_brooks_game_ids_for_date(cls, session, date):
+        date_id = date.strftime(DATE_ONLY_TABLE_ID)
+        return [
+            game.bb_game_id for game
+            in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
+        ]

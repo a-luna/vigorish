@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 from app.main.models.base import Base
 from app.main.util.list_functions import display_dict
+from app.main.util.dt_format_strings import DATE_ONLY_TABLE_ID
 
 class PitchAppearanceScrapeStatus(Base):
 
@@ -65,10 +66,17 @@ class PitchAppearanceScrapeStatus(Base):
             in session.query(cls).filter_by(season_id=season_id).all()]
 
     @classmethod
+    def get_all_pitch_app_ids_for_date(cls, session, date):
+        date_id = date.strftime(DATE_ONLY_TABLE_ID)
+        return [
+            pitch_app.pitch_app_id for pitch_app
+            in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
+        ]
+
+    @classmethod
     def get_all_pitch_app_ids_for_game(cls, session, bbref_game_id):
         return [
-            pitch_app_status.pitch_app_id
-            for pitch_app_status
+            pitch_app_status.pitch_app_id for pitch_app_status
             in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
         ]
 

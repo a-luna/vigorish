@@ -5,7 +5,12 @@ from datetime import datetime
 from fuzzywuzzy import process
 
 from app.main.constants import TEAM_ID_DICT
-from app.main.util.regex import TIMESTAMP_REGEX, PUNCTUATION_REGEX, WHITESPACE_REGEX
+from app.main.util.regex import (
+    TIMESTAMP_REGEX,
+    PUNCTUATION_REGEX,
+    WHITESPACE_REGEX,
+    PITCH_APP_REGEX,
+)
 from app.main.util.result import Result
 
 
@@ -64,7 +69,7 @@ def validate_bbref_game_id(input_str):
     if len(input_str) != 12:
         error = (
             f"String is not a valid bbref game id: {input_str}\n"
-            "Reason: len(input_str) != 13"
+            "Reason: len(input_str) != 12"
         )
         return Result.Fail(error)
 
