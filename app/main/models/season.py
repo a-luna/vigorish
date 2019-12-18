@@ -200,7 +200,7 @@ class Season(Base):
             f"Brooks Daily Dash Scraped..: {self.total_days_scraped_brooks:,}/{self.total_days:,} days ({self.percent_complete_brooks_games_for_date:.0%})\n"
             f"BBref Boxscores Scraped....: {self.total_bbref_boxscores_scraped:,}/{self.total_games:,} games ({self.percent_complete_bbref_boxscores_scraped:.0%})\n"
             f"Brooks Games Scraped.......: {self.total_brooks_games_scraped:,}/{self.total_games:,} games ({self.percent_complete_brooks_games_scraped:.0%})\n"
-            f"Brooks PitchFX Scraped.....: {self.total_pitchfx_logs_scraped:,}/{self.total_pitch_apps_with_pitchfx_data:,} pitch apps, {self.total_pitch_apps_no_pitchfx_data} no data ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
+            f"Brooks PitchFX Scraped.....: {self.total_pitchfx_logs_scraped:,}/{self.pitch_appearance_count_pitchfx:,} pitch apps ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
             f"Total Pitch Appearances....: {self.pitch_appearance_count_bbref:,} (BBref) {self.pitch_appearance_count_brooks:,} (Brooks) {self.pitch_appearance_count_pitchfx:,} (PitchFX)\n"
             f"Total Pitch Count..........: {self.total_pitch_count_bbref:,} (BBref) {self.total_pitch_count_brooks:,} (Brooks) {self.total_pitch_count_pitchfx:,} (PitchFX)\n"
         )
