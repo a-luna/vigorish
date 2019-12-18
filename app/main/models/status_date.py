@@ -142,7 +142,8 @@ class DateScrapeStatus(Base):
     def scraped_all_pitchfx_logs(self):
         if not self.scraped_daily_dash_bbref or not self.scraped_daily_dash_brooks:
             return False
-        return all(pitch_app.scraped_pitchfx for pitch_app in self.scrape_status_pitchfx)
+        return all(pitch_app.scraped_pitchfx for pitch_app in self.scrape_status_pitchfx) \
+            if len(self.scrape_status_pitchfx) > 0 else False
 
     @hybrid_property
     def scraped_no_data(self):
@@ -272,17 +273,19 @@ class DateScrapeStatus(Base):
         scraped_bbref_boxscores = "YES" if self.scraped_all_bbref_boxscores else "NO"
         scraped_brooks_pitch_logs = "YES" if self.scraped_all_brooks_pitch_logs else "NO"
         scraped_brooks_pitchfx = "YES" if self.scraped_all_pitchfx_logs else "NO"
-        date_status = (
+        return (
             f"Overall Status For Date.................: {self.scrape_status_description}\n"
             f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
             f"BBref Boxscores Scraped.................: {scraped_bbref_boxscores} {self.total_bbref_boxscores_scraped}/{self.total_games}\n"
             f"Brooks Games Scraped....................: {scraped_brooks_pitch_logs} {self.total_brooks_games_scraped}/{self.total_games}\n"
-            f"PitchFX Logs Scraped....................: {scraped_brooks_pitchfx} {self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_pitchfx} ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
+            f"PitchFx Logs Scraped....................: {scraped_brooks_pitchfx} {self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_pitchfx} ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
             f"Pitch App Counts (BBRef/Brooks).........: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}\n"
             f"Pitch App Counts (PFx/data/no data).....: {self.pitch_appearance_count_pitchfx}/{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
             f"Pitch Count (BBRef/PLogs/PFx)...........: {self.total_pitch_count_bbref}/{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}\n")
-        #game_status = "\n".join([game_status.display() for game_status in self.scrape_status_games])
-        return date_status
+
+    def games_status_report(self):
+        return "\n".join([game_status.status_report() for game_status in date_status.scrape_status_games])
+
 
     @classmethod
     def find_by_date(cls, session, game_date):

@@ -105,8 +105,11 @@ def status(db, update):
 @click.option(
     "--missing-ids/--no-missing-ids", default=False, show_default=True,
     help="Report includes pitch_app_ids that have not been scraped.")
+@click.option(
+    "--with-games/--without-games", default=False, show_default=True,
+    help="Report includes pitch_app_ids that have not been scraped.")
 @click.pass_obj
-def status_date(db, game_date, missing_ids):
+def status_date(db, game_date, missing_ids, with_games):
     """Report status for a single date."""
     season = Season.find_by_year(db["session"], game_date.year)
     date_is_valid = Season.is_date_in_season(db["session"], game_date).success
@@ -143,6 +146,8 @@ def status_date(db, game_date, missing_ids):
     click.secho(date_status.status_report(), fg="cyan")
     if missing_ids:
         click.secho(missing_ids_str, fg="cyan")
+    if with_games:
+        click.secho(date_status.games_status_report(), fg="cyan")
     return exit_app_success(db)
 
 
