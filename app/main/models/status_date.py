@@ -272,7 +272,7 @@ class DateScrapeStatus(Base):
             f"PitchFX Logs Scraped......................: {scraped_brooks_pitchfx} {self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_pitchfx} ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
             f"Pitch App Counts (br/bb/pfx_data/pfx_no)..: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
             f"Pitch Count (BBRef/Brooks/Diff)...........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_difference}\n")
-        game_status = "\n".join([game_status.display() for game_status in self.scrape_status_games])
+        #game_status = "\n".join([game_status.display() for game_status in self.scrape_status_games])
         return date_status
 
     @classmethod
