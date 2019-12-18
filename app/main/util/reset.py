@@ -28,8 +28,8 @@ def reset_date(session, date):
 
     try:
         date_id = date.strftime(DATE_ONLY_TABLE_ID)
-        PitchAppearanceScrapeStatus.filter_by(scrape_status_date_id=int(date_id)).delete()
-        GameScrapeStatus.filter_by(scrape_status_date_id=int(date_id)).delete()
+        session.query(PitchAppearanceScrapeStatus).filter_by(scrape_status_date_id=int(date_id)).delete()
+        session.query(GameScrapeStatus).filter_by(scrape_status_date_id=int(date_id)).delete()
         date_status = DateScrapeStatus.find_by_date(session, date)
         setattr(date_status, 'scraped_daily_dash_bbref', 0)
         setattr(date_status, 'game_count_bbref', 0)
