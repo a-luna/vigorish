@@ -128,7 +128,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
-        return self.total_pitchfx_logs_scraped == self.pitch_appearance_count_pitchfx()
+        return self.total_pitchfx_logs_scraped == self.pitch_appearance_count_pitchfx
 
     @hybrid_property
     def scraped_no_data(self):
