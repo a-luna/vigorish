@@ -123,7 +123,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
-        return self.total_pitchfx_logs_scraped / float(self.pitch_appearance_count_pitchfx()) \
+        return self.total_pitchfx_logs_scraped / float(self.pitch_appearance_count_pitchfx) \
             if self.pitch_appearance_count_brooks > 0 else 0.0
 
     @hybrid_property
