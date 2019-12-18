@@ -299,7 +299,7 @@ def status_season(db, year, verbosity):
 @click.pass_obj
 def reset(db, game_date, scrape, update):
     """Reset all database statistics and delete all data from s3 for a single date."""
-    result = reset_date(game_date)
+    result = reset_date(db["session"], game_date)
     if result.failure:
         return exit_app_error(db, result)
     if not scrape:
