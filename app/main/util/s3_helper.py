@@ -314,7 +314,7 @@ def delete_brooks_pitchfx_log_from_s3(pitch_app_id):
     match = PITCH_APP_REGEX.search(pitch_app_id)
     if not match:
         return Result.Fail(f"pitch_app_id: {pitch_app_id} is invalid")
-    id_dict = match.group_dict()
+    id_dict = match.groupdict()
     result = validate_bbref_game_id(id_dict["game_id"])
     if result.value:
         return result
