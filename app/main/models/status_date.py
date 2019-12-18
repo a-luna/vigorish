@@ -53,8 +53,8 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def percent_complete_bbref_boxscores_scraped(self):
-        return self.total_bbref_boxscores_scraped / float(self.total_games) \
-            if self.total_games > 0 else 0.0
+        return self.total_bbref_boxscores_scraped / float(len(self.scrape_status_games)) \
+            if len(self.scrape_status_games) > 0 else 0.0
 
     @hybrid_property
     def scraped_all_bbref_boxscores(self):
@@ -68,8 +68,8 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def percent_complete_brooks_games_scraped(self):
-        return self.total_brooks_games_scraped / float(self.total_games) \
-            if self.total_games > 0 else 0.0
+        return self.total_brooks_games_scraped / float(len(self.scrape_status_games)) \
+            if len(self.scrape_status_games) > 0 else 0.0
 
     @hybrid_property
     def scraped_all_brooks_pitch_logs(self):
@@ -104,6 +104,14 @@ class DateScrapeStatus(Base):
     @hybrid_property
     def total_pitch_count_brooks(self):
         return sum(game.total_pitch_count_brooks for game in self.scrape_status_games)
+
+    @hybrid_property
+    def total_pitch_count_pitchfx(self):
+        return sum(pfx.pitch_count_pitchfx for pfx in self.scrape_status_pitchfx)
+
+    @hybrid_property
+    def total_pitch_count_pitch_logs(self):
+        return sum(pfx.pitch_count_pitch_log for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def total_pitch_count_difference(self):
@@ -265,13 +273,14 @@ class DateScrapeStatus(Base):
         scraped_brooks_pitch_logs = "YES" if self.scraped_all_brooks_pitch_logs else "NO"
         scraped_brooks_pitchfx = "YES" if self.scraped_all_pitchfx_logs else "NO"
         date_status = (
-            f"Overall Status For Date...................: {self.scrape_status_description}\n"
-            f"Scraped Daily Dashboard (BBRef/Brooks)....: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
-            f"BBref Boxscores Scraped...................: {scraped_bbref_boxscores} {self.total_bbref_boxscores_scraped}/{self.total_games}\n"
-            f"Brooks Games Scraped......................: {scraped_brooks_pitch_logs} {self.total_brooks_games_scraped}/{self.total_games}\n"
-            f"PitchFX Logs Scraped......................: {scraped_brooks_pitchfx} {self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_pitchfx} ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
-            f"Pitch App Counts (br/bb/pfx_data/pfx_no)..: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
-            f"Pitch Count (BBRef/Brooks/Diff)...........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_difference}\n")
+            f"Overall Status For Date.................: {self.scrape_status_description}\n"
+            f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
+            f"BBref Boxscores Scraped.................: {scraped_bbref_boxscores} {self.total_bbref_boxscores_scraped}/{self.total_games}\n"
+            f"Brooks Games Scraped....................: {scraped_brooks_pitch_logs} {self.total_brooks_games_scraped}/{self.total_games}\n"
+            f"PitchFX Logs Scraped....................: {scraped_brooks_pitchfx} {self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_pitchfx} ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
+            f"Pitch App Counts (BBRef/Brooks).........: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}\n"
+            f"Pitch App Counts (PFx/data/no data).....: {self.pitch_appearance_count_pitchfx}/{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
+            f"Pitch Count (BBRef/PLogs/PFx)...........: {self.total_pitch_count_bbref}/{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}\n")
         #game_status = "\n".join([game_status.display() for game_status in self.scrape_status_games])
         return date_status
 
