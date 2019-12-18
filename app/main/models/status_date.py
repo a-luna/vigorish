@@ -284,7 +284,7 @@ class DateScrapeStatus(Base):
             f"Pitch Count (BBRef/PLogs/PFx)...........: {self.total_pitch_count_bbref}/{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}\n")
 
     def games_status_report(self):
-        return "\n".join([game_status.status_report() for game_status in date_status.scrape_status_games])
+        return "\n".join([game_status.status_report() for game_status in self.scrape_status_games])
 
 
     @classmethod
