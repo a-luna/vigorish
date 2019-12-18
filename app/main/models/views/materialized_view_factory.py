@@ -20,7 +20,7 @@ def create_mat_view(metadata, name, selectable):
     for c in selectable.c:
         t.append_column(Column(c.name, c.type, primary_key=c.primary_key))
 
-    if not (any([c.primary_key for c in selectable.c])):
+    if not (any(c.primary_key for c in selectable.c)):
         t.append_constraint(PrimaryKeyConstraint(*[c.name for c in selectable.c]))
 
     event.listen(

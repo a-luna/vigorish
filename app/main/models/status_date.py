@@ -58,6 +58,8 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def scraped_all_bbref_boxscores(self):
+        if not self.scraped_daily_dash_bbref or not self.scraped_daily_dash_brooks:
+            return False
         return all(game.scraped_bbref_boxscore == 1 for game in self.scrape_status_games)
 
     @hybrid_property
@@ -71,6 +73,8 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def scraped_all_brooks_pitch_logs(self):
+        if not self.scraped_daily_dash_bbref or not self.scraped_daily_dash_brooks:
+            return False
         return all(game.scraped_brooks_pitch_logs == 1 for game in self.scrape_status_games)
 
     @hybrid_property
@@ -128,7 +132,9 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
-        return self.total_pitchfx_logs_scraped == self.pitch_appearance_count_pitchfx
+        if not self.scraped_daily_dash_bbref or not self.scraped_daily_dash_brooks:
+            return False
+        return all(pitch_app.scraped_pitchfx for pitch_app in self.scrape_status_pitchfx)
 
     @hybrid_property
     def scraped_no_data(self):
@@ -267,7 +273,7 @@ class DateScrapeStatus(Base):
             f"Pitch App Counts (br/bb/pfx_data/pfx_no)..: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
             f"Pitch Count (BBRef/Brooks/Diff)...........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_difference}\n")
         game_status = "\n".join([game_status.display() for game_status in self.scrape_status_games])
-        return date_status + game_status
+        return date_status
 
     @classmethod
     def find_by_date(cls, session, game_date):

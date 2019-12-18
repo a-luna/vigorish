@@ -137,7 +137,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
 
 
 def fix_missing_des(pitchfx_data, pitch_log):
-    missing_des = any([pfx.des == "missing_des" for pfx in pitchfx_data])
+    missing_des = any(pfx.des == "missing_des" for pfx in pitchfx_data)
     if not missing_des:
         return Result.Ok(pitchfx_data)
     fix_ab_ids = list(set([pfx.ab_id for pfx in pitchfx_data if pfx.des == "missing_des"]))

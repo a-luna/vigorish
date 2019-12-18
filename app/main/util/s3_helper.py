@@ -345,7 +345,7 @@ def rename_brooks_pitchfx_log(old_pitch_app_id, new_pitch_app_id, year):
 def get_all_pitchfx_logs_for_game_from_s3(session, bbref_game_id):
     pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game(session, bbref_game_id)
     fetch_tasks = [get_brooks_pitchfx_log_from_s3(pitch_app_id) for pitch_app_id in pitch_app_ids]
-    task_failed = any([result.failure for result in fetch_tasks])
+    task_failed = any(result.failure for result in fetch_tasks)
     if task_failed:
         s3_errors = "\n".join([f"Error: {result.error}" for result in fetch_tasks])
         error = f"One or more errors occurred attempting to retrieve pitchfx logs for game {bbref_game_id}:\n{s3_errors}"
