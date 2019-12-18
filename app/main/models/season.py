@@ -114,6 +114,10 @@ class Season(Base):
         return sum(game_status.pitch_app_count_brooks for game_status in self.scrape_status_games)
 
     @hybrid_property
+    def pitch_appearance_count_pitchfx(self):
+        return len(self.scrape_status_pitchfx)
+
+    @hybrid_property
     def pitch_appearance_count_difference(self):
         return abs(self.pitch_appearance_count_bbref - self.pitch_appearance_count_brooks)
 
@@ -127,12 +131,12 @@ class Season(Base):
 
     @hybrid_property
     def total_pitch_apps_with_pitchfx_data(self):
-        return self.pitch_appearance_count_brooks - self.total_pitch_apps_no_pitchfx_data
+        return self.pitch_appearance_count_pitchfx - self.total_pitch_apps_no_pitchfx_data
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
-        return self.total_pitchfx_logs_scraped / float(self.pitch_appearance_count_brooks) \
-            if self.pitch_appearance_count_brooks > 0 else 0.0
+        return self.total_pitchfx_logs_scraped / float(self.pitch_appearance_count_pitchfx) \
+            if self.pitch_appearance_count_pitchfx > 0 else 0.0
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
@@ -197,7 +201,7 @@ class Season(Base):
             f"BBref Boxscores Scraped....: {self.total_bbref_boxscores_scraped:,}/{self.total_games:,} games ({self.percent_complete_bbref_boxscores_scraped:.0%})\n"
             f"Brooks Games Scraped.......: {self.total_brooks_games_scraped:,}/{self.total_games:,} games ({self.percent_complete_brooks_games_scraped:.0%})\n"
             f"Brooks PitchFX Scraped.....: {self.total_pitchfx_logs_scraped:,}/{self.total_pitch_apps_with_pitchfx_data:,} pitch apps, {self.total_pitch_apps_no_pitchfx_data} no data ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
-            f"Total Pitch Appearances....: {self.pitch_appearance_count_bbref:,} (BBref) {self.pitch_appearance_count_brooks:,} (Brooks) {self.total_pitchfx_logs_scraped:,} (PitchFX)\n"
+            f"Total Pitch Appearances....: {self.pitch_appearance_count_bbref:,} (BBref) {self.pitch_appearance_count_brooks:,} (Brooks) {self.pitch_appearance_count_pitchfx:,} (PitchFX)\n"
             f"Total Pitch Count..........: {self.total_pitch_count_bbref:,} (BBref) {self.total_pitch_count_brooks:,} (Brooks) {self.total_pitch_count_pitchfx:,} (PitchFX)\n"
         )
 
