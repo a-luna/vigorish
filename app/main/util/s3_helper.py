@@ -538,7 +538,7 @@ def delete_bbref_boxscore_from_s3(bbref_game_id):
     if result.failure:
         return result
     game_date = result.value['game_date']
-    date_str = scrape_date.strftime(DATE_ONLY)
+    date_str = game_date.strftime(DATE_ONLY)
     filename = Template(T_BBREF_BOXSCORE_FILENAME).substitute(gid=bbref_game_id)
     s3_key = Template(T_BR_GAME_KEY).substitute(year=game_date.year, filename=filename)
     try:
