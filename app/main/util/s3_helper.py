@@ -121,7 +121,7 @@ def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=
         return result
     filepath = result.value
     return read_brooks_games_for_date_from_file(
-        scrape_date, folderpath=filepath.parent, delete_file=True
+        scrape_date, folderpath=filepath.parent, delete_file=delete_file
     )
 
 
@@ -207,7 +207,7 @@ def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_f
     return read_brooks_pitch_logs_for_game_from_file(
         bb_game_id,
         folderpath=filepath.parent,
-        delete_file=True)
+        delete_file=delete_file)
 
 
 def get_all_brooks_pitch_logs_for_date_from_s3(session, game_date, folderpath=None, delete_file=True):
@@ -298,7 +298,7 @@ def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=Tr
     return read_brooks_pitchfx_log_from_file(
         pitch_app_id,
         folderpath=filepath.parent,
-        delete_file=True)
+        delete_file=delete_file)
 
 
 def get_all_pitch_app_ids_scraped(year):
@@ -416,7 +416,7 @@ def get_bbref_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=T
     if result.failure:
         return result
     filepath = result.value
-    return read_bbref_games_for_date_from_file(scrape_date, folderpath=filepath.parent, delete_file=True)
+    return read_bbref_games_for_date_from_file(scrape_date, folderpath=filepath.parent, delete_file=delete_file)
 
 
 def get_all_bbref_dates_scraped(year):
@@ -515,7 +515,7 @@ def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True)
     if result.failure:
         return result
     filepath = result.value
-    return read_bbref_boxscore_from_file(bbref_game_id, folderpath=filepath.parent, delete_file=True)
+    return read_bbref_boxscore_from_file(bbref_game_id, folderpath=filepath.parent, delete_file=delete_file)
 
 
 def get_all_scraped_bbref_game_ids(year):
