@@ -534,7 +534,7 @@ def get_all_scraped_bbref_game_ids(year):
 
 def delete_bbref_boxscore_from_s3(bbref_game_id):
     """Delete a bbref boxscore from s3."""
-    result = validate_bbref_game_id(game_id)
+    result = validate_bbref_game_id(bbref_game_id)
     if result.failure:
         return result
     game_date = result.value['game_date']
