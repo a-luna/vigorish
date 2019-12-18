@@ -57,6 +57,10 @@ class GameScrapeStatus(Base):
         return sum(pfx.pitch_count_pitchfx for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
+    def pitch_app_count_pitchfx(self):
+        return len(self.scrape_status_pitchfx)
+
+    @hybrid_property
     def total_pitch_apps_no_pitchfx_data(self):
         return sum(pfx.no_pitchfx_data for pfx in self.scrape_status_pitchfx)
 
@@ -66,27 +70,37 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_apps_with_pitchfx_data(self):
-        return self.pitch_app_count_brooks - self.total_pitch_apps_no_pitchfx_data
+        return self.pitch_app_count_pitchfx - self.total_pitch_apps_no_pitchfx_data
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
-        return self.total_pitchfx_logs_scraped / float(self.pitch_app_count_brooks) \
-            if self.pitch_app_count_brooks > 0 else 0.0
+        return self.total_pitchfx_logs_scraped / float(self.pitch_app_count_pitchfx) \
+            if self.pitch_app_count_pitchfx > 0 else 0.0
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
-        return self.total_pitchfx_logs_scraped == self.pitch_app_count_brooks
+        return self.total_pitchfx_logs_scraped == self.pitch_app_count_pitchfx
 
     def __repr__(self):
         return f"<GameScrapeStatus bbref_game_id={self.bbref_game_id}>"
 
     def as_dict(self):
-        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        d["game_date_time"] = d.game_date_time
-        d["game_date_time_str"] = d.game_date_time_str
-        d["total_pitchfx_logs_scraped"] = d.total_pitchfx_logs_scraped
-        d["percent_complete_pitchfx_logs_scraped"] = d.percent_complete_pitchfx_logs_scraped
-        d["scraped_all_pitchfx_logs"] = d.scraped_all_pitchfx_logs
+        d = {}
+        d["bb_game_id"] = self.bb_game_id
+        d["game_date_time_str"] = self.game_date_time_str
+        d["scraped_bbref_boxscore"] = self.scraped_bbref_boxscore
+        d["scraped_brooks_pitch_logs"] = self.scraped_brooks_pitch_logs
+        d["scraped_all_pitchfx_logs"] = self.scraped_all_pitchfx_logs
+        d["pitch_app_count_bbref"] = self.pitch_app_count_bbref
+        d["pitch_app_count_brooks"] = self.pitch_app_count_brooks
+        d["pitch_app_count_pitchfx"] = self.pitch_app_count_pitchfx
+        d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
+        d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
+        d["total_pitchfx_logs_scraped"] = self.total_pitchfx_logs_scraped
+        d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
+        d["total_pitch_count_bbref"] = self.total_pitch_count_bbref
+        d["total_pitch_count_brooks"] = self.total_pitch_count_brooks
+        d["total_pitch_count_pitchfx"] = self.total_pitch_count_pitchfx
         return d
 
     def display(self):

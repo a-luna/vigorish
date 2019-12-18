@@ -258,7 +258,7 @@ class DateScrapeStatus(Base):
         scraped_bbref_boxscores = "YES" if self.scraped_all_bbref_boxscores else "NO"
         scraped_brooks_pitch_logs = "YES" if self.scraped_all_brooks_pitch_logs else "NO"
         scraped_brooks_pitchfx = "YES" if self.scraped_all_pitchfx_logs else "NO"
-        return (
+        date_status = (
             f"Overall Status For Date...................: {self.scrape_status_description}\n"
             f"Scraped Daily Dashboard (BBRef/Brooks)....: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
             f"BBref Boxscores Scraped...................: {scraped_bbref_boxscores} {self.total_bbref_boxscores_scraped}/{self.total_games}\n"
@@ -266,6 +266,8 @@ class DateScrapeStatus(Base):
             f"PitchFX Logs Scraped......................: {scraped_brooks_pitchfx} {self.total_pitchfx_logs_scraped}/{self.pitch_appearance_count_pitchfx} ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
             f"Pitch App Counts (br/bb/pfx_data/pfx_no)..: {self.pitch_appearance_count_bbref}/{self.pitch_appearance_count_brooks}/{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
             f"Pitch Count (BBRef/Brooks/Diff)...........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_difference}\n")
+        game_status = "\n".join([game_status.display() for game_status in self.scrape_status_games])
+        return date_status + game_status
 
     @classmethod
     def find_by_date(cls, session, game_date):
