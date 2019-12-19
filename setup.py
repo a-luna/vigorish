@@ -30,6 +30,7 @@ setup(
         'alembic',
         'boto3',
         'Click',
+        'flask',
         'fuzzywuzzy',
         'halo',
         'lxml',
