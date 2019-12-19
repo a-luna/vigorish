@@ -107,7 +107,7 @@ def status(db, update):
     help="Report includes pitch_app_ids that have not been scraped.")
 @click.option(
     "--with-games/--without-games", default=False, show_default=True,
-    help="Report includes pitch_app_ids that have not been scraped.")
+    help="Report includes scrape statistics for all games on the specified date.")
 @click.pass_obj
 def status_date(db, game_date, missing_ids, with_games):
     """Report status for a single date."""

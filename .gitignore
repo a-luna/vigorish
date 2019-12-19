@@ -7,7 +7,7 @@ venv
 *.db
 *.DS_Store
 
-server/node_modules
+client/node_modules
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
