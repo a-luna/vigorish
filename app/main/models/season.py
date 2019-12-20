@@ -187,6 +187,7 @@ class Season(Base):
         return f"<Season name={self.name}, id={self.id})>"
 
     def as_dict(self):
+        d = {}
         d["name"] = self.name
         d["year"] = self.year
         d["start_date_str"] = self.start_date_str
