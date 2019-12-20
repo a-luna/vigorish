@@ -59,6 +59,10 @@ class Season(Base):
         return self.end_date.strftime(DATE_ONLY)
 
     @hybrid_property
+    def asg_date_str(self):
+        return self.asg_date.strftime(DATE_ONLY)
+
+    @hybrid_property
     def total_days(self):
         today = date.today()
         if today.year == self.year and today < self.end_date.date():
@@ -75,6 +79,11 @@ class Season(Base):
             if self.total_days > 0 else 0.0
 
     @hybrid_property
+    def scraped_all_bbref_games_for_date(self):
+        return all(date_status.scraped_daily_dash_bbref == 1 for date_status in self.scrape_status_dates) \
+            if self.total_days > 0 else False
+
+    @hybrid_property
     def total_days_scraped_brooks(self):
         return sum(date_status.scraped_daily_dash_brooks for date_status in self.scrape_status_dates)
 
@@ -82,6 +91,11 @@ class Season(Base):
     def percent_complete_brooks_games_for_date(self):
         return self.total_days_scraped_brooks / float(self.total_days) \
             if self.total_days > 0 else 0.0
+
+    @hybrid_property
+    def scraped_all_brooks_games_for_date(self):
+        return all(date_status.scraped_daily_dash_brooks == 1 for date_status in self.scrape_status_dates) \
+            if self.total_days > 0 else False
 
     @hybrid_property
     def total_games(self):
@@ -97,13 +111,23 @@ class Season(Base):
             if self.total_games > 0 else 0.0
 
     @hybrid_property
-    def total_brooks_games_scraped(self):
+    def scraped_all_bbref_boxscores(self):
+        return all(game_status.scraped_bbref_boxscore == 1 for game_status in self.scrape_status_games) \
+            if self.total_games > 0 else False
+
+    @hybrid_property
+    def total_brooks_pitch_logs_scraped(self):
         return sum(game_status.scraped_brooks_pitch_logs for game_status in self.scrape_status_games)
 
     @hybrid_property
-    def percent_complete_brooks_games_scraped(self):
-        return self.total_brooks_games_scraped / float(self.total_games) \
+    def percent_complete_brooks_pitch_logs(self):
+        return self.total_brooks_pitch_logs_scraped / float(self.total_games) \
             if self.total_games > 0 else 0.0
+
+    @hybrid_property
+    def scraped_all_brooks_pitch_logs(self):
+        return all(game_status.scraped_brooks_pitch_logs == 1 for game_status in self.scrape_status_games) \
+            if self.total_games > 0 else False
 
     @hybrid_property
     def pitch_appearance_count_bbref(self):
@@ -140,7 +164,8 @@ class Season(Base):
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
-        return self.percent_complete_pitchfx_logs_scraped == 1
+        return all(pfx.scraped_pitchfx == 1 for pfx in self.scrape_status_pitchfx) \
+            if self.pitch_appearance_count_pitchfx > 0 else False
 
     @hybrid_property
     def total_pitch_count_bbref(self):
@@ -162,27 +187,34 @@ class Season(Base):
         return f"<Season name={self.name}, id={self.id})>"
 
     def as_dict(self):
-        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
         d["name"] = self.name
+        d["year"] = self.year
         d["start_date_str"] = self.start_date_str
         d["end_date_str"] = self.end_date_str
+        d["asg_date_str"] = self.asg_date_str
         d["total_days"] = self.total_days
         d["total_days_scraped_bbref"] = self.total_days_scraped_bbref
         d["percent_complete_bbref_games_for_date"] = self.percent_complete_bbref_games_for_date
+        d["scraped_all_bbref_games_for_date"] = self.scraped_all_bbref_games_for_date
         d["total_days_scraped_brooks"] = self.total_days_scraped_brooks
         d["percent_complete_brooks_games_for_date"] = self.percent_complete_brooks_games_for_date
+        d["scraped_all_brooks_games_for_date"] = self.scraped_all_brooks_games_for_date
         d["total_games"] = self.total_games
         d["total_bbref_boxscores_scraped"] = self.total_bbref_boxscores_scraped
         d["percent_complete_bbref_boxscores_scraped"] = self.percent_complete_bbref_boxscores_scraped
-        d["total_brooks_games_scraped"] = self.total_brooks_games_scraped
-        d["percent_complete_brooks_games_scraped"] = self.percent_complete_brooks_games_scraped
+        d["scraped_all_bbref_boxscores"] = self.scraped_all_bbref_boxscores
+        d["total_brooks_pitch_logs_scraped"] = self.total_brooks_pitch_logs_scraped
+        d["percent_complete_brooks_pitch_logs"] = self.percent_complete_brooks_pitch_logs
+        d["scraped_all_brooks_pitch_logs"] = self.scraped_all_brooks_pitch_logs
         d["pitch_appearance_count_bbref"] = self.pitch_appearance_count_bbref
         d["pitch_appearance_count_brooks"] = self.pitch_appearance_count_brooks
+        d["pitch_appearance_count_pitchfx"] = self.pitch_appearance_count_pitchfx
         d["pitch_appearance_count_difference"] = self.pitch_appearance_count_difference
         d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
         d["total_pitchfx_logs_scraped"] = self.total_pitchfx_logs_scraped
         d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
         d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
+        d["scraped_all_pitchfx_logs"] = self.scraped_all_pitchfx_logs
         d["total_pitch_count_bbref"] = self.total_pitch_count_bbref
         d["total_pitch_count_brooks"] = self.total_pitch_count_brooks
         d["total_pitch_count_pitchfx"] = self.total_pitch_count_pitchfx
@@ -199,7 +231,7 @@ class Season(Base):
             f"BBref Daily Dash Scraped...: {self.total_days_scraped_bbref:,}/{self.total_days:,} days ({self.percent_complete_bbref_games_for_date:.0%})\n"
             f"Brooks Daily Dash Scraped..: {self.total_days_scraped_brooks:,}/{self.total_days:,} days ({self.percent_complete_brooks_games_for_date:.0%})\n"
             f"BBref Boxscores Scraped....: {self.total_bbref_boxscores_scraped:,}/{self.total_games:,} games ({self.percent_complete_bbref_boxscores_scraped:.0%})\n"
-            f"Brooks Games Scraped.......: {self.total_brooks_games_scraped:,}/{self.total_games:,} games ({self.percent_complete_brooks_games_scraped:.0%})\n"
+            f"Brooks Games Scraped.......: {self.total_brooks_pitch_logs_scraped:,}/{self.total_games:,} games ({self.percent_complete_brooks_pitch_logs:.0%})\n"
             f"Brooks PitchFX Scraped.....: {self.total_pitchfx_logs_scraped:,}/{self.pitch_appearance_count_pitchfx:,} pitch apps ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
             f"Total Pitch Appearances....: {self.pitch_appearance_count_bbref:,} (BBref) {self.pitch_appearance_count_brooks:,} (Brooks) {self.pitch_appearance_count_pitchfx:,} (PitchFX)\n"
             f"Total Pitch Count..........: {self.total_pitch_count_bbref:,} (BBref) {self.total_pitch_count_brooks:,} (Brooks) {self.total_pitch_count_pitchfx:,} (PitchFX)\n"

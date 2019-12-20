@@ -1,8 +1,10 @@
 """URL route definitions for user interface pages."""
 import random
+from http import HTTPStatus
 
-from flask import send_from_directory
+from flask import send_from_directory, abort, jsonify
 
+from app.main.models.season import Season
 from server.frontend import frontend
 
 # Path for our main Svelte page
@@ -16,6 +18,9 @@ def home(path):
     return send_from_directory('client/public', path)
 
 
-@frontend.route("/rand")
-def hello():
-    return str(random.randint(0, 100))
+@frontend.route("/season/<int:year>")
+def hello(year):
+    season = Season.find_by_year(year)
+    if not season:
+        abort(HTTPStatus.NOT_FOUND)
+    return jsonify(season.as_dict())
