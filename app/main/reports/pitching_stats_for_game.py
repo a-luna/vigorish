@@ -12,7 +12,7 @@ from app.main.util.result import Result
 from app.main.util.s3_helper import get_bbref_boxscore_from_s3, get_all_pitchfx_logs_for_game_from_s3
 
 def get_pitching_stats_for_game(session, bbref_game_id):
-    result = get_all_pbp_events_for_game(sesion, bbref_game_id)
+    result = get_all_pbp_events_for_game(session, bbref_game_id)
     if result.failure:
         return result
     all_pbp_events_for_game = result.value
