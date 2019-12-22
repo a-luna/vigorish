@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.main.constants import TEAM_ID_DICT
-from app.main.models.player import Player
 
 
 @dataclass
@@ -25,16 +24,6 @@ class BBRefPlayByPlayEvent():
     batter_id_br: str = "0"
     play_index_url: str = "0"
 
-
-    @property
-    def at_bat_id(self):
-        bbref_game_id = self.event_id.split("-")[0]
-        inning_num = self.inning_label[1:]
-        team_pitching_id_bb = self._get_brooks_team_id(self.team_pitching_id_br).lower()
-        pitcher_id_mlb = Player.find_by_bbref_id(self.pitcher_id_br).mlb_id
-        team_batting_id_bb = self._get_brooks_team_id(self.team_batting_id_br).lower()
-        batter_id_mlb = Player.find_by_bbref_id(self.batter_id_br).mlb_id
-        return f"{bbref_game_id}_{inning_num}_{team_pitching_id_bb}_{pitcher_id_mlb}_{team_batting_id_bb}_{batter_id_mlb}"
 
     def as_dict(self):
         """Convert game event values to a dictionary."""

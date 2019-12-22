@@ -3,6 +3,8 @@ import json
 from collections import Counter, defaultdict
 from copy import deepcopy
 
+from app.main.constants import TEAM_ID_DICT
+from app.main.models.player import Player
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.file_util import write_json_dict_to_file
 from app.main.util.list_functions import compare_lists
@@ -37,6 +39,8 @@ def get_all_pbp_events_for_game(bbref_game_id):
     boxscore = result.value
     all_pbp_events_for_game = []
     for inning in boxscore.innings_list:
+        for game_event in inning.game_events:
+            game_event.at_bat_id = get_at_bat_id_for_pbp_event(bbref_game_id, game_event)
         all_pbp_events_for_game.extend(inning.game_events)
     return Result.Ok(all_pbp_events_for_game)
 
@@ -128,3 +132,18 @@ def combine_at_bat_data(all_pbp_events_for_game, all_pfx_data_for_game, at_bat_i
             pbp_events=pbp_events_for_at_bat, pitchfx=pfx_data_for_at_bat
         )
     return combined_at_bat_data
+
+
+def get_at_bat_id_for_pbp_event(bbref_game_id, game_event):
+    inning_num = game_event.inning_label[1:]
+    team_pitching_id_bb = get_brooks_team_id(game_event.team_pitching_id_br).lower()
+    pitcher_id_mlb = Player.find_by_bbref_id(session, game_event.pitcher_id_br).mlb_id
+    team_batting_id_bb = get_brooks_team_id(game_event.team_batting_id_br).lower()
+    batter_id_mlb = Player.find_by_bbref_id(session, game_event.batter_id_br).mlb_id
+    return f"{bbref_game_id}_{inning_num}_{team_pitching_id_bb}_{pitcher_id_mlb}_{team_batting_id_bb}_{batter_id_mlb}"
+
+
+def get_brooks_team_id(br_team_id):
+        if br_team_id in TEAM_ID_DICT:
+            return TEAM_ID_DICT[br_team_id]
+        return br_team_id
