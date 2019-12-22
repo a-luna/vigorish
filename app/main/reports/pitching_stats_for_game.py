@@ -12,7 +12,7 @@ from app.main.util.result import Result
 from app.main.util.s3_helper import get_bbref_boxscore_from_s3, get_all_pitchfx_logs_for_game_from_s3
 
 def get_pitching_stats_for_game(session, bbref_game_id):
-    result = get_all_pbp_events_for_game(bbref_game_id)
+    result = get_all_pbp_events_for_game(sesion, bbref_game_id)
     if result.failure:
         return result
     all_pbp_events_for_game = result.value
@@ -32,7 +32,7 @@ def get_pitching_stats_for_game(session, bbref_game_id):
     return Result.Ok(f"Successfully combined pbp data and pfx data for game: {bbref_game_id}")
 
 
-def get_all_pbp_events_for_game(bbref_game_id):
+def get_all_pbp_events_for_game(session, bbref_game_id):
     result = get_bbref_boxscore_from_s3(bbref_game_id)
     if result.failure:
         return result
@@ -40,7 +40,7 @@ def get_all_pbp_events_for_game(bbref_game_id):
     all_pbp_events_for_game = []
     for inning in boxscore.innings_list:
         for game_event in inning.game_events:
-            game_event.at_bat_id = get_at_bat_id_for_pbp_event(bbref_game_id, game_event)
+            game_event.at_bat_id = get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event)
         all_pbp_events_for_game.extend(inning.game_events)
     return Result.Ok(all_pbp_events_for_game)
 
@@ -134,7 +134,7 @@ def combine_at_bat_data(all_pbp_events_for_game, all_pfx_data_for_game, at_bat_i
     return combined_at_bat_data
 
 
-def get_at_bat_id_for_pbp_event(bbref_game_id, game_event):
+def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event):
     inning_num = game_event.inning_label[1:]
     team_pitching_id_bb = get_brooks_team_id(game_event.team_pitching_id_br).lower()
     pitcher_id_mlb = Player.find_by_bbref_id(session, game_event.pitcher_id_br).mlb_id
