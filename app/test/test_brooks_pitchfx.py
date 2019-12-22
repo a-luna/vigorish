@@ -1,11 +1,14 @@
+from datetime import datetime
 from pathlib import Path
 
 from lxml import html
 
+from app.main.reports.pitching_stats_for_game import remove_duplicate_pitchfx
 from app.main.scrape.brooks.scrape_brooks_pitchfx import parse_pitchfx_log
 from app.main.scrape.brooks.models.pitchfx_log import BrooksPitchFxLog
 from app.main.scrape.brooks.models.pitchfx import BrooksPitchFxData
 from app.main.util.file_util import (
+    read_brooks_games_for_date_from_file,
     read_brooks_pitch_logs_for_game_from_file,
     write_brooks_pitchfx_log_to_file,
     read_brooks_pitchfx_log_from_file
@@ -55,3 +58,18 @@ class TestBrooksPitchFxLog(BaseTestCase):
 
         filepath.unlink()
         self.assertFalse(filepath.exists())
+
+
+    def test_remove_duplicate_pitchfx(self):
+        game_date = datetime(2019, 6, 13)
+        bbref_game_id = "NYN201906130"
+        pitch_app_id = "NYN201906130_621242"
+        result = read_brooks_games_for_date_from_file(game_date, folderpath=self.TEST_FILES_FOLDER)
+        self.assertTrue(result.success)
+        brooks_games_for_date = result.value
+        game_info = brooks_games_for_date.retrieve_game_info(bbref_game_id)
+        self.assertIsNotNone(game_info)
+        game_start_time = game_info.game_start_time
+        result = read_brooks_pitchfx_log_from_file(pitch_app_id, folderpath=self.TEST_FILES_FOLDER)
+        self.assertTrue(result.success)
+        pitchfx_log = result.value

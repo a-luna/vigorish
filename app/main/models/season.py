@@ -11,8 +11,6 @@ from app.main.models.base import Base
 from app.main.models.status_date import DateScrapeStatus
 from app.main.models.status_game import GameScrapeStatus
 from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
-from app.main.models.views.materialized_view import MaterializedView
-from app.main.models.views.materialized_view_factory import create_mat_view
 from app.main.util.datetime_util import get_date_range
 from app.main.util.dt_format_strings import DATE_ONLY
 from app.main.util.list_functions import display_dict

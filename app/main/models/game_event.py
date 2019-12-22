@@ -39,6 +39,7 @@ class GameEvent(Base):
     batter = relationship("Player", foreign_keys=[batter_id])
     team_pitching = relationship("Team", foreign_keys=[team_pitching_id])
     team_batting = relationship("Team", foreign_keys=[team_batting_id])
+    season = relationship("Season", foreign_keys=[season_id])
 
     def __repr__(self):
         return f"<GameEvent inning_id={self.db_inning_id}, pbp_number={self.pbp_table_row_number}>"

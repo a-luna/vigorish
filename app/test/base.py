@@ -1,3 +1,4 @@
+import json
 import os
 from pathlib import Path
 from unittest import TestCase
@@ -9,15 +10,15 @@ from sqlalchemy.orm import sessionmaker
 from app.main.models.base import Base
 
 
-DOTENV_PATH = Path.cwd() / ".env"
+APP_FOLDER = Path(__file__).resolve().parent.parent.parent
+CONFIG_PATH = APP_FOLDER / "config.json"
 
 
 class BaseTestCase(TestCase):
     """Base Tests."""
 
-    if DOTENV_PATH.is_file():
-        load_dotenv(DOTENV_PATH)
-    engine = create_engine(os.getenv("DATABASE_URL_TEST"))
+    config = json.loads(CONFIG_PATH.read_text())
+    engine = create_engine(config.get("DATABASE_URL_TEST"))
     sessionmaker = sessionmaker(bind=engine)
     session = sessionmaker()
 

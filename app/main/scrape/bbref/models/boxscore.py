@@ -44,7 +44,7 @@ class BBRefBoxscore:
     @property
     def game_date(self):
         result = validate_bbref_game_id(self.bbref_game_id)
-        return result.value["game_date"]
+        return result.value["game_date"] if result.success else None
 
     @property
     def away_team_pitch_appearance_count(self):

@@ -1,6 +1,20 @@
 """Pitchfx measurements for a single pitch scraped from brooksbaseball.com."""
+import re
 from dataclasses import dataclass
+from datetime import datetime, timezone
 
+from app.main.util.datetime_util import TIME_ZONE_NEW_YORK
+from app.main.util.string_functions import validate_bbref_game_id
+
+TIMESTAMP_REGEX = re.compile(
+    r'(?P<year>\d{2,2})'
+    r'(?P<month>\d{2,2})'
+    r'(?P<day>\d{2,2})_'
+    r'(?P<hour>\d{2,2})'
+    r'(?P<minute>\d{2,2})'
+    r'(?P<second>\d{2,2})'
+    r'(?P<team_id>[a-z]{3,3})'
+)
 
 @dataclass
 class BrooksPitchFxData():
@@ -61,6 +75,36 @@ class BrooksPitchFxData():
     pzold: str = "0"
     tm_spin: str = "0"
     sb: str = "0"
+
+    @property
+    def timestamp_pitch_thrown(self):
+        match = TIMESTAMP_REGEX.match(self.park_sv_id)
+        if not match:
+            return None
+        group_dict = match.groupdict()
+        result = validate_bbref_game_id(self.bbref_game_id)
+        if result.failure:
+            return None
+        game_date = result.value["game_date"]
+        timestamp = datetime(
+            game_date.year,
+            int(group_dict["month"]),
+            int(group_dict["day"]),
+            int(group_dict["hour"]),
+            int(group_dict["minute"]),
+            int(group_dict["second"])
+        )
+        return timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
+
+    @property
+    def has_zone_location(self):
+        return False if self.zone_location == 99 else True
+
+
+    @property
+    def at_bat_id(self):
+        return f"{self.bbref_game_id}_{self.inning}_{self.pitcher_team_id_bb}_{self.pitcher_id}_{self.opponent_team_id_bb}_{self.batter_id}"
+
 
     def as_dict(self):
         """Convert pitch log to a dictionary."""

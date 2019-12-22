@@ -43,12 +43,10 @@ class BrooksPitchFxLog:
 
     @property
     def at_bats(self):
-        ab_ids = sorted(list(set([pfx.ab_id for pfx in self.pitchfx_log])))
-        at_bats = {}
-        for ab_id in ab_ids:
-            at_bats[ab_id] = sorted(
-                [pfx for pfx in self.pitchfx_log if pfx.ab_id == ab_id],
-                key=lambda x: x.ab_count)
+        at_bats = defaultdict(list)
+        for pfx in self.pitchfx_log:
+            at_bats[pfx.ab_id].append(pfx)
+            at_bats[pfx.ab_id].sort(key=lambda x: x.park_sv_id)
         return at_bats
 
     @property

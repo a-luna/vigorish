@@ -33,7 +33,7 @@ class GameMetaInformation(Base):
     boxscore_id = Column(Integer, ForeignKey("boxscore.id"))
 
     @hybrid_property
-    def game_date_time(self):
+    def game_start_time(self):
         return datetime(
             year=self.game_date.year,
             month=self.game_date.month,

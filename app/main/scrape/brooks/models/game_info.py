@@ -31,13 +31,16 @@ class BrooksGameInfo():
 
     @property
     def game_start_time(self):
-        return datetime(
-            year=self.game_date_year,
-            month=self.game_date_month,
-            day=self.game_date_day,
-            hour=self.game_time_hour,
-            minute=self.game_time_minute,
-            tzinfo=tz.gettz(self.time_zone_name))
+        hour_adjusted = self.game_time_hour
+        if self.game_time_hour != 11 and self.game_time_hour != 12:
+            hour_adjusted = self.game_time_hour + 12
+        game_start_time = datetime(
+            year=self.game_date.year,
+            month=self.game_date.month,
+            day=self.game_date.day,
+            hour=hour_adjusted,
+            minute=self.game_time_minute)
+        return game_start_time.replace(tzinfo=tz.gettz(self.time_zone_name))
 
     def as_dict(self):
         """Convert pitcher appearance list/game log links to a dictionary."""

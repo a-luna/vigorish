@@ -39,21 +39,21 @@ class GameScrapeStatus(Base):
     scrape_status_pitchfx = relationship("PitchAppearanceScrapeStatus", backref="scrape_status_game")
 
     @hybrid_property
-    def game_date_time(self):
+    def game_start_time(self):
         hour_adjusted = self.game_time_hour
         if self.game_time_hour != 11 and self.game_time_hour != 12:
             hour_adjusted = self.game_time_hour + 12
-        game_date_time = datetime(
+        game_start_time = datetime(
             year=self.game_date.year,
             month=self.game_date.month,
             day=self.game_date.day,
             hour=hour_adjusted,
             minute=self.game_time_minute)
-        return game_date_time.replace(tzinfo=tz.gettz(self.game_time_zone))
+        return game_start_time.replace(tzinfo=tz.gettz(self.game_time_zone))
 
     @hybrid_property
     def game_date_time_str(self):
-        return self.game_date_time.strftime(DT_STR_FORMAT) if self.game_date_time else None
+        return self.game_start_time.strftime(DT_STR_FORMAT) if self.game_start_time else None
 
     @hybrid_property
     def total_pitch_count_pitchfx(self):
@@ -109,7 +109,7 @@ class GameScrapeStatus(Base):
 
     def display(self):
         season_dict = self.as_dict()
-        season_dict['game_date_time'] = self.game_date_time_str
+        season_dict['game_start_time'] = self.game_date_time_str
         title = f"SCRAPE STATUS FOR GAME: {self.bbref_game_id}"
         display_dict(season_dict, title=title)
 

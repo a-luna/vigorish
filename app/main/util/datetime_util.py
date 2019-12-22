@@ -1,5 +1,6 @@
 """Helpful datetime converters and formatters."""
 from datetime import datetime, timezone, timedelta, date
+from dateutil import tz
 from dateutil.relativedelta import relativedelta
 from email.utils import parsedate_to_datetime, format_datetime
 
@@ -10,6 +11,8 @@ from app.main.util.dt_format_strings import (
     DT_STR_FORMAT, DT_STR_FORMAT_NAIVE, DT_FORMAT_ISO, DT_FORMAT_SHORT,
     DT_FORMAT_XML, DATE_ONLY_2
 )
+
+TIME_ZONE_NEW_YORK = tz.gettz("America/New_York")
 
 
 def convert_dt_for_display(obj, attr_name, user_tz=None, str_format=DT_STR_FORMAT):

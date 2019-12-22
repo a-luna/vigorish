@@ -31,3 +31,7 @@ class BrooksGamesForDate():
     def as_json(self):
         """Convert daily game list to JSON."""
         return json.dumps(self.as_dict(), indent=2)
+
+    def retrieve_game_info(self, bbref_game_id):
+        game_match = [game for game in self.games if game.bbref_game_id == bbref_game_id]
+        return game_match[0] if game_match else None
