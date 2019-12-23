@@ -159,7 +159,8 @@ def combine_at_bat_data(boxscore, all_pbp_events_for_game, all_pfx_data_for_game
 
 def order_at_bat_ids_by_time(at_bat_ids_this_inning, all_pbp_events_for_game):
     game_event_pbp_map = [{
-        at_bat_id: min(
+        "at_bat_id": at_bat_id,
+        "pbp_table_row_number": min(
             game_event.pbp_table_row_number
             for game_event in all_pbp_events_for_game
             if game_event.at_bat_id == at_bat_id
@@ -167,7 +168,7 @@ def order_at_bat_ids_by_time(at_bat_ids_this_inning, all_pbp_events_for_game):
         for at_bat_id in at_bat_ids_this_inning
     ]
     game_event_pbp_map.sort(key=lambda x: x["pbp_table_row_number"])
-    return game_event_pbp_map.keys()
+    return [event_pbp_map["at_bat_id"] for event_pbp_map in game_event_pbp_map]
 
 def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event):
     inning_num = game_event.inning_label[1:]
