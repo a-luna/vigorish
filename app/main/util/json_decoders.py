@@ -345,6 +345,7 @@ def decode_bbref_playbyplay_event(json_dict):
         try:
             pbp_event = BBRefPlayByPlayEvent()
             pbp_event.pbp_table_row_number = json_dict["pbp_table_row_number"]
+            pbp_event.event_id = json_dict["event_id"]
             pbp_event.inning_id = json_dict["inning_id"]
             pbp_event.inning_label = json_dict["inning_label"]
             pbp_event.score = json_dict["score"]
@@ -357,6 +358,7 @@ def decode_bbref_playbyplay_event(json_dict):
             pbp_event.play_description = json_dict["play_description"]
             pbp_event.pitcher_id_br = json_dict["pitcher_id_br"]
             pbp_event.batter_id_br = json_dict["batter_id_br"]
+            pbp_event.play_index_url = json_dict["play_index_url"]
             return Result.Ok(pbp_event)
         except Exception as e:
             error = f"Error: {repr(e)}"

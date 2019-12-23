@@ -13,14 +13,14 @@ from app.main.util.s3_helper import get_bbref_boxscore_from_s3, get_all_pitchfx_
 
 def get_pitching_stats_for_game(session, bbref_game_id):
     result = get_all_pbp_events_for_game(session, bbref_game_id)
-    all_pbp_events_for_game = result.value
+    (boxscore, all_pbp_events_for_game) = result.value
     result = get_all_pfx_data_for_game(session, bbref_game_id)
     all_pfx_data_for_game = result.value
     result = reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game)
     at_bat_ids = result.value
-    combined_data = combine_at_bat_data(all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids)
+    combined_data = combine_at_bat_data(boxscore, all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids)
     combined_data_json = json.dumps(combined_data, indent=2, sort_keys=False)
-    result = write_json_dict_to_file(combined_data_json, f"{bbref_game_id}_COMBINED_AT_BATS.json")
+    result = write_json_dict_to_file(combined_data_json, f"{bbref_game_id}_COMBINED_DATA.json")
     if result.failure:
         return result
     return Result.Ok(f"Successfully combined pbp data and pfx data for game: {bbref_game_id}")
@@ -36,7 +36,7 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
         for game_event in inning.game_events:
             game_event.at_bat_id = get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event)
         all_pbp_events_for_game.extend(inning.game_events)
-    return Result.Ok(all_pbp_events_for_game)
+    return Result.Ok((boxscore, all_pbp_events_for_game))
 
 
 def get_all_pfx_data_for_game(session, bbref_game_id):
@@ -109,23 +109,32 @@ def reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game):
     return Result.Fail(message)
 
 
-def combine_at_bat_data(all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids):
-    combined_at_bat_data = {}
-    for at_bat_id in at_bat_ids:
-        pbp_events_for_at_bat = [
-            game_event.as_dict() for game_event
-            in all_pbp_events_for_game
-            if game_event.at_bat_id == at_bat_id
-        ]
-        pfx_data_for_at_bat = [
-            pfx.as_dict() for pfx
-            in all_pfx_data_for_game
-            if pfx.at_bat_id == at_bat_id
-        ]
-        combined_at_bat_data[at_bat_id] = dict(
-            pbp_events=pbp_events_for_at_bat, pitchfx=pfx_data_for_at_bat
-        )
-    return combined_at_bat_data
+def combine_at_bat_data(boxscore, all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids):
+    boxscore_dict = boxscore.as_dict()
+    for half_inning in boxscore.innings_list:
+        at_bat_ids_this_inning = set([game_event.at_bat_id for game_event in half_inning.game_events])
+        combined_at_bat_data = []
+        for at_bat_id in at_bat_ids_this_inning:
+            pbp_events_for_at_bat = [
+                game_event.as_dict() for game_event
+                in all_pbp_events_for_game
+                if game_event.at_bat_id == at_bat_id
+            ]
+            pfx_data_for_at_bat = [
+                pfx.as_dict() for pfx
+                in all_pfx_data_for_game
+                if pfx.at_bat_id == at_bat_id
+            ]
+            combined_at_bat_data.append({
+                "pbp_events": pbp_events_for_at_bat,
+                "pitchfx": pfx_data_for_at_bat
+            })
+        inning_dict = [
+            inning for inning in boxscore_dict["innings_list"]
+            if inning["inning_id"] == half_inning.inning_id
+        ][0]
+        inning_dict["game_events"] = combined_at_bat_data
+    return boxscore_dict
 
 
 def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event):
