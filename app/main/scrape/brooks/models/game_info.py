@@ -32,7 +32,7 @@ class BrooksGameInfo():
     @property
     def game_start_time(self):
         hour_adjusted = self.game_time_hour
-        if self.game_time_hour != 11 and self.game_time_hour != 12:
+        if not self.game_time_hour in [0, 11, 12]:
             hour_adjusted = self.game_time_hour + 12
         game_start_time = datetime(
             year=self.game_date.year,

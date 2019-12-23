@@ -1,5 +1,6 @@
 """Populate player_id and player tables with initial data."""
 import os
+from pathlib import Path
 
 import pandas as pd
 from tqdm import tqdm
@@ -9,8 +10,8 @@ from app.main.models.player_id import PlayerId
 from app.main.util.numeric_functions import sanitize, is_nan
 from app.main.util.result import Result
 
-PLAYER_ID_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'csv/idmap.csv')
-PLAYER_CSV_FILE_PATH = os.path.join(os.path.dirname(__file__), 'csv/People.csv')
+PLAYER_ID_CSV = Path(__file__).resolve().parent / "csv/idmap.csv"
+PLAYER_CSV = Path(__file__).resolve().parent / "csv/People.csv"
 
 def populate_players(session):
     """Populate player_id and player tables with initial data."""
@@ -28,7 +29,7 @@ def populate_players(session):
 def __import_idmap_csv(session):
     try:
         df_ids = pd.read_csv(
-            PLAYER_ID_CSV_FILE_PATH,
+            PLAYER_ID_CSV,
             usecols=[
                 'mlb_id',
                 'mlb_name',
@@ -98,7 +99,7 @@ def __import_idmap_csv(session):
 def __import_people_csv(session):
     try:
         df_player = pd.read_csv(
-            PLAYER_CSV_FILE_PATH,
+            PLAYER_CSV,
             usecols=[
                 'nameFirst',
                 'nameLast',
@@ -137,6 +138,8 @@ def __import_people_csv(session):
                     continue
 
                 player_id = PlayerId.find_by_retro_id(session, str(row['retroID']))
+                if not player_id:
+                    player_id = PlayerId.find_by_bbref_id(session, str(row['bbrefID']))
                 if not player_id:
                     pbar.update()
                     continue

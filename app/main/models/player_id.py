@@ -39,5 +39,9 @@ class PlayerId(Base):
         return session.query(cls).filter_by(retro_id=retro_id).first()
 
     @classmethod
+    def find_by_bbref_id(cls, session, bbref_id):
+        return session.query(cls).filter_by(bbref_id=bbref_id).first()
+
+    @classmethod
     def find_by_mlb_id(cls, session, mlb_id):
         return session.query(cls).filter_by(mlb_id=mlb_id).first()

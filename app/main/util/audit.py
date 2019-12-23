@@ -238,8 +238,8 @@ class PlayerIdMap:
 
 
 def update_player_id_map():
-    IDMAP_PATH = Path(__file__).resolve().parent.parent / "setup" / "csv" / "idmap.csv"
-    IDMAP_NEW_PATH = Path(__file__).resolve().parent.parent /  "setup" / "csv" / "idmap_new.csv"
+    IDMAP_PATH = Path(__file__).resolve().parent.parent / "setup/csv/idmap.csv"
+    IDMAP_NEW_PATH = Path(__file__).resolve().parent.parent / "setup/csv/idmap_new.csv"
     with open(IDMAP_PATH) as f:
         with open(IDMAP_NEW_PATH) as f_new:
             id_map = DataclassReader(f, PlayerIdMap)

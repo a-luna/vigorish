@@ -194,7 +194,7 @@ class TestBrooksGamesForDate(BaseTestCase):
         game0 = games_for_date_out.games[0]
         self.assertEqual(game0.time_zone_name, "America/New_York")
         edt = tz.gettz(game0.time_zone_name)
-        game_start = datetime(2018, 4, 17, hour=3, minute=7, tzinfo=edt)
+        game_start = datetime(2018, 4, 17, hour=15, minute=7, tzinfo=edt)
         self.assertEqual(game0.game_start_time, game_start)
 
         game1 = games_for_date_out.games[1]
