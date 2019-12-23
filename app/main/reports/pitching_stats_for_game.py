@@ -136,9 +136,9 @@ def combine_at_bat_data(all_pbp_events_for_game, all_pfx_data_for_game, at_bat_i
 
 def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event):
     inning_num = game_event.inning_label[1:]
-    team_pitching_id_bb = get_brooks_team_id(game_event.team_pitching_id_br).lower()
+    team_pitching_id_bb = get_brooks_team_id(game_event.team_pitching_id_br)
     pitcher_id_mlb = Player.find_by_bbref_id(session, game_event.pitcher_id_br).mlb_id
-    team_batting_id_bb = get_brooks_team_id(game_event.team_batting_id_br).lower()
+    team_batting_id_bb = get_brooks_team_id(game_event.team_batting_id_br)
     batter_id_mlb = Player.find_by_bbref_id(session, game_event.batter_id_br).mlb_id
     return f"{bbref_game_id}_{inning_num}_{team_pitching_id_bb}_{pitcher_id_mlb}_{team_batting_id_bb}_{batter_id_mlb}"
 
