@@ -168,6 +168,113 @@ AT_BAT_RESULTS_DP = [
     "Strikeout - DP",
 ]
 
+PPB_PITCH_LOG_DICT = {
+    "C":{
+        "description": "called strike",
+        "pitch_counts": 1
+    },
+    "S":{
+        "description": "swinging strike",
+        "pitch_counts": 1
+    },
+    "F":{
+        "description": "foul",
+        "pitch_counts": 1
+    },
+    "B":{
+        "description": "ball",
+        "pitch_counts": 1
+    },
+    "X":{
+        "description": "ball put into play by batter",
+        "pitch_counts": 1
+    },
+    "T":{
+        "description": "foul tip",
+        "pitch_counts": 1
+    },
+    "K":{
+        "description": "strike (unknown type)",
+        "pitch_counts": 1
+    },
+    "I":{
+        "description": "intentional ball",
+        "pitch_counts": 1
+    },
+    "H":{
+        "description": "hit batter",
+        "pitch_counts": 1
+    },
+    "L":{
+        "description": "foul bunt",
+        "pitch_counts": 1
+    },
+    "M":{
+        "description": "missed bunt attempt",
+        "pitch_counts": 1
+    },
+    "N":{
+        "description": "no pitch (on balks and interference calls)",
+        "pitch_counts": 0
+    },
+    "O":{
+        "description": "foul tip on bunt",
+        "pitch_counts": 1
+    },
+    "P":{
+        "description": "pitchout",
+        "pitch_counts": 1
+    },
+    "Q":{
+        "description": "swinging on pitchout",
+        "pitch_counts": 1
+    },
+    "R":{
+        "description": "foul ball on pitchout",
+        "pitch_counts": 1
+    },
+    "U":{
+        "description": "unknown or missed pitch",
+        "pitch_counts": 1
+    },
+    "V":{
+        "description": "called ball because pitcher went to his mouth",
+        "pitch_counts": 1
+    },
+    "Y":{
+        "description": "ball put into play on pitchout",
+        "pitch_counts": 1
+    },
+    "1":{
+        "description": "(pickoff throw to first)",
+        "pitch_counts": 0
+    },
+    "2":{
+        "description": "(pickoff throw to second)",
+        "pitch_counts": 0
+    },
+    "3":{
+        "description": "(pickoff throw to third)",
+        "pitch_counts": 0
+    },
+    ">":{
+        "description": "(runner going on the pitch)",
+        "pitch_counts": 0
+    },
+    "+":{
+        "description": "(pickoff throw by the catcher)",
+        "pitch_counts": 0
+    },
+    "*":{
+        "description": "(the following pitch was blocked by the catcher)",
+        "pitch_counts": 0
+    },
+    ".":{
+        "description": "(play not involving the batter)",
+        "pitch_counts": 0
+    },
+}
+
 VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dome"]
 
 BROOKS_DASHBOARD_DATE_FORMAT = "%m/%d/%Y"

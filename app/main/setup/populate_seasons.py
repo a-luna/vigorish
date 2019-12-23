@@ -67,6 +67,19 @@ def __add_mlb_seasons(session):
                 start_date='2019-10-01',
                 end_date='2019-10-30',
                 season_type=SEASON_TYPE_DICT['post']
+            ),
+            Season(
+                year=2020,
+                start_date='2019-03-26',
+                end_date='2019-09-29',
+                asg_date='2019-07-09',
+                season_type=SEASON_TYPE_DICT['reg']
+            ),
+            Season(
+                year=2020,
+                start_date='2019-10-01',
+                end_date='2019-10-30',
+                season_type=SEASON_TYPE_DICT['post']
             )
         ]
 

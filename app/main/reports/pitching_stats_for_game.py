@@ -3,7 +3,7 @@ import json
 from collections import Counter, defaultdict
 from copy import deepcopy
 
-from app.main.constants import TEAM_ID_DICT
+from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT
 from app.main.models.player import Player
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.file_util import write_json_dict_to_file
@@ -36,6 +36,7 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
         for game_event in inning.game_events:
             game_event.at_bat_id = get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event)
         all_pbp_events_for_game.extend(inning.game_events)
+    all_pbp_events_for_game.sort(key=lambda x: x.pbp_table_row_number)
     return Result.Ok((boxscore, all_pbp_events_for_game))
 
 
@@ -112,30 +113,61 @@ def reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game):
 def combine_at_bat_data(boxscore, all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids):
     boxscore_dict = boxscore.as_dict()
     for half_inning in boxscore.innings_list:
+        inning_events = []
         at_bat_ids_this_inning = set([game_event.at_bat_id for game_event in half_inning.game_events])
-        combined_at_bat_data = {}
-        for at_bat_id in at_bat_ids_this_inning:
+        ordered_at_bat_ids = order_at_bat_ids_by_time(at_bat_ids_this_inning, all_pbp_events_for_game)
+        for at_bat_id in ordered_at_bat_ids:
             pbp_events_for_at_bat = [
-                game_event.as_dict() for game_event
-                in all_pbp_events_for_game
+                game_event.as_dict()
+                for game_event in all_pbp_events_for_game
                 if game_event.at_bat_id == at_bat_id
             ]
+            for game_event in pbp_events_for_at_bat:
+                game_event["at_bat_id"] = at_bat_id
+            pbp_events_for_at_bat.sort(key=lambda x: x["pbp_table_row_number"])
             pfx_data_for_at_bat = [
                 pfx.as_dict() for pfx
                 in all_pfx_data_for_game
                 if pfx.at_bat_id == at_bat_id
             ]
-            combined_at_bat_data[at_bat_id] = {
+            for pfx in pfx_data_for_at_bat:
+                pfx["at_bat_id"] = at_bat_id
+            pfx_data_for_at_bat.sort(key=lambda x: x["ab_count"])
+            combined_at_bat_data = {
+                "event_type": "at_bat",
+                "at_bat_id": at_bat_id,
+                "pbp_table_row_number": pbp_events_for_at_bat[0]["pbp_table_row_number"],
+                "pitch_count_bbref_pitch_seq": pitch_count(pbp_events_for_at_bat[-1]["pitch_sequence"]),
+                "pitch_count_pitchfx": len(pfx_data_for_at_bat),
+                "pitch_sequence_description": pitch_sequence_description(pbp_events_for_at_bat[-1]["pitch_sequence"]),
                 "pbp_events": pbp_events_for_at_bat,
                 "pitchfx": pfx_data_for_at_bat
             }
+            inning_events.append(combined_at_bat_data)
+        if half_inning.substitutions:
+            substitutions_this_inning = [sub.as_dict() for sub in half_inning.substitutions]
+            inning_events.extend(substitutions_this_inning)
+        inning_events.sort(key=lambda x: x["pbp_table_row_number"])
         inning_dict = [
             inning for inning in boxscore_dict["innings_list"]
             if inning["inning_id"] == half_inning.inning_id
         ][0]
-        inning_dict["game_events"] = combined_at_bat_data
+        inning_dict["inning_events"] = inning_events
+        inning_dict.pop("game_events", None)
     return boxscore_dict
 
+
+def order_at_bat_ids_by_time(at_bat_ids_this_inning, all_pbp_events_for_game):
+    game_event_pbp_map = [{
+        at_bat_id: min(
+            game_event.pbp_table_row_number
+            for game_event in all_pbp_events_for_game
+            if game_event.at_bat_id == at_bat_id
+        )}
+        for at_bat_id in at_bat_ids_this_inning
+    ]
+    game_event_pbp_map.sort(key=lambda x: x["pbp_table_row_number"])
+    return game_event_pbp_map.keys()
 
 def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event):
     inning_num = game_event.inning_label[1:]
@@ -150,3 +182,22 @@ def get_brooks_team_id(br_team_id):
         if br_team_id in TEAM_ID_DICT:
             return TEAM_ID_DICT[br_team_id]
         return br_team_id
+
+
+def pitch_sequence_description(pitch_sequence):
+    total_pitches_in_sequence = pitch_count(pitch_sequence)
+    current_pitch_count = 0
+    sequence_description = []
+    for abbrev in pitch_sequence:
+        if PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"]:
+            current_pitch_count += 1
+            pitch_number = f"Pitch {current_pitch_count}/{total_pitches_in_sequence}"
+            pitch_description = f"{pitch_number}: {PPB_PITCH_LOG_DICT[abbrev]['description']}"
+            sequence_description.append(pitch_description)
+        else:
+            sequence_description.append(PPB_PITCH_LOG_DICT[abbrev]['description'])
+    return sequence_description
+
+
+def pitch_count(pitch_sequence):
+    return sum(PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"] for abbrev in pitch_sequence)

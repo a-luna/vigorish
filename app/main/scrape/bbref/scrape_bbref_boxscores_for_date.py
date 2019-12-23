@@ -1186,16 +1186,25 @@ def _create_innings_list(
         else:
             inning_label = f"b{inning_number}"
             inning_id = f"{game_id}_INN_BOT{inning_number:02d}"
+
         inning_events = [
             g for g in game_events
             if int(g.pbp_table_row_number) > start_row
             and int(g.pbp_table_row_number) < end_row
         ]
+        for game_event in inning_events:
+            g.inning_id = inning_id
+            g.inning_label = inning_label
+
         inning_substitutions = [
             sub for sub in substitutions
             if sub.pbp_table_row_number > start_row
             and sub.pbp_table_row_number < end_row
         ]
+        for sub in inning_substitutions:
+            sub.inning_id = inning_id
+            sub.inning_label = inning_label
+
         inning = BBRefHalfInning()
         inning.inning_id = inning_id
         inning.inning_label = inning_label
@@ -1203,10 +1212,6 @@ def _create_innings_list(
         inning.end_inning_summary = summaries_end[end_row]
         inning.game_events = inning_events
         inning.substitutions = inning_substitutions
-
-        for sub in inning_substitutions:
-            sub.inning_id = inning_id
-            sub.inning_label = inning_label
 
         match = INNING_TOTALS_REGEX.search(summaries_end[end_row])
         if match:

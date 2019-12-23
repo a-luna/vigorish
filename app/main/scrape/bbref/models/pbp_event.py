@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from app.main.constants import TEAM_ID_DICT
+from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT
 
 
 @dataclass
@@ -23,6 +23,28 @@ class BBRefPlayByPlayEvent():
     pitcher_id_br: str = "0"
     batter_id_br: str = "0"
     play_index_url: str = "0"
+
+
+    def pitch_sequence_description(self):
+        total_pitches_in_sequence = self.pitch_count()
+        current_pitch_count = 0
+        sequence_description = []
+        for abbrev in self.pitch_sequence:
+            pitch_description = PPB_PITCH_LOG_DICT[abbrev]['description']
+            if PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"]:
+                current_pitch_count += 1
+                pitch_number = f"Pitch {current_pitch_count}/{total_pitches_in_sequence}"
+                sequence_description.append(f"{pitch_number}: {pitch_description}")
+            else:
+                sequence_description.append(pitch_description)
+        return sequence_description
+
+
+    def pitch_count(self):
+        return sum(
+            PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"]
+            for abbrev in self.pitch_sequence
+        )
 
 
     def as_dict(self):
