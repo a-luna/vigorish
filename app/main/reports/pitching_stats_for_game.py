@@ -13,16 +13,10 @@ from app.main.util.s3_helper import get_bbref_boxscore_from_s3, get_all_pitchfx_
 
 def get_pitching_stats_for_game(session, bbref_game_id):
     result = get_all_pbp_events_for_game(session, bbref_game_id)
-    if result.failure:
-        return result
     all_pbp_events_for_game = result.value
     result = get_all_pfx_data_for_game(session, bbref_game_id)
-    if result.failure:
-        return result
     all_pfx_data_for_game = result.value
     result = reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game)
-    if result.failure:
-        return result
     at_bat_ids = result.value
     combined_data = combine_at_bat_data(all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids)
     combined_data_json = json.dumps(combined_data, indent=2, sort_keys=False)
@@ -119,12 +113,12 @@ def combine_at_bat_data(all_pbp_events_for_game, all_pfx_data_for_game, at_bat_i
     combined_at_bat_data = {}
     for at_bat_id in at_bat_ids:
         pbp_events_for_at_bat = [
-            game_event for game_event
+            game_event.as_dict() for game_event
             in all_pbp_events_for_game
             if game_event.at_bat_id == at_bat_id
         ]
         pfx_data_for_at_bat = [
-            pfx for pfx
+            pfx.as_dict() for pfx
             in all_pfx_data_for_game
             if pfx.at_bat_id == at_bat_id
         ]
