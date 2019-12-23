@@ -113,7 +113,7 @@ def combine_at_bat_data(boxscore, all_pbp_events_for_game, all_pfx_data_for_game
     boxscore_dict = boxscore.as_dict()
     for half_inning in boxscore.innings_list:
         at_bat_ids_this_inning = set([game_event.at_bat_id for game_event in half_inning.game_events])
-        combined_at_bat_data = []
+        combined_at_bat_data = {}
         for at_bat_id in at_bat_ids_this_inning:
             pbp_events_for_at_bat = [
                 game_event.as_dict() for game_event
@@ -125,10 +125,10 @@ def combine_at_bat_data(boxscore, all_pbp_events_for_game, all_pfx_data_for_game
                 in all_pfx_data_for_game
                 if pfx.at_bat_id == at_bat_id
             ]
-            combined_at_bat_data.append({
+            combined_at_bat_data[at_bat_id] = {
                 "pbp_events": pbp_events_for_at_bat,
                 "pitchfx": pfx_data_for_at_bat
-            })
+            }
         inning_dict = [
             inning for inning in boxscore_dict["innings_list"]
             if inning["inning_id"] == half_inning.inning_id
