@@ -1,9 +1,13 @@
 """One-off functions I used for various auditing/refactoring efforts."""
+import csv
+import dataclasses
 import json
 from collections import Counter
+from copy import deepcopy
 from pathlib import Path
 from pprint import pprint
 
+from dataclass_csv import DataclassReader, accept_whitespaces
 from halo import Halo
 from tqdm import tqdm
 
@@ -189,3 +193,78 @@ def bulkupdate(db, year):
     pprint(game_log_error_dict, indent=4)
     pprint(pfx_error_dict, indent=4)
     return exit_app_success(db, "Successfully updated all pitch logs with new id format.")
+
+
+@accept_whitespaces
+@dataclasses.dataclass
+class PlayerIdMap:
+    mlb_id: int = dataclasses.field(default=None)
+    mlb_name: str = dataclasses.field(default=None)
+    mlb_pos: str = dataclasses.field(default=None)
+    mlb_team: str = dataclasses.field(default=None)
+    mlb_team_long: str = dataclasses.field(default=None)
+    bats: str = dataclasses.field(default=None)
+    throws: str = dataclasses.field(default=None)
+    birth_year: str = dataclasses.field(default=None)
+    bp_id: int = dataclasses.field(default=None)
+    bref_id: str = dataclasses.field(default=None)
+    bref_name: str = dataclasses.field(default=None)
+    cbs_id: int = dataclasses.field(default=None)
+    cbs_name: str = dataclasses.field(default=None)
+    cbs_pos: str = dataclasses.field(default=None)
+    espn_id: int = dataclasses.field(default=None)
+    espn_name: str = dataclasses.field(default=None)
+    espn_pos: str = dataclasses.field(default=None)
+    fg_id: str = dataclasses.field(default=None)
+    fg_name: str = dataclasses.field(default=None)
+    fg_pos: str = dataclasses.field(default=None)
+    lahman_id: str = dataclasses.field(default=None)
+    nfbc_id: int = dataclasses.field(default=None)
+    nfbc_name: str = dataclasses.field(default=None)
+    nfbc_pos: str = dataclasses.field(default=None)
+    retro_id: str = dataclasses.field(default=None)
+    retro_name: str = dataclasses.field(default=None)
+    debut: int = dataclasses.field(default=None)
+    yahoo_id: int = dataclasses.field(default=None)
+    yahoo_name: str = dataclasses.field(default=None)
+    yahoo_pos: str = dataclasses.field(default=None)
+    mlb_depth: str = dataclasses.field(default=None)
+    ottoneu_id: str = dataclasses.field(default=None)
+    ottoneu_name: str = dataclasses.field(default=None)
+    ottoneu_pos: str = dataclasses.field(default=None)
+    rotowire_id: int = dataclasses.field(default=None)
+    rotowire_name: str = dataclasses.field(default=None)
+    rotowire_pos: str = dataclasses.field(default=None)
+
+
+def update_player_id_map():
+    IDMAP_PATH = Path(__file__).resolve().parent.parent / "setup" / "csv" / "idmap.csv"
+    IDMAP_NEW_PATH = Path(__file__).resolve().parent.parent /  "setup" / "csv" / "idmap_new.csv"
+    with open(IDMAP_PATH) as f:
+        with open(IDMAP_NEW_PATH) as f_new:
+            id_map = DataclassReader(f, PlayerIdMap)
+            id_map_list = list(id_map)
+            player_ids = set([id.mlb_id for id in id_map_list])
+            id_map_new = DataclassReader(f_new, PlayerIdMap)
+            id_map_list_new = list(id_map_new)
+            player_ids_new = set([id.mlb_id for id in id_map_list_new])
+            net_new_ids = player_ids_new - player_ids
+            if not net_new_ids:
+                return
+            id_map_updated = [dataclasses.asdict(id_map) for id_map in id_map_list]
+            for player_id_mlb in list(net_new_ids):
+                player_id_matches = [id_map for id_map in id_map_list_new if id_map.mlb_id == player_id_mlb]
+                if player_id_matches:
+                    player_id_map = player_id_matches[0]
+                    if player_id_map.birth_year:
+                        player_id_map.birth_year = player_id_map.birth_year[-4:]
+                    if player_id_map.mlb_id:
+                        id_map_updated.append(dataclasses.asdict(player_id_map))
+                else:
+                    print(f"Error! Failed to retrieve player id map for mlb_id: {player_id_mlb} from idmap_new.csv")
+            id_map_updated.sort(key=lambda x: x["mlb_name"])
+            with open("idmap_updated.csv", mode='w') as f_updated:
+                fieldnames = ["mlb_id","mlb_name","mlb_pos","mlb_team","mlb_team_long","bats","throws","birth_year","bp_id","bref_id","bref_name","cbs_id","cbs_name","cbs_pos","espn_id","espn_name","espn_pos","fg_id","fg_name","fg_pos","lahman_id","nfbc_id","nfbc_name","nfbc_pos","retro_id","retro_name","debut","yahoo_id","yahoo_name","yahoo_pos","mlb_depth","ottoneu_id","ottoneu_name","ottoneu_pos","rotowire_id","rotowire_name","rotowire_pos"]
+                writer = csv.DictWriter(f_updated, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(id_map_updated)
