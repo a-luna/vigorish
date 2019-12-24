@@ -286,7 +286,7 @@ def get_brooks_team_id(br_team_id):
 
 def get_pitch_sequence_description(game_event):
     pitch_sequence = game_event["pitch_sequence"]
-    total_pitches_in_sequence = pitch_count(pitch_sequence)
+    total_pitches_in_sequence = get_pitch_count(pitch_sequence)
     current_pitch_count = 0
     sequence_description = []
     for abbrev in pitch_sequence:
