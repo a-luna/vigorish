@@ -19,7 +19,11 @@ def get_pitching_stats_for_game(session, bbref_game_id):
     result = reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game)
     at_bat_ids_ordered = result.value
     combined_data = combine_boxscore_and_pitchfx_data(
-        boxscore, all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids_ordered
+        boxscore,
+        all_pbp_events_for_game,
+        pitchfx_logs_for_game,
+        all_pfx_data_for_game,
+        at_bat_ids_ordered
     )
     combined_data_json = json.dumps(combined_data, indent=2, sort_keys=False)
     result = write_json_dict_to_file(combined_data_json, f"{bbref_game_id}_COMBINED_DATA.json")
