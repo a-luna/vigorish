@@ -169,7 +169,7 @@ def combine_boxscore_and_pitchfx_data(
             for pfx in pfx_data_for_at_bat:
                 pfx["at_bat_id"] = at_bat_id
             pfx_data_for_at_bat.sort(key=lambda x: x["ab_count"])
-            pitch_count_bbref_pitch_seq = pitch_count(pbp_events_for_at_bat[-1]["pitch_sequence"])
+            pitch_count_bbref_pitch_seq = get_pitch_count(pbp_events_for_at_bat[-1]["pitch_sequence"])
             pitch_count_pitchfx = len(pfx_data_for_at_bat)
             pitch_sequence_description = get_pitch_sequence_description(pbp_events_for_at_bat[-1])
             combined_at_bat_data = {
@@ -228,7 +228,44 @@ def combine_boxscore_and_pitchfx_data(
     pitchfx_log_dicts = [pfx_log.as_dict() for pfx_log in pitchfx_logs_for_game]
     for pfx_log_dict in pitchfx_log_dicts:
         pfx_log_dict.pop("pitchfx_log", None)
+    pitch_count_by_inning = {}
+    all_at_bats = []
+    for inning in boxscore_dict["innings_list"]:
+        pitch_count_by_pitcher_id = defaultdict(int)
+        at_bats_this_inning = [
+            event for event in inning["inning_events"]
+            if event["event_type"] == "at_bat"
+        ]
+        for event in at_bat_ids_this_inning:
+            for pfx in event["pitchfx"]:
+                pitch_count_by_pitcher_id[pfx.pitcher_id] += 1
+        pitch_count_by_inning[inning.inning_label] = pitch_count_by_pitcher_id
+        all_at_bats.extend(at_bats_this_inning)
+    at_bats_with_complete_pitchfx_data_count = len([
+        at_bat for at_bat in all_at_bats
+        if at_bat["pitchfx_data_for_at_bat_is_complete"] == True
+    ])
+    at_bats_missing_pitchfx_data_count = len([
+        at_bat for at_bat in all_at_bats
+        if at_bat["total_missing_pitchfx"] > 0
+    ])
+    at_bats_extra_pitchfx_data_count = len([
+        at_bat for at_bat in all_at_bats
+        if at_bat["total_missing_pitchfx"] < 0
+    ])
+    total_pitch_count_bbref_pitch_seq = sum(
+        at_bat["pitch_count_bbref_pitch_seq"] for at_bat in all_at_bats
+    )
+    total_pitch_count_pitchfx = sum(at_bat["pitch_count_pitchfx"] for at_bat in all_at_bats)
+    total_missing_pitchfx = sum(at_bat["total_missing_pitchfx"] for at_bat in all_at_bats)
     boxscore_dict["pitchfx_logs"] = pitchfx_log_dicts
+    boxscore_dict["pitch_count_by_inning"] = pitch_count_by_inning
+    boxscore_dict["at_bats_with_complete_pitchfx_data_count"] = at_bats_with_complete_pitchfx_data_count
+    boxscore_dict["at_bats_missing_pitchfx_data_count"] = at_bats_missing_pitchfx_data_count
+    boxscore_dict["at_bats_extra_pitchfx_data_count"] = at_bats_extra_pitchfx_data_count
+    boxscore_dict["total_pitch_count_bbref_pitch_seq"] = total_pitch_count_bbref_pitch_seq
+    boxscore_dict["total_pitch_count_pitchfx"] = total_pitch_count_pitchfx
+    boxscore_dict["total_missing_pitchfx"] = total_missing_pitchfx
     return boxscore_dict
 
 
@@ -264,5 +301,5 @@ def get_pitch_sequence_description(game_event):
     return sequence_description
 
 
-def pitch_count(pitch_sequence):
+def get_pitch_count(pitch_sequence):
     return sum(PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"] for abbrev in pitch_sequence)

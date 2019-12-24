@@ -239,7 +239,7 @@ PPB_PITCH_LOG_DICT = {
     },
     "V":{
         "description": "Called ball because pitcher went to his mouth",
-        "pitch_counts": 1
+        "pitch_counts": 0
     },
     "Y":{
         "description": "Ball put into play on pitchout",
