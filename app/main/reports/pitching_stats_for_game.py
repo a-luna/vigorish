@@ -236,7 +236,7 @@ def combine_boxscore_and_pitchfx_data(
             event for event in inning["inning_events"]
             if event["event_type"] == "at_bat"
         ]
-        for event in at_bat_ids_this_inning:
+        for event in at_bats_this_inning:
             for pfx in event["pitchfx"]:
                 pitch_count_by_pitcher_id[pfx.pitcher_id] += 1
         pitch_count_by_inning[inning.inning_label] = pitch_count_by_pitcher_id
