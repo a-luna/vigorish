@@ -193,7 +193,7 @@ def combine_boxscore_and_pitchfx_data(
             inning_events.extend(substitutions_this_inning)
 
         inning_events.sort(key=lambda x: x["pbp_table_row_number"])
-        at_bats_this_inning = [event for event in inning_events if event.event_type == "at_bat"]
+        at_bats_this_inning = [event for event in inning_events if event["event_type"] == "at_bat"]
         at_bats_with_complete_pitchfx_data_count = len([
             at_bat for at_bat in at_bats_this_inning
             if at_bat["pitchfx_data_for_at_bat_is_complete"] == True
