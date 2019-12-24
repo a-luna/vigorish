@@ -170,107 +170,107 @@ AT_BAT_RESULTS_DP = [
 
 PPB_PITCH_LOG_DICT = {
     "C":{
-        "description": "called strike",
+        "description": "Called strike",
         "pitch_counts": 1
     },
     "S":{
-        "description": "swinging strike",
+        "description": "Swinging strike",
         "pitch_counts": 1
     },
     "F":{
-        "description": "foul",
+        "description": "Foul",
         "pitch_counts": 1
     },
     "B":{
-        "description": "ball",
+        "description": "Ball",
         "pitch_counts": 1
     },
     "X":{
-        "description": "ball put into play by batter",
+        "description": "Ball put into play by batter",
         "pitch_counts": 1
     },
     "T":{
-        "description": "foul tip",
+        "description": "Foul tip",
         "pitch_counts": 1
     },
     "K":{
-        "description": "strike (unknown type)",
+        "description": "Strike (unknown type)",
         "pitch_counts": 1
     },
     "I":{
-        "description": "intentional ball",
+        "description": "Intentional ball",
         "pitch_counts": 1
     },
     "H":{
-        "description": "hit batter",
+        "description": "Hit batter",
         "pitch_counts": 1
     },
     "L":{
-        "description": "foul bunt",
+        "description": "Foul bunt",
         "pitch_counts": 1
     },
     "M":{
-        "description": "missed bunt attempt",
+        "description": "Missed bunt attempt",
         "pitch_counts": 1
     },
     "N":{
-        "description": "no pitch (on balks and interference calls)",
+        "description": "No pitch (on balks and interference calls)",
         "pitch_counts": 0
     },
     "O":{
-        "description": "foul tip on bunt",
+        "description": "Foul tip on bunt",
         "pitch_counts": 1
     },
     "P":{
-        "description": "pitchout",
+        "description": "Pitchout",
         "pitch_counts": 1
     },
     "Q":{
-        "description": "swinging on pitchout",
+        "description": "Swinging on pitchout",
         "pitch_counts": 1
     },
     "R":{
-        "description": "foul ball on pitchout",
+        "description": "Foul ball on pitchout",
         "pitch_counts": 1
     },
     "U":{
-        "description": "unknown or missed pitch",
+        "description": "Unknown or missed pitch",
         "pitch_counts": 1
     },
     "V":{
-        "description": "called ball because pitcher went to his mouth",
+        "description": "Called ball because pitcher went to his mouth",
         "pitch_counts": 1
     },
     "Y":{
-        "description": "ball put into play on pitchout",
+        "description": "Ball put into play on pitchout",
         "pitch_counts": 1
     },
     "1":{
-        "description": "(pickoff throw to first)",
+        "description": "(Pickoff throw to first)",
         "pitch_counts": 0
     },
     "2":{
-        "description": "(pickoff throw to second)",
+        "description": "(Pickoff throw to second)",
         "pitch_counts": 0
     },
     "3":{
-        "description": "(pickoff throw to third)",
+        "description": "(Pickoff throw to third)",
         "pitch_counts": 0
     },
     ">":{
-        "description": "(runner going on the pitch)",
+        "description": "(Runner going on the pitch)",
         "pitch_counts": 0
     },
     "+":{
-        "description": "(pickoff throw by the catcher)",
+        "description": "(Pickoff throw by the catcher)",
         "pitch_counts": 0
     },
     "*":{
-        "description": "(the following pitch was blocked by the catcher)",
+        "description": "(The following pitch was blocked by the catcher)",
         "pitch_counts": 0
     },
     ".":{
-        "description": "(play not involving the batter)",
+        "description": "(Play not involving the batter)",
         "pitch_counts": 0
     },
 }
