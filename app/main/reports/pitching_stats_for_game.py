@@ -228,18 +228,17 @@ def combine_boxscore_and_pitchfx_data(
     pitchfx_log_dicts = [pfx_log.as_dict() for pfx_log in pitchfx_logs_for_game]
     for pfx_log_dict in pitchfx_log_dicts:
         pfx_log_dict.pop("pitchfx_log", None)
-    pitch_count_by_inning = {}
+    pitch_count_by_pitcher_id = defaultdict(lambda: defaultdict(int))
     all_at_bats = []
     for inning in boxscore_dict["innings_list"]:
-        pitch_count_by_pitcher_id = defaultdict(int)
+        inning_label = inning["inning_label"]
         at_bats_this_inning = [
             event for event in inning["inning_events"]
             if event["event_type"] == "at_bat"
         ]
         for event in at_bats_this_inning:
             for pfx in event["pitchfx"]:
-                pitch_count_by_pitcher_id[pfx["pitcher_id"]] += 1
-        pitch_count_by_inning[inning["inning_label"]] = pitch_count_by_pitcher_id
+                pitch_count_by_pitcher_id[pfx["pitcher_id"]][inning_label] += 1
         all_at_bats.extend(at_bats_this_inning)
     at_bats_with_complete_pitchfx_data_count = len([
         at_bat for at_bat in all_at_bats
@@ -259,7 +258,7 @@ def combine_boxscore_and_pitchfx_data(
     total_pitch_count_pitchfx = sum(at_bat["pitch_count_pitchfx"] for at_bat in all_at_bats)
     total_missing_pitchfx = sum(at_bat["total_missing_pitchfx"] for at_bat in all_at_bats)
     boxscore_dict["pitchfx_logs"] = pitchfx_log_dicts
-    boxscore_dict["pitch_count_by_inning"] = pitch_count_by_inning
+    boxscore_dict["pitch_count_by_pitcher_id"] = pitch_count_by_pitcher_id
     boxscore_dict["at_bats_with_complete_pitchfx_data_count"] = at_bats_with_complete_pitchfx_data_count
     boxscore_dict["at_bats_missing_pitchfx_data_count"] = at_bats_missing_pitchfx_data_count
     boxscore_dict["at_bats_extra_pitchfx_data_count"] = at_bats_extra_pitchfx_data_count
