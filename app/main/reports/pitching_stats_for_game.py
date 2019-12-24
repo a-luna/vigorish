@@ -171,7 +171,7 @@ def combine_boxscore_and_pitchfx_data(
             pfx_data_for_at_bat.sort(key=lambda x: x["ab_count"])
             pitch_count_bbref_pitch_seq = pitch_count(pbp_events_for_at_bat[-1]["pitch_sequence"])
             pitch_count_pitchfx = len(pfx_data_for_at_bat)
-            pitch_sequence_description = pitch_sequence_description(pbp_events_for_at_bat[-1])
+            pitch_sequence_description = get_pitch_sequence_description(pbp_events_for_at_bat[-1])
             combined_at_bat_data = {
                 "event_type": "at_bat",
                 "at_bat_id": at_bat_id,
@@ -247,7 +247,7 @@ def get_brooks_team_id(br_team_id):
         return br_team_id
 
 
-def pitch_sequence_description(game_event):
+def get_pitch_sequence_description(game_event):
     pitch_sequence = game_event["pitch_sequence"]
     total_pitches_in_sequence = pitch_count(pitch_sequence)
     current_pitch_count = 0
