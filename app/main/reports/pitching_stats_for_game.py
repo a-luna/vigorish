@@ -238,8 +238,8 @@ def combine_boxscore_and_pitchfx_data(
         ]
         for event in at_bats_this_inning:
             for pfx in event["pitchfx"]:
-                pitch_count_by_pitcher_id[pfx.pitcher_id] += 1
-        pitch_count_by_inning[inning.inning_label] = pitch_count_by_pitcher_id
+                pitch_count_by_pitcher_id[pfx["pitcher_id"]] += 1
+        pitch_count_by_inning[inning["inning_label"]] = pitch_count_by_pitcher_id
         all_at_bats.extend(at_bats_this_inning)
     at_bats_with_complete_pitchfx_data_count = len([
         at_bat for at_bat in all_at_bats
