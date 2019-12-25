@@ -238,7 +238,7 @@ PPB_PITCH_LOG_DICT = {
         "pitch_counts": 1
     },
     "V":{
-        "description": "Called ball because pitcher went to his mouth",
+        "description": "(Called ball because pitcher went to his mouth)",
         "pitch_counts": 0
     },
     "Y":{
