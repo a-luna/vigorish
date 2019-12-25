@@ -312,6 +312,7 @@ def get_pitch_count_by_pitcher_by_inning(updated_innings_list):
         for event in at_bats_this_inning:
             for pfx in event["pitchfx"]:
                 pitch_count_by_pitcher_id[pfx["pitcher_id"]][inning_label] += 1
+    return pitch_count_by_pitcher_id
 
 
 def update_pitchfx_log_with_combined_data(pfx_log, pitchfx_pitch_count_dict):
