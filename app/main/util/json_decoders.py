@@ -241,6 +241,8 @@ def decode_bbref_batting_stats(json_dict):
     try:
         bat_stats = BBRefBatStats(details=[])
         bat_stats.player_id_br = json_dict["player_id_br"]
+        bat_stats.player_team_id_br = json_dict["player_team_id_br"]
+        bat_stats.opponent_team_id_br = json_dict["opponent_team_id_br"]
         bat_stats.at_bats = int(json_dict["at_bats"])
         bat_stats.runs_scored = int(json_dict["runs_scored"])
         bat_stats.hits = int(json_dict["hits"])
