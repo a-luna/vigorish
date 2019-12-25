@@ -187,7 +187,7 @@ def get_all_pbp_events_for_at_bat(all_pbp_events_for_game, at_bat_id):
         if game_event.at_bat_id == at_bat_id
     ]
     for game_event in pbp_events_for_at_bat:
-        game_event["at_bat_id"] = ab_id
+        game_event["at_bat_id"] = at_bat_id
     pbp_events_for_at_bat.sort(key=lambda x: x["pbp_table_row_number"])
     return pbp_events_for_at_bat
 
