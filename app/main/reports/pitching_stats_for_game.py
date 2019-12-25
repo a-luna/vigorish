@@ -240,6 +240,7 @@ def update_boxscore_with_combined_data(boxscore, game_events_combined_data, pitc
     updated_pitchfx_logs = []
     for pfx_log in pitchfx_logs_for_game:
         pfx_log_dict = pfx_log.as_dict()
+        pfx_log_dict["duplicate_pitches_removed_count"] = pfx_log.duplicate_pitches_removed_count
         pfx_log_dict.pop("pitchfx_log", None)
         updated_pitchfx_logs.append(pfx_log_dict)
 
