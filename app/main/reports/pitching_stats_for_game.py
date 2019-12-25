@@ -120,7 +120,7 @@ def remove_duplicate_pitchfx_data(pitchfx_log, game_start_time):
 def get_pitch_count_by_inning(pitchfx_log):
     pitch_count_by_inning = defaultdict(int)
     for pfx in pitchfx_log:
-        pitch_count_by_inning[pfx.inning[-1]] += 1
+        pitch_count_by_inning[str(pfx.inning)] += 1
     return pitch_count_by_inning
 
 
