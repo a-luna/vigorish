@@ -84,7 +84,7 @@ def remove_duplicate_pitchfx_data(pitchfx_log, game_start_time):
     unique_guids = Counter(list(set(pitch_guids)))
     duplicate_guids = histogram - unique_guids
     if not duplicate_guids:
-        pitchfx_log.removed_count = 0
+        pitchfx_log.duplicate_pitches_removed_count = 0
         return pitchfx_log
     dupe_rank_dict = defaultdict(list)
     dupe_id_map = {}
