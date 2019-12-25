@@ -30,7 +30,7 @@ def update_boxscore_with_pitchfx_data(session, bbref_game_id):
     boxscore_dict = update_boxscore_with_combined_data(
         boxscore, game_events_combined_data, pitchfx_logs_for_game
     )
-    boxscore_json = json.dumps(boxscore_data, indent=2, sort_keys=False)
+    boxscore_json = json.dumps(boxscore_dict, indent=2, sort_keys=False)
     result = write_json_dict_to_file(boxscore_json, f"{bbref_game_id}_COMBINED_DATA.json")
     if result.failure:
         return result
