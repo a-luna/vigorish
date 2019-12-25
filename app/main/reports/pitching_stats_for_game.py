@@ -238,7 +238,6 @@ def update_boxscore_with_combined_data(boxscore, game_events_combined_data, pitc
         updated_innings_list.append(inning_dict)
 
     updated_pitchfx_logs = []
-    pitchfx_pitch_count_dict = get_pitch_count_by_pitcher_by_inning(updated_innings_list)
     for pfx_log in pitchfx_logs_for_game:
         pfx_log_dict = pfx_log.as_dict()
         pfx_log_dict.pop("pitchfx_log", None)
