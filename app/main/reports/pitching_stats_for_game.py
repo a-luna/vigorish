@@ -161,7 +161,7 @@ def combine_boxscore_and_pitchfx_data(all_pbp_events_for_game, all_pfx_data_for_
         pfx_data_for_at_bat = get_all_pfx_data_for_at_bat(all_pfx_data_for_game, ab_id)
         first_event_this_at_bat = pbp_events_for_at_bat[0]
         final_event_this_at_bat = pbp_events_for_at_bat[-1]
-        pitch_count_pitch_seq = get_total_pitches_in_sequence(pitch_sequence)
+        pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
         pitch_count_pitchfx = len(pfx_data_for_at_bat)
         pitch_sequence_description = get_detailed_pitch_sequence_description(final_event_this_at_bat)
         combined_at_bat_data = {
