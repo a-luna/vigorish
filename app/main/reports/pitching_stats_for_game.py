@@ -232,7 +232,9 @@ def get_detailed_pitch_sequence_description(game_event):
 def update_boxscore_with_combined_data(boxscore, game_events_combined_data, pitchfx_logs_for_game):
     updated_innings_list = []
     for inning in boxscore.innings_list:
-        inning_dict = update_inning_with_combined_data(inning, game_events_combined_data)
+        inning_dict = update_inning_with_combined_data(
+            inning, game_events_combined_data, boxscore.player_team_dict
+        )
         updated_innings_list.append(inning_dict)
 
     updated_pitchfx_logs = []
@@ -260,7 +262,7 @@ def update_boxscore_with_combined_data(boxscore, game_events_combined_data, pitc
     return boxscore_dict
 
 
-def update_inning_with_combined_data(inning, game_events_combined_data):
+def update_inning_with_combined_data(inning, game_events_combined_data, player_team_dict):
     at_bat_ids_this_inning = set([game_event.at_bat_id for game_event in inning.game_events])
     inning_events = [
         event for event in game_events_combined_data
@@ -277,7 +279,7 @@ def update_inning_with_combined_data(inning, game_events_combined_data):
         substitutions_this_inning = [sub.as_dict() for sub in inning.substitutions]
         for sub in substitutions_this_inning:
             sub["event_type"] = "player_substitution"
-            sub["sub_team_id"] = boxscore.player_team_dict.get(sub["incoming_player_id_br"], None)
+            sub["sub_team_id"] = player_team_dict.get(sub["incoming_player_id_br"], None)
         inning_events.extend(substitutions_this_inning)
     inning_events.sort(key=lambda x: x["pbp_table_row_number"])
 
