@@ -120,7 +120,7 @@ def remove_duplicate_pitchfx_data(pitchfx_log, game_start_time):
 def get_pitch_count_by_inning(pitchfx_log):
     pitch_count_by_inning = defaultdict(int)
     for pfx in pitchfx_log:
-        pitch_count_by_inning[str(pfx.inning)] += 1
+        pitch_count_by_inning[pfx.inning] += 1
     return pitch_count_by_inning
 
 
@@ -240,7 +240,8 @@ def update_boxscore_with_combined_data(boxscore, game_events_combined_data, pitc
     updated_pitchfx_logs = []
     pitchfx_pitch_count_dict = get_pitch_count_by_pitcher_by_inning(updated_innings_list)
     for pfx_log in pitchfx_logs_for_game:
-        pfx_log_dict = update_pitchfx_log_with_combined_data(pfx_log, pitchfx_pitch_count_dict)
+        pfx_log_dict = pfx_log.as_dict()
+        pfx_log_dict.pop("pitchfx_log", None)
         updated_pitchfx_logs.append(pfx_log_dict)
 
     total_pitchfx_complete_count = sum(inning["pitchfx_complete_count"] for inning in updated_innings_list)
@@ -300,25 +301,3 @@ def get_brooks_team_id(br_team_id):
         if br_team_id in TEAM_ID_DICT:
             return TEAM_ID_DICT[br_team_id]
         return br_team_id
-
-
-def get_pitch_count_by_pitcher_by_inning(updated_innings_list):
-    pitch_count_by_pitcher_id = defaultdict(lambda: defaultdict(int))
-    for inning in updated_innings_list:
-        inning_label = inning["inning_label"][-1]
-        at_bats_this_inning = [
-            event for event in inning["inning_events"] if event["event_type"] == "at_bat"
-        ]
-        for event in at_bats_this_inning:
-            for pfx in event["pitchfx"]:
-                pitch_count_by_pitcher_id[pfx["pitcher_id"]][inning_label] += 1
-    return pitch_count_by_pitcher_id
-
-
-def update_pitchfx_log_with_combined_data(pfx_log, pitchfx_pitch_count_dict):
-    pfx_log_dict = pfx_log.as_dict()
-    pfx_log_dict["pitch_count_by_inning_brooks_pitch_logs"] = pfx_log_dict["pitch_count_by_inning"]
-    pfx_log_dict["pitch_count_by_inning_pitchfx"] = pitchfx_pitch_count_dict[pfx_log_dict["pitcher_id_mlb"]]
-    pfx_log_dict.pop("pitchfx_log", None)
-    pfx_log_dict.pop("pitch_count_by_inning", None)
-    return pfx_log_dict
