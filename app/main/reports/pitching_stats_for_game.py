@@ -159,15 +159,15 @@ def combine_boxscore_and_pitchfx_data(all_pbp_events_for_game, all_pfx_data_for_
     for ab_id in at_bat_ids:
         pbp_events_for_at_bat = get_all_pbp_events_for_at_bat(all_pbp_events_for_game, ab_id)
         pfx_data_for_at_bat = get_all_pfx_data_for_at_bat(all_pfx_data_for_game, ab_id)
-        pbp_table_row_number = pbp_events_for_at_bat[0]["pbp_table_row_number"]
-        pitch_sequence = pbp_events_for_at_bat[-1]["pitch_sequence"]
+        first_event_this_at_bat = pbp_events_for_at_bat[0]
+        final_event_this_at_bat = pbp_events_for_at_bat[-1]
         pitch_count_pitch_seq = get_total_pitches_in_sequence(pitch_sequence)
         pitch_count_pitchfx = len(pfx_data_for_at_bat)
-        pitch_sequence_description = get_detailed_pitch_sequence_description(pitch_sequence)
+        pitch_sequence_description = get_detailed_pitch_sequence_description(final_event_this_at_bat)
         combined_at_bat_data = {
             "event_type": "at_bat",
             "at_bat_id": ab_id,
-            "pbp_table_row_number": pbp_table_row_number,
+            "pbp_table_row_number": first_event_this_at_bat["pbp_table_row_number"],
             "pitchfx_data_complete": pitch_count_pitch_seq == pitch_count_pitchfx,
             "pitch_count_bbref_pitch_seq": pitch_count_pitch_seq,
             "pitch_count_pitchfx": pitch_count_pitchfx,
@@ -208,11 +208,11 @@ def get_total_pitches_in_sequence(pitch_sequence):
     return sum(PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"] for abbrev in pitch_sequence)
 
 
-def get_detailed_pitch_sequence_description(pitch_sequence):
-    total_pitches_in_sequence = get_total_pitches_in_sequence(pitch_sequence)
+def get_detailed_pitch_sequence_description(game_event):
+    total_pitches_in_sequence = get_total_pitches_in_sequence(game_event["pitch_sequence"])
     current_pitch_count = 0
     sequence_description = []
-    for abbrev in pitch_sequence:
+    for abbrev in game_event["pitch_sequence"]:
         if PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"]:
             current_pitch_count += 1
             space_count = 1
