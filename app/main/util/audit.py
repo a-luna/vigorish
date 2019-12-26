@@ -236,35 +236,42 @@ class PlayerIdMap:
     rotowire_name: str = dataclasses.field(default=None)
     rotowire_pos: str = dataclasses.field(default=None)
 
-
 def update_player_id_map():
     IDMAP_PATH = Path(__file__).resolve().parent.parent / "setup/csv/idmap.csv"
     IDMAP_NEW_PATH = Path(__file__).resolve().parent.parent / "setup/csv/idmap_new.csv"
     with open(IDMAP_PATH) as f:
         with open(IDMAP_NEW_PATH) as f_new:
-            id_map = DataclassReader(f, PlayerIdMap)
-            id_map_list = list(id_map)
-            player_ids = set([id.mlb_id for id in id_map_list])
-            id_map_new = DataclassReader(f_new, PlayerIdMap)
-            id_map_list_new = list(id_map_new)
-            player_ids_new = set([id.mlb_id for id in id_map_list_new])
-            net_new_ids = player_ids_new - player_ids
-            if not net_new_ids:
+            id_map_csv_reader = DataclassReader(f, PlayerIdMap)
+            current_id_map = [id_map for id_map in list(id_map_csv_reader) if id_map.bref_id]
+            current_player_ids = set([id_map.mlb_id for id_map in current_id_map])
+            new_id_map_csv_reader = DataclassReader(f_new, PlayerIdMap)
+            new_id_map = list(new_id_map_csv_reader)
+            new_player_ids = set([id_map.mlb_id for id_map in new_id_map])
+            ids_to_add = new_player_ids - current_player_ids
+            if not ids_to_add:
                 return
-            id_map_updated = [dataclasses.asdict(id_map) for id_map in id_map_list]
-            for player_id_mlb in list(net_new_ids):
-                player_id_matches = [id_map for id_map in id_map_list_new if id_map.mlb_id == player_id_mlb]
-                if player_id_matches:
-                    player_id_map = player_id_matches[0]
-                    if player_id_map.birth_year:
-                        player_id_map.birth_year = player_id_map.birth_year[-4:]
-                    if player_id_map.mlb_id:
-                        id_map_updated.append(dataclasses.asdict(player_id_map))
+            updated_id_map = [dataclasses.asdict(id_map) for id_map in current_id_map]
+            ids_added_details = []
+            potential_ids_to_add = [
+                dataclasses.asdict(id_map) for id_map in new_id_map
+                if id_map.mlb_id in list(ids_to_add)
+            ]
+            for id_map in potential_ids_to_add:
+                if id_map["birth_year"]:
+                    id_map["birth_year"] = id_map["birth_year"][-4:]
+                if id_map["mlb_id"]:
+                    ids_added_details.append({
+                        "player_name": id_map["mlb_name"],
+                        "mlb_id": id_map["mlb_id"],
+                        "bbref_id": id_map["bref_id"]
+                    })
+                    updated_id_map.append(id_map)
                 else:
-                    print(f"Error! Failed to retrieve player id map for mlb_id: {player_id_mlb} from idmap_new.csv")
-            id_map_updated.sort(key=lambda x: x["mlb_name"])
+                    print(f'Error! Failed to retrieve player id map for player: {id_map["mlb_name"]} from idmap_new.csv')
+            updated_id_map.sort(key=lambda x: x["mlb_name"])
             with open("idmap_updated.csv", mode='w') as f_updated:
                 fieldnames = ["mlb_id","mlb_name","mlb_pos","mlb_team","mlb_team_long","bats","throws","birth_year","bp_id","bref_id","bref_name","cbs_id","cbs_name","cbs_pos","espn_id","espn_name","espn_pos","fg_id","fg_name","fg_pos","lahman_id","nfbc_id","nfbc_name","nfbc_pos","retro_id","retro_name","debut","yahoo_id","yahoo_name","yahoo_pos","mlb_depth","ottoneu_id","ottoneu_name","ottoneu_pos","rotowire_id","rotowire_name","rotowire_pos"]
                 writer = csv.DictWriter(f_updated, fieldnames=fieldnames)
                 writer.writeheader()
-                writer.writerows(id_map_updated)
+                writer.writerows(updated_id_map)
+            pprint(ids_added_details)
