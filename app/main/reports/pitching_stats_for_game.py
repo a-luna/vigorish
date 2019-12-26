@@ -247,20 +247,20 @@ def update_boxscore_with_combined_data(boxscore, game_events_combined_data, pitc
         updated_pitchfx_logs.append(pfx_log_dict)
 
     pitchfx_data_complete = all(inning["pitchfx_data_complete"] for inning in updated_innings_list)
-    total_pitchfx_complete_count = sum(inning["pitchfx_complete_count"] for inning in updated_innings_list)
-    total_missing_pitchfx_count = sum(inning["missing_pitchfx_count"] for inning in updated_innings_list)
-    total_extra_pitchfx_count = sum(inning["extra_pitchfx_count"] for inning in updated_innings_list)
+    total_at_bats_pitchfx_complete = sum(inning["total_at_bats_pitchfx_complete"] for inning in updated_innings_list)
+    total_at_bats_missing_pitchfx = sum(inning["total_at_bats_missing_pitchfx"] for inning in updated_innings_list)
+    total_at_bats_extra_pitchfx = sum(inning["total_at_bats_extra_pitchfx"] for inning in updated_innings_list)
     total_pitch_count_bbref_pitch_seq = sum(inning["pitch_count_bbref_pitch_seq"] for inning in updated_innings_list)
     total_pitch_count_pitchfx = sum(inning["pitch_count_pitchfx"] for inning in updated_innings_list)
-    total_pitch_count_missing_pitchfx = sum(inning["missing_pitchfx_count"] for inning in updated_innings_list)
+    total_pitch_count_missing_pitchfx = sum(inning["pitch_count_missing_pitchfx"] for inning in updated_innings_list)
 
     boxscore_dict = boxscore.as_dict()
     boxscore_dict["innings_list"] = updated_innings_list
     boxscore_dict["pitchfx_logs"] = updated_pitchfx_logs
     boxscore_dict["pitchfx_data_complete"] = pitchfx_data_complete
-    boxscore_dict["total_pitchfx_complete_count"] = total_pitchfx_complete_count
-    boxscore_dict["total_missing_pitchfx_count"] = total_missing_pitchfx_count
-    boxscore_dict["total_extra_pitchfx_count"] = total_extra_pitchfx_count
+    boxscore_dict["total_at_bats_pitchfx_complete"] = total_at_bats_pitchfx_complete
+    boxscore_dict["total_at_bats_missing_pitchfx"] = total_at_bats_missing_pitchfx
+    boxscore_dict["total_at_bats_extra_pitchfx"] = total_at_bats_extra_pitchfx
     boxscore_dict["total_pitch_count_bbref_pitch_seq"] = total_pitch_count_bbref_pitch_seq
     boxscore_dict["total_pitch_count_pitchfx"] = total_pitch_count_pitchfx
     boxscore_dict["total_pitch_count_missing_pitchfx"] = total_pitch_count_missing_pitchfx
@@ -274,9 +274,9 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
         if event["at_bat_id"] in at_bat_ids_this_inning
     ]
     pitchfx_data_complete = all(event["pitchfx_data_complete"] for event in inning_events)
-    pitchfx_complete_count = len([event for event in inning_events if event["pitchfx_data_complete"]])
-    missing_pitchfx_count = len([event for event in inning_events if event["missing_pitchfx_count"] > 0])
-    extra_pitchfx_count = len([event for event in inning_events if event["missing_pitchfx_count"] < 0])
+    total_at_bats_pitchfx_complete = len([event for event in inning_events if event["pitchfx_data_complete"]])
+    total_at_bats_missing_pitchfx = len([event for event in inning_events if event["missing_pitchfx_count"] > 0])
+    total_at_bats_extra_pitchfx = len([event for event in inning_events if event["missing_pitchfx_count"] < 0])
     pitch_count_bbref_pitch_seq = sum(event["pitch_count_bbref_pitch_seq"] for event in inning_events)
     pitch_count_pitchfx = sum(event["pitch_count_pitchfx"] for event in inning_events)
     pitch_count_missing_pitchfx = sum(event["missing_pitchfx_count"]for event in inning_events)
@@ -291,9 +291,9 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
 
     inning_dict = inning.as_dict()
     inning_dict["pitchfx_data_complete"] = pitchfx_data_complete
-    inning_dict["pitchfx_complete_count"] = pitchfx_complete_count
-    inning_dict["missing_pitchfx_count"] = missing_pitchfx_count
-    inning_dict["extra_pitchfx_count"] = extra_pitchfx_count
+    inning_dict["total_at_bats_pitchfx_complete"] = total_at_bats_pitchfx_complete
+    inning_dict["total_at_bats_missing_pitchfx"] = total_at_bats_missing_pitchfx
+    inning_dict["total_at_bats_extra_pitchfx"] = total_at_bats_extra_pitchfx
     inning_dict["pitch_count_bbref_pitch_seq"] = pitch_count_bbref_pitch_seq
     inning_dict["pitch_count_pitchfx"] = pitch_count_pitchfx
     inning_dict["pitch_count_missing_pitchfx"] = pitch_count_missing_pitchfx
