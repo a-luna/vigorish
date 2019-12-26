@@ -114,7 +114,7 @@ def remove_duplicate_pitchfx_data(pitchfx_log, game_start_time):
     pitchfx_log.duplicate_pitches_removed_count = removed_count
     pitchfx_log.pitchfx_log = pfx_log_no_dupes
     pitchfx_log.pitch_count_by_inning = get_pitch_count_by_inning(pfx_log_no_dupes)
-    pitchfx_log.total_pitch_count = len(pfx_log_copy)
+    pitchfx_log.total_pitch_count = len(pfx_log_no_dupes)
     return pitchfx_log
 
 
