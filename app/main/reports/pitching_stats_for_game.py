@@ -45,6 +45,7 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
     all_pbp_events_for_game = []
     for inning in boxscore.innings_list:
         for game_event in inning.game_events:
+            game_event.inning_id = inning.inning_id
             game_event.at_bat_id = get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event)
         all_pbp_events_for_game.extend(inning.game_events)
     all_pbp_events_for_game.sort(key=lambda x: x.pbp_table_row_number)
@@ -127,11 +128,12 @@ def get_pitch_count_by_inning(pitchfx_log):
 def reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game):
     at_bat_ids_from_boxscore = list(set([game_event.at_bat_id for game_event in all_pbp_events_for_game]))
     at_bat_ids_from_pfx = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
-    if compare_lists(at_bat_ids_from_boxscore, at_bat_ids_from_pfx):
-        at_bat_ids_ordered = order_at_bat_ids_by_time(at_bat_ids_from_pfx, all_pbp_events_for_game)
-        return Result.Ok(at_bat_ids_ordered)
+    at_bat_ids_match_exactly = compare_lists(at_bat_ids_from_boxscore, at_bat_ids_from_pfx)
     at_bat_ids_boxscore_only = list(set(at_bat_ids_from_boxscore) - set(at_bat_ids_from_pfx))
     at_bat_ids_pfx_only = list(set(at_bat_ids_from_pfx) - set(at_bat_ids_from_boxscore))
+    if at_bat_ids_match_exactly or (at_bat_ids_boxscore_only and not at_bat_ids_pfx_only):
+        at_bat_ids_ordered = order_at_bat_ids_by_time(at_bat_ids_from_boxscore, all_pbp_events_for_game)
+        return Result.Ok(at_bat_ids_ordered)
     message = "Play-by-play data and PitchFx data could not be reconciled:"
     if at_bat_ids_boxscore_only:
         message += f"\nat_bat_ids found ONLY in play-by-play data: {at_bat_ids_boxscore_only}"
