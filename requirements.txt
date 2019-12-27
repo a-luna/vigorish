@@ -62,7 +62,7 @@ progress==1.5
 prompt-toolkit==3.0.2
 psycopg2-binary==2.8.4
 ptyprocess==0.6.0
-py==1.8.0
+py==1.8.1
 pycodestyle==2.5.0
 pydocstyle==5.0.1
 pyflakes==2.1.1
