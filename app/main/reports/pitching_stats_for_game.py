@@ -15,7 +15,7 @@ def update_boxscore_with_pitchfx_data(session, bbref_game_id):
     result = get_all_pbp_events_for_game(session, bbref_game_id)
     if result.failure:
         return result
-    (boxscore, all_pbp_events_for_game) = result.value
+    (boxscore, player_id_dict, all_pbp_events_for_game) = result.value
     result = get_all_pfx_data_for_game(session, bbref_game_id)
     if result.failure:
         return result
@@ -42,22 +42,38 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
     if result.failure:
         return result
     boxscore = result.value
+    result = get_player_id_dict_for_game(session, boxscore.player_name_dict)
+    if result.failure:
+        return result
+    player_id_dict = result.value
     all_pbp_events_for_game = []
     for inning in boxscore.innings_list:
         for game_event in inning.game_events:
             game_event.inning_id = inning.inning_id
-            game_event.at_bat_id = get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event)
+            game_event.at_bat_id = get_at_bat_id_for_pbp_event(
+                session, bbref_game_id, game_event, player_id_dict
+            )
         all_pbp_events_for_game.extend(inning.game_events)
     all_pbp_events_for_game.sort(key=lambda x: x.pbp_table_row_number)
-    return Result.Ok((boxscore, all_pbp_events_for_game))
+    return Result.Ok((boxscore, player_id_dict, all_pbp_events_for_game))
 
 
-def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event):
+def get_player_id_dict_for_game(session, player_name_dict):
+    player_id_dict = {}
+    for name, bbref_id in player_name_dict.items():
+        player = Player.find_by_bbref_id(session, bbref_id)
+        if not player:
+            return Result.Fail(f"Unable to retrieve MLB ID for {name} ({bbref_id})")
+        player_id_dict[bbref_id] = {"name": name, "mlb_id": player.mlb_id}
+    return Result.Ok(player_id_dict)
+
+
+def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event, player_id_dict):
     inning_num = game_event.inning_label[1:]
     team_pitching_id_bb = get_brooks_team_id(game_event.team_pitching_id_br)
-    pitcher_id_mlb = Player.find_by_bbref_id(session, game_event.pitcher_id_br).mlb_id
+    pitcher_id_mlb = player_id_dict[game_event.pitcher_id_br]["mlb_id"]
     team_batting_id_bb = get_brooks_team_id(game_event.team_batting_id_br)
-    batter_id_mlb = Player.find_by_bbref_id(session, game_event.batter_id_br).mlb_id
+    batter_id_mlb = player_id_dict[game_event.batter_id_br]["mlb_id"]
     return f"{bbref_game_id}_{inning_num}_{team_pitching_id_bb}_{pitcher_id_mlb}_{team_batting_id_bb}_{batter_id_mlb}"
 
 
@@ -97,7 +113,9 @@ def remove_duplicate_pitchfx_data(pitchfx_log, game_start_time):
             pfx_criteria["has_zone_location"] = pfx.has_zone_location
             pfx_criteria["park_sv_id"] = pfx.park_sv_id
             dupe_rank_dict[pfx.play_guid].append(pfx_criteria)
-            dupe_rank_dict[pfx.play_guid].sort(key=lambda x: (-x["has_zone_location"], x["time_since_pitch_thrown"]))
+            dupe_rank_dict[pfx.play_guid].sort(
+                key=lambda x: (-x["has_zone_location"], x["time_since_pitch_thrown"])
+            )
             dupe_id_map[pfx.park_sv_id] = pfx
     pfx_log_no_dupes = []
     dupe_tracker = {guid:False for guid in unique_guids.keys()}
@@ -163,16 +181,18 @@ def combine_boxscore_and_pitchfx_data(all_pbp_events_for_game, all_pfx_data_for_
         pfx_data_for_at_bat = get_all_pfx_data_for_at_bat(all_pfx_data_for_game, ab_id)
         first_event_this_at_bat = pbp_events_for_at_bat[0]
         final_event_this_at_bat = pbp_events_for_at_bat[-1]
+        final_pitch_this_at_bat = pfx_data_for_at_bat[-1]
         pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
-        pitch_count_pitchfx = len(pfx_data_for_at_bat)
-        pitch_sequence_description = get_detailed_pitch_sequence_description(final_event_this_at_bat)
+        pitch_sequence_description = get_detailed_pitch_sequence_description(
+            final_event_this_at_bat, final_pitch_this_at_bat
+        )
         combined_at_bat_data = {
             "event_type": "at_bat",
             "at_bat_id": ab_id,
             "pbp_table_row_number": first_event_this_at_bat["pbp_table_row_number"],
             "pitchfx_data_complete": pitch_count_pitch_seq == pitch_count_pitchfx,
             "pitch_count_bbref_pitch_seq": pitch_count_pitch_seq,
-            "pitch_count_pitchfx": pitch_count_pitchfx,
+            "pitch_count_pitchfx": len(pfx_data_for_at_bat),
             "missing_pitchfx_count": pitch_count_pitch_seq - pitch_count_pitchfx,
             "pitch_sequence_description": pitch_sequence_description,
             "pbp_events": pbp_events_for_at_bat,
@@ -210,11 +230,15 @@ def get_total_pitches_in_sequence(pitch_sequence):
     return sum(PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"] for abbrev in pitch_sequence)
 
 
-def get_detailed_pitch_sequence_description(game_event):
+def get_detailed_pitch_sequence_description(game_event, pfx_data):
     total_pitches_in_sequence = get_total_pitches_in_sequence(game_event["pitch_sequence"])
     current_pitch_count = 0
+    next_pitch_blocked_by_c = False
     sequence_description = []
     for abbrev in game_event["pitch_sequence"]:
+        if abbrev == "*":
+            next_pitch_blocked_by_c = True
+            continue
         if PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"]:
             current_pitch_count += 1
             space_count = 1
@@ -224,9 +248,14 @@ def get_detailed_pitch_sequence_description(game_event):
                 space_count = 1
             pitch_number = f"Pitch{' '*space_count}{current_pitch_count}/{total_pitches_in_sequence}"
             pitch_description = f"{pitch_number}..: {PPB_PITCH_LOG_DICT[abbrev]['description']}"
-            sequence_description.append(pitch_description)
+            if abbrev == "X":
+                pitch_description = f'{pitch_number}..: {pfx_data["pdes"]}'
         else:
-            sequence_description.append(PPB_PITCH_LOG_DICT[abbrev]['description'])
+            pitch_description = PPB_PITCH_LOG_DICT[abbrev]['description']
+        if next_pitch_blocked_by_c:
+            pitch_description += " (pitch was blocked by catcher)"
+            next_pitch_blocked_by_c = False
+        sequence_description.append(pitch_description)
     sequence_description.append(f'Result.....: {game_event["play_description"]}')
     return sequence_description
 

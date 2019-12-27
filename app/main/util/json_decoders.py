@@ -290,6 +290,8 @@ def decode_bbref_pitching_stats(json_dict):
     try:
         pitch_stats = BBRefPitchStats()
         pitch_stats.player_id_br = json_dict["player_id_br"]
+        pitch_stats.player_team_id_br = json_dict["player_team_id_br"]
+        pitch_stats.opponent_team_id_br = json_dict["opponent_team_id_br"]
         pitch_stats.innings_pitched = float(json_dict["innings_pitched"])
         pitch_stats.hits = int(json_dict["hits"])
         pitch_stats.runs = int(json_dict["runs"])
