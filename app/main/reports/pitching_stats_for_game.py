@@ -183,6 +183,7 @@ def combine_boxscore_and_pitchfx_data(all_pbp_events_for_game, all_pfx_data_for_
         final_event_this_at_bat = pbp_events_for_at_bat[-1]
         final_pitch_this_at_bat = pfx_data_for_at_bat[-1]
         pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
+        pitch_count_pitchfx = len(pfx_data_for_at_bat)
         pitch_sequence_description = get_detailed_pitch_sequence_description(
             final_event_this_at_bat, final_pitch_this_at_bat
         )
@@ -192,7 +193,7 @@ def combine_boxscore_and_pitchfx_data(all_pbp_events_for_game, all_pfx_data_for_
             "pbp_table_row_number": first_event_this_at_bat["pbp_table_row_number"],
             "pitchfx_data_complete": pitch_count_pitch_seq == pitch_count_pitchfx,
             "pitch_count_bbref_pitch_seq": pitch_count_pitch_seq,
-            "pitch_count_pitchfx": len(pfx_data_for_at_bat),
+            "pitch_count_pitchfx": pitch_count_pitchfx,
             "missing_pitchfx_count": pitch_count_pitch_seq - pitch_count_pitchfx,
             "pitch_sequence_description": pitch_sequence_description,
             "pbp_events": pbp_events_for_at_bat,
