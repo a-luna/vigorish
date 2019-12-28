@@ -72,7 +72,7 @@ def get_player_id_dict_for_game(session, boxscore):
         player_id_dict[bbref_id] = {
             "name": name,
             "mlb_id": player.mlb_id,
-            "team_id_bbref": player_team_dict[bbref_id]
+            "team_id_bbref": player_team_dict.get(bbref_id, "")
         }
     return Result.Ok(player_id_dict)
 
