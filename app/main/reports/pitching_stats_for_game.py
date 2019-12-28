@@ -306,7 +306,7 @@ def update_boxscore_with_combined_data(boxscore, player_id_dict, game_events_com
     away_team_data.pop("pitching_stats", None)
     away_team_data["pitching_stats"] = away_team_pitching_stats
 
-    home_team_data = boxscore.away_team_data.as_dict()
+    home_team_data = boxscore.home_team_data.as_dict()
     home_team_data.pop("__bbref_boxscore_team_data__", None)
     home_team_data.pop("pitching_stats", None)
     home_team_data["pitching_stats"] = home_team_pitching_stats
@@ -408,7 +408,7 @@ def update_pitching_stats_with_combined_data(pfx_log, boxscore, player_id_dict):
     bbref_data.pop("player_team_id_br", None)
     bbref_data.pop("opponent_team_id_br", None)
     all_bbref_pitch_stats = None
-    at_bat_ids = list(set([pfx.at_bat_id for pfx in pfx_log.pitchfx_log]))
+    at_bat_ids = sorted(list(set([pfx.at_bat_id for pfx in pfx_log.pitchfx_log])))
     return {
         "pitcher_name": pfx_log.pitcher_name,
         "pitcher_id_mlb": pfx_log.pitcher_id_mlb,
