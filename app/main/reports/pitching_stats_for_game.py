@@ -361,7 +361,6 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
         "pitch_count_bbref_pitch_seq": pitch_count_bbref_pitch_seq,
         "pitch_count_pitchfx": pitch_count_pitchfx,
         "pitch_count_missing_pitchfx": pitch_count_missing_pitchfx,
-        "inning_events": inning_events
     }
     return {
         "inning_id": inning.inning_id,
