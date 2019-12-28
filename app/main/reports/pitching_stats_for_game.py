@@ -446,13 +446,34 @@ def separate_pitching_stats_by_team(updated_pitching_stats, home_team_id, away_t
 
 
 def audit_pitchfx_vs_bbref_data(updated_innings_list):
-    pitchfx_data_complete = all(inning["pitchfx_data_complete"] for inning in updated_innings_list)
-    total_at_bats_pitchfx_complete = sum(inning["total_at_bats_pitchfx_complete"] for inning in updated_innings_list)
-    total_at_bats_missing_pitchfx = sum(inning["total_at_bats_missing_pitchfx"] for inning in updated_innings_list)
-    total_at_bats_extra_pitchfx = sum(inning["total_at_bats_extra_pitchfx"] for inning in updated_innings_list)
-    total_pitch_count_bbref_pitch_seq = sum(inning["pitch_count_bbref_pitch_seq"] for inning in updated_innings_list)
-    total_pitch_count_pitchfx = sum(inning["pitch_count_pitchfx"] for inning in updated_innings_list)
-    total_pitch_count_missing_pitchfx = sum(inning["pitch_count_missing_pitchfx"] for inning in updated_innings_list)
+    pitchfx_data_complete = all(
+        inning["inning_pitchfx_audit"]["pitchfx_data_complete"]
+        for inning in updated_innings_list
+    )
+    total_at_bats_pitchfx_complete = sum(
+        inning["inning_pitchfx_audit"]["total_at_bats_pitchfx_complete"]
+        for inning in updated_innings_list
+    )
+    total_at_bats_missing_pitchfx = sum(
+        inning["inning_pitchfx_audit"]["total_at_bats_missing_pitchfx"]
+        for inning in updated_innings_list
+    )
+    total_at_bats_extra_pitchfx = sum(
+        inning["inning_pitchfx_audit"]["total_at_bats_extra_pitchfx"]
+        for inning in updated_innings_list
+    )
+    total_pitch_count_bbref_pitch_seq = sum(
+        inning["inning_pitchfx_audit"]["pitch_count_bbref_pitch_seq"]
+        for inning in updated_innings_list
+    )
+    total_pitch_count_pitchfx = sum(
+        inning["inning_pitchfx_audit"]["pitch_count_pitchfx"]
+        for inning in updated_innings_list
+    )
+    total_pitch_count_missing_pitchfx = sum(
+        inning["inning_pitchfx_audit"]["pitch_count_missing_pitchfx"]
+        for inning in updated_innings_list
+    )
 
     return {
         "pitchfx_data_complete": pitchfx_data_complete,
