@@ -404,14 +404,6 @@ def update_pitching_stats_with_combined_data(pfx_log, boxscore, player_id_dict):
     bbref_data.pop("player_id_br", None)
     bbref_data.pop("player_team_id_br", None)
     bbref_data.pop("opponent_team_id_br", None)
-    pitchfx_data = pfx_log.as_dict()
-    combined_stats.pop("__brooks_pitchfx_log__", None)
-    combined_stats.pop("pitchfx_log", None)
-    combined_stats["pitchfx_data"] = {}
-    combined_stats["pitchfx_data"]["total_pitch_count"] = pfx_log.total_pitch_count
-    combined_stats["pitchfx_data"]["duplicate_pitches_removed_count"] = pfx_log.duplicate_pitches_removed_count
-    combined_stats["pitchfx_data"]["pitch_count_by_inning"] = pfx_log.pitch_count_by_inning
-    combined_stats["bbref_data"] = bbref_data
     all_bbref_pitch_stats = None
     return {
         "pitcher_name": pfx_log.pitcher_name,
