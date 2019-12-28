@@ -7,7 +7,7 @@ from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT
 from app.main.models.player import Player
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.file_util import write_json_dict_to_file
-from app.main.util.list_functions import compare_lists
+from app.main.util.list_functions import compare_lists, flatten_list2d
 from app.main.util.result import Result
 from app.main.util.s3_helper import get_bbref_boxscore_from_s3, get_all_pitchfx_logs_for_game_from_s3
 
@@ -512,10 +512,11 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
         pitch_stats["pitchfx_data"]["duplicate_pitches_removed_count"]
         for pitch_stats in home_team_pitching_stats
     )
-    at_bat_ids_missing_pitchfx = sorted(list(set(
+    at_bat_ids_missing_pitchfx_2d = list(
         inning["inning_pitchfx_audit"]["at_bat_ids_missing_pitchfx"]
         for inning in updated_innings_list
-    )))
+    )
+    at_bat_ids_missing_pitchfx=sorted(list(set(flatten_list2d(at_bat_ids_missing_pitchfx_2d))))
     duplicate_pfx_removed_away = sum(
         pitch_stats["pitchfx_data"]["duplicate_pitches_removed_count"]
         for pitch_stats in away_team_pitching_stats
@@ -533,5 +534,6 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
         "total_pitch_count_bbref_pitch_seq": total_pitch_count_bbref_pitch_seq,
         "total_pitch_count_pitchfx": total_pitch_count_pitchfx,
         "total_pitch_count_missing_pitchfx": total_pitch_count_missing_pitchfx,
+        "at_bat_ids_missing_pitchfx": at_bat_ids_missing_pitchfx,
         "total_duplicate_pitchfx_removed": total_duplicate_pitchfx_removed
     }
