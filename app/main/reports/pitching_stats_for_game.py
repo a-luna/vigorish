@@ -202,7 +202,7 @@ def combine_boxscore_and_pitchfx_data(all_pbp_events_for_game, all_pfx_data_for_
         final_event_this_at_bat = pbp_events_for_at_bat[-1]
         pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
         pitch_count_pitchfx = len(pfx_data_for_at_bat)
-        if pfx_data_for_at_bat:
+        if pfx_data_for_at_bat and pitch_count_pitch_seq == pitch_count_pitchfx:
             final_pitch_this_at_bat = pfx_data_for_at_bat[-1]
         else:
             final_pitch_this_at_bat = None
@@ -271,7 +271,7 @@ def get_detailed_pitch_sequence_description(game_event, pfx_data=None):
                 space_count = 1
             pitch_number = f"Pitch{' '*space_count}{current_pitch_count}/{total_pitches_in_sequence}"
             pitch_description = f"{pitch_number}..: {PPB_PITCH_LOG_DICT[abbrev]['description']}"
-            if pfx_data and len(pfx_data) == total_pitches_in_sequence and abbrev == "X":
+            if pfx_data and abbrev == "X":
                 pitch_description = f'{pitch_number}..: {pfx_data["pdes"]}'
         else:
             pitch_description = PPB_PITCH_LOG_DICT[abbrev]['description']
