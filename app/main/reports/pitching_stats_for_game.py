@@ -433,13 +433,13 @@ def separate_pitching_stats_by_team(updated_pitching_stats, home_team_id, away_t
     for pitching_stats in updated_pitching_stats:
         if pitching_stats["pitcher_team_id_bbref"] == home_team_id:
             home_team_pitching_stats.append(pitching_stats)
-        elif pitching_stats["opponent_team_id_bbref"] == away_team_id:
+        elif pitching_stats["pitcher_team_id_bbref"] == away_team_id:
             away_team_pitching_stats.append(pitching_stats)
         else:
             error = (
                 f'Error occurred trying to assign pitching_stats for pitch_app_id {pitching_stats["pitch_app_id"]} '
                 f'to either home or away team (home_team_id: {home_team_id}, away_team_id: {away_team_id}, '
-                f'pitcher_team_id_bb: {pitching_stats["pitcher_team_id_bb"]}'
+                f'pitcher_team_id_bbref: {pitching_stats["pitcher_team_id_bbref"]}'
             )
             return Result.Fail(error)
     return Result.Ok((home_team_pitching_stats, away_team_pitching_stats))
