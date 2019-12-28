@@ -143,6 +143,7 @@ def remove_duplicate_pitchfx_data(pitchfx_log, game_start_time):
             pfx_log_no_dupes.append(dupe_id_map[best_pfx_id])
         else:
             pfx_log_no_dupes.append(pfx)
+        dupe_tracker[pfx.play_guid] = True
     pfx_log_no_dupes.sort(key=lambda x: (x.ab_id, x.ab_count))
     removed_count = len(pfx_log_copy) - len(pfx_log_no_dupes)
     pitchfx_log.duplicate_pitches_removed_count = removed_count
