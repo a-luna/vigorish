@@ -232,6 +232,7 @@ def get_all_pbp_events_for_at_bat(all_pbp_events_for_game, at_bat_id):
         if game_event.at_bat_id == at_bat_id
     ]
     for game_event in pbp_events_for_at_bat:
+        game_event.pop("__bbref_pbp_game_event__", None)
         game_event["at_bat_id"] = at_bat_id
     pbp_events_for_at_bat.sort(key=lambda x: x["pbp_table_row_number"])
     return pbp_events_for_at_bat
@@ -244,6 +245,7 @@ def get_all_pfx_data_for_at_bat(all_pfx_data_for_game, at_bat_id):
         if pfx.at_bat_id == at_bat_id
     ]
     for pfx in pfx_data_for_at_bat:
+        pfx.pop("__brooks_pitchfx_data__", None)
         pfx["at_bat_id"] = at_bat_id
     pfx_data_for_at_bat.sort(key=lambda x: x["ab_count"])
     return pfx_data_for_at_bat
@@ -309,7 +311,9 @@ def update_boxscore_with_combined_data(boxscore, player_id_dict, game_events_com
     home_team_data.pop("pitching_stats", None)
     home_team_data["pitching_stats"] = home_team_pitching_stats
 
-    pitchfx_vs_bbref_audit = audit_pitchfx_vs_bbref_data(updated_innings_list)
+    pitchfx_vs_bbref_audit = audit_pitchfx_vs_bbref_data(
+        updated_innings_list, home_team_pitching_stats, away_team_pitching_stats
+    )
     updated_boxscore = {
         "bbref_game_id": boxscore.bbref_game_id,
         "boxscore_url": boxscore.boxscore_url,
@@ -340,11 +344,11 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
     if inning.substitutions:
         substitutions_this_inning = [sub.as_dict() for sub in inning.substitutions]
         for sub in substitutions_this_inning:
+            sub.pop("__bbref_pbp_in_game_substitution__", None)
             sub["event_type"] = "player_substitution"
             sub["sub_team_id"] = player_team_dict.get(sub["incoming_player_id_br"], None)
         inning_events.extend(substitutions_this_inning)
     inning_events.sort(key=lambda x: x["pbp_table_row_number"])
-
     inning_totals = {
         "inning_total_runs": inning.inning_total_runs,
         "inning_total_hits": inning.inning_total_hits,
@@ -353,7 +357,6 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
         "away_team_runs_after_inning": inning.away_team_runs_after_inning,
         "home_team_runs_after_inning": inning.home_team_runs_after_inning,
     }
-
     inning_pitchfx_audit = {
         "pitchfx_data_complete": pitchfx_data_complete,
         "total_at_bats_pitchfx_complete": total_at_bats_pitchfx_complete,
@@ -405,6 +408,7 @@ def update_pitching_stats_with_combined_data(pfx_log, boxscore, player_id_dict):
     bbref_data.pop("player_team_id_br", None)
     bbref_data.pop("opponent_team_id_br", None)
     all_bbref_pitch_stats = None
+    at_bat_ids = list(set([pfx.at_bat_id for pfx in pfx_log.pitchfx_log]))
     return {
         "pitcher_name": pfx_log.pitcher_name,
         "pitcher_id_mlb": pfx_log.pitcher_id_mlb,
@@ -416,8 +420,11 @@ def update_pitching_stats_with_combined_data(pfx_log, boxscore, player_id_dict):
         "opponent_team_id_bbref": player_pitch_stats.opponent_team_id_br,
         "bb_game_id": pfx_log.bb_game_id,
         "bbref_game_id": pfx_log.bbref_game_id,
+        "batters_faced_bbref": player_pitch_stats.batters_faced,
+        "batters_faced_pitchfx": len(at_bat_ids),
         "total_pitch_count_bbref": player_pitch_stats.pitch_count,
         "total_pitch_count_pitchfx": pfx_log.total_pitch_count,
+        "at_bat_ids": at_bat_ids,
         "bbref_data": bbref_data,
         "pitchfx_data": {
             "total_pitch_count": pfx_log.total_pitch_count,
@@ -445,11 +452,25 @@ def separate_pitching_stats_by_team(updated_pitching_stats, home_team_id, away_t
     return Result.Ok((home_team_pitching_stats, away_team_pitching_stats))
 
 
-def audit_pitchfx_vs_bbref_data(updated_innings_list):
+def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, away_team_pitching_stats):
     pitchfx_data_complete = all(
         inning["inning_pitchfx_audit"]["pitchfx_data_complete"]
         for inning in updated_innings_list
     )
+    total_batters_faced_bbref_home = sum(
+        pitch_stats["batters_faced_bbref"] for pitch_stats in home_team_pitching_stats
+    )
+    total_batters_faced_bbref_away = sum(
+        pitch_stats["batters_faced_bbref"] for pitch_stats in away_team_pitching_stats
+    )
+    total_batters_faced_bbref = total_batters_faced_bbref_home + total_batters_faced_bbref_away
+    total_batters_faced_pitchfx_home = sum(
+        pitch_stats["batters_faced_pitchfx"] for pitch_stats in home_team_pitching_stats
+    )
+    total_batters_faced_pitchfx_away = sum(
+        pitch_stats["batters_faced_pitchfx"] for pitch_stats in away_team_pitching_stats
+    )
+    total_batters_faced_pitchfx = total_batters_faced_pitchfx_home + total_batters_faced_pitchfx_away
     total_at_bats_pitchfx_complete = sum(
         inning["inning_pitchfx_audit"]["total_at_bats_pitchfx_complete"]
         for inning in updated_innings_list
@@ -474,13 +495,25 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list):
         inning["inning_pitchfx_audit"]["pitch_count_missing_pitchfx"]
         for inning in updated_innings_list
     )
+    duplicate_pfx_removed_home = sum(
+        pitch_stats["pitchfx_data"]["duplicate_pitches_removed_count"]
+        for pitch_stats in home_team_pitching_stats
+    )
+    duplicate_pfx_removed_away = sum(
+        pitch_stats["pitchfx_data"]["duplicate_pitches_removed_count"]
+        for pitch_stats in away_team_pitching_stats
+    )
+    total_duplicate_pitchfx_removed = duplicate_pfx_removed_home + duplicate_pfx_removed_away
 
     return {
         "pitchfx_data_complete": pitchfx_data_complete,
+        "total_batters_faced_bbref": total_batters_faced_bbref,
+        "total_batters_faced_pitchfx": total_batters_faced_pitchfx,
         "total_at_bats_pitchfx_complete": total_at_bats_pitchfx_complete,
         "total_at_bats_missing_pitchfx": total_at_bats_missing_pitchfx,
         "total_at_bats_extra_pitchfx": total_at_bats_extra_pitchfx,
         "total_pitch_count_bbref_pitch_seq": total_pitch_count_bbref_pitch_seq,
         "total_pitch_count_pitchfx": total_pitch_count_pitchfx,
-        "total_pitch_count_missing_pitchfx": total_pitch_count_missing_pitchfx
+        "total_pitch_count_missing_pitchfx": total_pitch_count_missing_pitchfx,
+        "total_duplicate_pitchfx_removed": total_duplicate_pitchfx_removed
     }
