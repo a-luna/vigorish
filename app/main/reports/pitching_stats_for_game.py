@@ -483,6 +483,15 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
         inning["inning_pitchfx_audit"]["total_at_bats_extra_pitchfx"]
         for inning in updated_innings_list
     )
+    total_pitch_count_bbref_stats_table_home = sum(
+        pitch_stats["bbref_data"]["pitch_count"] for pitch_stats in home_team_pitching_stats
+    )
+    total_pitch_count_bbref_stats_table_away = sum(
+        pitch_stats["bbref_data"]["pitch_count"] for pitch_stats in away_team_pitching_stats
+    )
+    total_pitch_count_bbref_stats_table = (
+        total_pitch_count_bbref_stats_table_home + total_pitch_count_bbref_stats_table_away
+    )
     total_pitch_count_bbref_pitch_seq = sum(
         inning["inning_pitchfx_audit"]["pitch_count_bbref_pitch_seq"]
         for inning in updated_innings_list
@@ -512,6 +521,7 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
         "total_at_bats_pitchfx_complete": total_at_bats_pitchfx_complete,
         "total_at_bats_missing_pitchfx": total_at_bats_missing_pitchfx,
         "total_at_bats_extra_pitchfx": total_at_bats_extra_pitchfx,
+        "total_pitch_count_bbref_stats_table": total_pitch_count_bbref_stats_table,
         "total_pitch_count_bbref_pitch_seq": total_pitch_count_bbref_pitch_seq,
         "total_pitch_count_pitchfx": total_pitch_count_pitchfx,
         "total_pitch_count_missing_pitchfx": total_pitch_count_missing_pitchfx,
