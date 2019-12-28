@@ -508,15 +508,14 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
         inning["inning_pitchfx_audit"]["pitch_count_missing_pitchfx"]
         for inning in updated_innings_list
     )
+    at_bat_ids_missing_pitchfx = sorted(list(set(flatten_list2d([
+        inning["inning_pitchfx_audit"]["at_bat_ids_missing_pitchfx"]
+        for inning in updated_innings_list
+    ]))))
     duplicate_pfx_removed_home = sum(
         pitch_stats["pitchfx_data"]["duplicate_pitches_removed_count"]
         for pitch_stats in home_team_pitching_stats
     )
-    at_bat_ids_missing_pitchfx_2d = list(
-        inning["inning_pitchfx_audit"]["at_bat_ids_missing_pitchfx"]
-        for inning in updated_innings_list
-    )
-    at_bat_ids_missing_pitchfx=sorted(list(set(flatten_list2d(at_bat_ids_missing_pitchfx_2d))))
     duplicate_pfx_removed_away = sum(
         pitch_stats["pitchfx_data"]["duplicate_pitches_removed_count"]
         for pitch_stats in away_team_pitching_stats
