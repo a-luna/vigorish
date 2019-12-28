@@ -340,7 +340,10 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
     total_at_bats_extra_pitchfx = len([event for event in inning_events if event["missing_pitchfx_count"] < 0])
     pitch_count_bbref_pitch_seq = sum(event["pitch_count_bbref_pitch_seq"] for event in inning_events)
     pitch_count_pitchfx = sum(event["pitch_count_pitchfx"] for event in inning_events)
-    pitch_count_missing_pitchfx = sum(event["missing_pitchfx_count"]for event in inning_events)
+    pitch_count_missing_pitchfx = sum(event["missing_pitchfx_count"] for event in inning_events)
+    at_bat_ids_missing_pitchfx = sorted(list(set(
+        event["at_bat_id"] for event in inning_events if not event["pitchfx_data_complete"]
+    )))
     if inning.substitutions:
         substitutions_this_inning = [sub.as_dict() for sub in inning.substitutions]
         for sub in substitutions_this_inning:
@@ -365,6 +368,7 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
         "pitch_count_bbref_pitch_seq": pitch_count_bbref_pitch_seq,
         "pitch_count_pitchfx": pitch_count_pitchfx,
         "pitch_count_missing_pitchfx": pitch_count_missing_pitchfx,
+        "at_bat_ids_missing_pitchfx": at_bat_ids_missing_pitchfx,
     }
     return {
         "inning_id": inning.inning_id,
@@ -373,7 +377,7 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
         "end_inning_summary": inning.end_inning_summary,
         "inning_totals": inning_totals,
         "inning_pitchfx_audit": inning_pitchfx_audit,
-        "play_by_play_events": inning_events
+        "inning_events": inning_events
     }
 
 
