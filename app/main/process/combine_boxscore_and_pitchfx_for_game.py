@@ -1,4 +1,4 @@
-"""Aggregate pitchfx data and play-by-play data into a single ."""
+"""Aggregate pitchfx data and play-by-play data into a single object."""
 import json
 from collections import Counter, defaultdict
 from copy import deepcopy
