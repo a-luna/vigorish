@@ -101,11 +101,6 @@ class BrooksPitchFxData():
         return False if self.zone_location == 99 else True
 
 
-    @property
-    def at_bat_id(self):
-        return f"{self.bbref_game_id}_{self.inning}_{self.pitcher_team_id_bb}_{self.pitcher_id}_{self.opponent_team_id_bb}_{self.batter_id}"
-
-
     def as_dict(self):
         """Convert pitch log to a dictionary."""
         return dict(

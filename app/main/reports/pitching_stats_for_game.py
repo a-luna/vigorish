@@ -2,6 +2,7 @@
 import json
 from collections import Counter, defaultdict
 from copy import deepcopy
+from pprint import pformat
 
 from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT
 from app.main.models.player import Player
@@ -58,6 +59,43 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
             )
         all_pbp_events_for_game.extend(inning.game_events)
     all_pbp_events_for_game.sort(key=lambda x: x.pbp_table_row_number)
+    pbp_ids = [event.at_bat_id for event in all_pbp_events_for_game]
+    histogram = Counter(pbp_ids)
+    unique_pbp_ids = Counter(list(set(pbp_ids)))
+    duplicate_pbp_ids = histogram - unique_pbp_ids
+    if not duplicate_pbp_ids:
+        return Result.Ok((boxscore, player_id_dict, all_pbp_events_for_game))
+    duplicate_map = {}
+    for at_bat_id in duplicate_pbp_ids.keys():
+        pbp_events = [
+            event for event in all_pbp_events_for_game if event.at_bat_id == at_bat_id
+        ]
+        pbp_events.sort(key=lambda x: x.pbp_table_row_number)
+        total_events = len(pbp_events)
+        rows_apart = []
+        for index, pbp_event in enumerate(pbp_events):
+            if index != total_events - 1:
+                diff = pbp_events[index + 1].pbp_table_row_number - pbp_event.pbp_table_row_number
+                rows_apart.append(diff)
+        group_number = 1
+        group_size = 1
+        group_dict = {}
+        for diff in rows_apart:
+            if diff == 1:
+                group_size += 1
+                continue
+            group_dict[group_number] = group_size
+            group_number += 1
+            group_size = 1
+        group_dict[group_number] = group_size
+        event_index = 0
+        for instance_number, total_events_this_at_bat in group_dict.items():
+            for _ in range(total_events_this_at_bat):
+                game_event = pbp_events[event_index]
+                game_event.at_bat_id = get_at_bat_id_for_pbp_event(
+                    session, bbref_game_id, game_event, player_id_dict, instance_number
+                )
+                event_index += 1
     return Result.Ok((boxscore, player_id_dict, all_pbp_events_for_game))
 
 
@@ -77,13 +115,13 @@ def get_player_id_dict_for_game(session, boxscore):
     return Result.Ok(player_id_dict)
 
 
-def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event, player_id_dict):
+def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event, player_id_dict, instance_number=0):
     inning_num = game_event.inning_label[1:]
     team_pitching_id_bb = get_brooks_team_id(game_event.team_pitching_id_br)
     pitcher_id_mlb = player_id_dict[game_event.pitcher_id_br]["mlb_id"]
     team_batting_id_bb = get_brooks_team_id(game_event.team_batting_id_br)
     batter_id_mlb = player_id_dict[game_event.batter_id_br]["mlb_id"]
-    return f"{bbref_game_id}_{inning_num}_{team_pitching_id_bb}_{pitcher_id_mlb}_{team_batting_id_bb}_{batter_id_mlb}"
+    return f"{bbref_game_id}_{inning_num}_{team_pitching_id_bb}_{pitcher_id_mlb}_{team_batting_id_bb}_{batter_id_mlb}_{instance_number}"
 
 
 def get_brooks_team_id(br_team_id):
@@ -105,7 +143,20 @@ def get_all_pfx_data_for_game(session, bbref_game_id):
     ]
     all_pfx_data_for_game = []
     for pitchfx_log in pitchfx_logs_for_game:
+        for pfx in pitchfx_log:
+            pfx.at_bat_id = get_at_bat_id_for_pfx_data(pfx)
         all_pfx_data_for_game.extend(pitchfx_log.pitchfx_log)
+    all_at_bat_ids = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
+    for at_bat_id in all_at_bat_ids:
+        pfx_for_at_bat = [pfx for pfx in all_pfx_data_for_game if pfx.at_bat_id == at_bat_id]
+        pfx_ab_ids_for_at_bat = list(set([pfx.ab_id for pfx in pfx_for_at_bat]))
+        if len(pfx_ab_ids_for_at_bat) <= 1:
+            continue
+        for index, pfx_ab_id in enumerate(sorted(pfx_ab_ids_for_at_bat)):
+            pfx_for_separate_at_bat = [pfx for pfx in pfx_for_at_bat if pfx.ab_id == pfx_ab_id]
+            for pfx in pfx_for_separate_at_bat:
+                instance_number = index + 1
+                pfx.at_bat_id = get_at_bat_id_for_pfx_data(pfx, instance_number)
     all_pfx_data_for_game.sort(key=lambda x: (x.ab_id, x.ab_count))
     return Result.Ok((pitchfx_logs_for_game, all_pfx_data_for_game))
 
@@ -160,6 +211,10 @@ def get_pitch_count_by_inning(pitchfx_log):
     for pfx in pitchfx_log:
         pitch_count_by_inning[pfx.inning] += 1
     return pitch_count_by_inning
+
+
+def get_at_bat_id_for_pfx_data(pfx, instance_number=0):
+    return f"{pfx.bbref_game_id}_{pfx.inning}_{pfx.pitcher_team_id_bb}_{pfx.pitcher_id}_{pfx.opponent_team_id_bb}_{pfx.batter_id}_{instance_number}"
 
 
 def reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game):
