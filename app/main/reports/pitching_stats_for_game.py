@@ -339,7 +339,10 @@ def get_detailed_pitch_sequence_description(game_event, pfx_data=None):
             pitch_description += " (pitch was blocked by catcher)"
             next_pitch_blocked_by_c = False
         sequence_description.append(pitch_description)
-    sequence_description.append(f'Result.....: {game_event["play_description"]}')
+    extra_dots = 0
+    if total_pitches_in_sequence >= 10:
+        extra_dots = 2
+    sequence_description.append(f'Result.....{"."*extra_dots}: {game_event["play_description"]}')
     return sequence_description
 
 
