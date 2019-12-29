@@ -89,7 +89,8 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
             group_size = 1
         group_dict[group_number] = group_size
         event_index = 0
-        for instance_number, total_events_this_at_bat in group_dict.items():
+        for group_number, total_events_this_at_bat in group_dict.items():
+            instance_number = group_number - 1
             for _ in range(total_events_this_at_bat):
                 game_event = pbp_events[event_index]
                 game_event.at_bat_id = get_at_bat_id_for_pbp_event(
