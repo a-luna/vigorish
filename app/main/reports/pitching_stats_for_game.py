@@ -361,6 +361,7 @@ def update_boxscore_with_combined_data(boxscore, player_id_dict, game_events_com
 
     game_meta_info = boxscore.game_meta_info.as_dict()
     game_meta_info.pop("__bbref_boxscore_meta__", None)
+    game_meta_info["umpires"] = boxscore.as_dict()["umpires"]
 
     away_team_data = boxscore.away_team_data.as_dict()
     away_team_data.pop("__bbref_boxscore_team_data__", None)
@@ -378,12 +379,11 @@ def update_boxscore_with_combined_data(boxscore, player_id_dict, game_events_com
     updated_boxscore = {
         "bbref_game_id": boxscore.bbref_game_id,
         "boxscore_url": boxscore.boxscore_url,
+        "pitchfx_vs_bbref_audit": pitchfx_vs_bbref_audit,
         "game_meta_info": game_meta_info,
         "away_team_data": away_team_data,
         "home_team_data": home_team_data,
         "play_by_play_data": updated_innings_list,
-        "pitchfx_vs_bbref_audit": pitchfx_vs_bbref_audit,
-        "umpires": boxscore.as_dict()["umpires"],
         "player_id_dict": player_id_dict
     }
     return Result.Ok(updated_boxscore)
