@@ -12,7 +12,7 @@ from app.main.util.list_functions import compare_lists, flatten_list2d
 from app.main.util.result import Result
 from app.main.util.s3_helper import get_bbref_boxscore_from_s3, get_all_pitchfx_logs_for_game_from_s3
 
-def update_boxscore_with_pitchfx_data(session, bbref_game_id):
+def combine_boxscore_and_pitchfx_data_for_game(session, bbref_game_id):
     result = get_all_pbp_events_for_game(session, bbref_game_id)
     if result.failure:
         return result
@@ -21,12 +21,8 @@ def update_boxscore_with_pitchfx_data(session, bbref_game_id):
     if result.failure:
         return result
     (pitchfx_logs_for_game, all_pfx_data_for_game) = result.value
-    result = reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game)
-    if result.failure:
-        return result
-    at_bat_ids = result.value
-    game_events_combined_data = combine_boxscore_and_pitchfx_data(
-        all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids
+    game_events_combined_data = combine_pbp_events_with_pfx_data(
+        all_pbp_events_for_game, all_pfx_data_for_game
     )
     result = update_boxscore_with_combined_data(
         boxscore, player_id_dict, game_events_combined_data, pitchfx_logs_for_game
@@ -220,6 +216,42 @@ def get_at_bat_id_for_pfx_data(pfx, instance_number=0):
     return f"{pfx.bbref_game_id}_{pfx.inning}_{pfx.pitcher_team_id_bb}_{pfx.pitcher_id}_{pfx.opponent_team_id_bb}_{pfx.batter_id}_{instance_number}"
 
 
+def combine_pbp_events_with_pfx_data(all_pbp_events_for_game, all_pfx_data_for_game):
+    game_events_combined_data = []
+    result = reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game)
+    if result.failure:
+        return result
+    at_bat_ids = result.value
+    for ab_id in at_bat_ids:
+        pbp_events_for_at_bat = get_all_pbp_events_for_at_bat(all_pbp_events_for_game, ab_id)
+        pfx_data_for_at_bat = get_all_pfx_data_for_at_bat(all_pfx_data_for_game, ab_id)
+        first_event_this_at_bat = pbp_events_for_at_bat[0]
+        final_event_this_at_bat = pbp_events_for_at_bat[-1]
+        pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
+        pitch_count_pitchfx = len(pfx_data_for_at_bat)
+        if pfx_data_for_at_bat and pitch_count_pitch_seq == pitch_count_pitchfx:
+            final_pitch_this_at_bat = pfx_data_for_at_bat[-1]
+        else:
+            final_pitch_this_at_bat = None
+        pitch_sequence_description = construct_pitch_sequence_description(
+            final_event_this_at_bat, final_pitch_this_at_bat
+        )
+        combined_at_bat_data = {
+            "event_type": "at_bat",
+            "at_bat_id": ab_id,
+            "pbp_table_row_number": first_event_this_at_bat["pbp_table_row_number"],
+            "pitchfx_data_complete": pitch_count_pitch_seq == pitch_count_pitchfx,
+            "pitch_count_bbref_pitch_seq": pitch_count_pitch_seq,
+            "pitch_count_pitchfx": pitch_count_pitchfx,
+            "missing_pitchfx_count": pitch_count_pitch_seq - pitch_count_pitchfx,
+            "pitch_sequence_description": pitch_sequence_description,
+            "pbp_events": pbp_events_for_at_bat,
+            "pitchfx": pfx_data_for_at_bat
+        }
+        game_events_combined_data.append(combined_at_bat_data)
+    return game_events_combined_data
+
+
 def reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game):
     at_bat_ids_from_boxscore = list(set([game_event.at_bat_id for game_event in all_pbp_events_for_game]))
     at_bat_ids_from_pfx = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
@@ -249,38 +281,6 @@ def order_at_bat_ids_by_time(at_bat_ids, all_pbp_events_for_game):
     ]
     game_event_pbp_map.sort(key=lambda x: x["pbp_table_row_number"])
     return [event_pbp_map["at_bat_id"] for event_pbp_map in game_event_pbp_map]
-
-
-def combine_boxscore_and_pitchfx_data(all_pbp_events_for_game, all_pfx_data_for_game, at_bat_ids):
-    game_events_combined_data = []
-    for ab_id in at_bat_ids:
-        pbp_events_for_at_bat = get_all_pbp_events_for_at_bat(all_pbp_events_for_game, ab_id)
-        pfx_data_for_at_bat = get_all_pfx_data_for_at_bat(all_pfx_data_for_game, ab_id)
-        first_event_this_at_bat = pbp_events_for_at_bat[0]
-        final_event_this_at_bat = pbp_events_for_at_bat[-1]
-        pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
-        pitch_count_pitchfx = len(pfx_data_for_at_bat)
-        if pfx_data_for_at_bat and pitch_count_pitch_seq == pitch_count_pitchfx:
-            final_pitch_this_at_bat = pfx_data_for_at_bat[-1]
-        else:
-            final_pitch_this_at_bat = None
-        pitch_sequence_description = get_detailed_pitch_sequence_description(
-            final_event_this_at_bat, final_pitch_this_at_bat
-        )
-        combined_at_bat_data = {
-            "event_type": "at_bat",
-            "at_bat_id": ab_id,
-            "pbp_table_row_number": first_event_this_at_bat["pbp_table_row_number"],
-            "pitchfx_data_complete": pitch_count_pitch_seq == pitch_count_pitchfx,
-            "pitch_count_bbref_pitch_seq": pitch_count_pitch_seq,
-            "pitch_count_pitchfx": pitch_count_pitchfx,
-            "missing_pitchfx_count": pitch_count_pitch_seq - pitch_count_pitchfx,
-            "pitch_sequence_description": pitch_sequence_description,
-            "pbp_events": pbp_events_for_at_bat,
-            "pitchfx": pfx_data_for_at_bat
-        }
-        game_events_combined_data.append(combined_at_bat_data)
-    return game_events_combined_data
 
 
 def get_all_pbp_events_for_at_bat(all_pbp_events_for_game, at_bat_id):
@@ -313,7 +313,7 @@ def get_total_pitches_in_sequence(pitch_sequence):
     return sum(PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"] for abbrev in pitch_sequence)
 
 
-def get_detailed_pitch_sequence_description(game_event, pfx_data=None):
+def construct_pitch_sequence_description(game_event, pfx_data=None):
     total_pitches_in_sequence = get_total_pitches_in_sequence(game_event["pitch_sequence"])
     current_pitch_count = 0
     next_pitch_blocked_by_c = False
