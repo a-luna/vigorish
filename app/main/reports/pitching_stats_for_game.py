@@ -142,7 +142,7 @@ def get_all_pfx_data_for_game(session, bbref_game_id):
         for pitchfx_log in pitchfx_logs_for_game
     ]
     for pitchfx_log in pitchfx_logs_for_game:
-        for pfx in pitchfx_log:
+        for pfx in pitchfx_log.pitchfx_log:
             pfx.at_bat_id = get_at_bat_id_for_pfx_data(pfx)
     all_at_bat_ids = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
     for at_bat_id in all_at_bat_ids:
