@@ -153,10 +153,9 @@ def get_all_pfx_data_for_game(session, bbref_game_id):
         pfx_ab_ids_for_at_bat = list(set([pfx.ab_id for pfx in pfx_for_at_bat]))
         if len(pfx_ab_ids_for_at_bat) <= 1:
             continue
-        for index, pfx_ab_id in enumerate(sorted(pfx_ab_ids_for_at_bat)):
+        for instance_number, pfx_ab_id in enumerate(sorted(pfx_ab_ids_for_at_bat)):
             pfx_for_separate_at_bat = [pfx for pfx in pfx_for_at_bat if pfx.ab_id == pfx_ab_id]
             for pfx in pfx_for_separate_at_bat:
-                instance_number = index + 1
                 pfx.at_bat_id = get_at_bat_id_for_pfx_data(pfx, instance_number)
     all_pfx_data_for_game = []
     for pitchfx_log in pitchfx_logs_for_game:
