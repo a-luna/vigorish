@@ -141,11 +141,9 @@ def get_all_pfx_data_for_game(session, bbref_game_id):
         remove_duplicate_pitchfx_data(pitchfx_log, game_start_time)
         for pitchfx_log in pitchfx_logs_for_game
     ]
-    all_pfx_data_for_game = []
     for pitchfx_log in pitchfx_logs_for_game:
         for pfx in pitchfx_log:
             pfx.at_bat_id = get_at_bat_id_for_pfx_data(pfx)
-        all_pfx_data_for_game.extend(pitchfx_log.pitchfx_log)
     all_at_bat_ids = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
     for at_bat_id in all_at_bat_ids:
         pfx_for_at_bat = [pfx for pfx in all_pfx_data_for_game if pfx.at_bat_id == at_bat_id]
@@ -157,6 +155,10 @@ def get_all_pfx_data_for_game(session, bbref_game_id):
             for pfx in pfx_for_separate_at_bat:
                 instance_number = index + 1
                 pfx.at_bat_id = get_at_bat_id_for_pfx_data(pfx, instance_number)
+    all_pfx_data_for_game = []
+    for pitchfx_log in pitchfx_logs_for_game:
+        pitchfx_log.at_bat_ids = list(set([pfx.at_bat_id for pfx in pitchfx_log.pitchfx_log]))
+        all_pfx_data_for_game.extend(pitchfx_log.pitchfx_log)
     all_pfx_data_for_game.sort(key=lambda x: (x.ab_id, x.ab_count))
     return Result.Ok((pitchfx_logs_for_game, all_pfx_data_for_game))
 
@@ -201,7 +203,6 @@ def remove_duplicate_pitchfx_data(pitchfx_log, game_start_time):
     pitchfx_log.pitchfx_log = pfx_log_no_dupes
     pitchfx_log.pitch_count_by_inning = get_pitch_count_by_inning(pfx_log_no_dupes)
     pitchfx_log.total_pitch_count = len(pfx_log_no_dupes)
-    pitchfx_log.at_bat_ids = list(set([pfx.at_bat_id for pfx in pfx_log_no_dupes]))
     pfx_log_copy = None
     return pitchfx_log
 
