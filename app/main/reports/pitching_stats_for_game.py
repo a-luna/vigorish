@@ -141,9 +141,11 @@ def get_all_pfx_data_for_game(session, bbref_game_id):
         remove_duplicate_pitchfx_data(pitchfx_log, game_start_time)
         for pitchfx_log in pitchfx_logs_for_game
     ]
+    all_pfx_data_for_game = []
     for pitchfx_log in pitchfx_logs_for_game:
         for pfx in pitchfx_log.pitchfx_log:
             pfx.at_bat_id = get_at_bat_id_for_pfx_data(pfx)
+        all_pfx_data_for_game.extend(pitchfx_log.pitchfx_log)
     all_at_bat_ids = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
     for at_bat_id in all_at_bat_ids:
         pfx_for_at_bat = [pfx for pfx in all_pfx_data_for_game if pfx.at_bat_id == at_bat_id]
