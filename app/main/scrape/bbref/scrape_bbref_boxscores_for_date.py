@@ -251,6 +251,7 @@ def render_webpage(driver, url):
     return html.fromstring(driver.page_source, base_url=url)
 
 
+@snoop(depth=4)
 def parse_bbref_boxscore(response, url):
     """Parse boxscore data from the page source."""
     (game_id, away_team_id, home_team_id) = _parse_game_and_team_ids(response, url)
