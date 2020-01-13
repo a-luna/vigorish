@@ -336,7 +336,7 @@ def construct_pitch_sequence_description(game_event, pfx_data=None):
             if pfx_data:
                 pfx = pfx_data[current_pitch_count - 1]
                 pitch_type = PITCH_TYPE_DICT[pfx["mlbam_pitch_name"]]
-                pitch_description += f" ({pfx["start_speed"]:02.0f} {pitch_type})"
+                pitch_description += f' ({pfx["start_speed"]:02.0f} {pitch_type})'
         else:
             pitch_description = PPB_PITCH_LOG_DICT[abbrev]['description']
         if next_pitch_blocked_by_c:
