@@ -601,7 +601,7 @@ import snoop
 @snoop(depth=2)
 def perform_task(task, format, data_set, year, filepath):
     s3_key = Template(KEY_TEMPLATE_DICT[format]).substitute(
-        data_set=str(data_set), year=year, filename=filepath.name
+        data_set=str(data_set), year=str(year), filename=filepath.name
     )
     if task == S3Task.UPLOAD:
         return upload_to_s3(s3_key, filepath)
