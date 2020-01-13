@@ -6,10 +6,6 @@ from app.main.util.result import Result
 
 
 def update_brooks_games_for_date_single_date(session, season, games_for_date, game_date):
-    unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(session, season.id)
-    new_brooks_dates = set([game_date]) & set(unscraped_brooks_dates)
-    if not new_brooks_dates:
-        return Result.Ok()
     result = update_date_status_records(session, games_for_date, game_date)
     if result.failure:
         return result
