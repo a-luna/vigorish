@@ -230,7 +230,7 @@ def combine_pbp_events_with_pfx_data(all_pbp_events_for_game, all_pfx_data_for_g
         pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
         pitch_count_pitchfx = len(pfx_data_for_at_bat)
         if pfx_data_for_at_bat and pitch_count_pitch_seq == pitch_count_pitchfx:
-            pfx_data_for_seq_description = pfx_data_for_at_bat[-1]
+            pfx_data_for_seq_description = deepcopy(pfx_data_for_at_bat)
         else:
             pfx_data_for_seq_description = None
         pitch_sequence_description = construct_pitch_sequence_description(
