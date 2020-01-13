@@ -1,6 +1,7 @@
 import time
 from random import randint
 
+import snoop
 from tqdm import tqdm
 
 from app.main.constants import PBAR_LEN_DICT
@@ -17,6 +18,7 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
     key_name = "bbref_boxscore"
     display_name = "Boxscores for date (bbref.com)"
 
+    @snoop
     def execute(self, scrape_date):
         scraped_bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db['session'], scrape_date)
