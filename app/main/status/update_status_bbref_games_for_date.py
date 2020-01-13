@@ -3,7 +3,7 @@ from pathlib import Path
 from app.main.models.status_date import DateScrapeStatus
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
-from app.main.util.s3_helper import get_all_bbref_dates_scraped, get_bbref_games_for_date_from_s3
+from app.main.util.s3_helper import get_all_bbref_dates_scraped_from_s3, get_bbref_games_for_date_from_s3
 from app.main.util.result import Result
 from app.main.util.string_functions import validate_bbref_game_id_list
 
@@ -24,7 +24,7 @@ def update_bbref_games_for_date_single_date(session, season, games_for_date):
     return Result.Ok()
 
 def update_data_set_bbref_games_for_date(session, season):
-    result = get_all_bbref_dates_scraped(season.year)
+    result = get_all_bbref_dates_scraped_from_s3(season.year)
     if result.failure:
         return result
     scraped_bbref_dates = result.value

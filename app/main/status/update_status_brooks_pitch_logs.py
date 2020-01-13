@@ -2,12 +2,12 @@ from app.main.models.season import Season
 from app.main.models.status_date import DateScrapeStatus
 from app.main.models.status_game import GameScrapeStatus
 from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
-from app.main.util.s3_helper import get_all_scraped_brooks_game_ids, get_brooks_pitch_logs_for_game_from_s3
+from app.main.util.s3_helper import get_all_scraped_brooks_game_ids_from_s3, get_brooks_pitch_logs_for_game_from_s3
 from app.main.util.result import Result
 
 
 def update_data_set_brooks_pitch_logs(session, season):
-    result = get_all_scraped_brooks_game_ids(season.year)
+    result = get_all_scraped_brooks_game_ids_from_s3(season.year)
     if result.failure:
         return result
     scraped_brooks_game_ids = result.value

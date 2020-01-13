@@ -1,10 +1,10 @@
 from app.main.models.status_pitch_appearance import PitchAppearanceScrapeStatus
-from app.main.util.s3_helper import get_all_pitch_app_ids_scraped, get_brooks_pitchfx_log_from_s3
+from app.main.util.s3_helper import get_all_scraped_pitchfx_pitch_app_ids_from_s3, get_brooks_pitchfx_log_from_s3
 from app.main.util.result import Result
 
 
 def update_data_set_brooks_pitchfx(session, season):
-    result = get_all_pitch_app_ids_scraped(season.year)
+    result = get_all_scraped_pitchfx_pitch_app_ids_from_s3(season.year)
     if result.failure:
         return result
     scraped_pitch_app_ids = result.value

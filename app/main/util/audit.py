@@ -13,10 +13,10 @@ from tqdm import tqdm
 
 from app.main.models.season import Season
 from app.main.util.s3_helper import (
-    get_all_scraped_brooks_game_ids,
+    get_all_scraped_brooks_game_ids_from_s3,
     get_brooks_pitch_logs_for_game_from_s3,
     upload_brooks_pitch_logs_for_game,
-    get_all_pitch_app_ids_scraped,
+    get_all_scraped_pitchfx_pitch_app_ids_from_s3,
     get_brooks_pitchfx_log_from_s3,
     delete_brooks_pitchfx_log_from_s3,
     rename_brooks_pitchfx_log,
@@ -29,7 +29,7 @@ def audit(db, year):
     season = Season.find_by_year(db["session"], year)
     spinner = Halo(text=f'Gathering all scraped Pitchfx IDs for the {year} MLB season...', color='magenta', spinner='dots3')
     spinner.start()
-    result = get_all_pitch_app_ids_scraped(season.year)
+    result = get_all_scraped_pitchfx_pitch_app_ids_from_s3(season.year)
     if result.failure:
         return result
     spinner.stop();
@@ -100,7 +100,7 @@ def bulkrename(db, year):
     season = Season.find_by_year(db["session"], year)
     spinner = Halo(text=f'Gathering all scraped Pitchfx IDs for the {year} MLB season...', color='magenta', spinner='dots3')
     spinner.start()
-    result = get_all_pitch_app_ids_scraped(season.year)
+    result = get_all_scraped_pitchfx_pitch_app_ids_from_s3(season.year)
     if result.failure:
         return result
     scraped_pitch_app_ids = result.value
@@ -136,7 +136,7 @@ def bulkupdate(db, year):
     season = Season.find_by_year(db["session"], year)
     spinner = Halo(text=f'Gathering all scraped brooksbaseball game ids for the 2019 MLB season...', color='cyan', spinner='dots3')
     spinner.start()
-    result = get_all_scraped_brooks_game_ids(season.year)
+    result = get_all_scraped_brooks_game_ids_from_s3(season.year)
     if result.failure:
         return result
     scraped_brooks_game_ids = result.value
@@ -165,7 +165,7 @@ def bulkupdate(db, year):
 
     spinner = Halo(text=f'Gathering all scraped pitchfx ids for the 2019 MLB season...', color='magenta', spinner='dots3')
     spinner.start()
-    result = get_all_pitch_app_ids_scraped(season.year)
+    result = get_all_scraped_pitchfx_pitch_app_ids_from_s3(season.year)
     if result.failure:
         return result
     scraped_pitch_app_ids = result.value

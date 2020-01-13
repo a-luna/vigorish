@@ -32,12 +32,7 @@ from app.main.util.file_util import (
     read_brooks_pitchfx_log_from_file,
     write_brooks_pitchfx_log_to_file
 )
-from app.main.util.regex import (
-    BR_DAILY_KEY_REGEX,
-    BR_GAME_KEY_REGEX,
-    BB_DAILY_KEY_REGEX,
-    PITCH_APP_REGEX,
-)
+from app.main.util.regex import PITCH_APP_REGEX
 from app.main.util.result import Result
 from app.main.util.string_functions import validate_bb_game_id, validate_bbref_game_id
 
@@ -45,31 +40,6 @@ JSON_FOLDER_KEY_TEMPLATE = "${year}/${data_set}"
 JSON_FILE_KEY_TEMPLATE = "${year}/${data_set}/${filename}"
 HTML_FOLDER_KEY_TEMPLATE = "${year}/${data_set}/html"
 HTML_FILE_KEY_TEMPLATE = "${year}/${data_set}/html/${filename}"
-
-T_BB_DATE_FOLDER = "${year}/brooks_games_for_date"
-T_BB_DATE_KEY = "${year}/brooks_games_for_date/${filename}"
-T_BB_DATE_HTML_FOLDER = "${year}/brooks_games_for_date/html"
-T_BB_DATE_HTML_KEY = "${year}/brooks_games_for_date/html/${filename}"
-
-T_BB_LOG_FOLDER = "${year}/brooks_pitch_logs"
-T_BB_LOG_KEY = "${year}/brooks_pitch_logs/${filename}"
-T_BB_LOG_HTML_FOLDER = "${year}/brooks_pitch_logs/html"
-T_BB_LOG_HTML_KEY = "${year}/brooks_pitch_logs/html/${filename}"
-
-T_BB_PFX_FOLDER = "${year}/brooks_pitchfx"
-T_BB_PFX_KEY = "${year}/brooks_pitchfx/${filename}"
-T_BB_PFX_HTML_FOLDER = "${year}/brooks_pitchfx/html"
-T_BB_PFX_HTML_KEY = "${year}/brooks_pitchfx/html/${filename}"
-
-T_BR_DATE_FOLDER = "${year}/bbref_games_for_date"
-T_BR_DATE_KEY = "${year}/bbref_games_for_date/${filename}"
-T_BR_DATE_HTML_FOLDER = "${year}/bbref_games_for_date/html"
-T_BR_DATE_HTML_KEY = "${year}/bbref_games_for_date/html/${filename}"
-
-T_BR_GAME_FOLDER = "${year}/bbref_boxscore"
-T_BR_GAME_KEY = "${year}/bbref_boxscore/${filename}"
-T_BR_GAME_HTML_FOLDER = "${year}/bbref_boxscore/html"
-T_BR_GAME_HTML_KEY = "${year}/bbref_boxscore/html/${filename}"
 
 S3_BUCKET = "vig-data"
 s3_client = boto3.client("s3")
@@ -86,7 +56,12 @@ class DocFormat(Enum):
     JSON = auto()
     HTML = auto()
 
-KEY_TEMPLATE_DICT = {
+FOLDER_KEY_TEMPLATE_DICT = {
+    DocFormat.HTML: HTML_FOLDER_KEY_TEMPLATE,
+    DocFormat.JSON: JSON_FOLDER_KEY_TEMPLATE
+}
+
+FILE_KEY_TEMPLATE_DICT = {
     DocFormat.HTML: HTML_FILE_KEY_TEMPLATE,
     DocFormat.JSON: JSON_FILE_KEY_TEMPLATE
 }
@@ -117,7 +92,9 @@ def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_f
         delete_file=delete_file)
 
 
-def get_all_brooks_pitch_logs_for_date_from_s3(session, game_date, folderpath=None, delete_file=True):
+def get_all_brooks_pitch_logs_for_date_from_s3(
+    session, game_date, folderpath=None, delete_file=True
+):
     """Retrieve a list of BrooksPitchLogsForGame objects for all games that occurred on a date."""
     brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(session, game_date)
     pitch_logs = []
@@ -151,12 +128,17 @@ def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=Tr
 
 
 def get_all_pitchfx_logs_for_game_from_s3(session, bbref_game_id):
-    pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game(session, bbref_game_id)
+    pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game(
+        session, bbref_game_id
+    )
     fetch_tasks = [get_brooks_pitchfx_log_from_s3(pitch_app_id) for pitch_app_id in pitch_app_ids]
     task_failed = any(result.failure for result in fetch_tasks)
     if task_failed:
         s3_errors = "\n".join([f"Error: {result.error}" for result in fetch_tasks if result.failure])
-        error = f"The following errors occurred attempting to retrieve all pitchfx logs for game {bbref_game_id}:\n{s3_errors}"
+        error = (
+            "The following errors occurred attempting to retrieve all pitchfx logs for game "
+            f"{bbref_game_id}:\n{s3_errors}"
+        )
         return Result.Fail(error)
     pitchfx_logs = [result.value for result in fetch_tasks]
     return Result.Ok(pitchfx_logs)
@@ -169,7 +151,11 @@ def get_bbref_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=T
     if result.failure:
         return result
     filepath = result.value
-    return read_bbref_games_for_date_from_file(scrape_date, folderpath=filepath.parent, delete_file=delete_file)
+    return read_bbref_games_for_date_from_file(
+        scrape_date,
+        folderpath=filepath.parent,
+        delete_file=delete_file
+    )
 
 
 def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True):
@@ -179,15 +165,23 @@ def get_bbref_boxscore_from_s3(bbref_game_id, folderpath=None, delete_file=True)
     if result.failure:
         return result
     filepath = result.value
-    return read_bbref_boxscore_from_file(bbref_game_id, folderpath=filepath.parent, delete_file=delete_file)
-
-
-def get_all_brooks_dates_scraped_from_s3_test(year):
-    json_folder = Template(JSON_FOLDER_KEY_TEMPLATE).substitute(
-        year=year, data_set=DataSet.brooks_games_for_date
+    return read_bbref_boxscore_from_file(
+        bbref_game_id,
+        folderpath=filepath.parent,
+        delete_file=delete_file
     )
-    html_folder = Template(HTML_FOLDER_KEY_TEMPLATE).substitute(
-        year=year, data_set=DataSet.brooks_games_for_date
+
+
+def get_all_brooks_dates_scraped_from_s3(year):
+    json_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.JSON,
+        data_set=DataSet.brooks_games_for_date,
+        year=year
+    )
+    html_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.HTML,
+        data_set=DataSet.brooks_games_for_date,
+        year=year
     )
     scraped_dates = [
         parser.parse(Path(obj.key).stem[-10:])
@@ -198,67 +192,84 @@ def get_all_brooks_dates_scraped_from_s3_test(year):
     return Result.Ok(scraped_dates)
 
 
-def get_all_brooks_dates_scraped_from_s3(year):
-    s3_folder = Template(JSON_FOLDER_KEY_TEMPLATE).substitute(
-        data_set=DataSet.brooks_games_for_date, year=year
+def get_all_scraped_brooks_game_ids_from_s3(year):
+    json_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.JSON,
+        data_set=DataSet.brooks_pitch_logs,
+        year=year
     )
-    scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
-    scraped_dates = []
-    for key in scraped_keys:
-        try:
-            match = BB_DAILY_KEY_REGEX.search(key)
-            if not match:
-                continue
-            group_dict = match.groupdict()
-            game_date = parser.parse(group_dict['date_str'])
-            scraped_dates.append(game_date)
-        except Exception as e:
-            return Result.Fail(f"Error: {repr(e)}")
-    return Result.Ok(scraped_dates)
-
-
-def get_all_scraped_brooks_game_ids(year):
-    s3_folder = Template(T_BB_LOG_FOLDER).substitute(year=year)
-    scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
-    scraped_gameids = [Path(key).stem for key in scraped_keys]
+    html_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.HTML,
+        data_set=DataSet.brooks_pitch_logs,
+        year=year
+    )
+    scraped_gameids = [
+        Path(obj.key).stem
+        for obj in bucket.objects.all()
+        if json_folder in obj.key
+        and html_folder not in obj.key
+    ]
     return Result.Ok(scraped_gameids)
 
 
-def get_all_pitch_app_ids_scraped(year):
-    s3_folder = Template(T_BB_PFX_FOLDER).substitute(year=year)
-    scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
-    scraped_pitch_app_ids = [Path(key).stem for key in scraped_keys]
+def get_all_scraped_pitchfx_pitch_app_ids_from_s3(year):
+    json_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.JSON,
+        data_set=DataSet.brooks_pitchfx,
+        year=year
+    )
+    html_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.HTML,
+        data_set=DataSet.brooks_pitchfx,
+        year=year
+    )
+    scraped_pitch_app_ids = [
+        Path(obj.key).stem
+        for obj in bucket.objects.all()
+        if json_folder in obj.key
+        and html_folder not in obj.key
+    ]
     return Result.Ok(scraped_pitch_app_ids)
 
 
-def get_all_bbref_dates_scraped(year):
-    s3_folder = Template(T_BR_DATE_FOLDER).substitute(year=year)
-    scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
-    scraped_dates = []
-    for key in scraped_keys:
-        try:
-            match = BR_DAILY_KEY_REGEX.search(key)
-            if not match:
-                continue
-            group_dict = match.groupdict()
-            game_date = parser.parse(group_dict['date_str'])
-            scraped_dates.append(game_date)
-        except Exception as e:
-            return Result.Fail(f"Error: {repr(e)}")
+def get_all_bbref_dates_scraped_from_s3(year):
+    json_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.JSON,
+        data_set=DataSet.bbref_games_for_date,
+        year=year
+    )
+    html_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.HTML,
+        data_set=DataSet.bbref_games_for_date,
+        year=year
+    )
+    scraped_dates = [
+        parser.parse(Path(obj.key).stem[-10:])
+        for obj in bucket.objects.all()
+        if json_folder in obj.key
+        and html_folder not in obj.key
+    ]
     return Result.Ok(scraped_dates)
 
 
-def get_all_scraped_bbref_game_ids(year):
-    s3_folder = Template(T_BR_GAME_FOLDER).substitute(year=year)
-    scraped_keys = [obj.key for obj in bucket.objects.all() if s3_folder in obj.key]
-    scraped_gameids = []
-    for key in scraped_keys:
-        match = BR_GAME_KEY_REGEX.search(key)
-        if not match:
-            continue
-        group_dict = match.groupdict()
-        scraped_gameids.append(group_dict["game_id"])
-    return Result.Ok(scraped_gameids)
+def get_all_scraped_bbref_game_ids_from_s3(year):
+    json_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.JSON,
+        data_set=DataSet.bbref_boxscore,
+        year=year
+    )
+    html_folder = get_s3_key_for_folder(
+        doc_format=DocFormat.HTML,
+        data_set=DataSet.bbref_boxscore,
+        year=year
+    )
+    scraped_game_ids = [
+        Path(obj.key).stem
+        for obj in bucket.objects.all()
+        if json_folder in obj.key
+        and html_folder not in obj.key
+    ]
+    return Result.Ok(scraped_game_ids)
 
 
 def upload_brooks_games_for_date(games_for_date):
@@ -270,7 +281,7 @@ def upload_brooks_games_for_date(games_for_date):
     game_date = games_for_date.game_date
     return perform_task(
         task=S3Task.UPLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_games_for_date,
         year=game_date.year,
         filepath=filepath
@@ -286,7 +297,7 @@ def upload_brooks_pitch_logs_for_game(pitch_logs_for_game):
     game_date = pitch_logs_for_game.game_date
     return perform_task(
         task=S3Task.UPLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_pitch_logs,
         year=game_date.year,
         filepath=filepath
@@ -302,7 +313,7 @@ def upload_brooks_pitchfx_log(pitchfx_log):
     game_date = pitchfx_log.game_date
     return perform_task(
         task=S3Task.UPLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_pitchfx,
         year=game_date.year,
         filepath=filepath
@@ -318,7 +329,7 @@ def upload_bbref_games_for_date(games_for_date):
     game_date = games_for_date.game_date
     return perform_task(
         task=S3Task.UPLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.bbref_games_for_date,
         year=game_date.year,
         filepath=filepath
@@ -334,7 +345,7 @@ def upload_bbref_boxscore(boxscore):
     game_date = boxscore.game_date
     return perform_task(
         task=S3Task.UPLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.bbref_boxscore,
         year=game_date.year,
         filepath=filepath
@@ -349,7 +360,7 @@ def download_html_brooks_games_for_date(scrape_date, folderpath=None):
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.HTML,
+        doc_format=DocFormat.HTML,
         data_set=DataSet.brooks_games_for_date,
         year=scrape_date.year,
         filepath=filepath
@@ -364,7 +375,7 @@ def download_json_brooks_games_for_date(scrape_date, folderpath=None):
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_games_for_date,
         year=scrape_date.year,
         filepath=filepath
@@ -382,7 +393,7 @@ def download_html_brooks_pitch_log_page(pitch_app_id, folderpath=None):
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.HTML,
+        doc_format=DocFormat.HTML,
         data_set=DataSet.brooks_pitch_logs,
         year=year,
         filepath=filepath
@@ -401,7 +412,7 @@ def download_json_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_pitch_logs,
         year=game_date.year,
         filepath=filepath
@@ -420,7 +431,7 @@ def download_html_brooks_pitchfx_log(pitch_app_id, folderpath=None):
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.HTML,
+        doc_format=DocFormat.HTML,
         data_set=DataSet.brooks_pitchfx,
         year=year,
         filepath=filepath
@@ -439,7 +450,7 @@ def download_json_brooks_pitchfx_log(pitch_app_id, year, folderpath=None):
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_pitchfx,
         year=year,
         filepath=filepath
@@ -454,7 +465,7 @@ def download_html_bbref_games_for_date(scrape_date, folderpath=None):
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.HTML,
+        doc_format=DocFormat.HTML,
         data_set=DataSet.bbref_games_for_date,
         year=scrape_date.year,
         filepath=filepath
@@ -469,7 +480,7 @@ def download_json_bbref_games_for_date(scrape_date, folderpath=None):
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.bbref_games_for_date,
         year=scrape_date.year,
         filepath=filepath
@@ -484,7 +495,7 @@ def download_html_bbref_boxscore(bbref_game_id, folderpath=None):
     year = bbref_game_id[3:7]
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.HTML,
+        doc_format=DocFormat.HTML,
         data_set=DataSet.bbref_boxscore,
         year=year,
         filepath=filepath
@@ -503,7 +514,7 @@ def download_json_bbref_boxscore(bbref_game_id, folderpath=None):
     year = bbref_game_id[3:7]
     return perform_task(
         task=S3Task.DOWNLOAD,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.bbref_boxscore,
         year=year,
         filepath=filepath
@@ -516,7 +527,7 @@ def delete_brooks_games_for_date_from_s3(date):
     filename = Template(T_BROOKS_GAMESFORDATE_FILENAME).substitute(date=date_str)
     return perform_task(
         task=S3Task.DELETE,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_games_for_date,
         year=date.year,
         filepath=Path(filename)
@@ -532,7 +543,7 @@ def delete_brooks_pitch_logs_for_game_from_s3(bb_game_id):
     filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(gid=bb_game_id)
     return perform_task(
         task=S3Task.DELETE,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_pitch_logs,
         year=game_date.year,
         filepath=Path(filename)
@@ -553,7 +564,7 @@ def delete_brooks_pitchfx_log_from_s3(pitch_app_id):
     filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=pitch_app_id)
     return perform_task(
         task=S3Task.DELETE,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_pitchfx,
         year=game_date.year,
         filepath=Path(filename)
@@ -566,7 +577,7 @@ def delete_bbref_games_for_date_from_s3(scrape_date):
     filename = Template(T_BBREF_GAMESFORDATE_FILENAME).substitute(date=date_str)
     return perform_task(
         task=S3Task.DELETE,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.bbref_games_for_date,
         year=scrape_date.year,
         filepath=Path(filename)
@@ -582,7 +593,7 @@ def delete_bbref_boxscore_from_s3(bbref_game_id):
     filename = Template(T_BBREF_BOXSCORE_FILENAME).substitute(gid=bbref_game_id)
     return perform_task(
         task=S3Task.DELETE,
-        format=DocFormat.JSON,
+        doc_format=DocFormat.JSON,
         data_set=DataSet.bbref_boxscore,
         year=game_date.year,
         filepath=Path(filename)
@@ -591,24 +602,42 @@ def delete_bbref_boxscore_from_s3(bbref_game_id):
 
 def rename_brooks_pitchfx_log(old_pitch_app_id, new_pitch_app_id, year):
     old_filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=old_pitch_app_id)
-    old_key = Template(T_BB_PFX_KEY).substitute(year=year, filename=old_filename)
+    old_key = get_s3_key_for_file(
+        doc_format=DocFormat.JSON,
+        data_set=DataSet.brooks_pitchfx,
+        year=year,
+        filepath=Path(old_filename)
+    )
     new_filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=new_pitch_app_id)
-    new_key = Template(T_BB_PFX_KEY).substitute(year=year, filename=new_filename)
+    new_key = get_s3_key_for_file(
+        doc_format=DocFormat.JSON,
+        data_set=DataSet.brooks_pitchfx,
+        year=year,
+        filepath=Path(new_filename)
+    )
     return rename_s3_object(old_key, new_key)
 
-import snoop
 
-@snoop(depth=2)
-def perform_task(task, format, data_set, year, filepath):
-    s3_key = Template(KEY_TEMPLATE_DICT[format]).substitute(
-        data_set=str(data_set), year=str(year), filename=filepath.name
-    )
+def perform_task(task, doc_format, data_set, year, filepath):
+    s3_key = get_s3_key_for_file(doc_format, data_set, year, filepath)
     if task == S3Task.UPLOAD:
         return upload_to_s3(s3_key, filepath)
     if task == S3Task.DOWNLOAD:
         return download_from_s3(s3_key, filepath)
     if task == S3Task.DELETE:
         return delete_from_s3(s3_key)
+
+
+def get_s3_key_for_file(doc_format, data_set, year, filepath):
+    return Template(FILE_KEY_TEMPLATE_DICT[doc_format]).substitute(
+        data_set=str(data_set), year=str(year), filename=filepath.name
+    )
+
+
+def get_s3_key_for_folder(doc_format, data_set, year):
+    return Template(FOLDER_KEY_TEMPLATE_DICT[doc_format]).substitute(
+        data_set=str(data_set), year=str(year)
+    )
 
 
 def upload_to_s3(s3_key, filepath):

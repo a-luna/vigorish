@@ -12,6 +12,7 @@ from app.main.scrape.brooks.models.pitch_logs_for_game import BrooksPitchLogsFor
 from app.main.scrape.brooks.models.pitch_log import BrooksPitchLog
 from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.result import Result
+from app.main.util.s3_helper import download_html_brooks_pitch_log_page
 from app.main.util.scrape_functions import request_url
 
 
@@ -64,8 +65,9 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     with tqdm(total=len(pitch_app_dict), unit="pitch_log",  leave=False, position=3) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
             try:
-                pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
+                needs_timeout = False
                 already_scraped = False
+                pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
                 if hasattr(scraped_pitch_logs_for_game, "pitch_logs"):
                     already_scraped = any(
                         pitch_log.pitcher_id_mlb == pitcher_id and pitch_log.parsed_all_info
@@ -75,13 +77,21 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
                     time.sleep(randint(50, 75) / 100.0)
                     pbar.update()
                 pbar.set_description(get_pbar_description_requesting(pitcher_id))
-                response = request_url(url)
+                pitch_app_id = f"${game.bbref_game_id}_${pitcher_id}"
+                result = get_pitch_log_html_from_s3(pitch_app_id)
+                if result.failure:
+                    result = download_pitch_log_html(url)
+                    if result.failure:
+                        return result
+                    needs_timeout = True
+                response = result.value
                 result = parse_pitch_log(response, game, pitcher_id, url)
                 if result.failure:
                     return result
                 brooks_pitch_log = result.value
                 scraped_pitch_logs.append(brooks_pitch_log)
-                time.sleep(randint(250, 300) / 100.0)
+                if needs_timeout:
+                    time.sleep(randint(250, 300) / 100.0)
                 pbar.update()
             except RetryLimitExceededError as e:
                 return Result.Fail(repr(e))
@@ -90,6 +100,27 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
 
     pitch_logs_for_game.pitch_logs = scraped_pitch_logs
     return Result.Ok(pitch_logs_for_game)
+
+
+def get_pitch_log_html_from_s3(pitch_app_id):
+    result = download_html_brooks_pitch_log_page(pitch_app_id)
+    if result.failure:
+        return result
+    html_path = result.value
+    contents = html_path.read_text()
+    response = html.fromstring(contents)
+    html_path.unlink()
+    return Result.Ok(response)
+
+
+def download_pitch_log_html(url):
+    try:
+        response =  request_url(url)
+        return Result.Ok(response)
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
 
 
 def get_pbar_pitch_log_description(player_id):
