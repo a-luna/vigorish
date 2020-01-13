@@ -12,6 +12,7 @@ from app.main.scrape.brooks.models.pitchfx_log import BrooksPitchFxLog
 from app.main.scrape.brooks.models.pitchfx import BrooksPitchFxData
 from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.result import Result
+from app.main.util.s3_helper import download_html_brooks_pitchfx_log
 from app.main.util.scrape_functions import request_url
 
 
@@ -32,15 +33,22 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
                 time.sleep(randint(50, 75) / 100.0)
                 pbar.update()
                 continue
-            pbar.set_description(get_pbar_description_requesting(pitch_log.pitcher_id_mlb))
+            pitch_app_id = pitch_log.pitch_app_id
+            pitcher_id = pitch_log.pitcher_id_mlb
             try:
-                response = request_url(pitch_log.pitchfx_url)
+                result = get_pitchfx_data_html_from_s3(pitch_app_id, pitcher_id)
+                if result.failure:
+                    result = request_pitchfx_data_html(url, pitcher_id)
+                    if result.failure:
+                        return result
+                    needs_timeout = True
+                response = result.value
                 result = parse_pitchfx_log(response, pitch_log)
                 if result.failure:
                     return result
                 pitchfx_log = result.value
                 pitchfx_logs_for_game.append(pitchfx_log)
-                scrape_audit.append((pitch_log.pitch_app_id, "scraped_brooks"))
+                scrape_audit.append((pitch_app_id, "scraped_brooks"))
                 time.sleep(randint(250, 300) / 100.0)
                 pbar.update()
             except RetryLimitExceededError as e:
@@ -50,8 +58,37 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
     return Result.Ok((pitchfx_logs_for_game, scrape_audit))
 
 
+def get_pitchfx_data_html_from_s3(pitch_app_id, pitcher_id):
+    result = download_html_brooks_pitchfx_log(pitch_app_id)
+    if result.failure:
+        return result
+    pbar.set_description(get_pbar_description_from_s3(pitcher_id))
+    html_path = result.value
+    contents = html_path.read_text()
+    response = html.fromstring(contents)
+    html_path.unlink()
+    return Result.Ok(response)
+
+
+def request_pitchfx_data_html(url, pitcher_id):
+    pbar.set_description(get_pbar_description_requesting(pitcher_id))
+    try:
+        response = request_url(url)
+        return Result.Ok(response)
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))
+    except Exception as e:
+        return Result.Fail(f"Error: {repr(e)}")
+
+
 def get_pbar_description(player_id):
     pre =f"Player ID | {player_id}"
+    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
+def get_pbar_description_from_s3(player_id):
+    pre =f"FROM S3   | {player_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 

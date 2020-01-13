@@ -76,11 +76,10 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
                 if already_scraped:
                     time.sleep(randint(50, 75) / 100.0)
                     pbar.update()
-                pbar.set_description(get_pbar_description_requesting(pitcher_id))
                 pitch_app_id = f"${game.bbref_game_id}_${pitcher_id}"
-                result = get_pitch_log_html_from_s3(pitch_app_id)
+                result = get_pitch_log_html_from_s3(pitch_app_id, pitcher_id)
                 if result.failure:
-                    result = download_pitch_log_html(url)
+                    result = request_pitch_log_html(url, pitcher_id)
                     if result.failure:
                         return result
                     needs_timeout = True
@@ -102,10 +101,11 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     return Result.Ok(pitch_logs_for_game)
 
 
-def get_pitch_log_html_from_s3(pitch_app_id):
+def get_pitch_log_html_from_s3(pitch_app_id, pitcher_id):
     result = download_html_brooks_pitch_log_page(pitch_app_id)
     if result.failure:
         return result
+    pbar.set_description(get_pbar_description_from_s3(pitcher_id))
     html_path = result.value
     contents = html_path.read_text()
     response = html.fromstring(contents)
@@ -113,9 +113,10 @@ def get_pitch_log_html_from_s3(pitch_app_id):
     return Result.Ok(response)
 
 
-def download_pitch_log_html(url):
+def request_pitch_log_html(url, pitcher_id):
+    pbar.set_description(get_pbar_description_requesting(pitcher_id))
     try:
-        response =  request_url(url)
+        response = request_url(url)
         return Result.Ok(response)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
@@ -125,6 +126,12 @@ def download_pitch_log_html(url):
 
 def get_pbar_pitch_log_description(player_id):
     pre =f"Player ID | {player_id}"
+    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
+    return f"{pre}{'.'*pad_len}"
+
+
+def get_pbar_description_from_s3(player_id):
+    pre =f"FROM S3   | {player_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 

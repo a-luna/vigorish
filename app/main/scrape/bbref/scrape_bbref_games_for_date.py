@@ -11,6 +11,7 @@ from app.main.util.decorators import timeout, retry, RetryLimitExceededError
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from app.main.util.result import Result
 from app.main.util.s3_helper import download_html_bbref_games_for_date
+from app.main.util.scrape_functions import render_url
 from app.main.util.string_functions import validate_bbref_game_id
 
 
@@ -41,6 +42,13 @@ def scrape_bbref_games_for_date(scrape_date, driver):
         return Result.Fail(f"Error: {repr(e)}")
 
 
+def get_dashboard_url_for_date(scrape_date):
+    m = scrape_date.month
+    d = scrape_date.day
+    y = scrape_date.year
+    return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
+
+
 def get_bbref_games_for_date_html_from_s3(scrape_date):
     result = download_html_bbref_games_for_date(scrape_date)
     if result.failure:
@@ -54,26 +62,13 @@ def get_bbref_games_for_date_html_from_s3(scrape_date):
 
 def request_bbref_games_for_date_html(driver, url):
     try:
-        response = render_webpage(driver, url)
+        response = render_url(driver, url)
         return Result.Ok(response)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
 
-
-def get_dashboard_url_for_date(scrape_date):
-    m = scrape_date.month
-    d = scrape_date.day
-    y = scrape_date.year
-    return Template(T_BBREF_DASH_URL).substitute(m=m, d=d, y=y)
-
-@retry(
-    max_attempts=5,delay=5, exceptions=(TimeoutError, Exception))
-@timeout(seconds=15)
-def render_webpage(driver, url):
-    driver.get(url)
-    return html.fromstring(driver.page_source, base_url=url)
 
 def parse_bbref_dashboard_page(response, scrape_date, url):
     games_for_date = BBRefGamesForDate()
