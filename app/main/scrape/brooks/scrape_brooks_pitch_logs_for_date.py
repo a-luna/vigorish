@@ -53,9 +53,7 @@ def get_pbar_game_description(game_id):
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
-import snoop
 
-@snoop
 def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game.bb_game_id
@@ -78,7 +76,7 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
                 if already_scraped:
                     time.sleep(randint(50, 75) / 100.0)
                     pbar.update()
-                pitch_app_id = f"${game.bbref_game_id}_${pitcher_id}"
+                pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
                 result = get_pitch_log_html_from_s3(pitch_app_id, pitcher_id, pbar)
                 if result.failure:
                     result = request_pitch_log_html(url, pitcher_id, pbar)
@@ -103,7 +101,6 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     return Result.Ok(pitch_logs_for_game)
 
 
-@snoop
 def get_pitch_log_html_from_s3(pitch_app_id, pitcher_id, pbar):
     result = download_html_brooks_pitch_log_page(pitch_app_id)
     if result.failure:
@@ -116,7 +113,6 @@ def get_pitch_log_html_from_s3(pitch_app_id, pitcher_id, pbar):
     return Result.Ok(response)
 
 
-@snoop
 def request_pitch_log_html(url, pitcher_id, pbar):
     pbar.set_description(get_pbar_description_requesting(pitcher_id))
     try:
