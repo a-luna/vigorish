@@ -332,7 +332,7 @@ def construct_pitch_sequence_description(game_event, pfx_data=None):
             pitch_number = f"Pitch{' '*space_count}{current_pitch_count}/{total_pitches_in_sequence}"
             pitch_description = f"{pitch_number}..: {PPB_PITCH_LOG_DICT[abbrev]['description']}"
             if pfx_data and abbrev == "X":
-                pitch_description = f'{pitch_number}..: {pfx_data[-1]["pdes"]}'
+                pitch_description = f'{pitch_number}..: {pfx_data[current_pitch_count - 1]["pdes"]}'
             if pfx_data:
                 pfx = pfx_data[current_pitch_count - 1]
                 pitch_type = PITCH_TYPE_DICT[pfx["mlbam_pitch_name"]]
