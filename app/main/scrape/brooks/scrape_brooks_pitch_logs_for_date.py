@@ -15,7 +15,7 @@ from app.main.util.result import Result
 from app.main.util.scrape_functions import request_url
 
 
-DATA_SET = "brooks_pitch_log"
+DATA_SET = "brooks_pitch_logs"
 
 PITCHFX_URL_XPATH = '//a[text()="Get Expanded Tabled Data"]/@href'
 PITCH_COUNTS_XPATH = '//div[@class="span9"]//table[2]//tr'

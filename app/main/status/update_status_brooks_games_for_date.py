@@ -1,7 +1,7 @@
 from app.main.models.status_date import DateScrapeStatus
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
-from app.main.util.s3_helper import get_all_brooks_dates_scraped, get_brooks_games_for_date_from_s3
+from app.main.util.s3_helper import get_all_brooks_dates_scraped_from_s3, get_brooks_games_for_date_from_s3
 from app.main.util.result import Result
 
 
@@ -19,7 +19,7 @@ def update_brooks_games_for_date_single_date(session, season, games_for_date, ga
     return Result.Ok()
 
 def update_data_set_brooks_games_for_date(session, season):
-    result = get_all_brooks_dates_scraped(season.year)
+    result = get_all_brooks_dates_scraped_from_s3(season.year)
     if result.failure:
         return result
     scraped_brooks_dates = result.value

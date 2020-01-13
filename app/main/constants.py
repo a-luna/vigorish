@@ -1,4 +1,5 @@
 """Constant string and numeric values that are used by various modules."""
+from enum import Enum, auto
 
 SEASON_TYPE_DICT = dict(pre="Preseason", reg="Regular Season", post="Postseason")
 
@@ -43,17 +44,28 @@ MLB_DATA_SETS = [
     "bbref_boxscore",
     "bbref_player",
     "brooks_games_for_date",
-    "brooks_pitch_log",
+    "brooks_pitch_logs",
     "brooks_pitchfx",
     "all"
 ]
+
+class DataSet(Enum):
+    """MLB data sets."""
+    brooks_games_for_date = auto()
+    brooks_pitch_logs = auto()
+    brooks_pitchfx = auto()
+    bbref_games_for_date = auto()
+    bbref_boxscore = auto()
+
+    def __str__(self):
+        return self.name
 
 PBAR_LEN_DICT = dict(
     find_games_for_date=33,
     bbref_games_for_date=34,
     bbref_boxscore=28,
     brooks_games_for_date=35,
-    brooks_pitch_log=30,
+    brooks_pitch_logs=31,
     brooks_pitchfx=28)
 
 TEAM_ID_DICT = {

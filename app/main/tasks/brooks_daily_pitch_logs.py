@@ -18,7 +18,7 @@ from app.main.util.result import Result
 
 
 class ScrapeBrooksDailyPitchLogs(BaseTask):
-    key_name = "brooks_pitch_log"
+    key_name = "brooks_pitch_logs"
     display_name = "Pitch logs for date (brooksbaseball.com)"
 
     def execute(self, scrape_date):

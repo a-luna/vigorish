@@ -41,7 +41,7 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
         with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
             for scraped_boxscore in scraped_games:
                 pbar.set_description(self.get_pbar_upload_description(scraped_boxscore.bbref_game_id))
-                result = upload_bbref_boxscore(scraped_boxscore, scrape_date)
+                result = upload_bbref_boxscore(scraped_boxscore)
                 if result.failure:
                     return result
                 time.sleep(randint(25, 50) / 100.0)

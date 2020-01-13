@@ -13,7 +13,7 @@ TASK_LIST_MENU = dict(
     bbref_boxscore=[ScrapeBBRefDailyBoxscores],
     bbref_player=[ScrapeBBrefPlayerBio],
     brooks_games_for_date=[ScrapeBrooksDailyGames],
-    brooks_pitch_log=[ScrapeBrooksDailyPitchLogs],
+    brooks_pitch_logs=[ScrapeBrooksDailyPitchLogs],
     brooks_pitchfx=[ScrapeBrooksDailyPitchFxLogs],
     all=[
         ScrapeBBRefDailyGames,

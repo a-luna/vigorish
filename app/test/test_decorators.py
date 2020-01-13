@@ -4,7 +4,6 @@ from random import randint
 from unittest import TestCase
 
 from app.main.util.decorators import timeout, retry, measure_time, RetryLimitExceededError
-from app.test.base import BaseTestCase
 
 
 @timeout(seconds=1)
@@ -19,9 +18,10 @@ def retry_with_timeout():
 
 
 @measure_time
-def rand_time():
+def rand_time(min, max=1000, doSomething=False):
     time.sleep(1)
-    time.sleep(randint(100, 150) / 100.0)
+    if doSomething:
+        time.sleep(randint(min, max) / 100.0)
 
 
 class TestDecorators(TestCase):
@@ -34,7 +34,4 @@ class TestDecorators(TestCase):
             retry_with_timeout()
 
     def test_measure_time(self):
-        rand_time()
-
-#class TestUpdate(BaseTestCase):
-    #def test_update(self):
+        rand_time(300, 1000, True)

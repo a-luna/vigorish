@@ -9,7 +9,7 @@ from selenium.common.exceptions import NoSuchWindowException
 from app.main.constants import PBAR_LEN_DICT
 from app.main.models.season import Season
 from app.main.task_list import get_task_list
-from app.main.util.datetime_util import get_date_range, format_timedelta
+from app.main.util.datetime_util import get_date_range, format_timedelta_str
 from app.main.util.decorators import RetryLimitExceededError
 from app.main.util.dt_format_strings import MONTH_NAME_SHORT, DATE_ONLY_UNDERSCORE
 from app.main.util.result import Result
@@ -45,7 +45,7 @@ class ScrapeJob:
                 "Requested data was successfully scraped:\n"
                 f"data set.........: {self.data_set}\n"
                 f"date range.......: {start_str} - {end_str}\n"
-                f"duration.........: {format_timedelta(self.duration)}")
+                f"duration.........: {format_timedelta_str(self.duration)}")
             if self.errors:
                 errors = "\n".join(self.errors)
                 report += f"\nerrors.........: {errors}"

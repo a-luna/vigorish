@@ -1,16 +1,17 @@
 """Custom decorators."""
 import inspect
-import sys
 from datetime import datetime
 from functools import wraps
 from signal import signal, alarm, SIGALRM
-from time import sleep, time
+from time import sleep
 
-from app.main.util.datetime_util import format_timedelta
-from app.main.util.dt_format_strings import DT_FORMAT_ISO
+from app.main.util.datetime_util import format_timedelta_str
+from app.main.util.dt_format_strings import DT_NAIVE
+
 
 
 def handle_failed_attempt(func, remaining, e, delay):
+    """Example of the type of function that could be supplied to on_failure attribute."""
     message = (
         f"Function name: {func.__name__}\n"
         f"Error: {repr(e)}\n"
@@ -26,7 +27,7 @@ class RetryLimitExceededError(Exception):
         super().__init__(message)
 
 
-def timeout(*, seconds=3, error_message="Function call timed out"):
+def timeout(*, seconds=3, error_message="Call to function timed out"):
     """Abort the wrapped function if not finished after N seconds have elapsed."""
 
     def decorated(func):
@@ -47,7 +48,7 @@ def timeout(*, seconds=3, error_message="Function call timed out"):
 
 
 def retry(*, max_attempts=2, delay=1, exceptions=(Exception,), on_failure=None):
-    """Retry the wrapped function when an exception is raised and max_attempts limit not exceeded."""
+    """Retry the wrapped function when an exception is raised until max_attempts have failed."""
 
     def decorated(func):
         @wraps(func)
@@ -74,13 +75,17 @@ def measure_time(func):
 
     @wraps(func)
     def wrapper_measure_time(*args, **kwargs):
-        func_args = inspect.signature(func).bind(*args, **kwargs).arguments
-        func_args_str =  ', '.join('{}={!r}'.format(*item) for item in func_args.items())
+        func_call_signature = get_call_signature(func, *args, **kwargs)
         exec_start = datetime.now()
-        result = func(*args,**kwargs)
+        result = func(*args, **kwargs)
         exec_finish = datetime.now()
-        exec_time = exec_finish - exec_start
-        #print(f"{func.__name__} ({func_args_str}) {te-ts:0.2f} sec")
-        print(f"{exec_start.strftime(DT_FORMAT_ISO)} | {func.__name__} | {format_timedelta(exec_time)}")
+        exec_time = format_timedelta_str(exec_finish - exec_start)
+        exec_start_str = exec_start.strftime(DT_NAIVE)
+        print(f"{exec_start_str} | {func_call_signature} | {exec_time}")
         return result
     return wrapper_measure_time
+
+def get_call_signature(func, *args, **kwargs):
+    func_args = inspect.signature(func).bind(*args, **kwargs).arguments
+    func_args_str =  ", ".join(f"{arg}={val}" for arg, val in func_args.items())
+    return f"{func.__name__}({func_args_str})"

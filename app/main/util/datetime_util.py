@@ -66,7 +66,7 @@ def get_dt_iso_format_utc(obj, attr_name):
     except OverflowError:
         return ''
 
-def format_timedelta(td):
+def format_timedelta_digits(td):
     td_days = None
     td_str = str(td)
     if 'day' in td_str:
@@ -95,17 +95,6 @@ def format_timedelta(td):
     return '{m:02d}:{s:02d}'.format(m=td_min, s=td_sec)
 
 
-def format_timedelta(td):
-    td_sec = td.seconds % 60
-    td_min = (td.seconds - td_sec) / 60
-    td_ms = td.microseconds / 1000
-    if td_min > 0:
-        return '{:.0f}m {}s'.format(td_min, td_sec)
-    elif td_sec > 0:
-        return '{}s {:.0f}ms'.format(td.seconds, td_ms)
-    return '{:.0f}ms'.format(td_ms)
-
-
 def get_date_range(start, end, inc=timedelta(days=1)):
     result = []
     current = start
@@ -115,7 +104,7 @@ def get_date_range(start, end, inc=timedelta(days=1)):
     return result
 
 
-def format_timedelta(td):
+def format_timedelta_str(td):
     td_sec = td.seconds % 60
     td_min = (td.seconds - td_sec) / 60
     td_ms = td.microseconds / 1000

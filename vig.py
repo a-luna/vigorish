@@ -16,7 +16,7 @@ from app.main.models.views.materialized_view import refresh_all_mat_views
 from app.main.setup.initialize_database import initialize_database
 from app.main.status.update_status import update_status_for_mlb_season
 from app.main.util.click_params import DateString, MlbSeason
-from app.main.util.datetime_util import get_date_range, today_str, current_year, format_timedelta
+from app.main.util.datetime_util import get_date_range, today_str, current_year
 from app.main.util.dt_format_strings import DATE_ONLY, MONTH_NAME_SHORT
 from app.main.util.reset import reset_date
 from app.main.util.result import Result

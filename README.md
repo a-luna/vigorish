@@ -47,7 +47,7 @@ Options:
   --data-set DATA-SET  Data set to scrape, must be a value from the following
                        list:
                        bbref_games_for_date, bbref_boxscore,
-                       bbref_player, brooks_games_for_date, brooks_pitch_log,
+                       bbref_player, brooks_games_for_date, brooks_pitch_logs,
                        brooks_pitchfx
   --start DATE-STRING  Date to start scraping data, string can be in any
                        format that is recognized by dateutil.parser.
