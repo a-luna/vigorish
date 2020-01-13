@@ -6,7 +6,6 @@ from pathlib import Path
 from random import randint
 from string import Template
 
-import snoop
 from lxml import html
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -197,7 +196,6 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
     return Result.Ok((scraped_boxscores, scrape_audit))
 
 
-@snoop
 def get_boxscore_html_from_s3(game_id, pbar):
     result = download_html_bbref_boxscore(game_id)
     if result.failure:
@@ -227,7 +225,6 @@ def get_pbar_description(game_id):
     return f"{pre}{'.'*pad_len}"
 
 
-@snoop
 def get_pbar_description_from_s3(game_id):
     pre =f"FROM S3   | {game_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
@@ -1211,8 +1208,8 @@ def _create_innings_list(
             and int(g.pbp_table_row_number) < end_row
         ]
         for game_event in inning_events:
-            g.inning_id = inning_id
-            g.inning_label = inning_label
+            game_event.inning_id = inning_id
+            game_event.inning_label = inning_label
 
         inning_substitutions = [
             sub for sub in substitutions
