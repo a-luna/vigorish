@@ -42,9 +42,9 @@ from app.main.util.result import Result
 from app.main.util.string_functions import validate_bb_game_id, validate_bbref_game_id
 
 JSON_FOLDER_KEY_TEMPLATE = "${year}/${data_set}"
-JSON_FILE_KEY_TEMPLATE = "${year}/${data_set/${filename}"
+JSON_FILE_KEY_TEMPLATE = "${year}/${data_set}/${filename}"
 HTML_FOLDER_KEY_TEMPLATE = "${year}/${data_set}/html"
-HTML_FILE_KEY_TEMPLATE = "${year}/${data_set/html/${filename}"
+HTML_FILE_KEY_TEMPLATE = "${year}/${data_set}/html/${filename}"
 
 T_BB_DATE_FOLDER = "${year}/brooks_games_for_date"
 T_BB_DATE_KEY = "${year}/brooks_games_for_date/${filename}"
