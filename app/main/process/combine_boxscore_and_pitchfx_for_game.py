@@ -4,7 +4,7 @@ from collections import Counter, defaultdict
 from copy import deepcopy
 from pprint import pformat
 
-from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT
+from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT, PITCH_TYPE_DICT
 from app.main.models.player import Player
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.file_util import write_json_dict_to_file
@@ -230,11 +230,11 @@ def combine_pbp_events_with_pfx_data(all_pbp_events_for_game, all_pfx_data_for_g
         pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
         pitch_count_pitchfx = len(pfx_data_for_at_bat)
         if pfx_data_for_at_bat and pitch_count_pitch_seq == pitch_count_pitchfx:
-            final_pitch_this_at_bat = pfx_data_for_at_bat[-1]
+            pfx_data_for_seq_description = pfx_data_for_at_bat[-1]
         else:
-            final_pitch_this_at_bat = None
+            pfx_data_for_seq_description = None
         pitch_sequence_description = construct_pitch_sequence_description(
-            final_event_this_at_bat, final_pitch_this_at_bat
+            final_event_this_at_bat, pfx_data_for_seq_description
         )
         combined_at_bat_data = {
             "event_type": "at_bat",
@@ -332,7 +332,11 @@ def construct_pitch_sequence_description(game_event, pfx_data=None):
             pitch_number = f"Pitch{' '*space_count}{current_pitch_count}/{total_pitches_in_sequence}"
             pitch_description = f"{pitch_number}..: {PPB_PITCH_LOG_DICT[abbrev]['description']}"
             if pfx_data and abbrev == "X":
-                pitch_description = f'{pitch_number}..: {pfx_data["pdes"]}'
+                pitch_description = f'{pitch_number}..: {pfx_data[-1]["pdes"]}'
+            if pfx_data:
+                pfx = pfx_data[current_pitch_count - 1]
+                pitch_type = PITCH_TYPE_DICT[pfx["mlbam_pitch_name"]]
+                pitch_description += f" ({pfx["start_speed"]:02.0f} {pitch_type})"
         else:
             pitch_description = PPB_PITCH_LOG_DICT[abbrev]['description']
         if next_pitch_blocked_by_c:
