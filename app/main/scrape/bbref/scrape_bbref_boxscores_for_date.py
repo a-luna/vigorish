@@ -172,9 +172,9 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
                 game_id = uri.stem
                 audit_value = "skipped"
                 pbar.set_description(get_pbar_description(game_id))
-                result = get_boxscore_html_from_s3(game_id)
+                result = get_boxscore_html_from_s3(game_id, pbar)
                 if result.failure:
-                    result = request_boxscore_html(driver, url, game_id)
+                    result = request_boxscore_html(driver, url, game_id, pbar)
                     if result.failure:
                         return result
                     audit_value = "scraped_bbref"
@@ -196,7 +196,7 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
     return Result.Ok((scraped_boxscores, scrape_audit))
 
 
-def get_boxscore_html_from_s3(game_id):
+def get_boxscore_html_from_s3(game_id, pbar):
     result = download_html_bbref_boxscore(game_id)
     if result.failure:
         return result
@@ -208,7 +208,7 @@ def get_boxscore_html_from_s3(game_id):
     return Result.Ok(response)
 
 
-def request_boxscore_html(driver, url, game_id):
+def request_boxscore_html(driver, url, game_id, pbar):
     pbar.set_description(get_pbar_description_requesting(game_id))
     try:
         response = render_webpage(driver, url)

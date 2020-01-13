@@ -77,9 +77,9 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
                     time.sleep(randint(50, 75) / 100.0)
                     pbar.update()
                 pitch_app_id = f"${game.bbref_game_id}_${pitcher_id}"
-                result = get_pitch_log_html_from_s3(pitch_app_id, pitcher_id)
+                result = get_pitch_log_html_from_s3(pitch_app_id, pitcher_id, pbar)
                 if result.failure:
-                    result = request_pitch_log_html(url, pitcher_id)
+                    result = request_pitch_log_html(url, pitcher_id, pbar)
                     if result.failure:
                         return result
                     needs_timeout = True
@@ -101,7 +101,7 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     return Result.Ok(pitch_logs_for_game)
 
 
-def get_pitch_log_html_from_s3(pitch_app_id, pitcher_id):
+def get_pitch_log_html_from_s3(pitch_app_id, pitcher_id, pbar):
     result = download_html_brooks_pitch_log_page(pitch_app_id)
     if result.failure:
         return result
@@ -113,7 +113,7 @@ def get_pitch_log_html_from_s3(pitch_app_id, pitcher_id):
     return Result.Ok(response)
 
 
-def request_pitch_log_html(url, pitcher_id):
+def request_pitch_log_html(url, pitcher_id, pbar):
     pbar.set_description(get_pbar_description_requesting(pitcher_id))
     try:
         response = request_url(url)

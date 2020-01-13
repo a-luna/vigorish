@@ -36,9 +36,9 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
             pitch_app_id = pitch_log.pitch_app_id
             pitcher_id = pitch_log.pitcher_id_mlb
             try:
-                result = get_pitchfx_data_html_from_s3(pitch_app_id, pitcher_id)
+                result = get_pitchfx_data_html_from_s3(pitch_app_id, pitcher_id, pbar)
                 if result.failure:
-                    result = request_pitchfx_data_html(url, pitcher_id)
+                    result = request_pitchfx_data_html(url, pitcher_id, pbar)
                     if result.failure:
                         return result
                     needs_timeout = True
@@ -58,7 +58,7 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
     return Result.Ok((pitchfx_logs_for_game, scrape_audit))
 
 
-def get_pitchfx_data_html_from_s3(pitch_app_id, pitcher_id):
+def get_pitchfx_data_html_from_s3(pitch_app_id, pitcher_id, pbar):
     result = download_html_brooks_pitchfx_log(pitch_app_id)
     if result.failure:
         return result
@@ -70,7 +70,7 @@ def get_pitchfx_data_html_from_s3(pitch_app_id, pitcher_id):
     return Result.Ok(response)
 
 
-def request_pitchfx_data_html(url, pitcher_id):
+def request_pitchfx_data_html(url, pitcher_id, pbar):
     pbar.set_description(get_pbar_description_requesting(pitcher_id))
     try:
         response = request_url(url)
