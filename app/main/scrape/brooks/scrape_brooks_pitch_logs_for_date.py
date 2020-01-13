@@ -53,7 +53,9 @@ def get_pbar_game_description(game_id):
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
+import snoop
 
+@snoop(depth=4)
 def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game.bb_game_id
