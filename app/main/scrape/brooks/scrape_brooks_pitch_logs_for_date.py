@@ -68,14 +68,14 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
                 needs_timeout = False
                 already_scraped = False
                 pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
-                if hasattr(scraped_pitch_logs_for_game, "pitch_logs"):
-                    already_scraped = any(
-                        pitch_log.pitcher_id_mlb == pitcher_id and pitch_log.parsed_all_info
-                        for pitch_log in scraped_pitch_logs_for_game.pitch_logs
-                    )
-                if already_scraped:
-                    time.sleep(randint(50, 75) / 100.0)
-                    pbar.update()
+                #if hasattr(scraped_pitch_logs_for_game, "pitch_logs"):
+                #    already_scraped = any(
+                #        pitch_log.pitcher_id_mlb == pitcher_id and pitch_log.parsed_all_info
+                #        for pitch_log in scraped_pitch_logs_for_game.pitch_logs
+                #    )
+                #if already_scraped:
+                #    time.sleep(randint(50, 75) / 100.0)
+                #    pbar.update()
                 pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
                 result = get_pitch_log_html_from_s3(pitch_app_id, pitcher_id, pbar)
                 if result.failure:
