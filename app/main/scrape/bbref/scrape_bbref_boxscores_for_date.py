@@ -226,13 +226,13 @@ def get_pbar_description(game_id):
 
 
 def get_pbar_description_from_s3(game_id):
-    pre =f"FROM S3   | {player_id}"
+    pre =f"FROM S3   | {game_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
 
 def get_pbar_description_requesting(game_id):
-    pre =f"FETCHING  | {player_id}"
+    pre =f"FETCHING  | {game_id}"
     pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
     return f"{pre}{'.'*pad_len}"
 
