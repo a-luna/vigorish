@@ -115,6 +115,7 @@ def validate_bbref_game_id_list(game_ids):
     ]
 
 
+@snoop
 def validate_bb_game_id(input_str):
     if len(input_str) != 30:
         error = (
