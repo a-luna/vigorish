@@ -596,7 +596,9 @@ def rename_brooks_pitchfx_log(old_pitch_app_id, new_pitch_app_id, year):
     new_key = Template(T_BB_PFX_KEY).substitute(year=year, filename=new_filename)
     return rename_s3_object(old_key, new_key)
 
+import snoop
 
+@snoop(depth=2)
 def perform_task(task, format, data_set, year, filepath):
     s3_key = Template(KEY_TEMPLATE_DICT[format]).substitute(
         data_set=str(data_set), year=year, filename=filepath.name
