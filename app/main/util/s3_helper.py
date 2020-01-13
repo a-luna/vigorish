@@ -374,7 +374,7 @@ def download_json_brooks_games_for_date(scrape_date, folderpath=None):
 def download_html_brooks_pitch_log_page(pitch_app_id, folderpath=None):
     """Download raw HTML for brooks pitch log page for a single pitching appearance."""
     split = pitch_app_id.split("_")
-    if split.length != 2:
+    if len(split) != 2:
         error = f"Pitch appearance ID is not formatted correctly ({pitch_app_id})"
         return Result.Fail(error)
     year = split[0][3:7]
@@ -411,7 +411,7 @@ def download_json_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
 def download_html_brooks_pitchfx_log(pitch_app_id, folderpath=None):
     """Download raw HTML for brooks pitchfx data for a single pitching appearance."""
     split = pitch_app_id.split("_")
-    if split.length != 2:
+    if len(split) != 2:
         error = f"Pitch appearance ID is not formatted correctly ({pitch_app_id})"
         return Result.Fail(error)
     year = split[0][3:7]
@@ -430,7 +430,7 @@ def download_html_brooks_pitchfx_log(pitch_app_id, folderpath=None):
 def download_json_brooks_pitchfx_log(pitch_app_id, year, folderpath=None):
     """Download a file from S3 containing json encoded BrooksPitchFxLog object."""
     split = pitch_app_id.split("_")
-    if split.length != 2:
+    if len(split) != 2:
         error = f"Pitch appearance ID is not formatted correctly ({pitch_app_id})"
         return Result.Fail(error)
     year = split[0][3:7]
