@@ -55,7 +55,7 @@ def get_pbar_game_description(game_id):
 
 import snoop
 
-@snoop(depth=4)
+@snoop
 def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game.bb_game_id
@@ -103,6 +103,7 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     return Result.Ok(pitch_logs_for_game)
 
 
+@snoop
 def get_pitch_log_html_from_s3(pitch_app_id, pitcher_id, pbar):
     result = download_html_brooks_pitch_log_page(pitch_app_id)
     if result.failure:
@@ -115,6 +116,7 @@ def get_pitch_log_html_from_s3(pitch_app_id, pitcher_id, pbar):
     return Result.Ok(response)
 
 
+@snoop
 def request_pitch_log_html(url, pitcher_id, pbar):
     pbar.set_description(get_pbar_description_requesting(pitcher_id))
     try:

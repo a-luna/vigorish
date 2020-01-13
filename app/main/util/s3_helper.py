@@ -381,7 +381,9 @@ def download_json_brooks_games_for_date(scrape_date, folderpath=None):
         filepath=filepath
     )
 
+import snoop
 
+@snoop
 def download_html_brooks_pitch_log_page(pitch_app_id, folderpath=None):
     """Download raw HTML for brooks pitch log page for a single pitching appearance."""
     split = pitch_app_id.split("_")
@@ -619,6 +621,7 @@ def rename_brooks_pitchfx_log(old_pitch_app_id, new_pitch_app_id, year):
     return rename_s3_object(old_key, new_key)
 
 
+@snoop
 def perform_task(task, doc_format, data_set, year, filepath):
     s3_key = get_s3_key_for_file(doc_format, data_set, year, filepath)
     if task == S3Task.UPLOAD:
