@@ -354,9 +354,9 @@ def upload_bbref_boxscore(boxscore):
 
 def download_html_brooks_games_for_date(scrape_date, folderpath=None):
     """Download raw HTML for brooks daily scoreboard page."""
-    folderpath = folderpath if folderpath else Path.cwd()
     date_str = scrape_date.strftime(DATE_ONLY_TABLE_ID)
     filename = f"{date_str}.html"
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
@@ -369,9 +369,9 @@ def download_html_brooks_games_for_date(scrape_date, folderpath=None):
 
 def download_json_brooks_games_for_date(scrape_date, folderpath=None):
     """Download a file from S3 containing json encoded BrooksGamesForDate object."""
-    folderpath = folderpath if folderpath else Path.cwd()
     date_str = scrape_date.strftime(DATE_ONLY)
     filename = Template(T_BROOKS_GAMESFORDATE_FILENAME).substitute(date=date_str)
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
@@ -390,6 +390,7 @@ def download_html_brooks_pitch_log_page(pitch_app_id, folderpath=None):
         return Result.Fail(error)
     year = split[0][3:7]
     filename = f"{pitch_app_id}.html"
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
@@ -407,8 +408,8 @@ def download_json_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
         return result
     game_dict = result.value
     game_date = game_dict["game_date"]
-    folderpath = folderpath if folderpath else Path.cwd()
     filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(gid=bb_game_id)
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
@@ -445,8 +446,8 @@ def download_json_brooks_pitchfx_log(pitch_app_id, year, folderpath=None):
         error = f"Pitch appearance ID is not formatted correctly ({pitch_app_id})"
         return Result.Fail(error)
     year = split[0][3:7]
-    folderpath = folderpath if folderpath else Path.cwd()
     filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=pitch_app_id)
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
@@ -459,9 +460,9 @@ def download_json_brooks_pitchfx_log(pitch_app_id, year, folderpath=None):
 
 def download_html_bbref_games_for_date(scrape_date, folderpath=None):
     """Download raw HTML for bbref daily scoreboard page."""
-    folderpath = folderpath if folderpath else Path.cwd()
     date_str = scrape_date.strftime(DATE_ONLY_TABLE_ID)
     filename = f"{date_str}.html"
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
@@ -474,9 +475,9 @@ def download_html_bbref_games_for_date(scrape_date, folderpath=None):
 
 def download_json_bbref_games_for_date(scrape_date, folderpath=None):
     """Download a file from S3 containing json encoded BBRefGamesForDate object."""
-    folderpath = folderpath if folderpath else Path.cwd()
     date_str = scrape_date.strftime(DATE_ONLY)
     filename = Template(T_BBREF_GAMESFORDATE_FILENAME).substitute(date=date_str)
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     return perform_task(
         task=S3Task.DOWNLOAD,
@@ -489,8 +490,8 @@ def download_json_bbref_games_for_date(scrape_date, folderpath=None):
 
 def download_html_bbref_boxscore(bbref_game_id, folderpath=None):
     """Download raw HTML for bbref daily scoreboard page."""
-    folderpath = folderpath if folderpath else Path.cwd()
     filename = f"{bbref_game_id}.html"
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     year = bbref_game_id[3:7]
     return perform_task(
@@ -504,8 +505,8 @@ def download_html_bbref_boxscore(bbref_game_id, folderpath=None):
 
 def download_json_bbref_boxscore(bbref_game_id, folderpath=None):
     """Download a file from S3 containing json encoded BBRefBoxscore object."""
-    folderpath = folderpath if folderpath else Path.cwd()
     filename = Template(T_BBREF_BOXSCORE_FILENAME).substitute(gid=bbref_game_id)
+    folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     if len(bbref_game_id) != 12:
         error = f"bbref_game_id is not in expected format: {bbref_game_id}"
