@@ -78,9 +78,7 @@ def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=
         scrape_date, folderpath=filepath.parent, delete_file=delete_file
     )
 
-import snoop
 
-@snoop
 def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_file=True):
     """Retrieve BrooksPitchLogsForGame object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
@@ -94,7 +92,6 @@ def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_f
         delete_file=delete_file)
 
 
-@snoop
 def get_all_brooks_pitch_logs_for_date_from_s3(
     session, game_date, folderpath=None, delete_file=True
 ):
@@ -404,7 +401,6 @@ def download_html_brooks_pitch_log_page(pitch_app_id, folderpath=None):
     )
 
 
-@snoop
 def download_json_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
     """Download a file from S3 containing json encoded BrooksPitchLogsForGame object."""
     result = validate_bb_game_id(bb_game_id)
