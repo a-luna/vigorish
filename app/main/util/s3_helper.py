@@ -78,6 +78,7 @@ def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=
         scrape_date, folderpath=filepath.parent, delete_file=delete_file
     )
 
+import snoop
 
 @snoop
 def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_file=True):
@@ -92,7 +93,6 @@ def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_f
         folderpath=filepath.parent,
         delete_file=delete_file)
 
-import snoop
 
 @snoop
 def get_all_brooks_pitch_logs_for_date_from_s3(
