@@ -28,7 +28,7 @@ BR_GAME_KEY_REGEX = re.compile(BR_GAME_KEY_PATTERN)
 PITCH_APP_REGEX = re.compile(r'(?P<game_id>[0-9A-Z]{12,12})_(?P<mlb_id>\d{6,6})')
 DB_OBJECT_NAME_PATTERN = r'^[a-z0-9_-]+$'
 DB_OBJECT_NAME_REGEX = re.compile(DB_OBJECT_NAME_PATTERN)
-TIMESTAMP_REGEX = re.compile(r'\d?\d:\d\d')
+TIMESTAMP_REGEX = re.compile(r'(?P<hour>\d?\d):(?P<minute>\d\d)')
 PUNCTUATION_REGEX = re.compile(r'[^\w\s_]')
 WHITESPACE_REGEX = re.compile(r'\s')
 

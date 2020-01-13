@@ -21,9 +21,10 @@ from app.main.util.string_functions import parse_timestamp, validate_bbref_game_
 
 DATA_SET = "brooks_games_for_date"
 
-_T_GAMEINFO_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//table//tr[1]//td[1]//text()'
-_T_PLOG_URLS_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Game Log"]/@href'
-_T_K_ZONE_URL_XPATH = '//table//tr[${r}]//td[@class="dashcell"][${g}]//a[text()="Strikezone Map"]/@href'
+GAME_TABLE_XPATH = '//td[@class="dashcell"]/table'
+GAME_INFO_XPATH = './tbody//tr[1]//td[1]//text()'
+PITCH_LOG_URL_XPATH = './tbody//a[text()="Game Log"]/@href'
+KZONE_URL_XPATH = './tbody//a[text()="Strikezone Map"]/@href'
 
 
 def scrape_brooks_games_for_date(session, driver, scrape_date, bbref_games_for_date):
@@ -82,55 +83,45 @@ def parse_daily_dash_page(session, response, scrape_date, url, required_game_dat
 
     if Season.is_this_the_asg_date(session, scrape_date):
         return Result.Ok(games_for_date)
-    for row in range(2, 10):
-        for game in range(1, 5):
-            xpath_gameinfo = Template(_T_GAMEINFO_XPATH).substitute(r=row, g=game)
-            gameinfo_list = response.xpath(xpath_gameinfo)
-            if not gameinfo_list and not len(gameinfo_list) > 1:
-                continue
-            timestamp_str = gameinfo_list[1]
-            pitchlog_urls_xpath = Template(_T_PLOG_URLS_XPATH).substitute(r=row, g=game)
-            pitchlog_urls = response.xpath(pitchlog_urls_xpath)
-            if not pitchlog_urls:
-                result = _no_pitch_logs(
-                    response,
-                    row,
-                    game,
-                    scrape_date,
-                    timestamp_str,
-                    required_game_data
-                )
-                if result.failure:
-                    continue
-                gameinfo = result.value
-                games_for_date.games.append(gameinfo)
-                continue
-
-            url = pitchlog_urls[0]
-            result = _is_game_required(
-                scrape_date,
-                timestamp_str,
-                url,
-                required_game_data
-            )
+    game_tables = response.xpath(GAME_TABLE_XPATH)
+    if not game_tables:
+        error = f"Unable to parse any game data from {url}"
+        return Result.Fail(error)
+    for i, game in enumerate(game_tables):
+        game_info_list = game.xpath(GAME_INFO_XPATH)
+        if not game_info_list or len(game_info_list) != 2:
+            error = f"Game info table #{i + 1} was not in the expected format"
+            return Result.Fail(error)
+        game_time = parse_timestamp(game_info_list[1])
+        pitchlog_urls = game.xpath(PITCH_LOG_URL_XPATH)
+        if not pitchlog_urls:
+            result = _no_pitch_logs(game, i + 1, scrape_date, game_time, required_game_data)
             if result.failure:
                 continue
-            gameinfo = result.value
-            result = _parse_pitch_log_dict(gameinfo, pitchlog_urls)
-            if result.failure:
-                return result
             gameinfo = result.value
             games_for_date.games.append(gameinfo)
+            continue
+        result = _is_game_required(scrape_date, game_time, pitchlog_urls[0], required_game_data)
+        if result.failure:
+            continue
+        gameinfo = result.value
+        result = _parse_pitch_log_dict(gameinfo, pitchlog_urls)
+        if result.failure:
+            return result
+        gameinfo = result.value
+        games_for_date.games.append(gameinfo)
 
     games_for_date.game_count = len(games_for_date.games)
     _update_game_ids(games_for_date)
     return Result.Ok(games_for_date)
 
 
-def _no_pitch_logs(response, row, game, scrape_date, timestamp_str, required_game_data):
-    xpath_k_zone_urls = Template(_T_K_ZONE_URL_XPATH).substitute(r=row, g=game)
-    k_zone_urls = response.xpath(xpath_k_zone_urls)
-    result = _parse_gameinfo(scrape_date, timestamp_str, k_zone_urls[0])
+def _no_pitch_logs(game_table, game_number, scrape_date, game_time, required_game_data):
+    k_zone_urls = game_table.xpath(KZONE_URL_XPATH)
+    if not k_zone_urls:
+        error = f"Unable to parse bb_game_id for game table #{game_number}"
+        return Result.Fail(error)
+    result = _parse_gameinfo(scrape_date, game_time, k_zone_urls[0])
     if result.failure:
         return result
     gameinfo = result.value
@@ -144,8 +135,8 @@ def _no_pitch_logs(response, row, game, scrape_date, timestamp_str, required_gam
     return Result.Ok(gameinfo)
 
 
-def _is_game_required(scrape_date, timestamp_str, url, required_game_data):
-    result = _parse_gameinfo(scrape_date, timestamp_str, url)
+def _is_game_required(scrape_date, game_time, url, required_game_data):
+    result = _parse_gameinfo(scrape_date, game_time, url)
     if result.failure:
         return result
     gameinfo = result.value
@@ -164,9 +155,8 @@ def _is_game_required(scrape_date, timestamp_str, url, required_game_data):
     return Result.Ok(gameinfo)
 
 
-def _parse_gameinfo(scrape_date, timestamp_str, url):
+def _parse_gameinfo(scrape_date, game_time, url):
     gameinfo = BrooksGameInfo()
-    game_time = parse_timestamp(timestamp_str)
     gameinfo.game_date_year = scrape_date.year
     gameinfo.game_date_month = scrape_date.month
     gameinfo.game_date_day = scrape_date.day

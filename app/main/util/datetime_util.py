@@ -105,17 +105,21 @@ def get_date_range(start, end, inc=timedelta(days=1)):
 
 
 def format_timedelta_str(td):
-    td_sec = td.seconds % 60
-    td_min = (td.seconds - td_sec) / 60
-    td_ms = td.microseconds / 1000
-    if td_min > 60:
-        (td_hour, td_min) = divmod(td_min, 60)
-        if td.days > 0:
-            return f'{td.days}d {td_hour:.0f}h {td_min:.0f}m {td_sec}s'
-        return f'{td_hour:.0f}h {td_min:.0f}m {td_sec}s'
-    if td_min > 0:
-        return f'{td_min:.0f}m {td_sec}s'
-    return f'{td.seconds}s {td_ms:.0f}ms'
+    (milliseconds, microseconds) = divmod(td.microseconds, 1000)
+    (minutes, seconds) = divmod(td.seconds, 60)
+    (hours, minutes) = divmod(minutes, 60)
+    if td.days > 0:
+        return f'{td.days}d {hours:.0f}h {minutes:.0f}m {seconds}s'
+    if hours > 0:
+        return f'{hours:.0f}h {minutes:.0f}m {seconds}s'
+    if minutes > 0:
+        return f'{minutes:.0f}m {seconds}s'
+    if td.seconds > 0:
+        return f'{td.seconds}s {milliseconds:.0f}ms'
+    if milliseconds > 0:
+        return f"{milliseconds}ms"
+    return f"{td.microseconds}us"
+
 
 def today_str():
     return date.today().strftime(DATE_ONLY_2)

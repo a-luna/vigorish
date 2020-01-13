@@ -34,14 +34,11 @@ def normalize(input: str, sub_whitespace: str = "-") -> str:
 def parse_timestamp(input):
     if string_is_null_or_blank(input):
         return dict(hour=0, minute=0)
-    matches = TIMESTAMP_REGEX.findall(input)
-    if not matches:
+    match = TIMESTAMP_REGEX.search(input)
+    if not match:
         return dict(hour=0, minute=0)
-    time_str = matches[0]
-    split = time_str.split(":")
-    if len(split) != 2:
-        return dict(hour=0, minute=0)
-    return dict(hour=int(split[0]), minute=int(split[1]))
+    time_dict = match.groupdict()
+    return dict(hour=int(time_dict["hour"]), minute=int(time_dict["minute"]))
 
 
 def parse_total_minutes_from_duration(duration):
