@@ -81,7 +81,7 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
                 event_dict.pop("__bbref_pbp_misc_event__", None)
                 event_dict.pop("__bbref_pbp_in_game_substitution__", None)
                 event_dict["at_bat_id"] = at_bat_id
-                event_dict["event_type"] = event.event_type
+                event_dict["event_type"] = event.event_type.name
                 at_bat_event_dicts.append(event_dict)
             grouped_event_dict[at_bat_id] = at_bat_event_dicts
             at_bat_events = []
@@ -352,7 +352,7 @@ def order_at_bat_ids_by_time(at_bat_ids, grouped_event_dict):
 def get_all_pbp_events_for_at_bat(grouped_event_dict, at_bat_id):
     at_bat_events = [
         event for event in grouped_event_dict[at_bat_id]
-        if event["event_type"] == PlayByPlayEventType.AT_BAT
+        if event["event_type"] == "AT_BAT"
     ]
     at_bat_events.sort(key=lambda x: x["pbp_table_row_number"])
     return at_bat_events
@@ -470,14 +470,6 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
     at_bat_ids_missing_pitchfx = sorted(list(set(
         event["at_bat_id"] for event in inning_events if not event["pitchfx_data_complete"]
     )))
-    #if inning.substitutions:
-    #    substitutions_this_inning = [sub.as_dict() for sub in inning.substitutions]
-    #    for sub in substitutions_this_inning:
-    #        sub.pop("__bbref_pbp_in_game_substitution__", None)
-    #        sub["event_type"] = "player_substitution"
-    #        sub["sub_team_id"] = player_team_dict.get(sub["incoming_player_id_br"], None)
-    #    inning_events.extend(substitutions_this_inning)
-    #inning_events.sort(key=lambda x: x["pbp_table_row_number"])
     inning_totals = {
         "inning_total_runs": inning.inning_total_runs,
         "inning_total_hits": inning.inning_total_hits,
