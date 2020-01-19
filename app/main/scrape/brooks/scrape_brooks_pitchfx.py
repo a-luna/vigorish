@@ -33,6 +33,7 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
                 time.sleep(randint(50, 75) / 100.0)
                 pbar.update()
                 continue
+            needs_timeout = False
             pitch_app_id = pitch_log.pitch_app_id
             pitcher_id = pitch_log.pitcher_id_mlb
             try:
@@ -49,7 +50,8 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
                 pitchfx_log = result.value
                 pitchfx_logs_for_game.append(pitchfx_log)
                 scrape_audit.append((pitch_app_id, "scraped_brooks"))
-                time.sleep(randint(250, 300) / 100.0)
+                if needs_timeout:
+                    time.sleep(randint(250, 300) / 100.0)
                 pbar.update()
             except RetryLimitExceededError as e:
                 return Result.Fail(repr(e))

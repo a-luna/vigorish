@@ -14,6 +14,7 @@ class BBRefHalfInning():
     home_team_runs_after_inning = None
     game_events = []
     substitutions = []
+    misc_events = []
 
     def as_dict(self):
         """Convert half-inning to a dictionary."""
@@ -30,4 +31,5 @@ class BBRefHalfInning():
             away_team_runs_after_inning=int(self.away_team_runs_after_inning),
             home_team_runs_after_inning=int(self.home_team_runs_after_inning),
             game_events=as_dict_list(self.game_events),
-            substitutions=as_dict_list(self.substitutions))
+            substitutions=as_dict_list(self.substitutions),
+            misc_events=as_dict_list(self.misc_events))

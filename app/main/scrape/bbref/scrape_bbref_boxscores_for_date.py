@@ -22,6 +22,7 @@ from app.main.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
 from app.main.scrape.bbref.models.half_inning import BBRefHalfInning
 from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
 from app.main.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
+from app.main.scrape.bbref.models.pbp_other import BBRefPlayByPlayMiscEvent
 from app.main.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
 from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
 from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
@@ -75,6 +76,7 @@ _PBP_INNING_SUMMARY_BOTTOM_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_bott
 _PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = './tbody//tr[@class="pbp_summary_bottom"]//span[@class="half_inning_summary"]/text()'
 _PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
 _T_PBP_IN_GAME_SUBSTITUTION_XPATH = './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]//td[@data-stat="inning_summary_3"]//div/text()'
+_T_PBP_MISC_EVENT_XPATH = './tbody//tr[@data-row="${row}"]//td[@data-stat="inning_summary_3"]//text()'
 _PBP_INNING_XPATH = './tbody//tr[not(contains(@class, "thead"))]/th[@data-stat="inning"]/text()'
 
 BAT_STATS = dict(
@@ -535,7 +537,7 @@ def _parse_batting_details(stat_dict):
             d.stat = t[0].strip("\n")
             details.append(d)
         if len(t) == 2:
-            d.count = t[0]
+            d.count = t[0][0]
             d.stat = t[1].strip("\n")
             details.append(d)
     return details
@@ -819,9 +821,16 @@ def _parse_all_game_events(
         unique = {tuple(d.items()) for d in player_id_match_log}
         player_id_match_log = [dict(t) for t in unique]
 
+    misc_events = []
+    missing_row_ids = _find_missing_pbp_events(
+        inning_summaries_top, inning_summaries_bottom, play_by_play_events, in_game_substitutions
+    )
+    if missing_row_ids:
+        misc_events = _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id)
+
     result = _create_innings_list(
         game_id, inning_summaries_top, inning_summaries_bottom, play_by_play_events,
-        in_game_substitutions)
+        in_game_substitutions, misc_events)
     if result.failure:
         error = f"Error occurred constructing inning list:\n{result.error}"
         return Result.Fail(error)
@@ -1179,8 +1188,41 @@ def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_
     return Result.Ok(result)
 
 
+def _find_missing_pbp_events(summaries_begin, summaries_end, game_events, substitutions):
+    row_ids_top_inning = [row_num for row_num in summaries_begin.keys()]
+    row_ids_bot_inning = [row_num for row_num in summaries_end.keys()]
+    row_ids_game_events = [int(event.pbp_table_row_number) for event in game_events]
+    row_ids_substitutions = [sub.pbp_table_row_number for sub in substitutions]
+    all_row_ids = set(sorted(
+        row_ids_top_inning + row_ids_bot_inning + row_ids_game_events + row_ids_substitutions
+    ))
+    first_row_num = min(all_row_ids)
+    last_row_num = max(all_row_ids) + 1
+    check_row_ids = set(range(first_row_num, last_row_num))
+    missing_row_ids = check_row_ids - all_row_ids
+    return list(missing_row_ids)
+
+
+def _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id):
+    misc_events = []
+    for row_num in missing_row_ids:
+        missing_events_xpath = Template(_T_PBP_MISC_EVENT_XPATH).substitute(row=row_num)
+        event_descriptions = play_by_play_table.xpath(missing_events_xpath)
+        if event_descriptions is None:
+            continue
+        description = ""
+        for des in event_descriptions:
+            description += des[i].strip().replace("\xa0", " ")
+        misc_event = BBRefPlayByPlayMiscEvent(
+            pbp_table_row_number=row_num,
+            description=description
+        )
+        misc_events.append(misc_event)
+    return misc_events
+
+
 def _create_innings_list(
-    game_id, summaries_begin, summaries_end, game_events, substitutions
+    game_id, summaries_begin, summaries_end, game_events, substitutions, misc_events
 ):
     if len(summaries_begin) != len(summaries_end):
         error = "Begin inning and end inning summary list lengths do not match."
@@ -1219,6 +1261,15 @@ def _create_innings_list(
             sub.inning_id = inning_id
             sub.inning_label = inning_label
 
+        misc = [
+            misc_event for misc_event in misc_events
+            if misc_event.pbp_table_row_number > start_row
+            and misc_event.pbp_table_row_number < end_row
+        ]
+        for me in misc:
+            me.inning_id = inning_id
+            me.inning_label = inning_label
+
         inning = BBRefHalfInning()
         inning.inning_id = inning_id
         inning.inning_label = inning_label
@@ -1226,6 +1277,7 @@ def _create_innings_list(
         inning.end_inning_summary = summaries_end[end_row]
         inning.game_events = inning_events
         inning.substitutions = inning_substitutions
+        inning.misc_events = misc
 
         match = INNING_TOTALS_REGEX.search(summaries_end[end_row])
         if match:

@@ -1,4 +1,3 @@
-import re
 from dataclasses import dataclass
 
 from app.main.util.list_functions import display_dict

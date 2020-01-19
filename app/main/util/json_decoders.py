@@ -10,6 +10,7 @@ from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamDat
 from app.main.scrape.bbref.models.games_for_date import BBRefGamesForDate
 from app.main.scrape.bbref.models.half_inning import BBRefHalfInning
 from app.main.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
+from app.main.scrape.bbref.models.pbp_other import BBRefPlayByPlayMiscEvent
 from app.main.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
 from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
 from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
@@ -231,6 +232,13 @@ def decode_bbref_boxscore_half_inning(json_dict):
                     return result
                 inning.substitutions.append(result.value)
 
+            inning.misc_events = []
+            for m in json_dict["misc_events"]:
+                result = decode_bbref_pbp_misc_event(m)
+                if result.failure:
+                    return result
+                inning.misc_events.append(result.value)
+
             return Result.Ok(inning)
         except Exception as e:
             error = f"Error: {repr(e)}"
@@ -383,6 +391,20 @@ def decode_bbref_pbp_substitution(json_dict):
             substitution.outgoing_player_pos = json_dict["outgoing_player_pos"]
             substitution.lineup_slot = json_dict["lineup_slot"]
             return Result.Ok(substitution)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+
+def decode_bbref_pbp_misc_event(json_dict):
+    if "__bbref_pbp_misc_event__" in json_dict:
+        try:
+            misc_event = BBRefPlayByPlayMiscEvent()
+            misc_event.inning_id = json_dict["inning_id"]
+            misc_event.inning_label = json_dict["inning_label"]
+            misc_event.pbp_table_row_number = json_dict["pbp_table_row_number"]
+            misc_event.description = json_dict["description"]
+            return Result.Ok(misc_event)
         except Exception as e:
             error = f"Error: {repr(e)}"
             return Result.Fail(error)
