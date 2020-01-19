@@ -63,8 +63,8 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
     ]
     all_events = flatten_list2d(all_game_events + all_substitutions + all_misc_events)
     all_events.sort(key=lambda x: x.pbp_table_row_number)
-    grouped_events = []
-    ab_bat_ids = []
+    grouped_events = {}
+    at_bat_ids = []
     at_bat_events = []
     for game_event in all_events:
         at_bat_events.append(game_event)
@@ -101,9 +101,9 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
             at_bat_ids.append(at_bat_id)
             for event in at_bat_events:
                 event.at_bat_id = at_bat_id
-            grouped_events.append(deepcopy(at_bat_events))
+            grouped_events[at_bat_id] = deepcopy(at_bat_events)
             at_bat_events = []
-    return Result.Ok(grouped_events)
+    return Result.Ok((boxscore, player_id_dict, grouped_events))
 
 
 def event_is_player_substitution_or_misc(event):
