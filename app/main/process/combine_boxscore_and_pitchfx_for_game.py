@@ -394,7 +394,7 @@ def check_pfx_data_for_at_bat(pfx_data, pitch_count):
     pitch_count_error = any(pfx["ab_total"] != pitch_count for pfx in pfx_data)
     if pitch_count_error:
         return Result.Fail("Pitch count does not match")
-    pfx_pitch_numbers = set()
+    pfx_pitch_numbers = []
     for pfx in pfx_data:
         if pfx["ab_count"] in pfx_pitch_numbers:
             error = (
@@ -402,10 +402,10 @@ def check_pfx_data_for_at_bat(pfx_data, pitch_count):
                 'occurs more than once'
             )
             return Result.Fail(error)
-        pfx_pitch_numbers.update(pfx["ab_count"])
+        pfx_pitch_numbers.append(pfx["ab_count"])
     all_pitch_numbers = set(range(1, pitch_count + 1))
-    missing_pitch_numbers = list(all_pitch_numbers - pfx_pitch_numbers)
-    return Result.Ok(missing_pitch_numbers)
+    missing_pitch_numbers = all_pitch_numbers.difference(pfx_pitch_numbers)
+    return Result.Ok(list(missing_pitch_numbers))
 
 
 def construct_pitch_sequence_description(game_event, pfx_data=None):
