@@ -49,6 +49,11 @@ MLB_DATA_SETS = [
     "all"
 ]
 
+class PlayByPlayEventType(Enum):
+    AT_BAT = auto()
+    SUBSTITUTION = auto()
+    MISC = auto()
+
 class DataSet(Enum):
     """MLB data sets."""
     brooks_games_for_date = auto()

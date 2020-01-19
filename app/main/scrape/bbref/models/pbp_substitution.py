@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from app.main.constants import PlayByPlayEventType
 from app.main.util.list_functions import display_dict
 
 
@@ -16,6 +17,10 @@ class BBRefInGameSubstitution():
     incoming_player_pos: str = ""
     outgoing_player_pos: str = ""
     lineup_slot: str = "0"
+
+    @property
+    def event_type(self):
+        return PlayByPlayEventType.SUBSTITUTION
 
     def as_dict(self):
         dict = {

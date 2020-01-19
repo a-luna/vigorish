@@ -12,17 +12,18 @@ from app.main.util.list_functions import compare_lists, flatten_list2d
 from app.main.util.result import Result
 from app.main.util.s3_helper import get_bbref_boxscore_from_s3, get_all_pitchfx_logs_for_game_from_s3
 
+
 def combine_boxscore_and_pitchfx_data_for_game(session, bbref_game_id):
     result = get_all_pbp_events_for_game(session, bbref_game_id)
     if result.failure:
         return result
-    (boxscore, player_id_dict, all_pbp_events_for_game) = result.value
+    (boxscore, player_id_dict, grouped_event_dict) = result.value
     result = get_all_pfx_data_for_game(session, bbref_game_id)
     if result.failure:
         return result
     (pitchfx_logs_for_game, all_pfx_data_for_game) = result.value
     game_events_combined_data = combine_pbp_events_with_pfx_data(
-        all_pbp_events_for_game, all_pfx_data_for_game
+        grouped_event_dict, all_pfx_data_for_game
     )
     result = update_boxscore_with_combined_data(
         boxscore, player_id_dict, game_events_combined_data, pitchfx_logs_for_game
@@ -46,24 +47,10 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
     if result.failure:
         return result
     player_id_dict = result.value
-    all_game_events = [
-        event for event in [
-            inning.game_events for inning in boxscore.innings_list
-        ]
-    ]
-    all_substitutions = [
-        sub for sub in [
-            inning.substitutions for inning in boxscore.innings_list
-        ]
-    ]
-    all_misc_events = [
-        misc for misc in [
-            inning.misc_events for inning in boxscore.innings_list
-        ]
-    ]
-    all_events = flatten_list2d(all_game_events + all_substitutions + all_misc_events)
+    (game_events, substitutions, misc_events) = get_all_events_by_type(boxscore)
+    all_events = flatten_list2d(game_events + substitutions + misc_events)
     all_events.sort(key=lambda x: x.pbp_table_row_number)
-    grouped_events = {}
+    grouped_event_dict = {}
     at_bat_ids = []
     at_bat_events = []
     for game_event in all_events:
@@ -79,31 +66,50 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
             return result
         game_event_is_complete_at_bat = result.value
         if game_event_is_complete_at_bat:
-            instance_num = 0
-            at_bat_id = get_at_bat_id_for_pbp_event(
-                session,
-                bbref_game_id,
-                game_event,
-                player_id_dict,
-                instance_num
+            at_bat_id = get_new_at_bat_id(
+                session, bbref_game_id, game_event, player_id_dict, at_bat_ids
             )
-            id_exists = at_bat_id in at_bat_ids
-            while id_exists:
-                instance_num += 1
-                at_bat_id = get_at_bat_id_for_pbp_event(
-                    session,
-                    bbref_game_id,
-                    game_event,
-                    player_id_dict,
-                    instance_num
-                )
-                id_exists = at_bat_id in at_bat_ids
             at_bat_ids.append(at_bat_id)
-            for event in at_bat_events:
-                event.at_bat_id = at_bat_id
-            grouped_events[at_bat_id] = deepcopy(at_bat_events)
+            at_bat_event_dicts = [event.as_dict() for event in at_bat_events]
+            for event in at_bat_event_dicts:
+                event.pop("__bbref_pbp_game_event__", None)
+                event.pop("__bbref_pbp_misc_event__", None)
+                event.pop("__bbref_pbp_in_game_substitution__", None)
+                event["at_bat_id"] = at_bat_id
+                event["event_type"] = event.event_type
+            grouped_event_dict[at_bat_id] = at_bat_event_dicts
             at_bat_events = []
-    return Result.Ok((boxscore, player_id_dict, grouped_events))
+    return Result.Ok((boxscore, player_id_dict, grouped_event_dict))
+
+
+def get_player_id_dict_for_game(session, boxscore):
+    player_name_dict = boxscore.player_name_dict
+    player_team_dict = boxscore.player_team_dict
+    player_id_dict = {}
+    for name, bbref_id in player_name_dict.items():
+        player = Player.find_by_bbref_id(session, bbref_id)
+        if not player:
+            return Result.Fail(f"Unable to retrieve MLB ID for {name} ({bbref_id})")
+        player_id_dict[bbref_id] = {
+            "name": name,
+            "mlb_id": player.mlb_id,
+            "team_id_bbref": player_team_dict.get(bbref_id, "")
+        }
+    return Result.Ok(player_id_dict)
+
+
+def get_all_events_by_type(boxscore):
+    game_events = [
+        event for event in [inning.game_events for inning in boxscore.innings_list]
+    ]
+    substitutions = [
+        sub for sub in [inning.substitutions for inning in boxscore.innings_list]
+    ]
+    misc_events = [
+        misc for misc in [inning.misc_events for inning in boxscore.innings_list]
+    ]
+    return (game_events, substitutions, misc_events)
+
 
 
 def event_is_player_substitution_or_misc(event):
@@ -141,78 +147,23 @@ def pitch_sequence_is_complete_at_bat(pitch_seq, row_num, bbref_game_id):
     return Result.Ok(False)
 
 
-# def get_all_pbp_events_for_game_old(session, bbref_game_id):
-#     result = get_bbref_boxscore_from_s3(bbref_game_id)
-#     if result.failure:
-#         return result
-#     boxscore = result.value
-#     result = get_player_id_dict_for_game(session, boxscore)
-#     if result.failure:
-#         return result
-#     player_id_dict = result.value
-#     all_pbp_events_for_game = []
-#     for inning in boxscore.innings_list:
-#         for game_event in inning.game_events:
-#             game_event.at_bat_id = get_at_bat_id_for_pbp_event(
-#                 session, bbref_game_id, game_event, player_id_dict
-#             )
-#         all_pbp_events_for_game.extend(inning.game_events)
-#     all_pbp_events_for_game.sort(key=lambda x: x.pbp_table_row_number)
-#     pbp_ids = [event.at_bat_id for event in all_pbp_events_for_game]
-#     histogram = Counter(pbp_ids)
-#     unique_pbp_ids = Counter(list(set(pbp_ids)))
-#     duplicate_pbp_ids = histogram - unique_pbp_ids
-#     if not duplicate_pbp_ids:
-#         return Result.Ok((boxscore, player_id_dict, all_pbp_events_for_game))
-#     duplicate_map = {}
-#     for at_bat_id in duplicate_pbp_ids.keys():
-#         pbp_events = [
-#             event for event in all_pbp_events_for_game if event.at_bat_id == at_bat_id
-#         ]
-#         pbp_events.sort(key=lambda x: x.pbp_table_row_number)
-#         total_events = len(pbp_events)
-#         rows_apart = []
-#         for index, pbp_event in enumerate(pbp_events):
-#             if index != total_events - 1:
-#                 diff = pbp_events[index + 1].pbp_table_row_number - pbp_event.pbp_table_row_number
-#                 rows_apart.append(diff)
-#         group_number = 1
-#         group_size = 1
-#         group_dict = {}
-#         for diff in rows_apart:
-#             if diff == 1:
-#                 group_size += 1
-#                 continue
-#             group_dict[group_number] = group_size
-#             group_number += 1
-#             group_size = 1
-#         group_dict[group_number] = group_size
-#         event_index = 0
-#         for group_number, total_events_this_at_bat in group_dict.items():
-#             instance_number = group_number - 1
-#             for _ in range(total_events_this_at_bat):
-#                 game_event = pbp_events[event_index]
-#                 game_event.at_bat_id = get_at_bat_id_for_pbp_event(
-#                     session, bbref_game_id, game_event, player_id_dict, instance_number
-#                 )
-#                 event_index += 1
-#     return Result.Ok((boxscore, player_id_dict, all_pbp_events_for_game))
-
-
-def get_player_id_dict_for_game(session, boxscore):
-    player_name_dict = boxscore.player_name_dict
-    player_team_dict = boxscore.player_team_dict
-    player_id_dict = {}
-    for name, bbref_id in player_name_dict.items():
-        player = Player.find_by_bbref_id(session, bbref_id)
-        if not player:
-            return Result.Fail(f"Unable to retrieve MLB ID for {name} ({bbref_id})")
-        player_id_dict[bbref_id] = {
-            "name": name,
-            "mlb_id": player.mlb_id,
-            "team_id_bbref": player_team_dict.get(bbref_id, "")
-        }
-    return Result.Ok(player_id_dict)
+def get_new_at_bat_id(session, bbref_game_id, game_event, player_id_dict, at_bat_ids):
+    instance_num = 0
+    at_bat_id = get_at_bat_id_for_pbp_event(
+        session, bbref_game_id, game_event, player_id_dict, instance_num
+    )
+    id_exists = at_bat_id in at_bat_ids
+    while id_exists:
+        instance_num += 1
+        at_bat_id = get_at_bat_id_for_pbp_event(
+            session,
+            bbref_game_id,
+            game_event,
+            player_id_dict,
+            instance_num
+        )
+        id_exists = at_bat_id in at_bat_ids
+    return at_bat_id
 
 
 def get_at_bat_id_for_pbp_event(session, bbref_game_id, game_event, player_id_dict, instance_number=0):
@@ -316,17 +267,24 @@ def get_pitch_count_by_inning(pitchfx_log):
 
 
 def get_at_bat_id_for_pfx_data(pfx, instance_number=0):
-    return f"{pfx.bbref_game_id}_{pfx.inning}_{pfx.pitcher_team_id_bb}_{pfx.pitcher_id}_{pfx.opponent_team_id_bb}_{pfx.batter_id}_{instance_number}"
+    game_id = pfx.bbref_game_id
+    inn = pfx.inning
+    pteam = pfx.pitcher_team_id_bb
+    pid = pfx.pitcher_id
+    bteam = pfx.opponent_team_id_bb
+    bid = pfx.batter_id
+    num = instance_number
+    return f"{game_id}_{inn}_{pteam}_{pid}_{bteam}_{bid}_{num}"
 
 
-def combine_pbp_events_with_pfx_data(all_pbp_events_for_game, all_pfx_data_for_game):
+def combine_pbp_events_with_pfx_data(grouped_event_dict, all_pfx_data_for_game):
     game_events_combined_data = []
-    result = reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game)
+    result = reconcile_at_bat_ids(grouped_event_dict, all_pfx_data_for_game)
     if result.failure:
         return result
     at_bat_ids = result.value
     for ab_id in at_bat_ids:
-        pbp_events_for_at_bat = get_all_pbp_events_for_at_bat(all_pbp_events_for_game, ab_id)
+        pbp_events_for_at_bat = get_all_pbp_events_for_at_bat(grouped_event_dict, ab_id)
         pfx_data_for_at_bat = get_all_pfx_data_for_at_bat(all_pfx_data_for_game, ab_id)
         first_event_this_at_bat = pbp_events_for_at_bat[0]
         final_event_this_at_bat = pbp_events_for_at_bat[-1]
@@ -340,23 +298,23 @@ def combine_pbp_events_with_pfx_data(all_pbp_events_for_game, all_pfx_data_for_g
             final_event_this_at_bat, pfx_data_for_seq_description
         )
         combined_at_bat_data = {
-            "event_type": "at_bat",
             "at_bat_id": ab_id,
+            "inning_id": first_event_this_at_bat["inning_id"],
             "pbp_table_row_number": first_event_this_at_bat["pbp_table_row_number"],
             "pitchfx_data_complete": pitch_count_pitch_seq == pitch_count_pitchfx,
             "pitch_count_bbref_pitch_seq": pitch_count_pitch_seq,
             "pitch_count_pitchfx": pitch_count_pitchfx,
             "missing_pitchfx_count": pitch_count_pitch_seq - pitch_count_pitchfx,
             "pitch_sequence_description": pitch_sequence_description,
-            "pbp_events": pbp_events_for_at_bat,
+            "pbp_events": grouped_event_dict[ab_id],
             "pitchfx": pfx_data_for_at_bat
         }
         game_events_combined_data.append(combined_at_bat_data)
     return game_events_combined_data
 
 
-def reconcile_at_bat_ids(all_pbp_events_for_game, all_pfx_data_for_game):
-    at_bat_ids_from_boxscore = list(set([game_event.at_bat_id for game_event in all_pbp_events_for_game]))
+def reconcile_at_bat_ids(grouped_event_dict, all_pfx_data_for_game):
+    at_bat_ids_from_boxscore = list(set([at_bat_id for at_bat_id in grouped_event_dict.keys()]))
     at_bat_ids_from_pfx = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
     at_bat_ids_match_exactly = compare_lists(at_bat_ids_from_boxscore, at_bat_ids_from_pfx)
     at_bat_ids_boxscore_only = list(set(at_bat_ids_from_boxscore) - set(at_bat_ids_from_pfx))
@@ -386,17 +344,13 @@ def order_at_bat_ids_by_time(at_bat_ids, all_pbp_events_for_game):
     return [event_pbp_map["at_bat_id"] for event_pbp_map in game_event_pbp_map]
 
 
-def get_all_pbp_events_for_at_bat(all_pbp_events_for_game, at_bat_id):
-    pbp_events_for_at_bat = [
-        game_event.as_dict()
-        for game_event in all_pbp_events_for_game
-        if game_event.at_bat_id == at_bat_id
+def get_all_pbp_events_for_at_bat(grouped_event_dict, at_bat_id):
+    at_bat_events = [
+        event for event in grouped_event_dict[at_bat_id]
+        if event["event_type"] == PlayByPlayEventType.AT_BAT
     ]
-    for game_event in pbp_events_for_at_bat:
-        game_event.pop("__bbref_pbp_game_event__", None)
-        game_event["at_bat_id"] = at_bat_id
-    pbp_events_for_at_bat.sort(key=lambda x: x["pbp_table_row_number"])
-    return pbp_events_for_at_bat
+    at_bat_events.sort(key=lambda x: x["pbp_table_row_number"])
+    return at_bat_events
 
 
 def get_all_pfx_data_for_at_bat(all_pfx_data_for_game, at_bat_id):
@@ -497,10 +451,9 @@ def update_boxscore_with_combined_data(boxscore, player_id_dict, game_events_com
 
 
 def update_inning_with_combined_data(inning, game_events_combined_data, player_team_dict):
-    at_bat_ids_this_inning = set([game_event.at_bat_id for game_event in inning.game_events])
     inning_events = [
         event for event in game_events_combined_data
-        if event["at_bat_id"] in at_bat_ids_this_inning
+        if event["inning_id"] == inning.inning_id
     ]
     pitchfx_data_complete = all(event["pitchfx_data_complete"] for event in inning_events)
     total_at_bats_pitchfx_complete = len([event for event in inning_events if event["pitchfx_data_complete"]])
@@ -512,14 +465,14 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
     at_bat_ids_missing_pitchfx = sorted(list(set(
         event["at_bat_id"] for event in inning_events if not event["pitchfx_data_complete"]
     )))
-    if inning.substitutions:
-        substitutions_this_inning = [sub.as_dict() for sub in inning.substitutions]
-        for sub in substitutions_this_inning:
-            sub.pop("__bbref_pbp_in_game_substitution__", None)
-            sub["event_type"] = "player_substitution"
-            sub["sub_team_id"] = player_team_dict.get(sub["incoming_player_id_br"], None)
-        inning_events.extend(substitutions_this_inning)
-    inning_events.sort(key=lambda x: x["pbp_table_row_number"])
+    #if inning.substitutions:
+    #    substitutions_this_inning = [sub.as_dict() for sub in inning.substitutions]
+    #    for sub in substitutions_this_inning:
+    #        sub.pop("__bbref_pbp_in_game_substitution__", None)
+    #        sub["event_type"] = "player_substitution"
+    #        sub["sub_team_id"] = player_team_dict.get(sub["incoming_player_id_br"], None)
+    #    inning_events.extend(substitutions_this_inning)
+    #inning_events.sort(key=lambda x: x["pbp_table_row_number"])
     inning_totals = {
         "inning_total_runs": inning.inning_total_runs,
         "inning_total_hits": inning.inning_total_hits,

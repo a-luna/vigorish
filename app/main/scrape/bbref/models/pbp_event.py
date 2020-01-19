@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT
+from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT, PlayByPlayEventType
 
 
 @dataclass
@@ -23,6 +23,10 @@ class BBRefPlayByPlayEvent():
     pitcher_id_br: str = "0"
     batter_id_br: str = "0"
     play_index_url: str = "0"
+
+    @property
+    def event_type(self):
+        return PlayByPlayEventType.AT_BAT
 
 
     def pitch_sequence_description(self):
