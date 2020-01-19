@@ -1212,7 +1212,7 @@ def _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id):
             continue
         description = ""
         for des in event_descriptions:
-            description += des[i].strip().replace("\xa0", " ")
+            description += des.strip().replace("\xa0", " ")
         misc_event = BBRefPlayByPlayMiscEvent(
             pbp_table_row_number=row_num,
             description=description
