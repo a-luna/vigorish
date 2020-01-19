@@ -314,6 +314,8 @@ def combine_pbp_events_with_pfx_data(grouped_event_dict, all_pfx_data_for_game, 
         pitch_sequence_description = construct_pitch_sequence_description(
             final_event_this_at_bat, pfx_data_for_seq_description
         )
+        pitcher_name = player_id_dict[first_event_this_at_bat["pitcher_id_br"]].get("name", "")
+        batter_name = player_id_dict[first_event_this_at_bat["batter_id_br"]].get("name", "")
         combined_at_bat_data = {
             "at_bat_id": ab_id,
             "inning_id": first_event_this_at_bat["inning_id"],
@@ -324,8 +326,8 @@ def combine_pbp_events_with_pfx_data(grouped_event_dict, all_pfx_data_for_game, 
             "missing_pitchfx_count": missing_pitchfx_count,
             "missing_pitchfx_data_is_legit": missing_pitchfx_data_is_legit,
             "missing_pitch_numbers": missing_pitch_numbers,
-            "pitcher_name": player_id_dict[first_event_this_at_bat["pitcher_id_br"]],
-            "batter_name": player_id_dict[first_event_this_at_bat["batter_id_br"]],
+            "pitcher_name": pitcher_name,
+            "batter_name": batter_name,
             "pitch_sequence_description": pitch_sequence_description,
             "pbp_events": grouped_event_dict[ab_id],
             "pitchfx": pfx_data_for_at_bat
@@ -500,8 +502,12 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
     pitch_count_bbref_pitch_seq = sum(event["pitch_count_bbref_pitch_seq"] for event in inning_events)
     pitch_count_pitchfx = sum(event["pitch_count_pitchfx"] for event in inning_events)
     pitch_count_missing_pitchfx = sum(event["missing_pitchfx_count"] for event in inning_events)
+    missing_pitchfx_data_is_legit = all(event["missing_pitchfx_data_is_legit"] for event in inning_events)
     at_bat_ids_missing_pitchfx = sorted(list(set(
         event["at_bat_id"] for event in inning_events if not event["pitchfx_data_complete"]
+    )))
+    at_bat_ids_pitchfx_data_error = sorted(list(set(
+        event["at_bat_id"] for event in inning_events if not event["missing_pitchfx_data_is_legit"]
     )))
     inning_totals = {
         "inning_total_runs": inning.inning_total_runs,
@@ -519,7 +525,9 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
         "pitch_count_bbref_pitch_seq": pitch_count_bbref_pitch_seq,
         "pitch_count_pitchfx": pitch_count_pitchfx,
         "pitch_count_missing_pitchfx": pitch_count_missing_pitchfx,
+        "missing_pitchfx_data_is_legit": missing_pitchfx_data_is_legit,
         "at_bat_ids_missing_pitchfx": at_bat_ids_missing_pitchfx,
+        "at_bat_ids_pitchfx_data_error": at_bat_ids_pitchfx_data_error,
     }
     return {
         "inning_id": inning.inning_id,
@@ -659,8 +667,16 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
         inning["inning_pitchfx_audit"]["pitch_count_missing_pitchfx"]
         for inning in updated_innings_list
     )
+    missing_pitchfx_data_is_legit = all(
+        inning["inning_pitchfx_audit"]["missing_pitchfx_data_is_legit"]
+        for inning in updated_innings_list
+    )
     at_bat_ids_missing_pitchfx = sorted(list(set(flatten_list2d([
         inning["inning_pitchfx_audit"]["at_bat_ids_missing_pitchfx"]
+        for inning in updated_innings_list
+    ]))))
+    at_bat_ids_pitchfx_data_error = sorted(list(set(flatten_list2d([
+        inning["inning_pitchfx_audit"]["at_bat_ids_pitchfx_data_error"]
         for inning in updated_innings_list
     ]))))
     duplicate_pfx_removed_home = sum(
@@ -684,6 +700,8 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
         "total_pitch_count_bbref_pitch_seq": total_pitch_count_bbref_pitch_seq,
         "total_pitch_count_pitchfx": total_pitch_count_pitchfx,
         "total_pitch_count_missing_pitchfx": total_pitch_count_missing_pitchfx,
+        "missing_pitchfx_data_is_legit" : missing_pitchfx_data_is_legit,
         "at_bat_ids_missing_pitchfx": at_bat_ids_missing_pitchfx,
+        "at_bat_ids_pitchfx_data_error": at_bat_ids_pitchfx_data_error,
         "total_duplicate_pitchfx_removed": total_duplicate_pitchfx_removed
     }
