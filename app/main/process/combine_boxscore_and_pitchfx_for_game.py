@@ -4,13 +4,17 @@ from collections import Counter, defaultdict
 from copy import deepcopy
 from pprint import pformat
 
-from app.main.constants import TEAM_ID_DICT, PPB_PITCH_LOG_DICT, PITCH_TYPE_DICT
+from app.main.constants import (
+    TEAM_ID_DICT, PPB_PITCH_LOG_DICT, PITCH_TYPE_DICT, PlayByPlayEventType
+)
 from app.main.models.player import Player
 from app.main.models.status_game import GameScrapeStatus
 from app.main.util.file_util import write_json_dict_to_file
 from app.main.util.list_functions import compare_lists, flatten_list2d
 from app.main.util.result import Result
-from app.main.util.s3_helper import get_bbref_boxscore_from_s3, get_all_pitchfx_logs_for_game_from_s3
+from app.main.util.s3_helper import (
+    get_bbref_boxscore_from_s3, get_all_pitchfx_logs_for_game_from_s3
+)
 
 
 def combine_boxscore_and_pitchfx_data_for_game(session, bbref_game_id):
