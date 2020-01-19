@@ -322,7 +322,7 @@ def reconcile_at_bat_ids(grouped_event_dict, all_pfx_data_for_game):
     at_bat_ids_boxscore_only = list(set(at_bat_ids_from_boxscore) - set(at_bat_ids_from_pfx))
     at_bat_ids_pfx_only = list(set(at_bat_ids_from_pfx) - set(at_bat_ids_from_boxscore))
     if at_bat_ids_match_exactly or (at_bat_ids_boxscore_only and not at_bat_ids_pfx_only):
-        at_bat_ids_ordered = order_at_bat_ids_by_time(at_bat_ids_from_boxscore, all_pbp_events_for_game)
+        at_bat_ids_ordered = order_at_bat_ids_by_time(at_bat_ids_from_boxscore, grouped_event_dict)
         return Result.Ok(at_bat_ids_ordered)
     message = "Play-by-play data and PitchFx data could not be reconciled:"
     if at_bat_ids_boxscore_only:
@@ -332,13 +332,12 @@ def reconcile_at_bat_ids(grouped_event_dict, all_pfx_data_for_game):
     return Result.Fail(message)
 
 
-def order_at_bat_ids_by_time(at_bat_ids, all_pbp_events_for_game):
+def order_at_bat_ids_by_time(at_bat_ids, grouped_event_dict):
     game_event_pbp_map = [{
         "at_bat_id": ab_id,
         "pbp_table_row_number": min(
-            game_event.pbp_table_row_number
-            for game_event in all_pbp_events_for_game
-            if game_event.at_bat_id == ab_id
+            game_event["pbp_table_row_number"]
+            for game_event in grouped_event_dict[ab_id]
         )}
         for ab_id in at_bat_ids
     ]
