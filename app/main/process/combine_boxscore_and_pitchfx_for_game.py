@@ -70,13 +70,15 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
                 session, bbref_game_id, game_event, player_id_dict, at_bat_ids
             )
             at_bat_ids.append(at_bat_id)
-            at_bat_event_dicts = [event.as_dict() for event in at_bat_events]
-            for event in at_bat_event_dicts:
-                event.pop("__bbref_pbp_game_event__", None)
-                event.pop("__bbref_pbp_misc_event__", None)
-                event.pop("__bbref_pbp_in_game_substitution__", None)
-                event["at_bat_id"] = at_bat_id
-                event["event_type"] = event.event_type
+            at_bat_event_dicts = []
+            for event in at_bat_events:
+                event_dict = event.as_dict()
+                event_dict.pop("__bbref_pbp_game_event__", None)
+                event_dict.pop("__bbref_pbp_misc_event__", None)
+                event_dict.pop("__bbref_pbp_in_game_substitution__", None)
+                event_dict["at_bat_id"] = at_bat_id
+                event_dict["event_type"] = event.event_type
+                at_bat_event_dicts.append(event_dict)
             grouped_event_dict[at_bat_id] = at_bat_event_dicts
             at_bat_events = []
     return Result.Ok((boxscore, player_id_dict, grouped_event_dict))
