@@ -28,7 +28,6 @@ class BBRefPlayByPlayEvent():
     def event_type(self):
         return PlayByPlayEventType.AT_BAT
 
-
     def pitch_sequence_description(self):
         total_pitches_in_sequence = self.pitch_count()
         current_pitch_count = 0
