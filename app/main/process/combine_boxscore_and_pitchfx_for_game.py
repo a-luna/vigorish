@@ -27,7 +27,7 @@ def combine_boxscore_and_pitchfx_data_for_game(session, bbref_game_id):
         return result
     (pitchfx_logs_for_game, all_pfx_data_for_game) = result.value
     game_events_combined_data = combine_pbp_events_with_pfx_data(
-        grouped_event_dict, all_pfx_data_for_game
+        grouped_event_dict, all_pfx_data_for_game, player_id_dict
     )
     result = update_boxscore_with_combined_data(
         boxscore, player_id_dict, game_events_combined_data, pitchfx_logs_for_game
@@ -283,7 +283,7 @@ def get_at_bat_id_for_pfx_data(pfx, instance_number=0):
     return f"{game_id}_{inn}_{pteam}_{pid}_{bteam}_{bid}_{num}"
 
 
-def combine_pbp_events_with_pfx_data(grouped_event_dict, all_pfx_data_for_game):
+def combine_pbp_events_with_pfx_data(grouped_event_dict, all_pfx_data_for_game, player_id_dict):
     game_events_combined_data = []
     result = reconcile_at_bat_ids(grouped_event_dict, all_pfx_data_for_game)
     if result.failure:
@@ -296,6 +296,17 @@ def combine_pbp_events_with_pfx_data(grouped_event_dict, all_pfx_data_for_game):
         final_event_this_at_bat = pbp_events_for_at_bat[-1]
         pitch_count_pitch_seq = get_total_pitches_in_sequence(final_event_this_at_bat["pitch_sequence"])
         pitch_count_pitchfx = len(pfx_data_for_at_bat)
+        missing_pitchfx_count = pitch_count_pitch_seq - pitch_count_pitchfx
+        pitchfx_data_complete = pitch_count_pitch_seq == pitch_count_pitchfx
+        missing_pitchfx_data_is_legit = True
+        missing_pitch_numbers = []
+        if not pitchfx_data_complete:
+            result = check_pfx_data_for_at_bat(pfx_data_for_at_bat, pitch_count_pitch_seq)
+            if result.failure:
+                missing_pitchfx_data_is_legit = False
+            else:
+                missing_pitch_numbers = result.value
+                missing_pitchfx_data_is_legit = missing_pitchfx_count == len(missing_pitch_numbers)
         if pfx_data_for_at_bat and pitch_count_pitch_seq == pitch_count_pitchfx:
             pfx_data_for_seq_description = deepcopy(pfx_data_for_at_bat)
         else:
@@ -307,10 +318,14 @@ def combine_pbp_events_with_pfx_data(grouped_event_dict, all_pfx_data_for_game):
             "at_bat_id": ab_id,
             "inning_id": first_event_this_at_bat["inning_id"],
             "pbp_table_row_number": first_event_this_at_bat["pbp_table_row_number"],
-            "pitchfx_data_complete": pitch_count_pitch_seq == pitch_count_pitchfx,
+            "pitchfx_data_complete": pitchfx_data_complete,
             "pitch_count_bbref_pitch_seq": pitch_count_pitch_seq,
             "pitch_count_pitchfx": pitch_count_pitchfx,
-            "missing_pitchfx_count": pitch_count_pitch_seq - pitch_count_pitchfx,
+            "missing_pitchfx_count": missing_pitchfx_count,
+            "missing_pitchfx_data_is_legit": missing_pitchfx_data_is_legit,
+            "missing_pitch_numbers": missing_pitch_numbers,
+            "pitcher_name": player_id_dict[first_event_this_at_bat["pitcher_id_br"]],
+            "batter_name": player_id_dict[first_event_this_at_bat["batter_id_br"]],
             "pitch_sequence_description": pitch_sequence_description,
             "pbp_events": grouped_event_dict[ab_id],
             "pitchfx": pfx_data_for_at_bat
@@ -373,6 +388,24 @@ def get_all_pfx_data_for_at_bat(all_pfx_data_for_game, at_bat_id):
 
 def get_total_pitches_in_sequence(pitch_sequence):
     return sum(PPB_PITCH_LOG_DICT[abbrev]["pitch_counts"] for abbrev in pitch_sequence)
+
+
+def check_pfx_data_for_at_bat(pfx_data, pitch_count):
+    pitch_count_error = any(pfx["ab_total"] != pitch_count for pfx in pfx_data)
+    if pitch_count_error:
+        return Result.Fail("Pitch count does not match")
+    pfx_pitch_numbers = set()
+    for pfx in pfx_data:
+        if pfx["ab_count"] in pfx_pitch_numbers:
+            error = (
+                f'PitchFX data is invalid, pitch #{pfx["ab_count"]} '
+                'occurs more than once'
+            )
+            return Result.Fail(error)
+        pfx_pitch_numbers.update(pfx["ab_count"])
+    all_pitch_numbers = set(range(1, pitch_count + 1))
+    missing_pitch_numbers = list(all_pitch_numbers - pfx_pitch_numbers)
+    return Result.Ok(missing_pitch_numbers)
 
 
 def construct_pitch_sequence_description(game_event, pfx_data=None):
