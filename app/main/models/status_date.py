@@ -142,6 +142,8 @@ class DateScrapeStatus(Base):
     def scraped_all_pitchfx_logs(self):
         if not self.scraped_daily_dash_bbref or not self.scraped_daily_dash_brooks:
             return False
+        if not self.scrape_status_games or not self.scrape_status_pitchfx:
+            return True
         return all(pitch_app.scraped_pitchfx for pitch_app in self.scrape_status_pitchfx) \
             if len(self.scrape_status_pitchfx) > 0 else False
 

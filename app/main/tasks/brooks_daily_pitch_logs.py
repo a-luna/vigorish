@@ -52,7 +52,6 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
                 result = upload_brooks_pitch_logs_for_game(scraped_pitch_logs)
                 if result.failure:
                     return result
-                time.sleep(randint(25, 50) / 100.0)
                 pbar.update()
         with tqdm(total=len(scraped_games), unit="game", leave=False, position=2) as pbar:
             for scraped_pitch_logs in scraped_games:
@@ -60,7 +59,6 @@ class ScrapeBrooksDailyPitchLogs(BaseTask):
                 result = update_status_brooks_pitch_logs_for_game(self.db['session'], scraped_pitch_logs, scrape_date)
                 if result.failure:
                     return result
-                time.sleep(randint(10, 30) / 100.0)
                 pbar.update()
         return Result.Ok("scraped_brooks")
 

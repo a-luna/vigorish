@@ -60,8 +60,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
                 for pitchfx_log in pitchfx_logs_for_game:
                     result = upload_brooks_pitchfx_log(pitchfx_log)
                     if result.failure:
-                        return result
-                    time.sleep(randint(25, 50) / 100.0)
+                        return result\
                     pbar.update()
         with tqdm(total=scraped_count, unit="pitch_log", leave=False, position=2) as pbar:
             for bbref_game_id, pitchfx_logs_for_game in scraped_pitchfx_logs.items():
@@ -70,7 +69,6 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
                     result = update_pitch_appearance_status_records(self.db['session'], pitchfx_log)
                     if result.failure:
                         return result
-                    time.sleep(randint(10, 30) / 100.0)
                     pbar.update()
         return Result.Ok(scrape_audit)
 
