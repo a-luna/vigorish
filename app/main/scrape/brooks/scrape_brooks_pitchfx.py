@@ -27,12 +27,11 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
     scrape_audit = []
     with tqdm(total=len(pitch_logs_for_game.pitch_logs), unit="pitch_log", leave=False, position=3) as pbar:
         for pitch_log in pitch_logs_for_game.pitch_logs:
-            pbar.set_description(get_pbar_description(pitch_log.pitcher_id_mlb))
-            scraped_pitchfx = pitch_log.pitch_app_id in scraped_pitch_app_ids
-            if scraped_pitchfx or not pitch_log.parsed_all_info:
-                time.sleep(randint(50, 75) / 100.0)
-                pbar.update()
-                continue
+            # scraped_pitchfx = pitch_log.pitch_app_id in scraped_pitch_app_ids
+            # if scraped_pitchfx or not pitch_log.parsed_all_info:
+            #     time.sleep(randint(50, 75) / 100.0)
+            #     pbar.update()
+            #     continue
             needs_timeout = False
             pitch_app_id = pitch_log.pitch_app_id
             pitcher_id = pitch_log.pitcher_id_mlb
@@ -81,12 +80,6 @@ def request_pitchfx_data_html(url, pitcher_id, pbar):
         return Result.Fail(repr(e))
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
-
-
-def get_pbar_description(player_id):
-    pre =f"Player ID | {player_id}"
-    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
-    return f"{pre}{'.'*pad_len}"
 
 
 def get_pbar_description_from_s3(player_id):

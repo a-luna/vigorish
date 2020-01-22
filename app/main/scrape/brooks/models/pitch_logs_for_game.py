@@ -25,6 +25,10 @@ class BrooksPitchLogsForGame():
         return game_dict['game_date']
 
     @property
+    def total_pitch_count(self):
+        return sum(pitch_log.total_pitch_count for pitch_log in self.pitch_logs)
+
+    @property
     def upload_id(self):
         return self.bbref_game_id
 

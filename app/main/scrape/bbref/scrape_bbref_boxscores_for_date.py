@@ -173,7 +173,6 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
                 uri = Path(url)
                 game_id = uri.stem
                 audit_value = "skipped"
-                pbar.set_description(get_pbar_description(game_id))
                 result = get_boxscore_html_from_s3(game_id, pbar)
                 if result.failure:
                     result = request_boxscore_html(driver, url, game_id, pbar)
@@ -219,12 +218,6 @@ def request_boxscore_html(driver, url, game_id, pbar):
         return Result.Fail(repr(e))
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
-
-
-def get_pbar_description(game_id):
-    pre =f"Game ID   | {game_id}"
-    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
-    return f"{pre}{'.'*pad_len}"
 
 
 def get_pbar_description_from_s3(game_id):

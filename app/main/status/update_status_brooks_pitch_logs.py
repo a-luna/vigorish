@@ -48,9 +48,8 @@ def update_game_status_records(session, pitch_logs_for_game):
         if not game_status:
             error = f'scrape_status_game does not contain an entry for brooks_game_id: {bb_game_id}'
             return Result.Fail(error)
-        total_pitches = sum(log.total_pitch_count for log in pitch_logs_for_game.pitch_logs)
         setattr(game_status, 'scraped_brooks_pitch_logs', 1)
-        setattr(game_status, 'total_pitch_count_brooks', total_pitches)
+        setattr(game_status, 'total_pitch_count_brooks', pitch_logs_for_game.total_pitch_count)
         return Result.Ok()
     except Exception as e:
         return Result.Fail(f'Error: {repr(e)}')
@@ -59,7 +58,7 @@ def create_pitch_appearance_status_records(session, season, pitch_logs_for_game)
     bbref_game_id = pitch_logs_for_game.bbref_game_id
     all_pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game(session, bbref_game_id)
     scraped_pitch_app_ids = [plog.pitch_app_id for plog in pitch_logs_for_game.pitch_logs]
-    update_pitch_app_ids = set(scraped_pitch_app_ids).difference(set(all_pitch_app_ids))
+    update_pitch_app_ids = set(scraped_pitch_app_ids).difference(all_pitch_app_ids)
     for pitch_log in pitch_logs_for_game.pitch_logs:
         if pitch_log.pitch_app_id not in update_pitch_app_ids:
             continue

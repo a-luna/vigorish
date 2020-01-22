@@ -61,7 +61,7 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def pitch_app_count_pitchfx(self):
-        return len(self.scrape_status_pitchfx)
+        return len(self.scrape_status_pitchfx) if self.scrape_status_pitchfx else 0
 
     @hybrid_property
     def total_pitch_apps_no_pitchfx_data(self):
@@ -83,6 +83,11 @@ class GameScrapeStatus(Base):
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
         return all(pfx.scraped_pitchfx for pfx in self.scrape_status_pitchfx) \
+            if self.pitch_app_count_pitchfx > 0 else False
+
+    @hybrid_property
+    def pitch_data_was_audited(self):
+        return all(pfx.pitch_count_pitchfx_audited for pfx in self.scrape_status_pitchfx) \
             if self.pitch_app_count_pitchfx > 0 else False
 
     def __repr__(self):

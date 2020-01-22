@@ -67,7 +67,6 @@ def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
             try:
                 needs_timeout = False
                 already_scraped = False
-                pbar.set_description(get_pbar_pitch_log_description(pitcher_id))
                 #if hasattr(scraped_pitch_logs_for_game, "pitch_logs"):
                 #    already_scraped = any(
                 #        pitch_log.pitcher_id_mlb == pitcher_id and pitch_log.parsed_all_info
@@ -122,12 +121,6 @@ def request_pitch_log_html(url, pitcher_id, pbar):
         return Result.Fail(repr(e))
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
-
-
-def get_pbar_pitch_log_description(player_id):
-    pre =f"Player ID | {player_id}"
-    pad_len = PBAR_LEN_DICT[DATA_SET] - len(pre)
-    return f"{pre}{'.'*pad_len}"
 
 
 def get_pbar_description_from_s3(player_id):

@@ -87,7 +87,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def pitch_appearance_count_pitchfx(self):
-        return len(self.scrape_status_pitchfx)
+        return len(self.scrape_status_pitchfx) if self.scrape_status_pitchfx else 0
 
     @hybrid_property
     def pitch_appearance_count_difference(self):
