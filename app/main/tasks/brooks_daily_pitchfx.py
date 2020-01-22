@@ -60,7 +60,7 @@ class ScrapeBrooksDailyPitchFxLogs(BaseTask):
                 for pitchfx_log in pitchfx_logs_for_game:
                     result = upload_brooks_pitchfx_log(pitchfx_log)
                     if result.failure:
-                        return result\
+                        return result
                     pbar.update()
         with tqdm(total=scraped_count, unit="pitch_log", leave=False, position=2) as pbar:
             for bbref_game_id, pitchfx_logs_for_game in scraped_pitchfx_logs.items():
