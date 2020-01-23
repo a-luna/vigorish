@@ -33,6 +33,7 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
             #     pbar.update()
             #     continue
             needs_timeout = False
+            url = pitch_log.pitchfx_url
             pitch_app_id = pitch_log.pitch_app_id
             pitcher_id = pitch_log.pitcher_id_mlb
             try:
