@@ -9,6 +9,7 @@ from app.main.constants import (
 )
 from app.main.models.player import Player
 from app.main.models.status_game import GameScrapeStatus
+from app.main.scrape.mlb.scrape_mlb_player_data import scrape_mlb_player_data
 from app.main.util.file_util import write_json_dict_to_file
 from app.main.util.list_functions import compare_lists, flatten_list2d
 from app.main.util.result import Result
@@ -95,7 +96,10 @@ def get_player_id_dict_for_game(session, boxscore):
     for name, bbref_id in player_name_dict.items():
         player = Player.find_by_bbref_id(session, bbref_id)
         if not player:
-            return Result.Fail(f"Unable to retrieve MLB ID for {name} ({bbref_id})")
+            result = scrape_mlb_player_data(session, name, bbref_id)
+            if result.failure:
+                return result
+            player = result.value
         player_id_dict[bbref_id] = {
             "name": name,
             "mlb_id": player.mlb_id,

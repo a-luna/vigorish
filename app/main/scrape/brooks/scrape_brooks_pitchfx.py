@@ -27,12 +27,16 @@ def scrape_brooks_pitchfx_logs_for_game(pitch_logs_for_game, scraped_pitch_app_i
     scrape_audit = []
     with tqdm(total=len(pitch_logs_for_game.pitch_logs), unit="pitch_log", leave=False, position=3) as pbar:
         for pitch_log in pitch_logs_for_game.pitch_logs:
-            scraped_pitchfx = pitch_log.pitch_app_id in scraped_pitch_app_ids
-            if scraped_pitchfx or not pitch_log.parsed_all_info:
+            # scraped_pitchfx = pitch_log.pitch_app_id in scraped_pitch_app_ids
+            # if scraped_pitchfx or not pitch_log.parsed_all_info:
+            #     pbar.update()
+            #     continue
+            url = pitch_log.pitchfx_url
+            pitch_count = pitch_log.total_pitch_count
+            if not pitch_count or not url:
                 pbar.update()
                 continue
             needs_timeout = False
-            url = pitch_log.pitchfx_url
             pitch_app_id = pitch_log.pitch_app_id
             pitcher_id = pitch_log.pitcher_id_mlb
             try:
