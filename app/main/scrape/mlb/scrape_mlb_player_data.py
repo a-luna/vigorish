@@ -66,7 +66,8 @@ def parse_search_results(response, name, name_part, search_url):
     if num_results > 1:
         player_list = resp_json["search_player_all"]["queryResults"]["row"]
         mlb_player_info = find_best_match(name, player_list)
-    mlb_player_info = resp_json["search_player_all"]["queryResults"]["row"]
+    else:
+        mlb_player_info = resp_json["search_player_all"]["queryResults"]["row"]
     return Result.Ok(mlb_player_info)
 
 
