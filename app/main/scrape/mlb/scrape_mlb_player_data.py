@@ -31,6 +31,18 @@ def scrape_mlb_player_data(session, name, bbref_id):
     name_part = ("%20".join(split[1:])).upper()
     search_url = f"{MLB_PLAYER_SEARCH_URL}?sport_code='mlb'&name_part='{name_part}%25'&active_sw='Y'"
     response = requests.get(search_url)
+    result = parse_search_results(response, name_part, search_url)
+    if result.failure:
+        return result
+    mlb_player_info = result.value
+    player_dict = parse_player_data(mlb_player_info, bbref_id)
+    new_player = Player(**player_dict)
+    session.add(new_player)
+    session.commit()
+    return Result.Ok(new_player)
+
+
+def parse_search_results(response, name_part, search_url):
     try:
         resp_json = response.json()
     except JSONDecodeError:
@@ -40,16 +52,19 @@ def scrape_mlb_player_data(session, name, bbref_id):
             "search_url": search_url,
         }
         return Result.Fail(f"Failed to retrieve MLB player data: {search_dict}")
-    num_results = resp_json["search_player_all"]["queryResults"]["totalSize"]
+    num_results_str = resp_json["search_player_all"]["queryResults"]["totalSize"]
+
+    try:
+        num_results = int(num_results_str)
+    except ValueError:
+        error = f"Failed to parse number of results from search response: {resp_json}"
+        return Result.Fail(error)
+
     if num_results > 1:
         player_list = resp_json["search_player_all"]["queryResults"]["row"]
         mlb_player_info = find_best_match(name, player_list)
     mlb_player_info = resp_json["search_player_all"]["queryResults"]["row"]
-    player_dict = parse_player_data(mlb_player_info, bbref_id)
-    new_player = Player(**player_dict)
-    session.add(new_player)
-    session.commit()
-    return Result.Ok(new_player)
+    return Result.Ok(mlb_player_info)
 
 
 def find_best_match(name, player_list):
