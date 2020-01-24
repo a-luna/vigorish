@@ -128,7 +128,7 @@ def get_brooks_pitchfx_log_from_s3(pitch_app_id, folderpath=None, delete_file=Tr
 
 
 def get_all_pitchfx_logs_for_game_from_s3(session, bbref_game_id):
-    pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game(
+    pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
         session, bbref_game_id
     )
     fetch_tasks = [get_brooks_pitchfx_log_from_s3(pitch_app_id) for pitch_app_id in pitch_app_ids]

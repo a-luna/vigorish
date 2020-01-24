@@ -4,6 +4,8 @@ from collections import Counter, defaultdict
 from copy import deepcopy
 from pprint import pformat
 
+import snoop
+
 from app.main.constants import (
     TEAM_ID_DICT, PPB_PITCH_LOG_DICT, PITCH_TYPE_DICT, PlayByPlayEventType
 )
@@ -43,6 +45,7 @@ def combine_boxscore_and_pitchfx_data_for_game(session, bbref_game_id):
     return Result.Ok(f"Successfully combined pbp data and pfx data for game: {bbref_game_id}")
 
 
+@snoop
 def get_all_pbp_events_for_game(session, bbref_game_id):
     result = get_bbref_boxscore_from_s3(bbref_game_id)
     if result.failure:
@@ -129,6 +132,7 @@ def event_is_player_substitution_or_misc(event):
     )
 
 
+@snoop
 def pitch_sequence_is_complete_at_bat(pitch_seq, row_num, bbref_game_id):
     if not pitch_seq:
         return Result.Fail(f"Error! No pitch sequence was found for row# {row_num}")

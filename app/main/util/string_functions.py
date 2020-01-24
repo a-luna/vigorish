@@ -2,7 +2,6 @@ import re
 import string
 from datetime import datetime
 
-import snoop
 from fuzzywuzzy import process
 
 from app.main.constants import TEAM_ID_DICT
@@ -20,7 +19,6 @@ def string_is_null_or_blank(s: str) -> bool:
     return not s or s.isspace()
 
 
-@snoop
 def fuzzy_match(s, choices):
     (match, score) = process.extractOne(s, choices)
     return dict(best_match=match, score=score)

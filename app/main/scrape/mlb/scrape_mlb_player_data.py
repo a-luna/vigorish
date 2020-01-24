@@ -4,7 +4,6 @@ from datetime import datetime, date
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
-import snoop
 import requests
 from dataclass_csv import DataclassReader, accept_whitespaces
 
@@ -25,7 +24,6 @@ class PlayerID():
     bbrefID: str = dataclasses.field(default=None)
 
 
-@snoop
 def scrape_mlb_player_data(session, name, bbref_id):
     split = name.split()
     if not split or len(split) <= 1:
@@ -44,7 +42,6 @@ def scrape_mlb_player_data(session, name, bbref_id):
     return Result.Ok(new_player)
 
 
-@snoop
 def parse_search_results(response, name, name_part, search_url):
     try:
         resp_json = response.json()
@@ -71,7 +68,6 @@ def parse_search_results(response, name, name_part, search_url):
     return Result.Ok(mlb_player_info)
 
 
-@snoop
 def find_best_match(name, player_list):
     player_name_dict = {
         player["name_display_first_last"]:player["player_id"]
@@ -83,7 +79,6 @@ def find_best_match(name, player_list):
     return player_info_dict[player_name_dict[best_match]]
 
 
-@snoop
 def parse_player_data(player_info, bbref_id):
     try:
         feet = int(player_info["height_feet"])
@@ -121,11 +116,11 @@ def parse_player_data(player_info, bbref_id):
         "bbref_id": bbref_id,
         "retro_id": retrieve_retro_id(bbref_id),
         "mlb_id": player_info["player_id"],
+        "missing_mlb_id": False,
     }
     return player_dict
 
 
-@snoop
 def retrieve_retro_id(bbref_id):
     with open(PEOPLE_CSV) as people_csv:
         people_csv_reader = DataclassReader(people_csv, PlayerID)

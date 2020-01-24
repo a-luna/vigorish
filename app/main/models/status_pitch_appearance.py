@@ -81,6 +81,14 @@ class PitchAppearanceScrapeStatus(Base):
         ]
 
     @classmethod
+    def get_all_pitch_app_ids_for_game_with_pitchfx_data(cls, session, bbref_game_id):
+        return [
+            pitch_app_status.pitch_app_id for pitch_app_status
+            in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
+            if not pitch_app_status.no_pitchfx_data
+        ]
+
+    @classmethod
     def get_all_unscraped_pitch_app_ids_for_game(cls, session, bbref_game_id):
         return [
             pitch_app_status.pitch_app_id
