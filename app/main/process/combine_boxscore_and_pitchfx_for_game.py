@@ -65,14 +65,21 @@ def get_all_pbp_events_for_game(session, bbref_game_id):
         at_bat_events.append(game_event)
         if event_is_player_substitution_or_misc(game_event):
             continue
-        result = pitch_sequence_is_complete_at_bat(
-            game_event.pitch_sequence,
-            game_event.pbp_table_row_number,
-            bbref_game_id
-        )
-        if result.failure:
-            return result
-        game_event_is_complete_at_bat = result.value
+        if game_event.pitch_sequence:
+            result = pitch_sequence_is_complete_at_bat(
+                game_event.pitch_sequence,
+                game_event.pbp_table_row_number,
+                bbref_game_id
+            )
+            if result.failure:
+                return result
+            game_event_is_complete_at_bat = result.value
+        elif "balk" in game_event.play_description.lower():
+            game_event_is_complete_at_bat = False
+        else:
+            row_num = game_event.pbp_table_row_number
+            error = f"Error! No pitch sequence was found for row# {row_num}"
+            return Result.Fail(error)
         if game_event_is_complete_at_bat:
             at_bat_id = get_new_at_bat_id(
                 session, bbref_game_id, game_event, player_id_dict, at_bat_ids
@@ -134,8 +141,6 @@ def event_is_player_substitution_or_misc(event):
 
 @snoop
 def pitch_sequence_is_complete_at_bat(pitch_seq, row_num, bbref_game_id):
-    if not pitch_seq:
-        return Result.Fail(f"Error! No pitch sequence was found for row# {row_num}")
     last_pitch = pitch_seq[-1]
     if last_pitch in ["X", "H", "Y"]:
         return Result.Ok(True)
