@@ -624,8 +624,8 @@ def handle_pitch_stats_without_pitchfx_data(
     pitch_app_id = f"{bbref_game_id}_{mlb_id}"
     pitcher_name = player_id_dict[bbref_id].get("name", "")
     at_bat_ids = sorted(list(set([
-        game_event.at_bat_id for game_event in game_events_combined_data
-        if game_event.pitcher_name == pitcher_name
+        game_event["at_bat_id"] for game_event in game_events_combined_data
+        if game_event["pitcher_name"] == pitcher_name
     ])))
     bbref_data = player_pitch_stats.as_dict()
     bbref_data.pop("player_id_br", None)
