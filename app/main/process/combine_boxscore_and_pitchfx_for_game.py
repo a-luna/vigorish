@@ -2,9 +2,7 @@
 import json
 from collections import Counter, defaultdict
 from copy import deepcopy
-from pprint import pformat
-
-import snoop
+from pprint import pformatsnoop
 
 from app.main.constants import (
     TEAM_ID_DICT, PPB_PITCH_LOG_DICT, PITCH_TYPE_DICT, PlayByPlayEventType
@@ -45,7 +43,6 @@ def combine_boxscore_and_pitchfx_data_for_game(session, bbref_game_id):
     return Result.Ok(f"Successfully combined pbp data and pfx data for game: {bbref_game_id}")
 
 
-@snoop
 def get_all_pbp_events_for_game(session, bbref_game_id):
     result = get_bbref_boxscore_from_s3(bbref_game_id)
     if result.failure:
@@ -139,7 +136,6 @@ def event_is_player_substitution_or_misc(event):
     )
 
 
-@snoop
 def pitch_sequence_is_complete_at_bat(pitch_seq, row_num, bbref_game_id):
     last_pitch = pitch_seq[-1]
     if last_pitch in ["X", "H", "Y"]:
@@ -594,7 +590,7 @@ def update_pitching_stats_with_combined_data(pfx_log, player_pitch_stats):
     return {
         "pitcher_name": pfx_log.pitcher_name,
         "pitcher_id_mlb": pfx_log.pitcher_id_mlb,
-        "pitcher_id_bbref": bbref_id,
+        "pitcher_id_bbref": player_pitch_stats.player_id_br,
         "pitch_app_id": pfx_log.pitch_app_id,
         "pitcher_team_id_bb": pfx_log.pitcher_team_id_bb,
         "pitcher_team_id_bbref": player_pitch_stats.player_team_id_br,
@@ -620,7 +616,7 @@ def handle_pitch_stats_without_pitchfx_data(
     player_pitch_stats, boxscore, player_id_dict, game_events_combined_data
 ):
     bbref_game_id = boxscore.bbref_game_id
-    bbref_id = pitch_stats.player_id_br
+    bbref_id = player_pitch_stats.player_id_br
     pitcher_team_id_br = player_pitch_stats.player_team_id_br
     pitcher_team_id_bb = get_brooks_team_id(pitcher_team_id_br)
     opponent_team_id_br = player_pitch_stats.opponent_team_id_br
