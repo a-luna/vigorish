@@ -2,7 +2,6 @@
 import json
 from collections import Counter, defaultdict
 from copy import deepcopy
-from pprint import pformatsnoop
 
 from app.main.constants import (
     TEAM_ID_DICT, PPB_PITCH_LOG_DICT, PITCH_TYPE_DICT, PlayByPlayEventType
