@@ -686,13 +686,6 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
         pitch_stats["batters_faced_bbref"] for pitch_stats in away_team_pitching_stats
     )
     total_batters_faced_bbref = total_batters_faced_bbref_home + total_batters_faced_bbref_away
-    total_batters_faced_pitchfx_home = sum(
-        pitch_stats["batters_faced_pitchfx"] for pitch_stats in home_team_pitching_stats
-    )
-    total_batters_faced_pitchfx_away = sum(
-        pitch_stats["batters_faced_pitchfx"] for pitch_stats in away_team_pitching_stats
-    )
-    total_batters_faced_pitchfx = total_batters_faced_pitchfx_home + total_batters_faced_pitchfx_away
     total_at_bats_pitchfx_complete = sum(
         inning["inning_pitchfx_audit"]["total_at_bats_pitchfx_complete"]
         for inning in updated_innings_list
@@ -751,7 +744,6 @@ def audit_pitchfx_vs_bbref_data(updated_innings_list, home_team_pitching_stats, 
     return {
         "pitchfx_data_complete": pitchfx_data_complete,
         "total_batters_faced_bbref": total_batters_faced_bbref,
-        "total_batters_faced_pitchfx": total_batters_faced_pitchfx,
         "total_at_bats_pitchfx_complete": total_at_bats_pitchfx_complete,
         "total_at_bats_missing_pitchfx": total_at_bats_missing_pitchfx,
         "total_at_bats_extra_pitchfx": total_at_bats_extra_pitchfx,
