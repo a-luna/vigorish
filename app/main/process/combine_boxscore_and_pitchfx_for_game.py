@@ -113,7 +113,7 @@ def get_player_id_dict_for_game(session, boxscore):
         player_id_dict[bbref_id] = {
             "name": name,
             "mlb_id": player.mlb_id,
-            "team_id_bbref": player_team_dict.get(bbref_id, "")
+            "team_id_bbref": player_team_dict.get(bbref_id, ""),
         }
     return Result.Ok(player_id_dict)
 
@@ -468,7 +468,9 @@ def update_boxscore_with_combined_data(boxscore, player_id_dict, game_events_com
         )
         updated_innings_list.append(inning_dict)
 
-    result = update_pitching_stats_for_both_teams(pitchfx_logs_for_game, boxscore, player_id_dict)
+    result = update_pitching_stats_for_both_teams(
+        pitchfx_logs_for_game, boxscore, player_id_dict, game_events_combined_data
+    )
     if result.failure:
         return result
     (home_team_pitching_stats, away_team_pitching_stats) = result.value
@@ -553,13 +555,29 @@ def update_inning_with_combined_data(inning, game_events_combined_data, player_t
     }
 
 
-def update_pitching_stats_for_both_teams(pitchfx_logs_for_game, boxscore, player_id_dict):
+def update_pitching_stats_for_both_teams(
+    pitchfx_logs_for_game, boxscore, player_id_dict, game_events_combined_data
+):
+    pitch_stats_dict = {}
+    all_bbref_pitch_stats = deepcopy(boxscore.away_team_data.pitching_stats)
+    all_bbref_pitch_stats.extend(deepcopy(boxscore.home_team_data.pitching_stats))
+    for pitch_stats in all_bbref_pitch_stats:
+        bbref_id = pitch_stats.player_id_br
+        mlb_id = player_id_dict[bbref_id]["mlb_id"]
+        pitch_stats_dict[mlb_id] = pitch_stats
     updated_pitching_stats = []
     for pfx_log in pitchfx_logs_for_game:
-        combined_pitching_stats = update_pitching_stats_with_combined_data(
-            pfx_log, boxscore, player_id_dict
-        )
+        player_pitch_stats = pitch_stats_dict.pop(pfx_log.pitcher_id_mlb, None)
+        if not player_pitch_stats:
+            error = f"Error retrieving boxscore stats for pitch app: {pfx_log.pitch_app_id}"
+            return Result.Fail(error)
+        combined_pitching_stats = update_pitching_stats_with_combined_data(pfx_log, player_pitch_stats)
         updated_pitching_stats.append(combined_pitching_stats)
+    for _, player_pitch_stats in pitch_stats_dict.items():
+        pitch_stats = handle_pitch_stats_without_pitchfx_data(
+            player_pitch_stats, boxscore, player_id_dict, game_events_combined_data
+        )
+        updated_pitching_stats.append(pitch_stats)
     return separate_pitching_stats_by_team(
         updated_pitching_stats,
         boxscore.home_team_data.team_id_br,
@@ -567,23 +585,11 @@ def update_pitching_stats_for_both_teams(pitchfx_logs_for_game, boxscore, player
     )
 
 
-def update_pitching_stats_with_combined_data(pfx_log, boxscore, player_id_dict):
-    all_bbref_pitch_stats = deepcopy(boxscore.away_team_data.pitching_stats)
-    all_bbref_pitch_stats.extend(deepcopy(boxscore.home_team_data.pitching_stats))
-    bbref_id = None
-    player_pitch_stats = None
-    for pitch_stats in all_bbref_pitch_stats:
-        check_bbref_id = pitch_stats.player_id_br
-        if pfx_log.pitcher_id_mlb != player_id_dict[check_bbref_id]["mlb_id"]:
-            continue
-        bbref_id = check_bbref_id
-        player_pitch_stats = pitch_stats
-        break
+def update_pitching_stats_with_combined_data(pfx_log, player_pitch_stats):
     bbref_data = player_pitch_stats.as_dict()
     bbref_data.pop("player_id_br", None)
     bbref_data.pop("player_team_id_br", None)
     bbref_data.pop("opponent_team_id_br", None)
-    all_bbref_pitch_stats = None
     at_bat_ids = sorted(list(set([pfx.at_bat_id for pfx in pfx_log.pitchfx_log])))
     return {
         "pitcher_name": pfx_log.pitcher_name,
@@ -606,6 +612,51 @@ def update_pitching_stats_with_combined_data(pfx_log, boxscore, player_id_dict):
             "total_pitch_count": pfx_log.total_pitch_count,
             "duplicate_pitches_removed_count": pfx_log.duplicate_pitches_removed_count,
             "pitch_count_by_inning": pfx_log.pitch_count_by_inning,
+        }
+    }
+
+
+def handle_pitch_stats_without_pitchfx_data(
+    player_pitch_stats, boxscore, player_id_dict, game_events_combined_data
+):
+    bbref_game_id = boxscore.bbref_game_id
+    bbref_id = pitch_stats.player_id_br
+    pitcher_team_id_br = player_pitch_stats.player_team_id_br
+    pitcher_team_id_bb = get_brooks_team_id(pitcher_team_id_br)
+    opponent_team_id_br = player_pitch_stats.opponent_team_id_br
+    opponent_team_id_bb = get_brooks_team_id(opponent_team_id_br)
+    mlb_id = player_id_dict[bbref_id].get("mlb_id", "")
+    pitch_app_id = f"{bbref_game_id}_{mlb_id}"
+    pitcher_name = player_id_dict[bbref_id].get("name", "")
+    at_bat_ids = sorted(list(set([
+        game_event.at_bat_id for game_event in game_events_combined_data
+        if game_event.pitcher_name == pitcher_name
+    ])))
+    bbref_data = player_pitch_stats.as_dict()
+    bbref_data.pop("player_id_br", None)
+    bbref_data.pop("player_team_id_br", None)
+    bbref_data.pop("opponent_team_id_br", None)
+    return {
+        "pitcher_name": pitcher_name,
+        "pitcher_id_mlb": mlb_id,
+        "pitcher_id_bbref": bbref_id,
+        "pitch_app_id": pitch_app_id,
+        "pitcher_team_id_bb": pitcher_team_id_bb,
+        "pitcher_team_id_bbref": pitcher_team_id_br,
+        "opponent_team_id_bb": opponent_team_id_bb,
+        "opponent_team_id_bbref": opponent_team_id_br,
+        "bb_game_id": boxscore.brooks_game_id,
+        "bbref_game_id": bbref_game_id,
+        "batters_faced_bbref": player_pitch_stats.batters_faced,
+        "batters_faced_pitchfx": len(at_bat_ids),
+        "total_pitch_count_bbref": player_pitch_stats.pitch_count,
+        "total_pitch_count_pitchfx": 0,
+        "at_bat_ids": at_bat_ids,
+        "bbref_data": bbref_data,
+        "pitchfx_data": {
+            "total_pitch_count": 0,
+            "duplicate_pitches_removed_count": 0,
+            "pitch_count_by_inning": [],
         }
     }
 
