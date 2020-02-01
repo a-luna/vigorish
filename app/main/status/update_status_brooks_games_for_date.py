@@ -58,6 +58,8 @@ def update_date_status_records(session, games_for_date, game_date):
 
 def update_game_status_records(session, season, new_brooks_games):
     for brooks_game_info in new_brooks_games:
+        if not brooks_game_info.pitcher_appearance_count:
+            continue
         try:
             bbref_game_id = brooks_game_info.bbref_game_id
             game_date = brooks_game_info.game_date
