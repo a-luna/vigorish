@@ -1,0 +1,21 @@
+{
+  "name": "vig-node-deps",
+  "version": "0.0.1",
+  "description": "NightmareJS and other node modules used to scrape html from websites",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aaron Luna <contact@aaronluna.dev> (https://aaronluna.dev)",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.610.0",
+    "cli-progress": "^3.6.0",
+    "colors": "^1.4.0",
+    "fs": "0.0.1-security",
+    "nightmare": "^3.0.2",
+    "path": "^0.12.7",
+    "user-agents": "^1.0.521",
+    "uuid": "^3.4.0"
+  }
+}

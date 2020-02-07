@@ -1,0 +1,249 @@
+{
+  "SCRAPE_DATA_SET": {
+    "DATA_TYPE": "Enum",
+    "ENUM_NAME": "ScrapeOption",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "ONLY_MISSING_DATA",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "HTML_STORAGE": {
+    "DATA_TYPE": "Enum",
+    "ENUM_NAME": "HtmlStorage",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "BOTH",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "HTML_LOCAL_FOLDER_PATH": {
+    "DATA_TYPE": "str",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "ALL": null,
+    "BBREF_GAMES_FOR_DATE": "html_storage/bbref_games_for_date",
+    "BBREF_BOXSCORES": "html_storage/bbref_boxscores",
+    "BROOKS_GAMES_FOR_DATE": "html_storage/brooks_games_for_date",
+    "BROOKS_PITCH_LOGS": "html_storage/brooks_pitch_logs",
+    "BROOKS_PITCHFX": "html_storage/brooks_pitchfx"
+  },
+  "HTML_S3_FOLDER_PATH": {
+    "DATA_TYPE": "str",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "ALL": null,
+    "BBREF_GAMES_FOR_DATE": "bbref_games_for_date/html",
+    "BBREF_BOXSCORES": "bbref_boxscores/html",
+    "BROOKS_GAMES_FOR_DATE": "brooks_games_for_date/html",
+    "BROOKS_PITCH_LOGS": "brooks_pitch_logs/html",
+    "BROOKS_PITCHFX": "brooks_pitchfx/html"
+  },
+  "SCRAPE_TOOL": {
+    "DATA_TYPE": "Enum",
+    "ENUM_NAME": "ScrapeTool",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "NIGHTMAREJS",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "URL_SCRAPE_DELAY": {
+    "DATA_TYPE": "Object",
+    "CLASS_NAME": "UrlScrapeDelaySettings",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": {
+      "DELAY_AFTER_EACH_URL_IS_REQUIRED": true,
+      "DELAY_AFTER_EACH_URL_IS_RANDOM": true,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MIN": 3000,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MAX": 6000
+    },
+    "BBREF_GAMES_FOR_DATE": {
+      "DELAY_AFTER_EACH_URL_IS_REQUIRED": null,
+      "DELAY_AFTER_EACH_URL_IS_RANDOM": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MIN": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MAX": null
+    },
+    "BBREF_BOXSCORES": {
+      "DELAY_AFTER_EACH_URL_IS_REQUIRED": null,
+      "DELAY_AFTER_EACH_URL_IS_RANDOM": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MIN": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MAX": null
+    },
+    "BROOKS_GAMES_FOR_DATE": {
+      "DELAY_AFTER_EACH_URL_IS_REQUIRED": null,
+      "DELAY_AFTER_EACH_URL_IS_RANDOM": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MIN": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MAX": null
+    },
+    "BROOKS_PITCH_LOGS": {
+      "DELAY_AFTER_EACH_URL_IS_REQUIRED": null,
+      "DELAY_AFTER_EACH_URL_IS_RANDOM": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MIN": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MAX": null
+    },
+    "BROOKS_PITCHFX": {
+      "DELAY_AFTER_EACH_URL_IS_REQUIRED": null,
+      "DELAY_AFTER_EACH_URL_IS_RANDOM": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MIN": null,
+      "DELAY_AFTER_EACH_URL_IN_SECONDS_MAX": null
+    }
+  },
+  "BATCH_JOB_SETTINGS": {
+    "DATA_TYPE": "Object",
+    "CLASS_NAME": "BatchJobSettings",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": {
+      "CREATE_BATCHED_SCRAPE_JOBS": true,
+      "USE_IRREGULAR_BATCH_SIZES": true,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MINIMUM": 50,
+      "BATCH_SIZE_MAXIMUM": 80
+    },
+    "BBREF_GAMES_FOR_DATE": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MINIMUM": null,
+      "BATCH_SIZE_MAXIMUM": null
+    },
+    "BBREF_BOXSCORES": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MINIMUM": null,
+      "BATCH_SIZE_MAXIMUM": null
+    },
+    "BROOKS_GAMES_FOR_DATE": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MINIMUM": null,
+      "BATCH_SIZE_MAXIMUM": null
+    },
+    "BROOKS_PITCH_LOGS": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MINIMUM": null,
+      "BATCH_SIZE_MAXIMUM": null
+    },
+    "BROOKS_PITCHFX": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MINIMUM": null,
+      "BATCH_SIZE_MAXIMUM": null
+    }
+  },
+  "BATCH_SCRAPE_DELAY": {
+    "DATA_TYPE": "Object",
+    "CLASS_NAME": "BatchScrapeDelaySettings",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "ALL": {
+      "DELAY_AFTER_EACH_BATCH_IS_REQUIRED": null,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES": null,
+      "DELAY_AFTER_EACH_BATCH_IS_RANDOM": null,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MIN": null,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MAX": null
+    },
+    "BBREF_GAMES_FOR_DATE": {
+      "DELAY_AFTER_EACH_BATCH_IS_REQUIRED": true,
+      "DELAY_AFTER_EACH_BATCH_IS_RANDOM": true,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES": null,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MIN": 5,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MAX": 10
+    },
+    "BBREF_BOXSCORES": {
+      "DELAY_AFTER_EACH_BATCH_IS_REQUIRED": true,
+      "DELAY_AFTER_EACH_BATCH_IS_RANDOM": true,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES": null,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MIN": 5,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MAX": 10
+    },
+    "BROOKS_GAMES_FOR_DATE": {
+      "DELAY_AFTER_EACH_BATCH_IS_REQUIRED": true,
+      "DELAY_AFTER_EACH_BATCH_IS_RANDOM": true,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES": null,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MIN": 30,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MAX": 45
+    },
+    "BROOKS_PITCH_LOGS": {
+      "DELAY_AFTER_EACH_BATCH_IS_REQUIRED": true,
+      "DELAY_AFTER_EACH_BATCH_IS_RANDOM": true,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES": null,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MIN": 30,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MAX": 45
+    },
+    "BROOKS_PITCHFX": {
+      "DELAY_AFTER_EACH_BATCH_IS_REQUIRED": true,
+      "DELAY_AFTER_EACH_BATCH_IS_RANDOM": true,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES": null,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MIN": 30,
+      "DELAY_AFTER_EACH_BATCH_IN_MINUTES_MAX": 45
+    }
+  },
+  "JSON_STORAGE": {
+    "DATA_TYPE": "Enum",
+    "ENUM_NAME": "JsonStorage",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "BOTH",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "JSON_LOCAL_FOLDER_PATH": {
+    "DATA_TYPE": "str",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "ALL": null,
+    "BBREF_GAMES_FOR_DATE": "json_storage/bbref_games_for_date",
+    "BBREF_BOXSCORES": "json_storage/bbref_boxscores",
+    "BROOKS_GAMES_FOR_DATE": "json_storage/brooks_games_for_date",
+    "BROOKS_PITCH_LOGS": "json_storage/brooks_pitch_logs",
+    "BROOKS_PITCHFX": "json_storage/brooks_pitchfx"
+  },
+  "JSON_S3_FOLDER_PATH": {
+    "DATA_TYPE": "str",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "ALL": null,
+    "BBREF_GAMES_FOR_DATE": "bbref_games_for_date",
+    "BBREF_BOXSCORES": "bbref_boxscores",
+    "BROOKS_GAMES_FOR_DATE": "brooks_games_for_date",
+    "BROOKS_PITCH_LOGS": "brooks_pitch_logs",
+    "BROOKS_PITCHFX": "brooks_pitchfx"
+  },
+  "UPDATE_DATA_SET": {
+    "DATA_TYPE": "Enum",
+    "ENUM_NAME": "UpdateOption",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "ONLY_MISSING_DATA",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "STATUS_REPORT": {
+    "DATA_TYPE": "Enum",
+    "ENUM_NAME": "StatusReport",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "SEASON_SUMMARY",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  }
+}

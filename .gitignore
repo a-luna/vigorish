@@ -1,22 +1,24 @@
 .env
-config.json
 .flaskenv
 .vscode
-deploy
+.python-version
+tmp
 venv
 *.rdb
 *.db
 *.DS_Store
+node_modules
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-.pytest_cache
+.pytest_cache/
 
 # C extensions
 *.so
 
 # Distribution / packaging
+pip-wheel-metadata
 .Python
 env/
 bin/
@@ -30,7 +32,6 @@ parts/
 sdist/
 var/
 *.egg-info/
-*.egg-info
 .installed.cfg
 *.egg
 
@@ -39,6 +40,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+test-results
 htmlcov/
 .tox/
 .coverage
