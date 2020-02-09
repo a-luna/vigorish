@@ -10,7 +10,7 @@ from app.main.util.result import Result
 
 TASK_LIST_MENU = dict(
     bbref_games_for_date=[ScrapeBBRefDailyGames],
-    bbref_boxscore=[ScrapeBBRefDailyBoxscores],
+    bbref_boxscores=[ScrapeBBRefDailyBoxscores],
     bbref_player=[ScrapeBBrefPlayerBio],
     brooks_games_for_date=[ScrapeBrooksDailyGames],
     brooks_pitch_logs=[ScrapeBrooksDailyPitchLogs],

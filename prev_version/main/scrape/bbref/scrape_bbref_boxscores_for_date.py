@@ -37,7 +37,7 @@ from app.main.util.s3_helper import download_html_bbref_boxscore
 from app.main.util.string_functions import fuzzy_match
 
 
-DATA_SET = "bbref_boxscore"
+DATA_SET = "bbref_boxscores"
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _AWAY_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[1]/div[3]/text()'
@@ -45,30 +45,22 @@ _HOME_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[2]/div[3]/text()'
 _SCOREBOX_META_XPATH = '//div[@class="scorebox_meta"]//div/text()'
 _FIRST_PITCH_WEATHER_XPATH = '//strong[contains(text(), "Start Time Weather")]/../text()'
 _LINESCORE_KEYS_XPATH = '//table[contains(@class, "linescore")]//th/text()'
-_LINESCORE_AWAY_VALS_XPATH = (
-    '//table[contains(@class, "linescore")]//tbody/tr[1]//td/text()'
-)
-_LINESCORE_HOME_VALS_XPATH = (
-    '//table[contains(@class, "linescore")]//tbody/tr[2]//td/text()'
-)
+_LINESCORE_AWAY_VALS_XPATH = '//table[contains(@class, "linescore")]//tbody/tr[1]//td/text()'
+_LINESCORE_HOME_VALS_XPATH = '//table[contains(@class, "linescore")]//tbody/tr[2]//td/text()'
 _UMPIRES_XPATH = '//strong[contains(text(), "Umpires")]/../text()'
 
-_BATTING_STATS_TABLE = (
-    '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]'
-)
+_BATTING_STATS_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]'
 _BATTER_IDS_XPATH = (
     './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]/@data-append-csv'
 )
-_BATTER_NAMES_XPATH = (
-    './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]//a/text()'
-)
+_BATTER_NAMES_XPATH = './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]//a/text()'
 _T_BAT_STATS_ROW = './tbody//th[@data-append-csv="${pid}"]/..'
 _T_BAT_STATS_XPATH = './td[@data-stat="${stat}"]/text()'
 
-_PITCHING_STATS_TABLE = (
-    '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]'
+_PITCHING_STATS_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]'
+_PITCHER_IDS_XPATH = (
+    './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]/@data-append-csv'
 )
-_PITCHER_IDS_XPATH = './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]/@data-append-csv'
 _PITCHER_NAMES_XPATH = (
     './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]//a/text()'
 )
@@ -82,30 +74,20 @@ _HOME_LINEUP_ORDER_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[1]/text
 _HOME_LINEUP_PLAYER_XPATH = '//div[@id="lineups_2"]//table//tbody//a/@href'
 _HOME_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[3]/text()'
 
-_PLAY_BY_PLAY_TABLE = (
-    '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]'
-)
+_PLAY_BY_PLAY_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]'
 _PBP_INNING_SUMMARY_TOP_XPATH = './tbody//th[@data-stat="inning_summary_12"]/text()'
 _PBP_INNING_SUMMARY_TOP_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_top"]/@data-row'
-_PBP_INNING_SUMMARY_BOTTOM_XPATH = (
-    './tbody//tr[@class="pbp_summary_bottom"]//td[last()]/text()'
-)
-_PBP_INNING_SUMMARY_BOTTOM_ROW_NUM_XPATH = (
-    './tbody//tr[@class="pbp_summary_bottom"]/@data-row'
-)
+_PBP_INNING_SUMMARY_BOTTOM_XPATH = './tbody//tr[@class="pbp_summary_bottom"]//td[last()]/text()'
+_PBP_INNING_SUMMARY_BOTTOM_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_bottom"]/@data-row'
 _PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = (
     './tbody//tr[@class="pbp_summary_bottom"]//span[@class="half_inning_summary"]/text()'
 )
-_PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = (
-    './tbody//tr[@class="ingame_substitution"]/@data-row'
-)
+_PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
 _T_PBP_IN_GAME_SUBSTITUTION_XPATH = './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]//td[@data-stat="inning_summary_3"]//div/text()'
 _T_PBP_MISC_EVENT_XPATH = (
     './tbody//tr[@data-row="${row}"]//td[@data-stat="inning_summary_3"]//text()'
 )
-_PBP_INNING_XPATH = (
-    './tbody//tr[not(contains(@class, "thead"))]/th[@data-stat="inning"]/text()'
-)
+_PBP_INNING_XPATH = './tbody//tr[not(contains(@class, "thead"))]/th[@data-stat="inning"]/text()'
 
 BAT_STATS = dict(
     at_bats="AB",
@@ -198,9 +180,7 @@ def scrape_bbref_boxscores_for_date(games_for_date, driver):
     boxscore_urls = games_for_date.boxscore_urls
     scraped_boxscores = []
     scrape_audit = []
-    with tqdm(
-        total=len(boxscore_urls), unit="boxscore", leave=False, position=2
-    ) as pbar:
+    with tqdm(total=len(boxscore_urls), unit="boxscore", leave=False, position=2) as pbar:
         for url in boxscore_urls:
             try:
                 needs_timeout = False
@@ -270,15 +250,9 @@ def get_pbar_description_requesting(game_id):
 @timeout(seconds=15)
 def render_webpage(driver, url):
     driver.get(url)
-    WebDriverWait(driver, 1000).until(
-        ec.presence_of_element_located(_BAT_STATS_TABLE_LOC)
-    )
-    WebDriverWait(driver, 1000).until(
-        ec.presence_of_element_located(_PITCH_STATS_TABLE_LOC)
-    )
-    WebDriverWait(driver, 1000).until(
-        ec.presence_of_element_located(_PLAY_BY_PLAY_TABLE_LOC)
-    )
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_BAT_STATS_TABLE_LOC))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PITCH_STATS_TABLE_LOC))
+    WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PLAY_BY_PLAY_TABLE_LOC))
     return html.fromstring(driver.page_source, base_url=url)
 
 
@@ -305,10 +279,7 @@ def parse_bbref_boxscore(response, url):
     )
 
     player_name_dict = _create_player_name_dict(
-        away_team_bat_table,
-        home_team_bat_table,
-        away_team_pitch_table,
-        home_team_pitch_table,
+        away_team_bat_table, home_team_bat_table, away_team_pitch_table, home_team_pitch_table,
     )
 
     result = _parse_game_meta_info(response)
@@ -461,21 +432,15 @@ def _parse_team_data(
     if not team_totals:
         error = f"Failed to parse team linescore totals (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
-    opponent_totals = _parse_linescore_totals_for_team(
-        response, opponent_id, not is_home_team
-    )
+    opponent_totals = _parse_linescore_totals_for_team(response, opponent_id, not is_home_team)
     if not opponent_totals:
         error = f"Failed to parse opponent linescore totals (team_id={opponent_id}, is_home_team={not is_home_team})"
         return Result.Fail(error)
-    batting_stats = _parse_batting_stats_for_team(
-        team_batting_table, team_id, opponent_id
-    )
+    batting_stats = _parse_batting_stats_for_team(team_batting_table, team_id, opponent_id)
     if not batting_stats:
         error = "Failed to parse away team batting stats"
         return Result.Fail(error)
-    pitching_stats = _parse_pitching_stats_for_team(
-        team_pitching_table, team_id, opponent_id
-    )
+    pitching_stats = _parse_pitching_stats_for_team(team_pitching_table, team_id, opponent_id)
     if not pitching_stats:
         error = "Failed to parse away team pitching stats"
         return Result.Fail(error)
@@ -594,9 +559,7 @@ def _parse_batting_details(stat_dict):
     return details
 
 
-def _parse_pitching_stats_for_team(
-    team_pitching_table, player_team_id, opponent_team_id
-):
+def _parse_pitching_stats_for_team(team_pitching_table, player_team_id, opponent_team_id):
     pitch_data = []
     for player_id in team_pitching_table.xpath(_PITCHER_IDS_XPATH):
         player_pitch_stats_xpath = Template(_T_PITCH_STATS_ROW).substitute(pid=player_id)
@@ -700,9 +663,7 @@ def _parse_game_meta_info(response):
         return Result.Fail(error)
     split2 = first_pitch_weather[0].split(",")
     if len(split2) < 3:
-        error = (
-            f"First pitch weather info is not in expected format:\n{first_pitch_weather}"
-        )
+        error = f"First pitch weather info is not in expected format:\n{first_pitch_weather}"
         return Result.Fail(error)
 
     first_pitch_temperature = split2[0].strip()[:2]
@@ -793,10 +754,7 @@ def _parse_umpires(response):
 
 
 def _create_player_name_dict(
-    away_team_bat_table,
-    home_team_bat_table,
-    away_team_pitch_table,
-    home_team_pitch_table,
+    away_team_bat_table, home_team_bat_table, away_team_pitch_table, home_team_pitch_table,
 ):
     away_team_batter_name_dict = _parse_batter_name_dict(away_team_bat_table)
     if not away_team_batter_name_dict:
@@ -882,15 +840,10 @@ def _parse_all_game_events(
 
     misc_events = []
     missing_row_ids = _find_missing_pbp_events(
-        inning_summaries_top,
-        inning_summaries_bottom,
-        play_by_play_events,
-        in_game_substitutions,
+        inning_summaries_top, inning_summaries_bottom, play_by_play_events, in_game_substitutions,
     )
     if missing_row_ids:
-        misc_events = _parse_missing_pbp_events(
-            missing_row_ids, play_by_play_table, game_id
-        )
+        misc_events = _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id)
 
     result = _create_innings_list(
         game_id,
@@ -969,17 +922,13 @@ def _parse_play_by_play(pbp_table, player_id_dict, away_team_id, home_team_id, g
         else:
             event_dict["team_pitching_id_br"] = away_team_id
 
-        batter = _get_pbp_event_stat_value(pbp_table, "batter", event_num).replace(
-            "\xa0", " "
-        )
+        batter = _get_pbp_event_stat_value(pbp_table, "batter", event_num).replace("\xa0", " ")
         match = _match_player_id(batter, player_id_dict)
         if match["type"] != "Exact match":
             player_id_match_log.append(match)
         event_dict["batter_id_br"] = match["id"]
 
-        pitcher = _get_pbp_event_stat_value(pbp_table, "pitcher", event_num).replace(
-            "\xa0", " "
-        )
+        pitcher = _get_pbp_event_stat_value(pbp_table, "pitcher", event_num).replace("\xa0", " ")
         match = _match_player_id(pitcher, player_id_dict)
         if match["type"] != "Exact match":
             player_id_match_log.append(match)
@@ -1023,7 +972,9 @@ def _get_pbp_event_stat_value(pbp_table, stat_name, event_number):
         query = Template(templ_xpath).substitute(n=event_number)
 
     if stat_name == "play_index_url":
-        templ_xpath = './tbody//tr[@id="event_${n}"]/td[@data-stat="runners_on_bases_pbp"]/@data-endpoint'
+        templ_xpath = (
+            './tbody//tr[@id="event_${n}"]/td[@data-stat="runners_on_bases_pbp"]/@data-endpoint'
+        )
         query = Template(templ_xpath).substitute(n=event_number)
 
     pbp_value = ""
@@ -1117,9 +1068,7 @@ def _parse_substitution_description(sub_description):
     parsed_sub = {}
     parsed_sub["description"] = sub_description
     split = None
-    pre_split = [
-        s.strip() for s in sub_description.split("(change occurred mid-batter)")
-    ]
+    pre_split = [s.strip() for s in sub_description.split("(change occurred mid-batter)")]
     sub_description = pre_split[0]
     if "replaces" in sub_description:
         split = [s.strip() for s in sub_description.split("replaces")]
@@ -1170,9 +1119,7 @@ def _parse_substitution_description(sub_description):
         parsed_sub["lineup_slot"] = 0
         return Result.Ok(parsed_sub)
     else:
-        error = (
-            "Substitution description was in an unrecognized format. (After first split)"
-        )
+        error = "Substitution description was in an unrecognized format. (After first split)"
         return Result.Fail(error)
 
     if not split2 or len(split2) != 2:
@@ -1277,10 +1224,7 @@ def _find_missing_pbp_events(summaries_begin, summaries_end, game_events, substi
     row_ids_substitutions = [sub.pbp_table_row_number for sub in substitutions]
     all_row_ids = set(
         sorted(
-            row_ids_top_inning
-            + row_ids_bot_inning
-            + row_ids_game_events
-            + row_ids_substitutions
+            row_ids_top_inning + row_ids_bot_inning + row_ids_game_events + row_ids_substitutions
         )
     )
     first_row_num = min(all_row_ids)
@@ -1332,8 +1276,7 @@ def _create_innings_list(
         inning_events = [
             g
             for g in game_events
-            if int(g.pbp_table_row_number) > start_row
-            and int(g.pbp_table_row_number) < end_row
+            if int(g.pbp_table_row_number) > start_row and int(g.pbp_table_row_number) < end_row
         ]
         for game_event in inning_events:
             game_event.inning_id = inning_id
@@ -1342,8 +1285,7 @@ def _create_innings_list(
         inning_substitutions = [
             sub
             for sub in substitutions
-            if sub.pbp_table_row_number > start_row
-            and sub.pbp_table_row_number < end_row
+            if sub.pbp_table_row_number > start_row and sub.pbp_table_row_number < end_row
         ]
         for sub in inning_substitutions:
             sub.inning_id = inning_id

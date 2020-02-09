@@ -8,13 +8,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from vigorish.cli.menus.main_menu import MainMenu
-from vigorish.config.file import get_config_from_file
+from vigorish.config import Config
 from vigorish.constants import CLI_COLORS
+
 
 APP_FOLDER = Path(__file__).parent.parent
 APP_ROOT = APP_FOLDER.parent.parent
 SQLITE_DEV = "sqlite:///" + str(APP_FOLDER / "vig_dev.db")
 SQLITE_PROD = "sqlite:///" + str(APP_FOLDER / "vig_prod.db")
+CONFIG = APP_ROOT / "vig.config.json"
 DOTENV = APP_ROOT / ".env"
 
 
@@ -24,10 +26,7 @@ def cli(ctx):
     """Entry point for the CLI application."""
     if DOTENV.is_file():
         load_dotenv(DOTENV)
-    result = get_config_from_file()
-    if result.failure:
-        return exit_app_error(result.error)
-    config = result.value
+    config = Config(config_file_path=CONFIG)
     engine = create_engine(get_db_url())
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
@@ -49,12 +48,8 @@ def ui(vig):
 
 def get_db_url():
     db_url = os.getenv("DATABASE_URL", "")
-    if not db_url:
-        env = os.getenv("ENV", "dev")
-        if env == "prod":
-            return SQLITE_PROD
-        return SQLITE_DEV
-    return db_url
+    env = os.getenv("ENV", "dev")
+    return db_url if db_url else SQLITE_PROD if env == "prod" else SQLITE_DEV
 
 
 def exit_app_success(message=None):

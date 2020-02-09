@@ -5,9 +5,7 @@ from tqdm import tqdm
 
 from app.main.constants import PBAR_LEN_DICT
 from app.main.models.status_date import DateScrapeStatus
-from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import (
-    scrape_bbref_boxscores_for_date,
-)
+from app.main.scrape.bbref.scrape_bbref_boxscores_for_date import scrape_bbref_boxscores_for_date
 from app.main.status.update_status_bbref_boxscores import update_status_bbref_boxscore
 from app.main.tasks.base_task import BaseTask
 from app.main.util.dt_format_strings import DATE_ONLY
@@ -19,7 +17,7 @@ from app.main.util.result import Result
 
 
 class ScrapeBBRefDailyBoxscores(BaseTask):
-    key_name = "bbref_boxscore"
+    key_name = "bbref_boxscores"
     display_name = "Boxscores for date (bbref.com)"
 
     def execute(self, scrape_date):
@@ -45,9 +43,7 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
         if result.failure:
             return result
         (scraped_games, scrape_audit) = result.value
-        with tqdm(
-            total=len(scraped_games), unit="file", leave=False, position=2
-        ) as pbar:
+        with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
             for scraped_boxscore in scraped_games:
                 pbar.set_description(
                     self.get_pbar_upload_description(scraped_boxscore.bbref_game_id)
@@ -57,16 +53,12 @@ class ScrapeBBRefDailyBoxscores(BaseTask):
                     return result
                 time.sleep(randint(25, 50) / 100.0)
                 pbar.update()
-        with tqdm(
-            total=len(scraped_games), unit="file", leave=False, position=2
-        ) as pbar:
+        with tqdm(total=len(scraped_games), unit="file", leave=False, position=2) as pbar:
             for scraped_boxscore in scraped_games:
                 pbar.set_description(
                     self.get_pbar_updating_description(scraped_boxscore.bbref_game_id)
                 )
-                result = update_status_bbref_boxscore(
-                    self.db["session"], scraped_boxscore
-                )
+                result = update_status_bbref_boxscore(self.db["session"], scraped_boxscore)
                 if result.failure:
                     return result
                 time.sleep(randint(10, 30) / 100.0)

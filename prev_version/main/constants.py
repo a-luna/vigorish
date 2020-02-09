@@ -41,7 +41,7 @@ DEF_POSITION_DICT = {
 
 MLB_DATA_SETS = [
     "bbref_games_for_date",
-    "bbref_boxscore",
+    "bbref_boxscores",
     "bbref_player",
     "brooks_games_for_date",
     "brooks_pitch_logs",
@@ -63,7 +63,7 @@ class DataSet(Enum):
     brooks_pitch_logs = auto()
     brooks_pitchfx = auto()
     bbref_games_for_date = auto()
-    bbref_boxscore = auto()
+    bbref_boxscores = auto()
 
     def __str__(self):
         return self.name
@@ -72,7 +72,7 @@ class DataSet(Enum):
 PBAR_LEN_DICT = dict(
     find_games_for_date=33,
     bbref_games_for_date=34,
-    bbref_boxscore=28,
+    bbref_boxscores=29,
     brooks_games_for_date=35,
     brooks_pitch_logs=31,
     brooks_pitchfx=28,
@@ -202,29 +202,20 @@ PPB_PITCH_LOG_DICT = {
     "H": {"description": "Hit batter", "pitch_counts": 1},
     "L": {"description": "Foul bunt", "pitch_counts": 1},
     "M": {"description": "Missed bunt attempt", "pitch_counts": 1},
-    "N": {
-        "description": "No pitch (on balks and interference calls)",
-        "pitch_counts": 0,
-    },
+    "N": {"description": "No pitch (on balks and interference calls)", "pitch_counts": 0,},
     "O": {"description": "Foul tip on bunt", "pitch_counts": 1},
     "P": {"description": "Pitchout", "pitch_counts": 1},
     "Q": {"description": "Swinging on pitchout", "pitch_counts": 1},
     "R": {"description": "Foul ball on pitchout", "pitch_counts": 1},
     "U": {"description": "Unknown or missed pitch", "pitch_counts": 1},
-    "V": {
-        "description": "(Called ball because pitcher went to his mouth)",
-        "pitch_counts": 0,
-    },
+    "V": {"description": "(Called ball because pitcher went to his mouth)", "pitch_counts": 0,},
     "Y": {"description": "Ball put into play on pitchout", "pitch_counts": 1},
     "1": {"description": "(Pickoff throw to first)", "pitch_counts": 0},
     "2": {"description": "(Pickoff throw to second)", "pitch_counts": 0},
     "3": {"description": "(Pickoff throw to third)", "pitch_counts": 0},
     ">": {"description": "(Runner going on the pitch)", "pitch_counts": 0},
     "+": {"description": "(Pickoff throw by the catcher)", "pitch_counts": 0},
-    "*": {
-        "description": "(The following pitch was blocked by the catcher)",
-        "pitch_counts": 0,
-    },
+    "*": {"description": "(The following pitch was blocked by the catcher)", "pitch_counts": 0,},
     ".": {"description": "(Play not involving the batter)", "pitch_counts": 0},
 }
 
@@ -232,9 +223,7 @@ VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dom
 
 BROOKS_DASHBOARD_DATE_FORMAT = "%m/%d/%Y"
 T_BROOKS_DASH_URL = "http://www.brooksbaseball.net/dashboard.php?dts=${date}"
-T_BBREF_DASH_URL = (
-    "https://www.baseball-reference.com/boxes/?month=${m}&day=${d}&year=${y}"
-)
+T_BBREF_DASH_URL = "https://www.baseball-reference.com/boxes/?month=${m}&day=${d}&year=${y}"
 
 CLI_COLORS = [
     "black",

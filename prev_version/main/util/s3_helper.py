@@ -82,9 +82,7 @@ def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=
     )
 
 
-def get_brooks_pitch_logs_for_game_from_s3(
-    bb_game_id, folderpath=None, delete_file=True
-):
+def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_file=True):
     """Retrieve BrooksPitchLogsForGame object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
     result = download_json_brooks_pitch_logs_for_game(bb_game_id, folderpath)
@@ -100,9 +98,7 @@ def get_all_brooks_pitch_logs_for_date_from_s3(
     session, game_date, folderpath=None, delete_file=True
 ):
     """Retrieve a list of BrooksPitchLogsForGame objects for all games that occurred on a date."""
-    brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(
-        session, game_date
-    )
+    brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(session, game_date)
     pitch_logs = []
     for game_id in brooks_game_ids:
         result = get_brooks_pitch_logs_for_game_from_s3(game_id, folderpath, delete_file)
@@ -136,9 +132,7 @@ def get_all_pitchfx_logs_for_game_from_s3(session, bbref_game_id):
     pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
         session, bbref_game_id
     )
-    fetch_tasks = [
-        get_brooks_pitchfx_log_from_s3(pitch_app_id) for pitch_app_id in pitch_app_ids
-    ]
+    fetch_tasks = [get_brooks_pitchfx_log_from_s3(pitch_app_id) for pitch_app_id in pitch_app_ids]
     task_failed = any(result.failure for result in fetch_tasks)
     if task_failed:
         s3_errors = "\n".join(
@@ -239,10 +233,10 @@ def get_all_bbref_dates_scraped_from_s3(year):
 
 def get_all_scraped_bbref_game_ids_from_s3(year):
     json_folder = get_s3_key_for_folder(
-        doc_format=DocFormat.JSON, data_set=DataSet.bbref_boxscore, year=year
+        doc_format=DocFormat.JSON, data_set=DataSet.bbref_boxscores, year=year
     )
     html_folder = get_s3_key_for_folder(
-        doc_format=DocFormat.HTML, data_set=DataSet.bbref_boxscore, year=year
+        doc_format=DocFormat.HTML, data_set=DataSet.bbref_boxscores, year=year
     )
     scraped_game_ids = [
         Path(obj.key).stem
@@ -326,7 +320,7 @@ def upload_bbref_boxscore(boxscore):
     return perform_task(
         task=S3Task.UPLOAD,
         doc_format=DocFormat.JSON,
-        data_set=DataSet.bbref_boxscore,
+        data_set=DataSet.bbref_boxscores,
         year=game_date.year,
         filepath=filepath,
     )
@@ -477,7 +471,7 @@ def download_html_bbref_boxscore(bbref_game_id, folderpath=None):
     return perform_task(
         task=S3Task.DOWNLOAD,
         doc_format=DocFormat.HTML,
-        data_set=DataSet.bbref_boxscore,
+        data_set=DataSet.bbref_boxscores,
         year=year,
         filepath=filepath,
     )
@@ -496,7 +490,7 @@ def download_json_bbref_boxscore(bbref_game_id, folderpath=None):
     return perform_task(
         task=S3Task.DOWNLOAD,
         doc_format=DocFormat.JSON,
-        data_set=DataSet.bbref_boxscore,
+        data_set=DataSet.bbref_boxscores,
         year=year,
         filepath=filepath,
     )
@@ -575,25 +569,21 @@ def delete_bbref_boxscore_from_s3(bbref_game_id):
     return perform_task(
         task=S3Task.DELETE,
         doc_format=DocFormat.JSON,
-        data_set=DataSet.bbref_boxscore,
+        data_set=DataSet.bbref_boxscores,
         year=game_date.year,
         filepath=Path(filename),
     )
 
 
 def rename_brooks_pitchfx_log(old_pitch_app_id, new_pitch_app_id, year):
-    old_filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(
-        pid=old_pitch_app_id
-    )
+    old_filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=old_pitch_app_id)
     old_key = get_s3_key_for_file(
         doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_pitchfx,
         year=year,
         filepath=Path(old_filename),
     )
-    new_filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(
-        pid=new_pitch_app_id
-    )
+    new_filename = Template(T_BROOKS_PITCHFXLOG_FILENAME).substitute(pid=new_pitch_app_id)
     new_key = get_s3_key_for_file(
         doc_format=DocFormat.JSON,
         data_set=DataSet.brooks_pitchfx,
@@ -657,9 +647,7 @@ def delete_from_s3(s3_key):
 
 def rename_s3_object(old_key, new_key):
     try:
-        s3_resource.Object(S3_BUCKET, new_key).copy_from(
-            CopySource=f"{S3_BUCKET}/{old_key}"
-        )
+        s3_resource.Object(S3_BUCKET, new_key).copy_from(CopySource=f"{S3_BUCKET}/{old_key}")
         s3_resource.Object(S3_BUCKET, old_key).delete()
         return Result.Ok()
     except ClientError as e:

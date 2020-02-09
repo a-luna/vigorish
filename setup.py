@@ -38,8 +38,10 @@ INSTALL_REQUIRES = [
 EXTRAS_REQUIRE = {
     "dev": [
         "black",
+        "coverage",
         "flake8",
         "ipython",
+        "mypy",
         "pip-review",
         "pre-commit",
         "pydocstyle",
@@ -49,6 +51,7 @@ EXTRAS_REQUIRE = {
         "pytest-cov",
         "pytest-dotenv",
         "pytest-flake8",
+        "pytest-mypy",
         "snoop",
         "tox",
     ]

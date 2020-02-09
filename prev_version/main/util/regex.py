@@ -8,9 +8,7 @@ URL_PATTERN = (
 URL_REGEX = re.compile(URL_PATTERN)
 JWT_REGEX = re.compile(r"[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*")
 VERSION_NUMBER_REGEX = re.compile(r"(?:(\d+\.(?:\d+\.)*\d+[a-zA-Z]{0,1}))")
-GUID_REGEX = re.compile(
-    r"[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"
-)
+GUID_REGEX = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")
 BR_DAILY_KEY_PATTERN = (
     r"^\d{4,4}/bbref_games_for_date/bbref_games_for_date_"
     r"(?P<date_str>\d{4,4}-\d{2,2}-\d{2,2}).json"
@@ -21,8 +19,6 @@ BB_DAILY_KEY_PATTERN = (
     r"(?P<date_str>\d{4,4}-\d{2,2}-\d{2,2}).json"
 )
 BB_DAILY_KEY_REGEX = re.compile(BB_DAILY_KEY_PATTERN)
-BR_GAME_KEY_PATTERN = r"^\d{4,4}/bbref_boxscore/(?P<game_id>[0-9A-Z]{12,12}).json"
-BR_GAME_KEY_REGEX = re.compile(BR_GAME_KEY_PATTERN)
 PITCH_APP_REGEX = re.compile(r"(?P<game_id>[0-9A-Z]{12,12})_(?P<mlb_id>\d{6,6})")
 DB_OBJECT_NAME_PATTERN = r"^[a-z0-9_-]+$"
 DB_OBJECT_NAME_REGEX = re.compile(DB_OBJECT_NAME_PATTERN)

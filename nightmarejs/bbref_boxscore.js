@@ -72,7 +72,7 @@ async function scrapeBoxscoreHtmlFiles(s3KeyList) {
           urlSet.push({
             displayId: `${getBBRefGameIdFromUrl(boxscoreUrl)}           `,
             fileName: `${getBBRefGameIdFromUrl(boxscoreUrl)}.html`,
-            htmlFolderPath: `../html_storage/${year}/bbref_boxscore/`,
+            htmlFolderPath: `../html_storage/${year}/bbref_boxscores/`,
             s3KeyPrefix: `${year}/bbref_boxscore/html/`,
             url: boxscoreUrl,
           })

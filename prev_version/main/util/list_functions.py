@@ -14,28 +14,14 @@ def as_dict_list(db_objects):
 
 def display_dict(dict, title="", title_prefix="[", title_suffix="]", extra_dots=2):
     """Pretty print all dict keys and values, title is optional."""
-    max_length = 0
-    for k, v in dict.items():
-        if not v:
-            if type(v) is not int and type(v) is not bool:
-                continue
-        if len(k) > max_length:
-            max_length = len(k)
-    max_length += extra_dots
-
-    if title:
-        print(f"\n{title_prefix}{title}{title_suffix}")
-    else:
-        print("")
-    for k, v in dict.items():
-        if not v:
-            if type(v) is not int and type(v) is not bool:
-                continue
-        if type(v) is datetime:
-            v = v.strftime(DT_STR_FORMAT_ALL)
-        c = max_length - len(k)
-        d = "." * c
-        print(f"{k}{d}: {v}")
+    report = report_dict(
+        dict=dict,
+        title=title,
+        title_prefix=title_prefix,
+        title_suffix=title_suffix,
+        extra_dots=extra_dots,
+    )
+    print(report)
 
 
 def report_dict(dict, title="", title_prefix="[", title_suffix="]", extra_dots=2):
@@ -74,13 +60,9 @@ def flatten_list2d(list2d):
     return list(itertools.chain(*list2d))
 
 
-def group_and_sort(
-    unsorted, group_attr, sort_attr, sort_groups_desc=False, sort_all_desc=False
-):
+def group_and_sort(unsorted, group_attr, sort_attr, sort_groups_desc=False, sort_all_desc=False):
     """Produce a list that is grouped and sorted by attributes specified."""
-    list_sorted = sorted(
-        unsorted, key=lambda x: getattr(x, sort_attr), reverse=sort_all_desc
-    )
+    list_sorted = sorted(unsorted, key=lambda x: getattr(x, sort_attr), reverse=sort_all_desc)
     list_grouped = defaultdict(list)
     for item in list_sorted:
         list_grouped[getattr(item, group_attr)].append(item)

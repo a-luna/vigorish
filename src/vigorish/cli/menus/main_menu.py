@@ -19,5 +19,5 @@ class MainMenu(Menu):
 
     def _populate_menu(self) -> None:
         self.menu_items.clear()
-        self.menu_items.append(SettingsMenu("Settings"))
+        self.menu_items.append(SettingsMenu("Settings", self.config))
         self.menu_items.append(ExitProgramMenuItem())

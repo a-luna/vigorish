@@ -24,6 +24,7 @@ EMOJI_DICT = dict(
     FOLDER="📁",
     BOOK="📚",
     WRENCH="🔧",
+    DIAMOND="🔸",
     ONE="1️⃣",
     TWO="2️⃣",
     THREE="3️⃣",
