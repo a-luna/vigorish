@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from vigorish.cli.menus.main_menu import MainMenu
-from vigorish.config import Config
+from vigorish.config import ConfigFile
 from vigorish.constants import CLI_COLORS
 
 
@@ -26,7 +26,7 @@ def cli(ctx):
     """Entry point for the CLI application."""
     if DOTENV.is_file():
         load_dotenv(DOTENV)
-    config = Config(config_file_path=CONFIG)
+    config = ConfigFile(config_file_path=CONFIG)
     engine = create_engine(get_db_url())
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
