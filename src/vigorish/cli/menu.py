@@ -1,5 +1,5 @@
 import subprocess
-from typing import List, Union
+from typing import List, Union, Dict
 
 from bullet import Bullet, ScrollBar, colors
 
@@ -23,33 +23,32 @@ class Menu(MenuItem):
     word_color: str = colors.foreground["default"]
     word_on_switch: str = colors.foreground["default"]
     margin: int = 2
+    exit_menu: bool = False
 
     @property
     def menu_item_text_list(self) -> List[str]:
-        return [ellipsize(item.menu_item_text, 60) for item in self.menu_items]
+        return [menu_item_text for menu_item_text in self.menu_item_dict.keys()]
+
+    @property
+    def menu_item_dict(self) -> Dict[str, MenuItem]:
+        return {ellipsize(item.menu_item_text, 60): item for item in self.menu_items}
 
     @property
     def menu_item_count(self) -> int:
         return len(self.menu_items)
 
     @property
-    def selected_menu_item(self) -> Union[None, MenuItem]:
-        if not self.selected_menu_item_text:
-            return None
-        menu_item_dict = {
-            ellipsize(item.menu_item_text, 60): item for item in self.menu_items
-        }
-        return menu_item_dict.get(self.selected_menu_item_text)
-
-    @property
     def selected_menu_item_pos(self) -> int:
         if not self.selected_menu_item_text:
             return 0
         menu_item_pos_dict = {
-            ellipsize(item.menu_item_text, 60): i
-            for i, item in enumerate(self.menu_items)
+            ellipsize(item.menu_item_text, 60): i for i, item in enumerate(self.menu_items)
         }
         return menu_item_pos_dict.get(self.selected_menu_item_text, 0)
+
+    @property
+    def selected_menu_item(self) -> Union[None, MenuItem]:
+        return self.menu_item_dict.get(self.selected_menu_item_text)
 
     def launch(self) -> Result:
         result: Result
@@ -63,6 +62,8 @@ class Menu(MenuItem):
                 menu = self._get_scroll_menu()
             self.selected_menu_item_text = menu.launch()
             result = self.selected_menu_item.launch()
+            if result.failure:
+                break
             exit_menu = self.selected_menu_item.exit_menu
         return result
 

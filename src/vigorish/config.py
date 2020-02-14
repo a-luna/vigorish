@@ -272,10 +272,11 @@ class ConfigFile:
 
     @property
     def all_settings(self) -> Dict[str, Config]:
-        return {name: Config(name, config) for name, config in self.config_json.items()}
+        return [Config(name, config) for name, config in self.config_json.items()]
 
     def get_current_setting(self, config_name: str, data_set: DataSet) -> Union[None, Config]:
-        return self.all_settings.get(config_name, None)
+        current_setting_json = self.config_json.get(config_name)
+        return Config(config_name, current_setting_json) if current_setting_json else None
 
     def __read_config_file(self) -> None:
         if not self.config_file_path.exists():

@@ -12,12 +12,10 @@ class MainMenu(Menu):
         self.menu_text = "Welcome to vigorish!"
         self.menu_item_text = "Main Menu"
         self.exit_menu = False
+        self.menu_items = self._get_menu_items()
 
-    def launch(self) -> Result:
-        self._populate_menu()
-        return super().launch()
-
-    def _populate_menu(self) -> None:
-        self.menu_items.clear()
-        self.menu_items.append(SettingsMenu("Settings", self.config))
-        self.menu_items.append(ExitProgramMenuItem())
+    def _get_menu_items(self) -> None:
+        menu_items = []
+        menu_items.append(SettingsMenu("Settings", self.config))
+        menu_items.append(ExitProgramMenuItem())
+        return menu_items

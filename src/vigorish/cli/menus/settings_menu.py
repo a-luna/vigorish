@@ -18,22 +18,21 @@ class SettingsMenu(Menu):
         self.menu_item_text = menu_item_text
         self.menu_item_emoji = EMOJI_DICT.get("TOOLS", "")
         self.exit_menu = False
+        self.menu_items = self._get_menu_items()
 
-    def launch(self) -> Result:
-        self._populate_menu()
-        return super().launch()
-
-    def _populate_menu(self) -> None:
-        self.menu_items.clear()
-        for name, config in self.config.all_settings.items():
+    def _get_menu_items(self) -> None:
+        menu_items = []
+        for config in self.config.all_settings:
             if not config.data_type:
+                name = config.setting_name_title
                 options_str = report_dict(dict=config, title=name)
                 error = f'Config setting "{name}" does not have a data type:\n{options_str}'
                 return Result.Fail(error)
             if config.data_type == ConfigDataType.STRING:
-                self.menu_items.append(ChangeStringSettingMenu(config))
+                menu_items.append(ChangeStringSettingMenu(config))
             if config.data_type == ConfigDataType.ENUM:
-                self.menu_items.append(ChangeEnumSettingMenu(config))
+                menu_items.append(ChangeEnumSettingMenu(config))
             if config.data_type == ConfigDataType.NUMERIC:
-                self.menu_items.append(ChangeNumericSettingMenu(config))
-        self.menu_items.append(ReturnToParentMenuItem("Return to main menu"))
+                menu_items.append(ChangeNumericSettingMenu(config))
+        menu_items.append(ReturnToParentMenuItem("Return to Main Menu"))
+        return menu_items

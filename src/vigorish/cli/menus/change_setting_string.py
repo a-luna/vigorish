@@ -15,11 +15,9 @@ class ChangeStringSettingMenu(Menu):
         self.menu_item_emoji = CONFIG_EMOJI_DICT.get(config.setting_name, "")
         self.current_setting = config
         self.exit_menu = False
+        self.menu_items = self._get_menu_items()
 
-    def launch(self) -> Result:
-        self._populate_menu()
-        return super().launch()
-
-    def _populate_menu(self) -> None:
-        self.menu_items.clear()
-        self.menu_items.append(ReturnToParentMenuItem("Return to main menu"))
+    def _get_menu_items(self) -> None:
+        menu_items = []
+        menu_items.append(ReturnToParentMenuItem("Return to Settings"))
+        return menu_items
