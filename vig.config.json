@@ -44,8 +44,8 @@
       "URL_SCRAPE_DELAY_IS_REQUIRED": true,
       "URL_SCRAPE_DELAY_IS_RANDOM": true,
       "URL_SCRAPE_DELAY_IN_SECONDS": null,
-      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": 3,
-      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": 6
+      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": 3.0,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": 6.0
     },
     "BBREF_GAMES_FOR_DATE": {
       "URL_SCRAPE_DELAY_IS_REQUIRED": null,
@@ -228,13 +228,13 @@
     "DATA_TYPE": "Enum",
     "ENUM_NAME": "JsonStorage",
     "DESCRIPTION": "MLB data is parsed from HTML and stored in JSON docs. You can store the JSON docs in a local folder, an S3 bucket, or both.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
     "ALL": "BOTH",
-    "BBREF_GAMES_FOR_DATE": "S3_BUCKET",
-    "BBREF_BOXSCORES": "LOCAL_FOLDER",
-    "BROOKS_GAMES_FOR_DATE": "S3_BUCKET",
-    "BROOKS_PITCH_LOGS": "BOTH",
-    "BROOKS_PITCHFX": "BOTH"
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
   },
   "JSON_LOCAL_FOLDER_PATH": {
     "DATA_TYPE": "str",

@@ -38,10 +38,13 @@ EMOJI_DICT = dict(
     TWO="2️⃣",
     THREE="3️⃣",
     FOUR="4️⃣",
+    FIVE="5️⃣",
     QUESTION="❔",
     BACK="⬅",
     EXIT="❌",
 )
+
+MENU_NUMBERS = {1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣", 5: "5️⃣"}
 
 CONFIG_EMOJI_DICT = dict(
     SCRAPE_TOOL=EMOJI_DICT.get("KNIFE", ""),
@@ -51,10 +54,10 @@ CONFIG_EMOJI_DICT = dict(
     BATCH_JOB_SETTINGS=EMOJI_DICT.get("BAGS", ""),
     BATCH_SCRAPE_DELAY=EMOJI_DICT.get("CLOCK", ""),
     S3_BUCKET=EMOJI_DICT.get("BASKET", ""),
-    HTML_STORAGE=EMOJI_DICT.get("SPIRAL", ""),
+    HTML_STORAGE=EMOJI_DICT.get("QUESTION", ""),
     HTML_LOCAL_FOLDER_PATH=EMOJI_DICT.get("FOLDER", ""),
     HTML_S3_FOLDER_PATH=EMOJI_DICT.get("BOOKMARK", ""),
-    JSON_STORAGE=EMOJI_DICT.get("SPIRAL", ""),
+    JSON_STORAGE=EMOJI_DICT.get("QUESTION", ""),
     JSON_LOCAL_FOLDER_PATH=EMOJI_DICT.get("FOLDER", ""),
     JSON_S3_FOLDER_PATH=EMOJI_DICT.get("BOOKMARK", ""),
 )

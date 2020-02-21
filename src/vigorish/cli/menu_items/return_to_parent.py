@@ -10,4 +10,4 @@ class ReturnToParentMenuItem(MenuItem):
         self.exit_menu = True
 
     def launch(self) -> Result:
-        return Result.Ok()
+        return Result.Ok(self.exit_menu)
