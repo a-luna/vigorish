@@ -2,8 +2,9 @@
 from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.change_setting import ChangeSetttingMenuItem
 from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
-from vigorish.config import Config, ConfigFile, ConfigDataType
+from vigorish.config.config_file import Config, ConfigFile
 from vigorish.constants import CONFIG_EMOJI_DICT
+from vigorish.enums import ConfigDataType
 from vigorish.util.result import Result
 
 

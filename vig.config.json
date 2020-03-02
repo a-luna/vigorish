@@ -3,13 +3,13 @@
     "DATA_TYPE": "Enum",
     "ENUM_NAME": "ScrapeTool",
     "DESCRIPTION": "There are two different tool chains available for web scraping: The first uses Python packages requests and selenium, and the second uses NightmareJS which requires a node installation.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-    "ALL": "NIGHTMAREJS",
-    "BBREF_GAMES_FOR_DATE": null,
-    "BBREF_BOXSCORES": null,
-    "BROOKS_GAMES_FOR_DATE": null,
-    "BROOKS_PITCH_LOGS": null,
-    "BROOKS_PITCHFX": null
+    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "ALL": null,
+    "BBREF_GAMES_FOR_DATE": "REQUESTS_SELENIUM",
+    "BBREF_BOXSCORES": "NIGHTMAREJS",
+    "BROOKS_GAMES_FOR_DATE": "NIGHTMAREJS",
+    "BROOKS_PITCH_LOGS": "NIGHTMAREJS",
+    "BROOKS_PITCHFX": "NIGHTMAREJS"
   },
   "SCRAPE_CONDITION": {
     "DATA_TYPE": "Enum",
@@ -44,8 +44,8 @@
       "URL_SCRAPE_DELAY_IS_REQUIRED": true,
       "URL_SCRAPE_DELAY_IS_RANDOM": true,
       "URL_SCRAPE_DELAY_IN_SECONDS": null,
-      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": 3.0,
-      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": 6.0
+      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": 3,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": 6
     },
     "BBREF_GAMES_FOR_DATE": {
       "URL_SCRAPE_DELAY_IS_REQUIRED": null,
@@ -205,24 +205,24 @@
   "HTML_LOCAL_FOLDER_PATH": {
     "DATA_TYPE": "str",
     "DESCRIPTION": "Local folder path where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
-    "ALL": null,
-    "BBREF_GAMES_FOR_DATE": "html_storage/bbref_games_for_date",
-    "BBREF_BOXSCORES": "html_storage/bbref_boxscores",
-    "BROOKS_GAMES_FOR_DATE": "html_storage/brooks_games_for_date",
-    "BROOKS_PITCH_LOGS": "html_storage/brooks_pitch_logs",
-    "BROOKS_PITCHFX": "html_storage/brooks_pitchfx"
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "/Users/aaronluna/Desktop/vigorish/html_storage/{year}/{data_set}",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
   },
   "HTML_S3_FOLDER_PATH": {
     "DATA_TYPE": "str",
     "DESCRIPTION": "Path to a folder within an S3 bucket where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
-    "dsdsa": false,
-    "ALL": null,
-    "BBREF_GAMES_FOR_DATE": "bbref_games_for_date/html",
-    "BBREF_BOXSCORES": "bbref_boxscores/html",
-    "BROOKS_GAMES_FOR_DATE": "brooks_games_for_date/html",
-    "BROOKS_PITCH_LOGS": "brooks_pitch_logs/html",
-    "BROOKS_PITCHFX": "brooks_pitchfx/html"
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "{year}/{data_set}/html",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
   },
   "JSON_STORAGE": {
     "DATA_TYPE": "Enum",
@@ -239,23 +239,23 @@
   "JSON_LOCAL_FOLDER_PATH": {
     "DATA_TYPE": "str",
     "DESCRIPTION": "Local folder path where parsed JSON data should be stored.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
-    "ALL": null,
-    "BBREF_GAMES_FOR_DATE": "json_storage/bbref_games_for_date",
-    "BBREF_BOXSCORES": "json_storage/bbref_boxscores",
-    "BROOKS_GAMES_FOR_DATE": "json_storage/brooks_games_for_date",
-    "BROOKS_PITCH_LOGS": "json_storage/brooks_pitch_logs",
-    "BROOKS_PITCHFX": "json_storage/brooks_pitchfx"
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "/Users/aaronluna/Desktop/vigorish/json_storage/{year}/{data_set}",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
   },
   "JSON_S3_FOLDER_PATH": {
     "DATA_TYPE": "str",
     "DESCRIPTION": "Path to a folder within an S3 bucket where parsed JSON data should be stored.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
-    "ALL": null,
-    "BBREF_GAMES_FOR_DATE": "bbref_games_for_date",
-    "BBREF_BOXSCORES": "bbref_boxscores",
-    "BROOKS_GAMES_FOR_DATE": "brooks_games_for_date",
-    "BROOKS_PITCH_LOGS": "brooks_pitch_logs",
-    "BROOKS_PITCHFX": "brooks_pitchfx"
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "{year}/{data_set}",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
   }
 }

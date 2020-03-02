@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from vigorish.cli.menus.main_menu import MainMenu
-from vigorish.config import ConfigFile
+from vigorish.config.config_file import ConfigFile
 from vigorish.constants import CLI_COLORS
 
 
@@ -30,7 +30,6 @@ def cli(ctx):
     engine = create_engine(get_db_url())
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
-
     ctx.obj = {"config": config, "engine": engine, "session": session}
 
 

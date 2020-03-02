@@ -4,7 +4,7 @@ import subprocess
 from bullet import Bullet, Input, Numbers, SlidePrompt, colors
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.config import Config, ConfigFile
+from vigorish.config.config_file import Config, ConfigFile
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import ConfigDataType, DataSet
 from vigorish.util.result import Result
@@ -126,12 +126,12 @@ class ChangeSetttingMenuItem(MenuItem):
             random_max_prompt = Numbers(prompt_max, word_color=colors.foreground["default"])
             random_min = random_min_prompt.launch()
             random_max = random_max_prompt.launch()
-            return (prompt, (is_required, is_random, None, random_min, random_max))
+            return (prompt, (is_required, is_random, None, int(random_min), int(random_max)))
         else:
             prompt = f"Enter the value (in {setting_units}) for {self.setting_name_title} (Data Set = {data_set.name}): "
             new_value_prompt = Numbers(prompt, word_color=colors.foreground["default"])
             new_value = new_value_prompt.launch()
-            return (prompt, (is_required, is_random, new_value, None, None))
+            return (prompt, (is_required, is_random, int(new_value), None, None))
 
     def __get_updated_settings(self, prompt_results):
         if self.data_type == ConfigDataType.ENUM:

@@ -1,5 +1,5 @@
 const { readFileSync } = require("fs")
-const { executeS3SelectQuery } = require("./s3_sql_query")
+const { getS3SelectQueryParams, executeS3SelectQuery } = require("./s3_sql_query")
 const { executeBatchJob } = require("./scrape_urls")
 
 const gameDatesCsvFilePath = "./csv/game_dates.csv"
@@ -80,25 +80,6 @@ async function scrapePitchLogHtmlFiles(s3KeyList) {
         }
       })
       return urlSet
-
-      function getS3SelectQueryParams(bucket, key, query) {
-        return {
-          Bucket: bucket,
-          Key: key,
-          ExpressionType: "SQL",
-          Expression: query,
-          InputSerialization: {
-            JSON: {
-              Type: "DOCUMENT",
-            },
-          },
-          OutputSerialization: {
-            JSON: {
-              RecordDelimiter: ",",
-            },
-          },
-        }
-      }
     }
   }
 }

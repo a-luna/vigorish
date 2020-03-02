@@ -1,5 +1,5 @@
 const { readFileSync } = require("fs")
-const { executeS3SelectQuery } = require("./s3_sql_query")
+const { getS3SelectQueryParams, executeS3SelectQuery } = require("./s3_sql_query")
 const { executeBatchJob } = require("./scrape_urls")
 
 const brooksGameIdsFilePath = "./csv/bb_game_ids_2019.txt"

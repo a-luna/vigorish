@@ -12,6 +12,9 @@ class DataSet(Enum):
     BROOKS_PITCHFX = auto()
     ALL = auto()
 
+    def __str__(self):
+        return self.name
+
 
 class ScrapeCondition(Enum):
     """Allowed values for SCRAPE_CONDITION config setting."""
@@ -19,6 +22,9 @@ class ScrapeCondition(Enum):
     ONLY_MISSING_DATA = auto()
     ALWAYS = auto()
     NEVER = auto()
+
+    def __str__(self):
+        return self.name
 
 
 class ConfigDataType(Enum):
@@ -29,6 +35,9 @@ class ConfigDataType(Enum):
     NUMERIC = auto()
     NONE = auto()
 
+    def __str__(self):
+        return self.name
+
 
 class HtmlStorage(Enum):
     """Allowed values for HTML_STORAGE config setting."""
@@ -38,6 +47,9 @@ class HtmlStorage(Enum):
     BOTH = auto()
     NONE = auto()
 
+    def __str__(self):
+        return self.name
+
 
 class JsonStorage(Enum):
     """Allowed values for JSON_STORAGE config setting."""
@@ -46,12 +58,18 @@ class JsonStorage(Enum):
     S3_BUCKET = auto()
     BOTH = auto()
 
+    def __str__(self):
+        return self.name
+
 
 class ScrapeTool(Enum):
     """Config setting for scrape tool: requests/selenium or nightmarejs."""
 
     REQUESTS_SELENIUM = auto()
     NIGHTMAREJS = auto()
+
+    def __str__(self):
+        return self.name
 
 
 class StatusReport(Enum):
@@ -61,3 +79,6 @@ class StatusReport(Enum):
     DATE_SUMMARY = auto()
     DATE_DETAIL = auto()
     NONE = auto()
+
+    def __str__(self):
+        return self.name

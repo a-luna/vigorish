@@ -41,3 +41,13 @@ def report_dict(dict, title="", title_prefix="### ", title_suffix=" ###", extra_
         d = "." * c
         report += f"\n{k}{d}: {v}"
     return report
+
+
+def dict_to_param_list(input_dict: Dict) -> str:
+    params = []
+    for name, value in input_dict.items():
+        if isinstance(value, bool) and value:
+            params.append(f"--{name}")
+        else:
+            params.append(f"--{name}={value:}")
+    return " ".join(params)
