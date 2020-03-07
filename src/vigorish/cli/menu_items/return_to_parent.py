@@ -1,3 +1,4 @@
+"""Menu item that returns the user to the previous menu."""
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result

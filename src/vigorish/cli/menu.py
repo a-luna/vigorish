@@ -1,4 +1,5 @@
 import subprocess
+from abc import ABC, abstractmethod
 from typing import List, Union, Dict
 
 from bullet import Bullet, ScrollBar, colors
@@ -9,21 +10,16 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import ellipsize
 
 
-class Menu(MenuItem):
+class Menu(MenuItem, ABC):
     menu_text: str = ""
     menu_items: List[MenuItem] = []
     selected_menu_item_text: str = ""
     pointer: str = EMOJI_DICT.get("HAND_POINTER", "")
-    bullet_color: str = colors.bright(colors.foreground["cyan"])
-    check_color: str = colors.bright(colors.foreground["cyan"])
-    check_on_switch: str = colors.bright(colors.foreground["cyan"])
-    pointer_color: str = colors.bright(colors.foreground["cyan"])
-    background_color: str = colors.foreground["default"]
-    background_on_switch: str = colors.foreground["default"]
-    word_color: str = colors.foreground["default"]
-    word_on_switch: str = colors.foreground["default"]
+    bullet_color: str = colors.bright(colors.foreground["default"])
+    check_color: str = colors.bright(colors.foreground["default"])
+    check_on_switch: str = colors.bright(colors.foreground["default"])
+    pointer_color: str = colors.bright(colors.foreground["default"])
     margin: int = 2
-    exit_menu: bool = False
 
     @property
     def menu_item_text_list(self) -> List[str]:
@@ -55,6 +51,7 @@ class Menu(MenuItem):
         exit_menu = False
         while not exit_menu:
             subprocess.run(["clear"])
+            self.populate_menu_items()
             if self.menu_item_count <= 8:
                 menu = self._get_bullet_menu()
                 menu.pos = self.selected_menu_item_pos
@@ -66,6 +63,10 @@ class Menu(MenuItem):
                 break
             exit_menu = self.selected_menu_item.exit_menu
         return result
+
+    @abstractmethod
+    def populate_menu_items(self) -> None:
+        pass
 
     def _get_bullet_menu(self) -> Bullet:
         return Bullet(

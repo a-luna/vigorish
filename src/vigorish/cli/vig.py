@@ -8,14 +8,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from vigorish.cli.menus.main_menu import MainMenu
-from vigorish.config.config_file import ConfigFile
+from vigorish.cli.util import print_message
+from vigorish.config.database import get_db_url, initialize_database
+from vigorish.config.types import ConfigFile
 from vigorish.constants import CLI_COLORS
+from vigorish.config.database import Base
 
 
 APP_FOLDER = Path(__file__).parent.parent
 APP_ROOT = APP_FOLDER.parent.parent
-SQLITE_DEV = "sqlite:///" + str(APP_FOLDER / "vig_dev.db")
-SQLITE_PROD = "sqlite:///" + str(APP_FOLDER / "vig_prod.db")
 CONFIG = APP_ROOT / "vig.config.json"
 DOTENV = APP_ROOT / ".env"
 
@@ -36,7 +37,7 @@ def cli(ctx):
 @cli.command()
 @click.pass_obj
 def ui(vig):
-    """Menu-driven UI for vigorish."""
+    """Menu-driven TUI powered by Bullet."""
     try:
         main_menu = MainMenu(vig)
         result = main_menu.launch()
@@ -45,25 +46,28 @@ def ui(vig):
         return exit_app_error(f"Error: {repr(e)}")
 
 
-def get_db_url():
-    db_url = os.getenv("DATABASE_URL", "")
-    env = os.getenv("ENV", "dev")
-    return db_url if db_url else SQLITE_PROD if env == "prod" else SQLITE_DEV
+@cli.command()
+@click.confirmation_option(prompt="Are you sure you want to delete all existing data?")
+@click.pass_obj
+def setup(vig):
+    """Populate database with initial player, team and season data.
+
+    WARNING! Before the setup process begins, all existing data will be
+    deleted. This cannot be undone.
+    """
+    print()  # place an empty line between the command and the progress bars
+    result = initialize_database()
+    if result.failure:
+        return exit_app_error(vig, result)
+    return exit_app_success(vig, "Successfully populated database with initial data.")
 
 
 def exit_app_success(message=None):
     if message:
-        print_message(message, fg="green")
+        print_message(f"{message}\n", fg="bright_green", bold=True)
     return 0
 
 
 def exit_app_error(message):
-    print_message(message, fg="red")
+    print_message(f"{message}\n", fg="bright_red", bold=True)
     return 1
-
-
-def print_message(message, fg=None, bg=None, bold=None, underline=None):
-    if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
-        fg = None
-        bg = None
-    click.secho(f"{message}\n", fg=fg, bg=bg, bold=bold, underline=underline)
