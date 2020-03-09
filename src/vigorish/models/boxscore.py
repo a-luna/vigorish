@@ -19,7 +19,7 @@ class Boxscore(Base):
     id = Column(Integer, primary_key=True)
     boxscore_url = Column(String)
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
     away_team_id_br = Column(String)
     home_team_id_br = Column(String)
     away_team_id = Column(Integer, ForeignKey("team.id"))

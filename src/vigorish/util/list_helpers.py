@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Dict, Any
 
-from vigorish.util.datetime_format_strings import DT_STR_FORMAT_ALL
+from vigorish.util.dt_format_strings import DT_STR_FORMAT_ALL
 
 
 def display_dict(dict, title="", title_prefix="[", title_suffix="]", extra_dots=2):

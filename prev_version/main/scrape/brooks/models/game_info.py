@@ -13,7 +13,7 @@ class BrooksGameInfo:
     game_time_hour = ""
     game_time_minute = ""
     time_zone_name = ""
-    bb_game_id = ""
+    brooks_game_id = ""
     bbref_game_id = ""
     away_team_id_bb = ""
     home_team_id_bb = ""
@@ -23,13 +23,11 @@ class BrooksGameInfo:
 
     @property
     def game_id_dict(self):
-        return {f"{self.bbref_game_id}": f"{self.bb_game_id}"}
+        return {f"{self.bbref_game_id}": f"{self.brooks_game_id}"}
 
     @property
     def game_date(self):
-        return datetime(
-            self.game_date_year, self.game_date_month, self.game_date_day
-        ).date()
+        return datetime(self.game_date_year, self.game_date_month, self.game_date_day).date()
 
     @property
     def game_start_time(self):
@@ -56,7 +54,7 @@ class BrooksGameInfo:
             game_time_hour=int(self.game_time_hour),
             game_time_minute=int(self.game_time_minute),
             time_zone_name=self.time_zone_name,
-            bb_game_id=self.bb_game_id,
+            brooks_game_id=self.brooks_game_id,
             bbref_game_id=self.bbref_game_id,
             away_team_id_bb=self.away_team_id_bb,
             home_team_id_bb=self.home_team_id_bb,

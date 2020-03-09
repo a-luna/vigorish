@@ -82,15 +82,15 @@ def get_brooks_games_for_date_from_s3(scrape_date, folderpath=None, delete_file=
     )
 
 
-def get_brooks_pitch_logs_for_game_from_s3(bb_game_id, folderpath=None, delete_file=True):
+def get_brooks_pitch_logs_for_game_from_s3(brooks_game_id, folderpath=None, delete_file=True):
     """Retrieve BrooksPitchLogsForGame object from json encoded file stored in S3."""
     folderpath = folderpath if folderpath else Path.cwd()
-    result = download_json_brooks_pitch_logs_for_game(bb_game_id, folderpath)
+    result = download_json_brooks_pitch_logs_for_game(brooks_game_id, folderpath)
     if result.failure:
         return result
     filepath = result.value
     return read_brooks_pitch_logs_for_game_from_file(
-        bb_game_id, folderpath=filepath.parent, delete_file=delete_file
+        brooks_game_id, folderpath=filepath.parent, delete_file=delete_file
     )
 
 
@@ -375,14 +375,14 @@ def download_html_brooks_pitch_log_page(pitch_app_id, folderpath=None):
     )
 
 
-def download_json_brooks_pitch_logs_for_game(bb_game_id, folderpath=None):
+def download_json_brooks_pitch_logs_for_game(brooks_game_id, folderpath=None):
     """Download a file from S3 containing json encoded BrooksPitchLogsForGame object."""
-    result = validate_bb_game_id(bb_game_id)
+    result = validate_bb_game_id(brooks_game_id)
     if result.failure:
         return result
     game_dict = result.value
     game_date = game_dict["game_date"]
-    filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(gid=bb_game_id)
+    filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(gid=brooks_game_id)
     folderpath = folderpath if folderpath else Path.cwd()
     filepath = folderpath / filename
     return perform_task(
@@ -509,13 +509,13 @@ def delete_brooks_games_for_date_from_s3(date):
     )
 
 
-def delete_brooks_pitch_logs_for_game_from_s3(bb_game_id):
+def delete_brooks_pitch_logs_for_game_from_s3(brooks_game_id):
     """Delete brooks pitch logs for game from s3."""
-    result = validate_bb_game_id(bb_game_id)
+    result = validate_bb_game_id(brooks_game_id)
     if result.failure:
         return result
     game_date = result.value["game_date"]
-    filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(gid=bb_game_id)
+    filename = Template(T_BROOKS_PITCHLOGSFORGAME_FILENAME).substitute(gid=brooks_game_id)
     return perform_task(
         task=S3Task.DELETE,
         doc_format=DocFormat.JSON,

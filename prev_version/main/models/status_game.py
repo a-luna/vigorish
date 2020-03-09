@@ -34,7 +34,7 @@ class GameScrapeStatus(Base):
     game_time_minute = Column(Integer)
     game_time_zone = Column(String)
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
     scraped_bbref_boxscore = Column(Integer, default=0)
     scraped_brooks_pitch_logs = Column(Integer, default=0)
     pitch_app_count_bbref = Column(Integer, default=0)
@@ -64,11 +64,7 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def game_date_time_str(self):
-        return (
-            self.game_start_time.strftime(DT_STR_FORMAT)
-            if self.game_start_time
-            else None
-        )
+        return self.game_start_time.strftime(DT_STR_FORMAT) if self.game_start_time else None
 
     @hybrid_property
     def total_pitch_count_pitchfx(self):
@@ -97,9 +93,7 @@ class GameScrapeStatus(Base):
     @hybrid_property
     def total_duplicate_pitchfx_removed_count(self):
         return (
-            sum(
-                pfx.duplicate_pitchfx_removed_count for pfx in self.scrape_status_pitchfx
-            )
+            sum(pfx.duplicate_pitchfx_removed_count for pfx in self.scrape_status_pitchfx)
             if self.scrape_status_pitchfx
             else 0
         )
@@ -165,7 +159,7 @@ class GameScrapeStatus(Base):
 
     def as_dict(self):
         d = {}
-        d["bb_game_id"] = self.bb_game_id
+        d["brooks_game_id"] = self.brooks_game_id
         d["game_date_time_str"] = self.game_date_time_str
         d["scraped_bbref_boxscore"] = self.scraped_bbref_boxscore
         d["scraped_brooks_pitch_logs"] = self.scraped_brooks_pitch_logs
@@ -176,9 +170,7 @@ class GameScrapeStatus(Base):
         d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
         d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
         d["total_pitchfx_logs_scraped"] = self.total_pitchfx_logs_scraped
-        d[
-            "percent_complete_pitchfx_logs_scraped"
-        ] = self.percent_complete_pitchfx_logs_scraped
+        d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
         d["total_pitch_count_bbref"] = self.total_pitch_count_bbref
         d["total_pitch_count_brooks"] = self.total_pitch_count_brooks
         d["total_pitch_count_pitchfx"] = self.total_pitch_count_pitchfx
@@ -192,17 +184,13 @@ class GameScrapeStatus(Base):
 
     def status_report(self):
         scraped_bbref_boxscore = "YES" if self.scraped_bbref_boxscore == 1 else "NO"
-        scraped_brooks_pitch_logs = (
-            "YES" if self.scraped_brooks_pitch_logs == 1 else "NO"
-        )
+        scraped_brooks_pitch_logs = "YES" if self.scraped_brooks_pitch_logs == 1 else "NO"
         scraped_all_pitchfx_logs = "YES" if self.scraped_all_pitchfx_logs else "NO"
         pitchfx_bbref_audit_performed = "YES" if self.pitch_data_was_audited else "NO"
-        all_missing_pitchfx_is_valid = (
-            "YES" if self.all_missing_pitchfx_is_valid else "NO"
-        )
+        all_missing_pitchfx_is_valid = "YES" if self.all_missing_pitchfx_is_valid else "NO"
         return (
             f"BBRef Game ID.........................: {self.bbref_game_id}\n"
-            f"BrooksBaseball Game ID................: {self.bb_game_id}\n"
+            f"BrooksBaseball Game ID................: {self.brooks_game_id}\n"
             f"Date-Time.............................: {self.game_date_time_str}\n"
             f"Scraped BBRef Boxscore................: {scraped_bbref_boxscore}\n"
             f"Scraped Brooks Pitch Logs.............: {scraped_brooks_pitch_logs}\n"
@@ -220,8 +208,8 @@ class GameScrapeStatus(Base):
         return session.query(cls).filter_by(bbref_game_id=bbref_game_id).first()
 
     @classmethod
-    def find_by_bb_game_id(cls, session, bb_game_id):
-        return session.query(cls).filter_by(bb_game_id=bb_game_id).first()
+    def find_by_bb_game_id(cls, session, brooks_game_id):
+        return session.query(cls).filter_by(brooks_game_id=brooks_game_id).first()
 
     @classmethod
     def get_all_scraped_bbref_game_ids_for_season(cls, session, season_id):
@@ -242,7 +230,7 @@ class GameScrapeStatus(Base):
     @classmethod
     def get_all_scraped_brooks_game_ids_for_season(cls, session, season_id):
         return [
-            game_status.bb_game_id
+            game_status.brooks_game_id
             for game_status in session.query(cls).filter_by(season_id=season_id).all()
             if game_status.scraped_brooks_pitch_logs == 1
         ]
@@ -250,7 +238,7 @@ class GameScrapeStatus(Base):
     @classmethod
     def get_all_unscraped_brooks_game_ids_for_season(cls, session, season_id):
         return [
-            game_status.bb_game_id
+            game_status.brooks_game_id
             for game_status in session.query(cls).filter_by(season_id=season_id).all()
             if game_status.scraped_brooks_pitch_logs == 0
         ]
@@ -274,17 +262,13 @@ class GameScrapeStatus(Base):
         date_id = date.strftime(DATE_ONLY_TABLE_ID)
         return [
             game.bbref_game_id
-            for game in session.query(cls)
-            .filter_by(scrape_status_date_id=int(date_id))
-            .all()
+            for game in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
         ]
 
     @classmethod
     def get_all_brooks_game_ids_for_date(cls, session, date):
         date_id = date.strftime(DATE_ONLY_TABLE_ID)
         return [
-            game.bb_game_id
-            for game in session.query(cls)
-            .filter_by(scrape_status_date_id=int(date_id))
-            .all()
+            game.brooks_game_id
+            for game in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
         ]

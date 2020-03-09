@@ -40,18 +40,14 @@ class TestBrooksPitchLogsForDate(BaseTestCase):
 
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_daily_dash_page(
-            self.session,
-            response,
-            self.GAME_DATE,
-            self.DAILY_DASH_URL,
-            required_game_data,
+            self.session, response, self.GAME_DATE, self.DAILY_DASH_URL, required_game_data,
         )
         self.assertTrue(result.success)
         games_for_date = result.value
         game = games_for_date.games[11]
 
         pitch_logs_for_game = BrooksPitchLogsForGame()
-        pitch_logs_for_game.bb_game_id = game.bb_game_id
+        pitch_logs_for_game.brooks_game_id = game.brooks_game_id
         pitch_logs_for_game.bbref_game_id = game.bbref_game_id
         pitch_logs_for_game.pitch_log_count = game.pitcher_appearance_count
 

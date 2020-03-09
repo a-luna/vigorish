@@ -23,7 +23,7 @@ class GameEvent(Base):
     team_batting_id_br = Column(String)
     team_pitching_id_br = Column(String)
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
 
     runners_on_base_id = Column(Integer, ForeignKey("rob.id"))
     db_inning_id = Column(Integer, ForeignKey("game_inning.id"))

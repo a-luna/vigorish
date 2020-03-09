@@ -45,7 +45,7 @@ class GameBatStats(Base):
     player_team_id_br = Column(String)
     opponent_team_id_br = Column(String)
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
     player_id = Column(Integer, ForeignKey("player.id"))
     player_team_id = Column(Integer, ForeignKey("team.id"))
     opponent_team_id = Column(Integer, ForeignKey("team.id"))

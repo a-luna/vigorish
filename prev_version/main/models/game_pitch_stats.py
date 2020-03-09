@@ -38,7 +38,7 @@ class GamePitchStats(Base):
     player_team_id_br = Column(String)
     opponent_team_id_br = Column(String)
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
     player_id = Column(Integer, ForeignKey("player.id"))
     player_team_id = Column(Integer, ForeignKey("team.id"))
     opponent_team_id = Column(Integer, ForeignKey("team.id"))
@@ -49,9 +49,7 @@ class GamePitchStats(Base):
         "Team", foreign_keys=[player_team_id], back_populates="team_pitching_stats"
     )
     opponent_team = relationship(
-        "Team",
-        foreign_keys=[opponent_team_id],
-        back_populates="opponent_pitching_stats",
+        "Team", foreign_keys=[opponent_team_id], back_populates="opponent_pitching_stats",
     )
 
     def __repr__(self):
@@ -62,7 +60,5 @@ class GamePitchStats(Base):
 
     def display(self):
         pitch_stats_dict = self.as_dict()
-        title = (
-            f"Pitching stats for player {self.player_id_br}, game: {self.bbref_game_id}"
-        )
+        title = f"Pitching stats for player {self.player_id_br}, game: {self.bbref_game_id}"
         display_dict(pitch_stats_dict, title=title)

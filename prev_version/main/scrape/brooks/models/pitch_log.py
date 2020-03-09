@@ -13,14 +13,14 @@ class BrooksPitchLog:
     pitch_count_by_inning = {}
     pitcher_team_id_bb = ""
     opponent_team_id_bb = ""
-    bb_game_id = ""
+    brooks_game_id = ""
     bbref_game_id = ""
     pitchfx_url = ""
     pitch_log_url = ""
 
     @property
     def game_date(self):
-        result = validate_bb_game_id(self.bb_game_id)
+        result = validate_bb_game_id(self.brooks_game_id)
         if result.failure:
             return None
         game_dict = result.value
@@ -38,7 +38,7 @@ class BrooksPitchLog:
             "pitch_count_by_inning": self.pitch_count_by_inning,
             "pitcher_team_id_bb": "{}".format(self.pitcher_team_id_bb),
             "opponent_team_id_bb": "{}".format(self.opponent_team_id_bb),
-            "bb_game_id": "{}".format(self.bb_game_id),
+            "brooks_game_id": "{}".format(self.brooks_game_id),
             "bbref_game_id": "{}".format(self.bbref_game_id),
             "pitchfx_url": "{}".format(self.pitchfx_url),
             "pitch_log_url": "{}".format(self.pitch_log_url),

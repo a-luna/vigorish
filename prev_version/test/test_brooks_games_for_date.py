@@ -40,11 +40,7 @@ class TestBrooksGamesForDate(BaseTestCase):
 
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_daily_dash_page(
-            self.session,
-            response,
-            self.GAME_DATE,
-            self.DAILY_DASH_URL,
-            required_game_data,
+            self.session, response, self.GAME_DATE, self.DAILY_DASH_URL, required_game_data,
         )
         self.assertTrue(result.success)
 
@@ -65,7 +61,7 @@ class TestBrooksGamesForDate(BaseTestCase):
         self.assertEqual(game0.game_time_hour, 3)
         self.assertEqual(game0.game_time_minute, 7)
         self.assertEqual(game0.time_zone_name, "America/New_York")
-        self.assertEqual(game0.bb_game_id, "gid_2018_04_17_kcamlb_tormlb_1")
+        self.assertEqual(game0.brooks_game_id, "gid_2018_04_17_kcamlb_tormlb_1")
         self.assertEqual(game0.away_team_id_bb, "KCA")
         self.assertEqual(game0.home_team_id_bb, "TOR")
         self.assertEqual(game0.game_number_this_day, "1")
@@ -82,7 +78,7 @@ class TestBrooksGamesForDate(BaseTestCase):
         self.assertEqual(game1.game_time_hour, 0)
         self.assertEqual(game1.game_time_minute, 0)
         self.assertEqual(game1.time_zone_name, "America/New_York")
-        self.assertEqual(game1.bb_game_id, "gid_2018_04_17_kcamlb_tormlb_2")
+        self.assertEqual(game1.brooks_game_id, "gid_2018_04_17_kcamlb_tormlb_2")
         self.assertEqual(game1.away_team_id_bb, "KCA")
         self.assertEqual(game1.home_team_id_bb, "TOR")
         self.assertEqual(game1.game_number_this_day, "2")
@@ -99,7 +95,7 @@ class TestBrooksGamesForDate(BaseTestCase):
         self.assertEqual(game8.game_time_hour, 7)
         self.assertEqual(game8.game_time_minute, 35)
         self.assertEqual(game8.time_zone_name, "America/New_York")
-        self.assertEqual(game8.bb_game_id, "gid_2018_04_17_phimlb_atlmlb_1")
+        self.assertEqual(game8.brooks_game_id, "gid_2018_04_17_phimlb_atlmlb_1")
         self.assertEqual(game8.away_team_id_bb, "PHI")
         self.assertEqual(game8.home_team_id_bb, "ATL")
         self.assertEqual(game8.game_number_this_day, "1")
@@ -116,7 +112,7 @@ class TestBrooksGamesForDate(BaseTestCase):
         self.assertEqual(game15.game_time_hour, 10)
         self.assertEqual(game15.game_time_minute, 10)
         self.assertEqual(game15.time_zone_name, "America/New_York")
-        self.assertEqual(game15.bb_game_id, "gid_2018_04_17_lanmlb_sdnmlb_1")
+        self.assertEqual(game15.brooks_game_id, "gid_2018_04_17_lanmlb_sdnmlb_1")
         self.assertEqual(game15.away_team_id_bb, "LAN")
         self.assertEqual(game15.home_team_id_bb, "SDN")
         self.assertEqual(game15.game_number_this_day, "1")
@@ -165,11 +161,7 @@ class TestBrooksGamesForDate(BaseTestCase):
 
         response = html.parse(str(self.DAILY_DASH_HTML))
         result = parse_daily_dash_page(
-            self.session,
-            response,
-            self.GAME_DATE,
-            self.DAILY_DASH_URL,
-            required_game_data,
+            self.session, response, self.GAME_DATE, self.DAILY_DASH_URL, required_game_data,
         )
         self.assertTrue(result.success)
 

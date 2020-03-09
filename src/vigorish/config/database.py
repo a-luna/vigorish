@@ -19,6 +19,7 @@ from vigorish.models.player import Player
 from vigorish.models.player_id import PlayerId
 from vigorish.models.runners_on_base import RunnersOnBase
 from vigorish.models.scrape_job import ScrapeJob
+from vigorish.models.scrape_error import ScrapeError
 from vigorish.models.season import Season
 from vigorish.models.status_date import DateScrapeStatus
 from vigorish.models.status_game import GameScrapeStatus

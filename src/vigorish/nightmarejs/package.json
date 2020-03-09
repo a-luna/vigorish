@@ -9,14 +9,14 @@
   "author": "Aaron Luna <contact@aaronluna.dev> (https://aaronluna.dev)",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.630.0",
+    "aws-sdk": "^2.635.0",
     "cli-progress": "^3.6.0",
     "colors": "^1.4.0",
     "fs": "0.0.1-security",
     "minimist": "^1.2.0",
     "nightmare": "^3.0.2",
     "path": "^0.12.7",
-    "user-agents": "^1.0.546",
+    "user-agents": "^1.0.554",
     "xvfb": "^0.3.0"
   }
 }

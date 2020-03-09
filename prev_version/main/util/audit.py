@@ -41,18 +41,14 @@ def audit(db, year):
     pitchfx_id_tuples = []
     bbref_pitch_app_ids = []
     error_dict = {}
-    with tqdm(
-        total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True
-    ) as pbar:
+    with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
         for pitch_app_id in scraped_pitch_app_ids:
             pbar.set_description(pitch_app_id[:8])
             result = get_brooks_pitchfx_log_from_s3(pitch_app_id)
             if result.failure:
                 error_dict[pitch_app_id] = result.error
             pitchfx_log = result.value
-            bbref_pitch_app_id = (
-                f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
-            )
+            bbref_pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
             pitchfx_id_tuples.append((bbref_pitch_app_id, pitch_app_id))
             bbref_pitch_app_ids.append(bbref_pitch_app_id)
             pbar.update()
@@ -80,9 +76,7 @@ def fixdupes(db):
     audit_results = json.loads(audit_json)
     audit_results_copy = json.loads(audit_json)
     error_dict = {}
-    with tqdm(
-        total=len(audit_results), unit="pitch_app", position=0, leave=True
-    ) as pbar:
+    with tqdm(total=len(audit_results), unit="pitch_app", position=0, leave=True) as pbar:
         for bbref_pitch_app_id, pitch_app_id_list in audit_results.items():
             pbar.set_description(bbref_pitch_app_id)
             if len(pitch_app_id_list) != 2:
@@ -127,15 +121,11 @@ def bulkrename(db, year):
         return result
     scraped_pitch_app_ids = result.value
     scraped_pitch_app_ids = [
-        pitch_app_id
-        for pitch_app_id in scraped_pitch_app_ids
-        if GUID_REGEX.search(pitch_app_id)
+        pitch_app_id for pitch_app_id in scraped_pitch_app_ids if GUID_REGEX.search(pitch_app_id)
     ]
     spinner.stop()
     error_dict = {}
-    with tqdm(
-        total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True
-    ) as pbar:
+    with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
         for pitch_app_id in scraped_pitch_app_ids:
             pbar.set_description(pitch_app_id[:8])
             result = get_brooks_pitchfx_log_from_s3(pitch_app_id)
@@ -144,12 +134,8 @@ def bulkrename(db, year):
                 pbar.update()
                 continue
             pitchfx_log = result.value
-            bbref_pitch_app_id = (
-                f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
-            )
-            result = rename_brooks_pitchfx_log(
-                pitch_app_id, bbref_pitch_app_id, year=season.year
-            )
+            bbref_pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
+            result = rename_brooks_pitchfx_log(pitch_app_id, bbref_pitch_app_id, year=season.year)
             if result.failure:
                 error_dict[pitch_app_id] = result.error
                 pbar.update()
@@ -177,11 +163,11 @@ def bulkupdate(db, year):
     with tqdm(
         total=len(scraped_brooks_game_ids), unit="game", position=0, leave=True
     ) as pbar_game:
-        for bb_game_id in scraped_brooks_game_ids:
-            pbar_game.set_description(bb_game_id)
-            result = get_brooks_pitch_logs_for_game_from_s3(bb_game_id)
+        for brooks_game_id in scraped_brooks_game_ids:
+            pbar_game.set_description(brooks_game_id)
+            result = get_brooks_pitch_logs_for_game_from_s3(brooks_game_id)
             if result.failure:
-                game_log_error_dict[bb_game_id] = result.error
+                game_log_error_dict[brooks_game_id] = result.error
                 pbar_game.update()
                 continue
             pitch_logs_for_game = result.value
@@ -199,7 +185,7 @@ def bulkupdate(db, year):
                     pbar_pitch_app.update()
             result = upload_brooks_pitch_logs_for_game(pitch_logs_for_game)
             if result.failure:
-                game_log_error_dict[bb_game_id] = result.error
+                game_log_error_dict[brooks_game_id] = result.error
                 pbar_game.update()
                 continue
             pbar_game.update()
@@ -216,9 +202,7 @@ def bulkupdate(db, year):
     scraped_pitch_app_ids = result.value
     spinner.stop()
     pfx_error_dict = {}
-    with tqdm(
-        total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True
-    ) as pbar:
+    with tqdm(total=len(scraped_pitch_app_ids), unit="pitch_app", position=0, leave=True) as pbar:
         for pitch_app_id in scraped_pitch_app_ids:
             pbar.set_description(pitch_app_id)
             result = get_brooks_pitchfx_log_from_s3(pitch_app_id)
@@ -227,13 +211,9 @@ def bulkupdate(db, year):
                 pbar.update()
                 continue
             pitchfx_log = result.value
-            pitchfx_log.pitch_app_id = (
-                f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
-            )
+            pitchfx_log.pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
             for pitchfx in pitchfx_log.pitchfx_log:
-                pitchfx.pitch_app_id = (
-                    f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
-                )
+                pitchfx.pitch_app_id = f"{pitchfx_log.bbref_game_id}_{pitchfx_log.pitcher_id_mlb}"
             result = upload_brooks_pitchfx_log(pitchfx_log)
             if result.failure:
                 pfx_error_dict[pitch_app_id] = result.error
@@ -243,9 +223,7 @@ def bulkupdate(db, year):
     print("The following errors occurred:")
     pprint(game_log_error_dict, indent=4)
     pprint(pfx_error_dict, indent=4)
-    return exit_app_success(
-        db, "Successfully updated all pitch logs with new id format."
-    )
+    return exit_app_success(db, "Successfully updated all pitch logs with new id format.")
 
 
 @accept_whitespaces
@@ -296,9 +274,7 @@ def update_player_id_map():
     with open(IDMAP_PATH) as f:
         with open(IDMAP_NEW_PATH) as f_new:
             id_map_csv_reader = DataclassReader(f, PlayerIdMap)
-            current_id_map = [
-                id_map for id_map in list(id_map_csv_reader) if id_map.bref_id
-            ]
+            current_id_map = [id_map for id_map in list(id_map_csv_reader) if id_map.bref_id]
             current_player_ids = set([id_map.mlb_id for id_map in current_id_map])
             new_id_map_csv_reader = DataclassReader(f_new, PlayerIdMap)
             new_id_map = list(new_id_map_csv_reader)

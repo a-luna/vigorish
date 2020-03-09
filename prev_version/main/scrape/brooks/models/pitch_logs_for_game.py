@@ -8,18 +8,18 @@ from app.main.util.list_functions import as_dict_list
 class BrooksPitchLogsForGame:
     """Pitch logs and pitchfx URLs for a single game."""
 
-    bb_game_id = ""
+    brooks_game_id = ""
     bbref_game_id = ""
     pitch_log_count = ""
     pitch_logs = []
 
     @property
     def game_id_dict(self):
-        return {f"{self.bbref_game_id}": f"{self.bb_game_id}"}
+        return {f"{self.bbref_game_id}": f"{self.brooks_game_id}"}
 
     @property
     def game_date(self):
-        result = validate_bb_game_id(self.bb_game_id)
+        result = validate_bb_game_id(self.brooks_game_id)
         if result.failure:
             return None
         game_dict = result.value
@@ -40,9 +40,7 @@ class BrooksPitchLogsForGame:
     @property
     def pitch_app_ids_scraped_all_data(self):
         return [
-            pitch_log.pitch_app_id
-            for pitch_log in self.pitch_logs
-            if pitch_log.parsed_all_info
+            pitch_log.pitch_app_id for pitch_log in self.pitch_logs if pitch_log.parsed_all_info
         ]
 
     @property
@@ -57,7 +55,7 @@ class BrooksPitchLogsForGame:
         """Convert pitch logs for game to a dictionary."""
         return dict(
             __brooks_pitch_logs_for_game__=True,
-            bb_game_id=self.bb_game_id,
+            brooks_game_id=self.brooks_game_id,
             bbref_game_id=self.bbref_game_id,
             pitch_log_count=int(self.pitch_log_count),
             pitch_logs=as_dict_list(self.pitch_logs),

@@ -52,7 +52,7 @@ class GameSubstitution(Base):
         default="None",
     )
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
 
     db_inning_id = Column(Integer, ForeignKey("game_inning.id"))
     incoming_player_id = Column(Integer, ForeignKey("player.id"))
@@ -74,5 +74,7 @@ class GameSubstitution(Base):
 
     def display(self):
         event_dict = self.as_dict()
-        title = f"Details for game event: {self.inning.inning_id} Row #: {self.pbp_table_row_number}"
+        title = (
+            f"Details for game event: {self.inning.inning_id} Row #: {self.pbp_table_row_number}"
+        )
         display_dict(event_dict, title=title)

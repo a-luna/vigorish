@@ -83,9 +83,7 @@ class DateScrapeStatus(Base):
     def scraped_all_brooks_pitch_logs(self):
         if not self.scraped_daily_dash_bbref or not self.scraped_daily_dash_brooks:
             return False
-        return all(
-            game.scraped_brooks_pitch_logs == 1 for game in self.scrape_status_games
-        )
+        return all(game.scraped_brooks_pitch_logs == 1 for game in self.scrape_status_games)
 
     @hybrid_property
     def pitch_appearance_count_bbref(self):
@@ -109,9 +107,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def pitch_appearance_count_difference(self):
-        return abs(
-            self.pitch_appearance_count_bbref - self.pitch_appearance_count_brooks
-        )
+        return abs(self.pitch_appearance_count_bbref - self.pitch_appearance_count_brooks)
 
     @hybrid_property
     def pitch_appearance_count_differs(self):
@@ -151,9 +147,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_duplicate_pitchfx_removed_count(self):
-        return sum(
-            pfx.duplicate_pitchfx_removed_count for pfx in self.scrape_status_pitchfx
-        )
+        return sum(pfx.duplicate_pitchfx_removed_count for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def total_pitch_apps_no_pitchfx_data(self):
@@ -165,9 +159,7 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_apps_with_pitchfx_data(self):
-        return (
-            self.pitch_appearance_count_pitchfx - self.total_pitch_apps_no_pitchfx_data
-        )
+        return self.pitch_appearance_count_pitchfx - self.total_pitch_apps_no_pitchfx_data
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
@@ -301,9 +293,7 @@ class DateScrapeStatus(Base):
         self.season_id = season_id
 
     def __repr__(self):
-        return (
-            f"<DateScrapeStatus date={self.game_date_str}, season_id={self.season_id}>"
-        )
+        return f"<DateScrapeStatus date={self.game_date_str}, season_id={self.season_id}>"
 
     def as_dict(self):
         d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -326,9 +316,7 @@ class DateScrapeStatus(Base):
         d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
         d["total_pitchfx_logs_scraped"] = self.total_pitchfx_logs_scraped
         d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
-        d[
-            "percent_complete_pitchfx_logs_scraped"
-        ] = self.percent_complete_pitchfx_logs_scraped
+        d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
         d["scraped_all_pitchfx_logs"] = self.scraped_all_pitchfx_logs
         d["total_pitch_count_bbref"] = self.total_pitch_count_bbref
         d["total_pitch_count_brooks"] = self.total_pitch_count_brooks
@@ -354,9 +342,7 @@ class DateScrapeStatus(Base):
         scraped_brooks_pitch_logs = "YES" if self.scraped_all_brooks_pitch_logs else "NO"
         scraped_brooks_pitchfx = "YES" if self.scraped_all_pitchfx_logs else "NO"
         pitchfx_bbref_audit_performed = "YES" if self.pitch_data_was_audited else "NO"
-        all_missing_pitchfx_is_valid = (
-            "YES" if self.all_missing_pitchfx_is_valid else "NO"
-        )
+        all_missing_pitchfx_is_valid = "YES" if self.all_missing_pitchfx_is_valid else "NO"
         return (
             f"Overall Status For Date.................: {self.scrape_status_description}\n"
             f"Scraped Daily Dashboard (BBRef/Brooks)..: {scraped_daily_bbref}/{scraped_daily_brooks}\n"
@@ -372,9 +358,7 @@ class DateScrapeStatus(Base):
         )
 
     def games_status_report(self):
-        return "\n".join(
-            [game_status.status_report() for game_status in self.scrape_status_games]
-        )
+        return "\n".join([game_status.status_report() for game_status in self.scrape_status_games])
 
     @classmethod
     def find_by_date(cls, session, game_date):
@@ -424,9 +408,7 @@ class DateScrapeStatus(Base):
 
     @classmethod
     def get_unscraped_pitch_app_ids_for_date(cls, session, game_date):
-        unscraped_pitch_apps = cls.get_unscraped_pitch_appearances_for_date(
-            session, game_date
-        )
+        unscraped_pitch_apps = cls.get_unscraped_pitch_appearances_for_date(session, game_date)
         return [pitch_app.pitch_app_id for pitch_app in unscraped_pitch_apps]
 
     @classmethod
@@ -459,15 +441,11 @@ class DateScrapeStatus(Base):
         date_status = cls.find_by_date(session, game_date)
         if not date_status:
             return None
-        return [
-            game_status.bbref_game_id for game_status in date_status.scrape_status_games
-        ]
+        return [game_status.bbref_game_id for game_status in date_status.scrape_status_games]
 
     @classmethod
     def get_all_brooks_game_ids_for_date(cls, session, game_date):
         date_status = cls.find_by_date(session, game_date)
         if not date_status:
             return None
-        return [
-            game_status.bb_game_id for game_status in date_status.scrape_status_games
-        ]
+        return [game_status.brooks_game_id for game_status in date_status.scrape_status_games]

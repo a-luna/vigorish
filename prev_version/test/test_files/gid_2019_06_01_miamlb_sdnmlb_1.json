@@ -1,6 +1,6 @@
 {
   "__brooks_pitch_logs_for_game__": true,
-  "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+  "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
   "bbref_game_id": "SDN201906010",
   "pitch_log_count": 9,
   "pitch_logs": [
@@ -21,7 +21,7 @@
       },
       "pitcher_team_id_bb": "MIA",
       "opponent_team_id_bb": "SDN",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=570632&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=570632.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
@@ -38,7 +38,7 @@
       },
       "pitcher_team_id_bb": "MIA",
       "opponent_team_id_bb": "SDN",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=594027&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=594027.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
@@ -55,7 +55,7 @@
       },
       "pitcher_team_id_bb": "MIA",
       "opponent_team_id_bb": "SDN",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=623433&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=623433.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
@@ -72,7 +72,7 @@
       },
       "pitcher_team_id_bb": "MIA",
       "opponent_team_id_bb": "SDN",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543045&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=543045.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
@@ -92,7 +92,7 @@
       },
       "pitcher_team_id_bb": "SDN",
       "opponent_team_id_bb": "MIA",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=676606&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=676606.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
@@ -110,7 +110,7 @@
       },
       "pitcher_team_id_bb": "SDN",
       "opponent_team_id_bb": "MIA",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=606131&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=606131.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
@@ -128,7 +128,7 @@
       },
       "pitcher_team_id_bb": "SDN",
       "opponent_team_id_bb": "MIA",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=476589&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=476589.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
@@ -145,7 +145,7 @@
       },
       "pitcher_team_id_bb": "SDN",
       "opponent_team_id_bb": "MIA",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=623364&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=623364.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"
@@ -162,7 +162,7 @@
       },
       "pitcher_team_id_bb": "SDN",
       "opponent_team_id_bb": "MIA",
-      "bb_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
+      "brooks_game_id": "gid_2019_06_01_miamlb_sdnmlb_1",
       "bbref_game_id": "SDN201906010",
       "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=572362&game=gid_2019_06_01_miamlb_sdnmlb_1/&s_type=3&h_size=700&v_size=500",
       "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=01&pitchSel=572362.xml&game=gid_2019_06_01_miamlb_sdnmlb_1/&prevGame=gid_2019_06_01_miamlb_sdnmlb_1/"

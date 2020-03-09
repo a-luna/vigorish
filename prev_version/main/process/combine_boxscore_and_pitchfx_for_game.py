@@ -114,22 +114,16 @@ def get_player_id_dict_for_game(session, boxscore):
 
 
 def get_all_events_by_type(boxscore):
-    game_events = [
-        event for event in [inning.game_events for inning in boxscore.innings_list]
-    ]
-    substitutions = [
-        sub for sub in [inning.substitutions for inning in boxscore.innings_list]
-    ]
-    misc_events = [
-        misc for misc in [inning.misc_events for inning in boxscore.innings_list]
-    ]
+    game_events = [event for event in [inning.game_events for inning in boxscore.innings_list]]
+    substitutions = [sub for sub in [inning.substitutions for inning in boxscore.innings_list]]
+    misc_events = [misc for misc in [inning.misc_events for inning in boxscore.innings_list]]
     return (game_events, substitutions, misc_events)
 
 
 def event_is_player_substitution_or_misc(event):
-    return "BBRefInGameSubstitution" in str(
+    return "BBRefInGameSubstitution" in str(type(event)) or "BBRefPlayByPlayMiscEvent" in str(
         type(event)
-    ) or "BBRefPlayByPlayMiscEvent" in str(type(event))
+    )
 
 
 def pitch_sequence_is_complete_at_bat(pitch_seq, row_num, bbref_game_id):
@@ -169,9 +163,7 @@ def get_new_at_bat_id(session, bbref_game_id, game_event, player_id_dict, at_bat
     return at_bat_id
 
 
-def get_at_bat_id_for_pbp_event(
-    session, game_id, game_event, player_id_dict, instance_number=0
-):
+def get_at_bat_id_for_pbp_event(session, game_id, game_event, player_id_dict, instance_number=0):
     inn = game_event.inning_label[1:]
     pteam = get_brooks_team_id(game_event.team_pitching_id_br)
     pid = player_id_dict[game_event.pitcher_id_br]["mlb_id"]
@@ -204,23 +196,17 @@ def get_all_pfx_data_for_game(session, bbref_game_id):
         all_pfx_data_for_game.extend(pitchfx_log.pitchfx_log)
     all_at_bat_ids = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
     for at_bat_id in all_at_bat_ids:
-        pfx_for_at_bat = [
-            pfx for pfx in all_pfx_data_for_game if pfx.at_bat_id == at_bat_id
-        ]
+        pfx_for_at_bat = [pfx for pfx in all_pfx_data_for_game if pfx.at_bat_id == at_bat_id]
         pfx_ab_ids_for_at_bat = list(set([pfx.ab_id for pfx in pfx_for_at_bat]))
         if len(pfx_ab_ids_for_at_bat) <= 1:
             continue
         for instance_number, pfx_ab_id in enumerate(sorted(pfx_ab_ids_for_at_bat)):
-            pfx_for_separate_at_bat = [
-                pfx for pfx in pfx_for_at_bat if pfx.ab_id == pfx_ab_id
-            ]
+            pfx_for_separate_at_bat = [pfx for pfx in pfx_for_at_bat if pfx.ab_id == pfx_ab_id]
             for pfx in pfx_for_separate_at_bat:
                 pfx.at_bat_id = get_at_bat_id_for_pfx_data(pfx, instance_number)
     all_pfx_data_for_game = []
     for pitchfx_log in pitchfx_logs_for_game:
-        pitchfx_log.at_bat_ids = list(
-            set([pfx.at_bat_id for pfx in pitchfx_log.pitchfx_log])
-        )
+        pitchfx_log.at_bat_ids = list(set([pfx.at_bat_id for pfx in pitchfx_log.pitchfx_log]))
         all_pfx_data_for_game.extend(pitchfx_log.pitchfx_log)
     all_pfx_data_for_game.sort(key=lambda x: (x.ab_id, x.ab_count))
     return Result.Ok((pitchfx_logs_for_game, all_pfx_data_for_game))
@@ -241,9 +227,7 @@ def remove_duplicate_pitchfx_data(pitchfx_log, game_start_time):
         if pfx.play_guid in duplicate_guids:
             pfx_criteria = {}
             time_since_pitch_thrown = pfx.timestamp_pitch_thrown - game_start_time
-            pfx_criteria[
-                "time_since_pitch_thrown"
-            ] = time_since_pitch_thrown.total_seconds()
+            pfx_criteria["time_since_pitch_thrown"] = time_since_pitch_thrown.total_seconds()
             pfx_criteria["has_zone_location"] = pfx.has_zone_location
             pfx_criteria["park_sv_id"] = pfx.park_sv_id
             dupe_rank_dict[pfx.play_guid].append(pfx_criteria)
@@ -289,9 +273,7 @@ def get_at_bat_id_for_pfx_data(pfx, instance_number=0):
     return f"{game_id}_{inn}_{pteam}_{pid}_{bteam}_{bid}_{instance_number}"
 
 
-def combine_pbp_events_with_pfx_data(
-    grouped_event_dict, all_pfx_data_for_game, player_id_dict
-):
+def combine_pbp_events_with_pfx_data(grouped_event_dict, all_pfx_data_for_game, player_id_dict):
     game_events_combined_data = []
     result = reconcile_at_bat_ids(grouped_event_dict, all_pfx_data_for_game)
     if result.failure:
@@ -311,9 +293,7 @@ def combine_pbp_events_with_pfx_data(
         missing_pitchfx_data_is_legit = True
         missing_pitch_numbers = []
         if not pitchfx_data_complete:
-            result = check_pfx_data_for_at_bat(
-                pfx_data_for_at_bat, pitch_count_pitch_seq
-            )
+            result = check_pfx_data_for_at_bat(pfx_data_for_at_bat, pitch_count_pitch_seq)
             if result.failure:
                 missing_pitchfx_data_is_legit = False
             else:
@@ -327,12 +307,8 @@ def combine_pbp_events_with_pfx_data(
         pitch_sequence_description = construct_pitch_sequence_description(
             final_event_this_at_bat, pfx_data_copy
         )
-        pitcher_name = player_id_dict[first_event_this_at_bat["pitcher_id_br"]].get(
-            "name", ""
-        )
-        batter_name = player_id_dict[first_event_this_at_bat["batter_id_br"]].get(
-            "name", ""
-        )
+        pitcher_name = player_id_dict[first_event_this_at_bat["pitcher_id_br"]].get("name", "")
+        batter_name = player_id_dict[first_event_this_at_bat["batter_id_br"]].get("name", "")
         combined_at_bat_data = {
             "at_bat_id": ab_id,
             "inning_id": first_event_this_at_bat["inning_id"],
@@ -354,30 +330,18 @@ def combine_pbp_events_with_pfx_data(
 
 
 def reconcile_at_bat_ids(grouped_event_dict, all_pfx_data_for_game):
-    at_bat_ids_from_boxscore = list(
-        set([at_bat_id for at_bat_id in grouped_event_dict.keys()])
-    )
+    at_bat_ids_from_boxscore = list(set([at_bat_id for at_bat_id in grouped_event_dict.keys()]))
     at_bat_ids_from_pfx = list(set([pfx.at_bat_id for pfx in all_pfx_data_for_game]))
-    at_bat_ids_match_exactly = compare_lists(
-        at_bat_ids_from_boxscore, at_bat_ids_from_pfx
-    )
-    at_bat_ids_boxscore_only = list(
-        set(at_bat_ids_from_boxscore) - set(at_bat_ids_from_pfx)
-    )
+    at_bat_ids_match_exactly = compare_lists(at_bat_ids_from_boxscore, at_bat_ids_from_pfx)
+    at_bat_ids_boxscore_only = list(set(at_bat_ids_from_boxscore) - set(at_bat_ids_from_pfx))
     at_bat_ids_pfx_only = list(set(at_bat_ids_from_pfx) - set(at_bat_ids_from_boxscore))
-    if at_bat_ids_match_exactly or (
-        at_bat_ids_boxscore_only and not at_bat_ids_pfx_only
-    ):
-        at_bat_ids_ordered = order_at_bat_ids_by_time(
-            at_bat_ids_from_boxscore, grouped_event_dict
-        )
+    if at_bat_ids_match_exactly or (at_bat_ids_boxscore_only and not at_bat_ids_pfx_only):
+        at_bat_ids_ordered = order_at_bat_ids_by_time(at_bat_ids_from_boxscore, grouped_event_dict)
 
         return Result.Ok(at_bat_ids_ordered)
     message = "Play-by-play data and PitchFx data could not be reconciled:"
     if at_bat_ids_boxscore_only:
-        message += (
-            f"\nat_bat_ids found ONLY in play-by-play data: {at_bat_ids_boxscore_only}"
-        )
+        message += f"\nat_bat_ids found ONLY in play-by-play data: {at_bat_ids_boxscore_only}"
     if at_bat_ids_pfx_only:
         message += f"\nat_bat_ids found ONLY in PitchFx data: {at_bat_ids_pfx_only}"
     return Result.Fail(message)
@@ -388,8 +352,7 @@ def order_at_bat_ids_by_time(at_bat_ids, grouped_event_dict):
         {
             "at_bat_id": ab_id,
             "pbp_table_row_number": min(
-                game_event["pbp_table_row_number"]
-                for game_event in grouped_event_dict[ab_id]
+                game_event["pbp_table_row_number"] for game_event in grouped_event_dict[ab_id]
             ),
         }
         for ab_id in at_bat_ids
@@ -400,9 +363,7 @@ def order_at_bat_ids_by_time(at_bat_ids, grouped_event_dict):
 
 def get_all_pbp_events_for_at_bat(grouped_event_dict, at_bat_id):
     at_bat_events = [
-        event
-        for event in grouped_event_dict[at_bat_id]
-        if event["event_type"] == "AT_BAT"
+        event for event in grouped_event_dict[at_bat_id] if event["event_type"] == "AT_BAT"
     ]
     at_bat_events.sort(key=lambda x: x["pbp_table_row_number"])
     return at_bat_events
@@ -430,10 +391,7 @@ def check_pfx_data_for_at_bat(pfx_data, pitch_count):
     pfx_pitch_numbers = []
     for pfx in pfx_data:
         if pfx["ab_count"] in pfx_pitch_numbers:
-            error = (
-                f'PitchFX data is invalid, pitch #{pfx["ab_count"]} '
-                "occurs more than once"
-            )
+            error = f'PitchFX data is invalid, pitch #{pfx["ab_count"]} ' "occurs more than once"
             return Result.Fail(error)
         pfx_pitch_numbers.append(pfx["ab_count"])
     all_pitch_numbers = set(range(1, pitch_count + 1))
@@ -458,13 +416,9 @@ def construct_pitch_sequence_description(game_event, pfx_data=None):
             elif total_pitches >= 10 and current_pitch >= 10:
                 space_count = 1
             pitch_number = f"Pitch{' '*space_count}{current_pitch}/{total_pitches}"
-            pitch_description = (
-                f"{pitch_number}..: {PPB_PITCH_LOG_DICT[abbrev]['description']}"
-            )
+            pitch_description = f"{pitch_number}..: {PPB_PITCH_LOG_DICT[abbrev]['description']}"
             if pfx_data and abbrev == "X":
-                pitch_description = (
-                    f'{pitch_number}..: {pfx_data[current_pitch - 1]["pdes"]}'
-                )
+                pitch_description = f'{pitch_number}..: {pfx_data[current_pitch - 1]["pdes"]}'
             if pfx_data:
                 pfx = pfx_data[current_pitch - 1]
                 pitch_type = PITCH_TYPE_DICT[pfx["mlbam_pitch_name"]]
@@ -478,9 +432,7 @@ def construct_pitch_sequence_description(game_event, pfx_data=None):
     extra_dots = 0
     if total_pitches >= 10:
         extra_dots = 2
-    sequence_description.append(
-        f'Result.....{"."*extra_dots}: {game_event["play_description"]}'
-    )
+    sequence_description.append(f'Result.....{"."*extra_dots}: {game_event["play_description"]}')
     return sequence_description
 
 
@@ -531,17 +483,11 @@ def update_boxscore_with_combined_data(
     return Result.Ok(updated_boxscore)
 
 
-def update_inning_with_combined_data(
-    inning, game_events_combined_data, player_team_dict
-):
+def update_inning_with_combined_data(inning, game_events_combined_data, player_team_dict):
     inning_events = [
-        event
-        for event in game_events_combined_data
-        if event["inning_id"] == inning.inning_id
+        event for event in game_events_combined_data if event["inning_id"] == inning.inning_id
     ]
-    pitchfx_data_complete = all(
-        event["pitchfx_data_complete"] for event in inning_events
-    )
+    pitchfx_data_complete = all(event["pitchfx_data_complete"] for event in inning_events)
     total_at_bats_pitchfx_complete = len(
         [event for event in inning_events if event["pitchfx_data_complete"]]
     )
@@ -555,18 +501,14 @@ def update_inning_with_combined_data(
         event["pitch_count_bbref_pitch_seq"] for event in inning_events
     )
     pitch_count_pitchfx = sum(event["pitch_count_pitchfx"] for event in inning_events)
-    pitch_count_missing_pitchfx = sum(
-        event["missing_pitchfx_count"] for event in inning_events
-    )
+    pitch_count_missing_pitchfx = sum(event["missing_pitchfx_count"] for event in inning_events)
     missing_pitchfx_data_is_legit = all(
         event["missing_pitchfx_data_is_legit"] for event in inning_events
     )
     at_bat_ids_missing_pitchfx = sorted(
         list(
             set(
-                event["at_bat_id"]
-                for event in inning_events
-                if not event["pitchfx_data_complete"]
+                event["at_bat_id"] for event in inning_events if not event["pitchfx_data_complete"]
             )
         )
     )
@@ -624,9 +566,7 @@ def update_pitching_stats_for_both_teams(
     for pfx_log in pitchfx_logs_for_game:
         player_pitch_stats = pitch_stats_dict.pop(pfx_log.pitcher_id_mlb, None)
         if not player_pitch_stats:
-            error = (
-                f"Error retrieving boxscore stats for pitch app: {pfx_log.pitch_app_id}"
-            )
+            error = f"Error retrieving boxscore stats for pitch app: {pfx_log.pitch_app_id}"
             return Result.Fail(error)
         combined_pitching_stats = update_pitching_stats_with_combined_data(
             pfx_log, player_pitch_stats
@@ -659,7 +599,7 @@ def update_pitching_stats_with_combined_data(pfx_log, player_pitch_stats):
         "pitcher_team_id_bbref": player_pitch_stats.player_team_id_br,
         "opponent_team_id_bb": pfx_log.opponent_team_id_bb,
         "opponent_team_id_bbref": player_pitch_stats.opponent_team_id_br,
-        "bb_game_id": pfx_log.bb_game_id,
+        "brooks_game_id": pfx_log.brooks_game_id,
         "bbref_game_id": pfx_log.bbref_game_id,
         "batters_faced_bbref": player_pitch_stats.batters_faced,
         "batters_faced_pitchfx": len(at_bat_ids),
@@ -711,7 +651,7 @@ def handle_pitch_stats_without_pitchfx_data(
         "pitcher_team_id_bbref": pitcher_team_id_br,
         "opponent_team_id_bb": opponent_team_id_bb,
         "opponent_team_id_bbref": opponent_team_id_br,
-        "bb_game_id": boxscore.brooks_game_id,
+        "brooks_game_id": boxscore.brooks_game_id,
         "bbref_game_id": bbref_game_id,
         "batters_faced_bbref": player_pitch_stats.batters_faced,
         "batters_faced_pitchfx": len(at_bat_ids),
@@ -750,8 +690,7 @@ def audit_pitchfx_vs_bbref_data(
     updated_innings_list, home_team_pitching_stats, away_team_pitching_stats
 ):
     pitchfx_data_complete = all(
-        inning["inning_pitchfx_audit"]["pitchfx_data_complete"]
-        for inning in updated_innings_list
+        inning["inning_pitchfx_audit"]["pitchfx_data_complete"] for inning in updated_innings_list
     )
     total_batters_faced_bbref_home = sum(
         pitch_stats["batters_faced_bbref"] for pitch_stats in home_team_pitching_stats
@@ -759,9 +698,7 @@ def audit_pitchfx_vs_bbref_data(
     total_batters_faced_bbref_away = sum(
         pitch_stats["batters_faced_bbref"] for pitch_stats in away_team_pitching_stats
     )
-    total_batters_faced_bbref = (
-        total_batters_faced_bbref_home + total_batters_faced_bbref_away
-    )
+    total_batters_faced_bbref = total_batters_faced_bbref_home + total_batters_faced_bbref_away
     total_at_bats_pitchfx_complete = sum(
         inning["inning_pitchfx_audit"]["total_at_bats_pitchfx_complete"]
         for inning in updated_innings_list
@@ -775,24 +712,20 @@ def audit_pitchfx_vs_bbref_data(
         for inning in updated_innings_list
     )
     total_pitch_count_bbref_stats_table_home = sum(
-        pitch_stats["bbref_data"]["pitch_count"]
-        for pitch_stats in home_team_pitching_stats
+        pitch_stats["bbref_data"]["pitch_count"] for pitch_stats in home_team_pitching_stats
     )
     total_pitch_count_bbref_stats_table_away = sum(
-        pitch_stats["bbref_data"]["pitch_count"]
-        for pitch_stats in away_team_pitching_stats
+        pitch_stats["bbref_data"]["pitch_count"] for pitch_stats in away_team_pitching_stats
     )
     total_pitch_count_bbref_stats_table = (
-        total_pitch_count_bbref_stats_table_home
-        + total_pitch_count_bbref_stats_table_away
+        total_pitch_count_bbref_stats_table_home + total_pitch_count_bbref_stats_table_away
     )
     total_pitch_count_bbref_pitch_seq = sum(
         inning["inning_pitchfx_audit"]["pitch_count_bbref_pitch_seq"]
         for inning in updated_innings_list
     )
     total_pitch_count_pitchfx = sum(
-        inning["inning_pitchfx_audit"]["pitch_count_pitchfx"]
-        for inning in updated_innings_list
+        inning["inning_pitchfx_audit"]["pitch_count_pitchfx"] for inning in updated_innings_list
     )
     total_pitch_count_missing_pitchfx = sum(
         inning["inning_pitchfx_audit"]["pitch_count_missing_pitchfx"]
@@ -834,9 +767,7 @@ def audit_pitchfx_vs_bbref_data(
         pitch_stats["pitchfx_data"]["duplicate_pitches_removed_count"]
         for pitch_stats in away_team_pitching_stats
     )
-    total_duplicate_pitchfx_removed = (
-        duplicate_pfx_removed_home + duplicate_pfx_removed_away
-    )
+    total_duplicate_pitchfx_removed = duplicate_pfx_removed_home + duplicate_pfx_removed_away
 
     return {
         "pitchfx_data_complete": pitchfx_data_complete,

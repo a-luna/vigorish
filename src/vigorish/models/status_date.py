@@ -446,4 +446,4 @@ class DateScrapeStatus(Base):
         date_status = cls.find_by_date(session, game_date)
         if not date_status:
             return None
-        return [game_status.bb_game_id for game_status in date_status.scrape_status_games]
+        return [game_status.brooks_game_id for game_status in date_status.scrape_status_games]

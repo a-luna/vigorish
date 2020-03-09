@@ -73,7 +73,7 @@ async function scrapePitchFxHtmlFiles(dailyGamesS3KeyList) {
           if (!game.might_be_postponed) {
             s3Keys.push({
               year: year,
-              key: `${year}/brooks_pitch_logs/${game.bb_game_id}.json`,
+              key: `${year}/brooks_pitch_logs/${game.brooks_game_id}.json`,
             })
           }
         })

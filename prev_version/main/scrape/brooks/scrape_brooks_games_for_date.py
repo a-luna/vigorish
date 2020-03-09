@@ -98,17 +98,13 @@ def parse_daily_dash_page(session, response, scrape_date, url, required_game_dat
         game_time = parse_timestamp(game_info_list[1])
         pitchlog_urls = game.xpath(PITCH_LOG_URL_XPATH)
         if not pitchlog_urls:
-            result = _no_pitch_logs(
-                game, i + 1, scrape_date, game_time, required_game_data
-            )
+            result = _no_pitch_logs(game, i + 1, scrape_date, game_time, required_game_data)
             if result.failure:
                 continue
             gameinfo = result.value
             games_for_date.games.append(gameinfo)
             continue
-        result = _is_game_required(
-            scrape_date, game_time, pitchlog_urls[0], required_game_data
-        )
+        result = _is_game_required(scrape_date, game_time, pitchlog_urls[0], required_game_data)
         if result.failure:
             continue
         gameinfo = result.value
@@ -126,7 +122,7 @@ def parse_daily_dash_page(session, response, scrape_date, url, required_game_dat
 def _no_pitch_logs(game_table, game_number, scrape_date, game_time, required_game_data):
     k_zone_urls = game_table.xpath(KZONE_URL_XPATH)
     if not k_zone_urls:
-        error = f"Unable to parse bb_game_id for game table #{game_number}"
+        error = f"Unable to parse brooks_game_id for game table #{game_number}"
         return Result.Fail(error)
     result = _parse_gameinfo(scrape_date, game_time, k_zone_urls[0])
     if result.failure:
@@ -147,7 +143,7 @@ def _is_game_required(scrape_date, game_time, url, required_game_data):
     if result.failure:
         return result
     gameinfo = result.value
-    result = validate_bb_game_id(gameinfo.bb_game_id)
+    result = validate_bb_game_id(gameinfo.brooks_game_id)
     if result.failure:
         return result
     game_date = result.value["game_date"]
@@ -181,7 +177,7 @@ def _parse_gameinfo_from_url(gameinfo, url):
             f'query parameter "game":\n{url}'
         )
         return Result.Fail(error)
-    gameinfo.bb_game_id = gameid
+    gameinfo.brooks_game_id = gameid
     gameinfo.away_team_id_bb = _parse_away_team_from_gameid(gameid)
     gameinfo.home_team_id_bb = _parse_home_team_from_gameid(gameid)
     gameinfo.game_number_this_day = _parse_game_number_from_gameid(gameid)
@@ -244,8 +240,8 @@ def _parse_pitcherid_from_url(url):
 
 
 def _update_game_ids(games_for_date):
-    game_dict = {g.bb_game_id: g for g in games_for_date.games}
-    tracker = {g.bb_game_id: False for g in games_for_date.games}
+    game_dict = {g.brooks_game_id: g for g in games_for_date.games}
+    tracker = {g.brooks_game_id: False for g in games_for_date.games}
     for bb_gid in sorted(game_dict.keys(), reverse=True):
         if tracker[bb_gid]:
             continue

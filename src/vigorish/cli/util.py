@@ -1,6 +1,8 @@
 """Shared functions and menus for CLI."""
 import click
-from bullet import Bullet, colors
+from dateutil import parser
+from bullet import Bullet, colors, Input, keyhandler
+from bullet.charDef import NEWLINE_KEY
 
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS, CLI_COLORS
 from vigorish.util.result import Result
@@ -58,3 +60,16 @@ def prompt_user_yes_no_cancel(prompt: str, pointer: str = None) -> Result:
     choice_text = prompt.launch()
     choice_value = choices.get(choice_text)
     return Result.Fail("") if "CANCEL" in choice_text else Result.Ok(choice_value)
+
+
+class DateInput(Input):
+    def launch(self):
+        parsed_date = None
+        while not parsed_date:
+            result = super().launch()
+            if result:
+                try:
+                    parsed_date = parser.parse(result)
+                except ValueError:
+                    continue
+        return parsed_date

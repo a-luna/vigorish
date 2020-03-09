@@ -1,8 +1,10 @@
 """Record of a job to scrape data for a specified date range."""
 from datetime import date
+from uuid import uuid4
 
 from sqlalchemy import Column, Boolean, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
 from vigorish.enums import JobStatus
@@ -15,17 +17,19 @@ class ScrapeJob(Base):
 
     __tablename__ = "scrape_job"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    name = Column(String, default=lambda: f"Job{str(uuid4())[:4]}")
     status = Column(Enum(JobStatus), default=JobStatus.NOT_STARTED)
-    start_date = Column(DateTime, default=date.min)
-    end_date = Column(DateTime)
-    last_scraped_date = Column(DateTime)
-    scrape_bbref_games_for_date = Column(Boolean)
-    scrape_bbref_boxscores = Column(Boolean)
-    scrape_brooks_games_for_date = Column(Boolean)
-    scrape_brooks_pitch_logs = Column(Boolean)
-    scrape_brooks_pitchfx = Column(Boolean)
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
+    last_scraped_date = Column(DateTime, default=date.min)
+    bbref_games_for_date = Column(Boolean, default=False)
+    bbref_boxscores = Column(Boolean, default=False)
+    brooks_games_for_date = Column(Boolean, default=False)
+    brooks_pitch_logs = Column(Boolean, default=False)
+    brooks_pitchfx = Column(Boolean, default=False)
     season_id = Column(Integer, ForeignKey("season.id"))
+
+    errors = relationship("ScrapeError", backref="job")
 
     @hybrid_property
     def total_days(self):
@@ -42,9 +46,6 @@ class ScrapeJob(Base):
     @hybrid_property
     def percent_complete(self):
         return self.days_scraped / float(self.total_days) if self.total_days > 0 else 0.0
-
-    def __init__(self, **kwargs):
-        super(ScrapeJob, self).__init__(**kwargs)
 
     def __repr__(self):
         return f"<ScrapeJob name={self.name}, status={self.status}>"

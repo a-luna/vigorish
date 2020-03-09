@@ -26,13 +26,13 @@ class BrooksPitchFxLog:
     pitch_app_id: str = ""
     pitcher_team_id_bb: str = ""
     opponent_team_id_bb: str = ""
-    bb_game_id: str = ""
+    brooks_game_id: str = ""
     bbref_game_id: str = ""
     pitchfx_url: str = ""
 
     @property
     def game_date(self):
-        result = validate_bb_game_id(self.bb_game_id)
+        result = validate_bb_game_id(self.brooks_game_id)
         if result.failure:
             return None
         game_dict = result.value
@@ -78,9 +78,7 @@ class BrooksPitchFxLog:
         ab_ids = sorted(list(set([pfx.ab_id for pfx in self.pitchfx_log])))
         results = {}
         for ab_id in ab_ids:
-            ab_result = list(
-                set([pfx.des for pfx in self.pitchfx_log if pfx.ab_id == ab_id])
-            )[0]
+            ab_result = list(set([pfx.des for pfx in self.pitchfx_log if pfx.ab_id == ab_id]))[0]
             results[ab_id] = ab_result
         return results
 
@@ -187,7 +185,7 @@ class BrooksPitchFxLog:
             total_pitch_count=int(self.total_pitch_count),
             pitcher_team_id_bb=self.pitcher_team_id_bb,
             opponent_team_id_bb=self.opponent_team_id_bb,
-            bb_game_id=self.bb_game_id,
+            brooks_game_id=self.brooks_game_id,
             bbref_game_id=self.bbref_game_id,
             pitchfx_url=self.pitchfx_url,
         )

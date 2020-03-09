@@ -14,7 +14,7 @@ class PitchAppearanceScrapeStatus(Base):
     pitcher_id_mlb = Column(Integer)
     pitch_app_id = Column(String)
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
     scraped_pitchfx = Column(Integer, default=0)
     no_pitchfx_data = Column(Integer, default=0)
     pitch_count_pitch_log = Column(Integer, default=0)
@@ -47,9 +47,7 @@ class PitchAppearanceScrapeStatus(Base):
     def get_all_scraped_pitch_app_ids_for_season(cls, session, season_id):
         return [
             pitch_app_status.pitch_app_id
-            for pitch_app_status in session.query(cls)
-            .filter_by(season_id=season_id)
-            .all()
+            for pitch_app_status in session.query(cls).filter_by(season_id=season_id).all()
             if pitch_app_status.scraped_pitchfx == 1
         ]
 
@@ -57,9 +55,7 @@ class PitchAppearanceScrapeStatus(Base):
     def get_all_unscraped_pitch_app_ids_for_season(cls, session, season_id):
         return [
             pitch_app_status.pitch_app_id
-            for pitch_app_status in session.query(cls)
-            .filter_by(season_id=season_id)
-            .all()
+            for pitch_app_status in session.query(cls).filter_by(season_id=season_id).all()
             if pitch_app_status.scraped_pitchfx == 0
         ]
 
@@ -67,9 +63,7 @@ class PitchAppearanceScrapeStatus(Base):
     def get_pitch_app_ids_without_pitchfx_data(cls, session, season_id):
         return [
             pitch_app_status.pitch_app_id
-            for pitch_app_status in session.query(cls)
-            .filter_by(season_id=season_id)
-            .all()
+            for pitch_app_status in session.query(cls).filter_by(season_id=season_id).all()
             if pitch_app_status.no_pitchfx_data == 1
         ]
 
@@ -77,9 +71,7 @@ class PitchAppearanceScrapeStatus(Base):
     def get_all_pitch_app_ids(cls, session, season_id):
         return [
             pitch_app_status.pitch_app_id
-            for pitch_app_status in session.query(cls)
-            .filter_by(season_id=season_id)
-            .all()
+            for pitch_app_status in session.query(cls).filter_by(season_id=season_id).all()
         ]
 
     @classmethod
@@ -87,27 +79,21 @@ class PitchAppearanceScrapeStatus(Base):
         date_id = date.strftime(DATE_ONLY_TABLE_ID)
         return [
             pitch_app.pitch_app_id
-            for pitch_app in session.query(cls)
-            .filter_by(scrape_status_date_id=int(date_id))
-            .all()
+            for pitch_app in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
         ]
 
     @classmethod
     def get_all_pitch_app_ids_for_game(cls, session, bbref_game_id):
         return [
             pitch_app_status.pitch_app_id
-            for pitch_app_status in session.query(cls)
-            .filter_by(bbref_game_id=bbref_game_id)
-            .all()
+            for pitch_app_status in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
         ]
 
     @classmethod
     def get_all_pitch_app_ids_for_game_with_pitchfx_data(cls, session, bbref_game_id):
         return [
             pitch_app_status.pitch_app_id
-            for pitch_app_status in session.query(cls)
-            .filter_by(bbref_game_id=bbref_game_id)
-            .all()
+            for pitch_app_status in session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
             if not pitch_app_status.no_pitchfx_data
         ]
 

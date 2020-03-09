@@ -45,7 +45,7 @@ class GameBatStats(Base):
     player_team_id_br = Column(String)
     opponent_team_id_br = Column(String)
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
     player_id = Column(Integer, ForeignKey("player.id"))
     player_team_id = Column(Integer, ForeignKey("team.id"))
     opponent_team_id = Column(Integer, ForeignKey("team.id"))
@@ -60,14 +60,14 @@ class GameBatStats(Base):
     )
 
     def __repr__(self):
-        return f"<GameBatStats bbref_game_id={self.bbref_game_id}, player_id_br={self.player_id_br}>"
+        return (
+            f"<GameBatStats bbref_game_id={self.bbref_game_id}, player_id_br={self.player_id_br}>"
+        )
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def display(self):
         bat_stats_dict = self.as_dict()
-        title = (
-            f"Batting stats for player {self.player_id_br}, game: {self.bbref_game_id}"
-        )
+        title = f"Batting stats for player {self.player_id_br}, game: {self.bbref_game_id}"
         display_dict(bat_stats_dict, title=title)

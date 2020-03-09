@@ -79,14 +79,12 @@ def update_game_status_records(session, season, new_brooks_games):
                 return Result.Fail(error)
             setattr(game_status, "game_date", game_date)
             setattr(game_status, "bbref_game_id", bbref_game_id)
-            setattr(game_status, "bb_game_id", brooks_game_info.bb_game_id)
+            setattr(game_status, "brooks_game_id", brooks_game_info.brooks_game_id)
             setattr(game_status, "game_time_hour", brooks_game_info.game_time_hour)
             setattr(game_status, "game_time_minute", brooks_game_info.game_time_minute)
             setattr(game_status, "game_time_zone", brooks_game_info.time_zone_name)
             setattr(
-                game_status,
-                "pitch_app_count_brooks",
-                brooks_game_info.pitcher_appearance_count,
+                game_status, "pitch_app_count_brooks", brooks_game_info.pitcher_appearance_count,
             )
             setattr(game_status, "scrape_status_date_id", date_status.id)
             setattr(game_status, "season_id", season.id)

@@ -303,11 +303,11 @@ class Season(Base):
         return get_date_range(self.start_date, self.end_date)
 
     @classmethod
-    def find_by_year(cls, session, year, season_type="Regular Season"):
+    def find_by_year(cls, session, year, season_type=SeasonType.REGULAR_SEASON):
         return session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
 
     @classmethod
-    def is_date_in_season(cls, session, check_date, season_type="Regular Season"):
+    def is_date_in_season(cls, session, check_date, season_type=SeasonType.REGULAR_SEASON):
         season = cls.find_by_year(session, check_date.year)
         if not season:
             error = f"Database does not contain info for MLB {season_type} {check_date.year}"

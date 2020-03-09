@@ -32,17 +32,13 @@ TEAM_ID_REGEX = re.compile(TEAM_ID_PATTERN)
 
 def scrape_brooks_pitch_logs_for_date(pitch_logs_for_date, games_for_date):
     scraped_games = []
-    scraped_pitch_logs_dict = {g.bb_game_id: g for g in pitch_logs_for_date}
-    with tqdm(
-        total=len(games_for_date.games), unit="game", leave=False, position=2
-    ) as pbar:
+    scraped_pitch_logs_dict = {g.brooks_game_id: g for g in pitch_logs_for_date}
+    with tqdm(total=len(games_for_date.games), unit="game", leave=False, position=2) as pbar:
         for game in games_for_date.games:
             if game.might_be_postponed:
                 continue
             pbar.set_description(get_pbar_game_description(game.bbref_game_id))
-            scraped_pitch_logs_for_game = scraped_pitch_logs_dict.get(
-                game.bb_game_id, None
-            )
+            scraped_pitch_logs_for_game = scraped_pitch_logs_dict.get(game.brooks_game_id, None)
             result = parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game)
             if result.failure:
                 return result
@@ -60,15 +56,13 @@ def get_pbar_game_description(game_id):
 
 def parse_pitch_logs_for_game(scraped_pitch_logs_for_game, game):
     pitch_logs_for_game = BrooksPitchLogsForGame()
-    pitch_logs_for_game.bb_game_id = game.bb_game_id
+    pitch_logs_for_game.brooks_game_id = game.brooks_game_id
     pitch_logs_for_game.bbref_game_id = game.bbref_game_id
     pitch_logs_for_game.pitch_log_count = game.pitcher_appearance_count
     pitch_app_dict = game.pitcher_appearance_dict
 
     scraped_pitch_logs = []
-    with tqdm(
-        total=len(pitch_app_dict), unit="pitch_log", leave=False, position=3
-    ) as pbar:
+    with tqdm(total=len(pitch_app_dict), unit="pitch_log", leave=False, position=3) as pbar:
         for pitcher_id, url in pitch_app_dict.items():
             try:
                 needs_timeout = False
@@ -176,7 +170,7 @@ def _initialize_pitch_log(game, pitcher_id, url):
     pitch_log.parsed_all_info = False
     pitch_log.pitcher_id_mlb = pitcher_id
     pitch_log.pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
-    pitch_log.bb_game_id = game.bb_game_id
+    pitch_log.brooks_game_id = game.brooks_game_id
     pitch_log.bbref_game_id = game.bbref_game_id
     pitch_log.pitch_log_url = url
     pitch_log.pitcher_name = ""
@@ -196,9 +190,7 @@ def _parse_pitcher_details(response, game, pitcher_id):
         return Result.Fail(error)
 
     selected_pitcher = parsed[0]
-    indices = [
-        n for n in range(len(selected_pitcher)) if selected_pitcher.find("-", n) == n
-    ]
+    indices = [n for n in range(len(selected_pitcher)) if selected_pitcher.find("-", n) == n]
     if not indices or len(indices) < 2:
         error = "Failed to parse pitcher name from game log page."
         return Result.Fail(error)
@@ -209,9 +201,7 @@ def _parse_pitcher_details(response, game, pitcher_id):
     if result.failure:
         return result
     id_dict = result.value
-    pitcher_dict = dict(
-        name=name, team_id=id_dict["team_id"], opponent_id=id_dict["opponent_id"]
-    )
+    pitcher_dict = dict(name=name, team_id=id_dict["team_id"], opponent_id=id_dict["opponent_id"])
     return Result.Ok(pitcher_dict)
 
 

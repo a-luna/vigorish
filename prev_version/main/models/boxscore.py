@@ -19,7 +19,7 @@ class Boxscore(Base):
     id = Column(Integer, primary_key=True)
     boxscore_url = Column(String)
     bbref_game_id = Column(String)
-    bb_game_id = Column(String)
+    brooks_game_id = Column(String)
     away_team_id_br = Column(String)
     home_team_id_br = Column(String)
     away_team_id = Column(Integer, ForeignKey("team.id"))
@@ -27,9 +27,7 @@ class Boxscore(Base):
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    meta = relationship(
-        "GameMetaInformation", backref=backref("boxscore", uselist=False)
-    )
+    meta = relationship("GameMetaInformation", backref=backref("boxscore", uselist=False))
     away_team = relationship("Team", foreign_keys=[away_team_id])
     home_team = relationship("Team", foreign_keys=[home_team_id])
     away_team_totals = relationship(

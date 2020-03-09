@@ -22,7 +22,6 @@ class ChangeSetttingMenuItem(MenuItem):
     def __init__(self, setting_name: str, config_file: ConfigFile) -> None:
         self.menu_item_text = "Change Setting"
         self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
-        self.pointer = EMOJI_DICT.get("HAND_POINTER", "")
         self.config_file = config_file
         setting = self.config_file.all_settings.get(setting_name)
         self.setting_name_title = setting.setting_name_title

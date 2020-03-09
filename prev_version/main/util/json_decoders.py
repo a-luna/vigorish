@@ -52,7 +52,7 @@ def decode_brooks_game_info(json_dict):
             gameinfo.game_time_hour = json_dict["game_time_hour"]
             gameinfo.game_time_minute = json_dict["game_time_minute"]
             gameinfo.time_zone_name = json_dict["time_zone_name"]
-            gameinfo.bb_game_id = json_dict["bb_game_id"]
+            gameinfo.brooks_game_id = json_dict["brooks_game_id"]
             gameinfo.bbref_game_id = json_dict["bbref_game_id"]
             gameinfo.away_team_id_bb = json_dict["away_team_id_bb"]
             gameinfo.home_team_id_bb = json_dict["home_team_id_bb"]
@@ -148,9 +148,7 @@ def decode_bbref_boxscore_meta(json_dict):
             boxscore_meta.field_type = json_dict["field_type"]
             boxscore_meta.day_night = json_dict["day_night"]
             boxscore_meta.first_pitch_temperature = json_dict["first_pitch_temperature"]
-            boxscore_meta.first_pitch_precipitation = json_dict[
-                "first_pitch_precipitation"
-            ]
+            boxscore_meta.first_pitch_precipitation = json_dict["first_pitch_precipitation"]
             boxscore_meta.first_pitch_wind = json_dict["first_pitch_wind"]
             boxscore_meta.first_pitch_clouds = json_dict["first_pitch_clouds"]
             boxscore_meta.game_duration = json_dict["game_duration"]
@@ -171,9 +169,7 @@ def decode_boxscore_team_data(json_dict):
             team_data.total_wins_before_game = json_dict["total_wins_before_game"]
             team_data.total_losses_before_game = json_dict["total_losses_before_game"]
             team_data.total_runs_scored_by_team = json_dict["total_runs_scored_by_team"]
-            team_data.total_runs_scored_by_opponent = json_dict[
-                "total_runs_scored_by_opponent"
-            ]
+            team_data.total_runs_scored_by_opponent = json_dict["total_runs_scored_by_opponent"]
             team_data.total_hits_by_team = json_dict["total_hits_by_team"]
             team_data.total_hits_by_opponent = json_dict["total_hits_by_opponent"]
             team_data.total_errors_by_team = json_dict["total_errors_by_team"]
@@ -417,7 +413,7 @@ def decode_brooks_pitch_logs_for_game(json_dict):
     if "__brooks_pitch_logs_for_game__" in json_dict:
         try:
             pitch_logs_for_game = BrooksPitchLogsForGame()
-            pitch_logs_for_game.bb_game_id = json_dict["bb_game_id"]
+            pitch_logs_for_game.brooks_game_id = json_dict["brooks_game_id"]
             pitch_logs_for_game.bbref_game_id = json_dict["bbref_game_id"]
             pitch_logs_for_game.pitch_log_count = json_dict["pitch_log_count"]
 
@@ -446,7 +442,7 @@ def decode_brooks_pitch_log(json_dict):
             pitch_log.pitch_count_by_inning = json_dict["pitch_count_by_inning"]
             pitch_log.pitcher_team_id_bb = json_dict["pitcher_team_id_bb"]
             pitch_log.opponent_team_id_bb = json_dict["opponent_team_id_bb"]
-            pitch_log.bb_game_id = json_dict["bb_game_id"]
+            pitch_log.brooks_game_id = json_dict["brooks_game_id"]
             pitch_log.bbref_game_id = json_dict["bbref_game_id"]
             pitch_log.pitchfx_url = json_dict["pitchfx_url"]
             pitch_log.pitch_log_url = json_dict["pitch_log_url"]
@@ -474,7 +470,7 @@ def decode_brooks_pitchfx_log(json_dict):
                 total_pitch_count=json_dict["total_pitch_count"],
                 pitcher_team_id_bb=json_dict["pitcher_team_id_bb"],
                 opponent_team_id_bb=json_dict["opponent_team_id_bb"],
-                bb_game_id=json_dict["bb_game_id"],
+                brooks_game_id=json_dict["brooks_game_id"],
                 bbref_game_id=json_dict["bbref_game_id"],
                 pitchfx_url=json_dict["pitchfx_url"],
             )

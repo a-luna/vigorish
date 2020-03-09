@@ -27,7 +27,7 @@ class BrooksPitchFxData:
     batter_id: str = "0"
     pitcher_team_id_bb: str = ""
     opponent_team_id_bb: str = ""
-    bb_game_id: str = ""
+    brooks_game_id: str = ""
     bbref_game_id: str = ""
     table_row_number: str = "0"
     park_sv_id: str = ""
@@ -111,7 +111,7 @@ class BrooksPitchFxData:
             batter_id=self.batter_id,
             pitcher_team_id_bb=self.pitcher_team_id_bb,
             opponent_team_id_bb=self.opponent_team_id_bb,
-            bb_game_id=self.bb_game_id,
+            brooks_game_id=self.brooks_game_id,
             bbref_game_id=self.bbref_game_id,
             table_row_number=int(self.table_row_number),
             park_sv_id=self.park_sv_id,
