@@ -70,14 +70,14 @@ class S3Helper:
         result = self.download_json_brooks_games_for_date(game_date)
         if result.failure:
             return result
-        return self.file_helper.read_brooks_games_for_date_from_file(game_date, delete_file)
+        return self.file_helper.decode_json_brooks_games_for_date(game_date, delete_file)
 
     def get_brooks_pitch_logs_for_game_from_s3(self, bb_game_id, delete_file=True):
         """Retrieve BrooksPitchLogsForGame object from json encoded file stored in S3."""
         result = self.download_json_brooks_pitch_logs_for_game(bb_game_id)
         if result.failure:
             return result
-        return self.file_helper.read_brooks_pitch_logs_for_game_from_file(bb_game_id, delete_file)
+        return self.file_helper.decode_json_brooks_pitch_logs_for_game(bb_game_id, delete_file)
 
     def get_all_brooks_pitch_logs_for_date_from_s3(self, session, game_date, delete_file=True):
         """Retrieve a list of BrooksPitchLogsForGame objects for all games that occurred on a date."""
@@ -95,7 +95,7 @@ class S3Helper:
         result = self.download_json_brooks_pitchfx_log(pitch_app_id)
         if result.failure:
             return result
-        return self.file_helper.read_brooks_pitchfx_log_from_file(pitch_app_id, delete_file)
+        return self.file_helper.decode_json_brooks_pitchfx_log(pitch_app_id, delete_file)
 
     def get_all_pitchfx_logs_for_game_from_s3(self, session, bbref_game_id):
         pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
@@ -122,7 +122,7 @@ class S3Helper:
         result = self.download_json_bbref_games_for_date(game_date)
         if result.failure:
             return result
-        return self.file_helper.read_bbref_games_for_date_from_file(game_date, delete_file)
+        return self.file_helper.decode_json_bbref_games_for_date(game_date, delete_file)
 
     def get_bbref_boxscore_from_s3(self, bbref_game_id, delete_file=True):
         """Retrieve BBRefBoxscore object from json encoded file stored in S3."""
@@ -130,7 +130,7 @@ class S3Helper:
         if result.failure:
             return result
         filepath = result.value
-        return self.file_helper.read_bbref_boxscore_from_file(bbref_game_id, delete_file)
+        return self.file_helper.decode_json_bbref_boxscore(bbref_game_id, delete_file)
 
     def get_all_brooks_dates_scraped_from_s3(self, year):
         json_folder = self.get_s3_folder_path(
@@ -204,7 +204,7 @@ class S3Helper:
 
     def upload_brooks_games_for_date(self, games_for_date):
         """Upload a file to S3 containing json encoded BrooksGamesForDate object."""
-        result = write_brooks_games_for_date_to_file(games_for_date)
+        result = write_json_brooks_games_for_date(games_for_date)
         if result.failure:
             return result
         return self.perform_task(
@@ -216,7 +216,7 @@ class S3Helper:
 
     def upload_brooks_pitch_logs_for_game(self, pitch_logs_for_game):
         """Upload a file to S3 containing json encoded BrooksPitchLogsForGame object."""
-        result = write_brooks_pitch_logs_for_game_to_file(pitch_logs_for_game)
+        result = write_json_brooks_pitch_logs_for_game(pitch_logs_for_game)
         if result.failure:
             return result
         return self.perform_task(
@@ -229,7 +229,7 @@ class S3Helper:
 
     def upload_brooks_pitchfx_log(self, pitchfx_log):
         """Upload a file to S3 containing json encoded BrooksPitchFxLog object."""
-        result = write_brooks_pitchfx_log_to_file(pitchfx_log)
+        result = write_json_brooks_pitchfx_log(pitchfx_log)
         if result.failure:
             return result
         return self.perform_task(
@@ -242,7 +242,7 @@ class S3Helper:
 
     def upload_bbref_games_for_date(self, games_for_date):
         """Upload a file to S3 containing json encoded BBRefGamesForDate object."""
-        result = write_bbref_games_for_date_to_file(games_for_date)
+        result = write_json_bbref_games_for_date(games_for_date)
         if result.failure:
             return result
         return self.perform_task(
@@ -254,7 +254,7 @@ class S3Helper:
 
     def upload_bbref_boxscore(self, boxscore):
         """Upload a file to S3 containing json encoded BBRefBoxscore object."""
-        result = write_bbref_boxscore_to_file(boxscore)
+        result = write_json_bbref_boxscore(boxscore)
         if result.failure:
             return result
         filepath = result.value

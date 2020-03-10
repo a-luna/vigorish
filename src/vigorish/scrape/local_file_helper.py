@@ -77,7 +77,16 @@ class LocalFileHelper:
             DataSet.BBREF_BOXSCORES: decode_bbref_boxscore,
         }
 
-    def write_brooks_games_for_date_to_file(self, games_for_date):
+    def write_html_brooks_games_for_date(self, game_date, html):
+        return self.perform_task(
+            task=FileTask.WRITE_FILE,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            doc_format=DocFormat.HTML,
+            game_date=games_for_date.game_date,
+            scraped_data=html,
+        )
+
+    def write_json_brooks_games_for_date(self, games_for_date):
         return self.perform_task(
             task=FileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
@@ -86,7 +95,20 @@ class LocalFileHelper:
             scraped_data=games_for_date,
         )
 
-    def write_brooks_pitch_logs_for_game_to_file(self, pitch_logs_for_game):
+    def write_html_brooks_pitch_log(self, pitch_app_id, html):
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.WRITE_FILE,
+            data_set=DataSet.BROOKS_PITCH_LOGS,
+            doc_format=DocFormat.HTML,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
+        )
+
+    def write_json_brooks_pitch_logs_for_game(self, pitch_logs_for_game):
         return self.perform_task(
             task=FileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_PITCH_LOGS,
@@ -96,7 +118,20 @@ class LocalFileHelper:
             bb_game_id=pitch_logs_for_game.bb_game_id,
         )
 
-    def write_brooks_pitchfx_log_to_file(self, pitchfx_log):
+    def write_html_brooks_pitchfx(self, pitch_app_id):
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.WRITE_FILE,
+            data_set=DataSet.BROOKS_PITCHFX,
+            doc_format=DocFormat.HTML,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
+        )
+
+    def write_json_brooks_pitchfx_log(self, pitchfx_log):
         return self.perform_task(
             task=FileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_PITCHFX,
@@ -106,7 +141,15 @@ class LocalFileHelper:
             pitch_app_id=pitchfx_log.pitch_app_id,
         )
 
-    def write_bbref_games_for_date_to_file(self, games_for_date):
+    def write_html_bbref_games_for_date(self, game_date):
+        return self.perform_task(
+            task=FileTask.WRITE_FILE,
+            data_set=DataSet.BBREF_GAMES_FOR_DATE,
+            doc_format=DocFormat.HTML,
+            game_date=game_date,
+        )
+
+    def write_json_bbref_games_for_date(self, games_for_date):
         return self.perform_task(
             task=FileTask.WRITE_FILE,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
@@ -115,7 +158,20 @@ class LocalFileHelper:
             scraped_data=games_for_date,
         )
 
-    def write_bbref_boxscore_to_file(self, boxscore):
+    def write_html_bbref_boxscore(self, bbref_game_id):
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.WRITE_FILE,
+            data_set=DataSet.BBREF_BOXSCORES,
+            doc_format=DocFormat.HTML,
+            game_date=game_dict["game_date"],
+            bbref_game_id=bbref_game_id,
+        )
+
+    def write_json_bbref_boxscore(self, boxscore):
         return self.perform_task(
             task=FileTask.WRITE_FILE,
             data_set=DataSet.BBREF_BOXSCORES,
@@ -125,7 +181,117 @@ class LocalFileHelper:
             bbref_game_id=boxscore.bbref_game_id,
         )
 
-    def read_brooks_games_for_date_from_file(self, game_date, delete_file=False):
+    def get_html_brooks_games_for_date(self, game_date):
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            doc_format=DocFormat.HTML,
+            game_date=game_date,
+        )
+
+    def get_json_brooks_games_for_date(self, game_date):
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            doc_format=DocFormat.JSON,
+            game_date=game_date,
+        )
+
+    def get_html_brooks_pitch_log(self, pitch_app_id):
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BROOKS_PITCH_LOGS,
+            doc_format=DocFormat.HTML,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
+        )
+
+    def get_json_brooks_pitch_log_for_game(self, bb_game_id):
+        result = validate_brooks_game_id(bb_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BROOKS_PITCH_LOGS,
+            doc_format=DocFormat.JSON,
+            game_date=game_dict["game_date"],
+            bb_game_id=bb_game_id,
+        )
+
+    def get_html_brooks_pitchfx(self, pitch_app_id):
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BROOKS_PITCHFX,
+            doc_format=DocFormat.HTML,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
+        )
+
+    def get_json_brooks_pitchfx(self, pitch_app_id):
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BROOKS_PITCHFX,
+            doc_format=DocFormat.JSON,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
+        )
+
+    def get_html_bbref_games_for_date(self, game_date):
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BBREF_GAMES_FOR_DATE,
+            doc_format=DocFormat.HTML,
+            game_date=game_date,
+        )
+
+    def get_json_bbref_games_for_date(self, game_date):
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BBREF_GAMES_FOR_DATE,
+            doc_format=DocFormat.JSON,
+            game_date=game_date,
+        )
+
+    def get_html_bbref_boxscore(self, bbref_game_id):
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BBREF_BOXSCORES,
+            doc_format=DocFormat.HTML,
+            game_date=game_dict["game_date"],
+            bbref_game_id=bbref_game_id,
+        )
+
+    def get_json_bbref_boxscore(self, bbref_game_id):
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.perform_task(
+            task=FileTask.GET_FILE,
+            data_set=DataSet.BBREF_BOXSCORES,
+            doc_format=DocFormat.JSON,
+            game_date=game_dict["game_date"],
+            bbref_game_id=bbref_game_id,
+        )
+
+    def decode_json_brooks_games_for_date(self, game_date, delete_file=False):
         """Decode BrooksGamesForDate object from json file."""
         return self.perform_task(
             task=FileTask.DECODE_JSON,
@@ -135,7 +301,7 @@ class LocalFileHelper:
             delete_file=delete_file,
         )
 
-    def read_brooks_pitch_logs_for_game_from_file(self, bb_game_id, delete_file=False):
+    def decode_json_brooks_pitch_logs_for_game(self, bb_game_id, delete_file=False):
         """Decode BrooksPitchLogsForGame object from file."""
         result = validate_brooks_game_id(bb_game_id)
         if result.failure:
@@ -150,7 +316,7 @@ class LocalFileHelper:
             delete_file=delete_file,
         )
 
-    def read_brooks_pitchfx_log_from_file(self, pitch_app_id, delete_file=False):
+    def decode_json_brooks_pitchfx_log(self, pitch_app_id, delete_file=False):
         """Decode BrooksPitchFxLog object from json file."""
         result = validate_pitch_app_id(pitch_app_id)
         if result.failure:
@@ -165,7 +331,7 @@ class LocalFileHelper:
             delete_file=delete_file,
         )
 
-    def read_bbref_games_for_date_from_file(self, game_date, delete_file=False):
+    def decode_json_bbref_games_for_date(self, game_date, delete_file=False):
         """Decode BBRefGamesForDate object from json file."""
         return self.perform_task(
             task=FileTask.DECODE_JSON,
@@ -175,7 +341,7 @@ class LocalFileHelper:
             delete_file=delete_file,
         )
 
-    def read_bbref_boxscore_from_file(self, bbref_game_id, delete_file=False):
+    def decode_json_bbref_boxscore(self, bbref_game_id, delete_file=False):
         """Decode BBRefBoxscore object from file."""
         result = validate_bbref_game_id(bbref_game_id)
         if result.failure:
@@ -214,7 +380,7 @@ class LocalFileHelper:
             return Path(filepath)
 
         if task == FileTask.WRITE_FILE:
-            return self.write_json_dict_to_file(scraped_data.as_json(), Path(filepath))
+            return self.write_to_file(scraped_data.as_json(), Path(filepath))
 
         if task == FileTask.DECODE_JSON:
             return self.decode_json(Path(filepath), data_set, delete_file)
@@ -299,12 +465,10 @@ class LocalFileHelper:
     def get_file_name_json_bbref_boxscore(self, bbref_game_id):
         return f"{bbref_game_id}.json"
 
-    def write_json_dict_to_file(self, json_dict, filepath):
+    def write_to_file(self, data, filepath):
         """Write object in json format to file."""
-        folderpath = folderpath if folderpath else Path.cwd()
-        filepath = folderpath / filename
         try:
-            filepath.write_text(json_dict)
+            filepath.write_text(data)
             return Result.Ok(filepath)
         except Exception as e:
             error = f"Error: {repr(e)}"
