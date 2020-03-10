@@ -51,3 +51,8 @@ def dict_to_param_list(input_dict: Dict) -> str:
         else:
             params.append(f"--{name}={value:}")
     return " ".join(params)
+
+
+def as_dict_list(db_objects):
+    """Convert a list of model objects to a list of dicts."""
+    return [obj.as_dict() for obj in db_objects if hasmethod(obj, "as_dict")]

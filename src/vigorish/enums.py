@@ -85,6 +85,39 @@ class StatusReport(Enum):
         return self.name
 
 
+class S3Task(Enum):
+    """Type of action to perform on an object in an S3 bucket."""
+
+    UPLOAD = auto()
+    DOWNLOAD = auto()
+    DELETE = auto()
+    RENAME = auto()
+
+    def __str__(self):
+        return self.name
+
+
+class FileTask(Enum):
+    """Type of action to perform on a local file."""
+
+    WRITE_FILE = auto()
+    GET_FILE = auto()
+    DECODE_JSON = auto()
+
+    def __str__(self):
+        return self.name
+
+
+class DocFormat(Enum):
+    """Document formats scraped, created and stored by this program."""
+
+    JSON = auto()
+    HTML = auto()
+
+    def __str__(self):
+        return self.name
+
+
 class JobStatus(Enum):
     """Status of a scrape job created by a user."""
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 import errno
 import json
 import os
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -20,7 +21,8 @@ from vigorish.enums import (
 )
 from vigorish.util.list_helpers import report_dict, dict_to_param_list
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import try_parse_int, wrap_text
+from vigorish.util.numeric_functions import validate_year_value
+from vigorish.util.string_helpers import wrap_text
 from vigorish.util.sys_helpers import validate_folder_path
 
 
@@ -40,7 +42,7 @@ YEAR_TOKEN = "{year}"
 DATA_SET_TOKEN = "{data_set}"
 
 
-class FolderPathSetting:
+class FolderPathSetting(ABC):
     _path_str: str
 
     def __init__(self, path: str, data_set: DataSet):
@@ -50,6 +52,25 @@ class FolderPathSetting:
     def __str__(self) -> str:
         return self._path_str
 
+    @abstractmethod
+    def resolve(self, year: Optional[int, str] = None) -> Path:
+        pass
+
+
+class S3FolderPathSetting(FolderPathSetting):
+    def resolve(self, year: Optional[int, str] = None) -> Path:
+        path_str = self._path_str
+        if YEAR_TOKEN in self._path_str:
+            validate_year_value(year)
+            if isinstance(year, int):
+                year = str(year)
+            path_str = path_str.replace(YEAR_TOKEN, year)
+        if DATA_SET_TOKEN in self._path_str:
+            path_str = path_str.replace(DATA_SET_TOKEN, self.data_set.name.lower())
+        return path_str
+
+
+class LocalFolderPathSetting(FolderPathSetting):
     def is_valid(self, year: Optional[int, str]) -> bool:
         absolute_path = self.resolve(year)
         return validate_folder_path(absolute_path)
@@ -57,29 +78,13 @@ class FolderPathSetting:
     def resolve(self, year: Optional[int, str] = None) -> Path:
         path_str = self._path_str
         if YEAR_TOKEN in self._path_str:
-            self._validate_year_value(year)
+            validate_year_value(year)
             if isinstance(year, int):
                 year = str(year)
             path_str = path_str.replace(YEAR_TOKEN, year)
         if DATA_SET_TOKEN in self._path_str:
-            path_str = path_str.replace(DATA_SET_TOKEN, self.data_set.name)
-        return Path(path_str).resolve()
-
-    def _validate_year_value(self, year: Union[int, str]) -> bool:
-        if not year:
-            error = 'No value provided for "year" parameter, unable to resolve folder path.'
-            raise ValueError(error)
-        if isinstance(year, str):
-            year_str = year
-            year = try_parse_int(year_str)
-            if not year:
-                raise ValueError(f'Failed to parse int value from string "{year_str}"')
-        if not isinstance(year, int):
-            raise TypeError(f'"year" parameter must be int value (not "{type(year)}").')
-        if year < 1900:
-            raise ValueError(f"Data is not collected for year={year}")
-        if year > date.today().year:
-            raise ValueError(f'"{year}" is not valid since it is a future year')
+            path_str = path_str.replace(DATA_SET_TOKEN, self.data_set.name.lower())
+        return str(Path(path_str).resolve())
 
 
 @dataclass
@@ -333,7 +338,17 @@ class PathConfigSetting(ConfigSetting):
 
     def current_setting(self, data_set: DataSet) -> FolderPathSetting:
         current_setting = super().current_setting(data_set)
-        return FolderPathSetting(path=current_setting, data_set=data_set)
+        return self.__get_object(self.config_dict.get("CLASS_NAME"), current_setting, data_set)
+
+    @staticmethod
+    def __get_object(
+        class_name: str, current_setting: str, data_set: DataSet
+    ) -> NUMERIC_PY_SETTING:
+        if class_name == "LocalFolderPathSetting":
+            return LocalFolderPathSetting(path=current_setting, data_set=data_set)
+        if class_name == "S3FolderPathSetting":
+            return S3FolderPathSetting(path=current_setting, data_set=data_set)
+        return None
 
 
 class EnumConfigSetting(ConfigSetting):

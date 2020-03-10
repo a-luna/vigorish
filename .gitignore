@@ -8,7 +8,9 @@ venv
 *.db
 *.DS_Store
 node_modules
-.mypy_cache/**/*
+.mypy_cache
+json_storage
+html_storage
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

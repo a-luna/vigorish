@@ -14,7 +14,7 @@ class PitchAppearanceScrapeStatus(Base):
     pitcher_id_mlb = Column(Integer)
     pitch_app_id = Column(String)
     bbref_game_id = Column(String)
-    brooks_game_id = Column(String)
+    bb_game_id = Column(String)
     scraped_pitchfx = Column(Integer, default=0)
     no_pitchfx_data = Column(Integer, default=0)
     pitch_count_pitch_log = Column(Integer, default=0)

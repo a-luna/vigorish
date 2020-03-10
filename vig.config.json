@@ -204,7 +204,7 @@
   },
   "HTML_LOCAL_FOLDER_PATH": {
     "CONFIG_TYPE": "Path",
-    "CLASS_NAME": "FolderPathSetting",
+    "CLASS_NAME": "LocalFolderPathSetting",
     "DESCRIPTION": "Local folder path where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
     "SAME_SETTING_FOR_ALL_DATA_SETS": true,
     "ALL": "/Users/aaronluna/Desktop/vigorish/html_storage/{year}/{data_set}",
@@ -216,7 +216,7 @@
   },
   "HTML_S3_FOLDER_PATH": {
     "CONFIG_TYPE": "Path",
-    "CLASS_NAME": "FolderPathSetting",
+    "CLASS_NAME": "S3FolderPathSetting",
     "DESCRIPTION": "Path to a folder within an S3 bucket where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
     "SAME_SETTING_FOR_ALL_DATA_SETS": true,
     "ALL": "{year}/{data_set}/html",
@@ -240,7 +240,7 @@
   },
   "JSON_LOCAL_FOLDER_PATH": {
     "CONFIG_TYPE": "Path",
-    "CLASS_NAME": "FolderPathSetting",
+    "CLASS_NAME": "LocalFolderPathSetting",
     "DESCRIPTION": "Local folder path where parsed JSON data should be stored.",
     "SAME_SETTING_FOR_ALL_DATA_SETS": true,
     "ALL": "/Users/aaronluna/Desktop/vigorish/json_storage/{year}/{data_set}",
@@ -252,7 +252,7 @@
   },
   "JSON_S3_FOLDER_PATH": {
     "CONFIG_TYPE": "Path",
-    "CLASS_NAME": "FolderPathSetting",
+    "CLASS_NAME": "S3FolderPathSetting",
     "DESCRIPTION": "Path to a folder within an S3 bucket where parsed JSON data should be stored.",
     "SAME_SETTING_FOR_ALL_DATA_SETS": true,
     "ALL": "{year}/{data_set}",

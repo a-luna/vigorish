@@ -1,6 +1,10 @@
 """Helpful datetime converters and formatters."""
 from datetime import datetime, timedelta, timezone
 
+from dateutil import tz
+
+TIME_ZONE_NEW_YORK = tz.gettz("America/New_York")
+
 
 def get_date_range(start, end, inc=timedelta(days=1)):
     result = []

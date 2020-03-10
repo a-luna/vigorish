@@ -11,24 +11,11 @@ from string import Template
 import boto3
 from botocore.exceptions import ClientError
 
-from vigorish.enums import DataSet
+from vigorish.enums import DataSet, DocFormat, S3Task
 from vigorish.models.status_date import DateScrapeStatus
 from vigorish.models.status_pitch_appearance import PitchAppearanceScrapeStatus
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2, DATE_ONLY_TABLE_ID
-from vigorish.scrape.file_util import (
-    read_brooks_games_for_date_from_file,
-    write_brooks_games_for_date_to_file,
-    read_bbref_games_for_date_from_file,
-    write_bbref_games_for_date_to_file,
-    read_bbref_boxscore_from_file,
-    write_bbref_boxscore_to_file,
-    T_BROOKS_PITCHLOGSFORGAME_FILENAME,
-    read_brooks_pitch_logs_for_game_from_file,
-    write_brooks_pitch_logs_for_game_to_file,
-    T_BROOKS_PITCHFXLOG_FILENAME,
-    read_brooks_pitchfx_log_from_file,
-    write_brooks_pitchfx_log_to_file,
-)
+from vigorish.scrape.local_file_helper import LocalFileHelper
 from vigorish.util.regex import PITCH_APP_REGEX
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
@@ -38,45 +25,25 @@ from vigorish.util.string_helpers import (
 )
 
 
-class S3Task(Enum):
-    UPLOAD = auto()
-    DOWNLOAD = auto()
-    DELETE = auto()
-    RENAME = auto()
-
-
-class DocFormat(Enum):
-    JSON = auto()
-    HTML = auto()
-
-
 class S3Helper:
     """Perform CRUD operations on objects stored in an S3 bucket."""
 
     def __init__(self, config_file):
         self.config_file = config_file
-        self.bucket_name = self.config_file.all_settings.get("self.bucket_name")
+        self.bucket_name = self.config_file.all_settings.get("S3_BUCKET").current_setting(
+            DataSet.ALL
+        )
         self.client = boto3.client("s3")
         self.resource = boto3.resource("s3")
         self.bucket = self.resource.Bucket(self.bucket_name)
+        self.file_helper = LocalFileHelper(config_file)
 
     @property
-    def local_folder_path_dict(self):
-        html_local_folder = self.config_file.all_settings.get("HTML_LOCAL_FOLDER_PATH")
-        json_local_folder = self.config_file.all_settings.get("JSON_LOCAL_FOLDER_PATH")
-        html_local_folder_dict = {
-            data_set: html_local_folder.current_setting(data_set=data_set)
-            for data_set in DataSet
-            if data_set != DataSet.ALL
-        }
-        json_local_folder_dict = {
-            data_set: json_local_folder.current_setting(data_set=data_set)
-            for data_set in DataSet
-            if data_set != DataSet.ALL
-        }
+    def s3_task_dict(self):
         return {
-            DocFormat.HTML: html_local_folder_dict,
-            DocFormat.JSON: json_local_folder_dict,
+            S3Task.UPLOAD: self.upload_to_s3,
+            S3Task.DOWNLOAD: self.download_from_s3,
+            S3Task.DELETE: self.delete_from_s3,
         }
 
     @property
@@ -98,46 +65,19 @@ class S3Helper:
             DocFormat.JSON: json_s3_folder_dict,
         }
 
-    @property
-    def file_name_dict(self):
-        html_file_name_dict = {
-            DataSet.BROOKS_GAMES_FOR_DATE: self.get_file_name_html_brooks_games_for_date,
-            DataSet.BROOKS_PITCH_LOGS: self.get_file_name_html_brooks_pitch_log,
-            DataSet.BROOKS_PITCHFX: self.get_file_name_html_brooks_pitchfx,
-            DataSet.BBREF_GAMES_FOR_DATE: self.get_file_name_html_bbref_games_for_date,
-            DataSet.BBREF_BOXSCORES: self.get_file_name_html_bbref_boxscore,
-        }
-        json_file_name_dict = {
-            DataSet.BROOKS_GAMES_FOR_DATE: self.get_file_name_json_brooks_games_for_date,
-            DataSet.BROOKS_PITCH_LOGS: self.get_file_name_json_brooks_pitch_log_for_game,
-            DataSet.BROOKS_PITCHFX: self.get_file_name_json_brooks_pitchfx,
-            DataSet.BBREF_GAMES_FOR_DATE: self.get_file_name_json_bbref_games_for_date,
-            DataSet.BBREF_BOXSCORES: self.get_file_name_json_bbref_boxscore,
-        }
-        return {
-            DocFormat.HTML: html_file_name_dict,
-            DocFormat.JSON: json_file_name_dict,
-        }
-
     def get_brooks_games_for_date_from_s3(self, game_date, delete_file=True):
         """Retrieve BrooksGamesForDate object from json encoded file stored in S3."""
         result = self.download_json_brooks_games_for_date(game_date)
         if result.failure:
             return result
-        filepath = result.value
-        return read_brooks_games_for_date_from_file(
-            game_date, folderpath=filepath.parent, delete_file=delete_file
-        )
+        return self.file_helper.read_brooks_games_for_date_from_file(game_date, delete_file)
 
-    def get_brooks_pitch_logs_for_game_from_s3(self, brooks_game_id, delete_file=True):
+    def get_brooks_pitch_logs_for_game_from_s3(self, bb_game_id, delete_file=True):
         """Retrieve BrooksPitchLogsForGame object from json encoded file stored in S3."""
-        result = self.download_json_brooks_pitch_logs_for_game(brooks_game_id)
+        result = self.download_json_brooks_pitch_logs_for_game(bb_game_id)
         if result.failure:
             return result
-        filepath = result.value
-        return read_brooks_pitch_logs_for_game_from_file(
-            brooks_game_id, folderpath=filepath.parent, delete_file=delete_file
-        )
+        return self.file_helper.read_brooks_pitch_logs_for_game_from_file(bb_game_id, delete_file)
 
     def get_all_brooks_pitch_logs_for_date_from_s3(self, session, game_date, delete_file=True):
         """Retrieve a list of BrooksPitchLogsForGame objects for all games that occurred on a date."""
@@ -155,10 +95,7 @@ class S3Helper:
         result = self.download_json_brooks_pitchfx_log(pitch_app_id)
         if result.failure:
             return result
-        filepath = result.value
-        return read_brooks_pitchfx_log_from_file(
-            pitch_app_id, folderpath=filepath.parent, delete_file=delete_file
-        )
+        return self.file_helper.read_brooks_pitchfx_log_from_file(pitch_app_id, delete_file)
 
     def get_all_pitchfx_logs_for_game_from_s3(self, session, bbref_game_id):
         pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
@@ -185,10 +122,7 @@ class S3Helper:
         result = self.download_json_bbref_games_for_date(game_date)
         if result.failure:
             return result
-        filepath = result.value
-        return read_bbref_games_for_date_from_file(
-            game_date, folderpath=filepath.parent, delete_file=delete_file
-        )
+        return self.file_helper.read_bbref_games_for_date_from_file(game_date, delete_file)
 
     def get_bbref_boxscore_from_s3(self, bbref_game_id, delete_file=True):
         """Retrieve BBRefBoxscore object from json encoded file stored in S3."""
@@ -196,9 +130,7 @@ class S3Helper:
         if result.failure:
             return result
         filepath = result.value
-        return read_bbref_boxscore_from_file(
-            bbref_game_id, folderpath=filepath.parent, delete_file=delete_file
-        )
+        return self.file_helper.read_bbref_boxscore_from_file(bbref_game_id, delete_file)
 
     def get_all_brooks_dates_scraped_from_s3(self, year):
         json_folder = self.get_s3_folder_path(
@@ -209,7 +141,7 @@ class S3Helper:
         )
         scraped_dates = [
             parser.parse(Path(obj.key).stem[-10:])
-            for obj in bucket.objects.all()
+            for obj in self.bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
         return Result.Ok(scraped_dates)
@@ -223,7 +155,7 @@ class S3Helper:
         )
         scraped_gameids = [
             Path(obj.key).stem
-            for obj in bucket.objects.all()
+            for obj in self.bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
         return Result.Ok(scraped_gameids)
@@ -237,7 +169,7 @@ class S3Helper:
         )
         scraped_pitch_app_ids = [
             Path(obj.key).stem
-            for obj in bucket.objects.all()
+            for obj in self.bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
         return Result.Ok(scraped_pitch_app_ids)
@@ -251,7 +183,7 @@ class S3Helper:
         )
         scraped_dates = [
             parser.parse(Path(obj.key).stem[-10:])
-            for obj in bucket.objects.all()
+            for obj in self.bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
         return Result.Ok(scraped_dates)
@@ -265,7 +197,7 @@ class S3Helper:
         )
         scraped_game_ids = [
             Path(obj.key).stem
-            for obj in bucket.objects.all()
+            for obj in self.bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
         return Result.Ok(scraped_game_ids)
@@ -292,7 +224,7 @@ class S3Helper:
             doc_format=DocFormat.JSON,
             data_set=DataSet.BROOKS_PITCH_LOGS,
             game_date=pitch_logs_for_game.game_date,
-            brooks_game_id=pitch_logs_for_game.brooks_game_id,
+            bb_game_id=pitch_logs_for_game.bb_game_id,
         )
 
     def upload_brooks_pitchfx_log(self, pitchfx_log):
@@ -355,7 +287,7 @@ class S3Helper:
 
     def download_html_brooks_pitch_log_page(self, pitch_app_id):
         """Download raw HTML for brooks pitch log page for a single pitching appearance."""
-        result = validate_brooks_game_id(brooks_game_id)
+        result = validate_brooks_game_id(bb_game_id)
         if result.failure:
             return result
         game_dict = result.value
@@ -367,10 +299,10 @@ class S3Helper:
             pitch_app_id=pitch_app_id,
         )
 
-    def download_json_brooks_pitch_logs_for_game(self, brooks_game_id):
+    def download_json_brooks_pitch_logs_for_game(self, bb_game_id):
         """Download a file from S3 containing json encoded BrooksPitchLogsForGame object."""
-        result = validate_brooks_game_id(brooks_game_id)
-        if result.value:
+        result = validate_brooks_game_id(bb_game_id)
+        if result.failure:
             return result
         game_dict = result.value
         return self.perform_task(
@@ -378,7 +310,7 @@ class S3Helper:
             data_set=DataSet.BROOKS_PITCH_LOGS,
             doc_format=DocFormat.JSON,
             game_date=game_dict["game_date"],
-            brooks_game_id=brooks_game_id,
+            bb_game_id=bb_game_id,
         )
 
     def download_html_brooks_pitchfx_log(self, pitch_app_id):
@@ -429,8 +361,8 @@ class S3Helper:
 
     def download_html_bbref_boxscore(self, bbref_game_id):
         """Download raw HTML for bbref daily scoreboard page."""
-        result = validate_bbref_game_id(id_dict["game_id"])
-        if result.value:
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
             return result
         game_dict = result.value
         return self.perform_task(
@@ -443,8 +375,8 @@ class S3Helper:
 
     def download_json_bbref_boxscore(self, bbref_game_id):
         """Download a file from S3 containing json encoded BBRefBoxscore object."""
-        result = validate_bbref_game_id(id_dict["game_id"])
-        if result.value:
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
             return result
         game_dict = result.value
         return self.perform_task(
@@ -463,10 +395,10 @@ class S3Helper:
             game_date=game_date,
         )
 
-    def delete_brooks_pitch_logs_for_game_from_s3(self, brooks_game_id):
+    def delete_brooks_pitch_logs_for_game_from_s3(self, bb_game_id):
         """Delete brooks pitch logs for game from s3."""
-        result = validate_brooks_game_id(brooks_game_id)
-        if result.value:
+        result = validate_brooks_game_id(bb_game_id)
+        if result.failure:
             return result
         game_dict = result.value
         return self.perform_task(
@@ -474,7 +406,7 @@ class S3Helper:
             data_set=DataSet.BROOKS_PITCH_LOGS,
             doc_format=DocFormat.JSON,
             game_date=game_dict["game_date"],
-            brooks_game_id=brooks_game_id,
+            bb_game_id=bb_game_id,
         )
 
     def delete_brooks_pitchfx_log_from_s3(self, pitch_app_id):
@@ -502,8 +434,8 @@ class S3Helper:
 
     def delete_bbref_boxscore_from_s3(self, bbref_game_id):
         """Delete a bbref boxscore from s3."""
-        result = validate_bbref_game_id(id_dict["game_id"])
-        if result.value:
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
             return result
         game_dict = result.value
         return self.perform_task(
@@ -539,139 +471,71 @@ class S3Helper:
         return rename_s3_object(old_key, new_key)
 
     def perform_task(
-        self, task, data_set, doc_format, game_date, bbref_game_id, brooks_game_id, pitch_app_id,
+        self,
+        task,
+        data_set,
+        doc_format,
+        game_date,
+        bbref_game_id=None,
+        bb_game_id=None,
+        pitch_app_id=None,
     ):
         s3_key = self.get_object_key(
             data_set=data_set,
             doc_format=doc_format,
             game_date=game_date,
             bbref_game_id=bbref_game_id,
-            brooks_game_id=brooks_game_id,
+            bb_game_id=bb_game_id,
             pitch_app_id=pitch_app_id,
         )
-        local_file_path = self.get_local_file_path(
+        local_file_path = self.file_helper.get_local_file_path(
             data_set=data_set,
             doc_format=doc_format,
             game_date=game_date,
             bbref_game_id=bbref_game_id,
-            brooks_game_id=brooks_game_id,
+            bb_game_id=bb_game_id,
             pitch_app_id=pitch_app_id,
         )
-        if task == S3Task.UPLOAD:
-            return upload_to_s3(s3_key, local_file_path)
-
-        if task == S3Task.DOWNLOAD:
-            return download_from_s3(s3_key, local_file_path)
-
-        if task == S3Task.DELETE:
-            return delete_from_s3(s3_key)
+        return self.s3_task_dict[task](s3_key, local_file_path)
 
     def get_object_key(
-        self, data_set, doc_format, game_date, bbref_game_id, brooks_game_id, pitch_app_id
+        self,
+        data_set,
+        doc_format,
+        game_date,
+        bbref_game_id=None,
+        bb_game_id=None,
+        pitch_app_id=None,
     ):
-        folder_path = self.get_s3_folder_path(
+        folderpath = self.get_s3_folder_path(
             year=game_date.year, data_set=data_set, doc_format=doc_format
         )
-        file_name = self.get_file_name(
+        filename = self.file_helper.get_file_name(
             data_set=data_set,
             doc_format=doc_format,
             game_date=game_date,
             bbref_game_id=bbref_game_id,
-            brooks_game_id=brooks_game_id,
+            bb_game_id=bb_game_id,
             pitch_app_id=pitch_app_id,
         )
-        return f"{folder_path}/{file_name}"
+        return f"{folderpath}/{filename}"
 
     def get_s3_folder_path(self, year, data_set, doc_format):
         return self.s3_folder_path_dict[doc_format][data_set].resolve(year=year)
 
-    def get_local_file_path(
-        self, data_set, doc_format, game_date, bbref_game_id, brooks_game_id, pitch_app_id
-    ):
-        folder_path = self.get_local_folder_path(
-            year=game_date.year, data_set=data_set, doc_format=doc_format
-        )
-        file_name = self.get_file_name(
-            data_set=data_set,
-            doc_format=doc_format,
-            game_date=game_date,
-            bbref_game_id=bbref_game_id,
-            brooks_game_id=brooks_game_id,
-            pitch_app_id=pitch_app_id,
-        )
-        return f"{folder_path}/{file_name}"
-
-    def get_local_folder_path(self, year, data_set, doc_format):
-        return self.local_folder_path_dict[doc_format][data_set].resolve(year=year)
-
-    def get_file_name(
-        self, data_set, doc_format, game_date, bbref_game_id, brooks_game_id, pitch_app_id
-    ):
-        identifier = self.get_file_identifier(
-            game_date=game_date,
-            bbref_game_id=bbref_game_id,
-            brooks_game_id=brooks_game_id,
-            pitch_app_id=pitch_app_id,
-        )
-        return self.file_name_dict[doc_format][data_set](identifier)
-
-    def get_file_identifier(self, game_date, bbref_game_id, brooks_game_id, pitch_app_id):
-        if pitch_app_id:
-            return pitch_app_id
-        elif brooks_game_id:
-            return brooks_game_id
-        elif bbref_game_id:
-            return bbref_game_id
-        elif game_date:
-            return game_date
-        else:
-            raise ValueError(
-                "Identifying value was not provided, unable to construct file name. (S3Helper.get_file_identifier)"
-            )
-
-    def get_file_name_html_brooks_games_for_date(self, game_date):
-        return f"{game_date.strftime(DATE_ONLY_TABLE_ID)}.html"
-
-    def get_file_name_json_brooks_games_for_date(self, game_date):
-        return f"brooks_games_for_date_{game_date.strftime(DATE_ONLY)}.json"
-
-    def get_file_name_html_brooks_pitch_log(self, pitch_app_id):
-        return f"{pitch_app_id}.html"
-
-    def get_file_name_json_brooks_pitch_log_for_game(self, brooks_game_id):
-        return f"{brooks_game_id}.json"
-
-    def get_file_name_html_brooks_pitchfx(self, pitch_app_id):
-        return f"{pitch_app_id}.html"
-
-    def get_file_name_json_brooks_pitchfx(self, pitch_app_id):
-        return f"{pitch_app_id}.json"
-
-    def get_file_name_html_bbref_games_for_date(self, game_date):
-        return f"{game_date.strftime(DATE_ONLY_TABLE_ID)}.html"
-
-    def get_file_name_json_bbref_games_for_date(self, game_date):
-        return f"bbref_games_for_date_{game_date.strftime(DATE_ONLY)}.json"
-
-    def get_file_name_html_bbref_boxscore(self, bbref_game_id):
-        return f"{bbref_game_id}.html"
-
-    def get_file_name_json_bbref_boxscore(self, bbref_game_id):
-        return f"{bbref_game_id}.json"
-
     def upload_to_s3(self, s3_key, filepath):
         """Upload the specified file to S3. """
         try:
-            self.client.upload_file(str(filepath), self.bucket_name, s3_key)
-            filepath.unlink()
+            self.client.upload_file(filepath, self.bucket_name, s3_key)
+            Path(filepath).unlink()
             return Result.Ok()
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
     def download_from_s3(self, s3_key, filepath):
         try:
-            self.resource.Bucket(self.bucket_name).download_file(s3_key, str(filepath))
-            return Result.Ok(filepath)
+            self.resource.Bucket(self.bucket_name).download_file(s3_key, filepath)
+            return Result.Ok(Path(filepath))
         except ClientError as e:
             if e.response["Error"]["Code"] == "404":
                 error = f'The object "{s3_key}" does not exist.'
@@ -679,7 +543,7 @@ class S3Helper:
                 error = repr(e)
             return Result.Fail(error)
 
-    def delete_from_s3(self, s3_key):
+    def delete_from_s3(self, s3_key, filepath):
         try:
             self.resource.Object(self.bucket_name, s3_key).delete()
             return Result.Ok()

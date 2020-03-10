@@ -24,7 +24,7 @@ class GameHalfInning(Base):
     team_batting_id_br = Column(String)
     team_pitching_id_br = Column(String)
     bbref_game_id = Column(String)
-    brooks_game_id = Column(String)
+    bb_game_id = Column(String)
     boxscore_id = Column(Integer, ForeignKey("boxscore.id"))
 
     game_events = relationship("GameEvent", backref="inning")

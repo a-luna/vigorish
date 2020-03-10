@@ -21,7 +21,7 @@ class GameSubstitution(Base):
     incoming_player_pos = Column(Enum(DefensePosition), default=DefensePosition.NONE)
     outgoing_player_pos = Column(Enum(DefensePosition), default=DefensePosition.NONE)
     bbref_game_id = Column(String)
-    brooks_game_id = Column(String)
+    bb_game_id = Column(String)
 
     db_inning_id = Column(Integer, ForeignKey("game_inning.id"))
     incoming_player_id = Column(Integer, ForeignKey("player.id"))

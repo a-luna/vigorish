@@ -1,5 +1,109 @@
 """Constant values that are referenced from multiple places."""
 
+
+PBAR_LEN_DICT = dict(
+    find_games_for_date=33,
+    bbref_games_for_date=34,
+    bbref_boxscores=29,
+    brooks_games_for_date=35,
+    brooks_pitch_logs=31,
+    brooks_pitchfx=28,
+)
+
+TEAM_ID_DICT = {
+    "CHW": "CHA",
+    "CHC": "CHN",
+    "KCR": "KCA",
+    "LAA": "ANA",
+    "LAD": "LAN",
+    "NYY": "NYA",
+    "NYM": "NYN",
+    "SDP": "SDN",
+    "SFG": "SFN",
+    "STL": "SLN",
+    "TBR": "TBA",
+    "WSN": "WAS",
+}
+
+PITCH_TYPE_DICT = dict(
+    CH="Changeup",
+    CU="Curveball",
+    EP="Eephus",
+    FA="Fastball",
+    FC="Cutter",
+    FF="Four-seam Fastball",
+    FS="Splitter",
+    FT="Two-seam Fastball",
+    FO="Forkball",
+    IN="Intent ball",
+    KC="Knuckle ball Curve",
+    KN="Knuckle ball",
+    PO="Pitch Out",
+    SC="Screwball",
+    SI="Sinker",
+    SL="Slider",
+)
+
+AT_BAT_RESULTS_ALL = [
+    "Bunt Groundout",
+    "Bunt Lineout",
+    "Bunt Pop Out",
+    "Double",
+    "Double Play",
+    "Field Error",
+    "Fielders Choice",
+    "Fielders Choice Out",
+    "Flyout",
+    "Forceout",
+    "Grounded Into DP",
+    "Groundout",
+    "Hit By Pitch",
+    "Home Run",
+    "Intent Walk",
+    "Lineout",
+    "Pop Out",
+    "Runner Out",
+    "Sac Bunt",
+    "Sac Fly",
+    "Sac Fly DP",
+    "Single",
+    "Strikeout",
+    "Strikeout - DP",
+    "Triple",
+    "Walk",
+]
+
+PPB_PITCH_LOG_DICT = {
+    "C": {"description": "Called strike", "pitch_counts": 1},
+    "S": {"description": "Swinging strike", "pitch_counts": 1},
+    "F": {"description": "Foul", "pitch_counts": 1},
+    "B": {"description": "Ball", "pitch_counts": 1},
+    "X": {"description": "Ball put into play by batter", "pitch_counts": 1},
+    "T": {"description": "Foul tip", "pitch_counts": 1},
+    "K": {"description": "Strike (unknown type)", "pitch_counts": 1},
+    "I": {"description": "Intentional ball", "pitch_counts": 1},
+    "H": {"description": "Hit batter", "pitch_counts": 1},
+    "L": {"description": "Foul bunt", "pitch_counts": 1},
+    "M": {"description": "Missed bunt attempt", "pitch_counts": 1},
+    "N": {"description": "No pitch (on balks and interference calls)", "pitch_counts": 0,},
+    "O": {"description": "Foul tip on bunt", "pitch_counts": 1},
+    "P": {"description": "Pitchout", "pitch_counts": 1},
+    "Q": {"description": "Swinging on pitchout", "pitch_counts": 1},
+    "R": {"description": "Foul ball on pitchout", "pitch_counts": 1},
+    "U": {"description": "Unknown or missed pitch", "pitch_counts": 1},
+    "V": {"description": "(Called ball because pitcher went to his mouth)", "pitch_counts": 0,},
+    "Y": {"description": "Ball put into play on pitchout", "pitch_counts": 1},
+    "1": {"description": "(Pickoff throw to first)", "pitch_counts": 0},
+    "2": {"description": "(Pickoff throw to second)", "pitch_counts": 0},
+    "3": {"description": "(Pickoff throw to third)", "pitch_counts": 0},
+    ">": {"description": "(Runner going on the pitch)", "pitch_counts": 0},
+    "+": {"description": "(Pickoff throw by the catcher)", "pitch_counts": 0},
+    "*": {"description": "(The following pitch was blocked by the catcher)", "pitch_counts": 0,},
+    ".": {"description": "(Play not involving the batter)", "pitch_counts": 0},
+}
+
+VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dome"]
+
 CLI_COLORS = [
     "black",
     "red",
