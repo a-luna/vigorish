@@ -10,16 +10,15 @@ from vigorish.util.result import Result
 
 
 class ConfigSettingsMenu(Menu):
-    def __init__(self, config_file: ConfigFile) -> None:
-        self.config_file = config_file
+    def __init__(self, config: ConfigFile) -> None:
+        self.config = config
         self.menu_text = "You can modify any setting in the list below:\n"
         self.menu_item_text = "Settings"
         self.menu_item_emoji = EMOJI_DICT.get("TOOLS", "")
 
     def populate_menu_items(self) -> None:
         self.menu_items = [
-            CurrentSettingMenu(name, self.config_file)
-            for name in self.config_file.all_settings.keys()
+            CurrentSettingMenu(name, self.config) for name in self.config.all_settings.keys()
         ]
         self.menu_items.append(ReturnToParentMenuItem("Main Menu "))
         self.menu_items.insert(0, ReturnToParentMenuItem("Main Menu"))

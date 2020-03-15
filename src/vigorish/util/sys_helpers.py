@@ -15,14 +15,14 @@ def validate_folder_path(input_path: Union[Path, str]):
     if not input_path:
         return Result.Fail("NoneType or empty string is not a valid folder path.")
     if isinstance(input_path, str):
-        folderpath = Path(input_path).resolve()
+        folderpath = Path(input_path)
     elif not isinstance(input_path, Path):
         error = f'"input_path" parameter must be str or Path value (not "{type(input_path)}").'
         return Result.Fail(error)
     else:
         folderpath = input_path
     if not folderpath.exists():
-        return Result.Fail(f'No directory exists at path: "{folderpath}"')
+        return Result.Fail(f'Directory does NOT exist: "{folderpath}"')
     if not folderpath.is_dir():
         return Result.Fail(f'The provided path is NOT a directory: "{folderpath}"')
     if is_windows() and folderpath.is_reserved():
@@ -30,10 +30,16 @@ def validate_folder_path(input_path: Union[Path, str]):
     return Result.Ok(folderpath)
 
 
-def validate_file_path(input):
-    if not input:
+def validate_file_path(input_path: Union[Path, str]):
+    if not input_path:
         return Result.Fail("NoneType or empty string is not a valid file path.")
-    filepath = Path(input).resolve()
+    if isinstance(input_path, str):
+        filepath = Path(input_path)
+    elif not isinstance(input_path, Path):
+        error = f'"input_path" parameter must be str or Path value (not "{type(input_path)}").'
+        return Result.Fail(error)
+    else:
+        filepath = input_path
     if not filepath.exists():
         return Result.Fail(f'File does not exist: "{filepath}"')
     if not filepath.is_file():

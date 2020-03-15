@@ -9,10 +9,12 @@ from sqlalchemy.orm import sessionmaker
 
 from vigorish.cli.menus.main_menu import MainMenu
 from vigorish.cli.util import print_message
-from vigorish.config.database import get_db_url, initialize_database
+from vigorish.config.database import get_db_url, initialize_database, Base
 from vigorish.config.types import ConfigFile
 from vigorish.constants import CLI_COLORS
-from vigorish.config.database import Base
+from vigorish.data.file_helper import FileHelper
+from vigorish.data.scraped_data import ScrapedData
+from vigorish.scrape.url_builder import UrlBuilder
 
 
 APP_FOLDER = Path(__file__).parent.parent
@@ -31,7 +33,16 @@ def cli(ctx):
     engine = create_engine(get_db_url())
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
-    ctx.obj = {"config": config, "engine": engine, "session": session}
+    file_helper = FileHelper(config)
+    scraped_data = ScrapedData(db=session, config=config, file_helper=file_helper)
+    url_builder = UrlBuilder(config=config, file_helper=file_helper)
+    ctx.obj = {
+        "config": config,
+        "data": scraped_data,
+        "url_builder": url_builder,
+        "engine": engine,
+        "session": session,
+    }
 
 
 @cli.command()

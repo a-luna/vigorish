@@ -192,7 +192,7 @@
   },
   "HTML_STORAGE": {
     "CONFIG_TYPE": "Enum",
-    "ENUM_NAME": "HtmlStorage",
+    "ENUM_NAME": "HtmlStorageOption",
     "DESCRIPTION": "By default, HTML is NOT saved after it has been parsed. However, you can choose to save scraped HTML in a local folder, an S3 bucket, or both.",
     "SAME_SETTING_FOR_ALL_DATA_SETS": true,
     "ALL": "BOTH",

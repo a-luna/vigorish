@@ -9,10 +9,10 @@ from vigorish.util.result import Result
 
 
 class CurrentSettingMenu(Menu):
-    def __init__(self, setting_name: str, config_file: ConfigFile) -> None:
+    def __init__(self, setting_name: str, config: ConfigFile) -> None:
         self.setting_name = setting_name
-        self.config_file = config_file
-        self.setting = self.config_file.all_settings.get(self.setting_name)
+        self.config = config
+        self.setting = self.config.all_settings.get(self.setting_name)
         self.menu_text = self.setting.menu_text
         self.menu_item_text = self.setting.setting_name_title
         self.menu_item_emoji = CONFIG_EMOJI_DICT.get(self.setting_name, "")
@@ -30,11 +30,11 @@ class CurrentSettingMenu(Menu):
         return result
 
     def populate_menu_items(self) -> None:
-        self.setting = self.config_file.all_settings.get(self.setting_name)
+        self.setting = self.config.all_settings.get(self.setting_name)
         self.menu_items = []
-        self.menu_items.append(ChangeSetttingMenuItem(self.setting_name, self.config_file))
+        self.menu_items.append(ChangeSetttingMenuItem(self.setting_name, self.config))
         self.menu_items.append(ReturnToParentMenuItem("All Settings"))
 
     def __update_menu_text(self):
-        self.setting = self.config_file.all_settings.get(self.setting_name)
+        self.setting = self.config.all_settings.get(self.setting_name)
         self.menu_text = self.setting.menu_text

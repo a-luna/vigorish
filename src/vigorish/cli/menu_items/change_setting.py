@@ -19,11 +19,11 @@ NUMERIC_SETTING_UNITS = {
 
 
 class ChangeSetttingMenuItem(MenuItem):
-    def __init__(self, setting_name: str, config_file: ConfigFile) -> None:
+    def __init__(self, setting_name: str, config: ConfigFile) -> None:
         self.menu_item_text = "Change Setting"
         self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
-        self.config_file = config_file
-        setting = self.config_file.all_settings.get(setting_name)
+        self.config = config
+        setting = self.config.all_settings.get(setting_name)
         self.setting_name_title = setting.setting_name_title
         self.setting_name = setting.setting_name
         self.data_type = setting.data_type
@@ -56,7 +56,7 @@ class ChangeSetttingMenuItem(MenuItem):
         user_selections = self.__get_new_setting(data_sets)
         updated_settings = self.__get_updated_settings(user_selections)
         for data_set, new_value in updated_settings:
-            result = self.config_file.change_setting(self.setting_name, data_set, new_value)
+            result = self.config.change_setting(self.setting_name, data_set, new_value)
             if result.failure:
                 return result
         return Result.Ok(self.exit_menu)

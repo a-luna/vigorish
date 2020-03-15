@@ -40,7 +40,7 @@ class ScrapeCondition(Enum):
         return self.name
 
 
-class HtmlStorage(Enum):
+class HtmlStorageOption(Enum):
     """Allowed values for HTML_STORAGE config setting."""
 
     LOCAL_FOLDER = auto()
@@ -85,7 +85,18 @@ class StatusReport(Enum):
         return self.name
 
 
-class S3Task(Enum):
+class FileTask(Enum):
+    """Generic file actions that are mapped to LocalFileTask and S3FileTask file actions."""
+
+    STORE_FILE = auto()
+    GET_FILE = auto()
+    REMOVE_FILE = auto()
+
+    def __str__(self):
+        return self.name
+
+
+class S3FileTask(Enum):
     """Type of action to perform on an object in an S3 bucket."""
 
     UPLOAD = auto()
@@ -97,11 +108,12 @@ class S3Task(Enum):
         return self.name
 
 
-class FileTask(Enum):
+class LocalFileTask(Enum):
     """Type of action to perform on a local file."""
 
     WRITE_FILE = auto()
-    GET_FILE = auto()
+    READ_FILE = auto()
+    DELETE_FILE = auto()
     DECODE_JSON = auto()
 
     def __str__(self):

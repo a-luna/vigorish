@@ -13,7 +13,7 @@ from typing import List, Mapping, Optional, Union, Tuple, TypeVar
 from vigorish.enums import (
     ConfigType,
     DataSet,
-    HtmlStorage,
+    HtmlStorageOption,
     JsonStorage,
     ScrapeCondition,
     ScrapeTool,
@@ -34,7 +34,9 @@ NUMERIC_JSON_SETTING = Mapping[str, NUMERIC_JSON_VALUE]
 JSON_CONFIG_VALUE = Union[BASE_JSON_SETTING, NUMERIC_JSON_SETTING]
 JSON_CONFIG_SETTING = Mapping[str, JSON_CONFIG_VALUE]
 NUMERIC_PROMPT_VALUE = Tuple[bool, bool, int, int, int]
-ENUM_PY_SETTING = Union[None, ScrapeCondition, HtmlStorage, JsonStorage, ScrapeTool, StatusReport]
+ENUM_PY_SETTING = Union[
+    None, ScrapeCondition, HtmlStorageOption, JsonStorage, ScrapeTool, StatusReport
+]
 TConfigSetting = TypeVar("TConfigSetting", bound="ConfigSetting")
 
 
@@ -361,8 +363,8 @@ class EnumConfigSetting(ConfigSetting):
         enum_name = self.config_dict.get("ENUM_NAME")
         if enum_name == "ScrapeCondition":
             return [member for member in ScrapeCondition]
-        if enum_name == "HtmlStorage":
-            return [member for member in HtmlStorage]
+        if enum_name == "HtmlStorageOption":
+            return [member for member in HtmlStorageOption]
         if enum_name == "JsonStorage":
             return [member for member in JsonStorage]
         if enum_name == "ScrapeTool":
@@ -379,8 +381,8 @@ class EnumConfigSetting(ConfigSetting):
     def __get_enum(enum_name: str, value: str) -> ENUM_PY_SETTING:
         if enum_name == "ScrapeCondition":
             return ScrapeCondition[value]
-        if enum_name == "HtmlStorage":
-            return HtmlStorage[value]
+        if enum_name == "HtmlStorageOption":
+            return HtmlStorageOption[value]
         if enum_name == "JsonStorage":
             return JsonStorage[value]
         if enum_name == "ScrapeTool":
