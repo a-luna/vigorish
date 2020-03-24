@@ -16,7 +16,7 @@ class HtmlStorage:
         self.file_helper = file_helper
 
     def write_html_brooks_games_for_date_local_file(self, game_date, html):
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
             doc_format=DocFormat.HTML,
@@ -29,7 +29,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_PITCH_LOGS,
             doc_format=DocFormat.HTML,
@@ -43,7 +43,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_PITCHFX,
             doc_format=DocFormat.HTML,
@@ -53,7 +53,7 @@ class HtmlStorage:
         )
 
     def write_html_bbref_games_for_date_local_file(self, game_date, html):
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
             doc_format=DocFormat.HTML,
@@ -66,7 +66,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BBREF_BOXSCORES,
             doc_format=DocFormat.HTML,
@@ -76,7 +76,7 @@ class HtmlStorage:
         )
 
     def get_html_brooks_games_for_date_local_file(self, game_date):
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
             doc_format=DocFormat.HTML,
@@ -88,7 +88,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BROOKS_PITCH_LOGS,
             doc_format=DocFormat.HTML,
@@ -101,7 +101,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BROOKS_PITCHFX,
             doc_format=DocFormat.HTML,
@@ -110,7 +110,7 @@ class HtmlStorage:
         )
 
     def get_html_bbref_games_for_date_local_file(self, game_date):
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
             doc_format=DocFormat.HTML,
@@ -122,7 +122,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_local_file_task(
+        return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BBREF_BOXSCORES,
             doc_format=DocFormat.HTML,
@@ -134,7 +134,7 @@ class HtmlStorage:
         result = write_html_brooks_games_for_date(game_date, html)
         if result.failure:
             return result
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             doc_format=DocFormat.HTML,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
@@ -149,7 +149,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             doc_format=DocFormat.HTML,
             data_set=DataSet.BROOKS_PITCH_LOGS,
@@ -165,7 +165,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             doc_format=DocFormat.HTML,
             data_set=DataSet.BROOKS_PITCHFX,
@@ -177,7 +177,7 @@ class HtmlStorage:
         result = write_html_bbref_games_for_date(game_date, html)
         if result.failure:
             return result
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             doc_format=DocFormat.HTML,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
@@ -185,7 +185,6 @@ class HtmlStorage:
         )
 
     def upload_html_bbref_boxscore(self, bbref_game_id, html):
-        """Upload a file to S3 containing json encoded BBRefBoxscore object."""
         result = write_html_bbref_boxscore(bbref_game_id, html)
         if result.failure:
             return result
@@ -194,7 +193,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             doc_format=DocFormat.HTML,
             data_set=DataSet.BBREF_BOXSCORES,
@@ -204,7 +203,7 @@ class HtmlStorage:
 
     def download_html_brooks_games_for_date(self, game_date):
         """Download raw HTML for brooks daily scoreboard page."""
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
             doc_format=DocFormat.HTML,
@@ -217,7 +216,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
             data_set=DataSet.BROOKS_PITCH_LOGS,
             doc_format=DocFormat.HTML,
@@ -231,7 +230,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
             doc_format=DocFormat.HTML,
             data_set=DataSet.BROOKS_PITCHFX,
@@ -241,7 +240,7 @@ class HtmlStorage:
 
     def download_html_bbref_games_for_date(self, game_date):
         """Download raw HTML for bbref daily scoreboard page."""
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
             doc_format=DocFormat.HTML,
@@ -254,7 +253,7 @@ class HtmlStorage:
         if result.failure:
             return result
         game_dict = result.value
-        return self.perform_task(
+        return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
             doc_format=DocFormat.HTML,
             data_set=DataSet.BBREF_BOXSCORES,

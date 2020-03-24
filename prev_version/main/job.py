@@ -62,9 +62,7 @@ class ScrapeJob:
         print()  # place an empty line between the command and the progress bars
         self.status = "In Progress"
         self.start_time = datetime.now()
-        with tqdm(
-            total=len(self.date_range), unit="day", position=0, leave=False
-        ) as pbar_date:
+        with tqdm(total=len(self.date_range), unit="day", position=0, leave=False) as pbar_date:
             for scrape_date in self.date_range:
                 with tqdm(
                     total=len(self.task_list), unit="data-set", position=1, leave=False
@@ -72,9 +70,7 @@ class ScrapeJob:
                     for task in self.task_list:
                         scrape_task = task(self.db, self.season, None)
                         pbar_date.set_description(
-                            self._get_pbar_date_description(
-                                scrape_date, scrape_task.key_name
-                            )
+                            self._get_pbar_date_description(scrape_date, scrape_task.key_name)
                         )
                         pbar_data_set.set_description(
                             self._get_pbar_data_set_description(scrape_task.key_name)
@@ -101,9 +97,7 @@ class ScrapeJob:
             return Result.Fail(repr(e))
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
-        result = Season.validate_date_range(
-            self.db["session"], self.start_date, self.end_date
-        )
+        result = Season.validate_date_range(self.db["session"], self.start_date, self.end_date)
         if result.failure:
             return result
         self.season = result.value

@@ -1,15 +1,5 @@
 """Constant values that are referenced from multiple places."""
 
-
-PBAR_LEN_DICT = dict(
-    find_games_for_date=33,
-    bbref_games_for_date=34,
-    bbref_boxscores=29,
-    brooks_games_for_date=35,
-    brooks_pitch_logs=31,
-    brooks_pitchfx=28,
-)
-
 TEAM_ID_DICT = {
     "CHW": "CHA",
     "CHC": "CHN",
@@ -24,6 +14,21 @@ TEAM_ID_DICT = {
     "TBR": "TBA",
     "WSN": "WAS",
 }
+
+DEFENSE_POSITIONS = [
+    "P",
+    "C",
+    "1B",
+    "2B",
+    "3B",
+    "SS",
+    "RF",
+    "CF",
+    "LF",
+    "DH",
+    "PH",
+    "PR",
+]
 
 PITCH_TYPE_DICT = dict(
     CH="Changeup",
@@ -132,10 +137,16 @@ EMOJI_DICT = dict(
     TABBED_FILES="🗂️",
     TOOLS="🛠️",
     KNIFE="🔪",
+    ROBOT="🤖",
     KNOBS="🎛️",
     BASKET="🧺",
     BAGS="🛍️",
     CLOCK="🕚",
+    SHRUG="🤷‍♂️",
+    CRYING="😢",
+    WEARY="😩",
+    THUMBS_UP="👍",
+    CLOUD="🌧",
     SPIRAL="🌀",
     CIRCLE="🔵",
     BLUE_DIAMOND="🔹",

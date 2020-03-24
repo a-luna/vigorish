@@ -1,43 +1,26 @@
-import datetime
-import json
 import re
-import time
-from pathlib import Path
-from random import randint
 from string import Template
 
-from lxml import html
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
-from tqdm import tqdm
 from w3lib.url import url_query_parameter
 
-from app.main.constants import DEFENSE_POSITIONS, VENUE_TERMS, PBAR_LEN_DICT
-from app.main.scrape.bbref.models.bat_stats import BBRefBatStats
-from app.main.scrape.bbref.models.bat_stats_detail import BBRefBatStatsDetail
-from app.main.scrape.bbref.models.boxscore import BBRefBoxscore
-from app.main.scrape.bbref.models.boxscore_game_meta import BBRefBoxscoreMeta
-from app.main.scrape.bbref.models.half_inning import BBRefHalfInning
-from app.main.scrape.bbref.models.boxscore_team_data import BBRefBoxscoreTeamData
-from app.main.scrape.bbref.models.pbp_event import BBRefPlayByPlayEvent
-from app.main.scrape.bbref.models.pbp_other import BBRefPlayByPlayMiscEvent
-from app.main.scrape.bbref.models.pbp_substitution import BBRefInGameSubstitution
-from app.main.scrape.bbref.models.pitch_stats import BBRefPitchStats
-from app.main.scrape.bbref.models.starting_lineup_slot import BBRefStartingLineupSlot
-from app.main.scrape.bbref.models.team_linescore_totals import BBRefTeamLinescoreTotals
-from app.main.scrape.bbref.models.umpire import BBRefUmpire
-from app.main.util.decorators import timeout, retry, RetryLimitExceededError
-from app.main.util.dt_format_strings import DATE_ONLY_UNDERSCORE
-from app.main.util.list_functions import display_dict
-from app.main.util.numeric_functions import is_even
-from app.main.util.result import Result
-from app.main.util.s3_helper import download_html_bbref_boxscore
-from app.main.util.string_functions import fuzzy_match
+from vigorish.constants import DEFENSE_POSITIONS, VENUE_TERMS
+from vigorish.scrape.bbref_boxscores.models.bat_stats import BBRefBatStats
+from vigorish.scrape.bbref_boxscores.models.bat_stats_detail import BBRefBatStatsDetail
+from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
+from vigorish.scrape.bbref_boxscores.models.boxscore_game_meta import BBRefBoxscoreMeta
+from vigorish.scrape.bbref_boxscores.models.half_inning import BBRefHalfInning
+from vigorish.scrape.bbref_boxscores.models.boxscore_team_data import BBRefBoxscoreTeamData
+from vigorish.scrape.bbref_boxscores.models.pbp_event import BBRefPlayByPlayEvent
+from vigorish.scrape.bbref_boxscores.models.pbp_other import BBRefPlayByPlayMiscEvent
+from vigorish.scrape.bbref_boxscores.models.pbp_substitution import BBRefInGameSubstitution
+from vigorish.scrape.bbref_boxscores.models.pitch_stats import BBRefPitchStats
+from vigorish.scrape.bbref_boxscores.models.starting_lineup_slot import BBRefStartingLineupSlot
+from vigorish.scrape.bbref_boxscores.models.team_linescore_totals import BBRefTeamLinescoreTotals
+from vigorish.scrape.bbref_boxscores.models.umpire import BBRefUmpire
+from vigorish.util.numeric_functions import is_even
+from vigorish.util.result import Result
+from vigorish.util.string_helpers import fuzzy_match
 
-
-DATA_SET = "bbref_boxscores"
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _AWAY_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[1]/div[3]/text()'
@@ -169,10 +152,6 @@ CHANGE_POS_PATTERN = r"from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b"
 CHANGE_POS_REGEX = re.compile(CHANGE_POS_PATTERN)
 POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
 NUM_REGEX = re.compile(r"[1-9]{1}")
-
-_BAT_STATS_TABLE_LOC = (By.XPATH, _BATTING_STATS_TABLE)
-_PITCH_STATS_TABLE_LOC = (By.XPATH, _PITCHING_STATS_TABLE)
-_PLAY_BY_PLAY_TABLE_LOC = (By.XPATH, _PLAY_BY_PLAY_TABLE)
 
 
 def parse_bbref_boxscore(page_source, url):
@@ -581,13 +560,16 @@ def _parse_game_meta_info(page_source):
         error = "Failed to parse first pitch weather info"
         return Result.Fail(error)
     split2 = first_pitch_weather[0].split(",")
-    if len(split2) < 3:
+    if len(split2) < 2:
         error = f"First pitch weather info is not in expected format:\n{first_pitch_weather}"
         return Result.Fail(error)
 
     first_pitch_temperature = split2[0].strip()[:2]
     first_pitch_wind = split2[1].strip()
-    first_pitch_clouds = split2[2].strip().strip(".")
+
+    first_pitch_clouds = ""
+    if len(split2) > 2:
+        first_pitch_clouds = split2[2].strip().strip(".")
 
     first_pitch_precipitation = ""
     if len(split2) > 3:

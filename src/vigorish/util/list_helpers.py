@@ -1,4 +1,5 @@
 """Functions which operate on or produce list objects."""
+import itertools
 from datetime import datetime
 from typing import Dict, Any
 
@@ -56,3 +57,14 @@ def dict_to_param_list(input_dict: Dict) -> str:
 def as_dict_list(db_objects):
     """Convert a list of model objects to a list of dicts."""
     return [obj.as_dict() for obj in db_objects if hasmethod(obj, "as_dict")]
+
+
+def hasmethod(obj, method_name):
+    """Return True if obj.method_name exists and is callable. Otherwise, return False."""
+    obj_method = getattr(obj, method_name, None)
+    return callable(obj_method) if obj_method else False
+
+
+def flatten_list2d(list2d):
+    """Produce a normal list by flattenning a 2-dimensional list."""
+    return list(itertools.chain(*list2d))

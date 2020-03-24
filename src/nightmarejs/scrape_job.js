@@ -1,11 +1,14 @@
-const Nightmare = require("./new_nightmare")
 const Xvfb = require("xvfb")
 const parseArgs = require("minimist")
+const Nightmare = require("./new_nightmare")
+const { executeBatchJob, scrapeUrls } = require("./scrape_urls")
 
 const args = parseArgs(process.argv.slice(2))
 main(args).catch(console.error)
 
 async function main(args) {
+  const urlSetFilepath = args.urlSetFilepath
+  const s3Bucket = args.s3Bucket
   const timeoutParams = getTimeoutParams(args)
   const batchJobParams = getBatchJobParams(args)
   const nightmare = Nightmare({
@@ -17,16 +20,17 @@ async function main(args) {
   const xvfb = new Xvfb()
   xvfb.startSync()
 
-  const [err, title] = await poss(run(nightmare))
+  const [err, title] = await poss(
+    run(nightmare, urlSetFilepath, timeoutParams, batchJobParams, s3Bucket)
+  )
   if (err) {
     await nightmare.end()
     xvfb.stopSync()
     throw err
   }
-
-  console.log(title)
   await nightmare.end()
   xvfb.stopSync()
+  process.exit(0)
 }
 
 function getTimeoutParams(args) {
@@ -75,10 +79,19 @@ function getBatchJobParams(args) {
 // run nightmare
 //
 // put all your nightmare commands in here
-async function run(nightmare) {
-  await nightmare.goto("https://google.com")
-  const title = await nightmare.title()
-  return title
+async function run(nightmare, urlSetFilepath, timeoutParams, batchJobParams, s3Bucket) {
+  if (batchJobParams.batchScrapingEnabled) {
+    await executeBatchJob(
+      nightmare,
+      urlSetFilepath,
+      batchJobParams,
+      timeoutParams,
+      s3Bucket
+    )
+  } else {
+    await scrapeUrls(nightmare, urlSetFilepath, timeoutParams, s3Bucket)
+  }
+  return
 }
 
 // try/catch helper

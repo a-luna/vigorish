@@ -1,4 +1,4 @@
-const { writeFileSync } = require("fs")
+const { readFileSync, writeFileSync } = require("fs")
 const cliProgress = require("cli-progress")
 const colors = require("colors")
 const UserAgent = require("user-agents")
@@ -16,9 +16,16 @@ const multibar = new cliProgress.MultiBar({
   hideCursor: true,
 })
 
-async function executeBatchJob(nightmare, allUrls, batchJobParams, timeoutParams) {
-  let batchCounter = 1,
-    urlCounter = 1
+async function executeBatchJob(
+  nightmare,
+  urlSetFilepath,
+  batchJobParams,
+  timeoutParams,
+  s3Bucket
+) {
+  const allUrls = readUrlSetFromFile(urlSetFilepath)
+  let batchCounter = 0,
+    urlCounter = 0
   let { batchTimeoutRequired } = timeoutParams
   let [batchList, totalBatches, totalUrls] = createBatchJob(allUrls, batchJobParams)
   let [batchProgress, urlProgress, timeoutProgress] = initializeProgressBars(
@@ -27,9 +34,25 @@ async function executeBatchJob(nightmare, allUrls, batchJobParams, timeoutParams
   )
   await batchList.reduce(async (promise, urlBatch) => {
     await promise
-    let progressDescription = ""
+    const userAgent = new UserAgent()
+    let progressDescription = `${batchList[batchCounter].length} URLs this batch     `
+    batchProgress.update(batchCounter, {
+      displayId: progressDescription,
+      unit: "Batches",
+    })
+    nightmare.useragent(userAgent.toString())
+    urlCounter = await scrapeUrlBatch(
+      nightmare,
+      urlBatch,
+      timeoutParams,
+      urlCounter,
+      urlProgress,
+      s3Bucket
+    )
+    batchCounter += 1
+    progressDescription = ""
     if (batchCounter < totalBatches) {
-      progressDescription = `${batchList[batchCounter].length} URLs this batch     `
+      progressDescription = `${batchList[batchCounter].length} URLs next batch     `
     } else {
       progressDescription = "Scraped all batches    "
     }
@@ -37,17 +60,9 @@ async function executeBatchJob(nightmare, allUrls, batchJobParams, timeoutParams
       displayId: progressDescription,
       unit: "Batches",
     })
-    urlCounter = await scrapeUrlBatch(
-      nightmare,
-      urlBatch,
-      timeoutParams,
-      urlCounter,
-      urlProgress
-    )
     if (batchTimeoutRequired && batchCounter < totalBatches) {
       await mandatoryTimeout(timeoutProgress, timeoutParams)
     }
-    batchCounter += 1
   }, Promise.resolve())
   timeoutProgress.stop()
   urlProgress.stop()
@@ -60,6 +75,11 @@ async function executeBatchJob(nightmare, allUrls, batchJobParams, timeoutParams
     return [batchList, batchList.length, allUrls.length]
   }
 
+  function readUrlSetFromFile(urlSetFilepath) {
+    const urlSetText = readFileSync(urlSetFilepath, { encoding: "utf8" })
+    return JSON.parse(urlSetText)
+  }
+
   function initializeProgressBars(batchList, totalUrls) {
     const batchProgress = multibar.create(batchList.length, 0, {
       displayId: `${batchList[0].length} URLs this batch     `,
@@ -69,7 +89,7 @@ async function executeBatchJob(nightmare, allUrls, batchJobParams, timeoutParams
       displayId: "In Progress...         ",
       unit: "URLs",
     })
-    const timeoutProgress = multibar.create(0, 0, {
+    const timeoutProgress = multibar.create(1, 0, {
       displayId: "Executing Job Batch... ",
       unit: "Seconds",
     })
@@ -81,10 +101,9 @@ async function executeBatchJob(nightmare, allUrls, batchJobParams, timeoutParams
     urlSet,
     timeoutParams,
     urlCounter,
-    progressBar
+    progressBar,
+    s3Bucket
   ) {
-    const userAgent = new UserAgent()
-    nightmare.useragent(userAgent.toString())
     await urlSet.reduce(async (promise, urlDetails) => {
       await promise
       let { url, fileName, displayId, htmlFolderPath, s3KeyPrefix } = urlDetails
@@ -96,8 +115,9 @@ async function executeBatchJob(nightmare, allUrls, batchJobParams, timeoutParams
         htmlFolderPath,
         timeoutParams
       )
-      uploadFileToS3(filePath, s3KeyPrefix)
+      uploadFileToS3(filePath, s3Bucket, s3KeyPrefix, fileName)
       urlCounter += 1
+      progressBar.update(urlCounter, { displayId: displayId, unit: "URLs" })
     }, Promise.resolve())
     return urlCounter
   }
@@ -137,14 +157,15 @@ async function executeBatchJob(nightmare, allUrls, batchJobParams, timeoutParams
       const secPadded = secRemaining.toString().padStart(2, "0")
       return `Until Next Batch: ${minPadded}:${secPadded}`
     }
-
-    function sleep(timeoutMs) {
-      return new Promise(resolve => setTimeout(resolve, timeoutMs))
-    }
   }
 }
 
-async function scrapeUrls(nightmare, urlSet, timeoutParams) {
+function sleep(timeoutMs) {
+  return new Promise(resolve => setTimeout(resolve, timeoutMs))
+}
+
+async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams, s3Bucket) {
+  const urlSet = readUrlSetFromFile(urlSetFilepath)
   let counter = 1
   const scrapeUrlSetProgress = multibar.create(urlSet.length, 0, {
     displayId: "N/A",
@@ -160,7 +181,7 @@ async function scrapeUrls(nightmare, urlSet, timeoutParams) {
       htmlFolderPath,
       timeoutParams
     )
-    uploadFileToS3(filePath, s3KeyPrefix)
+    uploadFileToS3(filePath, s3Bucket, s3KeyPrefix, fileName)
     scrapeUrlSetProgress.update(counter, { displayId: displayId, unit: "URLs" })
     counter += 1
   }, Promise.resolve())

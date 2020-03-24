@@ -34,6 +34,7 @@ class Season(Base):
     boxscores = relationship("Boxscore", backref="season")
     pitching_stats = relationship("GamePitchStats", backref="season")
     batting_stats = relationship("GameBatStats", backref="season")
+    scrape_jobs = relationship("ScrapeJob", backref="season")
 
     @hybrid_property
     def name(self):

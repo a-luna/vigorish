@@ -3,12 +3,19 @@ import re
 from datetime import datetime
 from typing import Union
 
+from fuzzywuzzy import process
+
 from vigorish.util.regex import PITCH_APP_REGEX
 from vigorish.util.result import Result
 
 
 ELLIPSIS = b"\xe2\x80\xa6".decode("utf-8")
 WORD_REGEX = re.compile(r"\s?(?P<word>\b\w+\b)\s?")
+
+
+def fuzzy_match(s, choices):
+    (match, score) = process.extractOne(s, choices)
+    return dict(best_match=match, score=score)
 
 
 def ellipsize(input_str: str, max_len: int) -> str:

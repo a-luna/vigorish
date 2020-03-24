@@ -1,16 +1,16 @@
 """Enum definitions."""
-from enum import Enum, auto
+from enum import Enum, IntEnum, auto
 
 
-class DataSet(Enum):
+class DataSet(IntEnum):
     """MLB data sets."""
 
-    BBREF_GAMES_FOR_DATE = auto()
-    BBREF_BOXSCORES = auto()
-    BROOKS_GAMES_FOR_DATE = auto()
-    BROOKS_PITCH_LOGS = auto()
-    BROOKS_PITCHFX = auto()
-    ALL = auto()
+    BBREF_GAMES_FOR_DATE = 1
+    BROOKS_GAMES_FOR_DATE = 2
+    BBREF_BOXSCORES = 3
+    BROOKS_PITCH_LOGS = 4
+    BROOKS_PITCHFX = 5
+    ALL = 6
 
     def __str__(self):
         return self.name
@@ -46,13 +46,12 @@ class HtmlStorageOption(Enum):
     LOCAL_FOLDER = auto()
     S3_BUCKET = auto()
     BOTH = auto()
-    NONE = auto()
 
     def __str__(self):
         return self.name
 
 
-class JsonStorage(Enum):
+class JsonStorageOption(Enum):
     """Allowed values for JSON_STORAGE config setting."""
 
     LOCAL_FOLDER = auto()
@@ -130,15 +129,17 @@ class DocFormat(Enum):
         return self.name
 
 
-class JobStatus(Enum):
+class JobStatus(IntEnum):
     """Status of a scrape job created by a user."""
 
-    NOT_STARTED = auto()
-    IN_PROGRESS = auto()
-    PAUSED = auto()
-    COMPLETE = auto()
-    CANCELLED = auto()
-    ERROR = auto()
+    NOT_STARTED = 1
+    ERROR = 2
+    CANCELLED = 3
+    PAUSED = 4
+    PREPARING = 5
+    SCRAPING = 6
+    PARSING = 7
+    COMPLETE = 8
 
     def __str__(self):
         return self.name

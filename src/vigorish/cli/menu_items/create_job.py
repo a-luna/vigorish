@@ -11,6 +11,7 @@ from vigorish.cli.util import DateInput, prompt_user_yes_no, print_message
 from vigorish.config.database import ScrapeJob, Season
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
+from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 from vigorish.util.list_helpers import display_dict
@@ -25,9 +26,11 @@ DATA_SET_MAP = {
 
 
 class CreateJobMenuItem(MenuItem):
-    def __init__(self, db_engine, db_session) -> None:
-        self.db_engine = db_engine
+    def __init__(self, db_session, config, scraped_data, url_builder) -> None:
         self.db_session = db_session
+        self.config = config
+        self.scraped_data = scraped_data
+        self.url_builder = url_builder
         self.menu_item_text = "New Scrape Job"
         self.menu_item_emoji = EMOJI_DICT.get("KNIFE", "")
 
@@ -47,12 +50,23 @@ class CreateJobMenuItem(MenuItem):
                 season = result.value
                 dates_validated = True
             job_confirmed = self.confirm_job_details(data_sets, start_date, end_date, job_name)
-        self.create_new_scrape_job(data_sets, start_date, end_date, season, job_name)
 
+        new_scrape_job = self.create_new_scrape_job(
+            data_sets, start_date, end_date, season, job_name
+        )
         result = prompt_user_yes_no(prompt="Would you like to begin executing this job?")
         start_now = result.value
         if start_now:
-            print_message("Placeholder! RunJob command not implemented.")
+            job_runner = JobRunner(
+                db_job=new_scrape_job,
+                db_session=self.db_session,
+                config=self.config,
+                scraped_data=self.scraped_data,
+                url_builder=self.url_builder,
+            )
+            result = job_runner.execute()
+            if result.failure:
+                return result
         else:
             print_message("Placeholder! ViewJobs command not implemented.")
         pause(message="Press any key to continue...")
@@ -144,6 +158,7 @@ class CreateJobMenuItem(MenuItem):
         new_scrape_job = ScrapeJob(**scrape_job_dict)
         self.db_session.add(new_scrape_job)
         self.db_session.commit()
+        return new_scrape_job
 
     def get_scrape_job_dict(self, selected_data_sets, start_date, end_date, season, job_name):
         scrape_job_dict = {

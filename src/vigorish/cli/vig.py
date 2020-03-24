@@ -12,7 +12,6 @@ from vigorish.cli.util import print_message
 from vigorish.config.database import get_db_url, initialize_database, Base
 from vigorish.config.types import ConfigFile
 from vigorish.constants import CLI_COLORS
-from vigorish.data.file_helper import FileHelper
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.scrape.url_builder import UrlBuilder
 
@@ -33,15 +32,14 @@ def cli(ctx):
     engine = create_engine(get_db_url())
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
-    file_helper = FileHelper(config)
-    scraped_data = ScrapedData(db=session, config=config, file_helper=file_helper)
-    url_builder = UrlBuilder(config=config, file_helper=file_helper)
+    scraped_data = ScrapedData(db=session, config=config)
+    url_builder = UrlBuilder(config=config, scraped_data=scraped_data)
     ctx.obj = {
         "config": config,
-        "data": scraped_data,
-        "url_builder": url_builder,
         "engine": engine,
         "session": session,
+        "scraped_data": scraped_data,
+        "url_builder": url_builder,
     }
 
 

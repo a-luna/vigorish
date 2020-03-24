@@ -15,7 +15,7 @@ class ScrapeError(Base):
     __tablename__ = "scrape_error"
     id = Column(Integer, primary_key=True)
     occurred_at = Column(DateTime, default=utc_now)
-    data_Set = Column(Enum(DataSet), nullable=False)
+    data_set = Column(Enum(DataSet), nullable=False)
     error_message = Column(String, nullable=False)
     fixed = Column(Boolean, default=False)
     job_id = Column(Integer, ForeignKey("scrape_job.id"))

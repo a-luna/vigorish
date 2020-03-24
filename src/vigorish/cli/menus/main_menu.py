@@ -13,6 +13,8 @@ class MainMenu(Menu):
         self.config = vig["config"]
         self.db_engine = vig["engine"]
         self.db_session = vig["session"]
+        self.scraped_data = vig["scraped_data"]
+        self.url_builder = vig["url_builder"]
         self.menu_text = "Welcome to vigorish!\n"
 
     def populate_menu_items(self) -> None:
@@ -20,7 +22,12 @@ class MainMenu(Menu):
         self.menu_items.append(ConfigSettingsMenu(self.config))
         self.menu_items.append(ExitProgramMenuItem())
         if db_setup_complete(self.db_engine, self.db_session):
-            self.menu_items.insert(0, CreateJobMenuItem(self.db_engine, self.db_session))
+            self.menu_items.insert(
+                0,
+                CreateJobMenuItem(
+                    self.db_session, self.config, self.scraped_data, self.url_builder
+                ),
+            )
             db_menu_text = "Reset Database"
             menu_index = 2
         else:

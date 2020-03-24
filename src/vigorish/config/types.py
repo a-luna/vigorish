@@ -14,7 +14,7 @@ from vigorish.enums import (
     ConfigType,
     DataSet,
     HtmlStorageOption,
-    JsonStorage,
+    JsonStorageOption,
     ScrapeCondition,
     ScrapeTool,
     StatusReport,
@@ -35,7 +35,7 @@ JSON_CONFIG_VALUE = Union[BASE_JSON_SETTING, NUMERIC_JSON_SETTING]
 JSON_CONFIG_SETTING = Mapping[str, JSON_CONFIG_VALUE]
 NUMERIC_PROMPT_VALUE = Tuple[bool, bool, int, int, int]
 ENUM_PY_SETTING = Union[
-    None, ScrapeCondition, HtmlStorageOption, JsonStorage, ScrapeTool, StatusReport
+    None, ScrapeCondition, HtmlStorageOption, JsonStorageOption, ScrapeTool, StatusReport
 ]
 TConfigSetting = TypeVar("TConfigSetting", bound="ConfigSetting")
 
@@ -365,8 +365,8 @@ class EnumConfigSetting(ConfigSetting):
             return [member for member in ScrapeCondition]
         if enum_name == "HtmlStorageOption":
             return [member for member in HtmlStorageOption]
-        if enum_name == "JsonStorage":
-            return [member for member in JsonStorage]
+        if enum_name == "JsonStorageOption":
+            return [member for member in JsonStorageOption]
         if enum_name == "ScrapeTool":
             return [member for member in ScrapeTool]
         if enum_name == "StatusReport":
@@ -383,8 +383,8 @@ class EnumConfigSetting(ConfigSetting):
             return ScrapeCondition[value]
         if enum_name == "HtmlStorageOption":
             return HtmlStorageOption[value]
-        if enum_name == "JsonStorage":
-            return JsonStorage[value]
+        if enum_name == "JsonStorageOption":
+            return JsonStorageOption[value]
         if enum_name == "ScrapeTool":
             return ScrapeTool[value]
         if enum_name == "StatusReport":
@@ -462,10 +462,13 @@ class ConfigFile:
                 self.__reset_other_data_sets_numeric(config_dict, data_set)
         return self.__write_config_file()
 
-    def get_nodejs_script_params(self, data_set: DataSet) -> NUMERIC_OPTIONS_JSON_VALUE:
+    def get_nodejs_script_params(
+        self, data_set: DataSet, url_set_filepath: Path
+    ) -> NUMERIC_OPTIONS_JSON_VALUE:
         url_delay_settings = self.get_current_setting("URL_SCRAPE_DELAY", data_set)
         batch_job_settings = self.get_current_setting("BATCH_JOB_SETTINGS", data_set)
         batch_delay_settings = self.get_current_setting("BATCH_SCRAPE_DELAY", data_set)
+        s3_bucket = self.get_current_setting("S3_BUCKET", data_set)
         script_params = {}
         if url_delay_settings and batch_job_settings and batch_delay_settings:
             script_params = self.__get_nodejs_script_params_from_objects(
@@ -473,6 +476,8 @@ class ConfigFile:
             )
         else:
             script_params = self.__get_default_nodejs_script_params()
+        script_params["urlSetFilepath"] = url_set_filepath.resolve()
+        script_params["s3Bucket"] = s3_bucket
         return dict_to_param_list(script_params)
 
     def __read_config_file(self) -> None:

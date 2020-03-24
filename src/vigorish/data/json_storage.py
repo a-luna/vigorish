@@ -483,3 +483,26 @@ class JsonStorage:
             game_date=game_dict["game_date"],
             bbref_game_id=bbref_game_id,
         )
+
+    def rename_brooks_pitchfx_log(self, old_pitch_app_id, new_pitch_app_id, year):
+        result = validate_pitch_app_id(old_pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        old_key = self.file_helper.get_object_key(
+            doc_format=DocFormat.JSON,
+            data_set=DataSet.BROOKS_PITCHFX,
+            game_date=game_dict["game_date"],
+            pitch_app_id=old_pitch_app_id,
+        )
+        result = validate_pitch_app_id(new_pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        new_key = self.file_helper.get_object_key(
+            doc_format=DocFormat.JSON,
+            data_set=DataSet.BROOKS_PITCHFX,
+            game_date=game_dict["game_date"],
+            pitch_app_id=new_pitch_app_id,
+        )
+        return self.file_helper.rename_s3_object(old_key, new_key)
