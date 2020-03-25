@@ -56,7 +56,7 @@ class ScrapeBBRefBoxscores(ScrapeTaskABC):
                 url_id = url_details["identifier"]
                 pbar.set_description(url_fetch_description(self.data_set, url_id))
                 try:
-                    html = render_webpage(driver, url_details["url"])
+                    html = render_url(self.driver, url_details["url"])
                     pbar.set_description(save_html_description(self.data_set, url_id))
                     result = self.save_scraped_html(html, url_id)
                     if result.failure:
@@ -70,15 +70,15 @@ class ScrapeBBRefBoxscores(ScrapeTaskABC):
 
     @retry(max_attempts=3, delay=10, exceptions=(TimeoutError, Exception))
     @timeout(seconds=15)
-    def render_webpage(self, url):
+    def render_url(self, url):
         self.driver.get(url)
         WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_BAT_STATS_TABLE_LOC))
         WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PITCH_STATS_TABLE_LOC))
         WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PLAY_BY_PLAY_TABLE_LOC))
         return driver.page_source
 
-    def parse_html(self, page_source, url):
+    def parse_html(self, page_source, url_id, url):
         return parse_bbref_boxscore(page_source, url)
 
-    def update_status(self, parsed_data):
+    def update_status(self, game_date, parsed_data):
         return update_status_bbref_boxscore(self.db_session, parsed_data)

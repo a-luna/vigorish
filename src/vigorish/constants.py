@@ -1,4 +1,5 @@
 """Constant values that are referenced from multiple places."""
+from vigorish.enums import DataSet
 
 TEAM_ID_DICT = {
     "CHW": "CHA",
@@ -108,6 +109,14 @@ PPB_PITCH_LOG_DICT = {
 }
 
 VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dome"]
+
+JOB_SPINNER_COLORS = {
+    DataSet.BROOKS_GAMES_FOR_DATE: "green",
+    DataSet.BROOKS_PITCH_LOGS: "red",
+    DataSet.BROOKS_PITCHFX: "magenta",
+    DataSet.BBREF_GAMES_FOR_DATE: "cyan",
+    DataSet.BBREF_BOXSCORES: "yellow",
+}
 
 CLI_COLORS = [
     "black",

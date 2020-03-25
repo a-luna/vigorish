@@ -9,7 +9,7 @@ from lxml.html import HtmlElement
 from Naked.toolshed.shell import execute_js
 from tqdm import tqdm
 
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
 from vigorish.enums import (
     DocFormat,
     DataSet,
@@ -17,6 +17,7 @@ from vigorish.enums import (
     JsonStorageOption,
     ScrapeCondition,
     ScrapeTool,
+    PythonScrapeTool,
     JobStatus,
 )
 from vigorish.scrape.progress_bar import (
@@ -27,6 +28,9 @@ from vigorish.scrape.progress_bar import (
     save_json_description,
     updating_description,
 )
+from vigorish.scrape.util import request_url, render_url
+from vigorish.util.datetime_util import get_date_range
+from vigorish.util.decorators.retry import RetryLimitExceededError
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
 
@@ -45,6 +49,7 @@ class ScrapeTaskABC(ABC):
         self.driver = driver
         self.url_builder = url_builder
         self.url_set = {}
+        self.python_scrape_tool = PythonScrapeTool.NONE
         self.start_date = self.db_job.start_date
         self.end_date = self.db_job.end_date
         self.season = self.db_job.season
@@ -155,21 +160,26 @@ class ScrapeTaskABC(ABC):
     def total_urls(self):
         if not self.url_set:
             return 0
-        all_urls = flatten_list2d([urls for urls in self.url_set.values()])
-        return len(all_urls)
+        return len(flatten_list2d([urls for urls in self.url_set.values()]))
+
+    @property
+    def date_range(self):
+        return get_date_range(self.start_date, self.end_date)
 
     def execute(self):
         if self.scrape_condition == ScrapeCondition.NEVER:
             return Result.Fail("skip")
         result = self.validate_local_folder_paths()
         if result.failure:
-            return Result
+            return result
         result = self.construct_url_set()
         if result.failure:
             return result
-        html_spinner = Halo(color="cyan", spinner="earth")
+        html_spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
         result = self.retrieve_scraped_html(html_spinner)
         if result.failure:
+            if "skip" in result.error:
+                return Result.Fail("skip")
             html_spinner.fail(f"Error! {result.error}")
             return result
         missing_html = result.value
@@ -182,6 +192,7 @@ class ScrapeTaskABC(ABC):
         result = self.parse_data_from_scraped_html()
         if result.failure:
             return result
+        return Result.Ok()
 
     def validate_local_folder_paths(self):
         html_folder_is_valid = True
@@ -203,7 +214,8 @@ class ScrapeTaskABC(ABC):
         return Result.Fail("\n".join(errors))
 
     def construct_url_set(self):
-        spinner = Halo(text="Building URL List...", color="cyan", spinner="earth")
+        spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
+        spinner.text = "Building URL List..."
         spinner.start()
         result = self.url_builder.create_url_set(self.data_set, self.start_date, self.end_date)
         if result.failure:
@@ -221,9 +233,6 @@ class ScrapeTaskABC(ABC):
         spinner.text = f"Retrieving scraped HTML... (0 Skipped, 0 Found, 0 Missing, {self.total_urls} Remaining)"
         spinner.start()
         for game_date, urls in self.url_set.items():
-            remaining = self.total_urls - skipped
-            perc_complete = float(1) - (remaining / float(self.total_urls))
-            spinner.text = f"Retrieving scraped HTML... {perc_complete:.0%} ({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, {remaining} Remaining)"
             result = self.check_prerequisites(game_date)
             if result.failure:
                 return result
@@ -231,26 +240,42 @@ class ScrapeTaskABC(ABC):
             if result.failure:
                 if "skip" in result.error:
                     skipped += len(urls)
+                    remaining = self.total_urls - skipped
+                    perc_complete = float(1) - (remaining / float(self.total_urls))
+                    spinner.text = f"Retrieving scraped HTML... {perc_complete:.0%} ({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, {remaining} Remaining)"
                     continue
                 return result
             scrape_urls.extend(urls)
-
+            remaining = self.total_urls - skipped
+            perc_complete = float(1) - (remaining / float(self.total_urls))
+            spinner.text = f"Retrieving scraped HTML... {perc_complete:.0%} ({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, {remaining} Remaining)"
+        if not scrape_urls:
+            return Result.Fail("skip")
         for url_details in scrape_urls:
+            url_id = url_details["identifier"]
+            html_filepath = self.get_html(url_id)
+            if not html_filepath:
+                missing.append(url_details)
+                remaining = self.total_urls - skipped - retrieved - len(missing)
+                perc_complete = float(1) - (remaining / float(self.total_urls))
+                spinner.text = f"Retrieving scraped HTML... {perc_complete:.0%} ({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, {remaining} Remaining)"
+                continue
+            retrieved += 1
+            url_details["html_filepath"] = html_filepath
             remaining = self.total_urls - skipped - retrieved - len(missing)
             perc_complete = float(1) - (remaining / float(self.total_urls))
             spinner.text = f"Retrieving scraped HTML... {perc_complete:.0%} ({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, {remaining} Remaining)"
-            url_id = url_details["identifier"]
-            result = self.get_html_local[self.data_set](url_id)
-            if result.failure:
-                result = self.get_html_s3[self.data_set](url_id)
-                if result.failure:
-                    missing.append(url_details)
-                    continue
-            retrieved += 1
-            url_details["html_filepath"] = result.value
         if missing:
             spinner.text = f"Scraping HTML... ({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, {remaining} Remaining)"
         return Result.Ok(missing)
+
+    def get_html(self, url_id):
+        result = self.get_html_local[self.data_set](url_id)
+        if result.failure:
+            result = self.get_html_s3[self.data_set](url_id)
+            if result.failure:
+                return None
+        return result.value
 
     def scrape_missing_html(self, missing_html):
         if not missing_html:
@@ -263,31 +288,30 @@ class ScrapeTaskABC(ABC):
             return self.scrape_html_with_requests_selenium(missing_html)
         return Result.Fail(f"SCRAPE_TOOL setting either not set or set incorrectly.")
 
-    def parse_data_from_scraped_html(self):
-        spinner = Halo(text="Parsing HTML...", color="cyan", spinner="moon")
-        spinner.start()
-        self.db_job.status = JobStatus.PARSING
-        self.db_session.commit()
-        for game_date, urls in self.url_set.items():
-            for url_details in urls:
-                scraped_html = url_details["html_filepath"].read_text()
-                page_source = html.fromstring(scraped_html, base_url=url_details["url"])
-                result = self.parse_html(page_source, url_details["url"])
-                if result.failure:
-                    spinner.fail(f"Error! {result.error}")
-                    return result
-                parsed_data = result.value
-                result = self.save_parsed_data(parsed_data)
-                if result.failure:
-                    spinner.fail(f"Error! {result.error}")
-                    return result
-                url_details["json_filepath"] = result.value
-                result = self.update_status(parsed_data)
-                if result.failure:
-                    spinner.fail(f"Error! {result.error}")
-                    return result
-        spinner.succeed("HTML Parsed")
-        return Result.Ok()
+    def scrape_html_with_requests_selenium(self, missing_html):
+        with tqdm(total=len(missing_html), unit="url", leave=False, position=1) as pbar:
+            for url_details in missing_html:
+                url_id = url_details["identifier"]
+                pbar.set_description(url_fetch_description(self.data_set, url_id))
+                try:
+                    html = self.fetch_url(url_details["url"])
+                    pbar.set_description(save_html_description(self.data_set, url_id))
+                    result = self.save_scraped_html(html, url_id)
+                    if result.failure:
+                        return result
+                    url_details["html_filepath"] = result.value
+                    pbar.update()
+                except RetryLimitExceededError as e:
+                    return Result.Fail(repr(e))
+                except Exception as e:
+                    return Result.Fail(f"Error: {repr(e)}")
+
+    def fetch_url(self, url):
+        if self.python_scrape_tool == PythonScrapeTool.REQUESTS:
+            return request_url(url)
+        if self.python_scrape_tool == PythonScrapeTool.SELENIUM:
+            return render_url(self.driver, url)
+        return Result.Fail(f"SCRAPE_TOOL setting either not set or set incorrectly.")
 
     def scrape_html_with_nightmarejs(self, url_details):
         urls_json = json.dumps(url_details, indent=2, sort_keys=False)
@@ -311,6 +335,35 @@ class ScrapeTaskABC(ABC):
                 return result_s3
         return result_local if result_local else result_s3 if result_s3 else Result.Fail("")
 
+    def parse_data_from_scraped_html(self):
+        spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
+        spinner.text = "Parsing HTML..."
+        spinner.start()
+        self.db_job.status = JobStatus.PARSING
+        self.db_session.commit()
+        for game_date, urls in self.url_set.items():
+            for url_details in urls:
+                url = url_details["url"]
+                url_id = url_details["identifier"]
+                scraped_html = url_details["html_filepath"].read_text()
+                page_source = html.fromstring(scraped_html, base_url=url)
+                result = self.parse_html(page_source, url_id, url)
+                if result.failure:
+                    spinner.fail(f"Error! {result.error}")
+                    return result
+                parsed_data = result.value
+                result = self.save_parsed_data(parsed_data)
+                if result.failure:
+                    spinner.fail(f"Error! {result.error}")
+                    return result
+                url_details["json_filepath"] = result.value
+                result = self.update_status(game_date, parsed_data)
+                if result.failure:
+                    spinner.fail(f"Error! {result.error}")
+                    return result
+        spinner.succeed("HTML Parsed")
+        return Result.Ok()
+
     def save_parsed_data(self, parsed_data):
         if self.save_json_local:
             result_local = self.write_json_local[self.data_set](parsed_data)
@@ -331,13 +384,9 @@ class ScrapeTaskABC(ABC):
         pass
 
     @abstractmethod
-    def scrape_html_with_requests_selenium(self, missing_html):
+    def parse_html(self, page_source, url_id, url):
         pass
 
     @abstractmethod
-    def parse_html(self, page_source, url):
-        pass
-
-    @abstractmethod
-    def update_status(self, parsed_data):
+    def update_status(self, game_date, parsed_data):
         pass

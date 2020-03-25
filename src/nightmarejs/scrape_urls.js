@@ -2,8 +2,8 @@ const { readFileSync, writeFileSync } = require("fs")
 const cliProgress = require("cli-progress")
 const colors = require("colors")
 const UserAgent = require("user-agents")
+var joinPath = require("path.join")
 const { makeIrregularChunkedList } = require("./list_functions")
-const { uploadFileToS3 } = require("./s3_upload")
 
 const multibar = new cliProgress.MultiBar({
   format:
@@ -108,14 +108,7 @@ async function executeBatchJob(
       await promise
       let { url, fileName, displayId, htmlFolderPath, s3KeyPrefix } = urlDetails
       progressBar.update(urlCounter, { displayId: displayId, unit: "URLs" })
-      let filePath = await scrapeUrl(
-        nightmare,
-        url,
-        fileName,
-        htmlFolderPath,
-        timeoutParams
-      )
-      uploadFileToS3(filePath, s3Bucket, s3KeyPrefix, fileName)
+      await scrapeUrl(nightmare, url, fileName, htmlFolderPath, timeoutParams)
       urlCounter += 1
       progressBar.update(urlCounter, { displayId: displayId, unit: "URLs" })
     }, Promise.resolve())
@@ -174,14 +167,7 @@ async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams, s3Bucket) {
   await urlSet.reduce(async (promise, urlDetails) => {
     await promise
     let { url, fileName, displayId, htmlFolderPath, s3KeyPrefix } = urlDetails
-    let filePath = await scrapeUrl(
-      nightmare,
-      url,
-      fileName,
-      htmlFolderPath,
-      timeoutParams
-    )
-    uploadFileToS3(filePath, s3Bucket, s3KeyPrefix, fileName)
+    await scrapeUrl(nightmare, url, fileName, htmlFolderPath, timeoutParams)
     scrapeUrlSetProgress.update(counter, { displayId: displayId, unit: "URLs" })
     counter += 1
   }, Promise.resolve())
@@ -196,7 +182,7 @@ async function scrapeUrl(
   timeoutParams
 ) {
   let html = await fetchUrl(url, timeoutParams)
-  let filePath = `${outputFolderPath}${outputFileName}`
+  let filePath = joinPath(outputFolderPath, outputFileName)
   writeFileSync(filePath, html)
   return filePath
 

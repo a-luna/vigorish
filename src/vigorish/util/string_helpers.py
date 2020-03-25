@@ -5,7 +5,7 @@ from typing import Union
 
 from fuzzywuzzy import process
 
-from vigorish.util.regex import PITCH_APP_REGEX
+from vigorish.util.regex import PITCH_APP_REGEX, TIMESTAMP_REGEX
 from vigorish.util.result import Result
 
 
@@ -72,6 +72,21 @@ def get_brooks_team_id(bbref_team_id: str) -> str:
         "WSN": "WAS",
     }
     return bbref_id_to_brooks_id_map.get(bbref_team_id, bbref_team_id)
+
+
+def parse_timestamp(input):
+    if string_is_null_or_blank(input):
+        return dict(hour=0, minute=0)
+    match = TIMESTAMP_REGEX.search(input)
+    if not match:
+        return dict(hour=0, minute=0)
+    time_dict = match.groupdict()
+    return dict(hour=int(time_dict["hour"]), minute=int(time_dict["minute"]))
+
+
+def string_is_null_or_blank(s: str) -> bool:
+    """Check if a string is null or consists entirely of whitespace."""
+    return not s or s.isspace()
 
 
 def validate_bbref_game_id(input_str):

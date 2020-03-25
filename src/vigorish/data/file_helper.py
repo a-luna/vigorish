@@ -162,7 +162,7 @@ class FileHelper:
         filename = self.get_file_name(
             data_set, doc_format, game_date, bbref_game_id, bb_game_id, pitch_app_id,
         )
-        return f"{folderpath}{filename}"
+        return str(Path(folderpath).joinpath(filename))
 
     def get_local_folderpath(self, doc_format, data_set, game_date=None, year=None):
         if not game_date and not year:

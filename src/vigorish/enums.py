@@ -72,6 +72,17 @@ class ScrapeTool(Enum):
         return self.name
 
 
+class PythonScrapeTool(Enum):
+    """Internal setting that controls which Python scrape tool is used per data set."""
+
+    NONE = auto()
+    REQUESTS = auto()
+    SELENIUM = auto()
+
+    def __str__(self):
+        return self.name
+
+
 class StatusReport(Enum):
     """The type of status report (if any) to display after data has been scraped."""
 

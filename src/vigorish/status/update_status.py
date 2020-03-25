@@ -1,6 +1,7 @@
 from halo import Halo
 
 from vigorish.config.database import Season
+from vigorish.constants import JOB_SPINNER_COLORS
 from vigorish.status.update_status_bbref_boxscores import update_data_set_bbref_boxscores
 from vigorish.status.update_status_bbref_games_for_date import update_data_set_bbref_games_for_date
 from vigorish.status.update_status_brooks_games_for_date import (
@@ -12,7 +13,8 @@ from vigorish.util.result import Result
 
 
 def update_status_for_mlb_season(scraped_data, session, year):
-    spinner = Halo(text=f"Updating MLB {year}...", color="yellow", spinner="dots3")
+    spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
+    spinner.text = f"Updating MLB {year}..."
     spinner.start()
 
     season = Season.find_by_year(session, year)

@@ -4,7 +4,7 @@ from datetime import datetime
 from halo import Halo
 
 from vigorish.config.database import ScrapeError
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
 from vigorish.enums import DataSet, JobStatus
 from vigorish.scrape.bbref_boxscores.scrape_bbref_boxscores import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_bbref_games_for_date import (
@@ -66,10 +66,11 @@ class JobRunner:
         result = self.initialize()
         if result.failure:
             return self.job_failed(result)
-        spinners = defaultdict(lambda: Halo(spinner="weather"))
+        spinners = defaultdict(lambda: Halo(spinner="dots3"))
         for i, data_set in enumerate(self.data_sets, start=1):
             text = f"Scraping data set: {data_set.name} (Task #{i}/{len(self.data_sets)})..."
             spinners[data_set].text = text
+            spinners[data_set].color = JOB_SPINNER_COLORS[data_set]
             spinners[data_set].start()
             scrape_task = SCRAPE_TASK_DICT[data_set](
                 self.db_job,
@@ -80,17 +81,17 @@ class JobRunner:
                 self.url_builder,
             )
             spinners[data_set].stop_and_persist(spinners[data_set].frame(), "")
-            result = scrape_task.execute(scrape_date)
+            result = scrape_task.execute()
             if result.failure:
                 if "skip" in result.error:
-                    text = f"Skipped data set: {data_set.name} ((Task #{i}/{len(self.data_sets)}))"
+                    text = f"Skipped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
                     spinners[data_set].stop_and_persist(EMOJI_DICT.get("SHRUG", ""), text)
                     continue
-                test = f"Failed to scrape: {data_set.name} ((Task #{i}/{len(self.data_sets)}))"
+                test = f"Failed to scrape: {data_set.name} (Task #{i}/{len(self.data_sets)})"
                 spinners[data_set].stop_and_persist(EMOJI_DICT.get("WEARY", ""), text)
                 return self.job_failed(result)
-            text = f"Scraped data set: {data_set.name} ((Task #{i}/{len(self.data_sets)}))"
-            spinners[data_set].stop_and_persist(EMOJI_DICT.get("THUMBS_UP", ""), text)
+            text = f"Scraped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+            spinners[data_set].stop_and_persist(EMOJI_DICT.get("COOL", ""), text)
         return self.job_succeeded()
 
     def initialize(self):
@@ -112,13 +113,13 @@ class JobRunner:
         )
         self.db_session.add(new_error)
         self.db_session.commit()
-        self._tear_down()
+        self.tear_down()
         return result
 
     def job_succeeded(self):
         self.db_job.status = JobStatus.COMPLETE
         self.db_session.commit()
-        self._tear_down()
+        self.tear_down()
         return Result.Ok()
 
     def tear_down(self):

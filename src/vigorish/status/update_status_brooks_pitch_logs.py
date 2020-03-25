@@ -43,7 +43,7 @@ def update_status_brooks_pitch_logs_for_game_list(
     return Result.Ok()
 
 
-def update_status_brooks_pitch_logs_for_game(session, pitch_logs_for_game, game_date):
+def update_status_brooks_pitch_logs_for_game(session, game_date, pitch_logs_for_game):
     result = update_game_status_records(session, pitch_logs_for_game)
     if result.failure:
         return result

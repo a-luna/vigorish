@@ -212,7 +212,7 @@ class HtmlStorage:
 
     def download_html_brooks_pitch_log_page(self, pitch_app_id):
         """Download raw HTML for brooks pitch log page for a single pitching appearance."""
-        result = validate_brooks_game_id(bb_game_id)
+        result = validate_pitch_app_id(pitch_app_id)
         if result.failure:
             return result
         game_dict = result.value

@@ -38,40 +38,57 @@ class JsonStorage:
         )
 
     def write_json_brooks_pitch_logs_for_game_local_file(self, pitch_logs_for_game):
+        result = validate_brooks_game_id(pitch_logs_for_game.bb_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_PITCH_LOGS,
             doc_format=DocFormat.JSON,
-            game_date=pitch_logs_for_game.game_date,
+            game_date=game_dict["game_date"],
             scraped_data=pitch_logs_for_game,
             bb_game_id=pitch_logs_for_game.bb_game_id,
         )
 
     def write_json_brooks_pitch_logs_for_game_s3(self, pitch_logs_for_game):
+        result = validate_brooks_game_id(pitch_logs_for_game.bb_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             data_set=DataSet.BROOKS_PITCH_LOGS,
             doc_format=DocFormat.JSON,
-            game_date=pitch_logs_for_game.game_date,
+            game_date=game_dict["game_date"],
+            scraped_data=pitch_logs_for_game,
             bb_game_id=pitch_logs_for_game.bb_game_id,
         )
 
     def write_json_brooks_pitchfx_log_local_file(self, pitchfx_log):
+        result = validate_pitch_app_id(pitchfx_log.pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_PITCHFX,
             doc_format=DocFormat.JSON,
-            game_date=pitchfx_log.game_date,
+            game_date=game_dict["game_date"],
             scraped_data=pitchfx_log,
             pitch_app_id=pitchfx_log.pitch_app_id,
         )
 
     def write_json_brooks_pitchfx_log_s3(self, pitchfx_log):
+        result = validate_pitch_app_id(pitchfx_log.pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             data_set=DataSet.BROOKS_PITCHFX,
             doc_format=DocFormat.JSON,
-            game_date=pitchfx_log.game_date,
+            game_date=game_dict["game_date"],
             scraped_data=pitchfx_log,
             pitch_app_id=pitchfx_log.pitch_app_id,
         )

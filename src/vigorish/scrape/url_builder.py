@@ -98,13 +98,13 @@ class UrlBuilder:
         result = self.scraped_data.get_all_brooks_pitch_logs_for_date(game_date)
         if result.failure:
             return result
-        all_pitch_logs = result.value
+        pitch_logs_for_date = result.value
         urls = []
-        for pitch_logs in all_pitch_logs:
-            for pitch_log in pitch_logs:
+        for pitch_logs_for_game in pitch_logs_for_date:
+            for pitch_log in pitch_logs_for_game.pitch_logs:
                 if not pitch_log.parsed_all_info:
                     continue
-                pitch_app_id = f"{pitch_log.bbref_game_id}_${pitch_log.pitcher_id_mlb}"
+                pitch_app_id = f"{pitch_log.bbref_game_id}_{pitch_log.pitcher_id_mlb}"
                 urls.append(
                     {
                         "identifier": pitch_app_id,
