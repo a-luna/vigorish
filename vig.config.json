@@ -1,0 +1,265 @@
+{
+  "SCRAPE_TOOL": {
+    "CONFIG_TYPE": "Enum",
+    "ENUM_NAME": "ScrapeTool",
+    "DESCRIPTION": "There are two different tool chains available for web scraping: The first uses Python packages requests and selenium, and the second uses NightmareJS which requires a node installation.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "NIGHTMAREJS",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "SCRAPE_CONDITION": {
+    "CONFIG_TYPE": "Enum",
+    "ENUM_NAME": "ScrapeCondition",
+    "DESCRIPTION": "By default, HTML is scraped and parsed only once (ONLY_MISSING_DATA). You can overwrite existing data by selecting ALWAYS, or prevent any data from being scraped by selecting NEVER.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "ALL": null,
+    "BBREF_GAMES_FOR_DATE": "ONLY_MISSING_DATA",
+    "BBREF_BOXSCORES": "ALWAYS",
+    "BROOKS_GAMES_FOR_DATE": "ONLY_MISSING_DATA",
+    "BROOKS_PITCH_LOGS": "ONLY_MISSING_DATA",
+    "BROOKS_PITCHFX": "ONLY_MISSING_DATA"
+  },
+  "STATUS_REPORT": {
+    "CONFIG_TYPE": "Enum",
+    "ENUM_NAME": "StatusReport",
+    "DESCRIPTION": "After a scrape job has successfully completed, you can display a report for the MLB season displaying various metrics for all data sets. The options below determine the level of detail reported.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "NONE",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "URL_SCRAPE_DELAY": {
+    "CONFIG_TYPE": "Numeric",
+    "CLASS_NAME": "UrlScrapeDelaySettings",
+    "DESCRIPTION": "As a common courtesy (a.k.a, to avoid being banned), after scraping a webpage you should wait for a few seconds before requesting the next URL. You can specify a single length of time to use for all URLs, or create random delay lengths by specifying a minimum and maximum length of time.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": {
+      "URL_SCRAPE_DELAY_IS_REQUIRED": true,
+      "URL_SCRAPE_DELAY_IS_RANDOM": true,
+      "URL_SCRAPE_DELAY_IN_SECONDS": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": 3,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": 6
+    },
+    "BBREF_GAMES_FOR_DATE": {
+      "URL_SCRAPE_DELAY_IS_REQUIRED": null,
+      "URL_SCRAPE_DELAY_IS_RANDOM": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": null
+    },
+    "BBREF_BOXSCORES": {
+      "URL_SCRAPE_DELAY_IS_REQUIRED": null,
+      "URL_SCRAPE_DELAY_IS_RANDOM": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": null
+    },
+    "BROOKS_GAMES_FOR_DATE": {
+      "URL_SCRAPE_DELAY_IS_REQUIRED": null,
+      "URL_SCRAPE_DELAY_IS_RANDOM": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": null
+    },
+    "BROOKS_PITCH_LOGS": {
+      "URL_SCRAPE_DELAY_IS_REQUIRED": null,
+      "URL_SCRAPE_DELAY_IS_RANDOM": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": null
+    },
+    "BROOKS_PITCHFX": {
+      "URL_SCRAPE_DELAY_IS_REQUIRED": null,
+      "URL_SCRAPE_DELAY_IS_RANDOM": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MIN": null,
+      "URL_SCRAPE_DELAY_IN_SECONDS_MAX": null
+    }
+  },
+  "BATCH_JOB_SETTINGS": {
+    "CONFIG_TYPE": "Numeric",
+    "CLASS_NAME": "BatchJobSettings",
+    "DESCRIPTION": "Number of URLs to scrape per batch. You can specify a single amount to use for all batches, or create random batch sizes by specifying a minimum and maximum batch size.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": {
+      "CREATE_BATCHED_SCRAPE_JOBS": true,
+      "USE_IRREGULAR_BATCH_SIZES": true,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MIN": 50,
+      "BATCH_SIZE_MAX": 80
+    },
+    "BBREF_GAMES_FOR_DATE": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MIN": null,
+      "BATCH_SIZE_MAX": null
+    },
+    "BBREF_BOXSCORES": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MIN": null,
+      "BATCH_SIZE_MAX": null
+    },
+    "BROOKS_GAMES_FOR_DATE": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MIN": null,
+      "BATCH_SIZE_MAX": null
+    },
+    "BROOKS_PITCH_LOGS": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MIN": null,
+      "BATCH_SIZE_MAX": null
+    },
+    "BROOKS_PITCHFX": {
+      "CREATE_BATCHED_SCRAPE_JOBS": null,
+      "USE_IRREGULAR_BATCH_SIZES": null,
+      "BATCH_SIZE": null,
+      "BATCH_SIZE_MIN": null,
+      "BATCH_SIZE_MAX": null
+    }
+  },
+  "BATCH_SCRAPE_DELAY": {
+    "CONFIG_TYPE": "Numeric",
+    "CLASS_NAME": "BatchScrapeDelaySettings",
+    "DESCRIPTION": "Some websites will ban you even if you wait for a few seconds between each request. To avoid being banned, you can scrape URLs in batches (recommended batch size: ~50 URLs/batch) and wait for a long period of time (30-45 minutes) before you begin a new batch. You can specify a single length of time to use for all batches or create random delay lengths by specifying a minimum and maximum length of time.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": false,
+    "ALL": {
+      "BATCH_SCRAPE_DELAY_IS_REQUIRED": null,
+      "BATCH_SCRAPE_DELAY_IS_RANDOM": null,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES": null,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MIN": null,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MAX": null
+    },
+    "BBREF_GAMES_FOR_DATE": {
+      "BATCH_SCRAPE_DELAY_IS_REQUIRED": true,
+      "BATCH_SCRAPE_DELAY_IS_RANDOM": true,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES": null,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MIN": 5,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MAX": 10
+    },
+    "BBREF_BOXSCORES": {
+      "BATCH_SCRAPE_DELAY_IS_REQUIRED": true,
+      "BATCH_SCRAPE_DELAY_IS_RANDOM": true,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES": null,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MIN": 5,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MAX": 10
+    },
+    "BROOKS_GAMES_FOR_DATE": {
+      "BATCH_SCRAPE_DELAY_IS_REQUIRED": true,
+      "BATCH_SCRAPE_DELAY_IS_RANDOM": true,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES": null,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MIN": 30,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MAX": 45
+    },
+    "BROOKS_PITCH_LOGS": {
+      "BATCH_SCRAPE_DELAY_IS_REQUIRED": true,
+      "BATCH_SCRAPE_DELAY_IS_RANDOM": true,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES": null,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MIN": 30,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MAX": 45
+    },
+    "BROOKS_PITCHFX": {
+      "BATCH_SCRAPE_DELAY_IS_REQUIRED": true,
+      "BATCH_SCRAPE_DELAY_IS_RANDOM": true,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES": null,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MIN": 30,
+      "BATCH_SCRAPE_DELAY_IN_MINUTES_MAX": 45
+    }
+  },
+  "S3_BUCKET": {
+    "CONFIG_TYPE": "str",
+    "DESCRIPTION": "The name of the S3 bucket to use for storing HTML and/or JSON files",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "vig-data",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "HTML_STORAGE": {
+    "CONFIG_TYPE": "Enum",
+    "ENUM_NAME": "HtmlStorageOption",
+    "DESCRIPTION": "By default, HTML is NOT saved after it has been parsed. However, you can choose to save scraped HTML in a local folder, an S3 bucket, or both.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "BOTH",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "HTML_LOCAL_FOLDER_PATH": {
+    "CONFIG_TYPE": "Path",
+    "CLASS_NAME": "LocalFolderPathSetting",
+    "DESCRIPTION": "Local folder path where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "/Users/aaronluna/Desktop/vigorish/html_storage/{year}/{data_set}/",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "HTML_S3_FOLDER_PATH": {
+    "CONFIG_TYPE": "Path",
+    "CLASS_NAME": "S3FolderPathSetting",
+    "DESCRIPTION": "Path to a folder within an S3 bucket where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "{year}/{data_set}/html/",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "JSON_STORAGE": {
+    "CONFIG_TYPE": "Enum",
+    "ENUM_NAME": "JsonStorageOption",
+    "DESCRIPTION": "MLB data is parsed from HTML and stored in JSON docs. You can store the JSON docs in a local folder, an S3 bucket, or both.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "BOTH",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "JSON_LOCAL_FOLDER_PATH": {
+    "CONFIG_TYPE": "Path",
+    "CLASS_NAME": "LocalFolderPathSetting",
+    "DESCRIPTION": "Local folder path where parsed JSON data should be stored.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "/Users/aaronluna/Desktop/vigorish/json_storage/{year}/{data_set}/",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  },
+  "JSON_S3_FOLDER_PATH": {
+    "CONFIG_TYPE": "Path",
+    "CLASS_NAME": "S3FolderPathSetting",
+    "DESCRIPTION": "Path to a folder within an S3 bucket where parsed JSON data should be stored.",
+    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+    "ALL": "{year}/{data_set}/",
+    "BBREF_GAMES_FOR_DATE": null,
+    "BBREF_BOXSCORES": null,
+    "BROOKS_GAMES_FOR_DATE": null,
+    "BROOKS_PITCH_LOGS": null,
+    "BROOKS_PITCHFX": null
+  }
+}
