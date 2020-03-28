@@ -1,7 +1,11 @@
 """Base task that defines the template method for a scrape task."""
 import json
+import subprocess
 from abc import ABC, abstractmethod
+from functools import partial
 from pathlib import Path
+from signal import signal, SIGINT
+from sys import exit
 
 from halo import Halo
 from lxml import html
@@ -9,6 +13,8 @@ from lxml.html import HtmlElement
 from Naked.toolshed.shell import execute_js
 from tqdm import tqdm
 
+from vigorish.cli.util import prompt_user_yes_no, get_data_set_display_name
+from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
 from vigorish.enums import (
     DocFormat,
@@ -28,6 +34,7 @@ from vigorish.scrape.progress_bar import (
     save_json_description,
     updating_description,
 )
+from vigorish.scrape.url_builder import UrlBuilder
 from vigorish.scrape.util import request_url, render_url
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.decorators.retry import RetryLimitExceededError
@@ -38,22 +45,34 @@ SRC_FOLDER = Path(__file__).parent.parent.parent
 NODEJS_SCRIPT = SRC_FOLDER / "nightmarejs" / "scrape_job.js"
 
 
+def handle_user_cancellation(db_session, active_job, signal_received, frame):
+    active_job.status = JobStatus.PAUSED
+    subprocess.run(["clear"])
+    prompt = "Would you like to cancel the current job? Selecting NO will pause the job, allowing you to resume the job later. Selecting YES will cancel the job forever."
+    result = prompt_user_yes_no(prompt=prompt)
+    cancel_job = result.value
+    if cancel_job:
+        active_job.status = JobStatus.CANCELLED
+    db_session.commit()
+    exit(0)
+
+
 class ScrapeTaskABC(ABC):
     data_set: DataSet
 
-    def __init__(self, db_job, db_session, config, scraped_data, driver, url_builder):
+    def __init__(self, db_job, db_session, config, scraped_data, driver):
         self.db_job = db_job
         self.db_session = db_session
         self.config = config
         self.scraped_data = scraped_data
         self.driver = driver
-        self.url_builder = url_builder
         self.url_set = {}
         self.python_scrape_tool = PythonScrapeTool.NONE
         self.start_date = self.db_job.start_date
         self.end_date = self.db_job.end_date
         self.season = self.db_job.season
         self.total_days = self.db_job.total_days
+        self.url_builder = UrlBuilder(self.config, self.scraped_data)
         self.scrape_condition = self.config.get_current_setting("SCRAPE_CONDITION", self.data_set)
         self.scrape_tool = self.config.get_current_setting("SCRAPE_TOOL", self.data_set)
         self.html_storage = self.config.get_current_setting("HTML_STORAGE", self.data_set)
@@ -70,63 +89,69 @@ class ScrapeTaskABC(ABC):
 
     @property
     def get_html_local(self):
-        return {
+        get_html_local_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.scraped_data.html_storage.get_html_brooks_games_for_date_local_file,
             DataSet.BROOKS_PITCH_LOGS: self.scraped_data.html_storage.get_html_brooks_pitch_log_local_file,
             DataSet.BROOKS_PITCHFX: self.scraped_data.html_storage.get_html_brooks_pitchfx_local_file,
             DataSet.BBREF_GAMES_FOR_DATE: self.scraped_data.html_storage.get_html_bbref_games_for_date_local_file,
             DataSet.BBREF_BOXSCORES: self.scraped_data.html_storage.get_html_bbref_boxscore_local_file,
         }
+        return get_html_local_dict[self.data_set]
 
     @property
     def get_html_s3(self):
-        return {
+        get_html_s3_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.scraped_data.html_storage.download_html_brooks_games_for_date,
             DataSet.BROOKS_PITCH_LOGS: self.scraped_data.html_storage.download_html_brooks_pitch_log_page,
             DataSet.BROOKS_PITCHFX: self.scraped_data.html_storage.download_html_brooks_pitchfx_log,
             DataSet.BBREF_GAMES_FOR_DATE: self.scraped_data.html_storage.download_html_bbref_games_for_date,
             DataSet.BBREF_BOXSCORES: self.scraped_data.html_storage.download_html_bbref_boxscore,
         }
+        return get_html_s3_dict[self.data_set]
 
     @property
     def write_html_local(self):
-        return {
+        write_html_local_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.scraped_data.html_storage.write_html_brooks_games_for_date_local_file,
             DataSet.BROOKS_PITCH_LOGS: self.scraped_data.html_storage.write_html_brooks_pitch_log_local_file,
             DataSet.BROOKS_PITCHFX: self.scraped_data.html_storage.write_html_brooks_pitchfx_local_file,
             DataSet.BBREF_GAMES_FOR_DATE: self.scraped_data.html_storage.write_html_bbref_games_for_date_local_file,
             DataSet.BBREF_BOXSCORES: self.scraped_data.html_storage.write_html_bbref_boxscore_local_file,
         }
+        return write_html_local_dict[self.data_set]
 
     @property
     def write_html_s3(self):
-        return {
+        write_html_s3_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.scraped_data.html_storage.upload_html_brooks_games_for_date,
             DataSet.BROOKS_PITCH_LOGS: self.scraped_data.html_storage.upload_html_brooks_pitch_log,
             DataSet.BROOKS_PITCHFX: self.scraped_data.html_storage.upload_html_brooks_pitchfx,
             DataSet.BBREF_GAMES_FOR_DATE: self.scraped_data.html_storage.upload_html_bbref_games_for_date,
             DataSet.BBREF_BOXSCORES: self.scraped_data.html_storage.upload_html_bbref_boxscore,
         }
+        return write_html_s3_dict[self.data_set]
 
     @property
     def write_json_local(self):
-        return {
+        write_json_local_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.scraped_data.json_storage.write_json_brooks_games_for_date_local_file,
             DataSet.BROOKS_PITCH_LOGS: self.scraped_data.json_storage.write_json_brooks_pitch_logs_for_game_local_file,
             DataSet.BROOKS_PITCHFX: self.scraped_data.json_storage.write_json_brooks_pitchfx_log_local_file,
             DataSet.BBREF_GAMES_FOR_DATE: self.scraped_data.json_storage.write_json_bbref_games_for_date_local_file,
             DataSet.BBREF_BOXSCORES: self.scraped_data.json_storage.write_json_bbref_boxscore_local_file,
         }
+        return write_json_local_dict[self.data_set]
 
     @property
     def write_json_s3(self):
-        return {
+        write_json_s3_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.scraped_data.json_storage.write_json_brooks_games_for_date_s3,
             DataSet.BROOKS_PITCH_LOGS: self.scraped_data.json_storage.write_json_brooks_pitch_logs_for_game_s3,
             DataSet.BROOKS_PITCHFX: self.scraped_data.json_storage.write_json_brooks_pitchfx_log_s3,
             DataSet.BBREF_GAMES_FOR_DATE: self.scraped_data.json_storage.write_json_bbref_games_for_date_s3,
             DataSet.BBREF_BOXSCORES: self.scraped_data.json_storage.write_json_bbref_boxscore_s3,
         }
+        return write_json_s3_dict[self.data_set]
 
     @property
     def save_html_local(self):
@@ -169,6 +194,9 @@ class ScrapeTaskABC(ABC):
     def execute(self):
         if self.scrape_condition == ScrapeCondition.NEVER:
             return Result.Fail("skip")
+        signal(SIGINT, partial(handle_user_cancellation, self.db_session, self.db_job))
+        self.db_job.status = JobStatus.PREPARING
+        self.db_session.commit()
         result = self.validate_local_folder_paths()
         if result.failure:
             return result
@@ -179,16 +207,21 @@ class ScrapeTaskABC(ABC):
         result = self.retrieve_scraped_html(html_spinner)
         if result.failure:
             if "skip" in result.error:
+                html_spinner.succeed("HTML Scraped")
                 return Result.Fail("skip")
             html_spinner.fail(f"Error! {result.error}")
             return result
         missing_html = result.value
         html_spinner.stop_and_persist(html_spinner.frame(), "")
+        self.db_job.status = JobStatus.SCRAPING
+        self.db_session.commit()
         result = self.scrape_missing_html(missing_html)
         if result.failure:
             html_spinner.fail(f"Error! {result.error}")
             return result
         html_spinner.succeed("HTML Scraped")
+        self.db_job.status = JobStatus.PARSING
+        self.db_session.commit()
         result = self.parse_data_from_scraped_html()
         if result.failure:
             return result
@@ -270,9 +303,9 @@ class ScrapeTaskABC(ABC):
         return Result.Ok(missing)
 
     def get_html(self, url_id):
-        result = self.get_html_local[self.data_set](url_id)
+        result = self.get_html_local(url_id)
         if result.failure:
-            result = self.get_html_s3[self.data_set](url_id)
+            result = self.get_html_s3(url_id)
             if result.failure:
                 return None
         return result.value
@@ -280,8 +313,6 @@ class ScrapeTaskABC(ABC):
     def scrape_missing_html(self, missing_html):
         if not missing_html:
             return Result.Ok()
-        self.db_job.status = JobStatus.SCRAPING
-        self.db_session.commit()
         if self.scrape_tool == ScrapeTool.NIGHTMAREJS:
             return self.scrape_html_with_nightmarejs(missing_html)
         if self.scrape_tool == ScrapeTool.REQUESTS_SELENIUM:
@@ -326,21 +357,20 @@ class ScrapeTaskABC(ABC):
 
     def save_scraped_html(self, html, identifier):
         if self.save_html_local:
-            result_local = self.write_html_local[self.data_set](identifier, html)
+            result_local = self.write_html_local(identifier, html)
             if result_local.failure:
                 return result_local
         if self.save_html_s3:
-            result_s3 = self.write_html_s3[self.data_set](identifier, html)
+            result_s3 = self.write_html_s3(identifier, html)
             if result_s3.failure:
                 return result_s3
         return result_local if result_local else result_s3 if result_s3 else Result.Fail("")
 
     def parse_data_from_scraped_html(self):
         spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
-        spinner.text = "Parsing HTML..."
+        spinner.text = f"Parsing HTML... 0% (0/{self.total_urls} URLs)"
         spinner.start()
-        self.db_job.status = JobStatus.PARSING
-        self.db_session.commit()
+        parsed = 0
         for game_date, urls in self.url_set.items():
             for url_details in urls:
                 url = url_details["url"]
@@ -361,16 +391,18 @@ class ScrapeTaskABC(ABC):
                 if result.failure:
                     spinner.fail(f"Error! {result.error}")
                     return result
+                parsed += 1
+                spinner.text = f"Parsing HTML... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
         spinner.succeed("HTML Parsed")
         return Result.Ok()
 
     def save_parsed_data(self, parsed_data):
         if self.save_json_local:
-            result_local = self.write_json_local[self.data_set](parsed_data)
+            result_local = self.write_json_local(parsed_data)
             if result_local.failure:
                 return result_local
         if self.save_json_s3:
-            result_s3 = self.write_json_s3[self.data_set](parsed_data)
+            result_s3 = self.write_json_s3(parsed_data)
             if result_s3.failure:
                 return result_s3
         return result_local if result_local else result_s3 if result_s3 else Result.Fail("")

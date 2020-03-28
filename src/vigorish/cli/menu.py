@@ -14,12 +14,11 @@ class Menu(MenuItem, ABC):
     menu_text: str = ""
     menu_items: List[MenuItem] = []
     selected_menu_item_text: str = ""
-    pointer: str = EMOJI_DICT.get("HAND_POINTER", "")
+    pointer: str = ""
     bullet_color: str = colors.bright(colors.foreground["default"])
     check_color: str = colors.bright(colors.foreground["default"])
     check_on_switch: str = colors.bright(colors.foreground["default"])
     pointer_color: str = colors.bright(colors.foreground["default"])
-    margin: int = 2
 
     @property
     def menu_item_text_list(self) -> List[str]:
@@ -27,7 +26,7 @@ class Menu(MenuItem, ABC):
 
     @property
     def menu_item_dict(self) -> Dict[str, MenuItem]:
-        return {ellipsize(item.menu_item_text, 60): item for item in self.menu_items}
+        return {ellipsize(item.menu_item_text, 70): item for item in self.menu_items}
 
     @property
     def menu_item_count(self) -> int:
@@ -38,7 +37,7 @@ class Menu(MenuItem, ABC):
         if not self.selected_menu_item_text:
             return 0
         menu_item_pos_dict = {
-            ellipsize(item.menu_item_text, 60): i for i, item in enumerate(self.menu_items)
+            ellipsize(item.menu_item_text, 70): i for i, item in enumerate(self.menu_items)
         }
         return menu_item_pos_dict.get(self.selected_menu_item_text, 0)
 
@@ -72,8 +71,10 @@ class Menu(MenuItem, ABC):
         return Bullet(
             self.menu_text,
             choices=self.menu_item_text_list,
-            bullet=f" {self.pointer}",
-            margin=self.margin,
+            bullet=self.pointer,
+            shift=1,
+            indent=2,
+            margin=2,
             bullet_color=self.bullet_color,
             background_color=self.background_color,
             background_on_switch=self.background_on_switch,
@@ -86,8 +87,10 @@ class Menu(MenuItem, ABC):
             self.menu_text,
             choices=self.menu_item_text_list,
             height=8,
-            pointer=f" {self.pointer}",
-            margin=self.margin,
+            pointer=self.pointer,
+            shift=1,
+            indent=2,
+            margin=2,
             pointer_color=self.pointer_color,
             background_color=self.background_color,
             background_on_switch=self.background_on_switch,

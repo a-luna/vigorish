@@ -12,26 +12,18 @@ from vigorish.config.database import ScrapeJob, Season
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
 from vigorish.scrape.job_runner import JobRunner
+from vigorish.cli.util import get_data_set_display_name, DISPLAY_NAME_DICT
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 from vigorish.util.list_helpers import display_dict
 
-DATA_SET_MAP = {
-    "bbref.com Daily Games": DataSet.BBREF_GAMES_FOR_DATE,
-    "brooksbaseball.com Daily Games": DataSet.BROOKS_GAMES_FOR_DATE,
-    "bbref.com Boxscores": DataSet.BBREF_BOXSCORES,
-    "brooksbaseball.com Pitch Logs": DataSet.BROOKS_PITCH_LOGS,
-    "brooksbaseball.com PitchFx": DataSet.BROOKS_PITCHFX,
-}
-
 
 class CreateJobMenuItem(MenuItem):
-    def __init__(self, db_session, config, scraped_data, url_builder) -> None:
+    def __init__(self, db_session, config, scraped_data) -> None:
         self.db_session = db_session
         self.config = config
         self.scraped_data = scraped_data
-        self.url_builder = url_builder
-        self.menu_item_text = "New Scrape Job"
+        self.menu_item_text = "Create New Job"
         self.menu_item_emoji = EMOJI_DICT.get("KNIFE", "")
 
     def launch(self) -> Result:
@@ -62,15 +54,12 @@ class CreateJobMenuItem(MenuItem):
                 db_session=self.db_session,
                 config=self.config,
                 scraped_data=self.scraped_data,
-                url_builder=self.url_builder,
             )
             result = job_runner.execute()
             if result.failure:
                 return result
-        else:
-            print_message("Placeholder! ViewJobs command not implemented.")
-        pause(message="Press any key to continue...")
-        return Result.Ok(new_scrape_job)
+        pause(message="Press any key to return to the main menu...")
+        return Result.Ok()
 
     def get_data_sets_to_scrape(self):
         data_sets = []
@@ -79,25 +68,26 @@ class CreateJobMenuItem(MenuItem):
             data_sets_prompt = self.get_data_sets_prompt()
             result = data_sets_prompt.launch()
             if result:
-                data_sets = {DATA_SET_MAP[sel]: sel for sel in result}
+                data_sets = {DISPLAY_NAME_DICT[sel]: sel for sel in result}
         return data_sets
 
     def get_data_sets_prompt(self):
         return Check(
             prompt=(
                 "Select all data sets to scrape:\n"
-                "(use SPACE BAR to select a data set, ENTER to confirm your selections)\n"
+                "(use SPACE BAR to select a data set, ENTER to confirm your selections)"
             ),
             check=EMOJI_DICT.get("CHECK", ""),
-            choices=[data_set for data_set in DATA_SET_MAP.keys() if data_set != DataSet.ALL],
-            margin=2,
+            choices=[data_set for data_set in DISPLAY_NAME_DICT.keys() if data_set != DataSet.ALL],
+            shift=1,
             indent=2,
-            background_color=colors.background["default"],
-            background_on_switch=colors.background["default"],
-            word_color=colors.foreground["default"],
-            word_on_switch=colors.bright(colors.foreground["magenta"]),
+            margin=2,
             check_color=colors.foreground["default"],
             check_on_switch=colors.foreground["default"],
+            background_color=colors.foreground["default"],
+            background_on_switch=colors.foreground["default"],
+            word_color=colors.foreground["default"],
+            word_on_switch=colors.bright(colors.foreground["cyan"]),
         )
 
     def get_scrape_job_details(self):

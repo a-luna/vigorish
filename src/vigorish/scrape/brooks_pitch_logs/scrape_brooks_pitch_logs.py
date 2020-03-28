@@ -14,9 +14,9 @@ from vigorish.util.result import Result
 
 
 class ScrapeBrooksPitchLogs(ScrapeTaskABC):
-    def __init__(self, db_job, db_session, config, scraped_data, driver, url_builder):
+    def __init__(self, db_job, db_session, config, scraped_data, driver):
         self.data_set = DataSet.BROOKS_PITCH_LOGS
-        super().__init__(db_job, db_session, config, scraped_data, driver, url_builder)
+        super().__init__(db_job, db_session, config, scraped_data, driver)
 
     def check_prerequisites(self, game_date):
         scraped_brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
@@ -47,11 +47,12 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         super().scrape_html_with_requests_selenium(missing_html)
 
     def parse_data_from_scraped_html(self):
+        self.db_job.status = JobStatus.PARSING
+        self.db_session.commit()
         spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
         spinner.text = "Parsing HTML..."
         spinner.start()
-        self.db_job.status = JobStatus.PARSING
-        self.db_session.commit()
+        parsed = 0
         for game_date in self.date_range:
             result = self.scraped_data.get_brooks_games_for_date(game_date)
             if result.failure:
@@ -65,6 +66,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 pitch_logs_for_game.pitch_log_count = game.pitcher_appearance_count
                 scraped_pitch_logs = []
                 for pitcher_id, url in game.pitcher_appearance_dict.items():
+                    spinner.text = f"Parsing Pitch Logs for {game.bbref_game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
                     pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
                     filepath = self.get_html(pitch_app_id)
                     if not filepath:
@@ -76,8 +78,11 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                     if result.failure:
                         spinner.fail(f"Error! {result.error}")
                         return result
-                    brooks_pitch_log = result.value
-                    scraped_pitch_logs.append(brooks_pitch_log)
+                    pitch_log = result.value
+                    scraped_pitch_logs.append(pitch_log)
+                    parsed += 1
+                    spinner.text = f"Parsing Pitch Logs for {game.bbref_game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                spinner.text = f"Updating Pitch Logs for {game.bbref_game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
                 pitch_logs_for_game.pitch_logs = scraped_pitch_logs
                 result = self.save_parsed_data(pitch_logs_for_game)
                 if result.failure:

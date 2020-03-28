@@ -11,9 +11,9 @@ from vigorish.util.result import Result
 
 
 class ScrapeBrooksPitchFx(ScrapeTaskABC):
-    def __init__(self, db_job, db_session, config, scraped_data, driver, url_builder):
+    def __init__(self, db_job, db_session, config, scraped_data, driver):
         self.data_set = DataSet.BROOKS_PITCHFX
-        super().__init__(db_job, db_session, config, scraped_data, driver, url_builder)
+        super().__init__(db_job, db_session, config, scraped_data, driver)
 
     def check_prerequisites(self, game_date):
         scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
@@ -41,11 +41,12 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
         super().scrape_html_with_requests_selenium(missing_html)
 
     def parse_data_from_scraped_html(self):
+        self.db_job.status = JobStatus.PARSING
+        self.db_session.commit()
         spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
         spinner.text = "Parsing HTML..."
         spinner.start()
-        self.db_job.status = JobStatus.PARSING
-        self.db_session.commit()
+        parsed = 0
         for game_date in self.date_range:
             result = self.scraped_data.get_all_brooks_pitch_logs_for_date(game_date)
             if result.failure:
@@ -53,6 +54,7 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                 return result
             pitch_logs_for_date = result.value
             for pitch_logs_for_game in pitch_logs_for_date:
+                spinner.text = f"Parsing PitchFX Logs for {game.bbref_game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
                 for pitch_log in pitch_logs_for_game.pitch_logs:
                     if not pitch_log.parsed_all_info:
                         continue
@@ -75,6 +77,8 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                     if result.failure:
                         spinner.fail(f"Error! {result.error}")
                         return result
+                    parsed += 1
+                    spinner.text = f"Parsing PitchFX Logs for {game.bbref_game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
         spinner.succeed("HTML Parsed")
         return Result.Ok()
 

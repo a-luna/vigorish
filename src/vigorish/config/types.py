@@ -309,15 +309,7 @@ class ConfigSetting:
                 for data_set in DataSet
                 if data_set != DataSet.ALL
             }
-        return report_dict(settings_dict, title="", title_prefix="", title_suffix="").strip()
-
-    @property
-    def menu_text(self) -> str:
-        return (
-            f"Setting: {self.setting_name_title} (Type: {self.data_type.name})\n\n"
-            f"{wrap_text(self.description, max_len=80)}\n\n"
-            f"{wrap_text(self.current_settings_report, max_len=80)}\n"
-        )
+        return report_dict(settings_dict, title="", title_prefix="", title_suffix="")
 
     def current_setting(self, data_set: DataSet) -> str:
         return (

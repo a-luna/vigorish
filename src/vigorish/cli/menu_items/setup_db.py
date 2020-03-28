@@ -10,6 +10,7 @@ from vigorish.constants import EMOJI_DICT
 from vigorish.config.database import Base
 from vigorish.setup.populate_tables import populate_tables
 from vigorish.util.result import Result
+from vigorish.util.string_helpers import wrap_text
 
 SETUP_MESSAGE = (
     "Before you can begin scraping data, you must initialize the database with initial player, "
@@ -27,15 +28,15 @@ class SetupDBMenuItem(MenuItem):
         self.db_engine = db_engine
         self.db_session = db_session
         self.menu_item_text = menu_item_text
-        self.menu_item_emoji = EMOJI_DICT.get("TABBED_FILES", "")
+        self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
 
     def launch(self) -> Result:
         subprocess.run(["clear"])
         if db_setup_complete(self.db_engine, self.db_session):
-            print_message(RESET_MESSAGE)
-            print_message(WARNING, fg="bright_red", bold=True)
+            print_message(wrap_text(RESET_MESSAGE, max_len=70))
+            print_message(wrap_text(WARNING, max_len=70), fg="bright_red", bold=True)
         else:
-            print_message(SETUP_MESSAGE)
+            print_message(wrap_text(SETUP_MESSAGE, max_len=70))
         result = prompt_user_yes_no("Would you like to continue?")
         did_confirm_yes = result.value
         if not did_confirm_yes:

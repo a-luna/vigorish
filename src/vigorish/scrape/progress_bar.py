@@ -1,4 +1,5 @@
 from vigorish.enums import DataSet
+from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 
 PBAR_LEN_DICT = {
     DataSet.BBREF_GAMES_FOR_DATE: 34,
@@ -10,7 +11,7 @@ PBAR_LEN_DICT = {
 
 
 def game_date_description(date, data_set):
-    pre = f"Game Date | {date.strftime(MONTH_NAME_SHORT)}"
+    pre = f"Game Date | {date.strftime(DATE_MONTH_NAME)}"
     pad_len = PBAR_LEN_DICT[data_set] - len(pre)
     return f"{pre}{'.'*pad_len}"
 

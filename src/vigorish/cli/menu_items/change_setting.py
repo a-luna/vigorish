@@ -77,13 +77,15 @@ class ChangeSetttingMenuItem(MenuItem):
         return Bullet(
             f"Select a value for {self.setting_name_title} (Data Set = {data_set.name}): ",
             choices=[choice for choice in self.enum_dict.keys()],
-            bullet=f" {self.pointer}",
+            bullet="",
+            shift=1,
+            indent=2,
             margin=2,
-            bullet_color=colors.bright(colors.foreground["cyan"]),
+            bullet_color=colors.foreground["default"],
             background_color=colors.foreground["default"],
             background_on_switch=colors.foreground["default"],
             word_color=colors.foreground["default"],
-            word_on_switch=colors.foreground["default"],
+            word_on_switch=colors.bright(colors.foreground["cyan"]),
         )
 
     def __get_str_menu(self, data_set):
@@ -97,7 +99,7 @@ class ChangeSetttingMenuItem(MenuItem):
         result = prompt_user_yes_no(prompt)
         is_enabled = result.value
         if not is_enabled:
-            return (prompt, (is_required, None, None, None, None))
+            return (prompt, (is_enabled, None, None, None, None))
         prompt = f"Use random values (Data Set = {data_set.name})? "
         result = prompt_user_yes_no(prompt)
         is_random = result.value
@@ -114,12 +116,12 @@ class ChangeSetttingMenuItem(MenuItem):
             random_max_prompt = Numbers(prompt_max, word_color=colors.foreground["default"])
             random_min = random_min_prompt.launch()
             random_max = random_max_prompt.launch()
-            return (prompt, (is_required, is_random, None, int(random_min), int(random_max)))
+            return (prompt, (is_enabled, is_random, None, int(random_min), int(random_max)))
         else:
             prompt = f"Enter the value (in {self.setting_units}) for {self.setting_name_title} (Data Set = {data_set.name}): "
             new_value_prompt = Numbers(prompt, word_color=colors.foreground["default"])
             new_value = new_value_prompt.launch()
-            return (prompt, (is_required, is_random, int(new_value), None, None))
+            return (prompt, (is_enabled, is_random, int(new_value), None, None))
 
     def __get_updated_settings(self, prompt_results):
         if self.data_type == ConfigType.ENUM:

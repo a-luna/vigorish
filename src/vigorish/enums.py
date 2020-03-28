@@ -83,13 +83,16 @@ class PythonScrapeTool(Enum):
         return self.name
 
 
-class StatusReport(Enum):
+class StatusReport(IntEnum):
     """The type of status report (if any) to display after data has been scraped."""
 
-    SEASON_SUMMARY = auto()
-    DATE_SUMMARY = auto()
-    DATE_DETAIL = auto()
-    NONE = auto()
+    NONE = 0
+    SEASON_SUMMARY = 1
+    DATE_SUMMARY_MISSING_DATA = 2
+    DATE_SUMMARY_ALL_DATES = 3
+    DATE_DETAIL_MISSING_DATA = 4
+    DATE_DETAIL_ALL_DATES = 5
+    DATE_DETAIL_MISSING_PITCHFX = 6
 
     def __str__(self):
         return self.name
@@ -154,6 +157,19 @@ class JobStatus(IntEnum):
 
     def __str__(self):
         return self.name
+
+
+class JobGroup(IntEnum):
+    """Group"""
+
+    INCOMPLETE = 1
+    ACTIVE = 2
+    FAILED = 3
+    CANCELLED = 4
+    COMPLETE = 5
+
+    def __str__(self):
+        return self.name.title()
 
 
 class DefensePosition(Enum):

@@ -25,9 +25,9 @@ _PLAY_BY_PLAY_TABLE_LOC = (By.XPATH, _PLAY_BY_PLAY_TABLE)
 
 
 class ScrapeBBRefBoxscores(ScrapeTaskABC):
-    def __init__(self, db_job, db_session, config, scraped_data, driver, url_builder):
+    def __init__(self, db_job, db_session, config, scraped_data, driver):
         self.data_set = DataSet.BBREF_BOXSCORES
-        super().__init__(db_job, db_session, config, scraped_data, driver, url_builder)
+        super().__init__(db_job, db_session, config, scraped_data, driver)
 
     def check_prerequisites(self, game_date):
         scraped_bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(

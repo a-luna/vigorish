@@ -1,5 +1,5 @@
 """Constant values that are referenced from multiple places."""
-from vigorish.enums import DataSet
+from vigorish.enums import DataSet, JobGroup, JobStatus
 
 TEAM_ID_DICT = {
     "CHW": "CHA",
@@ -144,7 +144,7 @@ EMOJI_DICT = dict(
     CHART="📊",
     BOOK="📚",
     TABBED_FILES="🗂️",
-    TOOLS="🛠️",
+    TOOLS="🛠️ ",
     KNIFE="🔪",
     ROBOT="🤖",
     KNOBS="🎛️",
@@ -158,22 +158,30 @@ EMOJI_DICT = dict(
     CLOUD="🌧",
     SPIRAL="🌀",
     CIRCLE="🔵",
+    GEAR="⚙️ ",
     BLUE_DIAMOND="🔹",
     CHECK="☑️",
+    ASTERISK="✳️",
     PASSED="✅",
     FAILED="🚫",
     QUESTION="❔",
     COOL="🆒",
-    ONE="1️⃣",
-    TWO="2️⃣",
-    THREE="3️⃣",
-    FOUR="4️⃣",
-    FIVE="5️⃣",
-    BACK="⬅",
-    EXIT="❌",
+    BACK="⬅ ",
+    EXIT="❎",
 )
 
-MENU_NUMBERS = {1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣", 5: "5️⃣"}
+MENU_NUMBERS = {
+    1: "1️⃣",
+    2: "2️⃣",
+    3: "3️⃣",
+    4: "4️⃣",
+    5: "5️⃣",
+    6: "6️⃣",
+    7: "7️⃣",
+    8: "8️⃣",
+    9: "9️⃣",
+    10: "🔟",
+}
 
 CONFIG_EMOJI_DICT = dict(
     SCRAPE_TOOL=EMOJI_DICT.get("KNIFE", ""),
@@ -190,3 +198,22 @@ CONFIG_EMOJI_DICT = dict(
     JSON_LOCAL_FOLDER_PATH=EMOJI_DICT.get("FOLDER", ""),
     JSON_S3_FOLDER_PATH=EMOJI_DICT.get("BOOKMARK", ""),
 )
+
+JOB_STATUS_TO_GROUP_MAP = {
+    JobStatus.NOT_STARTED: JobGroup.INCOMPLETE,
+    JobStatus.PAUSED: JobGroup.INCOMPLETE,
+    JobStatus.PREPARING: JobGroup.ACTIVE,
+    JobStatus.SCRAPING: JobGroup.ACTIVE,
+    JobStatus.PARSING: JobGroup.ACTIVE,
+    JobStatus.ERROR: JobGroup.FAILED,
+    JobStatus.CANCELLED: JobGroup.CANCELLED,
+    JobStatus.COMPLETE: JobGroup.COMPLETE,
+}
+
+JOB_GROUP_TO_STATUS_MAP = {
+    JobGroup.INCOMPLETE: [JobStatus.NOT_STARTED, JobStatus.PAUSED],
+    JobGroup.ACTIVE: [JobStatus.PREPARING, JobStatus.SCRAPING, JobStatus.PARSING],
+    JobGroup.FAILED: [JobStatus.ERROR],
+    JobGroup.CANCELLED: [JobStatus.CANCELLED],
+    JobGroup.COMPLETE: [JobStatus.COMPLETE],
+}

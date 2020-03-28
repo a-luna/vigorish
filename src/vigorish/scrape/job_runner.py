@@ -1,7 +1,10 @@
+import subprocess
+import time
 from collections import defaultdict
 from datetime import datetime
 
 from halo import Halo
+from getch import pause
 
 from vigorish.config.database import ScrapeError
 from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
@@ -16,6 +19,7 @@ from vigorish.scrape.brooks_games_for_date.scrape_brooks_games_for_date import (
 from vigorish.scrape.brooks_pitch_logs.scrape_brooks_pitch_logs import ScrapeBrooksPitchLogs
 from vigorish.scrape.brooks_pitchfx.scrape_brooks_pitchfx import ScrapeBrooksPitchFx
 from vigorish.scrape.util import get_chromedriver
+from vigorish.status.report_status import report_season_status
 from vigorish.util.decorators.retry import RetryLimitExceededError
 from vigorish.util.result import Result
 
@@ -29,75 +33,67 @@ SCRAPE_TASK_DICT = {
 
 
 class JobRunner:
-    def __init__(self, db_job, db_session, config, scraped_data, url_builder):
+    def __init__(self, db_job, db_session, config, scraped_data):
         self.db_job = db_job
         self.data_sets = self.db_job.data_sets
         self.start_date = self.db_job.start_date
         self.end_date = self.db_job.end_date
+        self.season = self.db_job.season
         self.db_session = db_session
         self.config = config
         self.scraped_data = scraped_data
-        self.url_builder = url_builder
         self.driver = None
-
-    @property
-    def duration(self):
-        if self.start_time and self.end_time:
-            return self.end_time - self.start_time
-        return None
-
-    @property
-    def status_report(self):
-        if self.db_job.status == JobStatus.COMPLETE:
-            start_str = self.start_date.strftime(MONTH_NAME_SHORT)
-            end_str = self.end_date.strftime(MONTH_NAME_SHORT)
-            report = (
-                "Requested data was successfully scraped:\n"
-                f"data set.........: {self.data_sets}\n"
-                f"date range.......: {start_str} - {end_str}\n"
-                f"duration.........: {format_timedelta_str(self.duration)}"
-            )
-        elif self.db_job.status == JobStatus.ERROR:
-            return str(self.result)
-        else:
-            return self.status
+        self.status_report = self.config.get_current_setting("STATUS_REPORT", DataSet.ALL)
 
     def execute(self):
+        if self.db_job.status == JobStatus.COMPLETE:
+            error = "This job cannot be started, status is COMPLETE."
+            return Result.Fail(error)
         result = self.initialize()
         if result.failure:
             return self.job_failed(result)
+        task_results = []
         spinners = defaultdict(lambda: Halo(spinner="dots3"))
         for i, data_set in enumerate(self.data_sets, start=1):
+            subprocess.run(["clear"])
+            if task_results:
+                print("\n".join(task_results))
             text = f"Scraping data set: {data_set.name} (Task #{i}/{len(self.data_sets)})..."
             spinners[data_set].text = text
             spinners[data_set].color = JOB_SPINNER_COLORS[data_set]
             spinners[data_set].start()
             scrape_task = SCRAPE_TASK_DICT[data_set](
-                self.db_job,
-                self.db_session,
-                self.config,
-                self.scraped_data,
-                self.driver,
-                self.url_builder,
+                self.db_job, self.db_session, self.config, self.scraped_data, self.driver,
             )
             spinners[data_set].stop_and_persist(spinners[data_set].frame(), "")
             result = scrape_task.execute()
             if result.failure:
                 if "skip" in result.error:
-                    text = f"Skipped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
-                    spinners[data_set].stop_and_persist(EMOJI_DICT.get("SHRUG", ""), text)
+                    text = f"{EMOJI_DICT.get('SHRUG', '')} Skipped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+                    task_results.append(text)
                     continue
-                test = f"Failed to scrape: {data_set.name} (Task #{i}/{len(self.data_sets)})"
-                spinners[data_set].stop_and_persist(EMOJI_DICT.get("WEARY", ""), text)
+                test = f"{EMOJI_DICT.get('FAILED', '')} Failed to scrape: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+                task_results.append(text)
                 return self.job_failed(result)
-            text = f"Scraped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
-            spinners[data_set].stop_and_persist(EMOJI_DICT.get("COOL", ""), text)
+            text = f"{EMOJI_DICT.get('PASSED', '')} Scraped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+            task_results.append(text)
+        subprocess.run(["clear"])
+        print("\n".join(task_results))
+        pause(message="Press any key to continue...")
+        subprocess.run(["clear"])
+        result = report_season_status(
+            session=self.db_session,
+            scraped_data=self.scraped_data,
+            refresh_data=True,
+            year=self.season.year,
+            report_type=self.status_report,
+        )
+        if result.failure:
+            return self.job_failed(result)
         return self.job_succeeded()
 
     def initialize(self):
         try:
-            self.db_job.status = JobStatus.PREPARING
-            self.db_session.commit()
             self.driver = get_chromedriver()
             self.start_time = datetime.now()
             return Result.Ok()
