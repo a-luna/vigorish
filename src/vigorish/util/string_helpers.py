@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 from typing import Union
 
-from fuzzywuzzy import process
+from rapidfuzz import process
 
 from vigorish.util.regex import PITCH_APP_REGEX, TIMESTAMP_REGEX
 from vigorish.util.result import Result
