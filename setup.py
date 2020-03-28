@@ -30,7 +30,6 @@ INSTALL_REQUIRES = [
     "requests",
     "selenium",
     "SQLAlchemy",
-    "supersqlite",
     "tqdm",
     "tzlocal",
     "urllib3",

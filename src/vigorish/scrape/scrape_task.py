@@ -41,8 +41,8 @@ from vigorish.util.decorators.retry import RetryLimitExceededError
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
 
-SRC_FOLDER = Path(__file__).parent.parent.parent
-NODEJS_SCRIPT = SRC_FOLDER / "nightmarejs" / "scrape_job.js"
+APP_FOLDER = Path(__file__).parent.parent
+NODEJS_SCRIPT = APP_FOLDER / "nightmarejs" / "scrape_job.js"
 
 
 def handle_user_cancellation(db_session, active_job, signal_received, frame):

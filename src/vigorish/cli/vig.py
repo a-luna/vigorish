@@ -22,11 +22,9 @@ from vigorish.status.report_status import (
 )
 from vigorish.util.datetime_util import today_str, current_year
 
-
 APP_FOLDER = Path(__file__).parent.parent
-APP_ROOT = APP_FOLDER.parent.parent
-CONFIG = APP_ROOT / "vig.config.json"
-DOTENV = APP_ROOT / ".env"
+CONFIG = APP_FOLDER / "vig.config.json"
+DOTENV = APP_FOLDER / ".env"
 
 
 @click.group()

@@ -270,3 +270,13 @@ class GameScrapeStatus(Base):
             game.bb_game_id
             for game in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
         ]
+
+    @classmethod
+    def get_all_bbref_game_ids_ready_to_combine(cls, session):
+        return [
+            game.bbref_game_id
+            for game in session.query(cls).all()
+            if game.scraped_bbref_boxscore
+            and game.scraped_all_pitchfx_logs
+            and not pitch_data_was_audited
+        ]

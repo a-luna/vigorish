@@ -21,8 +21,8 @@ from vigorish.util.datetime_util import (
 from vigorish.util.dt_format_strings import DATE_ONLY, DT_STR_FORMAT
 from vigorish.util.list_helpers import group_and_sort_list
 
-SRC_FOLDER = Path(__file__).parent.parent.parent
-NODEJS_INBOX = SRC_FOLDER / "nightmarejs" / "inbox"
+APP_FOLDER = Path(__file__).parent.parent
+NODEJS_INBOX = APP_FOLDER / "nightmarejs" / "inbox"
 
 
 class ScrapeJob(Base):
