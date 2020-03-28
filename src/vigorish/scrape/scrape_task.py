@@ -287,7 +287,7 @@ class ScrapeTaskABC(ABC):
         for url_details in scrape_urls:
             url_id = url_details["identifier"]
             html_filepath = self.get_html(url_id)
-            if not html_filepath:
+            if not html_filepath or self.get_file_size_bytes(html_filepath) < 1024:
                 missing.append(url_details)
                 remaining = self.total_urls - skipped - retrieved - len(missing)
                 perc_complete = float(1) - (remaining / float(self.total_urls))
@@ -301,6 +301,9 @@ class ScrapeTaskABC(ABC):
         if missing:
             spinner.text = f"Scraping HTML... ({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, {remaining} Remaining)"
         return Result.Ok(missing)
+
+    def get_file_size_bytes(self, filepath):
+        return filepath.stat().st_size
 
     def get_html(self, url_id):
         result = self.get_html_local(url_id)

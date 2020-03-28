@@ -11,6 +11,14 @@ def is_windows():
     return any(platform.win32_ver())
 
 
+def get_file_size_bytes(filepath):
+    result = validate_file_path(filepath)
+    if result.failure:
+        return result
+    valid_filepath = result.value
+    return Result.Ok(valid_filepath.stat().st_size)
+
+
 def validate_folder_path(input_path: Union[Path, str]):
     if not input_path:
         return Result.Fail("NoneType or empty string is not a valid folder path.")

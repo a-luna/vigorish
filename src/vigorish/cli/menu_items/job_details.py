@@ -61,7 +61,7 @@ class JobDetailsMenuItem(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  Execute Job": "RUN",
             f"{MENU_NUMBERS.get(2)}  Cancel Job": "CANCEL",
-            f"{EMOJI_DICT.get('BACK')}  Return to Active Jobs": None,
+            f"{EMOJI_DICT.get('BACK')} Return to Active Jobs": None,
         }
         prompt = Bullet(
             "Current options:",

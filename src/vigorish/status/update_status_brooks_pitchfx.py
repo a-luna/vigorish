@@ -13,7 +13,7 @@ def update_data_set_brooks_pitchfx(scraped_data, session, season):
     new_pitch_app_ids = set(scraped_pitch_app_ids) & set(unscraped_pitch_app_ids)
     if not new_pitch_app_ids:
         return Result.Ok()
-    result = update_status_brooks_pitchfx_log_list(session, new_pitch_app_ids)
+    result = update_status_brooks_pitchfx_log_list(scraped_data, session, new_pitch_app_ids)
     if result.failure:
         return result
     return Result.Ok()
