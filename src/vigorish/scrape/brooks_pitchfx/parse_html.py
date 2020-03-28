@@ -26,7 +26,7 @@ def parse_pitchfx_log(page_source, pitch_log):
     pitchfx_log_dict["pitch_app_id"] = pitch_log.pitch_app_id
     pitchfx_log_dict["pitcher_team_id_bb"] = pitch_log.pitcher_team_id_bb
     pitchfx_log_dict["opponent_team_id_bb"] = pitch_log.opponent_team_id_bb
-    pitchfx_log_dict["brooks_game_id"] = pitch_log.brooks_game_id
+    pitchfx_log_dict["bb_game_id"] = pitch_log.bb_game_id
     pitchfx_log_dict["bbref_game_id"] = pitch_log.bbref_game_id
     pitchfx_log_dict["pitchfx_url"] = pitch_log.pitchfx_url
     pitchfx_log = BrooksPitchFxLog(**pitchfx_log_dict)
@@ -80,7 +80,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     pitchfx_dict["pitch_app_id"] = pitch_log.pitch_app_id
     pitchfx_dict["pitcher_team_id_bb"] = pitch_log.pitcher_team_id_bb
     pitchfx_dict["opponent_team_id_bb"] = pitch_log.opponent_team_id_bb
-    pitchfx_dict["brooks_game_id"] = pitch_log.brooks_game_id
+    pitchfx_dict["bb_game_id"] = pitch_log.bb_game_id
     pitchfx_dict["bbref_game_id"] = pitch_log.bbref_game_id
     pitchfx_dict["table_row_number"] = row_num
     pitchfx = BrooksPitchFxData(**pitchfx_dict)
