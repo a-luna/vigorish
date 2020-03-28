@@ -7,6 +7,11 @@ venv
 *.rdb
 *.db
 *.DS_Store
+html_storage
+json_storage
+.mypy_cache
+src/nightmarejs/node_modules
+src/nightmarejs/inbox
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
