@@ -66,7 +66,7 @@ def setup(app):
     deleted. This cannot be undone.
     """
     print()  # place an empty line between the command and the progress bars
-    result = initialize_database()
+    result = initialize_database(app["engine"], app["session"])
     if result.failure:
         return exit_app_error(app, result.error)
     return exit_app_success(app, "Successfully populated database with initial data.")
