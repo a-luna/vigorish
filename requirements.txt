@@ -7,7 +7,7 @@ attrs==19.3.0
 backcall==0.1.0
 birdseye==0.8.3
 black==19.10b0
-boto3==1.12.27
+boto3==1.12.31
 botocore==1.15.27
 bullet==2.1.0
 cached-property==1.5.1
