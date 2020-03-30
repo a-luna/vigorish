@@ -7,8 +7,6 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no
 from vigorish.config.database import initialize_database, db_setup_complete
 from vigorish.constants import EMOJI_DICT
-from vigorish.config.database import Base
-from vigorish.setup.populate_tables import populate_tables
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 

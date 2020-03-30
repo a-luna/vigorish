@@ -17,7 +17,7 @@ from vigorish.scrape.bbref_boxscores.models.pitch_stats import BBRefPitchStats
 from vigorish.scrape.bbref_boxscores.models.starting_lineup_slot import BBRefStartingLineupSlot
 from vigorish.scrape.bbref_boxscores.models.team_linescore_totals import BBRefTeamLinescoreTotals
 from vigorish.scrape.bbref_boxscores.models.umpire import BBRefUmpire
-from vigorish.util.numeric_functions import is_even
+from vigorish.util.numeric_helpers import is_even
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
 
@@ -66,7 +66,10 @@ _PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = (
     './tbody//tr[@class="pbp_summary_bottom"]//span[@class="half_inning_summary"]/text()'
 )
 _PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
-_T_PBP_IN_GAME_SUBSTITUTION_XPATH = './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]//td[@data-stat="inning_summary_3"]//div/text()'
+_T_PBP_IN_GAME_SUBSTITUTION_XPATH = (
+    './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]'
+    '//td[@data-stat="inning_summary_3"]//div/text()'
+)
 _T_PBP_MISC_EVENT_XPATH = (
     './tbody//tr[@data-row="${row}"]//td[@data-stat="inning_summary_3"]//text()'
 )
@@ -328,11 +331,17 @@ def _parse_team_data(
         return Result.Fail(error)
     team_totals = _parse_linescore_totals_for_team(page_source, team_id, is_home_team)
     if not team_totals:
-        error = f"Failed to parse team linescore totals (team_id={team_id}, is_home_team={is_home_team})"
+        error = (
+            "Failed to parse team linescore totals "
+            f"(team_id={team_id}, is_home_team={is_home_team})"
+        )
         return Result.Fail(error)
     opponent_totals = _parse_linescore_totals_for_team(page_source, opponent_id, not is_home_team)
     if not opponent_totals:
-        error = f"Failed to parse opponent linescore totals (team_id={opponent_id}, is_home_team={not is_home_team})"
+        error = (
+            "Failed to parse opponent linescore totals "
+            f"(team_id={opponent_id}, is_home_team={not is_home_team})"
+        )
         return Result.Fail(error)
     batting_stats = _parse_batting_stats_for_team(team_batting_table, team_id, opponent_id)
     if not batting_stats:
@@ -502,7 +511,10 @@ def _parse_starting_lineup_for_team(page_source, team_id, is_home_team):
         bat = BBRefStartingLineupSlot()
         split = player_links[i].split("/")
         if len(split) != 4:
-            error = "Player links in lineup table are not in the expected format (team_id={team_id}, is_home_team={is_home_team})"
+            error = (
+                "Player links in lineup table are not in the expected format "
+                f"(team_id={team_id}, is_home_team={is_home_team})"
+            )
             return Result.Fail(error)
         bat.player_id_br = split[3][:-6]
         bat.bat_order = bat_orders[i]

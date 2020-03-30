@@ -5,6 +5,7 @@ from vigorish.scrape.scrape_task import ScrapeTaskABC
 from vigorish.status.update_status_brooks_games_for_date import (
     update_brooks_games_for_date_single_date,
 )
+from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
 
@@ -14,10 +15,10 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
         super().__init__(db_job, db_session, config, scraped_data, driver)
 
     def check_prerequisites(self, game_date):
-        scraped_bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
+        bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
-        if scraped_bbref_games_for_date:
+        if bbref_games_for_date:
             return Result.Ok()
         date_str = game_date.strftime(DATE_ONLY)
         error = (
@@ -27,13 +28,10 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
         return Result.Fail(error)
 
     def check_current_status(self, game_date):
-        scraped_brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
+        brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
-        if (
-            scraped_brooks_games_for_date
-            and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA
-        ):
+        if brooks_games_for_date and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
             return Result.Fail("skip")
         return Result.Ok()
 

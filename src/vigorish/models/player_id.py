@@ -1,6 +1,5 @@
 """Values used to identify a single player in various websites and databases."""
-from sqlalchemy import Column, Boolean, Integer, String, Date, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, ForeignKey
 
 from vigorish.config.database import Base
 

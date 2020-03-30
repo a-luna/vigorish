@@ -1,9 +1,7 @@
 """Menu item that allows the user to create a record of a new scrape job."""
 import subprocess
-from datetime import date
 
 from bullet import Check, Input, VerticalPrompt, colors
-from dateutil import parser
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
@@ -12,10 +10,9 @@ from vigorish.config.database import ScrapeJob, Season
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
 from vigorish.scrape.job_runner import JobRunner
-from vigorish.cli.util import get_data_set_display_name, DISPLAY_NAME_DICT
+from vigorish.cli.util import DISPLAY_NAME_DICT
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
-from vigorish.util.list_helpers import display_dict
 
 
 class CreateJobMenuItem(MenuItem):

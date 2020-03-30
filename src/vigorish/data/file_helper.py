@@ -17,8 +17,6 @@ from vigorish.enums import (
     DocFormat,
     LocalFileTask,
     S3FileTask,
-    HtmlStorageOption,
-    JsonStorageOption,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
@@ -166,7 +164,9 @@ class FileHelper:
 
     def get_local_folderpath(self, doc_format, data_set, game_date=None, year=None):
         if not game_date and not year:
-            error = "You must provide either the game_date or year argument to construct a folderpath (FileHelper.get_s3_folderpath)"
+            error = (
+                "You must provide either the game_date or year argument to construct a folderpath"
+            )
             raise ValueError(error)
         year = year if year else game_date.year
         return self.local_folderpath_dict[doc_format][data_set].resolve(year=year)
@@ -189,7 +189,7 @@ class FileHelper:
         elif game_date:
             identifier = game_date
         else:
-            raise ValueError("Unable to construct file name. (FileHelper.get_file_name)")
+            raise ValueError("Unable to construct file name.")
         return self.filename_dict[doc_format][data_set](identifier)
 
     def perform_s3_task(
@@ -248,7 +248,9 @@ class FileHelper:
 
     def get_s3_folderpath(self, doc_format, data_set, game_date=None, year=None):
         if not game_date and not year:
-            error = "You must provide either the game_date or year argument to construct a folderpath (FileHelper.get_s3_folderpath)"
+            error = (
+                "You must provide either the game_date or year argument to construct a folderpath"
+            )
             raise ValueError(error)
         year = year if year else game_date.year
         return self.s3_folderpath_dict[doc_format][data_set].resolve(year=year)

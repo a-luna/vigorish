@@ -17,6 +17,15 @@ class ScrapedData:
         self.html_storage = HtmlStorage(config, self.file_helper)
         self.json_storage = JsonStorage(config, self.file_helper)
 
+    def save_html(self, data_set, url_id, html):
+        return self.html_storage.save_html(data_set, url_id, html)
+
+    def get_html(self, data_set, url_id):
+        return self.html_storage.get_html(data_set, url_id)
+
+    def save_json(self, data_set, parsed_data):
+        return self.json_storage.save_json(data_set, parsed_data)
+
     def get_brooks_games_for_date(self, game_date):
         result = self.json_storage.decode_json_brooks_games_for_date_local_file(game_date)
         if result.success:
@@ -58,10 +67,10 @@ class ScrapedData:
         return Result.Ok(pitch_logs)
 
     def get_all_pitchfx_logs_for_game(self, bbref_game_id):
-        pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
+        p_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
             self.db, bbref_game_id
         )
-        fetch_tasks = [self.get_brooks_pitchfx_log(pitch_app_id) for pitch_app_id in pitch_app_ids]
+        fetch_tasks = [self.get_brooks_pitchfx_log(pitch_app_id) for pitch_app_id in p_app_ids]
         task_failed = any(result.failure for result in fetch_tasks)
         if task_failed:
             s3_errors = "\n".join(

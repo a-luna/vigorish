@@ -1,5 +1,4 @@
 """Decode json dicts of scraped data to custom objects."""
-from datetime import datetime, timezone
 from dateutil import parser
 
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate

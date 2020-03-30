@@ -1,5 +1,4 @@
 """CLI application entry point."""
-import os
 from pathlib import Path
 
 import click
@@ -10,9 +9,8 @@ from sqlalchemy.orm import sessionmaker
 from vigorish.cli.click_params import DateString, MlbSeason
 from vigorish.cli.menus.main_menu import MainMenu
 from vigorish.cli.util import print_message
-from vigorish.config.database import get_db_url, initialize_database, Base, Season
+from vigorish.config.database import get_db_url, initialize_database
 from vigorish.config.types import ConfigFile
-from vigorish.constants import CLI_COLORS
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import StatusReport
 from vigorish.status.report_status import (

@@ -4,6 +4,10 @@ from datetime import date
 from typing import Union
 from vigorish.util.string_helpers import try_parse_int
 
+ONE_KB = 1024
+ONE_MB = ONE_KB * 1024
+ONE_GB = ONE_MB * 1024
+
 
 def is_nan(x):
     return isinstance(x, float) and math.isnan(x)

@@ -1,9 +1,8 @@
 """Db model that describes a single event, most likely an at bat."""
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-from vigorish.models.runners_on_base import RunnersOnBase
 from vigorish.util.list_helpers import display_dict
 
 

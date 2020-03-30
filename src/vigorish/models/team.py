@@ -1,7 +1,6 @@
 """Team statistics for a single season."""
-from sqlalchemy import Column, Boolean, Integer, String, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.hybrid import hybrid_property
 
 from vigorish.config.database import Base
 from vigorish.util.list_helpers import display_dict
@@ -75,8 +74,16 @@ class Team(Base):
         back_populates="opponent_team",
     )
 
-    # player_transactions_out = relationship('PlayerTransactionLink', primaryjoin='Team.id==PlayerTransactionLink.old_team_id', back_populates='old_team')
-    # player_transactions_in = relationship('PlayerTransactionLink', primaryjoin='Team.id==PlayerTransactionLink.new_team_id', back_populates='new_team')
+    # player_transactions_out = (
+    #   relationship('PlayerTransactionLink',
+    #   primaryjoin='Team.id==PlayerTransactionLink.old_team_id',
+    #   back_populates='old_team')
+    # )
+    # player_transactions_in = (
+    #   relationship('PlayerTransactionLink',
+    #   primaryjoin='Team.id==PlayerTransactionLink.new_team_id',
+    #   back_populates='new_team')
+    # )
 
     def __repr__(self):
         return f"<Team team_id={self.team_id}, year={self.year}>"

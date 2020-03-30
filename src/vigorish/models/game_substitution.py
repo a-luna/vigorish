@@ -1,5 +1,5 @@
 """Db model that describes an in game substitution."""
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
@@ -36,7 +36,13 @@ class GameSubstitution(Base):
     team = relationship("Team")
 
     def __repr__(self):
-        return f"<GameSubstitution in_player_id={self.incoming_player_id_br}, out_player_id={self.outgoing_player_id_br}, inning_id={self.db_inning_id}, pbp_number={self.pbp_table_row_number}>"
+        return (
+            "<GameSubstitution "
+            f"in_player_id={self.incoming_player_id_br}, "
+            f"out_player_id={self.outgoing_player_id_br}, "
+            f"inning_id={self.db_inning_id}, "
+            f"pbp_number={self.pbp_table_row_number}>"
+        )
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

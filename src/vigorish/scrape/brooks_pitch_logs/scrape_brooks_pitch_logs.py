@@ -10,6 +10,7 @@ from vigorish.scrape.scrape_task import ScrapeTaskABC
 from vigorish.status.update_status_brooks_pitch_logs import (
     update_status_brooks_pitch_logs_for_game,
 )
+from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 
 
@@ -19,10 +20,10 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         super().__init__(db_job, db_session, config, scraped_data, driver)
 
     def check_prerequisites(self, game_date):
-        scraped_brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
+        brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
-        if scraped_brooks_games_for_date:
+        if brooks_games_for_date:
             return Result.Ok()
         date_str = game_date.strftime(DATE_ONLY_2)
         error = (
@@ -66,9 +67,12 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 pitch_logs_for_game.pitch_log_count = game.pitcher_appearance_count
                 scraped_pitch_logs = []
                 for pitcher_id, url in game.pitcher_appearance_dict.items():
-                    spinner.text = f"Parsing Pitch Logs for {game.bbref_game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                    spinner.text = (
+                        f"Parsing Pitch Logs for {game.bbref_game_id}... "
+                        f"{parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                    )
                     pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
-                    filepath = self.get_html(pitch_app_id)
+                    filepath = self.scraped_data.get_html(self.data_set, pitch_app_id)
                     if not filepath:
                         error = f"Failed to retrieve HTML for pitch app: {pitch_app_id}"
                         spinner.fail(error)
@@ -81,10 +85,16 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                     pitch_log = result.value
                     scraped_pitch_logs.append(pitch_log)
                     parsed += 1
-                    spinner.text = f"Parsing Pitch Logs for {game.bbref_game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
-                spinner.text = f"Updating Pitch Logs for {game.bbref_game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                    spinner.text = (
+                        f"Parsing Pitch Logs for {game.bbref_game_id}... "
+                        f"{parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                    )
+                spinner.text = (
+                    f"Updating Pitch Logs for {game.bbref_game_id}... "
+                    f"{parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                )
                 pitch_logs_for_game.pitch_logs = scraped_pitch_logs
-                result = self.save_parsed_data(pitch_logs_for_game)
+                result = self.scraped_data.save_json(self.data_set, pitch_logs_for_game)
                 if result.failure:
                     spinner.fail(f"Error! {result.error}")
                     return result

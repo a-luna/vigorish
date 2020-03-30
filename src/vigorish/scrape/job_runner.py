@@ -1,5 +1,4 @@
 import subprocess
-import time
 from collections import defaultdict
 from datetime import datetime
 
@@ -69,13 +68,22 @@ class JobRunner:
             result = scrape_task.execute()
             if result.failure:
                 if "skip" in result.error:
-                    text = f"{EMOJI_DICT.get('SHRUG', '')} Skipped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+                    text = (
+                        f"{EMOJI_DICT.get('SHRUG', '')} "
+                        f"Skipped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+                    )
                     task_results.append(text)
                     continue
-                test = f"{EMOJI_DICT.get('FAILED', '')} Failed to scrape: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+                text = (
+                    f"{EMOJI_DICT.get('FAILED', '')} "
+                    f"Failed to scrape: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+                )
                 task_results.append(text)
                 return self.job_failed(result)
-            text = f"{EMOJI_DICT.get('PASSED', '')} Scraped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+            text = (
+                f"{EMOJI_DICT.get('PASSED', '')} "
+                f"Scraped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+            )
             task_results.append(text)
         subprocess.run(["clear"])
         print("\n".join(task_results))
@@ -124,5 +132,5 @@ class JobRunner:
             try:
                 self.driver.quit()
                 self.driver = None
-            except Exception:
+            except Exception as e:
                 return Result.Fail(f"Error occurred quitting chromedriver: {repr(e)}")

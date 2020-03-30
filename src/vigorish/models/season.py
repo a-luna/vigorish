@@ -1,16 +1,13 @@
 """Db model that describes a MLB season and tracks data scraping progress."""
 from datetime import date
 
-from sqlalchemy import Column, Boolean, Index, Integer, DateTime, select, func, join
+from sqlalchemy import Column, Integer, DateTime
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
 from vigorish.enums import SeasonType
 from vigorish.config.database import Base
-from vigorish.models.status_date import DateScrapeStatus
-from vigorish.models.status_game import GameScrapeStatus
-from vigorish.models.status_pitch_appearance import PitchAppearanceScrapeStatus
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.list_helpers import display_dict
@@ -291,13 +288,27 @@ class Season(Base):
 
     def status_report(self):
         return (
-            f"BBref Daily Dash Scraped...: {self.total_days_scraped_bbref:,}/{self.total_days:,} days ({self.percent_complete_bbref_games_for_date:.0%})\n"
-            f"Brooks Daily Dash Scraped..: {self.total_days_scraped_brooks:,}/{self.total_days:,} days ({self.percent_complete_brooks_games_for_date:.0%})\n"
-            f"BBref Boxscores Scraped....: {self.total_bbref_boxscores_scraped:,}/{self.total_games:,} games ({self.percent_complete_bbref_boxscores_scraped:.0%})\n"
-            f"Brooks Games Scraped.......: {self.total_brooks_pitch_logs_scraped:,}/{self.total_games:,} games ({self.percent_complete_brooks_pitch_logs:.0%})\n"
-            f"Brooks PitchFX Scraped.....: {self.total_pitchfx_logs_scraped:,}/{self.pitch_appearance_count_pitchfx:,} pitch apps ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
-            f"Total Pitch Appearances....: {self.pitch_appearance_count_bbref:,} (BBref) {self.pitch_appearance_count_brooks:,} (Brooks) {self.pitch_appearance_count_pitchfx:,} (PitchFX)\n"
-            f"Total Pitch Count..........: {self.total_pitch_count_bbref:,} (BBref) {self.total_pitch_count_brooks:,} (Brooks) {self.total_pitch_count_pitchfx:,} (PitchFX)\n"
+            "BBref Daily Dash Scraped...: "
+            f"{self.total_days_scraped_bbref:,}/{self.total_days:,} days "
+            f"({self.percent_complete_bbref_games_for_date:.0%})\n"
+            "Brooks Daily Dash Scraped..: "
+            f"{self.total_days_scraped_brooks:,}/{self.total_days:,} days "
+            f"({self.percent_complete_brooks_games_for_date:.0%})\n"
+            "BBref Boxscores Scraped....: "
+            f"{self.total_bbref_boxscores_scraped:,}/{self.total_games:,} games "
+            f"({self.percent_complete_bbref_boxscores_scraped:.0%})\n"
+            "Brooks Games Scraped.......: "
+            f"{self.total_brooks_pitch_logs_scraped:,}/{self.total_games:,} games "
+            f"({self.percent_complete_brooks_pitch_logs:.0%})\n"
+            "Brooks PitchFX Scraped.....: "
+            f"{self.total_pitchfx_logs_scraped:,}/{self.pitch_appearance_count_pitchfx:,} "
+            f"pitch apps ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
+            f"Total Pitch Appearances....: {self.pitch_appearance_count_bbref:,} (BBref) "
+            f"{self.pitch_appearance_count_brooks:,} (Brooks) "
+            f"{self.pitch_appearance_count_pitchfx:,} (PitchFX)\n"
+            f"Total Pitch Count..........: {self.total_pitch_count_bbref:,} (BBref) "
+            f"{self.total_pitch_count_brooks:,} (Brooks) "
+            f"{self.total_pitch_count_pitchfx:,} (PitchFX)\n"
         )
 
     def get_date_range(self):

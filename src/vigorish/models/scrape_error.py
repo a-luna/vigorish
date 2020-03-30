@@ -1,6 +1,4 @@
 """Errors encountered while executing scrape jobs."""
-from datetime import date
-
 from sqlalchemy import Boolean, Column, Integer, DateTime, ForeignKey, String
 from sqlalchemy.types import Enum
 
@@ -21,7 +19,12 @@ class ScrapeError(Base):
     job_id = Column(Integer, ForeignKey("scrape_job.id"))
 
     def __repr__(self):
-        return f"<ScrapeError job_name={self.job.name}, job_id={self.job_id}, message={self.error_message}>"
+        return (
+            "<ScrapeError "
+            f"job_name={self.job.name}, "
+            f"job_id={self.job_id}, "
+            f"message={self.error_message}>"
+        )
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

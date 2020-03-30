@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from tqdm import tqdm
 
 from vigorish.config.database import DateScrapeStatus
-from vigorish.enums import DataSet, ScrapeCondition, ScrapeTool
+from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.bbref_boxscores.parse_html import (
     _BATTING_STATS_TABLE,
     _PITCHING_STATS_TABLE,
@@ -19,9 +19,9 @@ from vigorish.util.decorators.timeout import timeout
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
-_BAT_STATS_TABLE_LOC = (By.XPATH, _BATTING_STATS_TABLE)
-_PITCH_STATS_TABLE_LOC = (By.XPATH, _PITCHING_STATS_TABLE)
-_PLAY_BY_PLAY_TABLE_LOC = (By.XPATH, _PLAY_BY_PLAY_TABLE)
+_BAT_STATS_TABLE = (By.XPATH, _BATTING_STATS_TABLE)
+_PITCH_STATS_TABLE = (By.XPATH, _PITCHING_STATS_TABLE)
+_PBP_TABLE = (By.XPATH, _PLAY_BY_PLAY_TABLE)
 
 
 class ScrapeBBRefBoxscores(ScrapeTaskABC):
@@ -30,10 +30,10 @@ class ScrapeBBRefBoxscores(ScrapeTaskABC):
         super().__init__(db_job, db_session, config, scraped_data, driver)
 
     def check_prerequisites(self, game_date):
-        scraped_bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
+        bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
-        if scraped_bbref_games_for_date:
+        if bbref_games_for_date:
             return Result.Ok()
         date_str = game_date.strftime(DATE_ONLY)
         error = (
@@ -56,7 +56,7 @@ class ScrapeBBRefBoxscores(ScrapeTaskABC):
                 url_id = url_details["identifier"]
                 pbar.set_description(url_fetch_description(self.data_set, url_id))
                 try:
-                    html = render_url(self.driver, url_details["url"])
+                    html = self.render_url(url_details["url"])
                     pbar.set_description(save_html_description(self.data_set, url_id))
                     result = self.save_scraped_html(html, url_id)
                     if result.failure:
@@ -72,10 +72,10 @@ class ScrapeBBRefBoxscores(ScrapeTaskABC):
     @timeout(seconds=15)
     def render_url(self, url):
         self.driver.get(url)
-        WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_BAT_STATS_TABLE_LOC))
-        WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PITCH_STATS_TABLE_LOC))
-        WebDriverWait(driver, 1000).until(ec.presence_of_element_located(_PLAY_BY_PLAY_TABLE_LOC))
-        return driver.page_source
+        WebDriverWait(self.driver, 1000).until(ec.presence_of_element_located(_BAT_STATS_TABLE))
+        WebDriverWait(self.driver, 1000).until(ec.presence_of_element_located(_PITCH_STATS_TABLE))
+        WebDriverWait(self.driver, 1000).until(ec.presence_of_element_located(_PBP_TABLE))
+        return self.driver.page_source
 
     def parse_html(self, page_source, url_id, url):
         return parse_bbref_boxscore(page_source, url)

@@ -6,7 +6,6 @@ import json
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import date
 from pathlib import Path
 from typing import List, Mapping, Optional, Union, Tuple, TypeVar
 
@@ -21,8 +20,7 @@ from vigorish.enums import (
 )
 from vigorish.util.list_helpers import report_dict, dict_to_param_list
 from vigorish.util.result import Result
-from vigorish.util.numeric_functions import validate_year_value
-from vigorish.util.string_helpers import wrap_text
+from vigorish.util.numeric_helpers import validate_year_value
 from vigorish.util.sys_helpers import validate_folder_path
 
 
@@ -164,7 +162,10 @@ class BatchJobSettings:
             return "Batched scraping is not enabled"
         if not self.batch_size_is_random:
             return f"Batch size is uniform ({self.batch_size_uniform} URLs)"
-        return f"Batch size is random ({self.batch_size_random_min}-{self.batch_size_random_max} URLs)"
+        return (
+            "Batch size is random "
+            f"({self.batch_size_random_min}-{self.batch_size_random_max} URLs)"
+        )
 
     def to_dict(self) -> NUMERIC_OPTIONS_JSON_VALUE:
         return {
@@ -419,15 +420,6 @@ class ConfigFile:
         return {
             name: self.__config_factory(name, config) for name, config in self.config_json.items()
         }
-
-    @property
-    def all_settings_are_valid(self) -> Result:
-        html_storage = self.all_settings.get("HTML_STORAGE")
-        html_local_folder = self.all_settings.get("HTML_LOCAL_FOLDER_PATH")
-        html_s3_folder = self.all_settings.get("HTML_S3_FOLDER_PATH")
-        json_storage = self.all_settings.get("JSON_STORAGE")
-        json_local_folder = self.all_settings.get("JSON_LOCAL_FOLDER_PATH")
-        json_s3_folder = self.all_settings.get("JSON_S3_FOLDER_PATH")
 
     def get_current_setting(self, setting_name: str, data_set: DataSet) -> PY_SETTING:
         config_dict = self.config_json.get(setting_name)

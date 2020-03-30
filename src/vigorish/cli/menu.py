@@ -4,7 +4,6 @@ from typing import List, Union, Dict
 
 from bullet import Bullet, ScrollBar, colors
 
-from vigorish.constants import EMOJI_DICT
 from vigorish.cli.menu_item import MenuItem
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import ellipsize

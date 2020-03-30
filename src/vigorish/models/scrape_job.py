@@ -1,5 +1,5 @@
 """Record of a job to scrape data for a specified date range."""
-from datetime import date, timezone
+from datetime import timezone
 from uuid import uuid4
 from pathlib import Path
 
@@ -18,7 +18,7 @@ from vigorish.util.datetime_util import (
     localized_dt_string,
     get_local_utcoffset,
 )
-from vigorish.util.dt_format_strings import DATE_ONLY, DT_STR_FORMAT
+from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.list_helpers import group_and_sort_list
 
 APP_FOLDER = Path(__file__).parent.parent
@@ -47,7 +47,7 @@ class ScrapeJob(Base):
     @hybrid_property
     def created_date_str(self):
         created_date_utc = make_tzaware(self.created_date, use_tz=timezone.utc, localize=False)
-        return localized_dt_string(created_at_utc, use_tz=get_local_utcoffset())
+        return localized_dt_string(created_date_utc, use_tz=get_local_utcoffset())
 
     @hybrid_property
     def group(self):
@@ -89,7 +89,7 @@ class ScrapeJob(Base):
             "MLB Season": self.season.name,
             "Start Date": self.start_date.strftime(DATE_ONLY),
             "End Date": self.end_date.strftime(DATE_ONLY),
-            "Created": self.created_date.strftime(DT_STR_FORMAT),
+            "Created": self.created_date_str,
             "Data Sets": ", ".join([str(ds) for ds in self.data_sets]),
         }
 

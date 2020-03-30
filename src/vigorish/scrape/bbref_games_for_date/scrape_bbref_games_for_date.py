@@ -1,14 +1,10 @@
-from tqdm import tqdm
-
 from vigorish.config.database import DateScrapeStatus
 from vigorish.enums import DataSet, PythonScrapeTool, ScrapeCondition
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
 from vigorish.scrape.scrape_task import ScrapeTaskABC
-from vigorish.scrape.util import render_url
 from vigorish.status.update_status_bbref_games_for_date import (
     update_bbref_games_for_date_single_date,
 )
-from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
 
@@ -21,13 +17,10 @@ class ScrapeBBRefGamesForDate(ScrapeTaskABC):
         return Result.Ok()
 
     def check_current_status(self, game_date):
-        scraped_bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
+        bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
-        if (
-            scraped_bbref_games_for_date
-            and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA
-        ):
+        if bbref_games_for_date and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
             return Result.Fail("skip")
         return Result.Ok()
 

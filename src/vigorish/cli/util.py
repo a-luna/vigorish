@@ -1,10 +1,9 @@
 """Shared functions and menus for CLI."""
 import click
 from dateutil import parser
-from bullet import Bullet, colors, Input, keyhandler
-from bullet.charDef import NEWLINE_KEY
+from bullet import Bullet, colors, Input
 
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS, CLI_COLORS
+from vigorish.constants import MENU_NUMBERS, CLI_COLORS
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import ellipsize

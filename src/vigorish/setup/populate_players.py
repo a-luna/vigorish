@@ -1,5 +1,4 @@
 """Populate player_id and player tables with initial data."""
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -9,7 +8,7 @@ from tqdm import tqdm
 from vigorish.models.player import Player
 from vigorish.models.player_id import PlayerId
 from vigorish.util.dt_format_strings import DATE_ONLY as PLAYER_DEBUT
-from vigorish.util.numeric_functions import sanitize, is_nan
+from vigorish.util.numeric_helpers import sanitize, is_nan
 from vigorish.util.result import Result
 
 PLAYER_ID_CSV = Path(__file__).parent / "csv" / "idmap.csv"

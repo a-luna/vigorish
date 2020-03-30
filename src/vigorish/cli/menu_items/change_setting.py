@@ -118,7 +118,10 @@ class ChangeSetttingMenuItem(MenuItem):
             random_max = random_max_prompt.launch()
             return (prompt, (is_enabled, is_random, None, int(random_min), int(random_max)))
         else:
-            prompt = f"Enter the value (in {self.setting_units}) for {self.setting_name_title} (Data Set = {data_set.name}): "
+            prompt = (
+                f"Enter the value (in {self.setting_units}) for {self.setting_name_title} "
+                f"(Data Set = {data_set.name}): "
+            )
             new_value_prompt = Numbers(prompt, word_color=colors.foreground["default"])
             new_value = new_value_prompt.launch()
             return (prompt, (is_enabled, is_random, int(new_value), None, None))

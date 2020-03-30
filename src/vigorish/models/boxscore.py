@@ -1,14 +1,8 @@
 """Db model that describes a boxscore for an MLB game and tracks data scraping progress."""
-from sqlalchemy import Column, Boolean, Index, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 
 from vigorish.config.database import Base
-from vigorish.models.game_bat_stats import GameBatStats
-from vigorish.models.game_inning import GameHalfInning
-from vigorish.models.game_pitch_stats import GamePitchStats
-from vigorish.models.game_starting_lineup import GameStartingLineupSlot
-from vigorish.models.game_meta import GameMetaInformation
-from vigorish.models.game_team_totals import GameTeamTotals
 from vigorish.util.list_helpers import display_dict
 
 

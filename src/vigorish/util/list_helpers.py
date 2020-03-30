@@ -2,7 +2,7 @@
 import itertools
 from collections import defaultdict, OrderedDict
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict
 
 from vigorish.util.dt_format_strings import DT_STR_FORMAT_ALL
 from vigorish.util.string_helpers import wrap_text

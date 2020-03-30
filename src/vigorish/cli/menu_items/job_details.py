@@ -21,7 +21,7 @@ class JobDetailsMenuItem(MenuItem):
         self.db_job = db_job
         self.job_group = db_job.group
         self.job_details = self.db_job.job_details
-        self.menu_item_text = f"{db_job.name} (Status: {db_job.status.name}, ID: {db_job.id})"
+        self.menu_item_text = f" {db_job.name} (Status: {db_job.status.name}, ID: {db_job.id})"
         self.menu_item_emoji = MENU_NUMBERS.get(menu_item_number, f"{menu_item_number}. ")
         self.exit_menu = True
 

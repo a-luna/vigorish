@@ -1,18 +1,11 @@
-from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 
 from vigorish.enums import DataSet, DocFormat
-from vigorish.data.scraped_data import ScrapedData
 from vigorish.util.datetime_util import get_date_range
-from vigorish.util.dt_format_strings import DATE_ONLY_2, DATE_ONLY_TABLE_ID
+from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.regex import BBREF_BOXSCORE_URL_REGEX
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import (
-    validate_bbref_game_id,
-    validate_brooks_game_id,
-    validate_pitch_app_id,
-)
 
 
 class UrlBuilder:

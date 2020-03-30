@@ -1,4 +1,5 @@
 """Database file and connection details."""
+# flake8: noqa
 import os
 from pathlib import Path
 

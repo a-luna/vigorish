@@ -17,15 +17,15 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
         super().__init__(db_job, db_session, config, scraped_data, driver)
 
     def check_prerequisites(self, game_date):
-        scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
+        brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
             self.db_session, game_date
         )
-        if scraped_brooks_pitch_logs:
+        if brooks_pitch_logs:
             return Result.Ok()
-        date_str = scrape_date.strftime(DATE_ONLY_2)
+        date_str = game_date.strftime(DATE_ONLY_2)
         error = (
-            f"Brooks pitch logs for date {date_str} have not been scraped, unable to scrape Brooks "
-            "pitchfx data until this has been done."
+            f"Brooks pitch logs for date {date_str} have not been scraped, unable to scrape "
+            "Brooks pitchfx data until this has been done."
         )
         return Result.Fail(error)
 
@@ -56,14 +56,17 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
             pitch_logs_for_date = result.value
             for pitch_logs_for_game in pitch_logs_for_date:
                 game_id = pitch_logs_for_game.bbref_game_id
-                spinner.text = f"Parsing PitchFX Logs for {game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                spinner.text = (
+                    f"Parsing PitchFX Logs for {game_id}... "
+                    f"{parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                )
                 for pitch_log in pitch_logs_for_game.pitch_logs:
                     pitchfx_url = pitch_log.pitchfx_url
                     if not pitch_log.parsed_all_info:
                         continue
-                    filepath = self.get_html(pitch_log.pitch_app_id)
+                    filepath = self.scraped_data.get_html(self.data_set, pitch_log.pitch_app_id)
                     if not filepath:
-                        error = f"Failed to retrieve HTML for pitch app: {pitch_app_id}"
+                        error = f"Failed to retrieve HTML for pitch app: {pitch_log.pitch_app_id}"
                         spinner.fail(error)
                         return Result.Fail(error)
                     page_source = html.fromstring(filepath.read_text(), base_url=pitchfx_url)
@@ -71,7 +74,7 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                     if result.failure:
                         return result
                     pitchfx_log = result.value
-                    result = self.save_parsed_data(pitchfx_log)
+                    result = self.scraped_data.save_json(self.data_set, pitchfx_log)
                     if result.failure:
                         spinner.fail(f"Error! {result.error}")
                         return result
@@ -80,7 +83,10 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                         spinner.fail(f"Error! {result.error}")
                         return result
                     parsed += 1
-                    spinner.text = f"Parsing PitchFX Logs for {game_id}... {parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                    spinner.text = (
+                        f"Parsing PitchFX Logs for {game_id}... "
+                        f"{parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
+                    )
         spinner.succeed("HTML Parsed")
         return Result.Ok()
 
