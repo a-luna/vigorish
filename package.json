@@ -6,7 +6,7 @@
     "node": "13.11.x"
   },
   "scripts": {
-    "heroku-postbuild": "echo hello_world"
+    "heroku-postbuild": "cd src/vigorish/nightmarejs && npm install"
   },
   "author": "Aaron Luna <contact@aaronluna.dev> (https://aaronluna.dev)",
   "license": "MIT"
