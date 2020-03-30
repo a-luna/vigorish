@@ -101,9 +101,12 @@ class JobRunner:
         return self.job_succeeded()
 
     def initialize(self):
+        self.start_time = datetime.now()
+        if not self.config.selenium_required():
+            self.driver = None
+            return Result.Ok()
         try:
             self.driver = get_chromedriver()
-            self.start_time = datetime.now()
             return Result.Ok()
         except RetryLimitExceededError as e:
             return Result.Fail(repr(e))

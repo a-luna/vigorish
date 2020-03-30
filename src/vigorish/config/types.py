@@ -464,6 +464,13 @@ class ConfigFile:
         script_params["s3Bucket"] = s3_bucket
         return dict_to_param_list(script_params)
 
+    def selenium_required(self) -> bool:
+        config_dict = self.config_json.get("SCRAPE_TOOL")
+        if not config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"]:
+            return False
+        scrape_tool_setting = self.get_current_setting("SCRAPE_TOOL", DataSet.ALL)
+        return scrape_tool_setting == ScrapeTool.NIGHTMAREJS
+
     def __read_config_file(self) -> None:
         if not self.config_file_path.exists():
             raise FileNotFoundError(
