@@ -469,7 +469,7 @@ class ConfigFile:
         if not config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"]:
             return False
         scrape_tool_setting = self.get_current_setting("SCRAPE_TOOL", DataSet.ALL)
-        return scrape_tool_setting == ScrapeTool.NIGHTMAREJS
+        return scrape_tool_setting != ScrapeTool.NIGHTMAREJS
 
     def __read_config_file(self) -> None:
         if not self.config_file_path.exists():
