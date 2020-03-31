@@ -1,1 +1,1 @@
-worker: sh heroku.sh
+worker: vig setup --yes
