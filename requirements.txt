@@ -5,7 +5,7 @@ asttokens==2.0.3
 attrs==19.3.0
 backcall==0.1.0
 black==19.10b0
-boto3==1.12.31
+boto3==1.12.32
 botocore==1.15.31
 bullet==2.1.0
 certifi==2019.11.28
