@@ -7,7 +7,7 @@ from vigorish.setup.populate_teams import populate_teams
 
 
 def populate_tables(session):
-    return (
+    result = (
         populate_base_tables(session)
         .on_success(populate_seasons, session)
         .on_success(populate_status_tables, session)
@@ -15,3 +15,8 @@ def populate_tables(session):
         .on_success(populate_teams, session)
         .on_success(create_relationships, session)
     )
+    if result.failure:
+        session.rollback()
+        return result
+    session.commit()
+    return result
