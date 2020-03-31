@@ -6,7 +6,7 @@ attrs==19.3.0
 backcall==0.1.0
 black==19.10b0
 boto3==1.12.31
-botocore==1.15.31
+botocore==1.15.32
 bullet==2.1.0
 certifi==2019.11.28
 cfgv==3.1.0
