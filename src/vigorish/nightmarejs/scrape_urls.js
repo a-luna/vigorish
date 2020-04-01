@@ -3,7 +3,7 @@ const cliProgress = require("cli-progress")
 const colors = require("colors")
 const UserAgent = require("user-agents")
 var joinPath = require("path.join")
-const { makeIrregularChunkedList } = require("./list_functions")
+const { makeChunkedList, makeIrregularChunkedList } = require("./list_functions")
 
 const multibar = new cliProgress.MultiBar({
   format:

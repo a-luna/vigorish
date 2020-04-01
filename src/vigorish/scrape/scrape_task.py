@@ -10,7 +10,6 @@ from sys import exit
 from halo import Halo
 from lxml import html
 from Naked.toolshed.shell import execute_js
-from tqdm import tqdm
 
 from vigorish.cli.util import prompt_user_yes_no
 from vigorish.constants import JOB_SPINNER_COLORS
@@ -21,11 +20,9 @@ from vigorish.enums import (
     PythonScrapeTool,
     JobStatus,
 )
-from vigorish.scrape.progress_bar import url_fetch_description, save_html_description
+from vigorish.scrape.scrape_urls import scrape_url_list
 from vigorish.scrape.url_builder import UrlBuilder
-from vigorish.scrape.util import request_url, render_url
 from vigorish.util.datetime_util import get_date_range
-from vigorish.util.decorators.retry import RetryLimitExceededError
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.numeric_helpers import ONE_KB
 from vigorish.util.result import Result
@@ -67,9 +64,6 @@ class ScrapeTaskABC(ABC):
         self.url_builder = UrlBuilder(self.config, self.scraped_data)
         self.scrape_condition = self.config.get_current_setting("SCRAPE_CONDITION", self.data_set)
         self.scrape_tool = self.config.get_current_setting("SCRAPE_TOOL", self.data_set)
-        self.url_timeout = self.config.get_current_setting("URL_SCRAPE_DELAY", self.data_set)
-        self.batch_job = self.config.get_current_setting("BATCH_JOB_SETTINGS", self.data_set)
-        self.batch_timeout = self.config.get_current_setting("BATCH_SCRAPE_DELAY", self.data_set)
 
     @property
     def total_urls(self):
@@ -205,29 +199,9 @@ class ScrapeTaskABC(ABC):
         return Result.Fail(f"SCRAPE_TOOL setting either not set or set incorrectly.")
 
     def scrape_html_with_requests_selenium(self, missing_html):
-        with tqdm(total=len(missing_html), unit="url", leave=False, position=1) as pbar:
-            for url_details in missing_html:
-                url_id = url_details["identifier"]
-                pbar.set_description(url_fetch_description(self.data_set, url_id))
-                try:
-                    html = self.fetch_url(url_details["url"])
-                    pbar.set_description(save_html_description(self.data_set, url_id))
-                    result = self.scraped_data.save_html(self.data_set, url_id, html)
-                    if result.failure:
-                        return result
-                    url_details["html_filepath"] = result.value
-                    pbar.update()
-                except RetryLimitExceededError as e:
-                    return Result.Fail(repr(e))
-                except Exception as e:
-                    return Result.Fail(f"Error: {repr(e)}")
-
-    def fetch_url(self, url):
-        if self.python_scrape_tool == PythonScrapeTool.REQUESTS:
-            return request_url(url)
-        if self.python_scrape_tool == PythonScrapeTool.SELENIUM:
-            return render_url(self.driver, url)
-        return Result.Fail(f"SCRAPE_TOOL setting either not set or set incorrectly.")
+        return scrape_url_list(
+            missing_html, self.data_set, self.python_scrape_tool, self.config, self.scraped_data
+        )
 
     def scrape_html_with_nightmarejs(self, url_details):
         urls_json = json.dumps(url_details, indent=2, sort_keys=False)

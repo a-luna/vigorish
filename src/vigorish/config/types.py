@@ -446,9 +446,7 @@ class ConfigFile:
                 self.__reset_other_data_sets_numeric(config_dict, data_set)
         return self.__write_config_file()
 
-    def get_nodejs_script_params(
-        self, data_set: DataSet, url_set_filepath: Path
-    ) -> NUMERIC_OPTIONS_JSON_VALUE:
+    def get_all_url_scrape_params(self, data_set: DataSet) -> Dict[str, int]:
         url_delay_settings = self.get_current_setting("URL_SCRAPE_DELAY", data_set)
         batch_job_settings = self.get_current_setting("BATCH_JOB_SETTINGS", data_set)
         batch_delay_settings = self.get_current_setting("BATCH_SCRAPE_DELAY", data_set)
@@ -459,6 +457,12 @@ class ConfigFile:
             )
         else:
             script_params = self.__get_default_nodejs_script_params()
+        return script_params
+
+    def get_nodejs_script_params(
+        self, data_set: DataSet, url_set_filepath: Path
+    ) -> NUMERIC_OPTIONS_JSON_VALUE:
+        script_params = self.get_all_url_scrape_params(data_set)
         script_params["urlSetFilepath"] = url_set_filepath.resolve()
         return dict_to_param_list(script_params)
 
