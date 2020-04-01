@@ -20,8 +20,7 @@ async function executeBatchJob(
   nightmare,
   urlSetFilepath,
   batchJobParams,
-  timeoutParams,
-  s3Bucket
+  timeoutParams
 ) {
   const allUrls = readUrlSetFromFile(urlSetFilepath)
   let batchCounter = 0,
@@ -46,8 +45,7 @@ async function executeBatchJob(
       urlBatch,
       timeoutParams,
       urlCounter,
-      urlProgress,
-      s3Bucket
+      urlProgress
     )
     batchCounter += 1
     progressDescription = ""
@@ -101,8 +99,7 @@ async function executeBatchJob(
     urlSet,
     timeoutParams,
     urlCounter,
-    progressBar,
-    s3Bucket
+    progressBar
   ) {
     await urlSet.reduce(async (promise, urlDetails) => {
       await promise

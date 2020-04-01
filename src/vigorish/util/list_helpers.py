@@ -2,6 +2,7 @@
 import itertools
 from collections import defaultdict, OrderedDict
 from datetime import datetime
+from random import randint
 from typing import Dict
 
 from vigorish.util.dt_format_strings import DT_STR_FORMAT_ALL
@@ -90,3 +91,33 @@ def compare_lists(list1, list2):
     check1 = not list(set(sorted(list1)) - set(sorted(list2)))
     check2 = not list(set(sorted(list2)) - set(sorted(list1)))
     return check1 and check2
+
+
+def make_chunked_list(input_list, chunk_size):
+    chunked_list = []
+    (total_chunks, last_chunk_size) = divmod(len(input_list), chunk_size)
+    if last_chunk_size:
+        total_chunks += 1
+    for i in range(total_chunks):
+        start = i * chunk_size
+        end = start + chunk_size
+        if last_chunk_size and i == total_chunks - 1:
+            end = len(input_list)
+        chunked_list.append(input_list[start:end])
+    return chunked_list
+
+
+def make_irregular_chunked_list(input_list, min_chunk_size, max_chunk_size):
+    chunked_list = []
+    remaining = len(input_list)
+    end = 0
+    while remaining:
+        if remaining > max_chunk_size:
+            chunk_size = randint(min_chunk_size, max_chunk_size)
+        else:
+            chunk_size = remaining
+        start = end
+        end = end + chunk_size
+        chunked_list.append(input_list[start:end])
+        remaining -= chunk_size
+    return chunked_list

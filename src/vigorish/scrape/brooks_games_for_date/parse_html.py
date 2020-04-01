@@ -175,7 +175,7 @@ def _parse_game_number_from_gameid(gameid):
     split = gameid.split("_")
     if len(split) != 7:
         return None
-    return split[6]
+    return int(split[6])
 
 
 def _parse_pitcherid_from_url(url):
@@ -197,7 +197,7 @@ def _update_game_ids(games_for_date):
         game_date = datetime(g.game_date_year, g.game_date_month, g.game_date_day)
         date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
 
-        if g.game_number_this_day == "2":
+        if g.game_number_this_day == 2:
             g.bbref_game_id = f"{g.home_team_id_bb}{date_str}2"
             game_1_bb_id = f"{bb_gid[:-1]}{1}"
             game_1 = game_dict[game_1_bb_id]

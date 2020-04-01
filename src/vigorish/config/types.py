@@ -452,7 +452,6 @@ class ConfigFile:
         url_delay_settings = self.get_current_setting("URL_SCRAPE_DELAY", data_set)
         batch_job_settings = self.get_current_setting("BATCH_JOB_SETTINGS", data_set)
         batch_delay_settings = self.get_current_setting("BATCH_SCRAPE_DELAY", data_set)
-        s3_bucket = self.get_current_setting("S3_BUCKET", data_set)
         script_params = {}
         if url_delay_settings and batch_job_settings and batch_delay_settings:
             script_params = self.__get_nodejs_script_params_from_objects(
@@ -461,7 +460,6 @@ class ConfigFile:
         else:
             script_params = self.__get_default_nodejs_script_params()
         script_params["urlSetFilepath"] = url_set_filepath.resolve()
-        script_params["s3Bucket"] = s3_bucket
         return dict_to_param_list(script_params)
 
     def selenium_required(self) -> bool:

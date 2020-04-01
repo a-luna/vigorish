@@ -358,14 +358,14 @@ def _parse_team_data(
 
     team_dict = dict(
         team_id_br=team_id,
-        total_wins_before_game=team_record[0],
-        total_losses_before_game=team_record[1],
-        total_runs_scored_by_team=team_totals.total_runs,
-        total_runs_scored_by_opponent=opponent_totals.total_runs,
-        total_hits_by_team=team_totals.total_hits,
-        total_hits_by_opponent=opponent_totals.total_hits,
-        total_errors_by_team=team_totals.total_errors,
-        total_errors_by_opponent=opponent_totals.total_errors,
+        total_wins_before_game=int(team_record[0]),
+        total_losses_before_game=int(team_record[1]),
+        total_runs_scored_by_team=int(team_totals.total_runs),
+        total_runs_scored_by_opponent=int(opponent_totals.total_runs),
+        total_hits_by_team=int(team_totals.total_hits),
+        total_hits_by_opponent=int(opponent_totals.total_hits),
+        total_errors_by_team=int(team_totals.total_errors),
+        total_errors_by_opponent=int(opponent_totals.total_errors),
         batting_stats=batting_stats,
         pitching_stats=pitching_stats,
         starting_lineup=starting_lineup,
@@ -588,12 +588,12 @@ def _parse_game_meta_info(page_source):
         first_pitch_precipitation = split2[3].strip().strip(".")
 
     game_info = BBRefBoxscoreMeta(
-        attendance=attendance,
+        attendance=int(attendance),
         park_name=park_name,
         game_duration=game_duration,
         day_night=day_night,
         field_type=field_type,
-        first_pitch_temperature=first_pitch_temperature,
+        first_pitch_temperature=int(first_pitch_temperature),
         first_pitch_wind=first_pitch_wind,
         first_pitch_clouds=first_pitch_clouds,
         first_pitch_precipitation=first_pitch_precipitation,

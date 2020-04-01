@@ -14,6 +14,7 @@ html_storage
 !tests/html_storage
 !tests/json_storage
 src/vigorish/nightmarejs/node_modules
+src/vigorish/nightmarejs/inbox/*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

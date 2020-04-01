@@ -17,6 +17,15 @@ class ScrapedData:
         self.html_storage = HtmlStorage(config, self.file_helper)
         self.json_storage = JsonStorage(config, self.file_helper)
 
+    def create_all_folderpaths(self, year) -> Result:
+        try:
+            for folderpath_dict in self.file_helper.local_folderpath_dict.values():
+                for folderpath in folderpath_dict.values():
+                    Path(folderpath.resolve(year=year)).mkdir(parents=True, exist_ok=True)
+            return Result.Ok()
+        except Exception as e:
+            return Result.Fail(f"Error: {repr(e)}")
+
     def save_html(self, data_set, url_id, html):
         return self.html_storage.save_html(data_set, url_id, html)
 

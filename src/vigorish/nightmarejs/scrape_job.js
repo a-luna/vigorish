@@ -8,7 +8,6 @@ main(args).catch(console.error)
 
 async function main(args) {
   const urlSetFilepath = args.urlSetFilepath
-  const s3Bucket = args.s3Bucket
   const timeoutParams = getTimeoutParams(args)
   const batchJobParams = getBatchJobParams(args)
   const nightmare = Nightmare({
@@ -21,7 +20,7 @@ async function main(args) {
   xvfb.startSync()
 
   const [err, title] = await poss(
-    run(nightmare, urlSetFilepath, timeoutParams, batchJobParams, s3Bucket)
+    run(nightmare, urlSetFilepath, timeoutParams, batchJobParams)
   )
   if (err) {
     await nightmare.end()
@@ -79,15 +78,9 @@ function getBatchJobParams(args) {
 // run nightmare
 //
 // put all your nightmare commands in here
-async function run(nightmare, urlSetFilepath, timeoutParams, batchJobParams, s3Bucket) {
+async function run(nightmare, urlSetFilepath, timeoutParams, batchJobParams) {
   if (batchJobParams.batchScrapingEnabled) {
-    await executeBatchJob(
-      nightmare,
-      urlSetFilepath,
-      batchJobParams,
-      timeoutParams,
-      s3Bucket
-    )
+    await executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeoutParams)
   } else {
     await scrapeUrls(nightmare, urlSetFilepath, timeoutParams, s3Bucket)
   }

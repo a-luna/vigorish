@@ -67,6 +67,9 @@ class ScrapeTaskABC(ABC):
         self.url_builder = UrlBuilder(self.config, self.scraped_data)
         self.scrape_condition = self.config.get_current_setting("SCRAPE_CONDITION", self.data_set)
         self.scrape_tool = self.config.get_current_setting("SCRAPE_TOOL", self.data_set)
+        self.url_timeout = self.config.get_current_setting("URL_SCRAPE_DELAY", self.data_set)
+        self.batch_job = self.config.get_current_setting("BATCH_JOB_SETTINGS", self.data_set)
+        self.batch_timeout = self.config.get_current_setting("BATCH_SCRAPE_DELAY", self.data_set)
 
     @property
     def total_urls(self):

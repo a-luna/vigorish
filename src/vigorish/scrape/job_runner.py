@@ -74,11 +74,6 @@ class JobRunner:
                     )
                     task_results.append(text)
                     continue
-                text = (
-                    f"{EMOJI_DICT.get('FAILED', '')} "
-                    f"Failed to scrape: {data_set.name} (Task #{i}/{len(self.data_sets)})"
-                )
-                task_results.append(text)
                 return self.job_failed(result)
             text = (
                 f"{EMOJI_DICT.get('PASSED', '')} "
@@ -102,11 +97,11 @@ class JobRunner:
 
     def initialize(self):
         self.start_time = datetime.now()
-        if not self.config.selenium_required():
-            self.driver = None
-            return Result.Ok()
+        result = self.scraped_data.create_all_folderpaths(self.season.year)
+        if result.failure:
+            return result
         try:
-            self.driver = get_chromedriver()
+            self.driver = get_chromedriver() if self.config.selenium_required() else None
             return Result.Ok()
         except RetryLimitExceededError as e:
             return Result.Fail(repr(e))
