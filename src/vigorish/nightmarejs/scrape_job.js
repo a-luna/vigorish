@@ -19,16 +19,13 @@ async function main(args) {
   const xvfb = new Xvfb()
   xvfb.startSync()
 
-  const [err, title] = await poss(
+  const [success, err] = await poss(
     run(nightmare, urlSetFilepath, timeoutParams, batchJobParams)
   )
-  if (err) {
-    await nightmare.end()
-    xvfb.stopSync()
+  xvfb.stopSync()
+  if (!success) {
     throw err
   }
-  await nightmare.end()
-  xvfb.stopSync()
   process.exit(0)
 }
 
@@ -75,24 +72,20 @@ function getBatchJobParams(args) {
   return batchJobParams
 }
 
-// run nightmare
-//
-// put all your nightmare commands in here
 async function run(nightmare, urlSetFilepath, timeoutParams, batchJobParams) {
   if (batchJobParams.batchScrapingEnabled) {
     await executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeoutParams)
   } else {
     await scrapeUrls(nightmare, urlSetFilepath, timeoutParams, s3Bucket)
   }
-  return
+  await nightmare.end()
 }
 
-// try/catch helper
 async function poss(promise) {
   try {
-    const result = await promise
-    return [null, result]
+    await promise
+    return [true, null]
   } catch (err) {
-    return [err, null]
+    return [false, err]
   }
 }
