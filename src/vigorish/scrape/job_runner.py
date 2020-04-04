@@ -17,9 +17,7 @@ from vigorish.scrape.brooks_games_for_date.scrape_brooks_games_for_date import (
 )
 from vigorish.scrape.brooks_pitch_logs.scrape_brooks_pitch_logs import ScrapeBrooksPitchLogs
 from vigorish.scrape.brooks_pitchfx.scrape_brooks_pitchfx import ScrapeBrooksPitchFx
-from vigorish.scrape.util import get_chromedriver
 from vigorish.status.report_status import report_season_status
-from vigorish.util.decorators.retry import RetryLimitExceededError
 from vigorish.util.result import Result
 
 SCRAPE_TASK_DICT = {
@@ -41,7 +39,6 @@ class JobRunner:
         self.db_session = db_session
         self.config = config
         self.scraped_data = scraped_data
-        self.driver = None
         self.status_report = self.config.get_current_setting("STATUS_REPORT", DataSet.ALL)
 
     def execute(self):

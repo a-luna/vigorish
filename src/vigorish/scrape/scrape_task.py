@@ -13,14 +13,7 @@ from Naked.toolshed.shell import execute_js
 
 from vigorish.cli.util import prompt_user_yes_no
 from vigorish.constants import JOB_SPINNER_COLORS
-from vigorish.enums import (
-    DataSet,
-    ScrapeCondition,
-    ScrapeTool,
-    PythonScrapeTool,
-    JobStatus,
-)
-from vigorish.scrape.scrape_urls import scrape_url_list
+from vigorish.enums import DataSet, ScrapeCondition, JobStatus
 from vigorish.scrape.url_builder import UrlBuilder
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.list_helpers import flatten_list2d
@@ -56,14 +49,12 @@ class ScrapeTaskABC(ABC):
         self.scraped_data = scraped_data
         self.driver = driver
         self.url_set = {}
-        self.python_scrape_tool = PythonScrapeTool.NONE
         self.start_date = self.db_job.start_date
         self.end_date = self.db_job.end_date
         self.season = self.db_job.season
         self.total_days = self.db_job.total_days
         self.url_builder = UrlBuilder(self.config, self.scraped_data)
         self.scrape_condition = self.config.get_current_setting("SCRAPE_CONDITION", self.data_set)
-        self.scrape_tool = self.config.get_current_setting("SCRAPE_TOOL", self.data_set)
 
     @property
     def total_urls(self):
@@ -192,27 +183,15 @@ class ScrapeTaskABC(ABC):
     def scrape_missing_html(self, missing_html):
         if not missing_html:
             return Result.Ok()
-        if self.scrape_tool == ScrapeTool.NIGHTMAREJS:
-            return self.scrape_html_with_nightmarejs(missing_html)
-        if self.scrape_tool == ScrapeTool.REQUESTS_SELENIUM:
-            return self.scrape_html_with_requests_selenium(missing_html)
-        return Result.Fail(f"SCRAPE_TOOL setting either not set or set incorrectly.")
-
-    def scrape_html_with_requests_selenium(self, missing_html):
-        return scrape_url_list(
-            missing_html, self.data_set, self.python_scrape_tool, self.config, self.scraped_data
-        )
-
-    def scrape_html_with_nightmarejs(self, url_details):
-        urls_json = json.dumps(url_details, indent=2, sort_keys=False)
+        urls_json = json.dumps(missing_html, indent=2, sort_keys=False)
         url_set_filepath = self.db_job.nodejs_filepath
         url_set_filepath.write_text(urls_json)
         args = self.config.get_nodejs_script_params(self.data_set, url_set_filepath)
         success = execute_js(str(NODEJS_SCRIPT), arguments=args)
-        if not success:
-            return Result.Fail("nodejs process did not exit successfully")
-        url_set_filepath.unlink()
-        return Result.Ok()
+        if success:
+            url_set_filepath.unlink()
+            return Result.Ok()
+        return Result.Fail("nodejs process did not exit successfully")
 
     def parse_data_from_scraped_html(self):
         spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")

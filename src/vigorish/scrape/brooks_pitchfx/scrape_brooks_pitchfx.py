@@ -37,10 +37,6 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
             return Result.Fail("skip")
         return Result.Ok()
 
-    def scrape_html_with_requests_selenium(self, missing_html):
-        self.python_scrape_tool = PythonScrapeTool.REQUESTS
-        super().scrape_html_with_requests_selenium(missing_html)
-
     def parse_data_from_scraped_html(self):
         self.db_job.status = JobStatus.PARSING
         self.db_session.commit()

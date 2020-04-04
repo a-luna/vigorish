@@ -1,16 +1,4 @@
 {
-  "SCRAPE_TOOL": {
-    "CONFIG_TYPE": "Enum",
-    "ENUM_NAME": "ScrapeTool",
-    "DESCRIPTION": "There are two different tool chains available for web scraping: The first uses Python packages requests and selenium, and the second uses NightmareJS which requires a node installation.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-    "ALL": "NIGHTMAREJS",
-    "BBREF_GAMES_FOR_DATE": null,
-    "BBREF_BOXSCORES": null,
-    "BROOKS_GAMES_FOR_DATE": null,
-    "BROOKS_PITCH_LOGS": null,
-    "BROOKS_PITCHFX": null
-  },
   "SCRAPE_CONDITION": {
     "CONFIG_TYPE": "Enum",
     "ENUM_NAME": "ScrapeCondition",

@@ -24,10 +24,6 @@ class ScrapeBBRefGamesForDate(ScrapeTaskABC):
             return Result.Fail("skip")
         return Result.Ok()
 
-    def scrape_html_with_requests_selenium(self, missing_html):
-        self.python_scrape_tool = PythonScrapeTool.SELENIUM
-        super().scrape_html_with_requests_selenium(missing_html)
-
     def parse_html(self, page_source, url_id, url):
         return parse_bbref_dashboard_page(page_source, url_id, url)
 

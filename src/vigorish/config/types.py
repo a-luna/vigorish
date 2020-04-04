@@ -480,6 +480,13 @@ class ConfigFile:
         script_params["urlSetFilepath"] = url_set_filepath.resolve()
         return dict_to_param_list(script_params)
 
+    def selenium_required(self) -> bool:
+        config_dict = self.config_json.get("SCRAPE_TOOL")
+        if not config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"]:
+            return False
+        scrape_tool_setting = self.get_current_setting("SCRAPE_TOOL", DataSet.ALL)
+        return scrape_tool_setting != ScrapeTool.NIGHTMAREJS
+
     def check_url_delay_settings(self, data_sets) -> Result:
         url_delay_settings = [
             self.get_current_setting("URL_SCRAPE_DELAY", data_set) for data_set in data_sets
