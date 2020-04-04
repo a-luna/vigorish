@@ -93,6 +93,10 @@ class ScrapeJob(Base):
             "Data Sets": ", ".join([str(ds) for ds in self.data_sets]),
         }
 
+    @hybrid_property
+    def error_messages(self):
+        return "\n".join([str(error) for error in self.errors])
+
     def __repr__(self):
         return f"<ScrapeJob id={self.id}, status={self.status}>"
 

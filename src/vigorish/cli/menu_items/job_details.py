@@ -32,8 +32,7 @@ class JobDetailsMenuItem(MenuItem):
         print_message(f"{job_details}\n", fg="bright_yellow")
         if self.db_job.errors:
             print_message("*** Errors ***", fg="bright_red", bold=True)
-            for error in self.db_job.errors:
-                print_message(f"{error}\n", fg="bright_red")
+            print_message(self.db_job.error_messages, fg="bright_red")
         if self.job_group == JobGroup.ACTIVE or self.job_group == JobGroup.INCOMPLETE:
             result = self.incomplete_job_options_prompt()
             if result.failure:
