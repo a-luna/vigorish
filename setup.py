@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 DESCRIPTION = "MLB data scraping tool"
 APP_ROOT = Path(__file__).parent
-README = (APP_ROOT / "README.md").read_text()
+README = (APP_ROOT / "README.md").read_text().strip()
 AUTHOR = "Aaron Luna"
 AUTHOR_EMAIL = "contact@aaronluna.dev"
 PROJECT_URLS = {
@@ -14,7 +14,6 @@ PROJECT_URLS = {
 CLASSIFIERS = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
-    "Environment :: MacOS X",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
@@ -27,28 +26,27 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 INSTALL_REQUIRES = [
-    "alembic",
-    "boto3",
-    "bullet",
-    "Click",
-    "dataclass-csv",
-    "fake-useragent",
-    "fuzzywuzzy",
-    "halo",
-    "lxml",
-    "naked",
-    "pandas",
-    "py-getch",
-    "python-dateutil",
-    "python-dotenv",
-    "python-levenshtein",
-    "requests",
-    "selenium",
-    "SQLAlchemy",
-    "tqdm",
-    "tzlocal",
-    "urllib3",
-    "w3lib",
+    "boto3==1.12.36",
+    "bullet==2.1.0",
+    "click==7.1.1",
+    "dataclass-csv==1.1.3",
+    "fake-useragent==0.1.11",
+    "fuzzywuzzy==0.18.0",
+    "halo==0.0.29",
+    "lxml==4.5.0",
+    "Naked==0.1.31",
+    "pandas==1.0.3",
+    "py-getch==1.0.1",
+    "python-dateutil==2.8.1",
+    "python-dotenv==0.12.0",
+    "python-Levenshtein==0.12.0",
+    "requests==2.23.0",
+    "selenium==3.141.0",
+    "SQLAlchemy==1.3.15",
+    "tqdm==4.45.0",
+    "tzlocal==2.0.0",
+    "urllib3==1.25.8",
+    "w3lib==1.21.0",
 ]
 EXTRAS_REQUIRE = {
     "dev": [
@@ -77,7 +75,7 @@ setup(
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
-    version="0.1.0",
+    version="0.2.1",
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     maintainer=AUTHOR,
