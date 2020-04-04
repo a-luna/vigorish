@@ -80,7 +80,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                     page_source = html.fromstring(filepath.read_text(), base_url=url)
                     result = parse_pitch_log(page_source, game, pitcher_id, url)
                     if result.failure:
-                        spinner.fail(f"Error! {result.error}")
+                        spinner.fail(f"Error! {result.error} (ID: {pitch_app_id})")
                         return result
                     pitch_log = result.value
                     scraped_pitch_logs.append(pitch_log)
@@ -96,11 +96,11 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 pitch_logs_for_game.pitch_logs = scraped_pitch_logs
                 result = self.scraped_data.save_json(self.data_set, pitch_logs_for_game)
                 if result.failure:
-                    spinner.fail(f"Error! {result.error}")
+                    spinner.fail(f"Error! {result.error} (ID: {game.bbref_game_id})")
                     return result
                 result = self.update_status(game_date, pitch_logs_for_game)
                 if result.failure:
-                    spinner.fail(f"Error! {result.error}")
+                    spinner.fail(f"Error! {result.error} (ID: {game.bbref_game_id})")
                     return result
         spinner.succeed("HTML Parsed")
         return Result.Ok()

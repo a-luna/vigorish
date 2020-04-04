@@ -130,29 +130,33 @@ def verify_brooks_games_for_date_apr_17_2018(games_for_date):
 
     g5_pitch_dict = games_for_date.games[5].pitcher_appearance_dict
     assert "543606" in g5_pitch_dict
-    assert (
-        g5_pitch_dict["543606"]
-        == "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=17&pitchSel=543606.xml&game=gid_2018_04_17_clemlb_minmlb_1/&prevGame=gid_2018_04_17_clemlb_minmlb_1/"
+    assert g5_pitch_dict["543606"] == (
+        "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0"
+        "&year=2018&month=4&day=17&pitchSel=543606.xml&game=gid_2018_04_17_clemlb_minmlb_1/"
+        "&prevGame=gid_2018_04_17_clemlb_minmlb_1/"
     )
 
     g6_pitch_dict = games_for_date.games[6].pitcher_appearance_dict
     assert "630023" in g6_pitch_dict
-    assert (
-        g6_pitch_dict["630023"]
-        == "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=17&pitchSel=630023.xml&game=gid_2018_04_17_texmlb_tbamlb_1/&prevGame=gid_2018_04_17_texmlb_tbamlb_1/"
+    assert g6_pitch_dict["630023"] == (
+        "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0"
+        "&year=2018&month=4&day=17&pitchSel=630023.xml&game=gid_2018_04_17_texmlb_tbamlb_1/"
+        "&prevGame=gid_2018_04_17_texmlb_tbamlb_1/"
     )
 
     g5_pitch_dict = games_for_date.games[5].pitcher_appearance_dict
     assert "543606" in g5_pitch_dict
-    assert (
-        g5_pitch_dict["543606"]
-        == "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=17&pitchSel=543606.xml&game=gid_2018_04_17_clemlb_minmlb_1/&prevGame=gid_2018_04_17_clemlb_minmlb_1/"
+    assert g5_pitch_dict["543606"] == (
+        "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0"
+        "&year=2018&month=4&day=17&pitchSel=543606.xml&game=gid_2018_04_17_clemlb_minmlb_1/"
+        "&prevGame=gid_2018_04_17_clemlb_minmlb_1/"
     )
 
     g5_pitch_dict = games_for_date.games[5].pitcher_appearance_dict
     assert "543606" in g5_pitch_dict
-    assert (
-        g5_pitch_dict["543606"]
-        == "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=17&pitchSel=543606.xml&game=gid_2018_04_17_clemlb_minmlb_1/&prevGame=gid_2018_04_17_clemlb_minmlb_1/"
+    assert g5_pitch_dict["543606"] == (
+        "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0"
+        "&year=2018&month=4&day=17&pitchSel=543606.xml&game=gid_2018_04_17_clemlb_minmlb_1/"
+        "&prevGame=gid_2018_04_17_clemlb_minmlb_1/"
     )
     return Result.Ok()

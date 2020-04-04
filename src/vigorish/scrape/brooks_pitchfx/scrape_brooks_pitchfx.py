@@ -76,11 +76,11 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                     pitchfx_log = result.value
                     result = self.scraped_data.save_json(self.data_set, pitchfx_log)
                     if result.failure:
-                        spinner.fail(f"Error! {result.error}")
+                        spinner.fail(f"Error! {result.error} (ID: {pitch_log.pitch_app_id})")
                         return result
                     result = self.update_status(game_date, pitchfx_log)
                     if result.failure:
-                        spinner.fail(f"Error! {result.error}")
+                        spinner.fail(f"Error! {result.error} (ID: {pitch_log.pitch_app_id})")
                         return result
                     parsed += 1
                     spinner.text = (
