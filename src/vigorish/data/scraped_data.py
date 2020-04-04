@@ -21,13 +21,7 @@ class ScrapedData:
         return self.file_helper.check_s3_bucket(data_sets)
 
     def create_all_folderpaths(self, year) -> Result:
-        try:
-            for folderpath_dict in self.file_helper.local_folderpath_dict.values():
-                for folderpath in folderpath_dict.values():
-                    Path(folderpath.resolve(year=year)).mkdir(parents=True, exist_ok=True)
-            return Result.Ok()
-        except Exception as e:
-            return Result.Fail(f"Error: {repr(e)}")
+        return self.file_helper.create_all_folderpaths(year)
 
     def save_html(self, data_set, url_id, html):
         return self.html_storage.save_html(data_set, url_id, html)

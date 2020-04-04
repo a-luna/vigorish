@@ -104,6 +104,9 @@ class JobRunner:
         result = self.check_s3_bucket() if self.s3_bucket_required() else Result.Ok()
         if result.failure:
             errors.append(result.error)
+        result = self.create_all_folderpaths()
+        if result.failure:
+            errors.append(result.error)
         if not errors:
             return Result.Ok()
         return Result.Fail("\n".join(errors))
@@ -123,6 +126,9 @@ class JobRunner:
         self.db_session.commit()
         self.end_time = datetime.now()
         return Result.Ok()
+
+    def create_all_folderpaths(self):
+        return self.scraped_data.create_all_folderpaths(self.season.year)
 
     def s3_bucket_required(self):
         return self.config.s3_bucket_required(self.db_job.data_sets)

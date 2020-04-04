@@ -116,6 +116,15 @@ class FileHelper:
             DocFormat.JSON: json_storage_dict,
         }
 
+    def create_all_folderpaths(self, year) -> Result:
+        try:
+            for folderpath_dict in self.local_folderpath_dict.values():
+                for folderpath in folderpath_dict.values():
+                    Path(folderpath.resolve(year=year)).mkdir(parents=True, exist_ok=True)
+            return Result.Ok()
+        except Exception as e:
+            return Result.Fail(f"Error: {repr(e)}")
+
     def check_s3_bucket(self, data_sets):
         bucket_names = list(
             set([self.config.get_current_setting("S3_BUCKET", data_set) for data_set in data_sets])
