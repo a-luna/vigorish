@@ -17,6 +17,9 @@ class ScrapedData:
         self.html_storage = HtmlStorage(config, self.file_helper)
         self.json_storage = JsonStorage(config, self.file_helper)
 
+    def check_s3_bucket(self, data_sets):
+        return self.file_helper.check_s3_bucket(data_sets)
+
     def create_all_folderpaths(self, year) -> Result:
         try:
             for folderpath_dict in self.file_helper.local_folderpath_dict.values():

@@ -25,10 +25,8 @@ from vigorish.util.result import Result
 class FileHelper:
     def __init__(self, config):
         self.config = config
-        self.bucket_name = self.config.all_settings.get("S3_BUCKET").current_setting(DataSet.ALL)
         self.client = boto3.client("s3")
         self.resource = boto3.resource("s3")
-        self.bucket = self.resource.Bucket(self.bucket_name)
 
     @property
     def local_folderpath_dict(self):
@@ -117,6 +115,17 @@ class FileHelper:
             DocFormat.HTML: html_storage_dict,
             DocFormat.JSON: json_storage_dict,
         }
+
+    def check_s3_bucket(self, data_sets):
+        bucket_names = list(
+            set([self.config.get_current_setting("S3_BUCKET", data_set) for data_set in data_sets])
+        )
+        try:
+            for bucket_name in bucket_names:
+                self.resource.Bucket(bucket_name).objects.all()
+            return Result.Ok()
+        except Exception as e:
+            return Result.Fail(f"Error: {repr(e)}")
 
     def perform_local_file_task(
         self,
@@ -219,12 +228,15 @@ class FileHelper:
             bb_game_id=bb_game_id,
             pitch_app_id=pitch_app_id,
         )
+        bucket_name = self.config.all_settings.get("S3_BUCKET").current_setting(data_set)
         if task == S3FileTask.UPLOAD:
-            return self.upload_to_s3(doc_format, data_set, scraped_data, s3_key, Path(filepath))
+            return self.upload_to_s3(
+                doc_format, data_set, scraped_data, bucket_name, s3_key, Path(filepath)
+            )
         if task == S3FileTask.DOWNLOAD:
-            return self.download_from_s3(s3_key, Path(filepath))
+            return self.download_from_s3(bucket_name, s3_key, Path(filepath))
         if task == S3FileTask.DELETE:
-            return self.delete_from_s3(s3_key)
+            return self.delete_from_s3(bucket_name, s3_key)
 
     def get_object_key(
         self,
@@ -321,23 +333,23 @@ class FileHelper:
             error = f"Error: {repr(e)}"
             return Result.Fail(error)
 
-    def upload_to_s3(self, doc_format, data_set, scraped_data, s3_key, filepath):
+    def upload_to_s3(self, doc_format, data_set, scraped_data, bucket_name, s3_key, filepath):
         delete_file = not self.save_local_file(doc_format, data_set)
         if doc_format == DocFormat.JSON:
             result = self.write_to_file(scraped_data.as_json(), filepath)
             if result.failure:
                 return result
         try:
-            self.client.upload_file(str(filepath), self.bucket_name, s3_key)
+            self.client.upload_file(str(filepath), bucket_name, s3_key)
             if delete_file:
                 filepath.unlink()
             return Result.Ok() if delete_file else Result.Ok(filepath)
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
-    def download_from_s3(self, s3_key, filepath):
+    def download_from_s3(self, bucket_name, s3_key, filepath):
         try:
-            self.resource.Bucket(self.bucket_name).download_file(s3_key, str(filepath))
+            self.resource.Bucket(bucket_name).download_file(s3_key, str(filepath))
             return Result.Ok(filepath)
         except ClientError as e:
             if e.response["Error"]["Code"] == "404":
@@ -346,19 +358,19 @@ class FileHelper:
                 error = repr(e)
             return Result.Fail(error)
 
-    def delete_from_s3(self, s3_key):
+    def delete_from_s3(self, bucket_name, s3_key):
         try:
-            self.resource.Object(self.bucket_name, s3_key).delete()
+            self.resource.Object(bucket_name, s3_key).delete()
             return Result.Ok()
         except ClientError as e:
             return Result.Fail(repr(e))
 
-    def rename_s3_object(self, old_key, new_key):
+    def rename_s3_object(self, bucket_name, old_key, new_key):
         try:
-            self.resource.Object(self.bucket_name, new_key).copy_from(
-                CopySource=f"{self.bucket_name}/{old_key}"
+            self.resource.Object(bucket_name, new_key).copy_from(
+                CopySource=f"{bucket_name}/{old_key}"
             )
-            self.resource.Object(self.bucket_name, old_key).delete()
+            self.resource.Object(bucket_name, old_key).delete()
             return Result.Ok()
         except ClientError as e:
             return Result.Fail(repr(e))

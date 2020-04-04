@@ -51,6 +51,7 @@ class JobRunner:
         result = self.initialize()
         if result.failure:
             return self.job_failed(result)
+        self.start_time = datetime.now()
         task_results = []
         spinners = defaultdict(lambda: Halo(spinner="dots3"))
         for i, data_set in enumerate(self.data_sets, start=1):
@@ -100,6 +101,9 @@ class JobRunner:
         result = self.check_url_delay_settings()
         if result.failure:
             errors.append(result.error)
+        result = self.check_s3_bucket() if self.s3_bucket_required() else Result.Ok()
+        if result.failure:
+            errors.append(result.error)
         if not errors:
             return Result.Ok()
         return Result.Fail("\n".join(errors))
@@ -111,20 +115,17 @@ class JobRunner:
         )
         self.db_session.add(new_error)
         self.db_session.commit()
-        self.tear_down()
+        self.end_time = datetime.now()
         return result
 
     def job_succeeded(self):
         self.db_job.status = JobStatus.COMPLETE
         self.db_session.commit()
-        self.tear_down()
+        self.end_time = datetime.now()
         return Result.Ok()
 
-    def tear_down(self):
-        self.end_time = datetime.now()
-        if self.driver:
-            try:
-                self.driver.quit()
-                self.driver = None
-            except Exception as e:
-                return Result.Fail(f"Error occurred quitting chromedriver: {repr(e)}")
+    def s3_bucket_required(self):
+        return self.config.s3_bucket_required(self.db_job.data_sets)
+
+    def check_s3_bucket(self):
+        return self.scraped_data.check_s3_bucket(self.db_job.data_sets)

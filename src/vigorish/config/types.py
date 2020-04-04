@@ -489,6 +489,23 @@ class ConfigFile:
         error = "URL delay cannot be disabled and must be at least 3 seconds"
         return Result.Fail(error)
 
+    def s3_bucket_required(self, data_sets) -> bool:
+        html_storage_settings = [
+            self.get_current_setting("HTML_STORAGE", data_set) for data_set in data_sets
+        ]
+        json_storage_settings = [
+            self.get_current_setting("JSON_STORAGE", data_set) for data_set in data_sets
+        ]
+        html_local_storage = all(
+            html_storage == HtmlStorageOption.LOCAL_FOLDER
+            for html_storage in html_storage_settings
+        )
+        json_local_storage = all(
+            json_storage == JsonStorageOption.LOCAL_FOLDER
+            for json_storage in json_storage_settings
+        )
+        return not html_local_storage or not json_local_storage
+
     def __read_config_file(self) -> None:
         if not self.config_file_path.exists():
             raise FileNotFoundError(
