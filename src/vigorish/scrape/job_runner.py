@@ -96,17 +96,13 @@ class JobRunner:
         return self.job_succeeded()
 
     def initialize(self):
-        self.start_time = datetime.now()
-        result = self.scraped_data.create_all_folderpaths(self.season.year)
+        errors = []
+        result = self.check_url_delay_settings()
         if result.failure:
-            return result
-        try:
-            self.driver = get_chromedriver() if self.config.selenium_required() else None
+            errors.append(result.error)
+        if not errors:
             return Result.Ok()
-        except RetryLimitExceededError as e:
-            return Result.Fail(repr(e))
-        except Exception as e:
-            return Result.Fail(f"Error: {repr(e)}")
+        return Result.Fail("\n".join(errors))
 
     def job_failed(self, result, data_set=DataSet.ALL):
         self.db_job.status = JobStatus.ERROR

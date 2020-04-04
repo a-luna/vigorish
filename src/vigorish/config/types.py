@@ -1,5 +1,6 @@
 """Functions that enable reading/writing the config file."""
 from __future__ import annotations
+from typing import Dict
 
 import errno
 import json
@@ -113,6 +114,16 @@ class UrlScrapeDelaySettings:
     @property
     def delay_random_max_ms(self) -> int:
         return self.delay_random_max * 1000 if self.delay_random_max else 0
+
+    @property
+    def is_valid(self) -> bool:
+        if not self.delay_is_required:
+            return False
+        if not self.delay_is_random and self.delay_uniform < 3:
+            return False
+        if self.delay_is_random and self.delay_random_min < 3:
+            return False
+        return True
 
     def to_dict(self) -> NUMERIC_OPTIONS_JSON_VALUE:
         return {
@@ -442,7 +453,10 @@ class ConfigFile:
                 config_dict[data_set.name] = new_value.name
                 self.__reset_other_data_sets_enum_str(config_dict, data_set)
             if config_dict["CONFIG_TYPE"] == "Numeric":
-                config_dict[data_set.name] = self.__get_object(setting_name, new_value)
+                result = self.__get_object(setting_name, new_value)
+                if result.failure:
+                    return result
+                config_dict[data_set.name] = result.value
                 self.__reset_other_data_sets_numeric(config_dict, data_set)
         return self.__write_config_file()
 
@@ -466,12 +480,14 @@ class ConfigFile:
         script_params["urlSetFilepath"] = url_set_filepath.resolve()
         return dict_to_param_list(script_params)
 
-    def selenium_required(self) -> bool:
-        config_dict = self.config_json.get("SCRAPE_TOOL")
-        if not config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"]:
-            return False
-        scrape_tool_setting = self.get_current_setting("SCRAPE_TOOL", DataSet.ALL)
-        return scrape_tool_setting != ScrapeTool.NIGHTMAREJS
+    def check_url_delay_settings(self, data_sets) -> Result:
+        url_delay_settings = [
+            self.get_current_setting("URL_SCRAPE_DELAY", data_set) for data_set in data_sets
+        ]
+        if all(url_delay.is_valid for url_delay in url_delay_settings):
+            return Result.Ok()
+        error = "URL delay cannot be disabled and must be at least 3 seconds"
+        return Result.Fail(error)
 
     def __read_config_file(self) -> None:
         if not self.config_file_path.exists():
@@ -535,12 +551,23 @@ class ConfigFile:
         setting = self.config_json.get(setting_name)
         class_name = setting.get("CLASS_NAME")
         if class_name == "UrlScrapeDelaySettings":
-            return UrlScrapeDelaySettings(*new_value).to_dict()
+            result = self.__validate_new_url_delay_setting(new_value)
+            if result.failure:
+                return result
+            return Result.Ok(UrlScrapeDelaySettings(*new_value).to_dict())
         if class_name == "BatchJobSettings":
-            return BatchJobSettings(*new_value).to_dict()
+            return Result.Ok(BatchJobSettings(*new_value).to_dict())
         if class_name == "BatchScrapeDelaySettings":
-            return BatchScrapeDelaySettings(*new_value).to_dict()
+            return Result.Ok(BatchScrapeDelaySettings(*new_value).to_dict())
         return None
+
+    def __validate_new_url_delay_setting(self, new_value):
+        is_enabled, is_random, delay_uniform, delay_min, delay_max = new_value
+        if not is_enabled:
+            return Result.Fail("URL delay cannot be disabled!")
+        if not is_random and delay_uniform < 3 or is_random and delay_min < 3:
+            return Result.Fail("URL delay min value must be greater than 2 seconds!")
+        return Result.Ok()
 
     def __get_null_object(self, class_name: str) -> Union[None, Mapping[str, None]]:
         null_data = (None, None, None, None, None)
