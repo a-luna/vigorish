@@ -6,7 +6,7 @@ from bullet import Bullet, colors, Input
 from vigorish.constants import MENU_NUMBERS, CLI_COLORS
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import ellipsize
+from vigorish.util.string_helpers import wrap_text
 
 DISPLAY_NAME_DICT = {
     "brooksbaseball.net Games for Date": DataSet.BROOKS_GAMES_FOR_DATE,
@@ -28,7 +28,7 @@ def print_message(message, fg=None, bg=None, bold=None, underline=None):
     if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
         fg = None
         bg = None
-    click.secho(f"{message}", fg=fg, bg=bg, bold=bold, underline=underline)
+    click.secho(f"\n{message}", fg=fg, bg=bg, bold=bold, underline=underline)
 
 
 def prompt_user_yes_no(prompt: str) -> Result:
@@ -37,7 +37,7 @@ def prompt_user_yes_no(prompt: str) -> Result:
         f"{MENU_NUMBERS.get(2)}  NO": False,
     }
     prompt = Bullet(
-        ellipsize(prompt, 70),
+        f"\n{wrap_text(prompt, 70)}",
         choices=[choice for choice in choices.keys()],
         bullet="",
         shift=1,
@@ -61,7 +61,7 @@ def prompt_user_yes_no_cancel(prompt: str) -> Result:
         f"{MENU_NUMBERS.get(3)}  CANCEL": None,
     }
     prompt = Bullet(
-        ellipsize(prompt, 70),
+        f"\n{wrap_text(prompt, 70)}",
         choices=[choice for choice in choices.keys()],
         bullet="",
         shift=1,

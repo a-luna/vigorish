@@ -114,9 +114,7 @@ class CreateJobMenuItem(MenuItem):
         result = Season.validate_date_range(self.db_session, start_date, end_date)
         if result.failure:
             print_message(
-                f"The dates you entered are invalid:\n{result.error}\n",
-                fg="bright_red",
-                bold=True,
+                f"The dates you entered are invalid:\n{result.error}", fg="bright_red", bold=True,
             )
             pause(message="Press any key to continue...")
             return Result.Fail("")
