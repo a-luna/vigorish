@@ -127,6 +127,9 @@ class JobRunner:
     def create_all_folderpaths(self):
         return self.scraped_data.create_all_folderpaths(self.season.year)
 
+    def check_url_delay_settings(self):
+        return self.config.check_url_delay_settings(self.db_job.data_sets)
+
     def s3_bucket_required(self):
         return self.config.s3_bucket_required(self.db_job.data_sets)
 
