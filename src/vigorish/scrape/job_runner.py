@@ -60,7 +60,7 @@ class JobRunner:
             spinners[data_set].color = JOB_SPINNER_COLORS[data_set]
             spinners[data_set].start()
             scrape_task = SCRAPE_TASK_DICT[data_set](
-                self.db_job, self.db_session, self.config, self.scraped_data, self.driver,
+                self.db_job, self.db_session, self.config, self.scraped_data,
             )
             spinners[data_set].stop_and_persist(spinners[data_set].frame(), "")
             result = scrape_task.execute()

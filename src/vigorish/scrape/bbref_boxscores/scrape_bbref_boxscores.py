@@ -8,9 +8,9 @@ from vigorish.util.result import Result
 
 
 class ScrapeBBRefBoxscores(ScrapeTaskABC):
-    def __init__(self, db_job, db_session, config, scraped_data, driver):
+    def __init__(self, db_job, db_session, config, scraped_data):
         self.data_set = DataSet.BBREF_BOXSCORES
-        super().__init__(db_job, db_session, config, scraped_data, driver)
+        super().__init__(db_job, db_session, config, scraped_data)
 
     def check_prerequisites(self, game_date):
         bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(

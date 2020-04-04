@@ -42,12 +42,11 @@ def handle_user_cancellation(db_session, active_job, signal_received, frame):
 class ScrapeTaskABC(ABC):
     data_set: DataSet
 
-    def __init__(self, db_job, db_session, config, scraped_data, driver):
+    def __init__(self, db_job, db_session, config, scraped_data):
         self.db_job = db_job
         self.db_session = db_session
         self.config = config
         self.scraped_data = scraped_data
-        self.driver = driver
         self.url_set = {}
         self.start_date = self.db_job.start_date
         self.end_date = self.db_job.end_date
