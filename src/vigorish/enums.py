@@ -62,27 +62,6 @@ class JsonStorageOption(Enum):
         return self.name
 
 
-class ScrapeTool(Enum):
-    """Config setting for scrape tool: requests/selenium or nightmarejs."""
-
-    REQUESTS_SELENIUM = auto()
-    NIGHTMAREJS = auto()
-
-    def __str__(self):
-        return self.name
-
-
-class PythonScrapeTool(Enum):
-    """Internal setting that controls which Python scrape tool is used per data set."""
-
-    NONE = auto()
-    REQUESTS = auto()
-    SELENIUM = auto()
-
-    def __str__(self):
-        return self.name
-
-
 class StatusReport(IntEnum):
     """The type of status report (if any) to display after data has been scraped."""
 

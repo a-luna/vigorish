@@ -16,7 +16,6 @@ from vigorish.enums import (
     HtmlStorageOption,
     JsonStorageOption,
     ScrapeCondition,
-    ScrapeTool,
     StatusReport,
 )
 from vigorish.util.list_helpers import report_dict, dict_to_param_list
@@ -33,9 +32,7 @@ NUMERIC_JSON_SETTING = Mapping[str, NUMERIC_JSON_VALUE]
 JSON_CONFIG_VALUE = Union[BASE_JSON_SETTING, NUMERIC_JSON_SETTING]
 JSON_CONFIG_SETTING = Mapping[str, JSON_CONFIG_VALUE]
 NUMERIC_PROMPT_VALUE = Tuple[bool, bool, int, int, int]
-ENUM_PY_SETTING = Union[
-    None, ScrapeCondition, HtmlStorageOption, JsonStorageOption, ScrapeTool, StatusReport
-]
+ENUM_PY_SETTING = Union[None, ScrapeCondition, HtmlStorageOption, JsonStorageOption, StatusReport]
 TConfigSetting = TypeVar("TConfigSetting", bound="ConfigSetting")
 
 
@@ -371,8 +368,6 @@ class EnumConfigSetting(ConfigSetting):
             return [member for member in HtmlStorageOption]
         if enum_name == "JsonStorageOption":
             return [member for member in JsonStorageOption]
-        if enum_name == "ScrapeTool":
-            return [member for member in ScrapeTool]
         if enum_name == "StatusReport":
             return [member for member in StatusReport]
         return []
@@ -389,8 +384,6 @@ class EnumConfigSetting(ConfigSetting):
             return HtmlStorageOption[value]
         if enum_name == "JsonStorageOption":
             return JsonStorageOption[value]
-        if enum_name == "ScrapeTool":
-            return ScrapeTool[value]
         if enum_name == "StatusReport":
             return StatusReport[value]
         return None
@@ -479,13 +472,6 @@ class ConfigFile:
         script_params = self.get_all_url_scrape_params(data_set)
         script_params["urlSetFilepath"] = url_set_filepath.resolve()
         return dict_to_param_list(script_params)
-
-    def selenium_required(self) -> bool:
-        config_dict = self.config_json.get("SCRAPE_TOOL")
-        if not config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"]:
-            return False
-        scrape_tool_setting = self.get_current_setting("SCRAPE_TOOL", DataSet.ALL)
-        return scrape_tool_setting != ScrapeTool.NIGHTMAREJS
 
     def check_url_delay_settings(self, data_sets) -> Result:
         url_delay_settings = [
