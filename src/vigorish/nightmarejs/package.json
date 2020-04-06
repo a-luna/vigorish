@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "NightmareJS and other node modules used to scrape html from websites",
   "engines": {
-    "node": "13.11.x"
+    "node": "13.12.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
