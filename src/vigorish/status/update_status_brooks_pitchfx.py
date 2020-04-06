@@ -3,10 +3,7 @@ from vigorish.util.result import Result
 
 
 def update_data_set_brooks_pitchfx(scraped_data, session, season):
-    result = scraped_data.get_all_scraped_pitchfx_pitch_app_ids(season.year)
-    if result.failure:
-        return result
-    scraped_ids = result.value
+    scraped_ids = scraped_data.get_all_scraped_pitchfx_pitch_app_ids(season.year)
     unscraped_ids = PitchAppearanceScrapeStatus.get_all_unscraped_pitch_app_ids_for_season(
         session, season.id
     )
