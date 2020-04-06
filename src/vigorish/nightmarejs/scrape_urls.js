@@ -7,9 +7,7 @@ const { makeChunkedList, makeIrregularChunkedList } = require("./list_functions"
 
 const multibar = new cliProgress.MultiBar({
   format:
-    "|" +
-    colors.cyan("{bar}") +
-    "| {displayId} | {percentage}% | {value}/{total} {unit}",
+    "|" + colors.cyan("{bar}") + "| {message} | {percentage}% | {value}/{total} {unit}",
   clearOnComplete: false,
   barCompleteChar: "\u2588",
   barIncompleteChar: "\u2591",
@@ -25,20 +23,18 @@ async function executeBatchJob(
   batchJobParams,
   timeoutParams
 ) {
-  const allUrls = readUrlSetFromFile(urlSetFilepath)
   let batchCounter = 0
   let urlCounter = 0
-  let { batchTimeoutRequired } = timeoutParams
+  let pBarDisplay = ""
+  const allUrls = readUrlSetFromFile(urlSetFilepath)
   let [batchList, totalBatches, totalUrls] = createBatchJob(allUrls, batchJobParams)
-  let [batchBar, urlBar, delayBar] = initializeProgressBars(batchList, totalUrls)
-  const userAgent = new UserAgent()
-  nightmare.useragent(userAgent.toString())
+  let [batchBar, urlBar, timeoutBar] = initializeProgressBars(batchList, totalUrls)
+  nightmare.useragent(new UserAgent().toString())
   await batchList.reduce(async (promise, urlBatch) => {
     await promise
-    batchBar.update(batchCounter, {
-      displayId: getPbarDisplayStr(`${batchList[batchCounter].length} URLs this batch`),
-      unit: "Batches",
-    })
+    const currentBatchSize = batchList[batchCounter].length
+    pBarDisplay = getPbarDisplayStr(`${currentBatchSize} URLs this batch`)
+    batchBar.update(batchCounter, { message: pBarDisplay })
     urlCounter = await scrapeUrlBatch(
       nightmare,
       urlBatch,
@@ -47,20 +43,17 @@ async function executeBatchJob(
       urlBar
     )
     batchCounter += 1
-    if (batchTimeoutRequired && batchCounter < totalBatches) {
-      const nextBatchSize = batchList[batchCounter].length
-      const nextBatchStr = `${nextBatchSize} URLs next batch`
-      batchBar.update(batchCounter, {
-        displayId: getPbarDisplayStr(nextBatchStr, (padEllipses = false)),
-        unit: "Batches",
-      })
-      await batchTimeout(delayBar, timeoutParams, urlCounter, nextBatchSize)
+    if (batchCounter < totalBatches) {
+      const nextBatchStr = `${batchList[batchCounter].length} URLs next batch`
+      pBarDisplay = getPbarDisplayStr(nextBatchStr, (padEllipses = false))
+      batchBar.update(batchCounter, { message: pBarDisplay })
+      if (timeoutParams.batchTimeoutRequired) {
+        await batchTimeout(timeoutParams, timeoutBar, urlCounter, nextBatchSize)
+      }
     }
   }, Promise.resolve())
-  batchBar.update(batchCounter, {
-    displayId: getPbarDisplayStr("Scraped all batches"),
-    unit: "Batches",
-  })
+  pBarDisplay = getPbarDisplayStr("Scraped all batches")
+  batchBar.update(batchCounter, { message: pBarDisplay })
   multibar.stop()
   return
 
@@ -82,22 +75,22 @@ async function executeBatchJob(
 
   function initializeProgressBars(batchList, totalUrls) {
     const batchBar = multibar.create(batchList.length, 0, {
-      displayId: getPbarDisplayStr(`${batchList[0].length} URLs this batch`),
+      message: getPbarDisplayStr(`${batchList[0].length} URLs this batch`),
       unit: "Batches",
     })
     const urlBar = multibar.create(totalUrls, 0, {
-      displayId: getPbarDisplayStr("In Progress"),
+      message: getPbarDisplayStr("In Progress"),
       unit: "URLs",
     })
-    const delayBar = multibar.create(0, 0, {
-      displayId: getNextUrlRangeStr(0, batchList[0].length),
+    const timeoutBar = multibar.create(0, 0, {
+      message: getNextUrlRangeStr(0, batchList[0].length),
       unit: "",
     })
-    return [batchBar, urlBar, delayBar]
+    return [batchBar, urlBar, timeoutBar]
   }
 
   function getNextUrlRangeStr(urlCounter, nextBatchSize) {
-    let nextUrlRange = `Scraping URLs ${urlCounter}-${urlCounter + nextBatchSize}`
+    let nextUrlRange = `Scraping URLs ${urlCounter + 1}-${urlCounter + nextBatchSize}`
     return getPbarDisplayStr(nextUrlRange)
   }
 
@@ -123,11 +116,9 @@ async function executeBatchJob(
   ) {
     await urlSet.reduce(async (promise, urlDetails) => {
       await promise
-      let { url, fileName, displayId, htmlFolderPath } = urlDetails
-      progressBar.update(urlCounter, {
-        displayId: getPbarDisplayStr(displayId, (padEllipses = false)),
-        unit: "URLs",
-      })
+      let { url, fileName, identifier, htmlFolderPath } = urlDetails
+      const pbarDisplay = getPbarDisplayStr(identifier, (padEllipses = false))
+      progressBar.update(urlCounter, { message: pbarDisplay })
       await scrapeUrl(nightmare, url, fileName, htmlFolderPath, timeoutParams)
       urlCounter += 1
     }, Promise.resolve())
@@ -135,45 +126,47 @@ async function executeBatchJob(
     return urlCounter
   }
 
-  async function batchTimeout(delayBar, timeoutParams, urlCounter, nextBatchSize) {
+  async function batchTimeout(timeoutParams, progressBar, urlCounter, nextBatchSize) {
     let { batchTimeoutMinMs, batchTimeoutMaxMs } = timeoutParams
+    let [timeoutList, totalSeconds, minRemaining, secRemaining] = getRandomTimeout(
+      batchTimeoutMinMs,
+      batchTimeoutMaxMs
+    )
+    let pBarDisplay = getTimeoutDisplayString(minRemaining, secRemaining)
+    progressBar.setTotal(totalSeconds)
+    progressBar.update(0, { message: pBarDisplay, unit: "Seconds" })
     let counter = 1
-    const timeoutMs = getRandomInt(batchTimeoutMinMs, batchTimeoutMaxMs)
-    let minRemaining = Math.floor(timeoutMs / 60000)
-    let secRemaining = Math.floor((timeoutMs - minRemaining * 60000) / 1000)
-    var totalSeconds = Math.floor(timeoutMs / 1000)
-    let timeoutList = Array.from({ length: totalSeconds }).map(x => 1000)
-    delayBar.setTotal(totalSeconds)
-    delayBar.update(0, {
-      displayId: getTimeoutDisplayString(minRemaining, secRemaining),
-      unit: "Seconds",
-    })
-    await timeoutList.reduce(async (promise, thisTimeout) => {
+    await timeoutList.reduce(async (promise, timeout) => {
       await promise
+      pBarDisplay = getTimeoutDisplayString(minRemaining, secRemaining)
+      progressBar.update(counter, { message: pBarDisplay })
+      await sleep(timeout)
+      counter += 1
+    }, Promise.resolve())
+    pBarDisplay = getNextUrlRangeStr(urlCounter, nextBatchSize)
+    progressBar.setTotal(0)
+    progressBar.update(0, { message: pbarDisplay, unit: "" })
+    return
+
+    function getRandomTimeout(timeoutMinMs, timeoutMaxMs) {
+      const timeoutMs = getRandomInt(timeoutMinMs, timeoutMaxMs)
+      const minRemaining = Math.floor(timeoutMs / 60000)
+      const secRemaining = Math.floor((timeoutMs - minRemaining * 60000) / 1000)
+      const totalSeconds = Math.floor(timeoutMs / 1000)
+      const timeoutList = Array.from({ length: totalSeconds }).map(x => 1000)
+      return [timeoutList, totalSeconds, minRemaining, secRemaining]
+    }
+
+    function getTimeoutDisplayString(minRemaining, secRemaining) {
       if (secRemaining == 0) {
         minRemaining -= 1
         secRemaining = 59
       } else {
         secRemaining -= 1
       }
-      delayBar.update(counter, {
-        displayId: getTimeoutDisplayString(minRemaining, secRemaining),
-        unit: "Seconds",
-      })
-      await sleep(thisTimeout)
-      counter += 1
-    }, Promise.resolve())
-    delayBar.setTotal(0)
-    delayBar.update(0, {
-      displayId: getNextUrlRangeStr(urlCounter, nextBatchSize),
-      unit: "",
-    })
-    return
-
-    function getTimeoutDisplayString(minRemaining, secRemaining) {
       const minPadded = minRemaining.toString().padStart(2, "0")
       const secPadded = secRemaining.toString().padStart(2, "0")
-      return getPbarDisplayStr(`${minPadded}:${secPadded} Until Next Batch`)
+      return getPbarDisplayStr(`${minPadded}:${secPadded} until next batch`)
     }
   }
 }
@@ -184,19 +177,16 @@ function sleep(timeoutMs) {
 
 async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams, s3Bucket) {
   const urlSet = readUrlSetFromFile(urlSetFilepath)
+  const urlBar = multibar.create(urlSet.length, 0, { message: "N/A", unit: "URLs" })
   let counter = 1
-  const scrapeUrlSetProgress = multibar.create(urlSet.length, 0, {
-    displayId: "N/A",
-    unit: "URLs",
-  })
   await urlSet.reduce(async (promise, urlDetails) => {
     await promise
-    let { url, fileName, displayId, htmlFolderPath, s3KeyPrefix } = urlDetails
+    let { url, fileName, identifier, htmlFolderPath } = urlDetails
     await scrapeUrl(nightmare, url, fileName, htmlFolderPath, timeoutParams)
-    scrapeUrlSetProgress.update(counter, { displayId: displayId, unit: "URLs" })
+    urlBar.update(counter, { message: identifier })
     counter += 1
   }, Promise.resolve())
-  scrapeUrlSetProgress.stop()
+  urlBar.stop()
   return
 }
 
@@ -213,7 +203,7 @@ async function scrapeUrl(
   return filePath
 
   async function fetchUrl(url, timeoutParams) {
-    let { urlTimeoutRequired, urlTimeoutMinMs, urlTimeoutMaxMs } = timeoutParams
+    let { urlTimeoutMinMs, urlTimeoutMaxMs } = timeoutParams
     try {
       await nightmare.on("did-get-response-details", () => {
         startTime = Date.now()
@@ -221,10 +211,7 @@ async function scrapeUrl(
       await nightmare.goto(url)
       await nightmare.waitUntilNetworkIdle(500)
       let html = await nightmare.evaluate(() => document.body.innerHTML)
-      if (urlTimeoutRequired) {
-        const timeout = getRandomInt(urlTimeoutMinMs, urlTimeoutMaxMs)
-        await nightmare.wait(timeout)
-      }
+      await nightmare.wait(getRandomInt(urlTimeoutMinMs, urlTimeoutMaxMs))
       return html
     } catch (e) {
       console.log(e)
