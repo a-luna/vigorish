@@ -12,9 +12,9 @@ T_PITCHFX_MEASUREMENT = "td[${i}]//text()"
 FILTER_NAMES = ["datestamp", "gid", "pitcher_team"]
 
 
-def parse_pitchfx_log(page_source, pitch_log):
+def parse_pitchfx_log(page_content, pitch_log):
     pitchfx_log_dict = {}
-    result = parse_pitchfx_table(page_source, pitch_log)
+    result = parse_pitchfx_table(page_content, pitch_log)
     if result.failure:
         return result
     pitchfx_data = result.value
@@ -33,10 +33,10 @@ def parse_pitchfx_log(page_source, pitch_log):
     return Result.Ok(pitchfx_log)
 
 
-def parse_pitchfx_table(page_source, pitch_log):
+def parse_pitchfx_table(page_content, pitch_log):
     pitchfx_data = []
-    column_names = page_source.xpath(PITCHFX_COLUMN_NAMES)
-    table_rows = page_source.xpath(PITCHFX_TABLE_ROWS)
+    column_names = page_content.xpath(PITCHFX_COLUMN_NAMES)
+    table_rows = page_content.xpath(PITCHFX_TABLE_ROWS)
     for i, row in enumerate(table_rows):
         result = parse_pitchfx_data(column_names, row, i, pitch_log)
         if result.failure:

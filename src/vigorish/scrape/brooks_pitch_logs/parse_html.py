@@ -17,9 +17,9 @@ TEAM_ID_PATTERN = r"\((?P<team_id>[\w]{3})\)"
 TEAM_ID_REGEX = re.compile(TEAM_ID_PATTERN)
 
 
-def parse_pitch_log(page_source, game, pitcher_id, url):
+def parse_pitch_log(page_content, game, pitcher_id, url):
     pitch_log = _initialize_pitch_log(game, pitcher_id, url)
-    result = _parse_pitcher_details(page_source, game, pitcher_id)
+    result = _parse_pitcher_details(page_content, game, pitcher_id)
     if result.failure:
         return Result.Ok(pitch_log)
     pitcher_dict = result.value
@@ -27,13 +27,13 @@ def parse_pitch_log(page_source, game, pitcher_id, url):
     pitch_log.pitcher_team_id_bb = pitcher_dict["team_id"]
     pitch_log.opponent_team_id_bb = pitcher_dict["opponent_id"]
 
-    parsed = page_source.xpath(PITCHFX_URL_XPATH)
+    parsed = page_content.xpath(PITCHFX_URL_XPATH)
     if not parsed:
         return Result.Ok(pitch_log)
     rel_url = parsed[0]
     pitch_log.pitchfx_url = Template(T_PITCHFX_URL).substitute(rel_url=rel_url)
 
-    result = _parse_pitch_counts(page_source)
+    result = _parse_pitch_counts(page_content)
     if result.failure:
         return Result.Ok(pitch_log)
     pitch_log.pitch_count_by_inning = result.value
@@ -64,9 +64,9 @@ def _initialize_pitch_log(game, pitcher_id, url):
     return pitch_log
 
 
-def _parse_pitcher_details(page_source, game, pitcher_id):
+def _parse_pitcher_details(page_content, game, pitcher_id):
     query = Template(T_PITCHER_NAME_XPATH).substitute(id=pitcher_id)
-    parsed = page_source.xpath(query)
+    parsed = page_content.xpath(query)
     if not parsed:
         error = "Failed to parse pitcher name from game log page."
         return Result.Fail(error)
@@ -101,8 +101,8 @@ def _parse_team_ids(game, selected_pitcher):
     return Result.Ok(id_dict)
 
 
-def _parse_pitch_counts(page_source):
-    rows = page_source.xpath(PITCH_COUNTS_XPATH)
+def _parse_pitch_counts(page_content):
+    rows = page_content.xpath(PITCH_COUNTS_XPATH)
     if not rows:
         error = "Failed to parse inning-by-inning pitch counts from game log page."
         return Result.Fail(error)
@@ -110,8 +110,8 @@ def _parse_pitch_counts(page_source):
     for i in range(2, len(rows)):
         q1 = Template(T_INNING_NUM_XPATH).substitute(index=(i + 1))
         q2 = Template(T_PITCH_COUNT_XPATH).substitute(index=(i + 1))
-        inning = page_source.xpath(q1)[0]
-        int_str = page_source.xpath(q2)[0]
+        inning = page_content.xpath(q1)[0]
+        int_str = page_content.xpath(q2)[0]
         count = int(int_str, 10)
         pitch_totals[inning] = count
     return Result.Ok(pitch_totals)

@@ -1,5 +1,5 @@
 from vigorish.config.database import DateScrapeStatus
-from vigorish.enums import DataSet, PythonScrapeTool, ScrapeCondition
+from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
 from vigorish.scrape.scrape_task import ScrapeTaskABC
 from vigorish.status.update_status_bbref_games_for_date import (
@@ -24,8 +24,8 @@ class ScrapeBBRefGamesForDate(ScrapeTaskABC):
             return Result.Fail("skip")
         return Result.Ok()
 
-    def parse_html(self, page_source, url_id, url):
-        return parse_bbref_dashboard_page(page_source, url_id, url)
+    def parse_html(self, page_content, url_id, url):
+        return parse_bbref_dashboard_page(page_content, url_id, url)
 
     def update_status(self, game_date, parsed_data):
         return update_bbref_games_for_date_single_date(self.db_session, self.season, parsed_data)

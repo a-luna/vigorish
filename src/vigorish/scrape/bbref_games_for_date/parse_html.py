@@ -18,12 +18,12 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
 )
 
 
-def parse_bbref_dashboard_page(page_source, game_date, url):
+def parse_bbref_dashboard_page(page_content, game_date, url):
     games_for_date = BBRefGamesForDate()
     games_for_date.game_date = game_date
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
-    boxscore_urls = page_source.xpath(XPATH_BOXSCORE_URL_MAIN_CONTENT)
+    boxscore_urls = page_content.xpath(XPATH_BOXSCORE_URL_MAIN_CONTENT)
     if not boxscore_urls:
         games_for_date.game_count = 0
         return Result.Ok(games_for_date)

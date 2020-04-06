@@ -22,7 +22,7 @@ PITCH_LOG_URL_XPATH = './tbody//a[text()="Game Log"]/@href'
 KZONE_URL_XPATH = './tbody//a[text()="Strikezone Map"]/@href'
 
 
-def parse_brooks_dashboard_page(session, page_source, game_date, url, bbref_games_for_date):
+def parse_brooks_dashboard_page(session, page_content, game_date, url, bbref_games_for_date):
     games_for_date = BrooksGamesForDate()
     games_for_date.game_date = game_date
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)
@@ -32,7 +32,7 @@ def parse_brooks_dashboard_page(session, page_source, game_date, url, bbref_game
 
     if Season.is_this_the_asg_date(session, game_date):
         return Result.Ok(games_for_date)
-    game_tables = page_source.xpath(GAME_TABLE_XPATH)
+    game_tables = page_content.xpath(GAME_TABLE_XPATH)
     if not game_tables:
         error = f"Unable to parse any game data from {url}"
         return Result.Fail(error)

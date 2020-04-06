@@ -33,8 +33,8 @@ class ScrapeBBRefBoxscores(ScrapeTaskABC):
             return Result.Fail("skip")
         return Result.Ok()
 
-    def parse_html(self, page_source, url_id, url):
-        return parse_bbref_boxscore(page_source, url)
+    def parse_html(self, page_content, url_id, url):
+        return parse_bbref_boxscore(page_content, url)
 
     def update_status(self, game_date, parsed_data):
         return update_status_bbref_boxscore(self.db_session, parsed_data)
