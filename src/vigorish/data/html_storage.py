@@ -1,5 +1,5 @@
 """Functions for reading and writing files."""
-from vigorish.enums import DataSet, DocFormat, LocalFileTask, S3FileTask, HtmlStorageOption
+from vigorish.enums import DataSet, DocFormat, LocalFileTask, S3FileTask
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id, validate_pitch_app_id
 
@@ -13,28 +13,20 @@ class HtmlStorage:
 
     def save_html(self, data_set, url_id, html):
         if self.html_stored_local_folder(data_set):
-            result_local = self.save_html_local(data_set, url_id, html)
-            if result_local.failure:
-                return result_local
+            result = self.save_html_local(data_set, url_id, html)
+            if result.failure:
+                return result
         if self.html_stored_s3(data_set):
-            result_s3 = self.save_html_s3(data_set, url_id, html)
-            if result_s3.failure:
-                return result_s3
-        return result_local if result_local else result_s3 if result_s3 else Result.Fail("")
+            result = self.save_html_s3(data_set, url_id, html)
+            if result.failure:
+                return result
+        return Result.Ok()
 
     def html_stored_local_folder(self, data_set):
-        storage_setting = self.config.get_current_setting("HTML_STORAGE", data_set)
-        return (
-            storage_setting == HtmlStorageOption.LOCAL_FOLDER
-            or storage_setting == HtmlStorageOption.BOTH
-        )
+        return self.file_helper.check_file_stored_local(DocFormat.HTML, data_set)
 
     def html_stored_s3(self, data_set):
-        storage_setting = self.config.get_current_setting("HTML_STORAGE", data_set)
-        return (
-            storage_setting == HtmlStorageOption.S3_BUCKET
-            or storage_setting == HtmlStorageOption.BOTH
-        )
+        return self.file_helper.check_file_stored_s3(DocFormat.HTML, data_set)
 
     def save_html_local(self, data_set, url_id, html):
         save_html_local_dict = {
@@ -200,7 +192,7 @@ class HtmlStorage:
         )
 
     def upload_html_brooks_games_for_date(self, game_date, html):
-        result = self.save_html(DataSet.BROOKS_GAMES_FOR_DATE, game_date, html)
+        result = self.save_html_local(DataSet.BROOKS_GAMES_FOR_DATE, game_date, html)
         if result.failure:
             return result
         return self.file_helper.perform_s3_task(
@@ -211,7 +203,7 @@ class HtmlStorage:
         )
 
     def upload_html_brooks_pitch_log(self, pitch_app_id, html):
-        result = self.save_html(DataSet.BROOKS_PITCH_LOGS, pitch_app_id, html)
+        result = self.save_html_local(DataSet.BROOKS_PITCH_LOGS, pitch_app_id, html)
         if result.failure:
             return result
         result = validate_pitch_app_id(pitch_app_id)
@@ -227,7 +219,7 @@ class HtmlStorage:
         )
 
     def upload_html_brooks_pitchfx(self, pitch_app_id, html):
-        result = self.save_html(DataSet.BROOKS_PITCHFX, pitch_app_id, html)
+        result = self.save_html_local(DataSet.BROOKS_PITCHFX, pitch_app_id, html)
         if result.failure:
             return result
         result = validate_pitch_app_id(pitch_app_id)
@@ -243,7 +235,7 @@ class HtmlStorage:
         )
 
     def upload_html_bbref_games_for_date(self, game_date, html):
-        result = self.save_html(DataSet.BBREF_GAMES_FOR_DATE, game_date, html)
+        result = self.save_html_local(DataSet.BBREF_GAMES_FOR_DATE, game_date, html)
         if result.failure:
             return result
         return self.file_helper.perform_s3_task(
@@ -254,7 +246,7 @@ class HtmlStorage:
         )
 
     def upload_html_bbref_boxscore(self, bbref_game_id, html):
-        result = self.save_html(DataSet.BBREF_BOXSCORES, bbref_game_id, html)
+        result = self.save_html_local(DataSet.BBREF_BOXSCORES, bbref_game_id, html)
         if result.failure:
             return result
         result = validate_bbref_game_id(bbref_game_id)

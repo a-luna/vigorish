@@ -19,6 +19,7 @@ from vigorish.enums import (
     S3FileTask,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
+from vigorish.util.numeric_helpers import ONE_KB
 from vigorish.util.result import Result
 
 
@@ -136,6 +137,18 @@ class FileHelper:
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
+    def check_file_stored_local(self, doc_format, data_set):
+        storage_setting = self.file_storage_dict[doc_format][data_set]
+        return "LOCAL_FOLDER" in storage_setting.name or "BOTH" in storage_setting.name
+
+    def check_file_stored_s3(self, doc_format, data_set):
+        storage_setting = self.file_storage_dict[doc_format][data_set]
+        return "S3_BUCKET" in storage_setting.name or "BOTH" in storage_setting.name
+
+    def get_s3_bucket(self, data_set):
+        bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
+        return self.resource.Bucket(bucket_name)
+
     def perform_local_file_task(
         self,
         task,
@@ -237,7 +250,7 @@ class FileHelper:
             bb_game_id=bb_game_id,
             pitch_app_id=pitch_app_id,
         )
-        bucket_name = self.config.all_settings.get("S3_BUCKET").current_setting(data_set)
+        bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
         if task == S3FileTask.UPLOAD:
             return self.upload_to_s3(
                 doc_format, data_set, scraped_data, bucket_name, s3_key, Path(filepath)
@@ -313,10 +326,6 @@ class FileHelper:
             else Result.Fail(f"File not found: {filepath.resolve()}.")
         )
 
-    def save_local_file(self, doc_format, data_set):
-        storage_setting = self.file_storage_dict[doc_format][data_set]
-        return "LOCAL_FOLDER" in storage_setting.name or "BOTH" in storage_setting.name
-
     def write_to_file(self, data, filepath):
         """Write object in json format to file."""
         try:
@@ -332,7 +341,7 @@ class FileHelper:
         return Result.Ok()
 
     def decode_json(self, data_set, filepath):
-        delete_file = not self.save_local_file(DocFormat.JSON, data_set)
+        delete_file = not self.check_file_stored_local(DocFormat.JSON, data_set)
         try:
             contents = filepath.read_text()
             if delete_file:
@@ -343,7 +352,7 @@ class FileHelper:
             return Result.Fail(error)
 
     def upload_to_s3(self, doc_format, data_set, scraped_data, bucket_name, s3_key, filepath):
-        delete_file = not self.save_local_file(doc_format, data_set)
+        delete_file = not self.check_file_stored_local(doc_format, data_set)
         if doc_format == DocFormat.JSON:
             result = self.write_to_file(scraped_data.as_json(), filepath)
             if result.failure:
@@ -359,6 +368,10 @@ class FileHelper:
     def download_from_s3(self, bucket_name, s3_key, filepath):
         try:
             self.resource.Bucket(bucket_name).download_file(s3_key, str(filepath))
+            if filepath.stat().st_size < ONE_KB:
+                self.resource.Object(bucket_name, s3_key).delete()
+                error = f"Size of file downloaded from S3 ({filepath}) is less than 1KB"
+                return Result.Fail(error)
             return Result.Ok(filepath)
         except ClientError as e:
             if e.response["Error"]["Code"] == "404":

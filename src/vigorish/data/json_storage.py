@@ -1,5 +1,5 @@
 """Functions for reading and writing files."""
-from vigorish.enums import DataSet, DocFormat, LocalFileTask, S3FileTask, JsonStorageOption
+from vigorish.enums import DataSet, DocFormat, LocalFileTask, S3FileTask
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
     validate_bbref_game_id,
@@ -27,18 +27,10 @@ class JsonStorage:
         return result_local if result_local else result_s3 if result_s3 else Result.Fail("")
 
     def json_stored_local_folder(self, data_set):
-        storage_setting = self.config.get_current_setting("JSON_STORAGE", data_set)
-        return (
-            storage_setting == JsonStorageOption.LOCAL_FOLDER
-            or storage_setting == JsonStorageOption.BOTH
-        )
+        return self.file_helper.check_file_stored_local(DocFormat.JSON, data_set)
 
     def json_stored_s3(self, data_set):
-        storage_setting = self.config.get_current_setting("JSON_STORAGE", data_set)
-        return (
-            storage_setting == JsonStorageOption.S3_BUCKET
-            or storage_setting == JsonStorageOption.BOTH
-        )
+        return self.file_helper.check_file_stored_s3(DocFormat.JSON, data_set)
 
     def save_json_local(self, data_set, parsed_data):
         save_json_local_dict = {

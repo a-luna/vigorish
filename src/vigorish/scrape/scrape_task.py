@@ -8,7 +8,6 @@ from signal import signal, SIGINT
 from sys import exit
 
 from halo import Halo
-from lxml import html
 from Naked.toolshed.shell import execute_js
 
 from vigorish.cli.util import prompt_user_yes_no
@@ -17,7 +16,6 @@ from vigorish.enums import DataSet, ScrapeCondition, JobStatus
 from vigorish.scrape.url_builder import UrlBuilder
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.list_helpers import flatten_list2d
-from vigorish.util.numeric_helpers import ONE_KB
 from vigorish.util.result import Result
 
 APP_FOLDER = Path(__file__).parent.parent
@@ -41,6 +39,7 @@ def handle_user_cancellation(db_session, active_job, signal_received, frame):
 
 class ScrapeTaskABC(ABC):
     data_set: DataSet
+    spinner: Halo
 
     def __init__(self, db_job, db_session, config, scraped_data):
         self.db_job = db_job
@@ -69,109 +68,96 @@ class ScrapeTaskABC(ABC):
         if self.scrape_condition == ScrapeCondition.NEVER:
             return Result.Fail("skip")
         signal(SIGINT, partial(handle_user_cancellation, self.db_session, self.db_job))
-        self.db_job.status = JobStatus.PREPARING
-        self.db_session.commit()
         result = self.construct_url_set()
         if result.failure:
+            self.spinner.stop()
             return result
-        html_spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
-        result = self.retrieve_scraped_html(html_spinner)
+        (skip, scrape_urls) = result.value
+        result = self.retrieve_scraped_html(skip, scrape_urls)
         if result.failure:
+            self.spinner.stop()
             if "skip" in result.error:
-                html_spinner.succeed("HTML Scraped")
                 return Result.Fail("skip")
-            html_spinner.fail(f"Error! {result.error}")
             return result
         missing_html = result.value
-        html_spinner.stop_and_persist(html_spinner.frame(), "")
-        self.db_job.status = JobStatus.SCRAPING
-        self.db_session.commit()
         result = self.scrape_missing_html(missing_html)
         if result.failure:
-            html_spinner.fail(f"Error! {result.error}")
+            self.spinner.stop()
             return result
-        html_spinner.succeed("HTML Scraped")
-        self.db_job.status = JobStatus.PARSING
-        self.db_session.commit()
         result = self.parse_data_from_scraped_html()
+        self.spinner.stop()
         if result.failure:
             return result
         return Result.Ok()
 
     def construct_url_set(self):
-        spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
-        spinner.text = "Building URL List..."
-        spinner.start()
+        self.db_job.status = JobStatus.PREPARING
+        self.db_session.commit()
+        self.spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
+        self.spinner.text = "Building URL List..."
+        self.spinner.start()
         result = self.url_builder.create_url_set(self.data_set, self.start_date, self.end_date)
         if result.failure:
-            spinner.fail(f"Error! {result.error}")
             return result
         self.url_set = result.value
-        spinner.succeed("URL List Built")
-        return Result.Ok()
+        result = self.determine_scrape_urls()
+        if result.failure:
+            return result
+        (skip, scrape_urls) = result.value
+        return Result.Ok((skip, scrape_urls))
 
-    def retrieve_scraped_html(self, spinner):
-        skipped = 0
-        retrieved = 0
+    def determine_scrape_urls(self):
+        skip = 0
+        remaining = 0
         scrape_urls = []
-        missing = []
-        spinner.text = (
-            "Retrieving scraped HTML... "
-            f"(0 Skipped, 0 Found, 0 Missing, {self.total_urls} Remaining)"
+        self.spinner.text = (
+            f"Determining URLs to scrape... 0% (0 Skip, 0 Scrape, {self.total_urls} Remaining)"
         )
-        spinner.start()
         for game_date, urls in self.url_set.items():
             result = self.check_prerequisites(game_date)
             if result.failure:
                 return result
             result = self.check_current_status(game_date)
             if result.failure:
-                if "skip" in result.error:
-                    skipped += len(urls)
-                    remaining = self.total_urls - skipped
-                    perc_complete = float(1) - (remaining / float(self.total_urls))
-                    spinner.text = (
-                        f"Retrieving scraped HTML... {perc_complete:.0%} "
-                        f"({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, "
-                        f"{remaining} Remaining)"
-                    )
-                    continue
-                return result
-            scrape_urls.extend(urls)
-            remaining = self.total_urls - skipped
-            perc_complete = float(1) - (remaining / float(self.total_urls))
-            spinner.text = (
-                "Retrieving scraped HTML... "
-                f"{perc_complete:.0%} ({skipped} Skipped, {retrieved} Found, "
-                f"{len(missing)} Missing, {remaining} Remaining)"
+                if "skip" not in result.error:
+                    return result
+                skip += len(urls)
+            else:
+                scrape_urls.extend(urls)
+            remaining = self.total_urls - skip - len(scrape_urls)
+            percent_complete = float(1) - (remaining / float(self.total_urls))
+            self.spinner.text = (
+                f"Determining URLs to scrape... {percent_complete:.0%} ({skip} Skip, "
+                f"{len(scrape_urls)} Scrape, {remaining} Remaining)"
             )
+            return Result.Ok((skip, scrape_urls))
+
+    def retrieve_scraped_html(self, skip, scrape_urls):
+        remaining = self.total_urls - skip
+        retrieved = 0
+        missing = []
+        self.spinner.text = (
+            f"Retrieving scraped HTML... 0% ({skip} Skipped, 0 Found, 0 Missing, {remaining} "
+            "Remaining)"
+        )
         if not scrape_urls:
             return Result.Fail("skip")
-        for url_details in scrape_urls:
-            url_id = url_details["identifier"]
-            html_filepath = self.scraped_data.get_html(self.data_set, url_id)
-            if not html_filepath or self.get_file_size_bytes(html_filepath) < ONE_KB:
-                missing.append(url_details)
-                remaining = self.total_urls - skipped - retrieved - len(missing)
-                perc_complete = float(1) - (remaining / float(self.total_urls))
-                spinner.text = (
-                    f"Retrieving scraped HTML... {perc_complete:.0%} "
-                    f"({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, "
-                    f"{remaining} Remaining)"
-                )
-                continue
-            retrieved += 1
-            url_details["html_filepath"] = html_filepath
-            remaining = self.total_urls - skipped - retrieved - len(missing)
-            perc_complete = float(1) - (remaining / float(self.total_urls))
-            spinner.text = (
-                f"Retrieving scraped HTML... {perc_complete:.0%} "
-                f"({skipped} Skipped, {retrieved} Found, {len(missing)} Missing, "
+        for url in scrape_urls:
+            self.scraped_data.get_html(self.data_set, url.identifier)
+            if url.file_exists_with_content:
+                retrieved += 1
+            else:
+                missing.append(url)
+            remaining = self.total_urls - skip - retrieved - len(missing)
+            percent_complete = float(1) - (remaining / float(self.total_urls))
+            self.spinner.text = (
+                f"Retrieving scraped HTML... {percent_complete:.0%} "
+                f"({skip} Skipped, {retrieved} Found, {len(missing)} Missing, "
                 f"{remaining} Remaining)"
             )
         if missing:
-            spinner.text = (
-                f"Scraping HTML... ({skipped} Skipped, "
+            self.spinner.text = (
+                f"Scraping HTML... ({skip} Skipped, "
                 f"{retrieved} Found, {len(missing)} Missing, {remaining} Remaining)"
             )
         return Result.Ok(missing)
@@ -179,50 +165,59 @@ class ScrapeTaskABC(ABC):
     def get_file_size_bytes(self, filepath):
         return filepath.stat().st_size
 
-    def scrape_missing_html(self, missing_html):
-        if not missing_html:
+    def scrape_missing_html(self, missing):
+        if not missing:
             return Result.Ok()
-        urls_json = json.dumps(missing_html, indent=2, sort_keys=False)
+        self.spinner.stop_and_persist(self.spinner.frame(), "")
+        self.db_job.status = JobStatus.SCRAPING
+        self.db_session.commit()
         url_set_filepath = self.db_job.nodejs_filepath
+        urls_json = json.dumps([url.as_dict() for url in missing], indent=2, sort_keys=False)
         url_set_filepath.write_text(urls_json)
         args = self.config.get_nodejs_script_params(self.data_set, url_set_filepath)
         success = execute_js(str(NODEJS_SCRIPT), arguments=args)
-        if success:
-            url_set_filepath.unlink()
-            return Result.Ok()
-        return Result.Fail("nodejs process did not exit successfully")
+        if not success:
+            return Result.Fail("nodejs process did not exit successfully")
+        url_set_filepath.unlink()
+        self.spinner.text = f"Saving scraped HTML... 0% (0/{len(missing)})"
+        self.spinner.start()
+        for i, url in enumerate(missing, start=1):
+            if not url.file_exists_with_content:
+                return Result.Fail(f"HTML file does not exist or is empty: {url.local_file_path}")
+            result = self.scraped_data.save_html(self.data_set, url.identifier, url.page_content)
+            if result.failure:
+                return result
+            percent_complete = i / float(len(missing))
+            self.spinner.text = (
+                f"Saving scraped HTML... {percent_complete:.0%}% ({i}/{len(missing)})"
+            )
+        return Result.Ok()
 
     def parse_data_from_scraped_html(self):
-        spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
-        spinner.text = f"Parsing HTML... 0% (0/{self.total_urls} URLs)"
-        spinner.start()
+        self.db_job.status = JobStatus.PARSING
+        self.db_session.commit()
+        self.spinner.text = f"Parsing HTML... 0% (0/{self.total_urls} URLs)"
         parsed = 0
         for game_date, urls in self.url_set.items():
-            for url_details in urls:
-                url = url_details["url"]
-                url_id = url_details["identifier"]
-                scraped_html = url_details["html_filepath"].read_text()
-                page_source = html.fromstring(scraped_html, base_url=url)
-                result = self.parse_html(page_source, url_id, url)
+            for url in urls:
+                html_filepath = self.scraped_data.get_html(self.data_set, url.identifier)
+                if not html_filepath:
+                    return Result.Fail(f"Failed to locate HTML for url: {url.identifier}")
+                result = self.parse_html(url.page_content, url.identifier, url.url)
                 if result.failure:
-                    spinner.fail(f"Error! {result.error}")
                     return result
                 parsed_data = result.value
                 result = self.scraped_data.save_json(self.data_set, parsed_data)
                 if result.failure:
-                    spinner.fail(f"Error! {result.error}")
                     return result
-                url_details["json_filepath"] = result.value
                 result = self.update_status(game_date, parsed_data)
                 if result.failure:
-                    spinner.fail(f"Error! {result.error}")
                     return result
                 parsed += 1
-                spinner.text = (
-                    f"Parsing HTML... {parsed / float(self.total_urls):.0%} "
-                    f"({parsed}/{self.total_urls} URLs)"
+                percent_complete = parsed / float(self.total_urls)
+                self.spinner.text = (
+                    f"Parsing HTML... {percent_complete:.0%} ({parsed}/{self.total_urls} URLs)"
                 )
-        spinner.succeed("HTML Parsed")
         return Result.Ok()
 
     @abstractmethod
@@ -234,7 +229,7 @@ class ScrapeTaskABC(ABC):
         pass
 
     @abstractmethod
-    def parse_html(self, page_source, url_id, url):
+    def parse_html(self, page_content, url_id, url):
         pass
 
     @abstractmethod
