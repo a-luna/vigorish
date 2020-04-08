@@ -1,6 +1,8 @@
 import re
 from string import Template
 
+from lxml import html
+
 from vigorish.scrape.brooks_pitch_logs.models.pitch_log import BrooksPitchLog
 from vigorish.util.result import Result
 
@@ -18,6 +20,7 @@ TEAM_ID_REGEX = re.compile(TEAM_ID_PATTERN)
 
 
 def parse_pitch_log(page_content, game, pitcher_id, url):
+    page_content = html.fromstring(page_content, base_url=url)
     pitch_log = _initialize_pitch_log(game, pitcher_id, url)
     result = _parse_pitcher_details(page_content, game, pitcher_id)
     if result.failure:

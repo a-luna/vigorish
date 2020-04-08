@@ -2,6 +2,7 @@
 from datetime import datetime
 from pathlib import Path
 
+from lxml import html
 import w3lib.url
 
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
@@ -23,6 +24,7 @@ KZONE_URL_XPATH = './tbody//a[text()="Strikezone Map"]/@href'
 
 
 def parse_brooks_dashboard_page(session, page_content, game_date, url, bbref_games_for_date):
+    page_content = html.fromstring(page_content, base_url=url)
     games_for_date = BrooksGamesForDate()
     games_for_date.game_date = game_date
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)

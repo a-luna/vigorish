@@ -2,6 +2,8 @@
 import uuid
 from string import Template
 
+from lxml import html
+
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
 from vigorish.util.result import Result
@@ -13,6 +15,7 @@ FILTER_NAMES = ["datestamp", "gid", "pitcher_team"]
 
 
 def parse_pitchfx_log(page_content, pitch_log):
+    page_content = html.fromstring(page_content, base_url=pitch_log.pitchfx_url)
     pitchfx_log_dict = {}
     result = parse_pitchfx_table(page_content, pitch_log)
     if result.failure:

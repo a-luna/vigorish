@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from lxml import html
 from urllib.parse import urljoin
 
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
@@ -19,6 +20,7 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
 
 
 def parse_bbref_dashboard_page(page_content, game_date, url):
+    page_content = html.fromstring(page_content, base_url=url)
     games_for_date = BBRefGamesForDate()
     games_for_date.game_date = game_date
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)
