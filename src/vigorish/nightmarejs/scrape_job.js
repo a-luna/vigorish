@@ -74,7 +74,7 @@ async function run(nightmare, urlSetFilepath, timeoutParams, batchJobParams) {
   if (batchJobParams.batchScrapingEnabled) {
     await executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeoutParams)
   } else {
-    await scrapeUrls(nightmare, urlSetFilepath, timeoutParams, s3Bucket)
+    await scrapeUrls(nightmare, urlSetFilepath, timeoutParams)
   }
   await nightmare.end()
 }

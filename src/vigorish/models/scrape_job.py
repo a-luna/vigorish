@@ -23,6 +23,7 @@ from vigorish.util.list_helpers import group_and_sort_list
 
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_INBOX = APP_FOLDER / "nightmarejs" / "inbox"
+NODEJS_OUTBOX = APP_FOLDER / "nightmarejs" / "outbox"
 
 
 class ScrapeJob(Base):
@@ -76,6 +77,19 @@ class ScrapeJob(Base):
         return sorted(data_sets)
 
     @hybrid_property
+    def created_date_str(self):
+        created_date_utc = make_tzaware(self.created_date, use_tz=timezone.utc, localize=False)
+        return localized_dt_string(created_date_utc, use_tz=get_local_utcoffset())
+
+    @hybrid_property
+    def group(self):
+        return JOB_STATUS_TO_GROUP_MAP[self.status]
+
+    @hybrid_property
+    def url_set_filepath(self):
+        return NODEJS_INBOX.joinpath(f"{self.id}.json")
+
+    @hybrid_property
     def date_range(self):
         return get_date_range(self.start_date, self.end_date)
 
@@ -105,6 +119,11 @@ class ScrapeJob(Base):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def get_scraped_html_folderpath(self, data_set):
+        scraped_html_folderpath = NODEJS_OUTBOX.joinpath(self.id).joinpath(data_set.name.lower())
+        scraped_html_folderpath.mkdir(parents=True, exist_ok=True)
+        return scraped_html_folderpath
 
     @classmethod
     def find_by_id(cls, session, job_id):

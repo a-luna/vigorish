@@ -5,36 +5,34 @@ from dacite import from_dict
 
 from vigorish.enums import DataSet, DocFormat
 from vigorish.scrape.url_details import UrlDetails
-from vigorish.util.datetime_util import get_date_range
 from vigorish.util.regex import BBREF_BOXSCORE_URL_REGEX
 from vigorish.util.result import Result
 
 
 class UrlBuilder:
-    def __init__(self, config, scraped_data):
+    def __init__(self, scrape_job, config, scraped_data):
+        self.scrape_job = scrape_job
         self.config = config
         self.scraped_data = scraped_data
 
-    @property
-    def create_url_set_dict(self):
-        return {
+    def create_url_set(self, data_set: DataSet) -> Result:
+        url_set = {}
+        for game_date in self.scrape_job.date_range:
+            result = self.create_url_set_for_date(data_set, game_date)
+            if result.failure:
+                return result
+            url_set[game_date] = result.value
+        return Result.Ok(url_set)
+
+    def create_url_set_for_date(self, data_set: DataSet, game_date: datetime):
+        create_url_set_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.create_url_for_brooks_games_for_date,
             DataSet.BROOKS_PITCH_LOGS: self.create_urls_for_brooks_pitch_logs_for_date,
             DataSet.BROOKS_PITCHFX: self.create_urls_for_brooks_pitchfx_logs_for_date,
             DataSet.BBREF_GAMES_FOR_DATE: self.create_url_for_bbref_games_for_date,
             DataSet.BBREF_BOXSCORES: self.create_urls_for_bbref_boxscores_for_date,
         }
-
-    def create_url_set(
-        self, data_set: DataSet, start_date: datetime, end_date: datetime
-    ) -> Result:
-        url_set = {}
-        for game_date in get_date_range(start_date, end_date):
-            result = self.create_url_set_dict[data_set](game_date)
-            if result.failure:
-                return result
-            url_set[game_date] = result.value
-        return Result.Ok(url_set)
+        return create_url_set_dict[data_set](game_date)
 
     def create_url_for_brooks_games_for_date(self, game_date: datetime) -> List[dict]:
         data_set = DataSet.BROOKS_GAMES_FOR_DATE
@@ -42,6 +40,7 @@ class UrlBuilder:
             "identifier": game_date,
             "fileName": self.get_filename(data_set, game_date),
             "htmlFolderPath": self.get_local_folderpath(data_set, game_date),
+            "scrapedHtmlFolderpath": self.get_scraped_html_folderpath(data_set),
             "s3KeyPrefix": self.get_s3_folderpath(data_set, game_date),
             "url": self.get_url_for_brooks_games_for_date(game_date),
         }
@@ -63,6 +62,7 @@ class UrlBuilder:
                     "identifier": pitch_app_id,
                     "fileName": self.get_filename(data_set, pitch_app_id),
                     "htmlFolderPath": self.get_local_folderpath(data_set, game_date),
+                    "scrapedHtmlFolderpath": self.get_scraped_html_folderpath(data_set),
                     "s3KeyPrefix": self.get_s3_folderpath(data_set, game_date),
                     "url": pitch_log_url,
                 }
@@ -85,6 +85,7 @@ class UrlBuilder:
                     "identifier": pitch_app_id,
                     "fileName": self.get_filename(data_set, pitch_app_id),
                     "htmlFolderPath": self.get_local_folderpath(data_set, game_date),
+                    "scrapedHtmlFolderpath": self.get_scraped_html_folderpath(data_set),
                     "s3KeyPrefix": self.get_s3_folderpath(data_set, game_date),
                     "url": pitch_log.pitchfx_url,
                 }
@@ -97,6 +98,7 @@ class UrlBuilder:
             "identifier": game_date,
             "fileName": self.get_filename(data_set, game_date),
             "htmlFolderPath": self.get_local_folderpath(data_set, game_date),
+            "scrapedHtmlFolderpath": self.get_scraped_html_folderpath(data_set),
             "s3KeyPrefix": self.get_s3_folderpath(data_set, game_date),
             "url": self.get_url_for_bbref_games_for_date(game_date),
         }
@@ -115,6 +117,7 @@ class UrlBuilder:
                 "identifier": bbref_game_id,
                 "fileName": self.get_filename(data_set, bbref_game_id),
                 "htmlFolderPath": self.get_local_folderpath(data_set, game_date),
+                "scrapedHtmlFolderpath": self.get_scraped_html_folderpath(data_set),
                 "s3KeyPrefix": self.get_s3_folderpath(data_set, game_date),
                 "url": boxscore_url,
             }
@@ -140,6 +143,10 @@ class UrlBuilder:
         return self.scraped_data.file_helper.get_local_folderpath(
             doc_format=DocFormat.HTML, data_set=data_set, game_date=game_date
         )
+
+    def get_scraped_html_folderpath(self, data_set: DataSet) -> str:
+        folderpath = self.scrape_job.get_scraped_html_folderpath(data_set)
+        return str(folderpath.resolve())
 
     def get_s3_folderpath(self, data_set: DataSet, game_date: datetime) -> str:
         return self.scraped_data.file_helper.get_s3_folderpath(
