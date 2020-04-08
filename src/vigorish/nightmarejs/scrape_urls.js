@@ -32,7 +32,8 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
         urlCounter = await scrapeUrlBatch(nightmare, urlBatch, timeoutParams, urlCounter, urlBar)
         batchCounter += 1
         if (batchCounter < totalBatches) {
-            const nextBatchStr = `${batchList[batchCounter].length} URLs next batch`
+            const nextBatchSize = batchList[batchCounter].length
+            const nextBatchStr = `${nextBatchSize} URLs next batch`
             pBarDisplay = getPbarDisplayStr(nextBatchStr, (padEllipses = false))
             batchBar.update(batchCounter, { message: pBarDisplay })
             if (timeoutParams.batchTimeoutRequired) {
