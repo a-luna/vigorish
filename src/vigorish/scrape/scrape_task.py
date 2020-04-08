@@ -7,7 +7,7 @@ from signal import signal, SIGINT
 from sys import exit
 
 from halo import Halo
-from Naked.toolshed.shell import execute_js
+from Naked.toolshed.shell import execute, execute_js
 
 from vigorish.cli.util import prompt_user_yes_no
 from vigorish.constants import JOB_SPINNER_COLORS
@@ -134,7 +134,10 @@ class ScrapeTaskABC(ABC):
         url_set_filepath = self.db_job.url_set_filepath
         url_set_filepath.write_text(self.tracker.urls_json)
         args = self.config.get_nodejs_script_params(self.data_set, url_set_filepath)
-        success = execute_js(str(NODEJS_SCRIPT), arguments=args)
+        if is_ubuntu():
+            success = self.invoke_nodejs_script_ubuntu(args)
+        else:
+            success = self.invoke_nodejs_script_normal(args)
         if not success:
             return Result.Fail("nodejs process did not exit successfully")
         url_set_filepath.unlink()
@@ -150,9 +153,13 @@ class ScrapeTaskABC(ABC):
             self.spinner.text = self.tracker.save_html_report(saved_count=i)
         return Result.Ok()
 
+    def invoke_nodejs_script_normal(self, args):
+        return execute_js(str(NODEJS_SCRIPT), arguments=args)
+
+    def invoke_nodejs_script_ubuntu(self):
+        return execute(f"nodejs {NODEJS_SCRIPT} {args}")
+
     def parse_data_from_scraped_html(self):
-        self.db_job.status = JobStatus.PARSING
-        self.db_session.commit()
         parsed = 0
         self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed)
         for game_date, urls in self.tracker.all_urls.items():

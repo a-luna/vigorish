@@ -7,6 +7,10 @@ from typing import Tuple, Union
 from vigorish.util.result import Result
 
 
+def is_ubuntu():
+    return "ubuntu" in platform.version().lower()
+
+
 def is_windows():
     return any(platform.win32_ver())
 
