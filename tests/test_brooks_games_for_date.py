@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from lxml import html
-
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
@@ -22,14 +20,11 @@ def get_brooks_url_for_date(game_date):
 def parse_brooks_games_for_date_from_html(db_session, scraped_data):
     result = scraped_data.get_bbref_games_for_date(GAME_DATE)
     assert result.success
-    bbref_games_for_date = result.value
+    games_for_date = result.value
     url = get_brooks_url_for_date(GAME_DATE)
     html_path = scraped_data.get_html(DATA_SET, GAME_DATE)
-    html_text = html_path.read_text()
-    page_content = html.fromstring(html_text, base_url=url)
-    result = parse_brooks_dashboard_page(
-        db_session, page_content, GAME_DATE, url, bbref_games_for_date
-    )
+    page_content = html_path.read_text()
+    result = parse_brooks_dashboard_page(db_session, page_content, GAME_DATE, url, games_for_date)
     assert result.success
     brooks_games_for_date = result.value
     return brooks_games_for_date

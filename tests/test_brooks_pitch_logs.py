@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from lxml import html
-
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from vigorish.scrape.brooks_pitch_logs.models.pitch_log import BrooksPitchLog
@@ -25,9 +23,8 @@ def parse_brooks_pitch_logs_for_game_from_html(scraped_data):
     scraped_pitch_logs = []
     for pitcher_id, url in game_info.pitcher_appearance_dict.items():
         pitch_app_id = f"{game_info.bbref_game_id}_{pitcher_id}"
-        filepath = scraped_data.get_html(DATA_SET, pitch_app_id)
-        page_content = html.fromstring(filepath.read_text(), base_url=url)
-        result = parse_pitch_log(page_content, game_info, pitcher_id, url)
+        html_path = scraped_data.get_html(DATA_SET, pitch_app_id)
+        result = parse_pitch_log(html_path.read_text(), game_info, pitcher_id, url)
         assert result.success
         pitch_log = result.value
         assert isinstance(pitch_log, BrooksPitchLog)

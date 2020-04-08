@@ -1,5 +1,3 @@
-from lxml import html
-
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
 from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
@@ -17,9 +15,7 @@ def get_bbref_boxscore_url(bbref_game_id):
 def parse_bbref_boxscore_from_html(scraped_data):
     url = get_bbref_boxscore_url(BBREF_GAME_ID)
     html_path = scraped_data.get_html(DATA_SET, BBREF_GAME_ID)
-    html_text = html_path.read_text()
-    page_content = html.fromstring(html_text, base_url=url)
-    result = parse_bbref_boxscore(page_content, url)
+    result = parse_bbref_boxscore(html_path.read_text(), url)
     assert result.success
     bbref_boxscore = result.value
     return bbref_boxscore

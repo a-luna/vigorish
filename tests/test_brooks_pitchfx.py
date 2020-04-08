@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from lxml import html
-
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.scrape.brooks_pitchfx.parse_html import parse_pitchfx_log
@@ -19,9 +17,7 @@ def parse_brooks_pitchfx_from_html(scraped_data):
     pitch_logs = result.value
     pitch_log = [plog for plog in pitch_logs.pitch_logs if plog.pitch_app_id == PITCH_APP_ID][0]
     html_path = scraped_data.get_html(DATA_SET, PITCH_APP_ID)
-    html_text = html_path.read_text()
-    page_content = html.fromstring(html_text, base_url=pitch_log.pitchfx_url)
-    result = parse_pitchfx_log(page_content, pitch_log)
+    result = parse_pitchfx_log(html_path.read_text(), pitch_log)
     assert result.success
     pitchfx_log = result.value
     return pitchfx_log

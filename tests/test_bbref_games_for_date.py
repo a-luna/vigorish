@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from lxml import html
-
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
@@ -21,9 +19,7 @@ def get_bbref_url_for_date():
 def parse_bbref_games_for_date_from_html(scraped_data):
     bbref_url = get_bbref_url_for_date()
     html_path = scraped_data.get_html(DATA_SET, GAME_DATE)
-    html_text = html_path.read_text()
-    page_content = html.fromstring(html_text, base_url=bbref_url)
-    result = parse_bbref_dashboard_page(page_content, GAME_DATE, bbref_url)
+    result = parse_bbref_dashboard_page(html_path.read_text(), GAME_DATE, bbref_url)
     assert result.success
     games_for_date = result.value
     return games_for_date
