@@ -123,7 +123,7 @@ class ScrapeTaskABC(ABC):
             return Result.Ok()
         self.spinner.stop_and_persist(self.spinner.frame(), "")
         url_set_filepath = self.db_job.url_set_filepath
-        url_set_filepath.write_text(self.tracker.urls_json)
+        url_set_filepath.write_text(self.tracker.scrape_urls_as_json)
         args = self.config.get_nodejs_script_params(self.data_set, url_set_filepath)
         if is_ubuntu():
             success = self.invoke_nodejs_script_ubuntu(args)

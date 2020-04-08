@@ -58,10 +58,8 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 scraped_pitch_logs = []
                 for pitcher_id, url in game.pitcher_appearance_dict.items():
                     pitch_app_id = f"{game_id}_{pitcher_id}"
-                    filepath = self.scraped_data.get_html(self.data_set, pitch_app_id)
-                    if not filepath:
-                        return Result.Fail(f"Failed to locate HTML for pitch app: {pitch_app_id}")
-                    result = parse_pitch_log(filepath.read_text(), game, pitcher_id, url)
+                    page_content = self.tracker.get_page_content(pitch_app_id)
+                    result = parse_pitch_log(page_content, game, pitcher_id, url)
                     if result.failure:
                         return result
                     pitch_log = result.value

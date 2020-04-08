@@ -44,25 +44,21 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                 game_id = pitch_logs_for_game.bbref_game_id
                 self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed, game_id)
                 for pitch_log in pitch_logs_for_game.pitch_logs:
-                    pitch_app_id = pitch_log.pitch_app_id
-                    url = pitch_log.pitchfx_url
                     if not pitch_log.parsed_all_info:
                         continue
-                    if pitch_app_id not in self.tracker.parse_url_ids:
+                    if pitch_log.pitch_app_id not in self.tracker.parse_url_ids:
                         continue
-                    html_filepath = self.scraped_data.get_html(self.data_set, pitch_app_id)
-                    if not html_filepath:
-                        return Result.Fail(f"Failed to locate HTML for pitch app: {pitch_app_id}")
-                    result = parse_pitchfx_log(html_filepath.read_text(), pitch_log)
+                    page_content = self.tracker.get_page_content(pitch_log.pitch_app_id)
+                    result = parse_pitchfx_log(page_content, pitch_log)
                     if result.failure:
                         return result
                     pitchfx_log = result.value
                     result = self.scraped_data.save_json(self.data_set, pitchfx_log)
                     if result.failure:
-                        return Result.Fail(f"Error! {result.error} (ID: {pitch_app_id})")
+                        return Result.Fail(f"Error! {result.error} (ID: {pitch_log.pitch_app_id})")
                     result = self.update_status(game_date, pitchfx_log)
                     if result.failure:
-                        return Result.Fail(f"Error! {result.error} (ID: {pitch_app_id})")
+                        return Result.Fail(f"Error! {result.error} (ID: {pitch_log.pitch_app_id})")
                     parsed += 1
                     self.spinner.text = self.tracker.parse_html_report(
                         self.data_set, parsed, game_id
