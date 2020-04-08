@@ -3,7 +3,7 @@ from datetime import timezone
 from uuid import uuid4
 from pathlib import Path
 
-from sqlalchemy import Column, Boolean, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
@@ -35,27 +35,30 @@ class ScrapeJob(Base):
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     created_date = Column(DateTime, default=utc_now)
-    bbref_games_for_date = Column(Boolean, default=False)
-    bbref_boxscores = Column(Boolean, default=False)
-    brooks_games_for_date = Column(Boolean, default=False)
-    brooks_pitch_logs = Column(Boolean, default=False)
-    brooks_pitchfx = Column(Boolean, default=False)
+    data_sets_int = Column(Integer, nullable=False)
     season_id = Column(Integer, ForeignKey("season.id"))
 
     errors = relationship("ScrapeError", backref="job")
 
     @hybrid_property
-    def created_date_str(self):
-        created_date_utc = make_tzaware(self.created_date, use_tz=timezone.utc, localize=False)
-        return localized_dt_string(created_date_utc, use_tz=get_local_utcoffset())
+    def bbref_games_for_date(self):
+        return self.data_sets_int & DataSet.BBREF_GAMES_FOR_DATE == DataSet.BBREF_GAMES_FOR_DATE
 
     @hybrid_property
-    def group(self):
-        return JOB_STATUS_TO_GROUP_MAP[self.status]
+    def bbref_boxscores(self):
+        return self.data_sets_int & DataSet.BBREF_BOXSCORES == DataSet.BBREF_BOXSCORES
 
     @hybrid_property
-    def nodejs_filepath(self):
-        return NODEJS_INBOX / f"{self.id}.json"
+    def brooks_games_for_date(self):
+        return self.data_sets_int & DataSet.BROOKS_GAMES_FOR_DATE == DataSet.BROOKS_GAMES_FOR_DATE
+
+    @hybrid_property
+    def brooks_pitch_logs(self):
+        return self.data_sets_int & DataSet.BROOKS_PITCH_LOGS == DataSet.BROOKS_PITCH_LOGS
+
+    @hybrid_property
+    def brooks_pitchfx(self):
+        return self.data_sets_int & DataSet.BROOKS_PITCHFX == DataSet.BROOKS_PITCHFX
 
     @hybrid_property
     def data_sets(self):
@@ -82,15 +85,15 @@ class ScrapeJob(Base):
 
     @hybrid_property
     def job_details(self):
+        job_name = f"{self.name} (ID: {self.id})" if self.name != self.id else self.id
         return {
-            "Job ID": self.id,
-            "Job Name": self.name,
+            "Job Name": job_name,
             "Status": self.status.name,
             "MLB Season": self.season.name,
             "Start Date": self.start_date.strftime(DATE_ONLY),
             "End Date": self.end_date.strftime(DATE_ONLY),
             "Created": self.created_date_str,
-            "Data Sets": ", ".join([str(ds) for ds in self.data_sets]),
+            "Data Sets": "\n\t".join([str(ds) for ds in self.data_sets]),
         }
 
     @hybrid_property

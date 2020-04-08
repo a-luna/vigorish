@@ -26,6 +26,7 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 INSTALL_REQUIRES = [
+    "aenum",
     "boto3",
     "bullet",
     "Click",

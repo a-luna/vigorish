@@ -152,11 +152,11 @@ class CreateJobMenuItem(MenuItem):
             "name": job_name,
             "season_id": season.id,
         }
+        ds_int = 0
         for ds in DataSet:
             if ds == DataSet.ALL:
                 continue
             if ds in selected_data_sets:
-                scrape_job_dict[ds.name.lower()] = True
-            else:
-                scrape_job_dict[ds.name.lower()] = False
+                ds_int += int(ds)
+        scrape_job_dict["data_sets_int"] = ds_int
         return scrape_job_dict
