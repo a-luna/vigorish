@@ -55,7 +55,7 @@ class JobRunner:
             subprocess.run(["clear"])
             if task_results:
                 print("\n".join(task_results))
-            text = f"Scraping data set: {data_set.name} (Task #{i}/{len(self.data_sets)})..."
+            text = f"Scraping data set: {data_set.name} (Task {i}/{len(self.data_sets)})..."
             spinners[data_set].text = text
             spinners[data_set].color = JOB_SPINNER_COLORS[data_set]
             spinners[data_set].start()
@@ -68,14 +68,14 @@ class JobRunner:
                 if "skip" in result.error:
                     text = (
                         f"{EMOJI_DICT.get('SHRUG', '')} "
-                        f"Skipped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+                        f"Skipped data set: {data_set.name} (Task {i}/{len(self.data_sets)})"
                     )
                     task_results.append(text)
                     continue
                 return self.job_failed(result)
             text = (
                 f"{EMOJI_DICT.get('PASSED', '')} "
-                f"Scraped data set: {data_set.name} (Task #{i}/{len(self.data_sets)})"
+                f"Scraped data set: {data_set.name} (Task {i}/{len(self.data_sets)})"
             )
             task_results.append(text)
         subprocess.run(["clear"])
@@ -85,10 +85,11 @@ class JobRunner:
         result = report_season_status(
             session=self.db_session,
             scraped_data=self.scraped_data,
-            refresh_data=True,
+            refresh_data=False,
             year=self.season.year,
             report_type=self.status_report,
         )
+        pause(message="Press any key to continue...")
         if result.failure:
             return self.job_failed(result)
         return self.job_succeeded()

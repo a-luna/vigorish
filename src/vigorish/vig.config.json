@@ -16,7 +16,7 @@
     "ENUM_NAME": "StatusReport",
     "DESCRIPTION": "After a scrape job has successfully completed, you can display a report for the MLB season displaying various metrics for all data sets. The options below determine the level of detail reported.",
     "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-    "ALL": "NONE",
+    "ALL": "SEASON_SUMMARY",
     "BBREF_GAMES_FOR_DATE": null,
     "BBREF_BOXSCORES": null,
     "BROOKS_GAMES_FOR_DATE": null,

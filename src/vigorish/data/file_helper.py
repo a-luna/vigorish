@@ -172,7 +172,7 @@ class FileHelper:
         if task == LocalFileTask.READ_FILE:
             return self.read_local_file(Path(filepath))
         if task == LocalFileTask.WRITE_FILE:
-            return self.write_to_file(scraped_data.as_json(), Path(filepath))
+            return self.write_to_file(doc_format, scraped_data, Path(filepath))
         if task == LocalFileTask.DELETE_FILE:
             return self.delete_file(Path(filepath))
         if task == LocalFileTask.DECODE_JSON:
@@ -326,8 +326,10 @@ class FileHelper:
             else Result.Fail(f"File not found: {filepath.resolve()}.")
         )
 
-    def write_to_file(self, data, filepath):
+    def write_to_file(self, doc_format, data, filepath):
         """Write object in json format to file."""
+        if doc_format == DocFormat.JSON:
+            data = data.as_json()
         try:
             filepath.write_text(data)
             return Result.Ok(filepath)
@@ -354,7 +356,7 @@ class FileHelper:
     def upload_to_s3(self, doc_format, data_set, scraped_data, bucket_name, s3_key, filepath):
         delete_file = not self.check_file_stored_local(doc_format, data_set)
         if doc_format == DocFormat.JSON:
-            result = self.write_to_file(scraped_data.as_json(), filepath)
+            result = self.write_to_file(doc_format, scraped_data, filepath)
             if result.failure:
                 return result
         try:
