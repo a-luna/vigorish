@@ -6,16 +6,18 @@ from pathlib import Path
 from signal import signal, SIGINT
 from sys import exit
 
+from getch import pause
 from halo import Halo
 from Naked.toolshed.shell import execute, execute_js
 
-from vigorish.cli.util import prompt_user_yes_no
+from vigorish.cli.util import print_message
 from vigorish.constants import JOB_SPINNER_COLORS
-from vigorish.enums import DataSet, ScrapeCondition, JobStatus
+from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.url_builder import UrlBuilder
 from vigorish.scrape.url_tracker import UrlTracker
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.result import Result
+from vigorish.util.sys_helpers import is_ubuntu
 
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_SCRIPT = APP_FOLDER / "nightmarejs" / "scrape_job.js"
@@ -23,17 +25,9 @@ NODEJS_SCRIPT = APP_FOLDER / "nightmarejs" / "scrape_job.js"
 
 def user_cancelled(db_session, active_job, spinner, signal_received, frame):
     spinner.stop()
-    active_job.status = JobStatus.PAUSED
     subprocess.run(["clear"])
-    prompt = (
-        "Would you like to cancel the current job? Selecting NO will pause the job, "
-        "allowing you to resume the job later. Selecting YES will cancel the job forever."
-    )
-    result = prompt_user_yes_no(prompt=prompt)
-    cancel_job = result.value
-    if cancel_job:
-        active_job.status = JobStatus.CANCELLED
-    db_session.commit()
+    print_message("Job cancelled by user!", fg="cyan", bold=True)
+    pause(message="Press any key to continue...")
     exit(0)
 
 
@@ -75,8 +69,6 @@ class ScrapeTaskABC(ABC):
         return Result.Ok()
 
     def task_preparation(self):
-        self.db_job.status = JobStatus.PREPARING
-        self.db_session.commit()
         self.spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
         signal(SIGINT, partial(user_cancelled, self.db_session, self.db_job, self.spinner))
         return Result.Ok()
@@ -129,8 +121,6 @@ class ScrapeTaskABC(ABC):
         if not self.tracker.scrape_urls:
             return Result.Ok()
         self.spinner.stop_and_persist(self.spinner.frame(), "")
-        self.db_job.status = JobStatus.SCRAPING
-        self.db_session.commit()
         url_set_filepath = self.db_job.url_set_filepath
         url_set_filepath.write_text(self.tracker.urls_json)
         args = self.config.get_nodejs_script_params(self.data_set, url_set_filepath)

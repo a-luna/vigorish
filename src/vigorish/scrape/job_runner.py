@@ -7,7 +7,7 @@ from getch import pause
 
 from vigorish.config.database import ScrapeError
 from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
-from vigorish.enums import DataSet, JobStatus
+from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.scrape_bbref_boxscores import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_bbref_games_for_date import (
     ScrapeBBRefGamesForDate,
@@ -42,9 +42,6 @@ class JobRunner:
         self.status_report = self.config.get_current_setting("STATUS_REPORT", DataSet.ALL)
 
     def execute(self):
-        if self.db_job.status == JobStatus.COMPLETE:
-            error = "This job cannot be started, status is COMPLETE."
-            return Result.Fail(error)
         result = self.initialize()
         if result.failure:
             return self.job_failed(result)
@@ -110,7 +107,6 @@ class JobRunner:
         return Result.Fail("\n".join(errors))
 
     def job_failed(self, result, data_set=DataSet.ALL):
-        self.db_job.status = JobStatus.ERROR
         new_error = ScrapeError(
             error_message=result.error, data_set=data_set, job_id=self.db_job.id
         )
@@ -120,8 +116,6 @@ class JobRunner:
         return result
 
     def job_succeeded(self):
-        self.db_job.status = JobStatus.COMPLETE
-        self.db_session.commit()
         self.end_time = datetime.now()
         return Result.Ok()
 

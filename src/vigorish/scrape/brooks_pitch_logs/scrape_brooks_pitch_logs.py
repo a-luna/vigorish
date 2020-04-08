@@ -1,5 +1,5 @@
 from vigorish.config.database import DateScrapeStatus
-from vigorish.enums import DataSet, ScrapeCondition, JobStatus
+from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from vigorish.scrape.brooks_pitch_logs.parse_html import parse_pitch_log
 from vigorish.scrape.scrape_task import ScrapeTaskABC
@@ -40,8 +40,6 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         return Result.Ok()
 
     def parse_data_from_scraped_html(self):
-        self.db_job.status = JobStatus.PARSING
-        self.db_session.commit()
         parsed = 0
         for game_date in self.date_range:
             result = self.scraped_data.get_brooks_games_for_date(game_date)
