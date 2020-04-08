@@ -17,6 +17,24 @@ class ScrapedData:
         self.html_storage = HtmlStorage(config, self.file_helper)
         self.json_storage = JsonStorage(config, self.file_helper)
 
+    def check_s3_bucket(self, data_sets):
+        return self.file_helper.check_s3_bucket(data_sets)
+
+    def create_all_folderpaths(self, year) -> Result:
+        return self.file_helper.create_all_folderpaths(year)
+
+    def html_stored_s3(self, data_set):
+        return self.html_storage.html_stored_s3(data_set)
+
+    def save_html(self, data_set, url_id, html):
+        return self.html_storage.save_html(data_set, url_id, html)
+
+    def get_html(self, data_set, url_id):
+        return self.html_storage.get_html(data_set, url_id)
+
+    def save_json(self, data_set, parsed_data):
+        return self.json_storage.save_json(data_set, parsed_data)
+
     def get_brooks_games_for_date(self, game_date):
         result = self.json_storage.decode_json_brooks_games_for_date_local_file(game_date)
         if result.success:
@@ -58,10 +76,10 @@ class ScrapedData:
         return Result.Ok(pitch_logs)
 
     def get_all_pitchfx_logs_for_game(self, bbref_game_id):
-        pitch_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
+        p_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
             self.db, bbref_game_id
         )
-        fetch_tasks = [self.get_brooks_pitchfx_log(pitch_app_id) for pitch_app_id in pitch_app_ids]
+        fetch_tasks = [self.get_brooks_pitchfx_log(pitch_app_id) for pitch_app_id in p_app_ids]
         task_failed = any(result.failure for result in fetch_tasks)
         if task_failed:
             s3_errors = "\n".join(
@@ -82,11 +100,12 @@ class ScrapedData:
         html_folder = self.file_helper.get_s3_folderpath(
             doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_GAMES_FOR_DATE, year=year
         )
-        all_files = self.file_helper.bucket.objects.all()
-        matching_files = [
-            obj.key for obj in all_files if json_folder in obj.key and html_folder not in obj.key
+        s3_bucket = self.file_helper.get_s3_bucket(DataSet.BROOKS_GAMES_FOR_DATE)
+        scraped_dates = [
+            parser.parse(Path(obj.key).stem[-10:])
+            for obj in s3_bucket.objects.all()
+            if json_folder in obj.key and html_folder not in obj.key
         ]
-        scraped_dates = [parser.parse(Path(filename).stem[-10:]) for filename in matching_files]
         return Result.Ok(scraped_dates)
 
     def get_all_scraped_brooks_game_ids(self, year):
@@ -96,9 +115,10 @@ class ScrapedData:
         html_folder = self.file_helper.get_s3_folderpath(
             doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_PITCH_LOGS, year=year
         )
+        s3_bucket = self.file_helper.get_s3_bucket(DataSet.BROOKS_PITCH_LOGS)
         scraped_gameids = [
             Path(obj.key).stem
-            for obj in self.file_helper.bucket.objects.all()
+            for obj in s3_bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
         return Result.Ok(scraped_gameids)
@@ -110,9 +130,10 @@ class ScrapedData:
         html_folder = self.file_helper.get_s3_folderpath(
             doc_format=DocFormat.HTML, data_set=DataSet.BBREF_GAMES_FOR_DATE, year=year
         )
+        s3_bucket = self.file_helper.get_s3_bucket(DataSet.BBREF_GAMES_FOR_DATE)
         scraped_dates = [
             parser.parse(Path(obj.key).stem[-10:])
-            for obj in self.file_helper.bucket.objects.all()
+            for obj in s3_bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
         return Result.Ok(scraped_dates)
@@ -124,9 +145,10 @@ class ScrapedData:
         html_folder = self.file_helper.get_s3_folderpath(
             doc_format=DocFormat.HTML, data_set=DataSet.BBREF_BOXSCORES, year=year
         )
+        s3_bucket = self.file_helper.get_s3_bucket(DataSet.BBREF_BOXSCORES)
         scraped_game_ids = [
             Path(obj.key).stem
-            for obj in self.file_helper.bucket.objects.all()
+            for obj in s3_bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
         return Result.Ok(scraped_game_ids)
@@ -138,9 +160,10 @@ class ScrapedData:
         html_folder = self.file_helper.get_s3_folderpath(
             doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_PITCHFX, year=year
         )
+        s3_bucket = self.file_helper.get_s3_bucket(DataSet.BROOKS_PITCHFX)
         scraped_pitch_app_ids = [
             Path(obj.key).stem
-            for obj in self.file_helper.bucket.objects.all()
+            for obj in s3_bucket.objects.all()
             if json_folder in obj.key and html_folder not in obj.key
         ]
-        return Result.Ok(scraped_pitch_app_ids)
+        return scraped_pitch_app_ids

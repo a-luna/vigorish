@@ -7,9 +7,9 @@ class BrooksPitchLog:
 
     parsed_all_info = None
     pitcher_name = ""
-    pitcher_id_mlb = ""
+    pitcher_id_mlb = 0
     pitch_app_id = ""
-    total_pitch_count = ""
+    total_pitch_count = 0
     pitch_count_by_inning = {}
     pitcher_team_id_bb = ""
     opponent_team_id_bb = ""
@@ -32,9 +32,9 @@ class BrooksPitchLog:
             "__brooks_pitch_log__": True,
             "parsed_all_info": self.parsed_all_info,
             "pitcher_name": "{}".format(self.pitcher_name),
-            "pitcher_id_mlb": int(self.pitcher_id_mlb),
+            "pitcher_id_mlb": self.pitcher_id_mlb,
             "pitch_app_id": "{}".format(self.pitch_app_id),
-            "total_pitch_count": int(self.total_pitch_count),
+            "total_pitch_count": self.total_pitch_count,
             "pitch_count_by_inning": self.pitch_count_by_inning,
             "pitcher_team_id_bb": "{}".format(self.pitcher_team_id_bb),
             "opponent_team_id_bb": "{}".format(self.opponent_team_id_bb),

@@ -4,18 +4,33 @@ from setuptools import setup, find_packages
 
 DESCRIPTION = "MLB data scraping tool"
 APP_ROOT = Path(__file__).parent
-README = (APP_ROOT / "README.md").read_text()
+README = (APP_ROOT / "README.md").read_text().strip()
 AUTHOR = "Aaron Luna"
-AUTHOR_EMAIL = "admin@aaronluna.dev"
+AUTHOR_EMAIL = "contact@aaronluna.dev"
 PROJECT_URLS = {
     "Bug Tracker": "https://github.com/a-luna/vigorish/issues",
     "Source Code": "https://github.com/a-luna/vigorish",
 }
+CLASSIFIERS = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+    "Programming Language :: JavaScript",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3 :: Only",
+]
 INSTALL_REQUIRES = [
-    "alembic",
+    "aenum",
     "boto3",
     "bullet",
     "Click",
+    "dacite",
     "dataclass-csv",
     "fake-useragent",
     "rapidfuzz",
@@ -61,7 +76,7 @@ setup(
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
-    version="0.1",
+    version="0.2.2",
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     maintainer=AUTHOR,
@@ -72,7 +87,8 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     include_package_data=True,
-    python_requires=">=3.6",
+    python_requires=">=3.7",
+    classifiers=CLASSIFIERS,
     install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
     entry_points="""

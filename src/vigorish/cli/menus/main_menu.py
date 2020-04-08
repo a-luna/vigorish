@@ -6,7 +6,6 @@ from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
 from vigorish.config.database import db_setup_complete
-from vigorish.util.result import Result
 
 
 class MainMenu(Menu):

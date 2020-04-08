@@ -3,7 +3,7 @@ from vigorish.config.database import Season, DateScrapeStatus
 from vigorish.enums import StatusReport
 from vigorish.status.update_status import update_status_for_mlb_season
 from vigorish.util.datetime_util import get_date_range
-from vigorish.util.dt_format_strings import DATE_MONTH_NAME
+from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY
 from vigorish.util.result import Result
 
 
@@ -47,7 +47,7 @@ def report_status_single_date(
     date_str = game_date.strftime(DATE_MONTH_NAME)
     print_message(f"\n### STATUS REPORT FOR {date_str} ###", fg="bright_cyan", bold=True)
     print_message(date_status.status_report(), fg="bright_cyan")
-    if missing_ids:
+    if missing_pitchfx:
         print_message(missing_ids_str, fg="bright_cyan")
     if with_games:
         print_message(date_status.games_status_report(), fg="bright_cyan")
@@ -110,7 +110,10 @@ def construct_date_range_status(
     for game_date in get_date_range(start_date, end_date):
         date_status = DateScrapeStatus.find_by_date(session, game_date)
         if not date_status:
-            error = f"scrape_status_date does not contain an entry for date: {game_date.strftime(DATE_ONLY)}"
+            error = (
+                "scrape_status_date does not contain an entry for date: "
+                f"{game_date.strftime(DATE_ONLY)}"
+            )
             return Result.Fail(error)
         if not show_all and date_status.scraped_all_game_data:
             continue
@@ -137,7 +140,7 @@ def display_detailed_report_for_date_range(session, status_date_range, missing_p
                 missing_ids_str = "All PitchFX logs have been scraped"
             elif date_status.scraped_all_brooks_pitch_logs:
                 missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
-                    session, game_date
+                    session, date_status.game_date
                 )
                 missing_ids_str = (
                     f"MISSING: {missing_pitch_app_ids}"

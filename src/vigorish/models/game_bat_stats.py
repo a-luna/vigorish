@@ -3,8 +3,6 @@ from sqlalchemy import Column, Integer, Float, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-from vigorish.models.player import Player
-from vigorish.models.team import Team
 from vigorish.util.list_helpers import display_dict
 
 

@@ -90,11 +90,12 @@ def string_is_null_or_blank(s: str) -> bool:
 
 
 def validate_bbref_game_id(input_str):
+    if not input_str:
+        raise ValueError("Input string was empty or None")
     if len(input_str) != 12:
-        error = (
-            f"String is not a valid bbref game id: {input_str}\n" "Reason: len(input_str) != 12"
+        raise ValueError(
+            f"String is not a valid bbref game id: {input_str} Reason: len(input_str) != 12"
         )
-        return Result.Fail(error)
 
     home_team_id = input_str[:3]
     year_str = input_str[3:7]
@@ -167,11 +168,11 @@ def validate_brooks_game_id(input_str):
         return Result.Fail(error)
 
     if len(split[4]) != 6:
-        error = f"Failed to parse away team id from game_id:\n{repr(e)}"
+        error = f"Failed to parse away team id from game_id:\n{input_str}"
         return Result.Fail(error)
 
     if len(split[5]) != 6:
-        error = f"Failed to parse home team id from game_id:\n{repr(e)}"
+        error = f"Failed to parse home team id from game_id:\n{input_str}"
         return Result.Fail(error)
 
     away_team_id = split[4][:3].upper()

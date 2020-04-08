@@ -1,9 +1,5 @@
 """Functions for reading and writing files."""
-from pathlib import Path
-
 from vigorish.enums import DataSet, DocFormat, LocalFileTask, S3FileTask
-from vigorish.data.file_helper import FileHelper
-from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
     validate_bbref_game_id,
@@ -19,7 +15,44 @@ class JsonStorage:
         self.config = config
         self.file_helper = file_helper
 
-    def write_json_brooks_games_for_date_local_file(self, games_for_date):
+    def save_json(self, data_set, parsed_data):
+        if self.json_stored_local_folder(data_set):
+            result_local = self.save_json_local(data_set, parsed_data)
+            if result_local.failure:
+                return result_local
+        if self.json_stored_s3(data_set):
+            result_s3 = self.save_json_s3(data_set, parsed_data)
+            if result_s3.failure:
+                return result_s3
+        return result_local if result_local else result_s3 if result_s3 else Result.Fail("")
+
+    def json_stored_local_folder(self, data_set):
+        return self.file_helper.check_file_stored_local(DocFormat.JSON, data_set)
+
+    def json_stored_s3(self, data_set):
+        return self.file_helper.check_file_stored_s3(DocFormat.JSON, data_set)
+
+    def save_json_local(self, data_set, parsed_data):
+        save_json_local_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.save_json_brooks_games_for_date_local_file,
+            DataSet.BROOKS_PITCH_LOGS: self.save_json_brooks_pitch_logs_for_game_local_file,
+            DataSet.BROOKS_PITCHFX: self.save_json_brooks_pitchfx_log_local_file,
+            DataSet.BBREF_GAMES_FOR_DATE: self.save_json_bbref_games_for_date_local_file,
+            DataSet.BBREF_BOXSCORES: self.save_json_bbref_boxscore_local_file,
+        }
+        return save_json_local_dict[data_set](parsed_data)
+
+    def save_json_s3(self, data_set, parsed_data):
+        save_json_s3_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.save_json_brooks_games_for_date_s3,
+            DataSet.BROOKS_PITCH_LOGS: self.save_json_brooks_pitch_logs_for_game_s3,
+            DataSet.BROOKS_PITCHFX: self.save_json_brooks_pitchfx_log_s3,
+            DataSet.BBREF_GAMES_FOR_DATE: self.save_json_bbref_games_for_date_s3,
+            DataSet.BBREF_BOXSCORES: self.save_json_bbref_boxscore_s3,
+        }
+        return save_json_s3_dict[data_set](parsed_data)
+
+    def save_json_brooks_games_for_date_local_file(self, games_for_date):
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
@@ -28,7 +61,7 @@ class JsonStorage:
             scraped_data=games_for_date,
         )
 
-    def write_json_brooks_games_for_date_s3(self, games_for_date):
+    def save_json_brooks_games_for_date_s3(self, games_for_date):
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
@@ -37,7 +70,7 @@ class JsonStorage:
             scraped_data=games_for_date,
         )
 
-    def write_json_brooks_pitch_logs_for_game_local_file(self, pitch_logs_for_game):
+    def save_json_brooks_pitch_logs_for_game_local_file(self, pitch_logs_for_game):
         result = validate_brooks_game_id(pitch_logs_for_game.bb_game_id)
         if result.failure:
             return result
@@ -51,7 +84,7 @@ class JsonStorage:
             bb_game_id=pitch_logs_for_game.bb_game_id,
         )
 
-    def write_json_brooks_pitch_logs_for_game_s3(self, pitch_logs_for_game):
+    def save_json_brooks_pitch_logs_for_game_s3(self, pitch_logs_for_game):
         result = validate_brooks_game_id(pitch_logs_for_game.bb_game_id)
         if result.failure:
             return result
@@ -65,7 +98,7 @@ class JsonStorage:
             bb_game_id=pitch_logs_for_game.bb_game_id,
         )
 
-    def write_json_brooks_pitchfx_log_local_file(self, pitchfx_log):
+    def save_json_brooks_pitchfx_log_local_file(self, pitchfx_log):
         result = validate_pitch_app_id(pitchfx_log.pitch_app_id)
         if result.failure:
             return result
@@ -79,7 +112,7 @@ class JsonStorage:
             pitch_app_id=pitchfx_log.pitch_app_id,
         )
 
-    def write_json_brooks_pitchfx_log_s3(self, pitchfx_log):
+    def save_json_brooks_pitchfx_log_s3(self, pitchfx_log):
         result = validate_pitch_app_id(pitchfx_log.pitch_app_id)
         if result.failure:
             return result
@@ -93,7 +126,7 @@ class JsonStorage:
             pitch_app_id=pitchfx_log.pitch_app_id,
         )
 
-    def write_json_bbref_games_for_date_local_file(self, games_for_date):
+    def save_json_bbref_games_for_date_local_file(self, games_for_date):
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
@@ -102,7 +135,7 @@ class JsonStorage:
             scraped_data=games_for_date,
         )
 
-    def write_json_bbref_games_for_date_s3(self, games_for_date):
+    def save_json_bbref_games_for_date_s3(self, games_for_date):
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
@@ -111,7 +144,7 @@ class JsonStorage:
             scraped_data=games_for_date,
         )
 
-    def write_json_bbref_boxscore_local_file(self, boxscore):
+    def save_json_bbref_boxscore_local_file(self, boxscore):
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BBREF_BOXSCORES,
@@ -121,7 +154,7 @@ class JsonStorage:
             bbref_game_id=boxscore.bbref_game_id,
         )
 
-    def write_json_bbref_boxscore_s3(self, boxscore):
+    def save_json_bbref_boxscore_s3(self, boxscore):
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
             data_set=DataSet.BBREF_BOXSCORES,

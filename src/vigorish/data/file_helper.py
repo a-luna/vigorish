@@ -17,20 +17,17 @@ from vigorish.enums import (
     DocFormat,
     LocalFileTask,
     S3FileTask,
-    HtmlStorageOption,
-    JsonStorageOption,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
+from vigorish.util.numeric_helpers import ONE_KB
 from vigorish.util.result import Result
 
 
 class FileHelper:
     def __init__(self, config):
         self.config = config
-        self.bucket_name = self.config.all_settings.get("S3_BUCKET").current_setting(DataSet.ALL)
         self.client = boto3.client("s3")
         self.resource = boto3.resource("s3")
-        self.bucket = self.resource.Bucket(self.bucket_name)
 
     @property
     def local_folderpath_dict(self):
@@ -120,6 +117,38 @@ class FileHelper:
             DocFormat.JSON: json_storage_dict,
         }
 
+    def create_all_folderpaths(self, year) -> Result:
+        try:
+            for folderpath_dict in self.local_folderpath_dict.values():
+                for folderpath in folderpath_dict.values():
+                    Path(folderpath.resolve(year=year)).mkdir(parents=True, exist_ok=True)
+            return Result.Ok()
+        except Exception as e:
+            return Result.Fail(f"Error: {repr(e)}")
+
+    def check_s3_bucket(self, data_sets):
+        bucket_names = list(
+            set([self.config.get_current_setting("S3_BUCKET", data_set) for data_set in data_sets])
+        )
+        try:
+            for bucket_name in bucket_names:
+                self.resource.Bucket(bucket_name).objects.all()
+            return Result.Ok()
+        except Exception as e:
+            return Result.Fail(f"Error: {repr(e)}")
+
+    def check_file_stored_local(self, doc_format, data_set):
+        storage_setting = self.file_storage_dict[doc_format][data_set]
+        return "LOCAL_FOLDER" in storage_setting.name or "BOTH" in storage_setting.name
+
+    def check_file_stored_s3(self, doc_format, data_set):
+        storage_setting = self.file_storage_dict[doc_format][data_set]
+        return "S3_BUCKET" in storage_setting.name or "BOTH" in storage_setting.name
+
+    def get_s3_bucket(self, data_set):
+        bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
+        return self.resource.Bucket(bucket_name)
+
     def perform_local_file_task(
         self,
         task,
@@ -143,7 +172,7 @@ class FileHelper:
         if task == LocalFileTask.READ_FILE:
             return self.read_local_file(Path(filepath))
         if task == LocalFileTask.WRITE_FILE:
-            return self.write_to_file(scraped_data.as_json(), Path(filepath))
+            return self.write_to_file(doc_format, scraped_data, Path(filepath))
         if task == LocalFileTask.DELETE_FILE:
             return self.delete_file(Path(filepath))
         if task == LocalFileTask.DECODE_JSON:
@@ -166,7 +195,9 @@ class FileHelper:
 
     def get_local_folderpath(self, doc_format, data_set, game_date=None, year=None):
         if not game_date and not year:
-            error = "You must provide either the game_date or year argument to construct a folderpath (FileHelper.get_s3_folderpath)"
+            error = (
+                "You must provide either the game_date or year argument to construct a folderpath"
+            )
             raise ValueError(error)
         year = year if year else game_date.year
         return self.local_folderpath_dict[doc_format][data_set].resolve(year=year)
@@ -189,7 +220,7 @@ class FileHelper:
         elif game_date:
             identifier = game_date
         else:
-            raise ValueError("Unable to construct file name. (FileHelper.get_file_name)")
+            raise ValueError("Unable to construct file name.")
         return self.filename_dict[doc_format][data_set](identifier)
 
     def perform_s3_task(
@@ -219,12 +250,15 @@ class FileHelper:
             bb_game_id=bb_game_id,
             pitch_app_id=pitch_app_id,
         )
+        bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
         if task == S3FileTask.UPLOAD:
-            return self.upload_to_s3(doc_format, data_set, scraped_data, s3_key, Path(filepath))
+            return self.upload_to_s3(
+                doc_format, data_set, scraped_data, bucket_name, s3_key, Path(filepath)
+            )
         if task == S3FileTask.DOWNLOAD:
-            return self.download_from_s3(s3_key, Path(filepath))
+            return self.download_from_s3(bucket_name, s3_key, Path(filepath))
         if task == S3FileTask.DELETE:
-            return self.delete_from_s3(s3_key)
+            return self.delete_from_s3(bucket_name, s3_key)
 
     def get_object_key(
         self,
@@ -248,7 +282,9 @@ class FileHelper:
 
     def get_s3_folderpath(self, doc_format, data_set, game_date=None, year=None):
         if not game_date and not year:
-            error = "You must provide either the game_date or year argument to construct a folderpath (FileHelper.get_s3_folderpath)"
+            error = (
+                "You must provide either the game_date or year argument to construct a folderpath"
+            )
             raise ValueError(error)
         year = year if year else game_date.year
         return self.s3_folderpath_dict[doc_format][data_set].resolve(year=year)
@@ -290,12 +326,10 @@ class FileHelper:
             else Result.Fail(f"File not found: {filepath.resolve()}.")
         )
 
-    def save_local_file(self, doc_format, data_set):
-        storage_setting = self.file_storage_dict[doc_format][data_set]
-        return "LOCAL_FOLDER" in storage_setting.name or "BOTH" in storage_setting.name
-
-    def write_to_file(self, data, filepath):
+    def write_to_file(self, doc_format, data, filepath):
         """Write object in json format to file."""
+        if doc_format == DocFormat.JSON:
+            data = data.as_json()
         try:
             filepath.write_text(data)
             return Result.Ok(filepath)
@@ -309,7 +343,7 @@ class FileHelper:
         return Result.Ok()
 
     def decode_json(self, data_set, filepath):
-        delete_file = not self.save_local_file(DocFormat.JSON, data_set)
+        delete_file = not self.check_file_stored_local(DocFormat.JSON, data_set)
         try:
             contents = filepath.read_text()
             if delete_file:
@@ -319,23 +353,27 @@ class FileHelper:
             error = f"Error: {repr(e)}"
             return Result.Fail(error)
 
-    def upload_to_s3(self, doc_format, data_set, scraped_data, s3_key, filepath):
-        delete_file = not self.save_local_file(doc_format, data_set)
+    def upload_to_s3(self, doc_format, data_set, scraped_data, bucket_name, s3_key, filepath):
+        delete_file = not self.check_file_stored_local(doc_format, data_set)
         if doc_format == DocFormat.JSON:
-            result = self.write_to_file(scraped_data.as_json(), filepath)
+            result = self.write_to_file(doc_format, scraped_data, filepath)
             if result.failure:
                 return result
         try:
-            self.client.upload_file(str(filepath), self.bucket_name, s3_key)
+            self.client.upload_file(str(filepath), bucket_name, s3_key)
             if delete_file:
                 filepath.unlink()
             return Result.Ok() if delete_file else Result.Ok(filepath)
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
-    def download_from_s3(self, s3_key, filepath):
+    def download_from_s3(self, bucket_name, s3_key, filepath):
         try:
-            self.resource.Bucket(self.bucket_name).download_file(s3_key, str(filepath))
+            self.resource.Bucket(bucket_name).download_file(s3_key, str(filepath))
+            if filepath.stat().st_size < ONE_KB:
+                self.resource.Object(bucket_name, s3_key).delete()
+                error = f"Size of file downloaded from S3 ({filepath}) is less than 1KB"
+                return Result.Fail(error)
             return Result.Ok(filepath)
         except ClientError as e:
             if e.response["Error"]["Code"] == "404":
@@ -344,19 +382,19 @@ class FileHelper:
                 error = repr(e)
             return Result.Fail(error)
 
-    def delete_from_s3(self, s3_key):
+    def delete_from_s3(self, bucket_name, s3_key):
         try:
-            self.resource.Object(self.bucket_name, s3_key).delete()
+            self.resource.Object(bucket_name, s3_key).delete()
             return Result.Ok()
         except ClientError as e:
             return Result.Fail(repr(e))
 
-    def rename_s3_object(self, old_key, new_key):
+    def rename_s3_object(self, bucket_name, old_key, new_key):
         try:
-            self.resource.Object(self.bucket_name, new_key).copy_from(
-                CopySource=f"{self.bucket_name}/{old_key}"
+            self.resource.Object(bucket_name, new_key).copy_from(
+                CopySource=f"{bucket_name}/{old_key}"
             )
-            self.resource.Object(self.bucket_name, old_key).delete()
+            self.resource.Object(bucket_name, old_key).delete()
             return Result.Ok()
         except ClientError as e:
             return Result.Fail(repr(e))

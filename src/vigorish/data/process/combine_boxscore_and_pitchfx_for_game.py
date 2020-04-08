@@ -7,7 +7,6 @@ from vigorish.constants import (
     TEAM_ID_DICT,
     PPB_PITCH_LOG_DICT,
     PITCH_TYPE_DICT,
-    PlayByPlayEventType,
 )
 from vigorish.config.database import Player, GameScrapeStatus
 from vigorish.scrape.mlb_player_info.scrape_mlb_player_info import scrape_mlb_player_info
@@ -20,7 +19,7 @@ def combine_boxscore_and_pitchfx_data_for_game(session, scraped_data, bbref_game
     if result.failure:
         return result
     (boxscore, player_id_dict, grouped_event_dict) = result.value
-    result = get_all_pfx_data_for_game(session, bbref_game_id)
+    result = get_all_pfx_data_for_game(session, scraped_data, bbref_game_id)
     if result.failure:
         return result
     (pitchfx_logs_for_game, all_pfx_data_for_game) = result.value
@@ -178,7 +177,7 @@ def get_brooks_team_id(br_team_id):
     return br_team_id
 
 
-def get_all_pfx_data_for_game(session, bbref_game_id):
+def get_all_pfx_data_for_game(session, scraped_data, bbref_game_id):
     result = scraped_data.get_all_pitchfx_logs_for_game(bbref_game_id)
     if result.failure:
         return result

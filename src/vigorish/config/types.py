@@ -1,12 +1,12 @@
 """Functions that enable reading/writing the config file."""
 from __future__ import annotations
+from typing import Dict
 
 import errno
 import json
 import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from datetime import date
 from pathlib import Path
 from typing import List, Mapping, Optional, Union, Tuple, TypeVar
 
@@ -16,13 +16,11 @@ from vigorish.enums import (
     HtmlStorageOption,
     JsonStorageOption,
     ScrapeCondition,
-    ScrapeTool,
     StatusReport,
 )
 from vigorish.util.list_helpers import report_dict, dict_to_param_list
 from vigorish.util.result import Result
-from vigorish.util.numeric_functions import validate_year_value
-from vigorish.util.string_helpers import wrap_text
+from vigorish.util.numeric_helpers import validate_year_value
 from vigorish.util.sys_helpers import validate_folder_path
 
 
@@ -34,9 +32,7 @@ NUMERIC_JSON_SETTING = Mapping[str, NUMERIC_JSON_VALUE]
 JSON_CONFIG_VALUE = Union[BASE_JSON_SETTING, NUMERIC_JSON_SETTING]
 JSON_CONFIG_SETTING = Mapping[str, JSON_CONFIG_VALUE]
 NUMERIC_PROMPT_VALUE = Tuple[bool, bool, int, int, int]
-ENUM_PY_SETTING = Union[
-    None, ScrapeCondition, HtmlStorageOption, JsonStorageOption, ScrapeTool, StatusReport
-]
+ENUM_PY_SETTING = Union[None, ScrapeCondition, HtmlStorageOption, JsonStorageOption, StatusReport]
 TConfigSetting = TypeVar("TConfigSetting", bound="ConfigSetting")
 
 
@@ -116,6 +112,16 @@ class UrlScrapeDelaySettings:
     def delay_random_max_ms(self) -> int:
         return self.delay_random_max * 1000 if self.delay_random_max else 0
 
+    @property
+    def is_valid(self) -> bool:
+        if not self.delay_is_required:
+            return False
+        if not self.delay_is_random and self.delay_uniform < 3:
+            return False
+        if self.delay_is_random and self.delay_random_min < 3:
+            return False
+        return True
+
     def to_dict(self) -> NUMERIC_OPTIONS_JSON_VALUE:
         return {
             "URL_SCRAPE_DELAY_IS_REQUIRED": self.delay_is_required,
@@ -164,7 +170,10 @@ class BatchJobSettings:
             return "Batched scraping is not enabled"
         if not self.batch_size_is_random:
             return f"Batch size is uniform ({self.batch_size_uniform} URLs)"
-        return f"Batch size is random ({self.batch_size_random_min}-{self.batch_size_random_max} URLs)"
+        return (
+            "Batch size is random "
+            f"({self.batch_size_random_min}-{self.batch_size_random_max} URLs)"
+        )
 
     def to_dict(self) -> NUMERIC_OPTIONS_JSON_VALUE:
         return {
@@ -359,8 +368,6 @@ class EnumConfigSetting(ConfigSetting):
             return [member for member in HtmlStorageOption]
         if enum_name == "JsonStorageOption":
             return [member for member in JsonStorageOption]
-        if enum_name == "ScrapeTool":
-            return [member for member in ScrapeTool]
         if enum_name == "StatusReport":
             return [member for member in StatusReport]
         return []
@@ -377,8 +384,6 @@ class EnumConfigSetting(ConfigSetting):
             return HtmlStorageOption[value]
         if enum_name == "JsonStorageOption":
             return JsonStorageOption[value]
-        if enum_name == "ScrapeTool":
-            return ScrapeTool[value]
         if enum_name == "StatusReport":
             return StatusReport[value]
         return None
@@ -420,15 +425,6 @@ class ConfigFile:
             name: self.__config_factory(name, config) for name, config in self.config_json.items()
         }
 
-    @property
-    def all_settings_are_valid(self) -> Result:
-        html_storage = self.all_settings.get("HTML_STORAGE")
-        html_local_folder = self.all_settings.get("HTML_LOCAL_FOLDER_PATH")
-        html_s3_folder = self.all_settings.get("HTML_S3_FOLDER_PATH")
-        json_storage = self.all_settings.get("JSON_STORAGE")
-        json_local_folder = self.all_settings.get("JSON_LOCAL_FOLDER_PATH")
-        json_s3_folder = self.all_settings.get("JSON_S3_FOLDER_PATH")
-
     def get_current_setting(self, setting_name: str, data_set: DataSet) -> PY_SETTING:
         config_dict = self.config_json.get(setting_name)
         config = self.__config_factory(setting_name, config_dict) if config_dict else None
@@ -450,17 +446,17 @@ class ConfigFile:
                 config_dict[data_set.name] = new_value.name
                 self.__reset_other_data_sets_enum_str(config_dict, data_set)
             if config_dict["CONFIG_TYPE"] == "Numeric":
-                config_dict[data_set.name] = self.__get_object(setting_name, new_value)
+                result = self.__get_object(setting_name, new_value)
+                if result.failure:
+                    return result
+                config_dict[data_set.name] = result.value
                 self.__reset_other_data_sets_numeric(config_dict, data_set)
         return self.__write_config_file()
 
-    def get_nodejs_script_params(
-        self, data_set: DataSet, url_set_filepath: Path
-    ) -> NUMERIC_OPTIONS_JSON_VALUE:
+    def get_all_url_scrape_params(self, data_set: DataSet) -> Dict[str, int]:
         url_delay_settings = self.get_current_setting("URL_SCRAPE_DELAY", data_set)
         batch_job_settings = self.get_current_setting("BATCH_JOB_SETTINGS", data_set)
         batch_delay_settings = self.get_current_setting("BATCH_SCRAPE_DELAY", data_set)
-        s3_bucket = self.get_current_setting("S3_BUCKET", data_set)
         script_params = {}
         if url_delay_settings and batch_job_settings and batch_delay_settings:
             script_params = self.__get_nodejs_script_params_from_objects(
@@ -468,9 +464,40 @@ class ConfigFile:
             )
         else:
             script_params = self.__get_default_nodejs_script_params()
+        return script_params
+
+    def get_nodejs_script_params(
+        self, data_set: DataSet, url_set_filepath: Path
+    ) -> NUMERIC_OPTIONS_JSON_VALUE:
+        script_params = self.get_all_url_scrape_params(data_set)
         script_params["urlSetFilepath"] = url_set_filepath.resolve()
-        script_params["s3Bucket"] = s3_bucket
         return dict_to_param_list(script_params)
+
+    def check_url_delay_settings(self, data_sets) -> Result:
+        url_delay_settings = [
+            self.get_current_setting("URL_SCRAPE_DELAY", data_set) for data_set in data_sets
+        ]
+        if all(url_delay.is_valid for url_delay in url_delay_settings):
+            return Result.Ok()
+        error = "URL delay cannot be disabled and must be at least 3 seconds"
+        return Result.Fail(error)
+
+    def s3_bucket_required(self, data_sets) -> bool:
+        html_storage_settings = [
+            self.get_current_setting("HTML_STORAGE", data_set) for data_set in data_sets
+        ]
+        json_storage_settings = [
+            self.get_current_setting("JSON_STORAGE", data_set) for data_set in data_sets
+        ]
+        html_local_storage = all(
+            html_storage == HtmlStorageOption.LOCAL_FOLDER
+            for html_storage in html_storage_settings
+        )
+        json_local_storage = all(
+            json_storage == JsonStorageOption.LOCAL_FOLDER
+            for json_storage in json_storage_settings
+        )
+        return not html_local_storage or not json_local_storage
 
     def __read_config_file(self) -> None:
         if not self.config_file_path.exists():
@@ -534,12 +561,23 @@ class ConfigFile:
         setting = self.config_json.get(setting_name)
         class_name = setting.get("CLASS_NAME")
         if class_name == "UrlScrapeDelaySettings":
-            return UrlScrapeDelaySettings(*new_value).to_dict()
+            result = self.__validate_new_url_delay_setting(new_value)
+            if result.failure:
+                return result
+            return Result.Ok(UrlScrapeDelaySettings(*new_value).to_dict())
         if class_name == "BatchJobSettings":
-            return BatchJobSettings(*new_value).to_dict()
+            return Result.Ok(BatchJobSettings(*new_value).to_dict())
         if class_name == "BatchScrapeDelaySettings":
-            return BatchScrapeDelaySettings(*new_value).to_dict()
+            return Result.Ok(BatchScrapeDelaySettings(*new_value).to_dict())
         return None
+
+    def __validate_new_url_delay_setting(self, new_value):
+        is_enabled, is_random, delay_uniform, delay_min, delay_max = new_value
+        if not is_enabled:
+            return Result.Fail("URL delay cannot be disabled!")
+        if not is_random and delay_uniform < 3 or is_random and delay_min < 3:
+            return Result.Fail("URL delay min value must be greater than 2 seconds!")
+        return Result.Ok()
 
     def __get_null_object(self, class_name: str) -> Union[None, Mapping[str, None]]:
         null_data = (None, None, None, None, None)

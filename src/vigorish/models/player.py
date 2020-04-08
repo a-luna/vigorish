@@ -3,8 +3,6 @@ from sqlalchemy import Column, Boolean, Integer, String, DateTime
 from sqlalchemy.orm import relationship, backref
 
 from vigorish.config.database import Base
-from vigorish.models.game_event import GameEvent
-from vigorish.models.player_id import PlayerId
 from vigorish.util.list_helpers import display_dict
 
 

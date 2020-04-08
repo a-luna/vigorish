@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Any
 
 from vigorish.constants import PPB_PITCH_LOG_DICT
 from vigorish.enums import PlayByPlayEvent

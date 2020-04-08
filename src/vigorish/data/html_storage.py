@@ -1,9 +1,5 @@
 """Functions for reading and writing files."""
-from pathlib import Path
-
 from vigorish.enums import DataSet, DocFormat, LocalFileTask, S3FileTask
-from vigorish.data.file_helper import FileHelper
-from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id, validate_pitch_app_id
 
@@ -15,7 +11,72 @@ class HtmlStorage:
         self.config = config
         self.file_helper = file_helper
 
-    def write_html_brooks_games_for_date_local_file(self, game_date, html):
+    def save_html(self, data_set, url_id, html):
+        if self.html_stored_local_folder(data_set):
+            result = self.save_html_local(data_set, url_id, html)
+            if result.failure:
+                return result
+        if self.html_stored_s3(data_set):
+            result = self.save_html_s3(data_set, url_id, html)
+            if result.failure:
+                return result
+        return Result.Ok()
+
+    def html_stored_local_folder(self, data_set):
+        return self.file_helper.check_file_stored_local(DocFormat.HTML, data_set)
+
+    def html_stored_s3(self, data_set):
+        return self.file_helper.check_file_stored_s3(DocFormat.HTML, data_set)
+
+    def save_html_local(self, data_set, url_id, html):
+        save_html_local_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.save_html_brooks_games_for_date_local_file,
+            DataSet.BROOKS_PITCH_LOGS: self.save_html_brooks_pitch_log_local_file,
+            DataSet.BROOKS_PITCHFX: self.save_html_brooks_pitchfx_local_file,
+            DataSet.BBREF_GAMES_FOR_DATE: self.save_html_bbref_games_for_date_local_file,
+            DataSet.BBREF_BOXSCORES: self.save_html_bbref_boxscore_local_file,
+        }
+        return save_html_local_dict[data_set](url_id, html)
+
+    def save_html_s3(self, data_set, url_id, html):
+        save_html_s3_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.upload_html_brooks_games_for_date,
+            DataSet.BROOKS_PITCH_LOGS: self.upload_html_brooks_pitch_log,
+            DataSet.BROOKS_PITCHFX: self.upload_html_brooks_pitchfx,
+            DataSet.BBREF_GAMES_FOR_DATE: self.upload_html_bbref_games_for_date,
+            DataSet.BBREF_BOXSCORES: self.upload_html_bbref_boxscore,
+        }
+        return save_html_s3_dict[data_set](url_id, html)
+
+    def get_html(self, data_set, url_id):
+        result = self.get_html_local(data_set, url_id)
+        if result.failure:
+            result = self.get_html_s3(data_set, url_id)
+            if result.failure:
+                return None
+        return result.value
+
+    def get_html_local(self, data_set, url_id):
+        get_html_local_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.get_html_brooks_games_for_date_local_file,
+            DataSet.BROOKS_PITCH_LOGS: self.get_html_brooks_pitch_log_local_file,
+            DataSet.BROOKS_PITCHFX: self.get_html_brooks_pitchfx_local_file,
+            DataSet.BBREF_GAMES_FOR_DATE: self.get_html_bbref_games_for_date_local_file,
+            DataSet.BBREF_BOXSCORES: self.get_html_bbref_boxscore_local_file,
+        }
+        return get_html_local_dict[data_set](url_id)
+
+    def get_html_s3(self, data_set, url_id):
+        get_html_s3_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.download_html_brooks_games_for_date,
+            DataSet.BROOKS_PITCH_LOGS: self.download_html_brooks_pitch_log_page,
+            DataSet.BROOKS_PITCHFX: self.download_html_brooks_pitchfx_log,
+            DataSet.BBREF_GAMES_FOR_DATE: self.download_html_bbref_games_for_date,
+            DataSet.BBREF_BOXSCORES: self.download_html_bbref_boxscore,
+        }
+        return get_html_s3_dict[data_set](url_id)
+
+    def save_html_brooks_games_for_date_local_file(self, game_date, html):
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
@@ -24,7 +85,7 @@ class HtmlStorage:
             scraped_data=html,
         )
 
-    def write_html_brooks_pitch_log_local_file(self, pitch_app_id, html):
+    def save_html_brooks_pitch_log_local_file(self, pitch_app_id, html):
         result = validate_pitch_app_id(pitch_app_id)
         if result.failure:
             return result
@@ -38,7 +99,7 @@ class HtmlStorage:
             pitch_app_id=pitch_app_id,
         )
 
-    def write_html_brooks_pitchfx_local_file(self, pitch_app_id, html):
+    def save_html_brooks_pitchfx_local_file(self, pitch_app_id, html):
         result = validate_pitch_app_id(pitch_app_id)
         if result.failure:
             return result
@@ -52,7 +113,7 @@ class HtmlStorage:
             pitch_app_id=pitch_app_id,
         )
 
-    def write_html_bbref_games_for_date_local_file(self, game_date, html):
+    def save_html_bbref_games_for_date_local_file(self, game_date, html):
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
@@ -61,7 +122,7 @@ class HtmlStorage:
             scraped_data=html,
         )
 
-    def write_html_bbref_boxscore_local_file(self, bbref_game_id, html):
+    def save_html_bbref_boxscore_local_file(self, bbref_game_id, html):
         result = validate_bbref_game_id(bbref_game_id)
         if result.failure:
             return result
@@ -131,7 +192,7 @@ class HtmlStorage:
         )
 
     def upload_html_brooks_games_for_date(self, game_date, html):
-        result = write_html_brooks_games_for_date(game_date, html)
+        result = self.save_html_local(DataSet.BROOKS_GAMES_FOR_DATE, game_date, html)
         if result.failure:
             return result
         return self.file_helper.perform_s3_task(
@@ -142,7 +203,7 @@ class HtmlStorage:
         )
 
     def upload_html_brooks_pitch_log(self, pitch_app_id, html):
-        result = write_html_brooks_pitch_log(pitch_app_id, html)
+        result = self.save_html_local(DataSet.BROOKS_PITCH_LOGS, pitch_app_id, html)
         if result.failure:
             return result
         result = validate_pitch_app_id(pitch_app_id)
@@ -158,7 +219,7 @@ class HtmlStorage:
         )
 
     def upload_html_brooks_pitchfx(self, pitch_app_id, html):
-        result = write_html_brooks_pitchfx(pitch_app_id, html)
+        result = self.save_html_local(DataSet.BROOKS_PITCHFX, pitch_app_id, html)
         if result.failure:
             return result
         result = validate_pitch_app_id(pitch_app_id)
@@ -174,7 +235,7 @@ class HtmlStorage:
         )
 
     def upload_html_bbref_games_for_date(self, game_date, html):
-        result = write_html_bbref_games_for_date(game_date, html)
+        result = self.save_html_local(DataSet.BBREF_GAMES_FOR_DATE, game_date, html)
         if result.failure:
             return result
         return self.file_helper.perform_s3_task(
@@ -185,10 +246,9 @@ class HtmlStorage:
         )
 
     def upload_html_bbref_boxscore(self, bbref_game_id, html):
-        result = write_html_bbref_boxscore(bbref_game_id, html)
+        result = self.save_html_local(DataSet.BBREF_BOXSCORES, bbref_game_id, html)
         if result.failure:
             return result
-        filepath = result.value
         result = validate_bbref_game_id(bbref_game_id)
         if result.failure:
             return result

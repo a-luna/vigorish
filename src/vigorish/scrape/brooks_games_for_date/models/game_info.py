@@ -17,8 +17,8 @@ class BrooksGameInfo:
     bbref_game_id = ""
     away_team_id_bb = ""
     home_team_id_bb = ""
-    game_number_this_day = ""
-    pitcher_appearance_count = ""
+    game_number_this_day = 0
+    pitcher_appearance_count = 0
     pitcher_appearance_dict = {}
 
     @property
@@ -32,7 +32,7 @@ class BrooksGameInfo:
     @property
     def game_start_time(self):
         hour_adjusted = self.game_time_hour
-        if not self.game_time_hour in [0, 11, 12]:
+        if self.game_time_hour not in [0, 11, 12]:
             hour_adjusted = self.game_time_hour + 12
         game_start_time = datetime(
             year=self.game_date.year,
@@ -58,7 +58,7 @@ class BrooksGameInfo:
             bbref_game_id=self.bbref_game_id,
             away_team_id_bb=self.away_team_id_bb,
             home_team_id_bb=self.home_team_id_bb,
-            game_number_this_day=int(self.game_number_this_day),
+            game_number_this_day=self.game_number_this_day,
             pitcher_appearance_count=int(self.pitcher_appearance_count),
             pitcher_appearance_dict=self.pitcher_appearance_dict,
         )

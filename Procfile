@@ -1,0 +1,1 @@
+worker: vig setup --yes

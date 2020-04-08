@@ -1,6 +1,7 @@
 import re
 from string import Template
 
+from lxml import html
 from w3lib.url import url_query_parameter
 
 from vigorish.constants import DEFENSE_POSITIONS, VENUE_TERMS
@@ -17,7 +18,7 @@ from vigorish.scrape.bbref_boxscores.models.pitch_stats import BBRefPitchStats
 from vigorish.scrape.bbref_boxscores.models.starting_lineup_slot import BBRefStartingLineupSlot
 from vigorish.scrape.bbref_boxscores.models.team_linescore_totals import BBRefTeamLinescoreTotals
 from vigorish.scrape.bbref_boxscores.models.umpire import BBRefUmpire
-from vigorish.util.numeric_functions import is_even
+from vigorish.util.numeric_helpers import is_even
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
 
@@ -66,7 +67,10 @@ _PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = (
     './tbody//tr[@class="pbp_summary_bottom"]//span[@class="half_inning_summary"]/text()'
 )
 _PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
-_T_PBP_IN_GAME_SUBSTITUTION_XPATH = './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]//td[@data-stat="inning_summary_3"]//div/text()'
+_T_PBP_IN_GAME_SUBSTITUTION_XPATH = (
+    './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]'
+    '//td[@data-stat="inning_summary_3"]//div/text()'
+)
 _T_PBP_MISC_EVENT_XPATH = (
     './tbody//tr[@data-row="${row}"]//td[@data-stat="inning_summary_3"]//text()'
 )
@@ -154,9 +158,10 @@ POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
 NUM_REGEX = re.compile(r"[1-9]{1}")
 
 
-def parse_bbref_boxscore(page_source, url):
+def parse_bbref_boxscore(page_content, url):
     """Parse boxscore data from the page source."""
-    (game_id, away_team_id, home_team_id) = _parse_game_and_team_ids(page_source, url)
+    page_content = html.fromstring(page_content, base_url=url)
+    (game_id, away_team_id, home_team_id) = _parse_game_and_team_ids(page_content, url)
 
     (
         away_team_bat_table,
@@ -164,10 +169,10 @@ def parse_bbref_boxscore(page_source, url):
         away_team_pitch_table,
         home_team_pitch_table,
         play_by_play_table,
-    ) = _parse_data_tables(page_source)
+    ) = _parse_data_tables(page_content)
 
     (away_team_data, home_team_data) = _parse_all_team_data(
-        page_source,
+        page_content,
         away_team_bat_table,
         home_team_bat_table,
         away_team_pitch_table,
@@ -180,11 +185,11 @@ def parse_bbref_boxscore(page_source, url):
         away_team_bat_table, home_team_bat_table, away_team_pitch_table, home_team_pitch_table,
     )
 
-    result = _parse_game_meta_info(page_source)
+    result = _parse_game_meta_info(page_content)
     if result.failure:
         return result
     game_meta_info = result.value
-    umpires = _parse_umpires(page_source)
+    umpires = _parse_umpires(page_content)
     if not umpires:
         error = "Failed to parse umpire info"
         return Result.Fail(error)
@@ -214,38 +219,38 @@ def parse_bbref_boxscore(page_source, url):
     return Result.Ok(boxscore)
 
 
-def _parse_game_and_team_ids(page_source, url):
+def _parse_game_and_team_ids(page_content, url):
     game_id = _parse_bbref_gameid_from_url(url)
     if not game_id:
         error = "Failed to parse game ID"
         return Result.Fail(error)
-    away_team_id = _parse_away_team_id(page_source)
+    away_team_id = _parse_away_team_id(page_content)
     if not away_team_id:
         error = "Failed to parse away team ID"
         return Result.Fail(error)
-    home_team_id = _parse_home_team_id(page_source)
+    home_team_id = _parse_home_team_id(page_content)
     if not home_team_id:
         error = "Failed to parse home team ID"
         return Result.Fail(error)
     return (game_id, away_team_id, home_team_id)
 
 
-def _parse_data_tables(page_source):
-    result = page_source.xpath(_BATTING_STATS_TABLE)
+def _parse_data_tables(page_content):
+    result = page_content.xpath(_BATTING_STATS_TABLE)
     if not result or len(result) != 2:
         error = "Failed to parse batting stats table"
         return Result.Fail(error)
     away_team_bat_table = result[0]
     home_team_bat_table = result[1]
 
-    result = page_source.xpath(_PITCHING_STATS_TABLE)
+    result = page_content.xpath(_PITCHING_STATS_TABLE)
     if not result or len(result) != 2:
         error = "Failed to parse pitching stats table"
         return Result.Fail(error)
     away_team_pitch_table = result[0]
     home_team_pitch_table = result[1]
 
-    result = page_source.xpath(_PLAY_BY_PLAY_TABLE)
+    result = page_content.xpath(_PLAY_BY_PLAY_TABLE)
     if not result:
         error = "Failed to parse play by play table"
         return Result.Fail(error)
@@ -265,16 +270,16 @@ def _parse_bbref_gameid_from_url(url):
     return matches[0] if matches else None
 
 
-def _parse_away_team_id(page_source):
-    name_urls = page_source.xpath(_TEAM_ID_XPATH)
+def _parse_away_team_id(page_content):
+    name_urls = page_content.xpath(_TEAM_ID_XPATH)
     if not name_urls:
         return None
     matches = re.findall(_TEAM_ID_PATTERN, name_urls[0])
     return matches[0] if matches else None
 
 
-def _parse_home_team_id(page_source):
-    name_urls = page_source.xpath(_TEAM_ID_XPATH)
+def _parse_home_team_id(page_content):
+    name_urls = page_content.xpath(_TEAM_ID_XPATH)
     if not name_urls:
         return None
     matches = re.findall(_TEAM_ID_PATTERN, name_urls[1])
@@ -282,7 +287,7 @@ def _parse_home_team_id(page_source):
 
 
 def _parse_all_team_data(
-    page_source,
+    page_content,
     away_team_bat_table,
     home_team_bat_table,
     away_team_pitch_table,
@@ -291,7 +296,7 @@ def _parse_all_team_data(
     home_team_id,
 ):
     result = _parse_team_data(
-        page_source,
+        page_content,
         team_batting_table=away_team_bat_table,
         team_pitching_table=away_team_pitch_table,
         team_id=away_team_id,
@@ -304,7 +309,7 @@ def _parse_all_team_data(
     away_team_data = BBRefBoxscoreTeamData(**away_team_dict)
 
     result = _parse_team_data(
-        page_source,
+        page_content,
         team_batting_table=home_team_bat_table,
         team_pitching_table=home_team_pitch_table,
         team_id=home_team_id,
@@ -320,19 +325,25 @@ def _parse_all_team_data(
 
 
 def _parse_team_data(
-    page_source, team_batting_table, team_pitching_table, team_id, opponent_id, is_home_team
+    page_content, team_batting_table, team_pitching_table, team_id, opponent_id, is_home_team
 ):
-    team_record = _parse_team_record(page_source, is_home_team)
+    team_record = _parse_team_record(page_content, is_home_team)
     if not team_record:
         error = f"Failed to parse team record (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
-    team_totals = _parse_linescore_totals_for_team(page_source, team_id, is_home_team)
+    team_totals = _parse_linescore_totals_for_team(page_content, team_id, is_home_team)
     if not team_totals:
-        error = f"Failed to parse team linescore totals (team_id={team_id}, is_home_team={is_home_team})"
+        error = (
+            "Failed to parse team linescore totals "
+            f"(team_id={team_id}, is_home_team={is_home_team})"
+        )
         return Result.Fail(error)
-    opponent_totals = _parse_linescore_totals_for_team(page_source, opponent_id, not is_home_team)
+    opponent_totals = _parse_linescore_totals_for_team(page_content, opponent_id, not is_home_team)
     if not opponent_totals:
-        error = f"Failed to parse opponent linescore totals (team_id={opponent_id}, is_home_team={not is_home_team})"
+        error = (
+            "Failed to parse opponent linescore totals "
+            f"(team_id={opponent_id}, is_home_team={not is_home_team})"
+        )
         return Result.Fail(error)
     batting_stats = _parse_batting_stats_for_team(team_batting_table, team_id, opponent_id)
     if not batting_stats:
@@ -342,21 +353,21 @@ def _parse_team_data(
     if not pitching_stats:
         error = "Failed to parse away team pitching stats"
         return Result.Fail(error)
-    result = _parse_starting_lineup_for_team(page_source, team_id, is_home_team)
+    result = _parse_starting_lineup_for_team(page_content, team_id, is_home_team)
     if result.failure:
         return result
     starting_lineup = result.value
 
     team_dict = dict(
         team_id_br=team_id,
-        total_wins_before_game=team_record[0],
-        total_losses_before_game=team_record[1],
-        total_runs_scored_by_team=team_totals.total_runs,
-        total_runs_scored_by_opponent=opponent_totals.total_runs,
-        total_hits_by_team=team_totals.total_hits,
-        total_hits_by_opponent=opponent_totals.total_hits,
-        total_errors_by_team=team_totals.total_errors,
-        total_errors_by_opponent=opponent_totals.total_errors,
+        total_wins_before_game=int(team_record[0]),
+        total_losses_before_game=int(team_record[1]),
+        total_runs_scored_by_team=int(team_totals.total_runs),
+        total_runs_scored_by_opponent=int(opponent_totals.total_runs),
+        total_hits_by_team=int(team_totals.total_hits),
+        total_hits_by_opponent=int(opponent_totals.total_hits),
+        total_errors_by_team=int(team_totals.total_errors),
+        total_errors_by_opponent=int(opponent_totals.total_errors),
         batting_stats=batting_stats,
         pitching_stats=pitching_stats,
         starting_lineup=starting_lineup,
@@ -364,12 +375,12 @@ def _parse_team_data(
     return Result.Ok(team_dict)
 
 
-def _parse_team_record(page_source, is_home_team):
+def _parse_team_record(page_content, is_home_team):
     if is_home_team:
         team_record_xpath = _HOME_TEAM_RECORD_XPATH
     else:
         team_record_xpath = _AWAY_TEAM_RECORD_XPATH
-    team_record_dirty = page_source.xpath(team_record_xpath)
+    team_record_dirty = page_content.xpath(team_record_xpath)
     if not team_record_dirty:
         return None
     team_record = team_record_dirty[0].split("-")
@@ -378,14 +389,14 @@ def _parse_team_record(page_source, is_home_team):
     return team_record
 
 
-def _parse_linescore_totals_for_team(page_source, team_id, is_home_team):
+def _parse_linescore_totals_for_team(page_content, team_id, is_home_team):
     if is_home_team:
         linescore_xpath = _LINESCORE_HOME_VALS_XPATH
     else:
         linescore_xpath = _LINESCORE_AWAY_VALS_XPATH
 
-    keys = page_source.xpath(_LINESCORE_KEYS_XPATH)
-    vals = page_source.xpath(linescore_xpath)
+    keys = page_content.xpath(_LINESCORE_KEYS_XPATH)
+    vals = page_content.xpath(linescore_xpath)
     if not keys or not vals:
         return None
     if len(keys) < 2 or len(vals) < 2:
@@ -485,16 +496,16 @@ def _get_pitch_stat_value(player_pitch_data_html, stat_name):
     return pitch_stat_value
 
 
-def _parse_starting_lineup_for_team(page_source, team_id, is_home_team):
+def _parse_starting_lineup_for_team(page_content, team_id, is_home_team):
     lineup = []
     if is_home_team:
-        bat_orders = page_source.xpath(_HOME_LINEUP_ORDER_XPATH)
-        player_links = page_source.xpath(_HOME_LINEUP_PLAYER_XPATH)
-        def_positions = page_source.xpath(_HOME_LINEUP_DEF_POS_XPATH)
+        bat_orders = page_content.xpath(_HOME_LINEUP_ORDER_XPATH)
+        player_links = page_content.xpath(_HOME_LINEUP_PLAYER_XPATH)
+        def_positions = page_content.xpath(_HOME_LINEUP_DEF_POS_XPATH)
     else:
-        bat_orders = page_source.xpath(_AWAY_LINEUP_ORDER_XPATH)
-        player_links = page_source.xpath(_AWAY_LINEUP_PLAYER_XPATH)
-        def_positions = page_source.xpath(_AWAY_LINEUP_DEF_POS_XPATH)
+        bat_orders = page_content.xpath(_AWAY_LINEUP_ORDER_XPATH)
+        player_links = page_content.xpath(_AWAY_LINEUP_PLAYER_XPATH)
+        def_positions = page_content.xpath(_AWAY_LINEUP_DEF_POS_XPATH)
     if not bat_orders or not player_links or not def_positions:
         error = "Failed to parse team lineup data (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
@@ -502,7 +513,10 @@ def _parse_starting_lineup_for_team(page_source, team_id, is_home_team):
         bat = BBRefStartingLineupSlot()
         split = player_links[i].split("/")
         if len(split) != 4:
-            error = "Player links in lineup table are not in the expected format (team_id={team_id}, is_home_team={is_home_team})"
+            error = (
+                "Player links in lineup table are not in the expected format "
+                f"(team_id={team_id}, is_home_team={is_home_team})"
+            )
             return Result.Fail(error)
         bat.player_id_br = split[3][:-6]
         bat.bat_order = bat_orders[i]
@@ -511,8 +525,8 @@ def _parse_starting_lineup_for_team(page_source, team_id, is_home_team):
     return Result.Ok(lineup)
 
 
-def _parse_game_meta_info(page_source):
-    scorebox_meta_strings = page_source.xpath(_SCOREBOX_META_XPATH)
+def _parse_game_meta_info(page_content):
+    scorebox_meta_strings = page_content.xpath(_SCOREBOX_META_XPATH)
     attendance_matches = _parse_attendance_from_strings(scorebox_meta_strings)
     if attendance_matches is not None:
         attendance = attendance_matches["match"]
@@ -555,7 +569,7 @@ def _parse_game_meta_info(page_source):
     day_night = split[0].strip()
     field_type = split[1].strip().title()
 
-    first_pitch_weather = page_source.xpath(_FIRST_PITCH_WEATHER_XPATH)
+    first_pitch_weather = page_content.xpath(_FIRST_PITCH_WEATHER_XPATH)
     if not first_pitch_weather:
         error = "Failed to parse first pitch weather info"
         return Result.Fail(error)
@@ -576,12 +590,12 @@ def _parse_game_meta_info(page_source):
         first_pitch_precipitation = split2[3].strip().strip(".")
 
     game_info = BBRefBoxscoreMeta(
-        attendance=attendance,
+        attendance=int(attendance),
         park_name=park_name,
         game_duration=game_duration,
         day_night=day_night,
         field_type=field_type,
-        first_pitch_temperature=first_pitch_temperature,
+        first_pitch_temperature=int(first_pitch_temperature),
         first_pitch_wind=first_pitch_wind,
         first_pitch_clouds=first_pitch_clouds,
         first_pitch_precipitation=first_pitch_precipitation,
@@ -637,8 +651,8 @@ def _parse_day_night_field_type_from_strings(strings):
     return None
 
 
-def _parse_umpires(page_source):
-    umpires = page_source.xpath(_UMPIRES_XPATH)[0]
+def _parse_umpires(page_content):
+    umpires = page_content.xpath(_UMPIRES_XPATH)[0]
     if umpires is None:
         return None
     split = umpires.split(",")

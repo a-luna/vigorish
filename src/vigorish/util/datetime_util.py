@@ -1,6 +1,6 @@
 """Helpful datetime converters and formatters."""
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 
 from dateutil import tz
 
@@ -13,7 +13,7 @@ def get_date_range(start, end, inc=timedelta(days=1)):
     if start > end:
         start_str = start.strftime(DATE_ONLY_2)
         end_str = end.strftime(DATE_ONLY_2)
-        raise ValueError(f"Start date ({start_str}) must be earlier than end date ({end_date})")
+        raise ValueError(f"Start date ({start_str}) must be earlier than end date ({end_str})")
 
     result = []
     current = start

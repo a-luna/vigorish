@@ -1,16 +1,25 @@
 """Enum definitions."""
 from enum import Enum, IntEnum, auto
 
+from aenum import IntFlag
+from aenum import auto as auto_flag
 
-class DataSet(IntEnum):
+
+class DataSet(IntFlag):
     """MLB data sets."""
 
-    BBREF_GAMES_FOR_DATE = 1
-    BROOKS_GAMES_FOR_DATE = 2
-    BBREF_BOXSCORES = 3
-    BROOKS_PITCH_LOGS = 4
-    BROOKS_PITCHFX = 5
-    ALL = 6
+    BBREF_GAMES_FOR_DATE = auto_flag()
+    BROOKS_GAMES_FOR_DATE = auto_flag()
+    BBREF_BOXSCORES = auto_flag()
+    BROOKS_PITCH_LOGS = auto_flag()
+    BROOKS_PITCHFX = auto_flag()
+    ALL = (
+        BBREF_GAMES_FOR_DATE
+        | BROOKS_GAMES_FOR_DATE
+        | BBREF_BOXSCORES
+        | BROOKS_PITCH_LOGS
+        | BROOKS_PITCHFX
+    )
 
     def __str__(self):
         return self.name
@@ -57,27 +66,6 @@ class JsonStorageOption(Enum):
     LOCAL_FOLDER = auto()
     S3_BUCKET = auto()
     BOTH = auto()
-
-    def __str__(self):
-        return self.name
-
-
-class ScrapeTool(Enum):
-    """Config setting for scrape tool: requests/selenium or nightmarejs."""
-
-    REQUESTS_SELENIUM = auto()
-    NIGHTMAREJS = auto()
-
-    def __str__(self):
-        return self.name
-
-
-class PythonScrapeTool(Enum):
-    """Internal setting that controls which Python scrape tool is used per data set."""
-
-    NONE = auto()
-    REQUESTS = auto()
-    SELENIUM = auto()
 
     def __str__(self):
         return self.name

@@ -1,12 +1,11 @@
 """Populate team table with initial data."""
-import os
 from pathlib import Path
 
 import pandas as pd
 from tqdm import tqdm
 
 from vigorish.models.team import Team
-from vigorish.util.numeric_functions import sanitize
+from vigorish.util.numeric_helpers import sanitize
 from vigorish.util.result import Result
 
 TEAM_CSV_FILE_PATH = Path(__file__).parent / "csv" / "Teams.csv"

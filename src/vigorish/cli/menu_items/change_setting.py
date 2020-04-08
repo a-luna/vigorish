@@ -2,9 +2,10 @@
 import subprocess
 
 from bullet import Bullet, Input, Numbers, SlidePrompt, colors
+from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import prompt_user_yes_no_cancel, prompt_user_yes_no
+from vigorish.cli.util import prompt_user_yes_no_cancel, prompt_user_yes_no, print_message
 from vigorish.config.types import ConfigFile
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import ConfigType, DataSet
@@ -53,13 +54,20 @@ class ChangeSetttingMenuItem(MenuItem):
         else:
             data_sets = [ds for ds in DataSet if ds != DataSet.ALL]
 
-        subprocess.run(["clear"])
-        user_selections = self.__get_new_setting(data_sets)
-        updated_settings = self.__get_updated_settings(user_selections)
-        for data_set, new_value in updated_settings:
-            result = self.config.change_setting(self.setting_name, data_set, new_value)
-            if result.failure:
-                return result
+        setting_changed = False
+        while not setting_changed:
+            subprocess.run(["clear"])
+            user_selections = self.__get_new_setting(data_sets)
+            updated_settings = self.__get_updated_settings(user_selections)
+            for data_set, new_value in updated_settings:
+                result = self.config.change_setting(self.setting_name, data_set, new_value)
+                if result.failure:
+                    if "URL delay" in result.error:
+                        print_message(result.error, fg="bright_red", bold=True)
+                        pause(message="Press any key to continue...")
+                        continue
+                    return result
+            setting_changed = True
         return Result.Ok(self.exit_menu)
 
     def __get_new_setting(self, data_sets):
@@ -104,21 +112,36 @@ class ChangeSetttingMenuItem(MenuItem):
         result = prompt_user_yes_no(prompt)
         is_random = result.value
         if is_random:
-            prompt_min = (
-                f"Enter the minimum value (in {self.setting_units}) for {self.setting_name_title} "
-                f"(Data Set = {data_set.name}): "
-            )
-            prompt_max = (
-                f"Enter the maximum value (in {self.setting_units}) for {self.setting_name_title} "
-                f"(Data Set = {data_set.name}): "
-            )
-            random_min_prompt = Numbers(prompt_min, word_color=colors.foreground["default"])
-            random_max_prompt = Numbers(prompt_max, word_color=colors.foreground["default"])
-            random_min = random_min_prompt.launch()
-            random_max = random_max_prompt.launch()
+            min_max_are_valid = False
+            while not min_max_are_valid:
+                subprocess.run(["clear"])
+                prompt_min = (
+                    f"Enter the minimum value (in {self.setting_units}) for "
+                    f"{self.setting_name_title} (Data Set = {data_set.name}): "
+                )
+                prompt_max = (
+                    f"Enter the maximum value (in {self.setting_units}) for "
+                    f"{self.setting_name_title} (Data Set = {data_set.name}): "
+                )
+                random_min_prompt = Numbers(prompt_min, word_color=colors.foreground["default"])
+                random_max_prompt = Numbers(prompt_max, word_color=colors.foreground["default"])
+                random_min = random_min_prompt.launch()
+                random_max = random_max_prompt.launch()
+                if random_max > random_min:
+                    min_max_are_valid = True
+                    continue
+                error = (
+                    f"Error: maximum value ({random_max}) must be greater than minimum "
+                    f"value ({random_min})"
+                )
+                print_message(error, fg="bright_red", bold=True)
+                pause(message="Press any key to continue...")
             return (prompt, (is_enabled, is_random, None, int(random_min), int(random_max)))
         else:
-            prompt = f"Enter the value (in {self.setting_units}) for {self.setting_name_title} (Data Set = {data_set.name}): "
+            prompt = (
+                f"Enter the value (in {self.setting_units}) for {self.setting_name_title} "
+                f"(Data Set = {data_set.name}): "
+            )
             new_value_prompt = Numbers(prompt, word_color=colors.foreground["default"])
             new_value = new_value_prompt.launch()
             return (prompt, (is_enabled, is_random, int(new_value), None, None))
@@ -130,8 +153,7 @@ class ChangeSetttingMenuItem(MenuItem):
 
     def __get_updated_settings_enum(self, prompt_results):
         updated_settings = []
-        for result in prompt_results:
-            prompt, selected_menu_item_text = result
+        for prompt, selected_menu_item_text in prompt_results:
             for data_set in DataSet:
                 if data_set.name in prompt:
                     new_value = self.enum_dict.get(selected_menu_item_text)
@@ -141,8 +163,7 @@ class ChangeSetttingMenuItem(MenuItem):
 
     def __get_updated_settings_str_num(self, prompt_results):
         updated_settings = []
-        for result in prompt_results:
-            prompt, new_value = result
+        for prompt, new_value in prompt_results:
             for data_set in DataSet:
                 if data_set.name in prompt:
                     updated_settings.append((data_set, new_value))

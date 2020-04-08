@@ -12,7 +12,7 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
 
 
-APP_FOLDER = Path(__file__).resolve().parent.parent.parent
+APP_FOLDER = Path(__file__).parent.parent.parent
 PEOPLE_CSV = APP_FOLDER / "setup/csv/People.csv"
 MLB_PLAYER_SEARCH_URL = "http://lookup-service-prod.mlb.com/json/named.search_player_all.bam"
 MLB_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"

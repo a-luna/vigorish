@@ -1,0 +1,11 @@
+src/vigorish/setup/csv/* linguist-vendored
+tests/html_storage/2018/bbref_boxscores/* linguist-vendored
+tests/html_storage/2018/bbref_games_for_date/* linguist-vendored
+tests/html_storage/2018/brooks_games_for_date/* linguist-vendored
+tests/html_storage/2018/brooks_pitch_logs/* linguist-vendored
+tests/html_storage/2018/brooks_pitchfx/* linguist-vendored
+tests/json_storage/2018/bbref_boxscores/* linguist-vendored
+tests/json_storage/2018/bbref_games_for_date/* linguist-vendored
+tests/json_storage/2018/brooks_games_for_date/* linguist-vendored
+tests/json_storage/2018/brooks_pitch_logs/* linguist-vendored
+tests/json_storage/2018/brooks_pitchfx/* linguist-vendored

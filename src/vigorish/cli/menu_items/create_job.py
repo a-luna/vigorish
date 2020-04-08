@@ -1,9 +1,7 @@
 """Menu item that allows the user to create a record of a new scrape job."""
 import subprocess
-from datetime import date
 
 from bullet import Check, Input, VerticalPrompt, colors
-from dateutil import parser
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
@@ -12,10 +10,9 @@ from vigorish.config.database import ScrapeJob, Season
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
 from vigorish.scrape.job_runner import JobRunner
-from vigorish.cli.util import get_data_set_display_name, DISPLAY_NAME_DICT
+from vigorish.cli.util import DISPLAY_NAME_DICT
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
-from vigorish.util.list_helpers import display_dict
 
 
 class CreateJobMenuItem(MenuItem):
@@ -117,9 +114,7 @@ class CreateJobMenuItem(MenuItem):
         result = Season.validate_date_range(self.db_session, start_date, end_date)
         if result.failure:
             print_message(
-                f"The dates you entered are invalid:\n{result.error}\n",
-                fg="bright_red",
-                bold=True,
+                f"The dates you entered are invalid:\n{result.error}", fg="bright_red", bold=True,
             )
             pause(message="Press any key to continue...")
             return Result.Fail("")
@@ -157,11 +152,11 @@ class CreateJobMenuItem(MenuItem):
             "name": job_name,
             "season_id": season.id,
         }
+        ds_int = 0
         for ds in DataSet:
             if ds == DataSet.ALL:
                 continue
             if ds in selected_data_sets:
-                scrape_job_dict[ds.name.lower()] = True
-            else:
-                scrape_job_dict[ds.name.lower()] = False
+                ds_int += int(ds)
+        scrape_job_dict["data_sets_int"] = ds_int
         return scrape_job_dict

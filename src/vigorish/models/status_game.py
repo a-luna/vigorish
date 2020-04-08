@@ -1,24 +1,11 @@
 from datetime import datetime
 from dateutil import tz
 
-from sqlalchemy import (
-    Index,
-    Column,
-    Boolean,
-    Integer,
-    String,
-    DateTime,
-    ForeignKey,
-    select,
-    func,
-    join,
-)
-from sqlalchemy import Column, Boolean, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-from vigorish.models.status_pitch_appearance import PitchAppearanceScrapeStatus
 from vigorish.util.dt_format_strings import DT_STR_FORMAT, DATE_ONLY_TABLE_ID
 from vigorish.util.list_helpers import display_dict
 
@@ -192,13 +179,20 @@ class GameScrapeStatus(Base):
             f"Date-Time.............................: {self.game_date_time_str}\n"
             f"Scraped BBRef Boxscore................: {scraped_bbref_boxscore}\n"
             f"Scraped Brooks Pitch Logs.............: {scraped_brooks_pitch_logs}\n"
-            f"PitchFx Logs Scraped..................: {scraped_all_pitchfx_logs} {self.total_pitchfx_logs_scraped}/{self.pitch_app_count_pitchfx} ({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
-            f"Pitch App Count (BBRef/Brooks/PFx)....: {self.pitch_app_count_bbref}/{self.pitch_app_count_brooks}/{self.pitch_app_count_pitchfx}\n"
-            f"Pitch App Count (PFx/data/no data)....: {self.pitch_app_count_pitchfx}/{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
-            f"Pitch Count (BBRef/Brooks/PFx)........: {self.total_pitch_count_bbref}/{self.total_pitch_count_brooks}/{self.total_pitch_count_pitchfx}\n"
+            f"PitchFx Logs Scraped..................: {scraped_all_pitchfx_logs} "
+            f"{self.total_pitchfx_logs_scraped}/{self.pitch_app_count_pitchfx} "
+            f"({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
+            f"Pitch App Count (BBRef/Brooks/PFx)....: {self.pitch_app_count_bbref}/"
+            f"{self.pitch_app_count_brooks}/{self.pitch_app_count_pitchfx}\n"
+            f"Pitch App Count (PFx/data/no data)....: {self.pitch_app_count_pitchfx}/"
+            f"{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
+            f"Pitch Count (BBRef/Brooks/PFx)........: {self.total_pitch_count_bbref}/"
+            f"{self.total_pitch_count_brooks}/{self.total_pitch_count_pitchfx}\n"
             f"PitchFx-BBRef Audit Performed.........: {pitchfx_bbref_audit_performed}\n"
             f"All Missing PitchFx Is Valid..........: {all_missing_pitchfx_is_valid}\n"
-            f"Pitch Count Audited (BBRef/PFx/Dupe)..: {self.total_pitch_count_bbref_audited}/{self.total_pitch_count_pitchfx_audited}/{self.total_duplicate_pitchfx_removed_count}\n"
+            f"Pitch Count Audited (BBRef/PFx/Dupe)..: {self.total_pitch_count_bbref_audited}/"
+            f"{self.total_pitch_count_pitchfx_audited}/"
+            f"{self.total_duplicate_pitchfx_removed_count}\n"
         )
 
     @classmethod
@@ -278,5 +272,5 @@ class GameScrapeStatus(Base):
             for game in session.query(cls).all()
             if game.scraped_bbref_boxscore
             and game.scraped_all_pitchfx_logs
-            and not pitch_data_was_audited
+            and not game.pitch_data_was_audited
         ]

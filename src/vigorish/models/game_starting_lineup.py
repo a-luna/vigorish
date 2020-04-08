@@ -5,7 +5,6 @@ from sqlalchemy.types import Enum
 
 from vigorish.enums import DefensePosition
 from vigorish.config.database import Base
-from vigorish.models.game_substitution import GameSubstitution
 from vigorish.util.list_helpers import display_dict
 
 
@@ -30,7 +29,13 @@ class GameStartingLineupSlot(Base):
     substitutions = relationship("GameSubstitution", backref="starting_lineup")
 
     def __repr__(self):
-        return f"<GameStartingLineupSlot game_id={self.bbref_game_id}, player_id={self.player_id_br}, bat_order={self.bat_order}, def_position={self.def_position}>"
+        return (
+            "<GameStartingLineupSlot "
+            f"game_id={self.bbref_game_id}, "
+            f"player_id={self.player_id_br}, "
+            f"bat_order={self.bat_order}, "
+            f"def_position={self.def_position}>"
+        )
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

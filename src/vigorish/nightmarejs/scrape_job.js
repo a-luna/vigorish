@@ -8,7 +8,6 @@ main(args).catch(console.error)
 
 async function main(args) {
   const urlSetFilepath = args.urlSetFilepath
-  const s3Bucket = args.s3Bucket
   const timeoutParams = getTimeoutParams(args)
   const batchJobParams = getBatchJobParams(args)
   const nightmare = Nightmare({
@@ -20,16 +19,13 @@ async function main(args) {
   const xvfb = new Xvfb()
   xvfb.startSync()
 
-  const [err, title] = await poss(
-    run(nightmare, urlSetFilepath, timeoutParams, batchJobParams, s3Bucket)
+  const [success, err] = await poss(
+    run(nightmare, urlSetFilepath, timeoutParams, batchJobParams)
   )
-  if (err) {
-    await nightmare.end()
-    xvfb.stopSync()
+  xvfb.stopSync()
+  if (!success) {
     throw err
   }
-  await nightmare.end()
-  xvfb.stopSync()
   process.exit(0)
 }
 
@@ -38,23 +34,21 @@ function getTimeoutParams(args) {
   if ("urlTimeoutRequired" in args) {
     timeoutParams.urlTimeoutRequired = true
     if ("urlTimeoutMinMs" in args && "urlTimeoutMaxMs" in args) {
-      timeoutParams.urlTimeoutIsRandom = true
       timeoutParams.urlTimeoutMinMs = args.urlTimeoutMinMs
       timeoutParams.urlTimeoutMaxMs = args.urlTimeoutMaxMs
     } else if ("urlTimeoutUniformMs" in args) {
-      timeoutParams.urlTimeoutIsRandom = false
-      timeoutParams.urlTimeoutUniformMs = args.urlTimeoutUniformMs
+      timeoutParams.urlTimeoutMinMs = args.urlTimeoutUniformMs
+      timeoutParams.urlTimeoutMaxMs = args.urlTimeoutUniformMs
     }
   }
   if ("batchTimeoutRequired" in args) {
     timeoutParams.batchTimeoutRequired = true
     if ("batchTimeoutMinMs" in args && "batchTimeoutMaxMs" in args) {
-      timeoutParams.batchTimeoutIsRandom = true
       timeoutParams.batchTimeoutMinMs = args.batchTimeoutMinMs
       timeoutParams.batchTimeoutMaxMs = args.batchTimeoutMaxMs
     } else if ("batchTimeoutUniformMs" in args) {
-      timeoutParams.batchTimeoutIsRandom = false
-      timeoutParams.batchTimeoutUniformMs = args.batchTimeoutUniformMs
+      timeoutParams.batchTimeoutMinMs = args.batchTimeoutUniformMs
+      timeoutParams.batchTimeoutMaxMs = args.batchTimeoutUniformMs
     }
   }
   return timeoutParams
@@ -76,30 +70,20 @@ function getBatchJobParams(args) {
   return batchJobParams
 }
 
-// run nightmare
-//
-// put all your nightmare commands in here
-async function run(nightmare, urlSetFilepath, timeoutParams, batchJobParams, s3Bucket) {
+async function run(nightmare, urlSetFilepath, timeoutParams, batchJobParams) {
   if (batchJobParams.batchScrapingEnabled) {
-    await executeBatchJob(
-      nightmare,
-      urlSetFilepath,
-      batchJobParams,
-      timeoutParams,
-      s3Bucket
-    )
+    await executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeoutParams)
   } else {
-    await scrapeUrls(nightmare, urlSetFilepath, timeoutParams, s3Bucket)
+    await scrapeUrls(nightmare, urlSetFilepath, timeoutParams)
   }
-  return
+  await nightmare.end()
 }
 
-// try/catch helper
 async function poss(promise) {
   try {
-    const result = await promise
-    return [null, result]
+    await promise
+    return [true, null]
   } catch (err) {
-    return [err, null]
+    return [false, err]
   }
 }

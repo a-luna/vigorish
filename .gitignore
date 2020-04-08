@@ -11,7 +11,11 @@ node_modules
 .mypy_cache
 json_storage
 html_storage
-src/vigorish/nightmarejs/inbox
+!tests/html_storage
+!tests/json_storage
+src/vigorish/nightmarejs/node_modules
+src/vigorish/nightmarejs/inbox/*.json
+src/vigorish/nightmarejs/outbox/**/*.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

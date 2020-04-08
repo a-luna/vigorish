@@ -17,7 +17,7 @@ class MenuItem(ABC):
 
     @property
     def menu_item_text(self) -> str:
-        return f"{self.menu_item_emoji}  {self._menu_item_text}"
+        return f"{self.menu_item_emoji} {self._menu_item_text}"
 
     @menu_item_text.setter
     def menu_item_text(self, menu_item_text: str) -> None:

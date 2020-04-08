@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from lxml import html
 from urllib.parse import urljoin
 
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
@@ -18,12 +19,13 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
 )
 
 
-def parse_bbref_dashboard_page(page_source, game_date, url):
+def parse_bbref_dashboard_page(page_content, game_date, url):
+    page_content = html.fromstring(page_content, base_url=url)
     games_for_date = BBRefGamesForDate()
     games_for_date.game_date = game_date
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
-    boxscore_urls = page_source.xpath(XPATH_BOXSCORE_URL_MAIN_CONTENT)
+    boxscore_urls = page_content.xpath(XPATH_BOXSCORE_URL_MAIN_CONTENT)
     if not boxscore_urls:
         games_for_date.game_count = 0
         return Result.Ok(games_for_date)
@@ -52,8 +54,8 @@ def verify_boxscore_date(boxscore_urls, game_date, url):
     if not game_date_id == game_date.date():
         scrape_date_str = game_date.strftime(DATE_ONLY_2)
         error = (
-            f"BBref daily dashboard URL for {scrape_date_str} redirected to game results "
-            f"for the previous day. Please try again when boxscores for {scrape_date_str} are available."
+            f"BBref daily dashboard URL for {scrape_date_str} redirected to game results for the "
+            f"previous day. Please try again when boxscores for {scrape_date_str} are available."
         )
         return Result.Fail(error)
     return Result.Ok()

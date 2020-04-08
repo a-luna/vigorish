@@ -2,8 +2,7 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from vigorish.scrape.bbref_boxscores.models.boxscore_game_meta import BBRefBoxscoreMeta
-from vigorish.scrape.bbref_boxscores.models.boxscore_team_data import BBRefBoxscoreTeamData
+from vigorish.constants import TEAM_ID_DICT
 from vigorish.util.list_helpers import as_dict_list
 from vigorish.util.string_helpers import get_brooks_team_id, validate_bbref_game_id
 
@@ -34,7 +33,10 @@ class BBRefBoxscore:
         game_number = result.value["game_number"]
         away_team_id = get_brooks_team_id(self.away_team_data.team_id_br).lower()
         home_team_id = get_brooks_team_id(self.home_team_data.team_id_br).lower()
-        return f"gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_{away_team_id}mlb_{home_team_id}mlb_{game_number}"
+        return (
+            f"gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_"
+            f"{away_team_id}mlb_{home_team_id}mlb_{game_number}"
+        )
 
     @property
     def game_id_dict(self):

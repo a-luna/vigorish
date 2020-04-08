@@ -3,11 +3,9 @@ import subprocess
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.change_setting import ChangeSetttingMenuItem
-from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no
 from vigorish.config.types import ConfigFile
 from vigorish.constants import EMOJI_DICT
-from vigorish.enums import ConfigType
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
@@ -26,9 +24,9 @@ class CurrentSettingMenuItem(MenuItem):
     def launch(self) -> Result:
         subprocess.run(["clear"])
         setting_name = f"Setting: {self.setting_name_title} (Type: {self.data_type.name})"
-        print_message(wrap_text(f"{setting_name}\n", max_len=70), fg="bright_magenta", bold=True)
-        print_message(wrap_text(f"{self.setting.description}\n", max_len=70))
-        print_message(f"{self.current_settings}\n", fg="bright_yellow", bold=True)
+        print_message(wrap_text(f"{setting_name}", max_len=70), fg="bright_magenta", bold=True)
+        print_message(wrap_text(f"{self.setting.description}", max_len=70))
+        print_message(f"{self.current_settings}", fg="bright_yellow", bold=True)
         result = prompt_user_yes_no(prompt="Change current setting?")
         change_setting = result.value
         if change_setting:

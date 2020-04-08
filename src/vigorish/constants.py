@@ -91,31 +91,31 @@ PPB_PITCH_LOG_DICT = {
     "H": {"description": "Hit batter", "pitch_counts": 1},
     "L": {"description": "Foul bunt", "pitch_counts": 1},
     "M": {"description": "Missed bunt attempt", "pitch_counts": 1},
-    "N": {"description": "No pitch (on balks and interference calls)", "pitch_counts": 0,},
+    "N": {"description": "No pitch (on balks and interference calls)", "pitch_counts": 0},
     "O": {"description": "Foul tip on bunt", "pitch_counts": 1},
     "P": {"description": "Pitchout", "pitch_counts": 1},
     "Q": {"description": "Swinging on pitchout", "pitch_counts": 1},
     "R": {"description": "Foul ball on pitchout", "pitch_counts": 1},
     "U": {"description": "Unknown or missed pitch", "pitch_counts": 1},
-    "V": {"description": "(Called ball because pitcher went to his mouth)", "pitch_counts": 0,},
+    "V": {"description": "(Called ball because pitcher went to his mouth)", "pitch_counts": 0},
     "Y": {"description": "Ball put into play on pitchout", "pitch_counts": 1},
     "1": {"description": "(Pickoff throw to first)", "pitch_counts": 0},
     "2": {"description": "(Pickoff throw to second)", "pitch_counts": 0},
     "3": {"description": "(Pickoff throw to third)", "pitch_counts": 0},
     ">": {"description": "(Runner going on the pitch)", "pitch_counts": 0},
     "+": {"description": "(Pickoff throw by the catcher)", "pitch_counts": 0},
-    "*": {"description": "(The following pitch was blocked by the catcher)", "pitch_counts": 0,},
+    "*": {"description": "(The following pitch was blocked by the catcher)", "pitch_counts": 0},
     ".": {"description": "(Play not involving the batter)", "pitch_counts": 0},
 }
 
 VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dome"]
 
 JOB_SPINNER_COLORS = {
-    DataSet.BROOKS_GAMES_FOR_DATE: "green",
-    DataSet.BROOKS_PITCH_LOGS: "red",
-    DataSet.BROOKS_PITCHFX: "magenta",
     DataSet.BBREF_GAMES_FOR_DATE: "cyan",
-    DataSet.BBREF_BOXSCORES: "yellow",
+    DataSet.BROOKS_GAMES_FOR_DATE: "magenta",
+    DataSet.BBREF_BOXSCORES: "white",
+    DataSet.BROOKS_PITCH_LOGS: "cyan",
+    DataSet.BROOKS_PITCHFX: "magenta",
 }
 
 CLI_COLORS = [
@@ -184,7 +184,6 @@ MENU_NUMBERS = {
 }
 
 CONFIG_EMOJI_DICT = dict(
-    SCRAPE_TOOL=EMOJI_DICT.get("KNIFE", ""),
     SCRAPE_CONDITION=EMOJI_DICT.get("QUESTION", ""),
     STATUS_REPORT=EMOJI_DICT.get("CHART", ""),
     URL_SCRAPE_DELAY=EMOJI_DICT.get("CLOCK", ""),

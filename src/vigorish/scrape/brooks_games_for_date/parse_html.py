@@ -2,6 +2,7 @@
 from datetime import datetime
 from pathlib import Path
 
+from lxml import html
 import w3lib.url
 
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
@@ -22,7 +23,8 @@ PITCH_LOG_URL_XPATH = './tbody//a[text()="Game Log"]/@href'
 KZONE_URL_XPATH = './tbody//a[text()="Strikezone Map"]/@href'
 
 
-def parse_brooks_dashboard_page(session, page_source, game_date, url, bbref_games_for_date):
+def parse_brooks_dashboard_page(session, page_content, game_date, url, bbref_games_for_date):
+    page_content = html.fromstring(page_content, base_url=url)
     games_for_date = BrooksGamesForDate()
     games_for_date.game_date = game_date
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)
@@ -32,7 +34,7 @@ def parse_brooks_dashboard_page(session, page_source, game_date, url, bbref_game
 
     if Season.is_this_the_asg_date(session, game_date):
         return Result.Ok(games_for_date)
-    game_tables = page_source.xpath(GAME_TABLE_XPATH)
+    game_tables = page_content.xpath(GAME_TABLE_XPATH)
     if not game_tables:
         error = f"Unable to parse any game data from {url}"
         return Result.Fail(error)
@@ -175,7 +177,7 @@ def _parse_game_number_from_gameid(gameid):
     split = gameid.split("_")
     if len(split) != 7:
         return None
-    return split[6]
+    return int(split[6])
 
 
 def _parse_pitcherid_from_url(url):
@@ -197,7 +199,7 @@ def _update_game_ids(games_for_date):
         game_date = datetime(g.game_date_year, g.game_date_month, g.game_date_day)
         date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
 
-        if g.game_number_this_day == "2":
+        if g.game_number_this_day == 2:
             g.bbref_game_id = f"{g.home_team_id_bb}{date_str}2"
             game_1_bb_id = f"{bb_gid[:-1]}{1}"
             game_1 = game_dict[game_1_bb_id]
