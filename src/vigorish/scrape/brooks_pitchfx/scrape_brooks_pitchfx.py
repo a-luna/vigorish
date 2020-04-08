@@ -1,5 +1,3 @@
-from lxml import html
-
 from vigorish.config.database import DateScrapeStatus
 from vigorish.enums import DataSet, ScrapeCondition, JobStatus
 from vigorish.scrape.scrape_task import ScrapeTaskABC
@@ -45,21 +43,19 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                 return result
             pitch_logs_for_date = result.value
             for pitch_logs_for_game in pitch_logs_for_date:
-                percent_complete = parsed / float(self.total_urls)
-                self.spinner.text = (
-                    f"Parsing PitchFX Logs for {pitch_logs_for_game.bbref_game_id}... "
-                    f"{percent_complete:.0%} ({parsed}/{self.total_urls} URLs)"
-                )
+                game_id = pitch_logs_for_game.bbref_game_id
+                self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed, game_id)
                 for pitch_log in pitch_logs_for_game.pitch_logs:
                     pitch_app_id = pitch_log.pitch_app_id
                     url = pitch_log.pitchfx_url
                     if not pitch_log.parsed_all_info:
                         continue
+                    if pitch_app_id not in self.tracker.parse_url_ids:
+                        continue
                     html_filepath = self.scraped_data.get_html(self.data_set, pitch_app_id)
                     if not html_filepath:
                         return Result.Fail(f"Failed to locate HTML for pitch app: {pitch_app_id}")
-                    page_content = html.fromstring(html_filepath.read_text(), base_url=url)
-                    result = parse_pitchfx_log(page_content, pitch_log)
+                    result = parse_pitchfx_log(html_filepath.read_text(), pitch_log)
                     if result.failure:
                         return result
                     pitchfx_log = result.value
@@ -70,11 +66,10 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                     if result.failure:
                         return Result.Fail(f"Error! {result.error} (ID: {pitch_app_id})")
                     parsed += 1
-                    percent_complete = parsed / float(self.total_urls)
-                    self.spinner.text = (
-                        f"Parsing PitchFX Logs for {pitch_logs_for_game.bbref_game_id}... "
-                        f"{percent_complete:.0%} ({parsed}/{self.total_urls} URLs)"
+                    self.spinner.text = self.tracker.parse_html_report(
+                        self.data_set, parsed, game_id
                     )
+                    self.db_session.commit()
         return Result.Ok()
 
     def parse_html(self, page_content, url_id, url):

@@ -1,5 +1,3 @@
-from lxml import html
-
 from vigorish.config.database import DateScrapeStatus
 from vigorish.enums import DataSet, ScrapeCondition, JobStatus
 from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
@@ -51,37 +49,25 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 return result
             brooks_games_for_date = result.value
             for game in brooks_games_for_date.games:
+                game_id = game.bbref_game_id
+                if game_id not in self.tracker.parse_url_ids:
+                    continue
+                self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed, game_id)
                 pitch_logs_for_game = BrooksPitchLogsForGame()
                 pitch_logs_for_game.bb_game_id = game.bb_game_id
-                pitch_logs_for_game.bbref_game_id = game.bbref_game_id
+                pitch_logs_for_game.bbref_game_id = game_id
                 pitch_logs_for_game.pitch_log_count = game.pitcher_appearance_count
-                percent_complete = parsed / float(self.total_urls)
-                self.spinner.text = (
-                    f"Parsing Pitch Logs for {game.bbref_game_id}... {percent_complete:.0%} "
-                    f"({parsed}/{self.total_urls} URLs)"
-                )
                 scraped_pitch_logs = []
                 for pitcher_id, url in game.pitcher_appearance_dict.items():
-                    pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
+                    pitch_app_id = f"{game_id}_{pitcher_id}"
                     filepath = self.scraped_data.get_html(self.data_set, pitch_app_id)
                     if not filepath:
                         return Result.Fail(f"Failed to locate HTML for pitch app: {pitch_app_id}")
-                    page_content = html.fromstring(filepath.read_text(), base_url=url)
-                    result = parse_pitch_log(page_content, game, pitcher_id, url)
+                    result = parse_pitch_log(filepath.read_text(), game, pitcher_id, url)
                     if result.failure:
                         return result
                     pitch_log = result.value
                     scraped_pitch_logs.append(pitch_log)
-                    parsed += 1
-                    percent_complete = parsed / float(self.total_urls)
-                    self.spinner.text = (
-                        f"Parsing Pitch Logs for {game.bbref_game_id}... {percent_complete:.0%} "
-                        f"({parsed}/{self.total_urls} URLs)"
-                    )
-                self.spinner.text = (
-                    f"Updating Pitch Logs for {game.bbref_game_id}... "
-                    f"{parsed / float(self.total_urls):.0%} ({parsed}/{self.total_urls} URLs)"
-                )
                 pitch_logs_for_game.pitch_logs = scraped_pitch_logs
                 result = self.scraped_data.save_json(self.data_set, pitch_logs_for_game)
                 if result.failure:
@@ -89,6 +75,9 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 result = self.update_status(game_date, pitch_logs_for_game)
                 if result.failure:
                     return result
+                parsed += 1
+                self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed, game_id)
+                self.db_session.commit()
         return Result.Ok()
 
     def parse_html(self, page_content, url_id, url):
