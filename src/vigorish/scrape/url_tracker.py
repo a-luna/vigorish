@@ -52,7 +52,7 @@ class UrlTracker:
         if self.total_urls > 0:
             percent_complete = self.total_complete / float(self.total_urls)
         return (
-            f"Determining URLs to scrape... {self.percent_complete:.0%} "
+            f"Determining URLs to scrape... {percent_complete:.0%} "
             f"({self.skip_url_count} Skip, {len(self.missing_urls)} Scrape, "
             f"{self.remaining_url_count} Remaining)"
         )
@@ -63,7 +63,7 @@ class UrlTracker:
         if self.total_urls > 0:
             percent_complete = self.total_complete / float(self.total_urls)
         return (
-            f"Retrieving scraped HTML... {self.percent_complete:.0%} "
+            f"Retrieving scraped HTML... {percent_complete:.0%} "
             f"({self.skip_url_count} Skipped, {len(self.cached_urls)} Found, "
             f"{len(self.scrape_urls)} Missing, {self.remaining_url_count} Remaining)"
         )

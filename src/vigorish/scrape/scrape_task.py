@@ -144,8 +144,7 @@ class ScrapeTaskABC(ABC):
             if not url.scraped_file_exists_with_content:
                 error = f"HTML file does not exist or is empty: {url.scraped_file_path}"
                 return Result.Fail(error)
-            html = url.scraped_page_content
-            result = self.scraped_data.save_html(self.data_set, url.identifier, html)
+            result = self.scraped_data.save_html(self.data_set, url.identifier, url.page_content)
             if result.failure:
                 return result
             self.spinner.text = self.tracker.save_html_report(saved_count=i)
