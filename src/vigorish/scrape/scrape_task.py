@@ -66,6 +66,7 @@ class ScrapeTaskABC(ABC):
         self.spinner.stop()
         if result.failure:
             return result
+        self.tracker.remove_scraped_html()
         return Result.Ok()
 
     def task_preparation(self):

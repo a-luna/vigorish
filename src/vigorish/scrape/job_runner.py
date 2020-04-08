@@ -1,6 +1,8 @@
+import shutil
 import subprocess
 from collections import defaultdict
 from datetime import datetime
+from pathlib import Path
 
 from halo import Halo
 from getch import pause
@@ -27,6 +29,9 @@ SCRAPE_TASK_DICT = {
     DataSet.BBREF_GAMES_FOR_DATE: ScrapeBBRefGamesForDate,
     DataSet.BBREF_BOXSCORES: ScrapeBBRefBoxscores,
 }
+
+APP_FOLDER = Path(__file__).parent.parent
+NODEJS_OUTBOX = APP_FOLDER / "nightmarejs" / "outbox"
 
 
 class JobRunner:
@@ -117,6 +122,7 @@ class JobRunner:
 
     def job_succeeded(self):
         self.end_time = datetime.now()
+        shutil.rmtree(NODEJS_OUTBOX.joinpath(self.db_job.id))
         return Result.Ok()
 
     def create_all_folderpaths(self):
