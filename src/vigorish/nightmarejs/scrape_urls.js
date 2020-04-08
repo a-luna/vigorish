@@ -121,6 +121,12 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
         let counter = 1
         await timeoutList.reduce(async (promise, timeout) => {
             await promise
+            if (secRemaining == 0) {
+                minRemaining -= 1
+                secRemaining = 59
+            } else {
+                secRemaining -= 1
+            }
             pBarDisplay = getTimeoutDisplayString(minRemaining, secRemaining)
             progressBar.update(counter, { message: pBarDisplay })
             await sleep(timeout)
@@ -141,12 +147,6 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
         }
 
         function getTimeoutDisplayString(minRemaining, secRemaining) {
-            if (secRemaining == 0) {
-                minRemaining -= 1
-                secRemaining = 59
-            } else {
-                secRemaining -= 1
-            }
             const minPadded = minRemaining.toString().padStart(2, "0")
             const secPadded = secRemaining.toString().padStart(2, "0")
             return getPbarDisplayStr(`${minPadded}:${secPadded} until next batch`)
