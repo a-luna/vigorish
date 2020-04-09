@@ -26,23 +26,20 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
     nightmare.useragent(new UserAgent().toString())
     await batchList.reduce(async (promise, urlBatch) => {
         await promise
-        const currentBatchSize = batchList[batchCounter].length
-        pBarDisplay = getPbarDisplayStr(`${currentBatchSize} URLs this batch`)
-        batchBar.update(batchCounter, { message: pBarDisplay })
+        const batchSize = batchList[batchCounter].length
+        batchBar.update(batchCounter, { message: pBarMessage(`${batchSize} URLs this batch`) })
         urlCounter = await scrapeUrlBatch(nightmare, urlBatch, timeoutParams, urlCounter, urlBar)
         batchCounter += 1
         if (batchCounter < totalBatches) {
             const nextBatchSize = batchList[batchCounter].length
-            const nextBatchStr = `${nextBatchSize} URLs next batch`
-            pBarDisplay = getPbarDisplayStr(nextBatchStr, (padEllipses = false))
-            batchBar.update(batchCounter, { message: pBarDisplay })
+            const nextBatchStr = pBarMessage(`${nextBatchSize} URLs next batch`, false)
+            batchBar.update(batchCounter, { message: nextBatchStr })
             if (timeoutParams.batchTimeoutRequired) {
                 await batchTimeout(timeoutParams, timeoutBar, urlCounter, nextBatchSize)
             }
         }
     }, Promise.resolve())
-    pBarDisplay = getPbarDisplayStr("Scraped all batches")
-    batchBar.update(batchCounter, { message: pBarDisplay })
+    batchBar.update(batchCounter, { message: pBarMessage("Scraped all batches") })
     multibar.stop()
     return
 
@@ -64,11 +61,11 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
 
     function initializeProgressBars(batchList, totalUrls) {
         const batchBar = multibar.create(batchList.length, 0, {
-            message: getPbarDisplayStr(`${batchList[0].length} URLs this batch`),
+            message: pBarMessage(`${batchList[0].length} URLs this batch`),
             unit: "Batches",
         })
         const urlBar = multibar.create(totalUrls, 0, {
-            message: getPbarDisplayStr("In Progress"),
+            message: pBarMessage("In Progress"),
             unit: "URLs",
         })
         const timeoutBar = multibar.create(0, 0, {
@@ -80,10 +77,10 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
 
     function getNextUrlRangeStr(urlCounter, nextBatchSize) {
         let nextUrlRange = `Scraping URLs ${urlCounter + 1}-${urlCounter + nextBatchSize}`
-        return getPbarDisplayStr(nextUrlRange)
+        return pBarMessage(nextUrlRange)
     }
 
-    function getPbarDisplayStr(displayStr, padEllipses = true) {
+    function pBarMessage(displayStr, padEllipses = true) {
         let padLength = PBAR_MAX_LENGTH - displayStr.length
         if (padLength <= 0) {
             return displayStr
@@ -100,7 +97,7 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
         await urlSet.reduce(async (promise, urlDetails) => {
             await promise
             let { url, fileName, identifier, scrapedHtmlFolderpath } = urlDetails
-            const pbarDisplay = getPbarDisplayStr(identifier, (padEllipses = false))
+            const pbarDisplay = pBarMessage(identifier, (padEllipses = false))
             progressBar.update(urlCounter, { message: pbarDisplay })
             await scrapeUrl(nightmare, url, fileName, scrapedHtmlFolderpath, timeoutParams)
             urlCounter += 1
@@ -110,46 +107,39 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
     }
 
     async function batchTimeout(timeoutParams, progressBar, urlCounter, nextBatchSize) {
-        let { batchTimeoutMinMs, batchTimeoutMaxMs } = timeoutParams
-        let [timeoutList, totalSeconds, minRemaining, secRemaining] = getRandomTimeout(
-            batchTimeoutMinMs,
-            batchTimeoutMaxMs
-        )
-        let pBarDisplay = getTimeoutDisplayString(minRemaining, secRemaining)
-        progressBar.setTotal(totalSeconds)
-        progressBar.update(0, { message: pBarDisplay, unit: "Seconds" })
-        let counter = 1
+        let [timeoutList, minutes, seconds] = getRandomTimeout(timeoutParams)
+        progressBar.setTotal(timeoutList.length)
+        progressBar.update(0, { message: getTimeoutDisplay(minutes, seconds), unit: "Seconds" })
+        let counter = 0
         await timeoutList.reduce(async (promise, timeout) => {
             await promise
-            if (secRemaining == 0) {
-                minRemaining -= 1
-                secRemaining = 59
-            } else {
-                secRemaining -= 1
-            }
-            pBarDisplay = getTimeoutDisplayString(minRemaining, secRemaining)
-            progressBar.update(counter, { message: pBarDisplay })
             await sleep(timeout)
+            if (seconds == 0) {
+                minutes -= 1
+                seconds = 59
+            } else {
+                seconds -= 1
+            }
             counter += 1
+            progressBar.update(counter, { message: getTimeoutDisplay(minutes, seconds) })
         }, Promise.resolve())
-        pBarDisplay = getNextUrlRangeStr(urlCounter, nextBatchSize)
         progressBar.setTotal(0)
-        progressBar.update(0, { message: pbarDisplay, unit: "" })
+        progressBar.update(0, { message: getNextUrlRangeStr(urlCounter, nextBatchSize), unit: "" })
         return
 
-        function getRandomTimeout(timeoutMinMs, timeoutMaxMs) {
-            const timeoutMs = getRandomInt(timeoutMinMs, timeoutMaxMs)
-            const minRemaining = Math.floor(timeoutMs / 60000)
-            const secRemaining = Math.floor((timeoutMs - minRemaining * 60000) / 1000)
+        function getRandomTimeout({ batchTimeoutMinMs, batchTimeoutMaxMs }) {
+            const timeoutMs = getRandomInt(batchTimeoutMinMs, batchTimeoutMaxMs)
+            const minutes = Math.floor(timeoutMs / 60000)
+            const seconds = Math.floor((timeoutMs - minutes * 60000) / 1000)
             const totalSeconds = Math.floor(timeoutMs / 1000)
             const timeoutList = Array.from({ length: totalSeconds }).map(x => 1000)
-            return [timeoutList, totalSeconds, minRemaining, secRemaining]
+            return [timeoutList, minutes, seconds]
         }
 
-        function getTimeoutDisplayString(minRemaining, secRemaining) {
-            const minPadded = minRemaining.toString().padStart(2, "0")
-            const secPadded = secRemaining.toString().padStart(2, "0")
-            return getPbarDisplayStr(`${minPadded}:${secPadded} until next batch`)
+        function getTimeoutDisplay(minutes, seconds) {
+            const minPadded = minutes.toString().padStart(2, "0")
+            const secPadded = seconds.toString().padStart(2, "0")
+            return pBarMessage(`${minPadded}:${secPadded} until next batch`)
         }
     }
 }
