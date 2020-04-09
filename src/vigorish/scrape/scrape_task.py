@@ -147,7 +147,7 @@ class ScrapeTaskABC(ABC):
     def invoke_nodejs_script_normal(self, args):
         return execute_js(str(NODEJS_SCRIPT), arguments=args)
 
-    def invoke_nodejs_script_ubuntu(self):
+    def invoke_nodejs_script_ubuntu(self, args):
         return execute(f"nodejs {NODEJS_SCRIPT} {args}")
 
     def parse_data_from_scraped_html(self):
