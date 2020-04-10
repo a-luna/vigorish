@@ -118,6 +118,15 @@ JOB_SPINNER_COLORS = {
     DataSet.BROOKS_PITCHFX: "magenta",
 }
 
+DATA_SET_CHOICES = {
+    "all": DataSet.ALL,
+    "bbref_games": DataSet.BBREF_GAMES_FOR_DATE,
+    "brooks_games": DataSet.BROOKS_GAMES_FOR_DATE,
+    "bbref_boxscores": DataSet.BBREF_BOXSCORES,
+    "brooks_pitch_logs": DataSet.BROOKS_PITCH_LOGS,
+    "brooks_pitchfx": DataSet.BROOKS_PITCHFX,
+}
+
 CLI_COLORS = [
     "black",
     "red",

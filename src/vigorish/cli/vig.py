@@ -6,13 +6,15 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from vigorish.cli.click_params import DateString, MlbSeason
+from vigorish.cli.click_params import DateString, MlbSeason, JobName
 from vigorish.cli.menus.main_menu import MainMenu
-from vigorish.cli.util import print_message
-from vigorish.config.database import get_db_url, initialize_database
+from vigorish.cli.util import print_message, validate_scrape_dates
+from vigorish.config.database import get_db_url, initialize_database, ScrapeJob
 from vigorish.config.types import ConfigFile
+from vigorish.constants import DATA_SET_CHOICES
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import StatusReport
+from vigorish.scrape.job_runner import JobRunner
 from vigorish.status.report_status import (
     report_status_single_date,
     report_date_range_status,
@@ -70,6 +72,63 @@ def setup(app):
     if result.failure:
         return exit_app_error(app, result.error)
     return exit_app_success(app, "Successfully populated database with initial data.")
+
+
+@cli.command()
+@click.option(
+    "--data-set",
+    type=click.Choice(DATA_SET_CHOICES.keys()),
+    multiple=True,
+    default=["all"],
+    show_default=True,
+    help="Data set to scrape, multiple values can be provided.",
+)
+@click.option(
+    "--start",
+    type=DateString(),
+    default=today_str,
+    prompt=True,
+    help="Date to start scraping data, string can be in any format that is recognized by dateutil.parser.",
+)
+@click.option(
+    "--end",
+    type=DateString(),
+    default=today_str,
+    prompt=True,
+    help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser.",
+)
+@click.option(
+    "--name",
+    type=JobName(),
+    help="A name to help identify this job.",
+    prompt="Enter a name to help you identify this job (must consist of ONLY: letters/numbers/underscore/hyphen)",
+)
+@click.pass_obj
+def scrape(app, data_set, start, end, name):
+    """Scrape MLB data from websites."""
+    data_sets_int = sum(int(DATA_SET_CHOICES[ds]) for ds in data_set)
+    result = validate_scrape_dates(app["session"], start, end)
+    if result.failure:
+        return exit_app_error(app, result.error)
+    season = result.value
+    scrape_job_dict = {
+        "data_sets_int": data_sets_int,
+        "start_date": start,
+        "end_date": end,
+        "name": name,
+        "season_id": season.id,
+    }
+    new_scrape_job = ScrapeJob(**scrape_job_dict)
+    app["session"].add(new_scrape_job)
+    app["session"].commit()
+    job_runner = JobRunner(
+        db_job=new_scrape_job,
+        db_session=app["session"],
+        config=app["config"],
+        scraped_data=app["scraped_data"],
+    )
+    result = job_runner.execute()
+    return exit_app_success(app) if result.success else exit_app_error(app, result.error)
 
 
 @cli.group()

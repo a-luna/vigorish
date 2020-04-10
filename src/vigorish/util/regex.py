@@ -10,3 +10,5 @@ BBREF_BOXSCORE_URL_PATTERN = (
 )
 BBREF_BOXSCORE_URL_REGEX = re.compile(BBREF_BOXSCORE_URL_PATTERN)
 TIMESTAMP_REGEX = re.compile(r"(?P<hour>\d?\d):(?P<minute>\d\d)")
+JOB_NAME_PATTERN = r"^[\w-]+$"
+JOB_NAME_REGEX = re.compile(JOB_NAME_PATTERN)

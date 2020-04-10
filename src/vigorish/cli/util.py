@@ -3,6 +3,7 @@ import click
 from dateutil import parser
 from bullet import Bullet, colors, Input
 
+from vigorish.config.database import Season
 from vigorish.constants import MENU_NUMBERS, CLI_COLORS
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
@@ -28,7 +29,18 @@ def print_message(message, fg=None, bg=None, bold=None, underline=None):
     if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
         fg = None
         bg = None
-    click.secho(f"\n{message}", fg=fg, bg=bg, bold=bold, underline=underline)
+    click.secho(message, fg=fg, bg=bg, bold=bold, underline=underline)
+
+
+def validate_scrape_dates(db_session, start_date, end_date):
+    result = Season.validate_date_range(db_session, start_date, end_date)
+    if result.failure:
+        error = f"The dates you entered are invalid:\n{result.error}"
+        print_message(error, fg="bright_red", bold=True)
+        pause(message="Press any key to continue...")
+        return Result.Fail("")
+    season = result.value
+    return Result.Ok(season)
 
 
 def prompt_user_yes_no(prompt: str) -> Result:

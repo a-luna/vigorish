@@ -5,7 +5,7 @@ from bullet import Check, Input, VerticalPrompt, colors
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import DateInput, prompt_user_yes_no, print_message
+from vigorish.cli.util import DateInput, prompt_user_yes_no, print_message, validate_scrape_dates
 from vigorish.config.database import ScrapeJob, Season
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
@@ -13,6 +13,7 @@ from vigorish.scrape.job_runner import JobRunner
 from vigorish.cli.util import DISPLAY_NAME_DICT
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
+from vigorish.util.regex import JOB_NAME_PATTERN
 
 
 class CreateJobMenuItem(MenuItem):
@@ -33,7 +34,7 @@ class CreateJobMenuItem(MenuItem):
                 start_date = job_details[0][1]
                 end_date = job_details[1][1]
                 job_name = job_details[2][1]
-                result = self.validate_scrape_dates(start_date, end_date)
+                result = validate_scrape_dates(start_date, end_date)
                 if result.failure:
                     continue
                 season = result.value
@@ -55,7 +56,6 @@ class CreateJobMenuItem(MenuItem):
             result = job_runner.execute()
             if result.failure:
                 return result
-        pause(message="Press any key to return to the main menu...")
         return Result.Ok()
 
     def get_data_sets_to_scrape(self):
@@ -97,7 +97,7 @@ class CreateJobMenuItem(MenuItem):
             [
                 DateInput(prompt="Enter date to START scraping: "),
                 DateInput(prompt="Enter date to STOP scraping: "),
-                Input(prompt="Enter a name for this job: ", pattern=r"^[\w-]+$"),
+                Input(prompt="Enter a name for this job: ", pattern=JOB_NAME_PATTERN),
             ]
         )
 
@@ -109,17 +109,6 @@ class CreateJobMenuItem(MenuItem):
             if result:
                 user_date = result
         return user_date
-
-    def validate_scrape_dates(self, start_date, end_date):
-        result = Season.validate_date_range(self.db_session, start_date, end_date)
-        if result.failure:
-            print_message(
-                f"The dates you entered are invalid:\n{result.error}", fg="bright_red", bold=True,
-            )
-            pause(message="Press any key to continue...")
-            return Result.Fail("")
-        season = result.value
-        return Result.Ok(season)
 
     def confirm_job_details(self, data_sets, start_date, end_date, job_name):
         subprocess.run(["clear"])

@@ -1,8 +1,10 @@
+import re
 from dateutil import parser
 
 import click
 
 from vigorish.config.database import Season
+from vigorish.util.regex import JOB_NAME_REGEX
 
 
 class DateString(click.ParamType):
@@ -49,3 +51,16 @@ class MlbSeason(click.ParamType):
             self.fail(error, param, ctx)
         except Exception:
             self.fail(error, param, ctx)
+
+
+class JobName(click.ParamType):
+    name = "job-name"
+
+    def convert(self, value, param, ctx):
+        if JOB_NAME_REGEX.match(value):
+            return value
+        error = (
+            f"'{value}' contains one or more invalid characters. Job name must "
+            "contain only letters, numbers, hyphen and underscore characters."
+        )
+        self.fail(error, param, ctx)
