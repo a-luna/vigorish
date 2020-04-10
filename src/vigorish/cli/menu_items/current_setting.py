@@ -24,8 +24,8 @@ class CurrentSettingMenuItem(MenuItem):
     def launch(self) -> Result:
         subprocess.run(["clear"])
         setting_name = f"Setting: {self.setting_name_title} (Type: {self.data_type.name})"
-        print_message(wrap_text(f"{setting_name}", max_len=70), fg="bright_magenta", bold=True)
-        print_message(wrap_text(f"{self.setting.description}", max_len=70))
+        print_message(wrap_text(f"{setting_name}\n", max_len=70), fg="bright_magenta", bold=True)
+        print_message(wrap_text(f"{self.setting.description}\n", max_len=70))
         print_message(f"{self.current_settings}", fg="bright_yellow", bold=True)
         result = prompt_user_yes_no(prompt="Change current setting?")
         change_setting = result.value

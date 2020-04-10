@@ -51,7 +51,7 @@ class UrlTracker:
     def scrape_html_report(self):
         report = f"Scraping missing HTML... ({self.skip_url_count} Skipped,"
         if self.completed_urls:
-            report = f"{report} {self.completed_urls} Scraped,"
+            report = f"{report} {len(self.completed_urls)} Scraped,"
         return f"{report} {len(self.cached_urls)} Found, {len(self.missing_urls)} Missing)"
 
     def retrieve_html_report(self, checked_url_count):
