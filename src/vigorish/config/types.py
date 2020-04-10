@@ -385,7 +385,7 @@ class EnumConfigSetting(ConfigSetting):
         if enum_name == "JsonStorageOption":
             return JsonStorageOption[value]
         if enum_name == "StatusReport":
-            return StatusReport[value]
+            return str(StatusReport[value])
         return None
 
 

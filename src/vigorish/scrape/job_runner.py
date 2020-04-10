@@ -9,7 +9,7 @@ from getch import pause
 
 from vigorish.config.database import ScrapeError
 from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
-from vigorish.enums import DataSet
+from vigorish.enums import DataSet, StatusReport
 from vigorish.scrape.bbref_boxscores.scrape_bbref_boxscores import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_bbref_games_for_date import (
     ScrapeBBRefGamesForDate,
@@ -19,7 +19,7 @@ from vigorish.scrape.brooks_games_for_date.scrape_brooks_games_for_date import (
 )
 from vigorish.scrape.brooks_pitch_logs.scrape_brooks_pitch_logs import ScrapeBrooksPitchLogs
 from vigorish.scrape.brooks_pitchfx.scrape_brooks_pitchfx import ScrapeBrooksPitchFx
-from vigorish.status.report_status import report_season_status
+from vigorish.status.report_status import report_season_status, report_date_range_status
 from vigorish.util.result import Result
 
 SCRAPE_TASK_DICT = {
@@ -82,15 +82,7 @@ class JobRunner:
             task_results.append(text)
         subprocess.run(["clear"])
         print("\n".join(task_results))
-        pause(message="Press any key to continue...")
-        subprocess.run(["clear"])
-        result = report_season_status(
-            session=self.db_session,
-            scraped_data=self.scraped_data,
-            refresh_data=False,
-            year=self.season.year,
-            report_type=self.status_report,
-        )
+        result = self.show_status_report()
         pause(message="Press any key to continue...")
         if result.failure:
             return self.job_failed(result)
@@ -110,6 +102,24 @@ class JobRunner:
         if not errors:
             return Result.Ok()
         return Result.Fail("\n".join(errors))
+
+    def show_status_report(self):
+        if self.status_report == StatusReport.SEASON_SUMMARY:
+            return report_season_status(
+                session=self.db_session,
+                scraped_data=self.scraped_data,
+                refresh_data=False,
+                year=self.season.year,
+                report_type=self.status_report,
+            )
+        return report_date_range_status(
+            session=self.db_session,
+            scraped_data=self.scraped_data,
+            refresh_data=False,
+            start_date=self.db_job.start_date,
+            end_date=self.db_job.end_date,
+            report_type=self.status_report,
+        )
 
     def job_failed(self, result, data_set=DataSet.ALL):
         new_error = ScrapeError(

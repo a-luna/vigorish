@@ -77,8 +77,7 @@ def report_date_range_status(
     session, scraped_data, refresh_data, start_date, end_date, report_type
 ):
     if report_type == StatusReport.NONE:
-        error = f"Invalid value for verbosity: {report_type}. Value must be greater than zero."
-        return Result.Fail(error)
+        return Result.Ok()
     result = construct_date_range_status(
         session, scraped_data, refresh_data, start_date, end_date, report_type
     )

@@ -72,7 +72,7 @@ class JsonStorageOption(Enum):
 
 
 class StatusReport(IntEnum):
-    """The type of status report (if any) to display after data has been scraped."""
+    """The type of status report (if any) to display."""
 
     NONE = 0
     SEASON_SUMMARY = 1
