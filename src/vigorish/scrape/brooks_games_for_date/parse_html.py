@@ -23,8 +23,8 @@ PITCH_LOG_URL_XPATH = './tbody//a[text()="Game Log"]/@href'
 KZONE_URL_XPATH = './tbody//a[text()="Strikezone Map"]/@href'
 
 
-def parse_brooks_dashboard_page(session, page_content, game_date, url, bbref_games_for_date):
-    page_content = html.fromstring(page_content, base_url=url)
+def parse_brooks_dashboard_page(session, scraped_html, game_date, url, bbref_games_for_date):
+    page_content = html.fromstring(scraped_html, base_url=url)
     games_for_date = BrooksGamesForDate()
     games_for_date.game_date = game_date
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)

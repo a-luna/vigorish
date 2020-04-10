@@ -19,8 +19,8 @@ XPATH_BOXSCORE_URL_HEADER_NAV = (
 )
 
 
-def parse_bbref_dashboard_page(page_content, game_date, url):
-    page_content = html.fromstring(page_content, base_url=url)
+def parse_bbref_dashboard_page(scraped_html, game_date, url):
+    page_content = html.fromstring(scraped_html, base_url=url)
     games_for_date = BBRefGamesForDate()
     games_for_date.game_date = game_date
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)

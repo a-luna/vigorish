@@ -14,8 +14,8 @@ T_PITCHFX_MEASUREMENT = "td[${i}]//text()"
 FILTER_NAMES = ["datestamp", "gid", "pitcher_team"]
 
 
-def parse_pitchfx_log(page_content, pitch_log):
-    page_content = html.fromstring(page_content, base_url=pitch_log.pitchfx_url)
+def parse_pitchfx_log(scraped_html, pitch_log):
+    page_content = html.fromstring(scraped_html, base_url=pitch_log.pitchfx_url)
     pitchfx_log_dict = {}
     result = parse_pitchfx_table(page_content, pitch_log)
     if result.failure:

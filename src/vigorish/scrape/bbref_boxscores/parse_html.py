@@ -158,9 +158,9 @@ POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
 NUM_REGEX = re.compile(r"[1-9]{1}")
 
 
-def parse_bbref_boxscore(page_content, url):
+def parse_bbref_boxscore(scraped_html, url):
     """Parse boxscore data from the page source."""
-    page_content = html.fromstring(page_content, base_url=url)
+    page_content = html.fromstring(scraped_html, base_url=url)
     (game_id, away_team_id, home_team_id) = _parse_game_and_team_ids(page_content, url)
 
     (

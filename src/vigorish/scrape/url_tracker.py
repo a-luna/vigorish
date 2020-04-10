@@ -10,7 +10,7 @@ class UrlTracker:
         self.all_urls = all_urls
         self.missing_urls = []
         self.cached_urls = []
-        self.scrape_urls = []
+        self.completed_urls = []
         self.skip_url_count = 0
 
     @property
@@ -20,12 +20,12 @@ class UrlTracker:
         return len(flatten_list2d([urls for urls in self.all_urls.values()]))
 
     @property
-    def scrape_urls_as_json(self):
-        return json.dumps([url.as_dict() for url in self.scrape_urls], indent=2, sort_keys=False)
+    def missing_urls_as_json(self):
+        return json.dumps([url.as_dict() for url in self.missing_urls], indent=2, sort_keys=False)
 
     @property
     def parse_urls(self):
-        return self.scrape_urls + self.cached_urls
+        return self.completed_urls + self.cached_urls
 
     @property
     def parse_url_ids(self):
@@ -48,30 +48,28 @@ class UrlTracker:
         )
 
     @property
-    def retrieve_html_report(self):
+    def scrape_html_report(self):
+        report = f"Scraping missing HTML... ({self.skip_url_count} Skipped,"
+        if self.completed_urls:
+            report = f"{report} {self.completed_urls} Scraped,"
+        return f"{report} {len(self.cached_urls)} Found, {len(self.missing_urls)} Missing)"
+
+    def retrieve_html_report(self, checked_url_count):
         percent_complete = 0
-        total_complete = self.skip_url_count + len(self.cached_urls) + len(self.scrape_urls)
+        total_missing = checked_url_count - len(self.cached_urls)
+        total_complete = checked_url_count + self.skip_url_count
+        total_remaining = self.total_urls - total_complete
         percent_complete = total_complete / float(self.total_urls)
         return (
             f"Retrieving scraped HTML... {percent_complete:.0%} "
             f"({self.skip_url_count} Skipped, {len(self.cached_urls)} Found, "
-            f"{len(self.scrape_urls)} Missing, {len(self.missing_urls)} Remaining)"
-        )
-
-    @property
-    def scrape_html_report(self):
-        return (
-            f"Scraping missing HTML... ({self.skip_url_count} Skipped, "
-            f"{len(self.cached_urls)} Found, {len(self.scrape_urls)} Missing)"
+            f"{total_missing} Missing, {total_remaining} Remaining)"
         )
 
     def save_html_report(self, saved_count):
-        percent_complete = 0
-        if len(self.scrape_urls) > 0:
-            percent_complete = saved_count / float(len(self.scrape_urls))
         return (
-            f"Saving scraped HTML... {percent_complete:.0%} "
-            f"({saved_count}/{len(self.scrape_urls)}) URLs"
+            f"Saving scraped HTML... {saved_count / float(len(self.missing_urls)):.0%} "
+            f"({saved_count}/{len(self.missing_urls)}) URLs"
         )
 
     def parse_html_report(self, data_set, parsed_count, game_id=None):
@@ -93,11 +91,11 @@ class UrlTracker:
             f"({parsed_count}/{len(self.parse_url_ids)}) URLs"
         )
 
-    def get_page_content(self, url_id):
+    def get_html(self, url_id):
         match = [url for url in self.parse_urls if url.identifier == url_id]
-        return match[0].page_content if match else None
+        return match[0].html if match else None
 
     def remove_scraped_html(self):
-        for url in self.scrape_urls:
+        for url in self.completed_urls:
             if url.scraped_file_path.exists():
                 url.scraped_file_path.unlink()

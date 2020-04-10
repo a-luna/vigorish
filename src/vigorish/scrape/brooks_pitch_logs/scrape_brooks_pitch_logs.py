@@ -39,7 +39,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
             return Result.Fail("skip")
         return Result.Ok()
 
-    def parse_data_from_scraped_html(self):
+    def parse_scraped_html(self):
         parsed = 0
         for game_date in self.date_range:
             result = self.scraped_data.get_brooks_games_for_date(game_date)
@@ -58,8 +58,8 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 scraped_pitch_logs = []
                 for pitcher_id, url in game.pitcher_appearance_dict.items():
                     pitch_app_id = f"{game_id}_{pitcher_id}"
-                    page_content = self.tracker.get_page_content(pitch_app_id)
-                    result = parse_pitch_log(page_content, game, pitcher_id, url)
+                    html = self.tracker.get_html(pitch_app_id)
+                    result = parse_pitch_log(html, game, pitcher_id, url)
                     if result.failure:
                         return result
                     pitch_log = result.value
@@ -76,7 +76,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 self.db_session.commit()
         return Result.Ok()
 
-    def parse_html(self, page_content, url_id, url):
+    def parse_html(self, html, url_id, url):
         pass
 
     def update_status(self, game_date, parsed_data):

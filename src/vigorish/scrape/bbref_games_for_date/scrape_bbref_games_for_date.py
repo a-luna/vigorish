@@ -24,8 +24,8 @@ class ScrapeBBRefGamesForDate(ScrapeTaskABC):
             return Result.Fail("skip")
         return Result.Ok()
 
-    def parse_html(self, page_content, url_id, url):
-        return parse_bbref_dashboard_page(page_content, url_id, url)
+    def parse_html(self, html, url_id, url):
+        return parse_bbref_dashboard_page(html, url_id, url)
 
     def update_status(self, game_date, parsed_data):
         return update_bbref_games_for_date_single_date(self.db_session, self.season, parsed_data)

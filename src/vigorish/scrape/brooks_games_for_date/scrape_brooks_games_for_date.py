@@ -35,13 +35,13 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
             return Result.Fail("skip")
         return Result.Ok()
 
-    def parse_html(self, page_content, url_id, url):
+    def parse_html(self, html, url_id, url):
         result = self.scraped_data.get_bbref_games_for_date(url_id)
         if result.failure:
             return result
         bbref_games_for_date = result.value
         return parse_brooks_dashboard_page(
-            self.db_session, page_content, url_id, url, bbref_games_for_date
+            self.db_session, html, url_id, url, bbref_games_for_date
         )
 
     def update_status(self, game_date, parsed_data):

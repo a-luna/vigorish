@@ -55,7 +55,7 @@ class UrlDetails:
         return self.local_file_exists_with_content or self.scraped_file_exists_with_content
 
     @property
-    def page_content(self):
+    def html(self):
         if self.local_file_exists_with_content:
             return self.local_page_content
         if self.scraped_file_exists_with_content:

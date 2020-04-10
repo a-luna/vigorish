@@ -466,7 +466,7 @@ class ConfigFile:
             script_params = self.__get_default_nodejs_script_params()
         return script_params
 
-    def get_nodejs_script_params(
+    def get_nodejs_script_args(
         self, data_set: DataSet, url_set_filepath: Path
     ) -> NUMERIC_OPTIONS_JSON_VALUE:
         script_params = self.get_all_url_scrape_params(data_set)

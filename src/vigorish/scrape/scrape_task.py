@@ -26,7 +26,7 @@ NODEJS_SCRIPT = APP_FOLDER / "nightmarejs" / "scrape_job.js"
 def user_cancelled(db_session, active_job, spinner, signal_received, frame):
     spinner.stop()
     subprocess.run(["clear"])
-    print_message("Job cancelled by user!", fg="cyan", bold=True)
+    print_message("Job cancelled by user!", fg="yellow", bold=True)
     pause(message="Press any key to continue...")
     exit(0)
 
@@ -34,7 +34,6 @@ def user_cancelled(db_session, active_job, spinner, signal_received, frame):
 class ScrapeTaskABC(ABC):
     data_set: DataSet
     tracker: UrlTracker
-    spinner: Halo
 
     def __init__(self, db_job, db_session, config, scraped_data):
         self.db_job = db_job
@@ -48,20 +47,19 @@ class ScrapeTaskABC(ABC):
         self.scraped_html_folderpath = self.db_job.get_scraped_html_folderpath(self.data_set)
         self.url_builder = UrlBuilder(self.db_job, self.config, self.scraped_data)
         self.scrape_condition = self.config.get_current_setting("SCRAPE_CONDITION", self.data_set)
+        self.spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
 
     @property
     def date_range(self):
         return get_date_range(self.start_date, self.end_date)
 
     def execute(self):
-        if self.scrape_condition == ScrapeCondition.NEVER:
-            return Result.Fail("skip")
         result = (
-            self.task_preparation()
-            .on_success(self.construct_url_set)
+            self.initialize()
+            .on_success(self.identify_missing_urls)
             .on_success(self.retrieve_scraped_html)
             .on_success(self.scrape_missing_html)
-            .on_success(self.parse_data_from_scraped_html)
+            .on_success(self.parse_scraped_html)
         )
         self.spinner.stop()
         if result.failure:
@@ -69,24 +67,16 @@ class ScrapeTaskABC(ABC):
         self.tracker.remove_scraped_html()
         return Result.Ok()
 
-    def task_preparation(self):
-        self.spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
+    def initialize(self):
+        if self.scrape_condition == ScrapeCondition.NEVER:
+            return Result.Fail("skip")
         signal(SIGINT, partial(user_cancelled, self.db_session, self.db_job, self.spinner))
-        return Result.Ok()
-
-    def construct_url_set(self):
         self.spinner.text = "Building URL List..."
         self.spinner.start()
-        result = self.url_builder.create_url_set(self.data_set)
-        if result.failure:
-            return result
-        self.tracker = UrlTracker(data_set=self.data_set, all_urls=result.value)
-        result = self.determine_scrape_urls()
-        if result.failure:
-            return result
-        return Result.Ok()
+        return self.url_builder.create_url_set(self.data_set)
 
-    def determine_scrape_urls(self):
+    def identify_missing_urls(self, all_urls):
+        self.tracker = UrlTracker(self.data_set, all_urls)
         self.spinner.text = self.tracker.identify_html_report
         for game_date, urls in self.tracker.all_urls.items():
             result = self.check_prerequisites(game_date)
@@ -103,61 +93,55 @@ class ScrapeTaskABC(ABC):
         return Result.Ok()
 
     def retrieve_scraped_html(self):
-        self.spinner.text = self.tracker.retrieve_html_report
+        self.spinner.text = self.tracker.retrieve_html_report(checked_url_count=0)
         if not self.tracker.missing_urls:
             return Result.Fail("skip")
-        for url in self.tracker.missing_urls[:]:
+        for checked_url_count, url in enumerate(self.tracker.missing_urls[:], start=1):
             self.scraped_data.get_html(self.data_set, url.identifier)
-            if url.file_exists_with_content:
-                self.tracker.cached_urls.append(url)
-            else:
-                self.tracker.scrape_urls.append(url)
+            if not url.file_exists_with_content:
+                continue
+            self.tracker.cached_urls.append(url)
             self.tracker.missing_urls.remove(url)
-            self.spinner.text = self.tracker.retrieve_html_report
-        if self.tracker.scrape_urls:
-            self.spinner.text = self.tracker.scrape_html_report
+            self.spinner.text = self.tracker.retrieve_html_report(checked_url_count)
         return Result.Ok()
 
     def scrape_missing_html(self):
-        if not self.tracker.scrape_urls:
-            return Result.Ok()
-        self.spinner.stop_and_persist(self.spinner.frame(), "")
-        url_set_filepath = self.db_job.url_set_filepath
-        url_set_filepath.write_text(self.tracker.scrape_urls_as_json)
-        args = self.config.get_nodejs_script_params(self.data_set, url_set_filepath)
-        if is_ubuntu():
-            success = self.invoke_nodejs_script_ubuntu(args)
-        else:
-            success = self.invoke_nodejs_script_normal(args)
-        if not success:
-            return Result.Fail("nodejs process did not exit successfully")
-        url_set_filepath.unlink()
-        self.spinner.text = self.tracker.save_html_report(saved_count=0)
-        self.spinner.start()
-        for i, url in enumerate(self.tracker.scrape_urls, start=1):
-            if not url.scraped_file_exists_with_content:
-                error = f"HTML file does not exist or is empty: {url.scraped_file_path}"
-                return Result.Fail(error)
-            result = self.scraped_data.save_html(self.data_set, url.identifier, url.page_content)
-            if result.failure:
-                return result
-            self.spinner.text = self.tracker.save_html_report(saved_count=i)
+        while self.tracker.missing_urls:
+            self.spinner.text = self.tracker.scrape_html_report
+            self.spinner.stop_and_persist(self.spinner.frame(), "")
+            result = self.invoke_nodejs_script()
+            self.spinner.text = self.tracker.save_html_report(saved_count=0)
+            self.spinner.start()
+            for i, url in enumerate(self.tracker.missing_urls, start=1):
+                if not url.scraped_file_exists_with_content:
+                    continue
+                result = self.scraped_data.save_html(self.data_set, url.identifier, url.html)
+                if result.failure:
+                    return result
+                self.tracker.completed_urls.append(url)
+                self.tracker.missing_urls.remove(url)
+                self.spinner.text = self.tracker.save_html_report(saved_count=i)
         return Result.Ok()
 
-    def invoke_nodejs_script_normal(self, args):
-        return execute_js(str(NODEJS_SCRIPT), arguments=args)
+    def invoke_nodejs_script(self):
+        missing_urls_filepath = self.db_job.url_set_filepath
+        missing_urls_filepath.write_text(self.tracker.missing_urls_as_json)
+        script_args = self.config.get_nodejs_script_args(self.data_set, missing_urls_filepath)
+        if is_ubuntu():
+            success = execute(f"nodejs {NODEJS_SCRIPT} {script_args}")
+        else:
+            success = execute_js(str(NODEJS_SCRIPT), arguments=script_args)
+        missing_urls_filepath.unlink()
+        return Result.Ok() if success else Result.Fail("nodejs script failed")
 
-    def invoke_nodejs_script_ubuntu(self, args):
-        return execute(f"nodejs {NODEJS_SCRIPT} {args}")
-
-    def parse_data_from_scraped_html(self):
+    def parse_scraped_html(self):
         parsed = 0
         self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed)
         for game_date, urls in self.tracker.all_urls.items():
             for url in urls:
                 if url.identifier not in self.tracker.parse_url_ids:
                     continue
-                result = self.parse_html(url.page_content, url.identifier, url.url)
+                result = self.parse_html(url.html, url.identifier, url.url)
                 if result.failure:
                     return result
                 parsed_data = result.value
@@ -181,7 +165,7 @@ class ScrapeTaskABC(ABC):
         pass
 
     @abstractmethod
-    def parse_html(self, page_content, url_id, url):
+    def parse_html(self, html, url_id, url):
         pass
 
     @abstractmethod
