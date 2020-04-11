@@ -1,7 +1,8 @@
 """The main menu for the CLI."""
 from vigorish.cli.menu import Menu
 from vigorish.cli.menus.all_jobs_menu import AllJobsMenu
-from vigorish.cli.menus.settings_menu import ConfigSettingsMenu
+from vigorish.cli.menus.config_settings_menu import ConfigSettingsMenu
+from vigorish.cli.menus.dotenv_settings_menu import DotEnvSettingsMenu
 from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
@@ -10,6 +11,7 @@ from vigorish.config.database import db_setup_complete
 
 class MainMenu(Menu):
     def __init__(self, app) -> None:
+        self.dotenv = app["dotenv"]
         self.config = app["config"]
         self.db_engine = app["engine"]
         self.db_session = app["session"]
@@ -19,6 +21,7 @@ class MainMenu(Menu):
     def populate_menu_items(self) -> None:
         self.menu_items = []
         self.menu_items.append(ConfigSettingsMenu(self.config))
+        self.menu_items.append(DotEnvSettingsMenu(self.dotenv))
         self.menu_items.append(ExitProgramMenuItem())
         if db_setup_complete(self.db_engine, self.db_session):
             self.menu_items.insert(

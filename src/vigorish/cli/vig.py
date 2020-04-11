@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from vigorish.cli.click_params import DateString, MlbSeason, JobName
 from vigorish.cli.menus.main_menu import MainMenu
 from vigorish.cli.util import print_message, validate_scrape_dates
+from vigorish.config.dotenv import DotEnvFile
 from vigorish.config.database import get_db_url, initialize_database, ScrapeJob
 from vigorish.config.types import ConfigFile
 from vigorish.constants import DATA_SET_CHOICES
@@ -33,12 +34,14 @@ def cli(ctx):
     """Entry point for the CLI application."""
     if DOTENV.is_file():
         load_dotenv(DOTENV)
+    dotenv = DotEnvFile()
     config = ConfigFile(config_file_path=CONFIG)
     engine = create_engine(get_db_url())
     session_maker = sessionmaker(bind=engine)
     session = session_maker()
     scraped_data = ScrapedData(db=session, config=config)
     ctx.obj = {
+        "dotenv": dotenv,
         "config": config,
         "engine": engine,
         "session": session,

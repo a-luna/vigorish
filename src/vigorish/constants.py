@@ -1,6 +1,14 @@
 """Constant values that are referenced from multiple places."""
 from vigorish.enums import DataSet, JobGroup, JobStatus
 
+ENV_VAR_NAMES = [
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_DEFAULT_REGION",
+    "CONFIG_FILE",
+    "DATABASE_URL",
+]
+
 TEAM_ID_DICT = {
     "CHW": "CHA",
     "CHC": "CHN",
@@ -166,6 +174,8 @@ EMOJI_DICT = dict(
     THUMBS_UP="👍",
     CLOUD="🌧",
     SPIRAL="🌀",
+    DIZZY="💫",
+    BOMB="💣",
     CIRCLE="🔵",
     GEAR="⚙️ ",
     BLUE_DIAMOND="🔹",
@@ -175,7 +185,7 @@ EMOJI_DICT = dict(
     FAILED="🚫",
     QUESTION="❔",
     COOL="🆒",
-    BACK="⬅ ",
+    BACK="👈",
     EXIT="❎",
 )
 
@@ -191,21 +201,6 @@ MENU_NUMBERS = {
     9: "9️⃣",
     10: "🔟",
 }
-
-CONFIG_EMOJI_DICT = dict(
-    SCRAPE_CONDITION=EMOJI_DICT.get("QUESTION", ""),
-    STATUS_REPORT=EMOJI_DICT.get("CHART", ""),
-    URL_SCRAPE_DELAY=EMOJI_DICT.get("CLOCK", ""),
-    BATCH_JOB_SETTINGS=EMOJI_DICT.get("BAGS", ""),
-    BATCH_SCRAPE_DELAY=EMOJI_DICT.get("CLOCK", ""),
-    S3_BUCKET=EMOJI_DICT.get("BASKET", ""),
-    HTML_STORAGE=EMOJI_DICT.get("QUESTION", ""),
-    HTML_LOCAL_FOLDER_PATH=EMOJI_DICT.get("FOLDER", ""),
-    HTML_S3_FOLDER_PATH=EMOJI_DICT.get("BOOKMARK", ""),
-    JSON_STORAGE=EMOJI_DICT.get("QUESTION", ""),
-    JSON_LOCAL_FOLDER_PATH=EMOJI_DICT.get("FOLDER", ""),
-    JSON_S3_FOLDER_PATH=EMOJI_DICT.get("BOOKMARK", ""),
-)
 
 JOB_STATUS_TO_GROUP_MAP = {
     JobStatus.NOT_STARTED: JobGroup.INCOMPLETE,

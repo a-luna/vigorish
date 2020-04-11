@@ -35,8 +35,8 @@ class ChangeSetttingMenuItem(MenuItem):
     @property
     def enum_dict(self):
         return {
-            f"{MENU_NUMBERS.get(choice.value)}  {choice.name}": choice
-            for choice in self.possible_values
+            f"{MENU_NUMBERS.get(num)}  {choice.name}": choice
+            for num, choice in enumerate(self.possible_values, start=1)
         }
 
     @property

@@ -2,7 +2,7 @@
 import subprocess
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.menu_items.change_setting import ChangeSetttingMenuItem
+from vigorish.cli.menu_items.change_config_setting import ChangeSetttingMenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no
 from vigorish.config.types import ConfigFile
 from vigorish.constants import EMOJI_DICT
@@ -10,7 +10,7 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
 
-class CurrentSettingMenuItem(MenuItem):
+class ConfigSettingMenuItem(MenuItem):
     def __init__(self, setting_name: str, config: ConfigFile) -> None:
         self.setting_name = setting_name
         self.config = config
