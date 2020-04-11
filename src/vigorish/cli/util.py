@@ -3,6 +3,8 @@ import click
 from dateutil import parser
 from bullet import Bullet, colors, Input
 
+from getch import pause
+
 from vigorish.config.database import Season
 from vigorish.constants import MENU_NUMBERS, CLI_COLORS
 from vigorish.enums import DataSet

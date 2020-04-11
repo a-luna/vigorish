@@ -7,6 +7,7 @@ from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
 from vigorish.config.database import db_setup_complete
+from vigorish.constants import EMOJI_DICT
 
 
 class MainMenu(Menu):
@@ -28,10 +29,12 @@ class MainMenu(Menu):
                 0, CreateJobMenuItem(self.db_session, self.config, self.scraped_data)
             )
             self.menu_items.insert(1, AllJobsMenu(self.db_session, self.config, self.scraped_data))
-            db_menu_text = "Reset Database"
-            menu_index = 2
+            db_text = "Reset Database"
+            db_emoji = EMOJI_DICT.get("BOMB")
+            db_index = 4
         else:
-            db_menu_text = "Setup Database"
-            menu_index = 0
-        db_menu_item = SetupDBMenuItem(db_menu_text, self.db_engine, self.db_session)
-        self.menu_items.insert(menu_index, db_menu_item)
+            db_text = "Setup Database"
+            db_emoji = EMOJI_DICT.get("DIZZY")
+            db_index = 0
+        db_menu_item = SetupDBMenuItem(db_text, db_emoji, self.db_engine, self.db_session)
+        self.menu_items.insert(db_index, db_menu_item)

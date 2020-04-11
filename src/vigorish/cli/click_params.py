@@ -1,4 +1,3 @@
-import re
 from dateutil import parser
 
 import click

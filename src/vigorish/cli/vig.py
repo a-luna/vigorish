@@ -91,20 +91,29 @@ def setup(app):
     type=DateString(),
     default=today_str,
     prompt=True,
-    help="Date to start scraping data, string can be in any format that is recognized by dateutil.parser.",
+    help=(
+        "Date to start scraping data, string can be in any format that is recognized by "
+        "dateutil.parser."
+    ),
 )
 @click.option(
     "--end",
     type=DateString(),
     default=today_str,
     prompt=True,
-    help="Date to stop scraping data, string can be in any format that is recognized by dateutil.parser.",
+    help=(
+        "Date to stop scraping data, string can be in any format that is recognized by "
+        "dateutil.parser."
+    ),
 )
 @click.option(
     "--name",
     type=JobName(),
     help="A name to help identify this job.",
-    prompt="Enter a name to help you identify this job (must consist of ONLY: letters/numbers/underscore/hyphen)",
+    prompt=(
+        "Enter a name to help you identify this job (must consist of ONLY: "
+        "letters/numbers/underscore/hyphen)"
+    ),
 )
 @click.pass_obj
 def scrape(app, data_set, start, end, name):

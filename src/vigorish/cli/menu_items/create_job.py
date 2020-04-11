@@ -2,11 +2,10 @@
 import subprocess
 
 from bullet import Check, Input, VerticalPrompt, colors
-from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import DateInput, prompt_user_yes_no, print_message, validate_scrape_dates
-from vigorish.config.database import ScrapeJob, Season
+from vigorish.cli.util import DateInput, prompt_user_yes_no, validate_scrape_dates
+from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
 from vigorish.scrape.job_runner import JobRunner
@@ -34,7 +33,7 @@ class CreateJobMenuItem(MenuItem):
                 start_date = job_details[0][1]
                 end_date = job_details[1][1]
                 job_name = job_details[2][1]
-                result = validate_scrape_dates(start_date, end_date)
+                result = validate_scrape_dates(self.db_session, start_date, end_date)
                 if result.failure:
                     continue
                 season = result.value

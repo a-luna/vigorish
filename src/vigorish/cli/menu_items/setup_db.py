@@ -6,7 +6,6 @@ from getch import pause
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no
 from vigorish.config.database import initialize_database, db_setup_complete
-from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
@@ -22,11 +21,11 @@ WARNING = (
 
 
 class SetupDBMenuItem(MenuItem):
-    def __init__(self, menu_item_text, db_engine, db_session) -> None:
+    def __init__(self, menu_item_text, menu_item_emoji, db_engine, db_session) -> None:
         self.db_engine = db_engine
         self.db_session = db_session
         self.menu_item_text = menu_item_text
-        self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
+        self.menu_item_emoji = menu_item_emoji
 
     def launch(self) -> Result:
         subprocess.run(["clear"])
