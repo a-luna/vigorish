@@ -9,13 +9,11 @@ const PBAR_MAX_LENGTH = 23
 
 const multibar = new cliProgress.MultiBar({
     format:
-        "|" +
-        colors.cyan("{bar}") +
-        "| " +
+        colors.cyan("|{bar}| ") +
         colors.bold.cyan("{message}") +
-        " | " +
+        colors.cyan(" | ") +
         colors.bold.cyan("{percentage}%") +
-        " | " +
+        colors.cyan(" | ") +
         colors.bold.cyan("{value}/{total} {unit}"),
     barCompleteChar: "\u2588",
     barIncompleteChar: "\u2591",
@@ -48,11 +46,6 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
     batchBar.update(batchCounter, { message: pBarMessage("Scraped all batches") })
     multibar.stop()
     return
-
-    function readUrlSetFromFile(urlSetFilepath) {
-        const urlSetText = readFileSync(urlSetFilepath, { encoding: "utf8" })
-        return JSON.parse(urlSetText)
-    }
 
     function createBatchJob(allUrls, batchJobParams) {
         let batchList
@@ -155,19 +148,15 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
     }
 }
 
-function sleep(timeoutMs) {
-    return new Promise((resolve) => setTimeout(resolve, timeoutMs))
-}
-
 async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams) {
     const urlSet = readUrlSetFromFile(urlSetFilepath)
     const urlBar = multibar.create(urlSet.length, 0, { message: "N/A", unit: "URLs" })
-    let counter = 1
+    let counter = 0
     await urlSet.reduce(async (promise, urlDetails) => {
         await promise
         let { url, fileName, identifier, scrapedHtmlFolderpath } = urlDetails
-        await scrapeUrl(nightmare, url, fileName, scrapedHtmlFolderpath, timeoutParams)
         urlBar.update(counter, { message: identifier })
+        await scrapeUrl(nightmare, url, fileName, scrapedHtmlFolderpath, timeoutParams)
         counter += 1
     }, Promise.resolve())
     urlBar.stop()
@@ -195,6 +184,15 @@ async function scrapeUrl(nightmare, url, outputFileName, outputFolderPath, timeo
             console.log(e)
         }
     }
+}
+
+function readUrlSetFromFile(urlSetFilepath) {
+    const urlSetText = readFileSync(urlSetFilepath, { encoding: "utf8" })
+    return JSON.parse(urlSetText)
+}
+
+function sleep(timeoutMs) {
+    return new Promise((resolve) => setTimeout(resolve, timeoutMs))
 }
 
 function getRandomInt(min, max) {
