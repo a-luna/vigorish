@@ -81,7 +81,7 @@ class JobRunner:
 
     def scrape_task_skipped_text(self, data_set, task_number):
         return (
-            f"{EMOJI_DICT.get('SHRUG', '')} Scraped data set: {data_set.name} "
+            f"{EMOJI_DICT.get('SHRUG', '')} Skipped data set: {data_set.name} "
             f"(Task {task_number}/{len(self.data_sets)})"
         )
 

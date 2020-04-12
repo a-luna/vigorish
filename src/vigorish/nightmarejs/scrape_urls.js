@@ -10,11 +10,7 @@ const PBAR_MAX_LENGTH = 23
 const multibar = new cliProgress.MultiBar({
     format:
         colors.cyan("|{bar}| ") +
-        colors.bold.cyan("{message}") +
-        colors.cyan(" | ") +
-        colors.bold.cyan("{percentage}%") +
-        colors.cyan(" | ") +
-        colors.bold.cyan("{value}/{total} {unit}"),
+        colors.white("{message} | {percentage}% | {value}/{total} {unit}"),
     barCompleteChar: "\u2588",
     barIncompleteChar: "\u2591",
     stopOnComplete: true,

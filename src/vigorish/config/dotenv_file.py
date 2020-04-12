@@ -18,7 +18,7 @@ class DotEnvFile:
     def read_dotenv_file(self):
         """Parse .env file to a dictionary of environment variables."""
         if not DOTENV_FILE.exists():
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), DOTENV_FILE)
+            DOTENV_FILE.touch()
         if not DOTENV_FILE.is_file():
             raise TypeError(f"Unable to open file: {DOTENV_FILE}")
         load_dotenv(DOTENV_FILE)
