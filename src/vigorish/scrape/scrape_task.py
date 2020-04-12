@@ -17,7 +17,7 @@ from vigorish.scrape.url_builder import UrlBuilder
 from vigorish.scrape.url_tracker import UrlTracker
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.result import Result
-from vigorish.util.sys_helpers import is_ubuntu
+from vigorish.util.sys_helpers import node_installed
 
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_SCRIPT = APP_FOLDER / "nightmarejs" / "scrape_job.js"
@@ -127,10 +127,12 @@ class ScrapeTaskABC(ABC):
         missing_urls_filepath = self.db_job.url_set_filepath
         missing_urls_filepath.write_text(self.tracker.missing_urls_as_json)
         script_args = self.config.get_nodejs_script_args(self.data_set, missing_urls_filepath)
-        if is_ubuntu():
+        if node_installed():
+            success = execute_js(str(NODEJS_SCRIPT), arguments=script_args)
+        elif node_installed(exe_name="nodejs"):
             success = execute(f"nodejs {NODEJS_SCRIPT} {script_args}")
         else:
-            success = execute_js(str(NODEJS_SCRIPT), arguments=script_args)
+            return Result.Fail("Node.js is NOT installed!")
         missing_urls_filepath.unlink()
         return Result.Ok() if success else Result.Fail("nodejs script failed")
 

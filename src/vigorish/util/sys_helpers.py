@@ -1,14 +1,26 @@
 """Utility functions that interact with the terminal."""
 import os
 import platform
+import re
+import subprocess
 from pathlib import Path
 from typing import Tuple, Union
 
 from vigorish.util.result import Result
 
 
-def is_ubuntu():
-    return "ubuntu" in platform.version().lower()
+def node_installed(exe_name="node"):
+    try:
+        node_version = subprocess.run(
+            [exe_name, "--version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            encoding="utf-8",
+        )
+        output = node_version.stdout.strip()
+        return True if re.compile(r"v\d{1,2}\.").match(output) else False
+    except FileNotFoundError:
+        return False
 
 
 def is_windows():
