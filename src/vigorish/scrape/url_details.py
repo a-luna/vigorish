@@ -66,9 +66,11 @@ class UrlDetails:
         self.scraped_file_path.replace(self.local_file_path)
 
     def as_dict(self):
-        valid_json_id = self.identifier
-        if isinstance(self.identifier, datetime):
-            valid_json_id = self.identifier.strftime(DATE_ONLY_2)
+        valid_json_id = (
+            self.identifier.strftime(DATE_ONLY_2)
+            if isinstance(self.identifier, datetime)
+            else self.identifier
+        )
         return {
             "url": self.url,
             "identifier": valid_json_id,

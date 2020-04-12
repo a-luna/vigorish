@@ -24,7 +24,7 @@ from vigorish.status.report_status import report_season_status, report_date_rang
 from vigorish.util.result import Result
 
 APP_FOLDER = Path(__file__).parent.parent
-NODEJS_OUTBOX = APP_FOLDER / "nightmarejs" / "outbox"
+NODEJS_OUTBOX = APP_FOLDER.joinpath("nightmarejs/outbox")
 
 
 class JobRunner:
@@ -57,18 +57,10 @@ class JobRunner:
             result = self.get_scrape_task_for_data_set(data_set).execute()
             if result.failure:
                 if "skip" in result.error:
-                    text = (
-                        f"{EMOJI_DICT.get('SHRUG', '')} "
-                        f"Skipped data set: {data_set.name} (Task {i}/{len(self.data_sets)})"
-                    )
-                    task_results.append(text)
+                    task_results.append(self.scrape_task_skipped_text(data_set, i))
                     continue
-                return self.job_failed(result)
-            text = (
-                f"{EMOJI_DICT.get('PASSED', '')} "
-                f"Scraped data set: {data_set.name} (Task {i}/{len(self.data_sets)})"
-            )
-            task_results.append(text)
+                return self.job_failed(result, data_set=data_set)
+            task_results.append(self.scrape_task_complete_text(data_set, i))
         subprocess.run(["clear"])
         print("\n".join(task_results))
         result = self.show_status_report()
@@ -86,6 +78,18 @@ class JobRunner:
             DataSet.BBREF_BOXSCORES: ScrapeBBRefBoxscores,
         }
         return task_dict[data_set](self.db_job, self.db_session, self.config, self.scraped_data)
+
+    def scrape_task_skipped_text(self, data_set, task_number):
+        return (
+            f"{EMOJI_DICT.get('SHRUG', '')} Scraped data set: {data_set.name} "
+            f"(Task {task_number}/{len(self.data_sets)})"
+        )
+
+    def scrape_task_complete_text(self, data_set, task_number):
+        return (
+            f"{EMOJI_DICT.get('PASSED', '')} Scraped data set: {data_set.name} "
+            f"(Task {task_number}/{len(self.data_sets)})"
+        )
 
     def initialize(self):
         errors = []
