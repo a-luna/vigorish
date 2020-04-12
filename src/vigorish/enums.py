@@ -71,7 +71,7 @@ class JsonStorageOption(Enum):
         return self.name
 
 
-class StatusReport(IntEnum):
+class StatusReport(Enum):
     """The type of status report (if any) to display."""
 
     NONE = 0
