@@ -7,6 +7,7 @@ from pathlib import Path
 from halo import Halo
 from getch import pause
 
+from vigorish.cli.util import print_message
 from vigorish.config.database import ScrapeError
 from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
 from vigorish.enums import DataSet, StatusReport
@@ -21,14 +22,6 @@ from vigorish.scrape.brooks_pitch_logs.scrape_brooks_pitch_logs import ScrapeBro
 from vigorish.scrape.brooks_pitchfx.scrape_brooks_pitchfx import ScrapeBrooksPitchFx
 from vigorish.status.report_status import report_season_status, report_date_range_status
 from vigorish.util.result import Result
-
-SCRAPE_TASK_DICT = {
-    DataSet.BROOKS_GAMES_FOR_DATE: ScrapeBrooksGamesForDate,
-    DataSet.BROOKS_PITCH_LOGS: ScrapeBrooksPitchLogs,
-    DataSet.BROOKS_PITCHFX: ScrapeBrooksPitchFx,
-    DataSet.BBREF_GAMES_FOR_DATE: ScrapeBBRefGamesForDate,
-    DataSet.BBREF_BOXSCORES: ScrapeBBRefBoxscores,
-}
 
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_OUTBOX = APP_FOLDER / "nightmarejs" / "outbox"
@@ -50,22 +43,18 @@ class JobRunner:
         result = self.initialize()
         if result.failure:
             return self.job_failed(result)
-        self.start_time = datetime.now()
         task_results = []
         spinners = defaultdict(lambda: Halo(spinner="dots3"))
         for i, data_set in enumerate(self.data_sets, start=1):
             subprocess.run(["clear"])
             if task_results:
-                print("\n".join(task_results))
+                print_message("\n".join(task_results), fg="gray")
             text = f"Scraping data set: {data_set.name} (Task {i}/{len(self.data_sets)})..."
             spinners[data_set].text = text
             spinners[data_set].color = JOB_SPINNER_COLORS[data_set]
             spinners[data_set].start()
-            scrape_task = SCRAPE_TASK_DICT[data_set](
-                self.db_job, self.db_session, self.config, self.scraped_data,
-            )
             spinners[data_set].stop_and_persist(spinners[data_set].frame(), "")
-            result = scrape_task.execute()
+            result = self.get_scrape_task_for_data_set(data_set).execute()
             if result.failure:
                 if "skip" in result.error:
                     text = (
@@ -88,8 +77,19 @@ class JobRunner:
             return self.job_failed(result)
         return self.job_succeeded()
 
+    def get_scrape_task_for_data_set(self, data_set):
+        task_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: ScrapeBrooksGamesForDate,
+            DataSet.BROOKS_PITCH_LOGS: ScrapeBrooksPitchLogs,
+            DataSet.BROOKS_PITCHFX: ScrapeBrooksPitchFx,
+            DataSet.BBREF_GAMES_FOR_DATE: ScrapeBBRefGamesForDate,
+            DataSet.BBREF_BOXSCORES: ScrapeBBRefBoxscores,
+        }
+        return task_dict[data_set](self.db_job, self.db_session, self.config, self.scraped_data)
+
     def initialize(self):
         errors = []
+        self.start_time = datetime.now()
         result = self.check_url_delay_settings()
         if result.failure:
             errors.append(result.error)
