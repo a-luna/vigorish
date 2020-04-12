@@ -106,13 +106,13 @@ class ScrapeTaskABC(ABC):
         return Result.Ok()
 
     def scrape_missing_html(self):
-        while self.tracker.missing_urls:
+        while not self.tracker.html_scraping_complete:
             self.spinner.text = self.tracker.scrape_html_report
             self.spinner.stop_and_persist(self.spinner.frame(), "")
             result = self.invoke_nodejs_script()
             self.spinner.text = self.tracker.save_html_report(saved_count=0)
             self.spinner.start()
-            for i, url in enumerate(self.tracker.missing_urls, start=1):
+            for i, url in enumerate(self.tracker.missing_urls[:], start=1):
                 if not url.scraped_file_exists_with_content:
                     continue
                 result = self.scraped_data.save_html(self.data_set, url.identifier, url.html)

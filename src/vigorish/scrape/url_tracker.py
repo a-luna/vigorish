@@ -25,13 +25,17 @@ class UrlTracker:
 
     @property
     def parse_urls(self):
-        return self.completed_urls + self.cached_urls
+        return self.missing_urls + self.completed_urls + self.cached_urls
 
     @property
     def parse_url_ids(self):
         if self.data_set == DataSet.BROOKS_PITCH_LOGS:
             return list(set([url.identifier[:12] for url in self.parse_urls]))
         return [url.identifier for url in self.parse_urls]
+
+    @property
+    def html_scraping_complete(self):
+        return all([url.file_exists_with_content for url in self.parse_urls])
 
     @property
     def identify_html_report(self):
@@ -67,9 +71,10 @@ class UrlTracker:
         )
 
     def save_html_report(self, saved_count):
+        total_urls = len(self.missing_urls) + len(self.complete_urls)
         return (
-            f"Saving scraped HTML... {saved_count / float(len(self.missing_urls)):.0%} "
-            f"({saved_count}/{len(self.missing_urls)}) URLs"
+            f"Saving scraped HTML... {saved_count / float(total_urls):.0%} "
+            f"({saved_count}/{total_urls}) URLs"
         )
 
     def parse_html_report(self, data_set, parsed_count, game_id=None):
