@@ -1,22 +1,33 @@
 {
-    "SCRAPE_CONDITION": {
-        "CONFIG_TYPE": "Enum",
-        "ENUM_NAME": "ScrapeCondition",
-        "DESCRIPTION": "By default, HTML is scraped and parsed only once (ONLY_MISSING_DATA). You can overwrite existing data by selecting ALWAYS, or prevent any data from being scraped by selecting NEVER.",
-        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-        "ALL": "ONLY_MISSING_DATA",
-        "BBREF_GAMES_FOR_DATE": null,
-        "BBREF_BOXSCORES": null,
-        "BROOKS_GAMES_FOR_DATE": null,
-        "BROOKS_PITCH_LOGS": null,
-        "BROOKS_PITCHFX": null
-    },
     "STATUS_REPORT": {
         "CONFIG_TYPE": "Enum",
         "ENUM_NAME": "StatusReport",
         "DESCRIPTION": "After a scrape job has successfully completed, you can display a report for the MLB season displaying various metrics for all data sets. The options below determine the level of detail reported.",
         "SAME_SETTING_FOR_ALL_DATA_SETS": true,
         "ALL": "SEASON_SUMMARY",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
+    "S3_BUCKET": {
+        "CONFIG_TYPE": "str",
+        "DESCRIPTION": "The name of the S3 bucket to use for storing HTML and/or JSON files",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "vig-data",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
+    "SCRAPE_CONDITION": {
+        "CONFIG_TYPE": "Enum",
+        "ENUM_NAME": "ScrapeCondition",
+        "DESCRIPTION": "By default, HTML is scraped and parsed only once (ONLY_MISSING_DATA). You can overwrite existing data by selecting ALWAYS, or prevent any data from being scraped by selecting NEVER.",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "ONLY_MISSING_DATA",
         "BBREF_GAMES_FOR_DATE": null,
         "BBREF_BOXSCORES": null,
         "BROOKS_GAMES_FOR_DATE": null,
@@ -77,11 +88,11 @@
         "DESCRIPTION": "Number of URLs to scrape per batch. You can specify a single amount to use for all batches, or create random batch sizes by specifying a minimum and maximum batch size.",
         "SAME_SETTING_FOR_ALL_DATA_SETS": true,
         "ALL": {
-            "CREATE_BATCHED_SCRAPE_JOBS": true,
-            "USE_IRREGULAR_BATCH_SIZES": true,
+            "CREATE_BATCHED_SCRAPE_JOBS": false,
+            "USE_IRREGULAR_BATCH_SIZES": null,
             "BATCH_SIZE": null,
-            "BATCH_SIZE_MIN": 50,
-            "BATCH_SIZE_MAX": 80
+            "BATCH_SIZE_MIN": null,
+            "BATCH_SIZE_MAX": null
         },
         "BBREF_GAMES_FOR_DATE": {
             "CREATE_BATCHED_SCRAPE_JOBS": null,
@@ -166,17 +177,6 @@
             "BATCH_SCRAPE_DELAY_IN_MINUTES_MIN": 30,
             "BATCH_SCRAPE_DELAY_IN_MINUTES_MAX": 45
         }
-    },
-    "S3_BUCKET": {
-        "CONFIG_TYPE": "str",
-        "DESCRIPTION": "The name of the S3 bucket to use for storing HTML and/or JSON files",
-        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-        "ALL": "vig-data",
-        "BBREF_GAMES_FOR_DATE": null,
-        "BBREF_BOXSCORES": null,
-        "BROOKS_GAMES_FOR_DATE": null,
-        "BROOKS_PITCH_LOGS": null,
-        "BROOKS_PITCHFX": null
     },
     "HTML_STORAGE": {
         "CONFIG_TYPE": "Enum",

@@ -25,11 +25,11 @@ class ChangeSetttingMenuItem(MenuItem):
         self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
         self.pointer = EMOJI_DICT.get("HAND_POINTER", "")
         self.config = config
-        setting = self.config.all_settings.get(setting_name)
-        self.setting_name_title = setting.setting_name_title
-        self.setting_name = setting.setting_name
-        self.data_type = setting.data_type
-        self.possible_values = setting.possible_values
+        self.setting = self.config.all_settings.get(setting_name)
+        self.setting_name_title = self.setting.setting_name_title
+        self.setting_name = self.setting.setting_name
+        self.data_type = self.setting.data_type
+        self.possible_values = self.setting.possible_values
         self.exit_menu = True
 
     @property
@@ -45,15 +45,9 @@ class ChangeSetttingMenuItem(MenuItem):
 
     def launch(self) -> Result:
         subprocess.run(["clear"])
-        result = prompt_user_yes_no_cancel("Use same setting for all data sets?")
-        if result.failure:
+        data_sets = self.__get_data_sets_setting_will_apply_to()
+        if not data_sets:
             return Result.Ok(self.exit_menu)
-        use_same_seting = result.value
-        if use_same_seting:
-            data_sets = [DataSet.ALL]
-        else:
-            data_sets = [ds for ds in DataSet if ds != DataSet.ALL]
-
         setting_changed = False
         while not setting_changed:
             subprocess.run(["clear"])
@@ -69,6 +63,15 @@ class ChangeSetttingMenuItem(MenuItem):
                     return result
             setting_changed = True
         return Result.Ok(self.exit_menu)
+
+    def __get_data_sets_setting_will_apply_to(self):
+        if self.setting.same_value_for_all_data_sets_is_required:
+            return [DataSet.ALL]
+        result = prompt_user_yes_no_cancel("Use same setting for all data sets?")
+        if result.failure:
+            return None
+        use_same_setting = result.value
+        return [DataSet.ALL] if use_same_setting else [ds for ds in DataSet if ds != DataSet.ALL]
 
     def __get_new_setting(self, data_sets):
         if self.data_type == ConfigType.NUMERIC:
@@ -103,11 +106,12 @@ class ChangeSetttingMenuItem(MenuItem):
         )
 
     def __get_numeric_menu(self, data_set):
-        prompt = f"Enable {self.setting_name_title} (Data Set = {data_set.name})? "
-        result = prompt_user_yes_no(prompt)
-        is_enabled = result.value
-        if not is_enabled:
-            return (prompt, (is_enabled, None, None, None, None))
+        if not self.setting.cannot_be_disabled:
+            prompt = f"Enable {self.setting_name_title} (Data Set = {data_set.name})? "
+            result = prompt_user_yes_no(prompt)
+            is_enabled = result.value
+            if not is_enabled:
+                return (prompt, (is_enabled, None, None, None, None))
         prompt = f"Use random values (Data Set = {data_set.name})? "
         result = prompt_user_yes_no(prompt)
         is_random = result.value
@@ -136,7 +140,7 @@ class ChangeSetttingMenuItem(MenuItem):
                 )
                 print_message(error, fg="bright_red", bold=True)
                 pause(message="Press any key to continue...")
-            return (prompt, (is_enabled, is_random, None, int(random_min), int(random_max)))
+            return (prompt, (True, is_random, None, int(random_min), int(random_max)))
         else:
             prompt = (
                 f"Enter the value (in {self.setting_units}) for {self.setting_name_title} "
@@ -144,7 +148,7 @@ class ChangeSetttingMenuItem(MenuItem):
             )
             new_value_prompt = Numbers(prompt, word_color=colors.foreground["default"])
             new_value = new_value_prompt.launch()
-            return (prompt, (is_enabled, is_random, int(new_value), None, None))
+            return (prompt, (True, is_random, int(new_value), None, None))
 
     def __get_updated_settings(self, prompt_results):
         if self.data_type == ConfigType.ENUM:

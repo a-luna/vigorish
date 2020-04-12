@@ -309,6 +309,14 @@ class ConfigSetting:
         self.config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"] = is_same
 
     @property
+    def cannot_be_disabled(self):
+        return self.setting_name in ["URL_SCRAPE_DELAY"]
+
+    @property
+    def same_value_for_all_data_sets_is_required(self):
+        return self.setting_name in ["STATUS_REPORT", "S3_BUCKET"]
+
+    @property
     def current_settings_report(self) -> str:
         if self.is_same_for_all_data_sets:
             settings_dict = {"ALL_DATA_SETS": self.current_setting(DataSet.ALL)}
@@ -385,7 +393,7 @@ class EnumConfigSetting(ConfigSetting):
         if enum_name == "JsonStorageOption":
             return JsonStorageOption[value]
         if enum_name == "StatusReport":
-            return str(StatusReport[value])
+            return StatusReport[value]
         return None
 
 
