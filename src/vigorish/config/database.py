@@ -36,6 +36,8 @@ SQLITE_PROD_URL = f"sqlite:///{APP_FOLDER / 'vig_prod.db'}"
 
 def get_db_url():
     db_url = os.getenv("DATABASE_URL", "")
+    if db_url and db_url.startswith("/"):
+        db_url = f"sqlite:///{db_url}"
     env = os.getenv("ENV", "dev")
     return db_url if db_url else SQLITE_PROD_URL if env == "prod" else SQLITE_DEV_URL
 

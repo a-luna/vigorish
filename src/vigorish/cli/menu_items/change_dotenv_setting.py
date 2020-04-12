@@ -5,7 +5,7 @@ from bullet import Input, colors
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no, prompt_user_yes_no_cancel
-from vigorish.config.dotenv import DotEnvFile
+from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 

@@ -9,9 +9,9 @@ from sqlalchemy.orm import sessionmaker
 from vigorish.cli.click_params import DateString, MlbSeason, JobName
 from vigorish.cli.menus.main_menu import MainMenu
 from vigorish.cli.util import print_message, validate_scrape_dates
-from vigorish.config.dotenv import DotEnvFile
+from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.config.database import get_db_url, initialize_database, ScrapeJob
-from vigorish.config.types import ConfigFile
+from vigorish.config.config_file import ConfigFile
 from vigorish.constants import DATA_SET_CHOICES
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import StatusReport
@@ -24,7 +24,6 @@ from vigorish.status.report_status import (
 from vigorish.util.datetime_util import today_str, current_year
 
 APP_FOLDER = Path(__file__).parent.parent
-CONFIG = APP_FOLDER / "vig.config.json"
 DOTENV = APP_FOLDER / ".env"
 
 
@@ -35,7 +34,7 @@ def cli(ctx):
     if DOTENV.is_file():
         load_dotenv(DOTENV)
     dotenv = DotEnvFile()
-    config = ConfigFile(config_file_path=CONFIG)
+    config = ConfigFile()
     engine = create_engine(get_db_url())
     session_maker = sessionmaker(bind=engine)
     session = session_maker()

@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from vigorish.config.types import ConfigFile
+from vigorish.config.config_file import ConfigFile
 from vigorish.data.scraped_data import ScrapedData
 
 TESTS_FOLDER = Path(__file__).parent

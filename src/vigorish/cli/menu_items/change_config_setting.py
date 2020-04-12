@@ -6,7 +6,7 @@ from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import prompt_user_yes_no_cancel, prompt_user_yes_no, print_message
-from vigorish.config.types import ConfigFile
+from vigorish.config.config_file import ConfigFile
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import ConfigType, DataSet
 from vigorish.util.result import Result

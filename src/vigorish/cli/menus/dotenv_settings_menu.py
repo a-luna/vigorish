@@ -2,7 +2,7 @@
 from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.change_dotenv_setting import DotEnvSettingMenuItem
 from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
-from vigorish.config.dotenv import DotEnvFile
+from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.constants import EMOJI_DICT, ENV_VAR_NAMES
 
 
