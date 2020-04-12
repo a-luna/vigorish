@@ -2,11 +2,25 @@
 import os
 import platform
 import re
+import shlex
 import subprocess
 from pathlib import Path
 from typing import Tuple, Union
 
 from vigorish.util.result import Result
+
+
+def run_command(command, cwd=None, encoding=None):
+    process = subprocess.run(
+        shlex.split(command), stdout=subprocess.PIPE, cwd=cwd, encoding=encoding
+    )
+    while True:
+        output = process.stdout.readline()
+        if process.poll() and not output:
+            break
+        if output:
+            print(output.strip())
+    return process.poll()
 
 
 def node_installed(exe_name="node"):
@@ -21,6 +35,12 @@ def node_installed(exe_name="node"):
         return True if re.compile(r"v\d{1,2}\.").match(output) else False
     except FileNotFoundError:
         return False
+
+
+def node_modules_folder_exists():
+    app_folder = Path(__file__).parent.parent
+    node_modules_folder = app_folder.joinpath("nightmarejs/node_modules")
+    return node_modules_folder.exists()
 
 
 def is_windows():
