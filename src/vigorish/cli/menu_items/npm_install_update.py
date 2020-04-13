@@ -46,6 +46,7 @@ class NpmInstallUpdate(MenuItem):
         yes_response = result.value
         if not yes_response:
             return Result.Ok(self.exit_menu)
+        subprocess.run(["clear"])
         exit_code = run_command(command, cwd=str(NIGHTMAREJS_FOLDER))
         if exit_code == 0:
             pause(message="Press any key to continue...")

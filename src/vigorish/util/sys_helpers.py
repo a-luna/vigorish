@@ -12,15 +12,15 @@ from vigorish.util.result import Result
 
 def run_command(command, cwd=None, encoding=None):
     process = subprocess.run(
-        shlex.split(command), stdout=subprocess.PIPE, cwd=cwd, encoding=encoding
+        shlex.split(command), stdout=subprocess.PIPE, cwd=cwd, encoding=encoding, text=True
     )
     while True:
-        output = process.stdout.readline()
-        if process.poll() and not output:
+        try:
+            print(process.stdout.readline())
+        except AttributeError as e:
+            print()
             break
-        if output:
-            print(output.strip())
-    return process.poll()
+    return process.returncode
 
 
 def node_installed(exe_name="node"):
