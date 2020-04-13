@@ -17,7 +17,7 @@ def run_command(command, cwd=None, encoding=None):
     while True:
         try:
             print(process.stdout.readline())
-        except AttributeError as e:
+        except AttributeError:
             print()
             break
     return process.returncode
