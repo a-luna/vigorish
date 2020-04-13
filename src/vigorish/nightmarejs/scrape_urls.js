@@ -8,9 +8,7 @@ const { makeChunkedList, makeIrregularChunkedList } = require("./list_functions"
 const PBAR_MAX_LENGTH = 23
 
 const multibar = new cliProgress.MultiBar({
-    format:
-        colors.cyan("|{bar}| ") +
-        colors.white("{message} | {percentage}% | {value}/{total} {unit}"),
+    format: colors.cyan("{bar} ") + "{message} | {percentage}% | {value}/{total} {unit}",
     barCompleteChar: "\u2588",
     barIncompleteChar: "\u2591",
     stopOnComplete: true,

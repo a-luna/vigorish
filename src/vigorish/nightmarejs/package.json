@@ -5,15 +5,14 @@
   "author": "Aaron Luna <contact@aaronluna.dev> (https://aaronluna.dev)",
   "license": "MIT",
   "dependencies": {
-    "cli-progress": "^3.6.1",
+    "cli-progress": "^3.7.0",
     "colors": "^1.4.0",
     "fs": "0.0.1-security",
     "minimist": "^1.2.5",
     "nightmare": "^3.0.2",
+    "path.join": "^1.0.0",
     "user-agents": "^1.0.559",
-    "xvfb": "^0.3.0",
-    "path.join": "^1.0.0"
+    "xvfb": "^0.3.0"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
