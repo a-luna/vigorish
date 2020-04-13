@@ -3,7 +3,6 @@ import subprocess
 from pathlib import Path
 
 from getch import pause
-from Naked.toolshed.shell import execute
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no

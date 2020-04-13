@@ -9,6 +9,7 @@ from vigorish.cli.menu_items.npm_install_update import NpmInstallUpdate
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
 from vigorish.config.database import db_setup_complete
 from vigorish.constants import EMOJI_DICT
+from vigorish.util.sys_helpers import node_installed
 
 
 class MainMenu(Menu):

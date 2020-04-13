@@ -15,7 +15,7 @@ SQLITE_URL = f"sqlite:///{TESTS_FOLDER / 'vig_test.db'}"
 
 @pytest.fixture(scope="session")
 def config(request):
-    return ConfigFile(config_file_path=CONFIG)
+    return ConfigFile()
 
 
 @pytest.fixture(scope="session")
