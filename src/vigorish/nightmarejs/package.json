@@ -11,7 +11,6 @@
     "minimist": "^1.2.5",
     "nightmare": "^3.0.2",
     "path.join": "^1.0.0",
-    "user-agents": "^1.0.559",
     "xvfb": "^0.3.0"
   },
   "devDependencies": {}

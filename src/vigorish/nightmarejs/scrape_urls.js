@@ -5,10 +5,12 @@ const UserAgent = require("user-agents")
 var joinPath = require("path.join")
 const { makeChunkedList, makeIrregularChunkedList } = require("./list_functions")
 
+const USER_AGENT =
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15"
 const PBAR_MAX_LENGTH = 23
 
 const multibar = new cliProgress.MultiBar({
-    format: colors.cyan("{bar} ") + "{message} | {percentage}% | {value}/{total} {unit}",
+    format: colors.cyan("|{bar}| ") + "{message} | {percentage}% | {value}/{total} {unit}",
     barCompleteChar: "\u2588",
     barIncompleteChar: "\u2591",
     stopOnComplete: true,
@@ -23,7 +25,6 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
     const allUrls = readUrlSetFromFile(urlSetFilepath)
     let [batchList, totalBatches, totalUrls] = createBatchJob(allUrls, batchJobParams)
     let [batchBar, urlBar, timeoutBar] = initializeProgressBars(batchList, totalUrls)
-    nightmare.useragent(new UserAgent().toString())
     await batchList.reduce(async (promise, urlBatch) => {
         await promise
         batchBar.update(batchCounter, { message: urlBatchMessage(batchList[batchCounter].length) })
@@ -79,24 +80,21 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
         return pBarMessage(batchMessage)
     }
 
-    function pBarMessage(displayStr, padEllipses = true) {
-        let padLength = PBAR_MAX_LENGTH - displayStr.length
+    function pBarMessage(input) {
+        let padLength = PBAR_MAX_LENGTH - input.length
         if (padLength <= 0) {
-            return displayStr
+            return input
         }
-        if (padLength >= 3 && padEllipses) {
-            displayStr += "..."
-            padLength -= 3
-        }
-        displayStr += " ".repeat(padLength)
-        return displayStr
+        padLeft = Math.floor(padLength / 2)
+        padRight = padLength - padLeft
+        return `${" ".repeat(padLeft)}${input}${" ".repeat(padRight)}`
     }
 
     async function scrapeUrlBatch(nightmare, urlSet, timeoutParams, urlCounter, progressBar) {
         await urlSet.reduce(async (promise, urlDetails) => {
             await promise
             let { url, fileName, identifier, scrapedHtmlFolderpath } = urlDetails
-            progressBar.update(urlCounter, { message: pBarMessage(identifier, false) })
+            progressBar.update(urlCounter, { message: pBarMessage(identifier) })
             await scrapeUrl(nightmare, url, fileName, scrapedHtmlFolderpath, timeoutParams)
             urlCounter += 1
         }, Promise.resolve())
