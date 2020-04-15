@@ -119,9 +119,9 @@ PPB_PITCH_LOG_DICT = {
 VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dome"]
 
 JOB_SPINNER_COLORS = {
-    DataSet.BBREF_GAMES_FOR_DATE: "cyan",
-    DataSet.BROOKS_GAMES_FOR_DATE: "magenta",
-    DataSet.BBREF_BOXSCORES: "white",
+    DataSet.BBREF_GAMES_FOR_DATE: "red",
+    DataSet.BROOKS_GAMES_FOR_DATE: "blue",
+    DataSet.BBREF_BOXSCORES: "green",
     DataSet.BROOKS_PITCH_LOGS: "cyan",
     DataSet.BROOKS_PITCHFX: "magenta",
 }
