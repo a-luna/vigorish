@@ -9,7 +9,7 @@ from getch import pause
 
 from vigorish.cli.util import print_message
 from vigorish.config.database import ScrapeError
-from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
+from vigorish.constants import JOB_SPINNER_COLORS
 from vigorish.enums import DataSet, StatusReport, JobStatus
 from vigorish.scrape.bbref_boxscores.scrape_task import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_task import ScrapeBBRefGamesForDate
