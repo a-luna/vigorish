@@ -1,7 +1,6 @@
 const { readFileSync, writeFileSync } = require("fs")
 const cliProgress = require("cli-progress")
 const colors = require("colors")
-const UserAgent = require("user-agents")
 var joinPath = require("path.join")
 const { makeChunkedList, makeIrregularChunkedList } = require("./list_functions")
 

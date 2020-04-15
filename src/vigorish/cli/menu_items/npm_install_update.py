@@ -13,6 +13,7 @@ from vigorish.util.sys_helpers import node_installed, node_modules_folder_exists
 
 APP_FOLDER = Path(__file__).parent.parent.parent
 NIGHTMAREJS_FOLDER = APP_FOLDER.joinpath("nightmarejs").resolve()
+NODEJS_INBOX = NIGHTMAREJS_FOLDER.joinpath("inbox").resolve()
 INSTALL_ERROR = "Error! Node.js is not installed, see README for install instructions."
 INSTALL_MESSAGE = (
     "Nightmare is not installed, you must install it and other node dependencies in order to "
@@ -35,21 +36,23 @@ class NpmInstallUpdate(MenuItem):
             print_message(wrap_text(INSTALL_ERROR, max_len=70), fg="bright_red", bold=True)
             pause(message="Press any key to continue...")
             return
+        if not NODEJS_INBOX.exists():
+            NODEJS_INBOX.mkdir(parents=True, exist_ok=True)
         if node_modules_folder_exists():
             prompt = UPDATE_MESSAGE
-            command = "npm update"
+            command = "npm update --timeout=9999999"
         else:
             prompt = INSTALL_MESSAGE
-            command = "npm install"
+            command = "npm install --timeout=9999999"
         print_message(wrap_text(prompt, max_len=70))
         result = prompt_user_yes_no("Would you like to continue?")
         yes_response = result.value
         if not yes_response:
             return Result.Ok(self.exit_menu)
         subprocess.run(["clear"])
-        exit_code = run_command(command, cwd=str(NIGHTMAREJS_FOLDER))
-        if exit_code == 0:
+        result = run_command(command, cwd=str(NIGHTMAREJS_FOLDER))
+        breakpoint()
+        if result.success:
             pause(message="Press any key to continue...")
             return Result.Ok(self.exit_menu)
-        error = f"Error! {command} command did not complete successfully."
-        Result.Fail(error)
+        return result

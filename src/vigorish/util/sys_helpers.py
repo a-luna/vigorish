@@ -10,17 +10,25 @@ from typing import Tuple, Union
 from vigorish.util.result import Result
 
 
-def run_command(command, cwd=None, encoding=None):
-    process = subprocess.run(
-        shlex.split(command), stdout=subprocess.PIPE, cwd=cwd, encoding=encoding, text=True
-    )
-    while True:
-        try:
-            print(process.stdout.readline())
-        except AttributeError:
-            print()
-            break
-    return process.returncode if process.returncode else 1
+def run_command(command, cwd=None):
+    try:
+        process = subprocess.run(
+            shlex.split(command),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=cwd,
+            text=True,
+        )
+        while True:
+            try:
+                print(process.stdout.readline())
+            except AttributeError:
+                print()
+                break
+        success = process.returncode == 0
+        return Result.Ok() if success else Result.Fail(process.stderr)
+    except FileNotFoundError as e:
+        return Result.Fail(repr(e))
 
 
 def node_installed(exe_name="node"):
