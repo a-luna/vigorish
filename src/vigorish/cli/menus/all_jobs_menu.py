@@ -33,10 +33,10 @@ class AllJobsMenu(Menu):
                 self.db_session,
                 self.config,
                 self.scraped_data,
-                jobs_grouped[group],
-                group,
+                jobs_grouped[status],
+                status,
                 menu_number,
             )
-            for menu_number, group in enumerate(jobs_grouped.keys(), start=1)
+            for menu_number, status in enumerate(jobs_grouped.keys(), start=1)
         ]
         self.menu_items.append(ReturnToParentMenuItem("Main Menu"))

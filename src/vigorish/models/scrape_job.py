@@ -8,9 +8,8 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
-from vigorish.enums import JobStatus, JobGroup, DataSet
+from vigorish.enums import JobStatus, DataSet
 from vigorish.config.database import Base
-from vigorish.constants import JOB_STATUS_TO_GROUP_MAP
 from vigorish.util.datetime_util import (
     get_date_range,
     utc_now,
@@ -32,7 +31,7 @@ class ScrapeJob(Base):
     __tablename__ = "scrape_job"
     id = Column(String, primary_key=True, default=lambda: f"{str(uuid4())[:4]}")
     name = Column(String)
-    status = Column(Enum(JobStatus), default=JobStatus.NOT_STARTED)
+    status = Column(Enum(JobStatus), default=JobStatus.INCOMPLETE)
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     created_date = Column(DateTime, default=utc_now)
@@ -82,10 +81,6 @@ class ScrapeJob(Base):
         return localized_dt_string(created_date_utc, use_tz=get_local_utcoffset())
 
     @hybrid_property
-    def group(self):
-        return JOB_STATUS_TO_GROUP_MAP[self.status]
-
-    @hybrid_property
     def url_set_filepath(self):
         return NODEJS_INBOX.joinpath(f"{self.id}.json")
 
@@ -130,26 +125,18 @@ class ScrapeJob(Base):
         return session.query(cls).filter_by(id=job_id).first()
 
     @classmethod
-    def get_all_incomplete_jobs(cls, session):
-        return [job for job in session.query(cls).all() if job.group == JobGroup.INCOMPLETE]
-
-    @classmethod
     def get_all_active_jobs(cls, session):
-        return [job for job in session.query(cls).all() if job.group == JobGroup.ACTIVE]
+        return [job for job in session.query(cls).all() if job.status == JobStatus.INCOMPLETE]
 
     @classmethod
     def get_all_failed_jobs(cls, session):
-        return [job for job in session.query(cls).all() if job.group == JobGroup.FAILED]
-
-    @classmethod
-    def get_all_cancelled_jobs(cls, session):
-        return [job for job in session.query(cls).all() if job.group == JobGroup.CANCELLED]
+        return [job for job in session.query(cls).all() if job.status == JobStatus.ERROR]
 
     @classmethod
     def get_all_complete_jobs(cls, session):
-        return [job for job in session.query(cls).all() if job.group == JobGroup.COMPLETE]
+        return [job for job in session.query(cls).all() if job.status == JobStatus.COMPLETE]
 
     @classmethod
     def get_all_jobs_grouped_sorted(cls, session):
         all_jobs = session.query(cls).all()
-        return group_and_sort_list(all_jobs, "group", "created_date", sort_all_desc=True)
+        return group_and_sort_list(all_jobs, "status", "created_date", sort_all_desc=True)

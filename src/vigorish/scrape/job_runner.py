@@ -10,21 +10,13 @@ from getch import pause
 from vigorish.cli.util import print_message
 from vigorish.config.database import ScrapeError
 from vigorish.constants import EMOJI_DICT, JOB_SPINNER_COLORS
-from vigorish.enums import DataSet, StatusReport
-from vigorish.scrape.bbref_boxscores.scrape_bbref_boxscores import ScrapeBBRefBoxscores
-from vigorish.scrape.bbref_games_for_date.scrape_bbref_games_for_date import (
-    ScrapeBBRefGamesForDate,
-)
-from vigorish.scrape.brooks_games_for_date.scrape_brooks_games_for_date import (
-    ScrapeBrooksGamesForDate,
-)
-from vigorish.scrape.brooks_pitch_logs.scrape_brooks_pitch_logs import ScrapeBrooksPitchLogs
-from vigorish.scrape.brooks_pitchfx.scrape_brooks_pitchfx import ScrapeBrooksPitchFx
+from vigorish.enums import DataSet, StatusReport, JobStatus
 from vigorish.status.report_status import report_season_status, report_date_range_status
 from vigorish.util.result import Result
 
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_OUTBOX = APP_FOLDER.joinpath("nightmarejs/outbox")
+JOB_STATUS_TEXT_COLOR = {"scraped": "bright_green", "skipped": "blue"}
 
 
 class JobRunner:
@@ -126,16 +118,19 @@ class JobRunner:
         )
 
     def job_failed(self, result, data_set=DataSet.ALL):
+        self.end_time = datetime.now()
+        self.db_job.status = JobStatus.ERROR
         new_error = ScrapeError(
             error_message=result.error, data_set=data_set, job_id=self.db_job.id
         )
         self.db_session.add(new_error)
         self.db_session.commit()
-        self.end_time = datetime.now()
         return result
 
     def job_succeeded(self):
         self.end_time = datetime.now()
+        self.db_job.status = JobStatus.COMPLETE
+        self.db_session.commit()
         shutil.rmtree(NODEJS_OUTBOX.joinpath(self.db_job.id))
         return Result.Ok()
 

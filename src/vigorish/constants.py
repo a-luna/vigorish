@@ -1,5 +1,5 @@
 """Constant values that are referenced from multiple places."""
-from vigorish.enums import DataSet, JobGroup, JobStatus
+from vigorish.enums import DataSet
 
 ENV_VAR_NAMES = [
     "AWS_ACCESS_KEY_ID",
@@ -200,23 +200,4 @@ MENU_NUMBERS = {
     8: "8️⃣",
     9: "9️⃣",
     10: "🔟",
-}
-
-JOB_STATUS_TO_GROUP_MAP = {
-    JobStatus.NOT_STARTED: JobGroup.INCOMPLETE,
-    JobStatus.PAUSED: JobGroup.INCOMPLETE,
-    JobStatus.PREPARING: JobGroup.ACTIVE,
-    JobStatus.SCRAPING: JobGroup.ACTIVE,
-    JobStatus.PARSING: JobGroup.ACTIVE,
-    JobStatus.ERROR: JobGroup.FAILED,
-    JobStatus.CANCELLED: JobGroup.CANCELLED,
-    JobStatus.COMPLETE: JobGroup.COMPLETE,
-}
-
-JOB_GROUP_TO_STATUS_MAP = {
-    JobGroup.INCOMPLETE: [JobStatus.NOT_STARTED, JobStatus.PAUSED],
-    JobGroup.ACTIVE: [JobStatus.PREPARING, JobStatus.SCRAPING, JobStatus.PARSING],
-    JobGroup.FAILED: [JobStatus.ERROR],
-    JobGroup.CANCELLED: [JobStatus.CANCELLED],
-    JobGroup.COMPLETE: [JobStatus.COMPLETE],
 }

@@ -134,30 +134,12 @@ class DocFormat(Enum):
 class JobStatus(IntEnum):
     """Status of a scrape job created by a user."""
 
-    NOT_STARTED = 1
-    ERROR = 2
-    CANCELLED = 3
-    PAUSED = 4
-    PREPARING = 5
-    SCRAPING = 6
-    PARSING = 7
-    COMPLETE = 8
+    INCOMPLETE = auto()
+    ERROR = auto()
+    COMPLETE = auto()
 
     def __str__(self):
         return self.name
-
-
-class JobGroup(IntEnum):
-    """Group"""
-
-    INCOMPLETE = 1
-    ACTIVE = 2
-    FAILED = 3
-    CANCELLED = 4
-    COMPLETE = 5
-
-    def __str__(self):
-        return self.name.title()
 
 
 class DefensePosition(Enum):
