@@ -34,32 +34,27 @@ class JobRunner:
         self.db_session = db_session
         self.config = config
         self.scraped_data = scraped_data
+        self.spinners = defaultdict(lambda: Halo(spinner="dots3"))
+        self.task_results = []
         self.status_report = self.config.get_current_setting("STATUS_REPORT", DataSet.ALL)
 
     def execute(self):
         result = self.initialize()
         if result.failure:
             return self.job_failed(result)
-        task_results = []
-        spinners = defaultdict(lambda: Halo(spinner="dots3"))
-        for i, data_set in enumerate(self.data_sets, start=1):
-            subprocess.run(["clear"])
-            if task_results:
-                print_message("\n".join(task_results), fg="gray")
-            text = f"Scraping data set: {data_set.name} (Task {i}/{len(self.data_sets)})..."
-            spinners[data_set].text = text
-            spinners[data_set].color = JOB_SPINNER_COLORS[data_set]
-            spinners[data_set].start()
-            spinners[data_set].stop_and_persist(spinners[data_set].frame(), "")
+        for task_number, data_set in enumerate(self.data_sets, start=1):
+            self.report_task_results()
+            self.update_spinner(data_set, task_number)
             result = self.get_scrape_task_for_data_set(data_set).execute()
             if result.failure:
                 if "skip" in result.error:
-                    task_results.append(self.scrape_task_skipped_text(data_set, i))
+                    self.log_result_data_set_skipped(data_set, task_number)
+                    self.spinners[data_set].stop()
                     continue
                 return self.job_failed(result, data_set=data_set)
-            task_results.append(self.scrape_task_complete_text(data_set, i))
-        subprocess.run(["clear"])
-        print("\n".join(task_results))
+            self.log_result_data_set_scraped(data_set, task_number)
+            self.spinners[data_set].stop()
+        self.report_task_results()
         result = self.show_status_report()
         pause(message="Press any key to continue...")
         if result.failure:
@@ -76,17 +71,35 @@ class JobRunner:
         }
         return task_dict[data_set](self.db_job, self.db_session, self.config, self.scraped_data)
 
-    def scrape_task_skipped_text(self, data_set, task_number):
-        return (
-            f"{EMOJI_DICT.get('SHRUG', '')} Skipped data set: {data_set.name} "
-            f"(Task {task_number}/{len(self.data_sets)})"
-        )
+    def update_spinner(self, data_set, task_number):
+        self.spinners[data_set].text = self.scrape_task_started_text(data_set, task_number)
+        self.spinners[data_set].color = JOB_SPINNER_COLORS[data_set]
+        self.spinners[data_set].start()
+        self.spinners[data_set].stop_and_persist(self.spinners[data_set].frame(), "")
+
+    def log_result_data_set_scraped(self, data_set, task_number):
+        self.task_results.append(self.scrape_task_complete_text(data_set, task_number))
+
+    def log_result_data_set_skipped(self, data_set, task_number):
+        self.task_results.append(self.scrape_task_skipped_text(data_set, task_number))
 
     def scrape_task_complete_text(self, data_set, task_number):
-        return (
-            f"{EMOJI_DICT.get('PASSED', '')} Scraped data set: {data_set.name} "
-            f"(Task {task_number}/{len(self.data_sets)})"
-        )
+        scraped = f"Scraped data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})"
+        return (scraped, JOB_STATUS_TEXT_COLOR["scraped"])
+
+    def scrape_task_skipped_text(self, data_set, task_number):
+        skipped = f"Skipped data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})"
+        return (skipped, JOB_STATUS_TEXT_COLOR["skipped"])
+
+    def scrape_task_started_text(self, data_set, task_number):
+        return f"Scraping data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})..."
+
+    def report_task_results(self):
+        if not self.task_results:
+            return
+        subprocess.run(["clear"])
+        for task_result in self.task_results:
+            print_message(task_result[0], fg=task_result[1])
 
     def initialize(self):
         errors = []
