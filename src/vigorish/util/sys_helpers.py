@@ -20,7 +20,7 @@ def run_command(command, cwd=None, encoding=None):
         except AttributeError:
             print()
             break
-    return process.returncode
+    return process.returncode if process.returncode else 1
 
 
 def node_installed(exe_name="node"):
