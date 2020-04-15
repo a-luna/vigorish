@@ -71,7 +71,7 @@ class UrlTracker:
         )
 
     def save_html_report(self, saved_count):
-        total_urls = len(self.missing_urls) + len(self.complete_urls)
+        total_urls = len(self.missing_urls) + len(self.completed_urls)
         return (
             f"Saving scraped HTML... {saved_count / float(total_urls):.0%} "
             f"({saved_count}/{total_urls}) URLs"
