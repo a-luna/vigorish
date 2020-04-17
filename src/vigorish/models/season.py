@@ -369,3 +369,19 @@ class Season(Base):
     def is_this_the_asg_date(cls, session, game_date):
         season = cls.find_by_year(session, game_date.year)
         return game_date == season.asg_date if season else None
+
+    @classmethod
+    def get_all_bbref_game_ids_scraped_pfx_not_audited(cls, session, year):
+        season = cls.find_by_year(session, year)
+        if not season:
+            error = f"Database does not contain info for MLB {season_type} {check_date.year}"
+            return Result.Fail(error)
+        game_ids = []
+        for date_status in season.scrape_status_dates:
+            eligible_game_ids = [
+                game_status.bbref_game_id
+                for game_status in date_status.scrape_status_games
+                if game_status.scraped_all_pitchfx_logs and not game_status.pitch_data_was_audited
+            ]
+            game_ids.extend(eligible_game_ids)
+        return Result.Ok(game_ids)

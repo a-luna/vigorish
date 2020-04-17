@@ -2,6 +2,7 @@
 import json
 from collections import Counter, defaultdict
 from copy import deepcopy
+from pathlib import Path
 
 from vigorish.constants import (
     TEAM_ID_DICT,
@@ -15,7 +16,7 @@ from vigorish.util.result import Result
 
 
 def combine_boxscore_and_pitchfx_data_for_game(session, scraped_data, bbref_game_id):
-    result = get_all_pbp_events_for_game(session, bbref_game_id)
+    result = get_all_pbp_events_for_game(session, scraped_data, bbref_game_id)
     if result.failure:
         return result
     (boxscore, player_id_dict, grouped_event_dict) = result.value
@@ -33,7 +34,7 @@ def combine_boxscore_and_pitchfx_data_for_game(session, scraped_data, bbref_game
         return result
     boxscore_dict = result.value
     boxscore_json = json.dumps(boxscore_dict, indent=2, sort_keys=False)
-    filepath = f"{bbref_game_id}_COMBINED_DATA.json"
+    filepath = Path(f"{bbref_game_id}_COMBINED_DATA.json")
     try:
         filepath.write_text(boxscore_json)
         return Result.Ok(filepath)

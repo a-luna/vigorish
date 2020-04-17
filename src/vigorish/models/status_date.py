@@ -447,3 +447,14 @@ class DateScrapeStatus(Base):
         if not date_status:
             return None
         return [game_status.bb_game_id for game_status in date_status.scrape_status_games]
+
+    @classmethod
+    def get_all_bbref_game_ids_scraped_pfx_not_audited(cls, session, game_date):
+        date_status = cls.find_by_date(session, game_date)
+        if not date_status:
+            return None
+        return [
+            game_status.bbref_game_id
+            for game_status in date_status.scrape_status_games
+            if game_status.scraped_all_pitchfx_logs and not game_status.pitch_data_was_audited
+        ]

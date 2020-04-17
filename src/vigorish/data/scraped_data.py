@@ -76,7 +76,7 @@ class ScrapedData:
         return Result.Ok(pitch_logs)
 
     def get_all_pitchfx_logs_for_game(self, bbref_game_id):
-        p_app_ids = PitchAppearanceScrapeStatus.get_all_pitch_app_ids_for_game_with_pitchfx_data(
+        p_app_ids = PitchAppearanceScrapeStatus.get_all_scraped_pitch_app_ids_for_game(
             self.db, bbref_game_id
         )
         fetch_tasks = [self.get_brooks_pitchfx_log(pitch_app_id) for pitch_app_id in p_app_ids]
