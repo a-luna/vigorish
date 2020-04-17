@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class BatchScrapeDelaySettings:
+class BatchScrapeDelay:
     delay_is_required: bool
     delay_is_random: bool
     delay_uniform: int
@@ -44,7 +44,7 @@ class BatchScrapeDelaySettings:
         delay_uniform = config_dict.get("BATCH_SCRAPE_DELAY_IN_MINUTES", 0)
         delay_random_min = config_dict.get("BATCH_SCRAPE_DELAY_IN_MINUTES_MIN", 5)
         delay_random_max = config_dict.get("BATCH_SCRAPE_DELAY_IN_MINUTES_MAX", 10)
-        return BatchScrapeDelaySettings(
+        return BatchScrapeDelay(
             delay_is_required=delay_is_required,
             delay_is_random=delay_is_random,
             delay_uniform=delay_uniform,

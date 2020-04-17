@@ -1,8 +1,8 @@
 """Functions that enable reading/writing the config file."""
 from vigorish.config.types.batch_job_settings import BatchJobSettings
-from vigorish.config.types.batch_scrape_delay import BatchScrapeDelaySettings
+from vigorish.config.types.batch_scrape_delay import BatchScrapeDelay
 from vigorish.config.types.folder_path_setting import S3FolderPathSetting, LocalFolderPathSetting
-from vigorish.config.types.url_scrape_delay import UrlScrapeDelaySettings
+from vigorish.config.types.url_scrape_delay import UrlScrapeDelay
 from vigorish.enums import (
     ConfigType,
     DataSet,
@@ -143,10 +143,10 @@ class NumericConfigSetting(ConfigSetting):
 
     @staticmethod
     def __get_object(class_name, config_dict):
-        if class_name == "UrlScrapeDelaySettings":
-            return UrlScrapeDelaySettings.from_config(config_dict)
+        if class_name == "UrlScrapeDelay":
+            return UrlScrapeDelay.from_config(config_dict)
         if class_name == "BatchJobSettings":
             return BatchJobSettings.from_config(config_dict)
-        if class_name == "BatchScrapeDelaySettings":
-            return BatchScrapeDelaySettings.from_config(config_dict)
+        if class_name == "BatchScrapeDelay":
+            return BatchScrapeDelay.from_config(config_dict)
         return None

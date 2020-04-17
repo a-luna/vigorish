@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class UrlScrapeDelaySettings:
+class UrlScrapeDelay:
     delay_is_required: bool
     delay_is_random: bool
     delay_uniform: int
@@ -54,7 +54,7 @@ class UrlScrapeDelaySettings:
         delay_uniform = config_dict.get("URL_SCRAPE_DELAY_IN_SECONDS", 0)
         delay_random_min = config_dict.get("URL_SCRAPE_DELAY_IN_SECONDS_MIN", 3)
         delay_random_max = config_dict.get("URL_SCRAPE_DELAY_IN_SECONDS_MAX", 6)
-        return UrlScrapeDelaySettings(
+        return UrlScrapeDelay(
             delay_is_required=delay_is_required,
             delay_is_random=delay_is_random,
             delay_uniform=delay_uniform,
