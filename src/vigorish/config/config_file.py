@@ -29,14 +29,17 @@ DEFAULT_CONFIG = VIG_FOLDER / "vig.config.json"
 
 
 class ConfigFile:
-    def __init__(self):
-        self.config_filepath = Path(os.getenv("CONFIG_FILE", ""))
-        if not self.config_filepath:
-            self.config_filepath = DEFAULT_CONFIG
+    def __init__(self, config_file_path=None):
+        if config_file_path:
+            self.config_filepath = config_file_path
+        else:
+            self.config_filepath = Path(os.getenv("CONFIG_FILE", ""))
+            if not self.config_filepath:
+                self.config_filepath = DEFAULT_CONFIG
         if self.config_filepath.exists():
             self.read_config_file()
         else:
-            self.create_default_config_file(config_filepath)
+            self.create_default_config_file(DEFAULT_CONFIG)
 
     @property
     def all_settings(self):
