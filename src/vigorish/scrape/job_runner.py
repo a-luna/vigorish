@@ -17,6 +17,7 @@ from vigorish.scrape.brooks_games_for_date.scrape_task import ScrapeBrooksGamesF
 from vigorish.scrape.brooks_pitch_logs.scrape_task import ScrapeBrooksPitchLogs
 from vigorish.scrape.brooks_pitchfx.scrape_task import ScrapeBrooksPitchFx
 from vigorish.status.report_status import report_season_status, report_date_range_status
+from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 
 APP_FOLDER = Path(__file__).parent.parent
@@ -51,7 +52,7 @@ class JobRunner:
                     self.log_result_data_set_skipped(data_set, task_number)
                     self.spinners[data_set].stop()
                     continue
-                return self.job_failed(result, data_set=data_set)
+                return self.job_failed(result, data_set)
             self.log_result_data_set_scraped(data_set, task_number)
             self.spinners[data_set].stop()
         self.report_task_results()
@@ -95,9 +96,12 @@ class JobRunner:
         return f"Scraping data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})..."
 
     def report_task_results(self):
+        subprocess.run(["clear"])
+        start_date_str = self.start_date.strftime(DATE_ONLY_2)
+        end_date_str = self.end_date.strftime(DATE_ONLY_2)
+        print_message(f"Date Range: {start_date_str}-{end_date_str}", fg="cyan", bold=True)
         if not self.task_results:
             return
-        subprocess.run(["clear"])
         for task_result in self.task_results:
             print_message(task_result[0], fg=task_result[1])
 
