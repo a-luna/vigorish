@@ -5,7 +5,11 @@ DEFAULT_CONFIG_SETTINGS = {
     "STATUS_REPORT": {
         "CONFIG_TYPE": "Enum",
         "ENUM_NAME": "StatusReport",
-        "DESCRIPTION": "After a scrape job has successfully completed, you can display a report for the MLB season displaying various metrics for all data sets. The options below determine the level of detail reported.",
+        "DESCRIPTION": (
+            "After a scrape job has successfully completed, you can display a report for the MLB "
+            "season displaying various metrics for all data sets. The options below determine the "
+            "level of detail reported."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
     "S3_BUCKET": {
@@ -16,49 +20,81 @@ DEFAULT_CONFIG_SETTINGS = {
     "SCRAPE_CONDITION": {
         "CONFIG_TYPE": "Enum",
         "ENUM_NAME": "ScrapeCondition",
-        "DESCRIPTION": "By default, HTML is scraped and parsed only once (ONLY_MISSING_DATA). You can overwrite existing data by selecting ALWAYS, or prevent any data from being scraped by selecting NEVER.",
+        "DESCRIPTION": (
+            "By default, HTML is scraped and parsed only once (ONLY_MISSING_DATA). You can "
+            "overwrite existing data by selecting ALWAYS, or prevent any data from being scraped "
+            "by selecting NEVER."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
     "URL_SCRAPE_DELAY": {
         "CONFIG_TYPE": "Numeric",
         "CLASS_NAME": "UrlScrapeDelay",
-        "DESCRIPTION": "As a common courtesy (a.k.a, to avoid being banned), after scraping a webpage you should wait for a few seconds before requesting the next URL. You can specify a single length of time to use for all URLs, or create random delay lengths by specifying a minimum and maximum length of time.",
+        "DESCRIPTION": (
+            "As a common courtesy (a.k.a, to avoid being banned), after scraping a webpage you "
+            "should wait for a few seconds before requesting the next URL. You can specify a "
+            "single length of time to use for all URLs, or create random delay lengths by "
+            "specifying a minimum and maximum length of time."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
     "BATCH_JOB_SETTINGS": {
         "CONFIG_TYPE": "Numeric",
         "CLASS_NAME": "BatchJobSettings",
-        "DESCRIPTION": "Number of URLs to scrape per batch. You can specify a single amount to use for all batches, or create random batch sizes by specifying a minimum and maximum batch size.",
+        "DESCRIPTION": (
+            "Number of URLs to scrape per batch. You can specify a single amount to use for all "
+            "batches, or create random batch sizes by specifying a minimum and maximum batch size."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
     "BATCH_SCRAPE_DELAY": {
         "CONFIG_TYPE": "Numeric",
         "CLASS_NAME": "BatchScrapeDelay",
-        "DESCRIPTION": "Some websites will ban you even if you wait for a few seconds between each request. To avoid being banned, you can scrape URLs in batches (recommended batch size: ~50 URLs/batch) and wait for a long period of time (30-45 minutes) before you begin a new batch. You can specify a single length of time to use for all batches or create random delay lengths by specifying a minimum and maximum length of time.",
+        "DESCRIPTION": (
+            "Some websites will ban you even if you wait for a few seconds between each request. "
+            "To avoid being banned, you can scrape URLs in batches (recommended batch size: ~50 "
+            "URLs/batch) and wait for a long period of time (30-45 minutes) before you begin a "
+            "new batch. You can specify a single length of time to use for all batches or create "
+            "random delay lengths by specifying a minimum and maximum length of time."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": False,
     },
     "HTML_STORAGE": {
         "CONFIG_TYPE": "Enum",
         "ENUM_NAME": "HtmlStorageOption",
-        "DESCRIPTION": "By default, HTML is NOT saved after it has been parsed. However, you can choose to save scraped HTML in a local folder, an S3 bucket, or both.",
+        "DESCRIPTION": (
+            "By default, HTML is NOT saved after it has been parsed. However, you can choose to "
+            "save scraped HTML in a local folder, an S3 bucket, or both."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
     "HTML_LOCAL_FOLDER_PATH": {
         "CONFIG_TYPE": "Path",
         "CLASS_NAME": "LocalFolderPathSetting",
-        "DESCRIPTION": "Local folder path where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
+        "DESCRIPTION": (
+            "Local folder path where scraped HTML should be stored. The application will always "
+            "check for saved HTML content in this location before sending a request to the "
+            "website."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
     "HTML_S3_FOLDER_PATH": {
         "CONFIG_TYPE": "Path",
         "CLASS_NAME": "S3FolderPathSetting",
-        "DESCRIPTION": "Path to a folder within an S3 bucket where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
+        "DESCRIPTION": (
+            "Path to a folder within an S3 bucket where scraped HTML should be stored. The "
+            "application will always check for saved HTML content in this location before sending "
+            "a request to the website."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
     "JSON_STORAGE": {
         "CONFIG_TYPE": "Enum",
         "ENUM_NAME": "JsonStorageOption",
-        "DESCRIPTION": "MLB data is parsed from HTML and stored in JSON docs. You can store the JSON docs in a local folder, an S3 bucket, or both.",
+        "DESCRIPTION": (
+            "MLB data is parsed from HTML and stored in JSON docs. You can store the JSON docs "
+            "in a local folder, an S3 bucket, or both."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
     "JSON_LOCAL_FOLDER_PATH": {
@@ -70,7 +106,9 @@ DEFAULT_CONFIG_SETTINGS = {
     "JSON_S3_FOLDER_PATH": {
         "CONFIG_TYPE": "Path",
         "CLASS_NAME": "S3FolderPathSetting",
-        "DESCRIPTION": "Path to a folder within an S3 bucket where parsed JSON data should be stored.",
+        "DESCRIPTION": (
+            "Path to a folder within an S3 bucket where parsed JSON data should be stored."
+        ),
         "SAME_SETTING_FOR_ALL_DATA_SETS": True,
     },
 }
