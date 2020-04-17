@@ -17,6 +17,16 @@ All web scraping is performed by [Nightmare](https://github.com/segmentio/nightm
 
 `vigorish` is designed for a headless environment. In order to run Nightmare/Electron in this environment, you must install xvfb and several dependencies along with nodejs/npm.
 
+### _**WARNING**_
+
+Use of vigorish must abide by the terms stated in the license. Also, in order to abide by the guidelines quoted below (from [baseball-reference.com](https://www.sports-reference.com/data_use.html)), **a delay of at least two seconds MUST always occur after a URL is scraped:**
+
+> Please do not attempt to aggressively spider data from our web sites, as spidering violates the terms and conditions that govern your use of our web sites: [Site Terms of Use](https://www.sports-reference.com/termsofuse.html)
+
+> If we notice excessive activity from a particular IP address we will be forced to take appropriate measures, which will include, but not be limited to, blocking that IP address. We thank you in advance for respecting our terms of use.
+
+You may notice that the URL delay time is a configurable setting. This setting must be enabled and the min delay time must be greater than two seconds. _**If the setting is disabled or if you enter a min value of two seconds or shorter, you will be unable to start any scrape job.**_
+
 ### Install Prerequisites
 
 First, install a recent, stable version of Node.js (i.e., v10-13), along with npm. I'll provide instructions for Ubuntu, but they should be easily adaptable to any Linux-distro.
@@ -31,13 +41,13 @@ The command below will download the installation script for the NodeSource PPA c
 $ curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 ```
 
-The script will add the signing key for the PPA and update your local package cache. After the NodeSource PPA has been updated, you can install both Node.js and npm with the `nodejs` package:
+The script will add the NodesSource PPA and update your local package cache. After the package listing is refreshed, install the `nodejs` package using the command below:
 
 ```console
 $ sudo apt install nodejs
 ```
 
-Verify that the versions of Node.js and npm that were installed are correct:
+The version of node you specified and npm should both be installed. Verify that the versions installed are correct:
 
 ```console
 $ node --version
@@ -57,7 +67,9 @@ $ sudo apt install build-essential
 
 #### Xvfb
 
-An X server must be installed in order to use Electron in headless mode. `Xvfb` enables a system without display hardware to run graphical applications. Install `Xvfb` and its dependencies using the command below:
+An X server must be installed in order to use Electron in headless mode. [The most popular X server for UNIX-like systems is Xvfb](https://www.x.org/releases/X11R7.6/doc/man/man1/Xvfb.1.xhtml). `Xvfb` enables a system without display hardware to run graphical applications.
+
+Install `Xvfb` and its dependencies using the command below:
 
 ```console
 sudo apt install -y xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic x11-apps clang libdbus-1-dev libgtk2.0-dev libnotify-dev libgnome-keyring-dev libgconf2-dev libasound2-dev libcap-dev libcups2-dev libxtst-dev libxss1 libnss3-dev gcc-multilib g++-multilib
@@ -156,21 +168,21 @@ Commands:
 
 Next, run `vig ui` and verify that the UI displays:
 
-![vig ui verified](docs/img/vig_ui_verified.png)
+![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/vig_ui_verified.png)
+
+If both the CLI help screen and the UI are displayed, the installation was successful! However, you can not begin scraping data just yet. You need to perform a few additional configuration steps first.
 
 ### Config/Setup
 
+There are four different areas/tools that must be configured: AWS credentials, the JSON config file, npm packages/node dependencies, and the SQLite database.
+
+#### Environment Variables
+
+Run `vig ui` and use the arrow keys to select **Environment Variables** from the menu options. Press **Enter** to launch the
+
+![Environment Variables Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/env_var_menu.jpg)
+
 ### Usage
-
-### _**WARNING**_
-
-Use of vigorish must abide by the terms stated in the license. Also, in order to abide by the guidelines quoted below (from [baseball-reference.com](https://www.sports-reference.com/data_use.html)), **a delay of at least two seconds MUST always occur after a URL is scraped:**
-
-> Please do not attempt to aggressively spider data from our web sites, as spidering violates the terms and conditions that govern your use of our web sites: [Site Terms of Use](https://www.sports-reference.com/termsofuse.html)
-
-> If we notice excessive activity from a particular IP address we will be forced to take appropriate measures, which will include, but not be limited to, blocking that IP address. We thank you in advance for respecting our terms of use.
-
-You may notice that the URL delay time is a configurable setting, allowing you to specify a min and max delay time that generates a random delay between the two values. This setting must be enabled and the min delay time must be greater than two seconds. _**If the setting is disabled or if you enter a min value of two seconds or shorter, you will be unable to start any scrape job.**_
 
 ### HTML/JSON Storage
 
