@@ -174,11 +174,11 @@ If both the CLI help screen and the UI are displayed, the installation was succe
 
 ### Config/Setup
 
-There are four different areas/tools that must be configured: AWS credentials, the JSON config file, npm packages/node dependencies, and the SQLite database.
+There are four different areas/tools that must be configured: AWS credentials, JSON config file, npm packages/node dependencies, and the SQLite database.
 
 #### Environment Variables
 
-Run `vig ui` and use the arrow keys to select **Environment Variables** from the menu options. Press **Enter** to launch the
+Run `vig ui` and use the arrow keys to select **Environment Variables** from the menu options. Press **Enter** and you should see the menu below:
 
 ![Environment Variables Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/env_var_menu.jpg)
 
