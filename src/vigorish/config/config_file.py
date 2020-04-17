@@ -39,7 +39,7 @@ class ConfigFile:
         if self.config_filepath.exists():
             self.read_config_file()
         else:
-            self.create_default_config_file(DEFAULT_CONFIG)
+            self.create_default_config_file()
 
     @property
     def all_settings(self):

@@ -26,8 +26,12 @@ from vigorish.util.result import Result
 class FileHelper:
     def __init__(self, config):
         self.config = config
-        self.client = boto3.client("s3")
-        self.resource = boto3.resource("s3")
+        try:
+            self.client = boto3.client("s3")
+            self.resource = boto3.resource("s3")
+        except ValueError:
+            self.client = None
+            self.resource = None
 
     @property
     def local_folderpath_dict(self):
