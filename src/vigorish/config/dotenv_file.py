@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 from vigorish.constants import ENV_VAR_NAMES
 from vigorish.util.result import Result
 
-APP_FOLDER = Path(__file__).parent.parent
-DOTENV_FILE = APP_FOLDER / ".env"
+VIG_FOLDER = Path.home() / ".vig"
+DOTENV_FILE = VIG_FOLDER / ".env"
+DEFAULT_CONFIG = VIG_FOLDER / "vig.config.json"
 
 
 class DotEnvFile:
@@ -16,7 +17,7 @@ class DotEnvFile:
     def read_dotenv_file(self):
         """Parse .env file to a dictionary of environment variables."""
         if not DOTENV_FILE.exists():
-            DOTENV_FILE.touch()
+            self.create_default_dotenv_file()
         if not DOTENV_FILE.is_file():
             raise TypeError(f"Unable to open file: {DOTENV_FILE}")
         load_dotenv(DOTENV_FILE)
@@ -24,6 +25,11 @@ class DotEnvFile:
         env_var_split = [f for f in file_text.split("\n") if f and "=" in f]
         env_var_split = [s.split("=") for s in env_var_split]
         return {v[0]: v[1].strip('"').strip("'").strip() for v in env_var_split if len(v) == 2}
+
+    def create_default_dotenv_file(self):
+        self.env_var_dict = {var_name: "" for var_name in ENV_VAR_NAMES}
+        self.change_value("CONFIG_FILE", DEFAULT_CONFIG)
+        self.write_dotenv_file()
 
     def get_current_value(self, env_var_name):
         if env_var_name not in ENV_VAR_NAMES:

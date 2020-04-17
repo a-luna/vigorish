@@ -23,16 +23,15 @@ from vigorish.status.report_status import (
 )
 from vigorish.util.datetime_util import today_str, current_year
 
-APP_FOLDER = Path(__file__).parent.parent
-DOTENV = APP_FOLDER / ".env"
+VIG_FOLDER = Path.home() / ".vig"
 
 
 @click.group()
 @click.pass_context
 def cli(ctx):
     """Entry point for the CLI application."""
-    if DOTENV.is_file():
-        load_dotenv(DOTENV)
+    if not VIG_FOLDER.exists():
+        VIG_FOLDER.mkdir(parents=True, exist_ok=True)
     dotenv = DotEnvFile()
     config = ConfigFile()
     engine = create_engine(get_db_url())
