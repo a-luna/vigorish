@@ -1,3 +1,5 @@
+from pprint import pformat
+
 from vigorish.cli.util import print_message
 from vigorish.config.database import Season, DateScrapeStatus
 from vigorish.enums import StatusReport
@@ -7,9 +9,7 @@ from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY
 from vigorish.util.result import Result
 
 
-def report_status_single_date(
-    session, scraped_data, refresh_data, game_date, missing_pitchfx, with_games
-):
+def report_status_single_date(session, scraped_data, refresh_data, game_date, report_type):
     season = Season.find_by_year(session, game_date.year)
     date_is_valid = Season.is_date_in_season(session, game_date).success
     date_str = game_date.strftime(DATE_ONLY)
@@ -28,6 +28,10 @@ def report_status_single_date(
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
         return Result.Fail(error)
+    missing_pitchfx = (
+        report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX
+        or report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS
+    )
     if missing_pitchfx:
         if date_status.scraped_all_pitchfx_logs:
             missing_ids_str = "All PitchFX logs have been scraped"
@@ -48,8 +52,8 @@ def report_status_single_date(
     print_message(f"\n### STATUS REPORT FOR {date_str} ###", fg="bright_cyan", bold=True)
     print_message(date_status.status_report(), fg="bright_cyan")
     if missing_pitchfx:
-        print_message(missing_ids_str, fg="bright_cyan")
-    if with_games:
+        print_message(pformat(missing_ids_str), fg="bright_cyan")
+    if report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS:
         print_message(date_status.games_status_report(), fg="bright_cyan")
     return Result.Ok()
 
@@ -153,7 +157,7 @@ def display_detailed_report_for_date_range(session, status_date_range, missing_p
         print_message(f"\n### STATUS REPORT FOR {game_date_str} ###", fg="bright_cyan", bold=True)
         print_message(date_status.status_report(), fg="bright_cyan")
         if missing_pitchfx:
-            print_message(missing_ids_str, fg="bright_cyan")
+            print_message(pformat(missing_ids_str), fg="bright_cyan")
     return Result.Ok()
 
 

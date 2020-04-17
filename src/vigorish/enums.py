@@ -81,6 +81,7 @@ class StatusReport(Enum):
     DATE_DETAIL_MISSING_DATA = 4
     DATE_DETAIL_ALL_DATES = 5
     DATE_DETAIL_MISSING_PITCHFX = 6
+    SINGLE_DATE_WITH_GAME_STATUS = 7
 
     def __str__(self):
         return self.name
