@@ -1,12 +1,11 @@
 """Menu item that allows the user to initialize/reset the database."""
 import subprocess
-from pathlib import Path
 
 from bullet import Numbers, Bullet, colors
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import print_message, prompt_user_yes_no, DateInput
+from vigorish.cli.util import prompt_user_yes_no, DateInput
 from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import StatusReport
@@ -16,7 +15,6 @@ from vigorish.status.report_status import (
     report_date_range_status,
 )
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import wrap_text
 
 
 class StatusReportMenuItem(MenuItem):
@@ -52,33 +50,49 @@ class StatusReportMenuItem(MenuItem):
         return self.user_options_prompt(choices)
 
     def get_season_report_type_from_user(self):
+        choice_text1 = f"{MENU_NUMBERS.get(1)}  Season Summary"
+        choice_text2 = f"{MENU_NUMBERS.get(2)}  Dates Missing Data (Summary)"
+        choice_text3 = f"{MENU_NUMBERS.get(3)}  All Dates In Season (Summary)"
+        choice_text4 = f"{MENU_NUMBERS.get(4)}  Dates Missing Data (Detail)"
+        choice_text5 = f"{MENU_NUMBERS.get(5)}  All Dates In Season (Detail)"
+        choice_text6 = f"{MENU_NUMBERS.get(6)}  All Dates In Season + Missing PitchFx IDs (Detail)"
         choices = {
-            f"{MENU_NUMBERS.get(1)}  Season Summary": StatusReport.SEASON_SUMMARY,
-            f"{MENU_NUMBERS.get(2)}  Dates Missing Data (Summary)": StatusReport.DATE_SUMMARY_MISSING_DATA,
-            f"{MENU_NUMBERS.get(3)}  All Dates In Season (Summary)": StatusReport.DATE_SUMMARY_ALL_DATES,
-            f"{MENU_NUMBERS.get(4)}  Dates Missing Data (Detail)": StatusReport.DATE_DETAIL_MISSING_DATA,
-            f"{MENU_NUMBERS.get(5)}  All Dates In Season (Detail)": StatusReport.DATE_DETAIL_ALL_DATES,
-            f"{MENU_NUMBERS.get(6)}  All Dates In Season + Missing PitchFx IDs (Detail)": StatusReport.DATE_DETAIL_MISSING_PITCHFX,
+            choice_text1: StatusReport.SEASON_SUMMARY,
+            choice_text2: StatusReport.DATE_SUMMARY_MISSING_DATA,
+            choice_text3: StatusReport.DATE_SUMMARY_ALL_DATES,
+            choice_text4: StatusReport.DATE_DETAIL_MISSING_DATA,
+            choice_text5: StatusReport.DATE_DETAIL_ALL_DATES,
+            choice_text6: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
         return self.user_options_prompt(choices)
 
     def get_single_date_report_type_from_user(self):
+        choice_text1 = f"{MENU_NUMBERS.get(1)}  Detail Report"
+        choice_text2 = f"{MENU_NUMBERS.get(2)}  Detail Report + Missing PitchFx IDs"
+        choice_text3 = (
+            f"{MENU_NUMBERS.get(3)}  Detail Report + Missing PitchFx IDs and Game Status"
+        )
         choices = {
-            f"{MENU_NUMBERS.get(1)}  Detail Report (No Missing IDs or Game Status)": StatusReport.DATE_DETAIL_ALL_DATES,
-            f"{MENU_NUMBERS.get(2)}  Detail Report with Missing PitchFx IDs": StatusReport.DATE_DETAIL_MISSING_PITCHFX,
-            f"{MENU_NUMBERS.get(3)}  Detail Report with Missing PitchFx IDs and Game Status": StatusReport.SINGLE_DATE_WITH_GAME_STATUS,
+            choice_text1: StatusReport.DATE_DETAIL_ALL_DATES,
+            choice_text2: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
+            choice_text3: StatusReport.SINGLE_DATE_WITH_GAME_STATUS,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
         return self.user_options_prompt(choices)
 
     def get_date_range_report_type_from_user(self):
+        choice_text1 = f"{MENU_NUMBERS.get(1)}  Dates Missing Data (Summary)"
+        choice_text2 = f"{MENU_NUMBERS.get(2)}  All Dates In Range (Summary)"
+        choice_text3 = f"{MENU_NUMBERS.get(3)}  Dates Missing Data (Detail)"
+        choice_text4 = f"{MENU_NUMBERS.get(4)}  All Dates In Range (Detail)"
+        choice_text5 = f"{MENU_NUMBERS.get(5)}  All Dates In Range + Missing PitchFx IDs (Detail)"
         choices = {
-            f"{MENU_NUMBERS.get(1)}  Dates Missing Data (Summary)": StatusReport.DATE_SUMMARY_MISSING_DATA,
-            f"{MENU_NUMBERS.get(2)}  All Dates In Range (Summary)": StatusReport.DATE_SUMMARY_ALL_DATES,
-            f"{MENU_NUMBERS.get(3)}  Dates Missing Data (Detail)": StatusReport.DATE_DETAIL_MISSING_DATA,
-            f"{MENU_NUMBERS.get(4)}  All Dates In Range (Detail)": StatusReport.DATE_DETAIL_ALL_DATES,
-            f"{MENU_NUMBERS.get(5)}  All Dates In Range + Missing PitchFx IDs (Detail)": StatusReport.DATE_DETAIL_MISSING_PITCHFX,
+            choice_text1: StatusReport.DATE_SUMMARY_MISSING_DATA,
+            choice_text2: StatusReport.DATE_SUMMARY_ALL_DATES,
+            choice_text3: StatusReport.DATE_DETAIL_MISSING_DATA,
+            choice_text4: StatusReport.DATE_DETAIL_ALL_DATES,
+            choice_text5: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
         return self.user_options_prompt(choices)

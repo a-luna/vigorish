@@ -374,7 +374,7 @@ class Season(Base):
     def get_all_bbref_game_ids_scraped_pfx_not_audited(cls, session, year):
         season = cls.find_by_year(session, year)
         if not season:
-            error = f"Database does not contain info for MLB {season_type} {check_date.year}"
+            error = f"Database does not contain info for year={year}"
             return Result.Fail(error)
         game_ids = []
         for date_status in season.scrape_status_dates:
