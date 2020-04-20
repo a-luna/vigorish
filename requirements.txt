@@ -24,7 +24,7 @@ decorator==4.4.2
 distlib==0.3.0
 docutils==0.15.2
 entrypoints==0.3
-executing==0.4.2
+executing==0.4.3
 fake-useragent==0.1.11
 filelock==3.0.12
 flake8==3.7.9
