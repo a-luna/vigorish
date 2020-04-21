@@ -1,6 +1,5 @@
 """Shared functions and menus for CLI."""
 import click
-import subprocess
 from dateutil import parser
 from bullet import Bullet, colors, Input
 

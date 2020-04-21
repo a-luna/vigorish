@@ -4,7 +4,6 @@ import platform
 import re
 import shlex
 import subprocess
-import time
 from pathlib import Path
 from typing import Tuple, Union
 
@@ -13,7 +12,12 @@ from vigorish.util.result import Result
 
 def run_command(command, cwd=None):
     p = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, cwd=cwd, text=True
+        shlex.split(command),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        cwd=cwd,
+        shell=True,
+        text=True,
     )
     for line in iter(p.stdout.readline, ""):
         if line:
