@@ -12,13 +12,23 @@ class HtmlStorage:
         self.file_helper = file_helper
 
     def save_html(self, data_set, url_id, html):
+        filepath_local = None
+        filepath_s3 = None
         result_local = Result.Ok()
         result_s3 = Result.Ok()
         if self.html_stored_local_folder(data_set):
             result_local = self.save_html_local(data_set, url_id, html)
+            if result_local.success:
+                filepath_local = result_local.value
         if self.html_stored_s3(data_set):
             result_s3 = self.save_html_s3(data_set, url_id, html)
-        return Result.Combine([result_local, result_s3])
+            if result_s3.success:
+                filepath_s3 = result_local.value
+        result = Result.Combine([result_local, result_s3])
+        if result.failure:
+            return result
+        filepath = filepath_local if filepath_local else filepath_s3 if filepath_s3 else None
+        return Result.Ok(filepath)
 
     def html_stored_local_folder(self, data_set):
         return self.file_helper.check_file_stored_local(DocFormat.HTML, data_set)
