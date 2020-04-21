@@ -4,6 +4,7 @@ import platform
 import re
 import shlex
 import subprocess
+import time
 from pathlib import Path
 from typing import Tuple, Union
 
@@ -11,36 +12,30 @@ from vigorish.util.result import Result
 
 
 def run_command(command, cwd=None):
-    try:
-        process = subprocess.run(
-            shlex.split(command),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            cwd=cwd,
-            text=True,
-        )
-        while True:
-            try:
-                print(process.stdout.readline())
-            except AttributeError:
-                print()
-                break
-        success = process.returncode == 0
-        return Result.Ok() if success else Result.Fail(process.stderr)
-    except FileNotFoundError as e:
-        return Result.Fail(repr(e))
+    p = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, cwd=cwd, text=True
+    )
+    for line in iter(p.stdout.readline, ""):
+        if line:
+            line = line[:-1] if line.endswith("\n") else line
+            yield line
+    print()
 
 
-def node_installed(exe_name="node"):
+def node_is_installed():
+    return any(program_is_installed(node_alias) for node_alias in ["node", "nodejs"])
+
+
+def program_is_installed(exe_name, version_option="--version"):
     try:
-        node_version = subprocess.run(
-            [exe_name, "--version"],
+        check_version = subprocess.run(
+            [exe_name, version_option],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             encoding="utf-8",
         )
-        output = node_version.stdout.strip()
-        return True if re.compile(r"v\d{1,2}\.").match(output) else False
+        output = check_version.stdout.strip()
+        return True if re.compile(r"[vV]?\d+\.").match(output) else False
     except FileNotFoundError:
         return False
 

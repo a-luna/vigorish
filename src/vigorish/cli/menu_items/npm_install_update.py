@@ -9,7 +9,7 @@ from vigorish.cli.util import print_message, prompt_user_yes_no
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
-from vigorish.util.sys_helpers import node_installed, node_modules_folder_exists, run_command
+from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists, run_command
 
 APP_FOLDER = Path(__file__).parent.parent.parent
 NIGHTMAREJS_FOLDER = APP_FOLDER.joinpath("nightmarejs").resolve()
@@ -32,7 +32,7 @@ class NpmInstallUpdate(MenuItem):
 
     def launch(self) -> Result:
         subprocess.run(["clear"])
-        if not node_installed() and not node_installed(exe_name="nodejs"):
+        if not node_is_installed():
             print_message(wrap_text(INSTALL_ERROR, max_len=70), fg="bright_red", bold=True)
             pause(message="Press any key to continue...")
             return
@@ -50,8 +50,7 @@ class NpmInstallUpdate(MenuItem):
         if not yes_response:
             return Result.Ok(self.exit_menu)
         subprocess.run(["clear"])
-        result = run_command(command, cwd=str(NIGHTMAREJS_FOLDER))
-        if result.success:
-            pause(message="Press any key to continue...")
-            return Result.Ok(self.exit_menu)
-        return result
+        for line in run_command(command, cwd=str(NIGHTMAREJS_FOLDER)):
+            print(line)
+        pause(message="Press any key to continue...")
+        return Result.Ok(self.exit_menu)

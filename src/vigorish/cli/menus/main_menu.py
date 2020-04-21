@@ -10,7 +10,7 @@ from vigorish.cli.menu_items.status_report import StatusReportMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
 from vigorish.config.database import db_setup_complete
 from vigorish.constants import EMOJI_DICT
-from vigorish.util.sys_helpers import node_installed
+from vigorish.util.sys_helpers import node_is_installed
 
 
 class MainMenu(Menu):
@@ -21,7 +21,7 @@ class MainMenu(Menu):
         self.db_session = app["session"]
         self.scraped_data = app["scraped_data"]
         self.menu_text = "Welcome to vigorish!"
-        if not node_installed() and not node_installed(exe_name="nodejs"):
+        if not node_is_installed() and not node_is_installed(exe_name="nodejs"):
             error = "Error! Node.js is not installed, see README for install instructions."
             self.menu_text += f"\n{error}"
 

@@ -19,6 +19,7 @@ from vigorish.scrape.brooks_pitchfx.scrape_task import ScrapeBrooksPitchFx
 from vigorish.status.report_status import report_season_status, report_date_range_status
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
+from vigorish.util.sys_helpers import node_is_installed
 
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_OUTBOX = APP_FOLDER.joinpath("nightmarejs/outbox")
@@ -107,7 +108,13 @@ class JobRunner:
 
     def initialize(self):
         errors = []
-        self.start_time = datetime.now()
+        if not node_is_installed():
+            error = (
+                "Node.js installation cannot be located. Please install a recent, stable "
+                "version and install dependencies from npm, see github repo for detailed "
+                "intructions."
+            )
+            errors.append(error)
         result = self.check_url_delay_settings()
         if result.failure:
             errors.append(result.error)
@@ -118,6 +125,7 @@ class JobRunner:
         if result.failure:
             errors.append(result.error)
         if not errors:
+            self.start_time = datetime.now()
             return Result.Ok()
         return Result.Fail("\n".join(errors))
 
