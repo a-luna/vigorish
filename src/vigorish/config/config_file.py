@@ -102,7 +102,8 @@ class ConfigFile:
             self.get_current_setting("JSON_STORAGE", data_set) for data_set in data_sets
         ]
         html_local_storage = all(
-            html_storage == HtmlStorageOption.LOCAL_FOLDER
+            html_storage == HtmlStorageOption.NONE
+            or html_storage == HtmlStorageOption.LOCAL_FOLDER
             for html_storage in html_storage_settings
         )
         json_local_storage = all(
@@ -251,9 +252,7 @@ class ConfigFile:
             "STATUS_REPORT": StatusReport.SEASON_SUMMARY.name,
             "S3_BUCKET": "your-bucket",
             "SCRAPE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA.name,
-            "URL_SCRAPE_DELAY": UrlScrapeDelay(*(True, True, None, 3, 6)).to_dict(),
-            "BATCH_JOB_SETTINGS": BatchJobSettings(*(True, True, None, 50, 80)).to_dict(),
-            "HTML_STORAGE": HtmlStorageOption.LOCAL_FOLDER.name,
+            "HTML_STORAGE": HtmlStorageOption.NONE.name,
             "HTML_LOCAL_FOLDER_PATH": "html_storage/{year}/{data_set}/",
             "HTML_S3_FOLDER_PATH": "{year}/{data_set}/html/",
             "JSON_STORAGE": JsonStorageOption.LOCAL_FOLDER.name,

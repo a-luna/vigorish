@@ -52,6 +52,7 @@ class ScrapeCondition(Enum):
 class HtmlStorageOption(Enum):
     """Allowed values for HTML_STORAGE config setting."""
 
+    NONE = auto()
     LOCAL_FOLDER = auto()
     S3_BUCKET = auto()
     BOTH = auto()
