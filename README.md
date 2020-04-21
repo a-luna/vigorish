@@ -168,19 +168,69 @@ Commands:
 
 Next, run `vig ui` and verify that the UI displays:
 
-![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/vig_ui_verified.png)
+![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_setup_db.jpg)
 
 If both the CLI help screen and the UI are displayed, the installation was successful! However, you can not begin scraping data just yet. You need to perform a few additional configuration steps first.
 
 ### Config/Setup
 
-There are four different areas/tools that must be configured: AWS credentials, JSON config file, npm packages/node dependencies, and the SQLite database.
+There are quite a few settings that determine how `vigorish` scrapes data, where scraped HTML/JSON is stored, etc. The majority of these settings are stored in a JSON file, and the rest are stored in a file named `.env`
+
+When you launch the UI or run any CLI command, `vigorish` looks for a folder named `~/.vig` and creates the directory if it does not exist. Next, it looks for `.env` in the `~/.vig` folder. If this file does not exist, a default `.env` is created with the following values:
+
+```ini
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=
+CONFIG_FILE={YOUR_HOME_FOLDER}/.vig/vig.config.json
+DATABASE_URL=sqlite:///{YOUR_HOME_FOLDER}/.vig/vig.db
+```
+
+> _{YOUR_HOME_FOLDER}_ is not a real value that you will see in your `.env` file. It is a placeholder for the path of the current user's home folder.
+
+These values are **Environment Variables**. They are loaded into the environment using the `python-dotenv` package, and their values can be accessed from code with the `os.getenv` function.
+
+Next, `vigorish` uses the value of `CONFIG_FILE` to read the contents of `vig.config.json`. Just like `.env`, if this file does not exist a default config file is created. Let's go back and discuss how to manage the values in `.env` before we discuss the settings available in `vig.config.json`.
 
 #### Environment Variables
 
 Run `vig ui` and use the arrow keys to select **Environment Variables** from the menu options. Press **Enter** and you should see the menu below:
 
 ![Environment Variables Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/env_var_menu.jpg)
+
+The first three settings in this list must be set if you wish to store scraped HTML/JSON documents in an S3 bucket. If you do not want to use this feature, you have the option to store scraped HTML in a local folder or to not store HTML files at all. JSON files must be stored in a local folder if you do not wish to store them in a S3 bucket.
+
+If you do wish to store files in S3, you can find more details in the **HTML/JSON Storage** section.
+
+The remaining environment variables are rather self-explanatory. If you wish to change the location/filename of `vig.config.json`, select **CONFIG_FILE**. If you wish to change the location/filename of the SQLite database, select **DATABASE_URL** .
+
+Selecting any item in this list will show the current value of the environment variable. For example, if you select **DATABASE_URL** you will see the menu below:
+
+![Current Env Var Setting](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/current_env_var_setting.jpg)
+
+You can return to the list of environment variables by selecting **NO**. If you select **YES**, you will be prompted to enter a new value.
+
+You will be asked to confirm the new value is correct before it is applied. If it is not correct, you can re-enter the new value or cancel and keep the current value:
+
+![Env Var Change Value](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_env_var_setting.jpg)
+
+#### Config File Settings
+
+![Config File Setings Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_file_settings.jpg)
+
+![Change Config Setting](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_config_setting.jpg)
+
+![Same Setting For All Data Sets](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/same_setting_all_data_sets.jpg)
+
+![Select Value All Data Sets](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_setting_all_data_sets.jpg)
+
+![Select Value Single Data Set](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_setting_bbref_games_for_date.jpg)
+
+![Updated Config Setting](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/updated_config_setting.jpg)
+
+#### Install Node.js Packages (Nightmare)
+
+#### Initialize SQLite Database
 
 ### Usage
 
