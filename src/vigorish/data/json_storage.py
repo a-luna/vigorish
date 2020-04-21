@@ -16,15 +16,13 @@ class JsonStorage:
         self.file_helper = file_helper
 
     def save_json(self, data_set, parsed_data):
+        result_local = Result.Ok()
+        result_s3 = Result.Ok()
         if self.json_stored_local_folder(data_set):
             result_local = self.save_json_local(data_set, parsed_data)
-            if result_local.failure:
-                return result_local
         if self.json_stored_s3(data_set):
             result_s3 = self.save_json_s3(data_set, parsed_data)
-            if result_s3.failure:
-                return result_s3
-        return result_local if result_local else result_s3 if result_s3 else Result.Fail("")
+        return Result.Combine([result_local, result_s3])
 
     def json_stored_local_folder(self, data_set):
         return self.file_helper.check_file_stored_local(DocFormat.JSON, data_set)

@@ -251,6 +251,8 @@ class ConfigFile:
             "STATUS_REPORT": StatusReport.SEASON_SUMMARY.name,
             "S3_BUCKET": "your-bucket",
             "SCRAPE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA.name,
+            "URL_SCRAPE_DELAY": UrlScrapeDelay(True, True, None, 3, 6).to_dict(),
+            "BATCH_JOB_SETTINGS": BatchJobSettings(True, True, None, 50, 80).to_dict(),
             "HTML_STORAGE": HtmlStorageOption.NONE.name,
             "HTML_LOCAL_FOLDER_PATH": "html_storage/{year}/{data_set}/",
             "HTML_S3_FOLDER_PATH": "{year}/{data_set}/html/",
@@ -259,11 +261,11 @@ class ConfigFile:
             "JSON_S3_FOLDER_PATH": "{year}/{data_set}",
         }
         batch_delay_setting_dict = {
-            "BBREF_GAMES_FOR_DATE": BatchScrapeDelay(*(True, True, None, 5, 10)).to_dict(),
-            "BBREF_BOXSCORES": BatchScrapeDelay(*(True, True, None, 5, 10)).to_dict(),
-            "BROOKS_GAMES_FOR_DATE": BatchScrapeDelay(*(True, True, None, 30, 45)).to_dict(),
-            "BROOKS_PITCH_LOGS": BatchScrapeDelay(*(True, True, None, 30, 45)).to_dict(),
-            "BROOKS_PITCHFX": BatchScrapeDelay(*(True, True, None, 30, 45)).to_dict(),
+            "BBREF_GAMES_FOR_DATE": BatchScrapeDelay(True, True, None, 5, 10).to_dict(),
+            "BBREF_BOXSCORES": BatchScrapeDelay(True, True, None, 5, 10).to_dict(),
+            "BROOKS_GAMES_FOR_DATE": BatchScrapeDelay(True, True, None, 30, 45).to_dict(),
+            "BROOKS_PITCH_LOGS": BatchScrapeDelay(True, True, None, 30, 45).to_dict(),
+            "BROOKS_PITCHFX": BatchScrapeDelay(True, True, None, 30, 45).to_dict(),
         }
         if setting_name in default_value_dict:
             return default_value_dict.get(setting_name)

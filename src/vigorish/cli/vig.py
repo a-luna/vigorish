@@ -170,13 +170,14 @@ def status(app, update):
 @click.pass_obj
 def status_date(app, game_date, missing_pitchfx, with_games):
     """Report status for a single date."""
+    if missing_pitchfx and with_games:
+        report_type = StatusReport.SINGLE_DATE_WITH_GAME_STATUS
+    elif missing_pitchfx:
+        report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
+    else:
+        report_type = StatusReport.DATE_DETAIL_ALL_DATES
     result = report_status_single_date(
-        app["session"],
-        app["scraped_data"],
-        app["run_update"],
-        game_date,
-        missing_pitchfx,
-        with_games,
+        app["session"], app["scraped_data"], app["run_update"], game_date, report_type
     )
     return exit_app_success(app) if result.success else exit_app_error(app, result.error)
 

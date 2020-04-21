@@ -2,6 +2,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from vigorish.config.database import SQLITE_PROD_URL
 from vigorish.constants import ENV_VAR_NAMES
 from vigorish.util.result import Result
 
@@ -29,6 +30,7 @@ class DotEnvFile:
     def create_default_dotenv_file(self):
         self.env_var_dict = {var_name: "" for var_name in ENV_VAR_NAMES}
         self.change_value("CONFIG_FILE", DEFAULT_CONFIG)
+        self.change_value("DATABASE_URL", SQLITE_PROD_URL)
         self.write_dotenv_file()
 
     def get_current_value(self, env_var_name):

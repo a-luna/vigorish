@@ -48,14 +48,14 @@ class JobDetailsMenuItem(MenuItem):
                 result = job_runner.execute()
                 if result.failure:
                     return result
-                return Result.Ok(self.exit_menu)
+                return Result.Ok(True)
             if user_choice == "CANCEL":
                 self.db_job.status = JobStatus.COMPLETE
                 self.db_session.commit()
                 subprocess.run(["clear"])
                 print_message("Job was successfully cancelled.", fg="bright_red", bold=True)
                 pause(message="Press any key to continue...")
-                return Result.Ok(self.exit_menu)
+                return Result.Ok(True)
         if self.job_status == JobStatus.ERROR:
             result = self.failed_job_options_prompt()
             if result.failure:
@@ -71,10 +71,10 @@ class JobDetailsMenuItem(MenuItem):
                 result = job_runner.execute()
                 if result.failure:
                     return result
-                return Result.Ok(self.exit_menu)
+                return Result.Ok(True)
         else:
             pause(message="Press any key to return to the previous menu...")
-            return Result.Ok(False)
+            return Result.Ok(self.exit_menu)
 
     def incomplete_job_options_prompt(self):
         choices = {

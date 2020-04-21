@@ -64,7 +64,6 @@ def prompt_user_yes_no(prompt: str) -> Result:
         word_color=colors.foreground["default"],
         word_on_switch=colors.bright(colors.foreground["cyan"]),
     )
-    subprocess.run(["clear"])
     choice_text = prompt.launch()
     choice_value = choices.get(choice_text)
     return Result.Ok(choice_value)
@@ -89,7 +88,6 @@ def prompt_user_yes_no_cancel(prompt: str) -> Result:
         word_color=colors.foreground["default"],
         word_on_switch=colors.bright(colors.foreground["cyan"]),
     )
-    subprocess.run(["clear"])
     choice_text = prompt.launch()
     choice_value = choices.get(choice_text)
     return Result.Fail("") if "CANCEL" in choice_text else Result.Ok(choice_value)

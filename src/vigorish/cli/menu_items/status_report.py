@@ -70,9 +70,7 @@ class StatusReportMenuItem(MenuItem):
     def get_single_date_report_type_from_user(self):
         choice_text1 = f"{MENU_NUMBERS.get(1)}  Detail Report"
         choice_text2 = f"{MENU_NUMBERS.get(2)}  Detail Report + Missing PitchFx IDs"
-        choice_text3 = (
-            f"{MENU_NUMBERS.get(3)}  Detail Report + Missing PitchFx IDs and Game Status"
-        )
+        choice_text3 = f"{MENU_NUMBERS.get(3)}  Detail Report + Missing PitchFx IDs + Game Status"
         choices = {
             choice_text1: StatusReport.DATE_DETAIL_ALL_DATES,
             choice_text2: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
