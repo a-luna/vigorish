@@ -10,14 +10,9 @@ from typing import Tuple, Union
 from vigorish.util.result import Result
 
 
-def run_command(command, cwd=None):
+def run_command(command, cwd=None, shell=True, text=True):
     p = subprocess.Popen(
-        shlex.split(command),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        cwd=cwd,
-        shell=True,
-        text=True,
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd, shell=shell, text=text,
     )
     for line in iter(p.stdout.readline, ""):
         if line:
