@@ -2,7 +2,6 @@
 import os
 import platform
 import re
-import shlex
 import subprocess
 from pathlib import Path
 from typing import Tuple, Union
