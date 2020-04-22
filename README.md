@@ -194,7 +194,11 @@ Next, `vigorish` uses the value of `CONFIG_FILE` to read the contents of `vig.co
 
 #### Environment Variables
 
-Run `vig ui` and use the arrow keys to select **Environment Variables** from the menu options. Press **Enter** and you should see the menu below:
+Run `vig ui` and use the arrow keys to select **Environment Variables** from the menu options:
+
+![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_env_vars.jpg)
+
+Press **Enter** and you should see the menu below:
 
 ![Environment Variables Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/env_var_menu.jpg)
 
@@ -216,6 +220,8 @@ You will be asked to confirm the new value is correct before it is applied. If i
 
 #### Config File Settings
 
+![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_config_settings.jpg)
+
 ![Config File Setings Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_file_settings.jpg)
 
 ![Change Config Setting](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_config_setting.jpg)
@@ -230,7 +236,23 @@ You will be asked to confirm the new value is correct before it is applied. If i
 
 #### Install Node.js Packages (Nightmare)
 
+![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_npm_packages.jpg)
+
+![NPM Install Prompt](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_install_prompt.jpg)
+
+![NPM Install Complete](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_install_complete.jpg)
+
+![NPM Update Prompt](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_update_prompt.jpg)
+
+![NPM Update Complete](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_update_complete.jpg)
+
 #### Initialize SQLite Database
+
+![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_setup_db.jpg)
+
+![Setup DB Prompt](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/setup_db_prompt.jpg)
+
+![Setup DB Complete](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/setup_db_complete.jpg)
 
 ### Usage
 

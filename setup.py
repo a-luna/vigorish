@@ -32,7 +32,6 @@ INSTALL_REQUIRES = [
     "Click",
     "dacite",
     "dataclass-csv",
-    "fake-useragent",
     "rapidfuzz",
     "halo",
     "lxml",
@@ -42,10 +41,8 @@ INSTALL_REQUIRES = [
     "python-dateutil",
     "python-dotenv",
     "requests",
-    "selenium",
     "SQLAlchemy",
     "tqdm",
-    "tzlocal",
     "urllib3",
     "w3lib",
 ]
