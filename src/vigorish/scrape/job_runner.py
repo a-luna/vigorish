@@ -19,7 +19,7 @@ from vigorish.scrape.brooks_pitchfx.scrape_task import ScrapeBrooksPitchFx
 from vigorish.status.report_status import report_season_status, report_date_range_status
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
-from vigorish.util.sys_helpers import node_is_installed
+from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
 
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_OUTBOX = APP_FOLDER.joinpath("nightmarejs/outbox")
@@ -113,6 +113,12 @@ class JobRunner:
                 "Node.js installation cannot be located. Please install a recent, stable "
                 "version and install dependencies from npm, see github repo for detailed "
                 "intructions."
+            )
+            errors.append(error)
+        elif not node_modules_folder_exists():
+            error = (
+                "Nightmare is not installed, you must install it and other node dependencies in "
+                "order to scrape any data."
             )
             errors.append(error)
         result = self.check_url_delay_settings()
