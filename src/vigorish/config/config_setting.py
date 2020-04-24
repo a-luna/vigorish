@@ -39,11 +39,16 @@ class ConfigSetting:
 
     @property
     def is_same_for_all_data_sets(self):
-        return self.config_dict.get("SAME_SETTING_FOR_ALL_DATA_SETS")
+        return (
+            True
+            if self.same_value_for_all_data_sets_is_required
+            else self.config_dict.get("SAME_SETTING_FOR_ALL_DATA_SETS")
+        )
 
     @is_same_for_all_data_sets.setter
     def is_same_for_all_data_sets(self, is_same):
-        self.config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"] = is_same
+        if not self.same_value_for_all_data_sets_is_required:
+            self.config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"] = is_same
 
     @property
     def cannot_be_disabled(self):

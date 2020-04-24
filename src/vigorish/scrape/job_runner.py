@@ -24,6 +24,15 @@ from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exi
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_OUTBOX = APP_FOLDER.joinpath("nightmarejs/outbox")
 JOB_STATUS_TEXT_COLOR = {"scraped": "bright_green", "skipped": "blue"}
+NODEJS_INSTALL_ERROR = (
+    "Node.js installation cannot be located. Please install a recent, stable "
+    "version and install dependencies from npm, see github repo for detailed "
+    "intructions."
+)
+NPM_PACKAGES_INSTALL_ERROR = (
+    "Nightmare is not installed, you must install it and other node dependencies in "
+    "order to scrape any data."
+)
 
 
 class JobRunner:
@@ -109,18 +118,9 @@ class JobRunner:
     def initialize(self):
         errors = []
         if not node_is_installed():
-            error = (
-                "Node.js installation cannot be located. Please install a recent, stable "
-                "version and install dependencies from npm, see github repo for detailed "
-                "intructions."
-            )
-            errors.append(error)
+            errors.append(NODEJS_INSTALL_ERROR)
         elif not node_modules_folder_exists():
-            error = (
-                "Nightmare is not installed, you must install it and other node dependencies in "
-                "order to scrape any data."
-            )
-            errors.append(error)
+            errors.append(NPM_PACKAGES_INSTALL_ERROR)
         result = self.check_url_delay_settings()
         if result.failure:
             errors.append(result.error)

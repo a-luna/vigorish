@@ -16,5 +16,5 @@ class ConfigSettingsMenu(Menu):
     def populate_menu_items(self) -> None:
         all_settings = self.config.all_settings.keys()
         self.menu_items = [ConfigSettingMenuItem(name, self.config) for name in all_settings]
-        self.menu_items.append(ReturnToParentMenuItem("Main Menu "))
-        self.menu_items.insert(0, ReturnToParentMenuItem("Main Menu"))
+        self.menu_items.append(ReturnToParentMenuItem("Return to Main Menu "))
+        self.menu_items.insert(0, ReturnToParentMenuItem("Return to Main Menu"))

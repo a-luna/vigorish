@@ -18,13 +18,11 @@ class UrlTracker:
 
     @property
     def total_urls(self):
-        if not self.all_urls:
-            return 0
-        return len(flatten_list2d([urls for urls in self.all_urls.values()]))
-
-    @property
-    def missing_urls_as_json(self):
-        return json.dumps([url.as_dict() for url in self.missing_urls], indent=2, sort_keys=False)
+        return (
+            len(flatten_list2d([urls_for_date for urls_for_date in self.all_urls.values()]))
+            if self.all_urls
+            else 0
+        )
 
     @property
     def parse_urls(self):
@@ -32,9 +30,11 @@ class UrlTracker:
 
     @property
     def parse_url_ids(self):
-        if self.data_set == DataSet.BROOKS_PITCH_LOGS:
-            return list(set([url.identifier[:12] for url in self.parse_urls]))
-        return [url.identifier for url in self.parse_urls]
+        return (
+            [url.identifier for url in self.parse_urls]
+            if self.data_set != DataSet.BROOKS_PITCH_LOGS
+            else list(set([url.identifier[:12] for url in self.parse_urls]))
+        )
 
     @property
     def html_scraping_complete(self):
@@ -80,14 +80,14 @@ class UrlTracker:
             f"({len(self.completed_urls)}/{total_urls}) URLs"
         )
 
-    def parse_html_report(self, data_set, parsed_count, game_id=None):
+    def parse_html_report(self, parsed_count, game_id=None):
         percent_complete = 0
         if len(self.parse_url_ids) > 0:
             percent_complete = parsed_count / float(len(self.parse_url_ids))
         if game_id:
             data_set_str = "PitchFX Logs"
             unit = "URLs"
-            if data_set == DataSet.BROOKS_PITCH_LOGS:
+            if self.data_set == DataSet.BROOKS_PITCH_LOGS:
                 data_set_str = "Pitch Logs"
                 unit = "Games"
             return (
