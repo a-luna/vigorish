@@ -4,18 +4,17 @@ const colors = require("colors")
 var joinPath = require("path.join")
 const { makeChunkedList, makeIrregularChunkedList } = require("./list_functions")
 
-const USER_AGENT =
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15"
 const PBAR_MAX_LENGTH = 23
 
 const multibar = new cliProgress.MultiBar({
-    format: colors.cyan("|{bar}| ") + "{message} | {percentage}% | {value}/{total} {unit}",
+    format: "{message} " + colors.cyan("|{bar}| ") + " {percentage}% | {value}/{total} {unit}",
     barCompleteChar: "\u2588",
     barIncompleteChar: "\u2591",
     stopOnComplete: true,
     clearOnComplete: true,
     hideCursor: true,
     emptyOnZero: true,
+    autopadding: true,
 })
 
 async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeoutParams) {
@@ -53,6 +52,10 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
     }
 
     function initializeProgressBars(batchList, totalUrls) {
+        const timeoutBar = multibar.create(0, 0, {
+            message: urlRangeMessage(0, batchList[0].length),
+            unit: "",
+        })
         const batchBar = multibar.create(batchList.length, 0, {
             message: urlBatchMessage(batchList[0].length),
             unit: "Batches",
@@ -60,10 +63,6 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
         const urlBar = multibar.create(totalUrls, 0, {
             message: pBarMessage("In Progress"),
             unit: "URLs",
-        })
-        const timeoutBar = multibar.create(0, 0, {
-            message: urlRangeMessage(0, batchList[0].length),
-            unit: "",
         })
         return [batchBar, urlBar, timeoutBar]
     }
