@@ -57,7 +57,7 @@ class ScrapeTaskABC(ABC):
     def execute(self):
         result = (
             self.initialize()
-            .on_success(self.identify_missing_urls)
+            .on_success(self.identify_needed_urls)
             .on_success(self.retrieve_scraped_html)
             .on_success(self.scrape_missing_html)
             .on_success(self.parse_scraped_html)
@@ -76,6 +76,7 @@ class ScrapeTaskABC(ABC):
         self.spinner.start()
         return self.url_builder.create_url_set(self.data_set)
 
+    def identify_needed_urls(self, all_urls):
         self.tracker = UrlTracker(self.db_job, self.data_set, all_urls)
         self.spinner.text = self.tracker.identify_html_report
         for game_date, urls in self.tracker.all_urls.items():
@@ -88,21 +89,22 @@ class ScrapeTaskABC(ABC):
                     return result
                 self.tracker.skip_url_count += len(urls)
             else:
-                self.tracker.missing_urls.extend(urls)
+                self.tracker.needed_urls.extend(urls)
             self.spinner.text = self.tracker.identify_html_report
         return Result.Ok()
 
     def retrieve_scraped_html(self):
-        self.spinner.text = self.tracker.retrieve_html_report(checked_url_count=0)
-        if not self.tracker.missing_urls:
+        self.spinner.text = self.tracker.retrieve_html_report
+        if not self.tracker.needed_urls:
             return Result.Fail("skip")
-        for checked_url_count, url in enumerate(self.tracker.missing_urls[:], start=1):
+        for url in self.tracker.needed_urls[:]:
             self.scraped_data.get_html(self.data_set, url.identifier)
             if not url.file_exists_with_content:
-                continue
-            self.tracker.cached_urls.append(url)
-            self.tracker.missing_urls.remove(url)
-            self.spinner.text = self.tracker.retrieve_html_report(checked_url_count)
+                self.tracker.missing_urls.append(url)
+            else:
+                self.tracker.cached_urls.append(url)
+            self.tracker.needed_urls.remove(url)
+            self.spinner.text = self.tracker.retrieve_html_report
         return Result.Ok()
 
     def scrape_missing_html(self):
@@ -110,9 +112,9 @@ class ScrapeTaskABC(ABC):
             self.spinner.text = self.tracker.scrape_html_report
             self.spinner.stop_and_persist(self.spinner.frame(), "")
             result = self.invoke_nodejs_script()
-            self.spinner.text = self.tracker.save_html_report(saved_count=0)
+            self.spinner.text = self.tracker.save_html_report
             self.spinner.start()
-            for i, url in enumerate(self.tracker.missing_urls[:], start=1):
+            for url in self.tracker.missing_urls[:]:
                 if not url.scraped_file_exists_with_content:
                     continue
                 result = self.scraped_data.save_html(self.data_set, url.identifier, url.html)
@@ -120,7 +122,7 @@ class ScrapeTaskABC(ABC):
                     return result
                 self.tracker.completed_urls.append(url)
                 self.tracker.missing_urls.remove(url)
-                self.spinner.text = self.tracker.save_html_report(saved_count=i)
+                self.spinner.text = self.tracker.save_html_report
         return Result.Ok()
 
     def invoke_nodejs_script(self):
@@ -137,7 +139,7 @@ class ScrapeTaskABC(ABC):
 
     def parse_scraped_html(self):
         parsed = 0
-        self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed)
+        self.spinner.text = self.tracker.parse_html_report(parsed)
         for game_date, urls in self.tracker.all_urls.items():
             for url in urls:
                 if url.identifier not in self.tracker.parse_url_ids:
@@ -152,9 +154,9 @@ class ScrapeTaskABC(ABC):
                 result = self.update_status(game_date, parsed_data)
                 if result.failure:
                     return result
-                parsed += 1
-                self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed)
                 self.db_session.commit()
+                parsed += 1
+                self.spinner.text = self.tracker.parse_html_report(parsed)
         return Result.Ok()
 
     @abstractmethod

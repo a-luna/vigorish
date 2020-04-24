@@ -9,6 +9,7 @@ class UrlTracker:
         self.db_job = db_job
         self.data_set = data_set
         self.all_urls = all_urls
+        self.needed_urls = []
         self.missing_urls = []
         self.cached_urls = []
         self.completed_urls = []
@@ -43,14 +44,24 @@ class UrlTracker:
     def identify_html_report(self):
         percent_complete = 0
         total_remaining = 0
-        total_complete = self.skip_url_count + len(self.missing_urls)
+        total_complete = self.skip_url_count + len(self.needed_urls)
         if self.all_urls:
             percent_complete = total_complete / float(self.total_urls)
             total_remaining = self.total_urls - total_complete
         return (
             f"Determining URLs to scrape... {percent_complete:.0%} "
-            f"({self.skip_url_count} Skip, {len(self.missing_urls)} Scrape, "
+            f"({self.skip_url_count} Skip, {len(self.needed_urls)} Scrape, "
             f"{total_remaining} Remaining)"
+        )
+
+    @property
+    def retrieve_html_report(self):
+        total_complete = self.skip_url_count + len(self.cached_urls) + len(self.missing_urls)
+        percent_complete = total_complete / float(self.total_urls)
+        return (
+            f"Retrieving scraped HTML... {percent_complete:.0%} "
+            f"({self.skip_url_count} Skipped, {len(self.cached_urls)} Found, "
+            f"{len(self.missing_urls)} Missing, {len(self.needed_urls)} Remaining)"
         )
 
     @property
@@ -60,23 +71,13 @@ class UrlTracker:
             report = f"{report} {len(self.completed_urls)} Scraped,"
         return f"{report} {len(self.cached_urls)} Found, {len(self.missing_urls)} Missing)"
 
-    def retrieve_html_report(self, checked_url_count):
-        percent_complete = 0
-        total_missing = checked_url_count - len(self.cached_urls)
-        total_complete = checked_url_count + self.skip_url_count
-        total_remaining = self.total_urls - total_complete
-        percent_complete = total_complete / float(self.total_urls)
-        return (
-            f"Retrieving scraped HTML... {percent_complete:.0%} "
-            f"({self.skip_url_count} Skipped, {len(self.cached_urls)} Found, "
-            f"{total_missing} Missing, {total_remaining} Remaining)"
-        )
-
-    def save_html_report(self, saved_count):
+    @property
+    def save_html_report(self):
         total_urls = len(self.missing_urls) + len(self.completed_urls)
+        percent_complete = len(self.completed_urls) / float(total_urls)
         return (
-            f"Saving scraped HTML... {saved_count / float(total_urls):.0%} "
-            f"({saved_count}/{total_urls}) URLs"
+            f"Saving scraped HTML... {percent_complete:.0%} "
+            f"({len(self.completed_urls)}/{total_urls}) URLs"
         )
 
     def parse_html_report(self, data_set, parsed_count, game_id=None):
