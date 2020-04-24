@@ -29,7 +29,7 @@ UPDATE_MESSAGE = (
 class NpmInstallUpdate(MenuItem):
     def __init__(self) -> None:
         self.menu_item_text = "NPM Packages"
-        self.menu_item_emoji = EMOJI_DICT.get("BASKET")
+        self.menu_item_emoji = EMOJI_DICT.get("PACKAGE")
 
     def launch(self) -> Result:
         subprocess.run(["clear"])

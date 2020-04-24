@@ -166,6 +166,7 @@ EMOJI_DICT = dict(
     ROBOT="🤖",
     KNOBS="🎛️",
     BASKET="🧺",
+    PACKAGE="📦",
     BAGS="🛍️",
     CLOCK="🕚",
     SHRUG="🤷‍♂️",
