@@ -42,7 +42,8 @@ def test_persist_brooks_games_for_date(db_session, scraped_data):
     assert isinstance(games_for_date_parsed, BrooksGamesForDate)
     result = scraped_data.save_json(DATA_SET, games_for_date_parsed)
     assert result.success
-    json_filepath = result.value
+    saved_file_dict = result.value
+    json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "brooks_games_for_date_2018-04-17.json"
     result = scraped_data.get_brooks_games_for_date(GAME_DATE)
     assert result.success

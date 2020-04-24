@@ -46,7 +46,8 @@ def test_persist_brooks_pitch_logs_for_game(scraped_data):
     result = verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game_parsed)
     result = scraped_data.save_json(DATA_SET, pitch_logs_for_game_parsed)
     assert result.success
-    json_filepath = result.value
+    saved_file_dict = result.value
+    json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "gid_2018_06_17_wasmlb_tormlb_1.json"
     result = scraped_data.get_brooks_pitch_logs_for_game(BB_GAME_ID)
     assert result.success

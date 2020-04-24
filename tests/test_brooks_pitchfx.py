@@ -35,7 +35,8 @@ def test_persist_brooks_pitchfx(scraped_data):
     assert isinstance(pitchfx_log_parsed, BrooksPitchFxLog)
     result = scraped_data.save_json(DATA_SET, pitchfx_log_parsed)
     assert result.success
-    json_filepath = result.value
+    saved_file_dict = result.value
+    json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "OAK201804010_660271.json"
     result = scraped_data.get_brooks_pitchfx_log(PITCH_APP_ID)
     assert result.success

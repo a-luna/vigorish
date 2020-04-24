@@ -37,7 +37,8 @@ def test_persist_bbref_games_for_date(scraped_data):
     assert isinstance(games_for_date_parsed, BBRefGamesForDate)
     result = scraped_data.save_json(DATA_SET, games_for_date_parsed)
     assert result.success
-    json_filepath = result.value
+    saved_file_dict = result.value
+    json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "bbref_games_for_date_2018-07-26.json"
     result = scraped_data.get_bbref_games_for_date(GAME_DATE)
     assert result.success

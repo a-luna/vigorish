@@ -33,7 +33,8 @@ def test_persist_bbref_boxscore(scraped_data):
     assert isinstance(bbref_boxscore_parsed, BBRefBoxscore)
     result = scraped_data.save_json(DATA_SET, bbref_boxscore_parsed)
     assert result.success
-    json_filepath = result.value
+    saved_file_dict = result.value
+    json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "ATL201803290.json"
     result = scraped_data.get_bbref_boxscore(BBREF_GAME_ID)
     assert result.success
