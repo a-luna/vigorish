@@ -25,9 +25,9 @@ class CreateJobMenuItem(MenuItem):
 
     def launch(self) -> Result:
         job_confirmed = False
-        dates_validated = False
         while not job_confirmed:
             data_sets = self.get_data_sets_to_scrape()
+            dates_validated = False
             while not dates_validated:
                 job_details = self.get_scrape_job_details()
                 start_date = job_details[0][1]
