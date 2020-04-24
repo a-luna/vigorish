@@ -36,4 +36,6 @@ class JobsMenu(Menu):
             )
             for menu_item_number, job in enumerate(self.jobs, start=1)
         ]
-        self.menu_items.append(ReturnToParentMenuItem("All Jobs"))
+        self.menu_items.append(ReturnToParentMenuItem("Return to All Jobs Menu "))
+        if len(self.jobs) > 8:
+            self.menu_items.insert(0, ReturnToParentMenuItem("Return to All Jobs Menu"))
