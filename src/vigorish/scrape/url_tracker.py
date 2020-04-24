@@ -5,13 +5,15 @@ from vigorish.util.list_helpers import flatten_list2d
 
 
 class UrlTracker:
-    def __init__(self, data_set, all_urls):
+    def __init__(self, db_job, data_set, all_urls):
+        self.db_job = db_job
         self.data_set = data_set
         self.all_urls = all_urls
         self.missing_urls = []
         self.cached_urls = []
         self.completed_urls = []
         self.skip_url_count = 0
+        self.missing_urls_filepath = self.db_job.url_set_filepath
 
     @property
     def total_urls(self):
@@ -95,6 +97,12 @@ class UrlTracker:
             f"Parsing scraped HTML... {percent_complete:.0%} "
             f"({parsed_count}/{len(self.parse_url_ids)}) URLs"
         )
+
+    def create_missing_urls_json_file(self):
+        urls_dict = [url.as_dict() for url in self.missing_urls]
+        urls_json = json.dumps(urls_dict, indent=2, sort_keys=False)
+        self.missing_urls_filepath.write_text(urls_json)
+        return self.missing_urls_filepath
 
     def get_html(self, url_id):
         match = [url for url in self.parse_urls if url.identifier == url_id]

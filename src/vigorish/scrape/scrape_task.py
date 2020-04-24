@@ -76,8 +76,7 @@ class ScrapeTaskABC(ABC):
         self.spinner.start()
         return self.url_builder.create_url_set(self.data_set)
 
-    def identify_missing_urls(self, all_urls):
-        self.tracker = UrlTracker(self.data_set, all_urls)
+        self.tracker = UrlTracker(self.db_job, self.data_set, all_urls)
         self.spinner.text = self.tracker.identify_html_report
         for game_date, urls in self.tracker.all_urls.items():
             result = self.check_prerequisites(game_date)
@@ -125,8 +124,7 @@ class ScrapeTaskABC(ABC):
         return Result.Ok()
 
     def invoke_nodejs_script(self):
-        missing_urls_filepath = self.db_job.url_set_filepath
-        missing_urls_filepath.write_text(self.tracker.missing_urls_as_json)
+        missing_urls_filepath = self.tracker.create_missing_urls_json_file()
         script_args = self.config.get_nodejs_script_args(self.data_set, missing_urls_filepath)
         if program_is_installed("node"):
             success = execute_js(str(NODEJS_SCRIPT), arguments=script_args)
