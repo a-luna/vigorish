@@ -10,10 +10,10 @@ from vigorish.util.result import Result
 
 
 def run_command(command, cwd=None, shell=True, text=True):
-    p = subprocess.Popen(
+    process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd, shell=shell, text=text,
     )
-    for line in iter(p.stdout.readline, ""):
+    for line in iter(process.stdout.readline, ""):
         if line:
             line = line[:-1] if line.endswith("\n") else line
             yield line

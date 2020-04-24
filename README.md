@@ -168,7 +168,7 @@ Commands:
 
 Next, run `vig ui` and verify that the UI displays:
 
-![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_setup_db.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_setup_db.jpg" alt="Main Menu" width="500px">
 
 If both the CLI help screen and the UI are displayed, the installation was successful! However, you can not begin scraping data just yet. You need to perform a few additional configuration steps first.
 
@@ -186,7 +186,7 @@ CONFIG_FILE={YOUR_HOME_FOLDER}/.vig/vig.config.json
 DATABASE_URL=sqlite:///{YOUR_HOME_FOLDER}/.vig/vig.db
 ```
 
-> _{YOUR_HOME_FOLDER}_ is not a real value that you will see in your `.env` file. It is a placeholder for the path of the current user's home folder.
+> ⚠️ `{YOUR_HOME_FOLDER}` _is not a real value that you should use or will see in your_ `.env` _file. It is a placeholder for the path of the current user's home folder._
 
 These values are **Environment Variables**. They are loaded into the environment using the `python-dotenv` package, and their values can be accessed from code with the `os.getenv` function.
 
@@ -196,11 +196,11 @@ Next, `vigorish` uses the value of `CONFIG_FILE` to read the contents of `vig.co
 
 Run `vig ui` and use the arrow keys to select **Environment Variables** from the menu options:
 
-![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_env_vars.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_env_vars.jpg" alt="Main Menu" width="500px">
 
 Press **Enter** and you should see the menu below:
 
-![Environment Variables Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/env_var_menu.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/env_var_menu.jpg" alt="Environment Variables Menu" width="500px">
 
 The first three settings in this list must be set if you wish to store scraped HTML/JSON documents in an S3 bucket. If you do not want to use this feature, you have the option to store scraped HTML in a local folder or to not store HTML files at all. JSON files must be stored in a local folder if you do not wish to store them in a S3 bucket.
 
@@ -210,49 +210,66 @@ The remaining environment variables are rather self-explanatory. If you wish to 
 
 Selecting any item in this list will show the current value of the environment variable. For example, if you select **DATABASE_URL** you will see the menu below:
 
-![Current Env Var Setting](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/current_env_var_setting.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/current_env_var_setting.jpg" alt="Current Env Var Setting" width="500px">
 
 You can return to the list of environment variables by selecting **NO**. If you select **YES**, you will be prompted to enter a new value.
 
-You will be asked to confirm the new value is correct before it is applied. If it is not correct, you can re-enter the new value or cancel and keep the current value:
+Next, you will be asked to confirm the new value is correct before it is applied. If it is not correct, selecting **NO** will prompt you to re-enter the new value. Selecting **CANCEL** will keep the current value and return to the previous menu:
 
-![Env Var Change Value](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_env_var_setting.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_env_var_setting.jpg" alt="Env Var Change Value" width="500px">
+
+> ⚠️ _If you change the value of either_ **CONFIG_FILE** _or_ **DATABASE_URL**, `vigorish` _will automatically exit to ensure that the new settings/SQLite file are used, rather than the previous, discarded settings/database._
+
+Please enter your AWS credentials if you plan on using the S3 storage feature. If you would like to change the location/name of the `vig.config.json` file and/or SQLite database file, please do so now. When complete, return to the main menu.
 
 #### Config File Settings
 
-![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_config_settings.jpg)
+Next, select **Config File Settings** from the main menu:
 
-![Config File Setings Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_file_settings.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_config_settings.jpg" alt="Main Menu" width="500px">
 
-![Change Config Setting](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_config_setting.jpg)
+Press **Enter** and you should see the menu below:
 
-![Same Setting For All Data Sets](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/same_setting_all_data_sets.jpg)
+<div style="width: 100%;">
+    <figure style="margin: 15px 0">
+        <video id="vid-config-setting-scroll-menu" style="width: 500px" autoplay playsinline loop muted controls>
+            <source src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_settings_scroll_menu.mp4" type="video/mp4">
+            Sorry, your browser doesn't support embedded videos, but don't worry, you can <a href="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_settings_scroll_menu.mp4">download it</a> and watch it with your favorite video player!
+        </video>
+    </figure>
+</div>
 
-![Select Value All Data Sets](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_setting_all_data_sets.jpg)
+The **Config File Settings** menu contains too many settings to display all of them simultaneously. Whenever a menu contains more than eight items, it will be rendered as a scrolling menu (as shown in the video above). To make navigating the UI easier, options to return to the previous menu are added to the beginning **AND** end of the list of menu options (as opposed to normal menus which only have the return option at the end of the list).
 
-![Select Value Single Data Set](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_setting_bbref_games_for_date.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_config_setting.jpg" alt="Change Config Setting" width="500px">
 
-![Updated Config Setting](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/updated_config_setting.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/same_setting_all_data_sets.jpg" alt="Same Setting For All Data Sets" width="500px">
+
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_setting_all_data_sets.jpg" alt="Select Value All Data Sets" width="500px">
+
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_setting_bbref_games_for_date.jpg" alt="Select Value Single Data Set" width="500px">
+
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/updated_config_setting.jpg" alt="Updated Config Setting" width="500px">
 
 #### Install Node.js Packages (Nightmare)
 
-![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_npm_packages.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_npm_packages.jpg" alt="Main Menu" width="500px">
 
-![NPM Install Prompt](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_install_prompt.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_install_prompt.jpg" alt="NPM Install Prompt" width="500px">
 
-![NPM Install Complete](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_install_complete.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_install_complete.jpg" alt="NPM Install Complete" width="500px">
 
-![NPM Update Prompt](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_update_prompt.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_update_prompt.jpg" alt="NPM Update Prompt" width="500px">
 
-![NPM Update Complete](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_update_complete.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_update_complete.jpg" alt="NPM Update Complete" width="500px">
 
 #### Initialize SQLite Database
 
-![Main Menu](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_setup_db.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_setup_db.jpg" alt="Main Menu" width="500px">
 
-![Setup DB Prompt](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/setup_db_prompt.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/setup_db_prompt.jpg" alt="Setup DB Prompt" width="500px">
 
-![Setup DB Complete](https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/setup_db_complete.jpg)
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/setup_db_complete.jpg" alt="Setup DB Complete" width="500px">
 
 ### Usage
 
