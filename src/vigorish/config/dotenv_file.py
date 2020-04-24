@@ -46,6 +46,9 @@ class DotEnvFile:
         self.env_var_dict = self.read_dotenv_file()
         return Result.Ok()
 
+    def restart_required_on_change(self, setting_name):
+        return setting_name in ["CONFIG_FILE", "DATABASE_URL"]
+
     def write_dotenv_file(self):
         env_var_strings = [f"{name}={value}" for name, value in self.env_var_dict.items()]
         DOTENV_FILE.write_text("\n".join(env_var_strings))

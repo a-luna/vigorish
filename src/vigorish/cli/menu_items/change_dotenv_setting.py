@@ -1,13 +1,17 @@
 """Menu that allows the user to view and modify environment variables."""
 import subprocess
+from sys import exit
 
 from bullet import Input, colors
+from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no, prompt_user_yes_no_cancel
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
+
+RESTART_WARNING = "\nApplication must be restarted for these changes to take effect!"
 
 
 class DotEnvSettingMenuItem(MenuItem):
@@ -17,6 +21,7 @@ class DotEnvSettingMenuItem(MenuItem):
         self.setting_name = setting_name
         self.dotenv_file = dotenv_file
         self.current_setting = self.dotenv_file.get_current_value(self.setting_name)
+        self.restart_required = self.dotenv_file.restart_required_on_change(self.setting_name)
         self.exit_menu = False
 
     def launch(self) -> Result:
@@ -34,14 +39,19 @@ class DotEnvSettingMenuItem(MenuItem):
             subprocess.run(["clear"])
             prompt = (
                 f"Enter a value for {self.setting_name} "
-                f"(Current Value: {self.current_setting}): "
+                f"(Current Value: {self.current_setting}):\n"
             )
             new_value = Input(prompt, word_color=colors.foreground["default"]).launch()
             result = self.confirm_new_value(new_value)
             if result.failure:
                 return Result.Ok(self.exit_menu)
             user_confirmed = result.value
-        return self.dotenv_file.change_value(self.setting_name, new_value)
+        result = self.dotenv_file.change_value(self.setting_name, new_value)
+        if not self.restart_required:
+            return result
+        print_message(RESTART_WARNING, fg="bright_magenta", bold=True)
+        pause(message="Press any key to continue...")
+        exit(0)
 
     def confirm_new_value(self, new_value):
         prompt = (
