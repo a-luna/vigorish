@@ -220,63 +220,132 @@ Next, you will be asked to confirm the new value is correct before it is applied
 
 > ⚠️ _If you change the value of either_ **CONFIG_FILE** _or_ **DATABASE_URL**, `vigorish` _will automatically exit to ensure that the new settings/SQLite file are used, rather than the previous, discarded settings/database._
 
-Please enter your AWS credentials if you plan on using the S3 storage feature. If you would like to change the location/name of the `vig.config.json` file and/or SQLite database file, please do so now. When complete, return to the main menu.
+Please enter your AWS credentials if you plan on using the S3 storage feature. If you would like to change the location/name of the `vig.config.json` file and/or SQLite database file, please do so now. When complete, return to the Main Menu.
 
 #### Config File Settings
 
-Next, select **Config File Settings** from the main menu:
+Next, select **Config File Settings** from the Main Menu:
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_config_settings.jpg" alt="Main Menu" width="500px">
 
 Press **Enter** and you should see the menu below:
 
-<div style="width: 100%;">
-    <figure style="margin: 15px 0">
-        <video id="vid-config-setting-scroll-menu" style="width: 500px" autoplay playsinline loop muted controls>
-            <source src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_settings_scroll_menu.mp4" type="video/mp4">
-            Sorry, your browser doesn't support embedded videos, but don't worry, you can <a href="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_settings_scroll_menu.mp4">download it</a> and watch it with your favorite video player!
-        </video>
-    </figure>
-</div>
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_file_settings_1.jpg" alt="Config File Settings (Scroll Menu)" width="500px">
 
-The **Config File Settings** menu contains too many settings to display all of them simultaneously. Whenever a menu contains more than eight items, it will be rendered as a scrolling menu (as shown in the video above). To make navigating the UI easier, options to return to the previous menu are added to the beginning **AND** end of the list of menu options (as opposed to normal menus which only have the return option at the end of the list).
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/config_file_settings_2.jpg" alt="Config File Settings (Scroll Menu)" width="500px">
+
+The **Config File Settings** menu allows the user to view or modify the current value of any setting defined in `vig.config.json`. Please note the up/down arrows highlighted in the two screenshots above. Whenever a menu contains more than eight items, it will be rendered as a scrolling menu. The arrows indicate that there are additional menu items that can be accessed by navigating through the list.
+
+To make navigating the UI easier, options to return to the previous menu are added to the beginning **AND** end of the scroll menu (as opposed to normal menus which only have the return option at the end of the list).
+
+We will cover the purpose/effect of each config setting shortly. Selecting a config setting (press `ENTER`) displays the setting name, data type, description and current setting as shown below:
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_config_setting.jpg" alt="Change Config Setting" width="500px">
 
+Within this menu, you are asked if you would like to change the current setting. In the screenshot above, the `Json Storage` setting has a current value of `ALL_DATA_SETS..: BOTH`. Most settings can be configured per data set **OR** or the same value can be used for all data sets.
+
+If you choose to change the current setting, you are asked if you would like to use the same setting for all data sets:
+
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/same_setting_all_data_sets.jpg" alt="Same Setting For All Data Sets" width="500px">
+
+Selecting **YES** will prompt you to select a new value:
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_setting_all_data_sets.jpg" alt="Select Value All Data Sets" width="500px">
 
+In this case, the data type of the setting is an `Enum`. For this data type, you can select a new value from a list of all possible values (all other data types (`str`, `numeric`, `Path`) will be typed in directly).
+
+Going back one step, if you selected **NO** when asked if you would like to use the same setting for all data sets, you will be asked to enter a new value for the setting five times, once for each data set that can be scraped using vigorish.
+
+The prompt for a single data type is shown below:
+
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/change_setting_bbref_games_for_date.jpg" alt="Select Value Single Data Set" width="500px">
+
+After entering values for all data types, you can verify that the new value was applied by selecting the setting you modified from the **Config File Settings** menu. If you chose to set separate values for each data set, you will see something similar to the screenshot below:
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/updated_config_setting.jpg" alt="Updated Config Setting" width="500px">
 
+With a fresh install, the following default settings are used:
+
+##### **Same setting for all data sets**
+
+-   **`STATUS_REPORT`**: `SEASON_SUMMARY`
+-   **`S3_BUCKET`**: `your-bucket`
+    -   This is a placeholder value, you must set this to the name of a S3 bucket that your AWS account has permission to create/read/delete objects.
+-   **`SCRAPE_CONDITION`**: `ONLY_MISSING_DATA`
+-   **`URL_SCRAPE_DELAY`**: `Delay is random (3-6 seconds)`
+-   **`BATCH_JOB_SETTINGS`**: `Batch size is random (50-80 URLs)`
+-   **`HTML_STORAGE`**: `NONE`
+    -   By default, scraped HTML is **NOT STORED** since this will consume storage space very quickly. However, I frequently make changes to the parser functions and it is extremely useful and 100x quicker to store the HTML and run the updated parsers against local copies of scraped HTML. The owners of the scraped sites surely appreciate it as well.
+-   **`HTML_LOCAL_FOLDER_PATH`**: `html_storage/{year}/{data_set}/`
+    -   All settings that are `data_type` = `Path` recognize the two placeholder strings `{year}` and `{data_set}`. The path that is generated substitutes values in place of the placeholders using the date that the game occurred on and the data set being scraped.
+-   **`HTML_S3_FOLDER_PATH`**: `{year}/{data_set}/html/`
+-   **`JSON_STORAGE`**: `LOCAL_FOLDER`
+    -   Be default, JSON files containing parsed data are only stored in the local file system. If you would like to store JSON files in S3 or both S3 and the local file system, you must enter your AWS credentials in the **Environment Variables** menu and then update this setting.
+-   **`JSON_LOCAL_FOLDER_PATH`:** `json_storage/{year}/{data_set}/`
+-   **`JSON_S3_FOLDER_PATH`**: `{year}/{data_set}`
+    <br>
+
+##### **Different setting for each data set**
+
+-   **`BATCH_SCRAPE_DELAY`**
+    -   `BBREF_GAMES_FOR_DATE`: `Delay is random (5-10 minutes)`
+    -   `BROOKS_GAMES_FOR_DATE`: `Delay is random (30-45 minutes)`
+    -   `BBREF_BOXSCORES`: `Delay is random (5-10 minutes)`
+    -   `BROOKS_PITCH_LOGS`: `Delay is random (30-45 minutes)`
+    -   `BROOKS_PITCHFX`: `Delay is random (30-45 minutes)`
+
+I arrived at these settings through much trial and error. I know that it takes much longer to scrape data from brooksbaseball.net with a 30-45 minute delay every 50-80 URLs, but I have never been banned with this configuration. Without the batch delay, I was always blocked within an hour or two.
+
+Please make any changes you wish at this point. When you have everything setup to your liking, return to the Main Menu.
+
 #### Install Node.js Packages (Nightmare)
+
+Next, select **NPM Packages** from the Main Menu:
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_npm_packages.jpg" alt="Main Menu" width="500px">
 
+Press **Enter** and you will be prompted to install all node dependencies:
+
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_install_prompt.jpg" alt="NPM Install Prompt" width="500px">
+
+Select **YES** to begin the installation. You will see the output from npm, and when complete simply press any key to continue:
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_install_complete.jpg" alt="NPM Install Complete" width="500px">
 
+After successful installation, the **NPM Packages** menu will instead ask if you would like to update the installed npm packages:
+
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_update_prompt.jpg" alt="NPM Update Prompt" width="500px">
+
+Select **YES** to check for updates. If any are available, they will be updated automatically and the output from npm will be displayed as shown below:
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/npm_update_complete.jpg" alt="NPM Update Complete" width="500px">
 
+When the update process is complete, return to the main menu by pressing any key.
+
 #### Initialize SQLite Database
+
+Finally, select **Setup Database** from the Main Menu:
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_setup_db.jpg" alt="Main Menu" width="500px">
 
+Press **Enter** and you will be prompted to initialize the SQLite database:
+
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/setup_db_prompt.jpg" alt="Setup DB Prompt" width="500px">
+
+Select **YES** to begin the initialization process. After all tables have been populated with initial data, press any key to return to the Main Menu.
 
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/setup_db_complete.jpg" alt="Setup DB Complete" width="500px">
 
 ### Usage
 
-### HTML/JSON Storage
+Congratulations! If you made it this far, you have successfully installed and configured `vigorish`! After the database has been initialized, the Main Menu will contain a slightly different set of options:
 
-To prevent making multiple identical requests and to reduce the load on the websites being scraped, you can choose to save the raw HTML to a local file,
+<img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/main_menu_db_setup.jpg" alt="Main Menu After DB Initialized" width="500px">
 
-`vigorish` stores all data parsed from HTML in JSON files that can either be and you have the ability to store HTML of scraped pages as well (to prevent making multiple identical requests and reduce the load on the servers being scraped). These files can be stored in the local file system, in an S3 bucket, or both. You can add your AWS access keys to the `.env` file in the app root folder (`src/vigorish`) to use this feature. You can also use any method supported by [the `boto3` package](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html) that does not require hard-coding credentials in a script file.
+#### Create New Job
 
-`python-dotenv` is installed as a dependency of `vigorish` and is used to load the values from `.env` whenever the application runs, making the AWS access keys (and any other values defined in `.env`) available as environment variables with the names that `boto3` is configured to utilize. Obviously, you must never commit your `.env` file to source control. The .gitignore file for `vigorish` includes `.env` for this reason.
+#### View All Jobs
+
+#### Job Execution
+
+#### Reset Database

@@ -234,7 +234,7 @@ class ConfigFile:
         return script_params
 
     def create_default_config_file(self):
-        self.config_json = deepcopy(self.default_settings)
+        self.config_json = deepcopy(self.settings_meta)
         for setting, config_dict in self.config_json.items():
             if config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"]:
                 config_dict["ALL"] = self.get_default_value(setting, DataSet.ALL)
@@ -274,7 +274,7 @@ class ConfigFile:
         raise ValueError(f"{setting_name} is not a valid setting name")
 
     @property
-    def default_settings(self):
+    def settings_meta(self):
         return {
             "STATUS_REPORT": {
                 "CONFIG_TYPE": "Enum",
@@ -343,7 +343,7 @@ class ConfigFile:
                 "ENUM_NAME": "HtmlStorageOption",
                 "DESCRIPTION": (
                     "By default, HTML is NOT saved after it has been parsed. However, you "
-                    "can choose to save scraped HTML in a local folder, an S3 bucket, or "
+                    "can choose to save scraped HTML in a local folder, S3 bucket, or "
                     "both."
                 ),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
@@ -373,7 +373,7 @@ class ConfigFile:
                 "ENUM_NAME": "JsonStorageOption",
                 "DESCRIPTION": (
                     "MLB data is parsed from HTML and stored in JSON docs. You can store "
-                    "the JSON docs in a local folder, an S3 bucket, or both."
+                    "the JSON docs in a local folder, S3 bucket, or both."
                 ),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
