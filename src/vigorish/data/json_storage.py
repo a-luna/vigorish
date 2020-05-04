@@ -27,7 +27,7 @@ class JsonStorage:
         if self.json_stored_s3(data_set):
             result_s3 = self.save_json_s3(data_set, parsed_data)
             if result_s3.success:
-                s3_object_key = result_local.value
+                s3_object_key = result_s3.value
         result = Result.Combine([result_local, result_s3])
         if result.failure:
             return result

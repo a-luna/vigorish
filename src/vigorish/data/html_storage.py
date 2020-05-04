@@ -23,7 +23,7 @@ class HtmlStorage:
         if self.html_stored_s3(data_set):
             result_s3 = self.save_html_s3(data_set, url_id, html)
             if result_s3.success:
-                s3_object_key = result_local.value
+                s3_object_key = result_s3.value
         result = Result.Combine([result_local, result_s3])
         if result.failure:
             return result
