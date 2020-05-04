@@ -83,9 +83,7 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
         if (padLength <= 0) {
             return input
         }
-        padLeft = Math.floor(padLength / 2)
-        padRight = padLength - padLeft
-        return `${" ".repeat(padLeft)}${input}${" ".repeat(padRight)}`
+        return `${" ".repeat(padLength)}${input}`
     }
 
     async function scrapeUrlBatch(nightmare, urlSet, timeoutParams, urlCounter, progressBar) {

@@ -1,4 +1,5 @@
 """CLI application entry point."""
+import subprocess
 from pathlib import Path
 
 import click
@@ -21,6 +22,7 @@ from vigorish.status.report_status import (
     report_season_status,
 )
 from vigorish.util.datetime_util import today_str, current_year
+from vigorish.util.string_helpers import wrap_text
 
 VIG_FOLDER = Path.home() / ".vig"
 
@@ -277,12 +279,14 @@ def status_season(app, year, verbosity):
 
 def exit_app_success(app, message=None):
     if message:
-        print_message(f"{message}\n", fg="bright_green", bold=True)
+        subprocess.run(["clear"])
+        print_message(wrap_text(f"\n{message}\n", max_len=70), fg="bright_green", bold=True)
     app["session"].close()
     return 0
 
 
 def exit_app_error(app, message):
-    print_message(f"{message}\n", fg="bright_red", bold=True)
+    subprocess.run(["clear"])
+    print_message(wrap_text(f"\n{message}\n", max_len=70), fg="bright_red", bold=True)
     app["session"].close()
     return 1

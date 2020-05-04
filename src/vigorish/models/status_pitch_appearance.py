@@ -33,9 +33,8 @@ class PitchAppearanceScrapeStatus(Base):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def display(self):
-        season_dict = self.as_dict()
         title = f"SCRAPE STATUS FOR PITCH APPEARANCE: {self.pitch_app_id}"
-        display_dict(season_dict, title=title)
+        display_dict(self.as_dict(), title=title)
 
     @classmethod
     def find_by_pitch_app_id(cls, session, pitch_app_id):
