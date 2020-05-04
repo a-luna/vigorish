@@ -21,8 +21,6 @@ from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
 
-APP_FOLDER = Path(__file__).parent.parent
-NODEJS_OUTBOX = APP_FOLDER.joinpath("nightmarejs/outbox")
 JOB_STATUS_TEXT_COLOR = {"scraped": "bright_green", "skipped": "blue"}
 NODEJS_INSTALL_ERROR = (
     "Node.js installation cannot be located. Please install a recent, stable "
@@ -167,7 +165,7 @@ class JobRunner:
         self.end_time = datetime.now()
         self.db_job.status = JobStatus.COMPLETE
         self.db_session.commit()
-        shutil.rmtree(NODEJS_OUTBOX.joinpath(self.db_job.id))
+        shutil.rmtree(self.db_job.scraped_html_root_folder)
         return Result.Ok()
 
     def create_all_folderpaths(self):

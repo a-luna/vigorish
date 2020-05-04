@@ -45,7 +45,6 @@ class ScrapeTaskABC(ABC):
         self.end_date = self.db_job.end_date
         self.season = self.db_job.season
         self.total_days = self.db_job.total_days
-        self.scraped_html_folderpath = self.db_job.get_scraped_html_folderpath(self.data_set)
         self.url_builder = UrlBuilder(self.db_job, self.config, self.scraped_data)
         self.scrape_condition = self.config.get_current_setting("SCRAPE_CONDITION", self.data_set)
         self.spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")

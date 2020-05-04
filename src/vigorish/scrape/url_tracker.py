@@ -15,6 +15,7 @@ class UrlTracker:
         self.completed_urls = []
         self.skip_url_count = 0
         self.missing_urls_filepath = self.db_job.url_set_filepath
+        self.scraped_html_folderpath = self.db_job.scraped_html_folders[self.data_set]
 
     @property
     def total_urls(self):

@@ -85,6 +85,20 @@ class ScrapeJob(Base):
         return NODEJS_INBOX.joinpath(f"{self.id}.json")
 
     @hybrid_property
+    def scraped_html_root_folder(self):
+        return NODEJS_OUTBOX.joinpath(self.id)
+
+    @hybrid_property
+    def scraped_html_folders(self):
+        folder_dict = {
+            data_set: self.scraped_html_root_folder.joinpath(data_set.name.lower())
+            for data_set in self.data_sets
+        }
+        for folderpath in folder_dict.values():
+            folderpath.mkdir(parents=True, exist_ok=True)
+        return folder_dict
+
+    @hybrid_property
     def date_range(self):
         return get_date_range(self.start_date, self.end_date)
 
@@ -101,8 +115,8 @@ class ScrapeJob(Base):
             "MLB Season": self.season.name,
             "Start Date": self.start_date.strftime(DATE_ONLY),
             "End Date": self.end_date.strftime(DATE_ONLY),
-            "Created": self.created_date_str,
-            "Data Sets": "\n\t".join([str(ds) for ds in self.data_sets]),
+            "Created At": self.created_date_str,
+            "Data Sets": "\n\t      ".join([str(ds) for ds in self.data_sets]),
         }
 
     @hybrid_property
@@ -114,11 +128,6 @@ class ScrapeJob(Base):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-    def get_scraped_html_folderpath(self, data_set):
-        scraped_html_folderpath = NODEJS_OUTBOX.joinpath(self.id).joinpath(data_set.name.lower())
-        scraped_html_folderpath.mkdir(parents=True, exist_ok=True)
-        return scraped_html_folderpath
 
     @classmethod
     def find_by_id(cls, session, job_id):
