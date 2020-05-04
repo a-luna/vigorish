@@ -50,7 +50,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 game_id = game.bbref_game_id
                 if game_id not in self.tracker.parse_url_ids:
                     continue
-                self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed, game_id)
+                self.spinner.text = self.tracker.parse_html_report(parsed, game_id)
                 pitch_logs_for_game = BrooksPitchLogsForGame()
                 pitch_logs_for_game.bb_game_id = game.bb_game_id
                 pitch_logs_for_game.bbref_game_id = game_id
@@ -72,7 +72,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 if result.failure:
                     return result
                 parsed += 1
-                self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed, game_id)
+                self.spinner.text = self.tracker.parse_html_report(parsed, game_id)
                 self.db_session.commit()
         return Result.Ok()
 

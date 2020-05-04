@@ -1,19 +1,22 @@
 import json
 
 from vigorish.enums import DataSet
+from vigorish.scrape.url_builder import create_url_set
 from vigorish.util.list_helpers import flatten_list2d
+from vigorish.util.result import Result
 
 
 class UrlTracker:
-    def __init__(self, db_job, data_set, all_urls):
+    def __init__(self, db_job, data_set, scraped_data):
         self.db_job = db_job
         self.data_set = data_set
-        self.all_urls = all_urls
-        self.needed_urls = []
+        self.scraped_data = scraped_data
+        self.all_urls = []
+        self.need_urls = []
         self.missing_urls = []
         self.cached_urls = []
         self.completed_urls = []
-        self.skip_url_count = 0
+        self.skip_urls = []
         self.missing_urls_filepath = self.db_job.url_set_filepath
         self.scraped_html_folderpath = self.db_job.scraped_html_folders[self.data_set]
 
@@ -45,29 +48,29 @@ class UrlTracker:
     def identify_html_report(self):
         percent_complete = 0
         total_remaining = 0
-        total_complete = self.skip_url_count + len(self.needed_urls)
+        total_complete = len(self.skip_urls) + len(self.need_urls)
         if self.all_urls:
             percent_complete = total_complete / float(self.total_urls)
             total_remaining = self.total_urls - total_complete
         return (
             f"Determining URLs to scrape... {percent_complete:.0%} "
-            f"({self.skip_url_count} Skip, {len(self.needed_urls)} Scrape, "
+            f"({len(self.skip_urls)} Skip, {len(self.need_urls)} Scrape, "
             f"{total_remaining} Remaining)"
         )
 
     @property
     def retrieve_html_report(self):
-        total_complete = self.skip_url_count + len(self.cached_urls) + len(self.missing_urls)
+        total_complete = len(self.skip_urls) + len(self.cached_urls) + len(self.missing_urls)
         percent_complete = total_complete / float(self.total_urls)
         return (
             f"Retrieving scraped HTML... {percent_complete:.0%} "
-            f"({self.skip_url_count} Skipped, {len(self.cached_urls)} Found, "
-            f"{len(self.missing_urls)} Missing, {len(self.needed_urls)} Remaining)"
+            f"({len(self.skip_urls)} Skipped, {len(self.cached_urls)} Found, "
+            f"{len(self.missing_urls)} Missing, {len(self.need_urls)} Remaining)"
         )
 
     @property
     def scrape_html_report(self):
-        report = f"Scraping missing HTML... ({self.skip_url_count} Skipped,"
+        report = f"Scraping missing HTML... ({len(self.skip_urls)} Skipped,"
         if self.completed_urls:
             report = f"{report} {len(self.completed_urls)} Scraped,"
         return f"{report} {len(self.cached_urls)} Found, {len(self.missing_urls)} Missing)"
@@ -80,6 +83,13 @@ class UrlTracker:
             f"Saving scraped HTML... {percent_complete:.0%} "
             f"({len(self.completed_urls)}/{total_urls}) URLs"
         )
+
+    def create_url_set(self):
+        result = create_url_set(self.db_job, self.data_set, self.scraped_data)
+        if result.failure:
+            return result
+        self.all_urls = result.value
+        return Result.Ok()
 
     def parse_html_report(self, parsed_count, game_id=None):
         percent_complete = 0

@@ -42,7 +42,7 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
             pitch_logs_for_date = result.value
             for pitch_logs_for_game in pitch_logs_for_date:
                 game_id = pitch_logs_for_game.bbref_game_id
-                self.spinner.text = self.tracker.parse_html_report(self.data_set, parsed, game_id)
+                self.spinner.text = self.tracker.parse_html_report(parsed, game_id)
                 for pitch_log in pitch_logs_for_game.pitch_logs:
                     if not pitch_log.parsed_all_info:
                         continue
@@ -60,9 +60,7 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                     if result.failure:
                         return Result.Fail(f"Error! {result.error} (ID: {pitch_log.pitch_app_id})")
                     parsed += 1
-                    self.spinner.text = self.tracker.parse_html_report(
-                        self.data_set, parsed, game_id
-                    )
+                    self.spinner.text = self.tracker.parse_html_report(parsed, game_id)
                     self.db_session.commit()
         return Result.Ok()
 
