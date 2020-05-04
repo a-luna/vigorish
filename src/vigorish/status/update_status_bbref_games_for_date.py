@@ -47,6 +47,8 @@ def update_bbref_games_for_date_list(scraped_data, session, scraped_bbref_dates)
     for game_date in scraped_bbref_dates:
         result = scraped_data.get_bbref_games_for_date(game_date)
         if result.failure:
+            if "Size of file downloaded from S3 is less than 1KB" in result.error:
+                continue
             return result
         games_for_date = result.value
         result = update_status_bbref_games_for_date(session, games_for_date)

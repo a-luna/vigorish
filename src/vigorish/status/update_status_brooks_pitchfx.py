@@ -19,6 +19,8 @@ def update_data_set_brooks_pitchfx(scraped_data, session, season):
 def update_status_brooks_pitchfx_log_list(scraped_data, session, new_pitch_app_ids):
     for pitch_app_id in new_pitch_app_ids:
         result = scraped_data.get_brooks_pitchfx_log(pitch_app_id)
+        if "Size of file downloaded from S3 is less than 1KB" in result.error:
+            continue
         if result.failure:
             return result
         pitchfx_log = result.value

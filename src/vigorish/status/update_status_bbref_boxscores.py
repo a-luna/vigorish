@@ -23,6 +23,8 @@ def update_status_bbref_boxscore_list(scraped_data, session, new_bbref_game_ids)
     for bbref_game_id in new_bbref_game_ids:
         result = scraped_data.get_bbref_boxscore(bbref_game_id)
         if result.failure:
+            if "Size of file downloaded from S3 is less than 1KB" in result.error:
+                continue
             return result
         boxscore = result.value
         result = update_status_bbref_boxscore(session, boxscore)

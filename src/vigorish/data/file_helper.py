@@ -376,7 +376,8 @@ class FileHelper:
             self.resource.Bucket(bucket_name).download_file(s3_key, str(filepath))
             if filepath.stat().st_size < ONE_KB:
                 self.resource.Object(bucket_name, s3_key).delete()
-                error = f"Size of file downloaded from S3 ({filepath}) is less than 1KB"
+                filepath.unlink()
+                error = f"Size of file downloaded from S3 is less than 1KB ({s3_key})"
                 return Result.Fail(error)
             return Result.Ok(filepath)
         except ClientError as e:
