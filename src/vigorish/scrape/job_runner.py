@@ -2,7 +2,6 @@ import shutil
 import subprocess
 from collections import defaultdict
 from datetime import datetime
-from pathlib import Path
 
 from halo import Halo
 from getch import pause

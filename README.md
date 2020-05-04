@@ -98,13 +98,11 @@ While creating unique virtual environments works, it can be annoying and confusi
 
 > You can globally install an application by running
 >
-> ```console
-> pipx install PACKAGE
-> ```
+> `pipx install PACKAGE`
 >
 > This automatically creates a virtual environment, installs the package, and adds the package's associated applications (entry points) to a location on your `PATH`. For example, `pipx install pycowsay` makes the `pycowsay` command available globally, but sandboxes the pycowsay package in its own virtual environment.
 
-It is similarly easy to update and remove Python applications with `pipx`. Check out the README for install instructions for Mac and usage examples.
+It is similarly easy to update and remove Python applications with `pipx`. Check out the `README` for install instructions for Mac and usage examples.
 
 ### Install
 
@@ -203,8 +201,6 @@ Press **Enter** and you should see the menu below:
 <img src="https://alunapublic.s3-us-west-1.amazonaws.com/vigorish/env_var_menu.jpg" alt="Environment Variables Menu" width="500px">
 
 The first three settings in this list must be set if you wish to store scraped HTML/JSON documents in an S3 bucket. If you do not want to use this feature, you have the option to store scraped HTML in a local folder or to not store HTML files at all. JSON files must be stored in a local folder if you do not wish to store them in a S3 bucket.
-
-If you do wish to store files in S3, you can find more details in the **HTML/JSON Storage** section.
 
 The remaining environment variables are rather self-explanatory. If you wish to change the location/filename of `vig.config.json`, select **CONFIG_FILE**. If you wish to change the location/filename of the SQLite database, select **DATABASE_URL** .
 
