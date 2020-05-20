@@ -86,5 +86,24 @@ class DateInput(Input):
                 try:
                     parsed_date = parser.parse(result)
                 except ValueError:
-                    continue
+                    error = (
+                        f'"{result}" could not be parsed as a valid date. You can use any format '
+                        f"recognized by dateutil.parser. For example, all of the strings below "
+                        "are valid ways to represent the same date:\n"
+                    )
+                    examples = '"2018-5-13" -or- "05/13/2018" -or- "May 13 2018"'
+                    print_message(error, fg="bright_red")
+                    print_message(examples, fg="bright_red")
+                    pause(message="Press any key to continue...")
         return parsed_date
+
+
+def single_date_prompt(prompt):
+    user_date = None
+    while not user_date:
+        subprocess.run(["clear"])
+        date_prompt = DateInput(prompt=prompt)
+        result = date_prompt.launch()
+        if result:
+            user_date = result
+    return user_date
