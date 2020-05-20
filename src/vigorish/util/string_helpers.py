@@ -4,7 +4,13 @@ from datetime import datetime
 
 from rapidfuzz import process
 
-from vigorish.util.regex import PITCH_APP_REGEX, TIMESTAMP_REGEX
+from vigorish.util.regex import (
+    PITCH_APP_REGEX,
+    TIMESTAMP_REGEX,
+    BBREF_GAME_ID_REGEX,
+    BB_GAME_ID_REGEX,
+    AT_BAT_ID_REGEX,
+)
 from vigorish.util.result import Result
 
 
@@ -55,6 +61,25 @@ def try_parse_int(input_str):
         return None
 
 
+def parse_date(input_str):
+    if not input_str:
+        raise ValueError("Input string was empty or None")
+    if len(input_str) != 8:
+        raise ValueError(f"String is not in the expected YYYYMMDD format! (len(input_str) != 8)")
+    year_str = input_str[0:4]
+    month_str = input_str[4:6]
+    day_str = input_str[6:8]
+    try:
+        year = int(year_str)
+        month = int(month_str)
+        day = int(day_str)
+        parsed_date = datetime(year, month, day)
+        return parsed_date
+    except Exception as e:
+        error = f"Failed to parse date from input_str ({input_str}):\n{repr(e)}"
+        return Result.Fail(error)
+
+
 def get_brooks_team_id(bbref_team_id):
     bbref_id_to_brooks_id_map = {
         "CHW": "CHA",
@@ -89,24 +114,15 @@ def string_is_null_or_blank(s):
 
 
 def validate_bbref_game_id(input_str):
-    if not input_str:
-        raise ValueError("Input string was empty or None")
-    if len(input_str) != 12:
-        raise ValueError(
-            f"String is not a valid bbref game id: {input_str} Reason: len(input_str) != 12"
-        )
-
-    home_team_id = input_str[:3]
-    year_str = input_str[3:7]
-    month_str = input_str[7:9]
-    day_str = input_str[9:11]
-    game_number_str = input_str[-1]
-
+    match = BBREF_GAME_ID_REGEX.search(input_str)
+    if not match:
+        raise ValueError(f"String is not a valid bbref game id: {input_str}")
+    captured = match.groupdict()
     try:
-        year = int(year_str)
-        month = int(month_str)
-        day = int(day_str)
-        parsed = int(game_number_str)
+        year = int(captured["year"])
+        month = int(captured["month"])
+        day = int(captured["day"])
+        parsed = int(captured["game_num"])
         if parsed < 2:
             game_number = 1
         else:
@@ -120,10 +136,12 @@ def validate_bbref_game_id(input_str):
     except Exception as e:
         error = f"Failed to parse game_date from game_id:\n{repr(e)}"
         return Result.Fail(error)
-
-    game_dict = dict(
-        game_id=input_str, game_date=game_date, home_team_id=home_team_id, game_number=game_number,
-    )
+    game_dict = {
+        "game_id": match[0],
+        "game_date": game_date,
+        "home_team_id": captured["home_team"],
+        "game_number": game_number,
+    }
     return Result.Ok(game_dict)
 
 
@@ -136,26 +154,16 @@ def validate_bbref_game_id_list(game_ids):
 
 
 def validate_brooks_game_id(input_str):
-    if len(input_str) != 30:
-        error = (
-            f"String is not a valid brooks baseball game id: {input_str}\n"
-            "Reason: len(input_str) != 30"
-        )
-        return Result.Fail(error)
-
-    split = input_str.split("_")
-    if len(split) != 7:
-        error = (
-            f"String is not a valid brooks baseball game id: {input_str}\n"
-            "Reason: len(input_str.split('_')) != 7"
-        )
-        return Result.Fail(error)
+    match = BB_GAME_ID_REGEX.search(input_str)
+    if not match:
+        raise ValueError(f"String is not a valid bb game id: {input_str}")
+    captured = match.groupdict()
 
     try:
-        year = int(split[1])
-        month = int(split[2])
-        day = int(split[3])
-        game_number = int(split[6])
+        year = int(captured["year"])
+        month = int(captured["month"])
+        day = int(captured["day"])
+        game_number = int(captured["game_num"])
     except ValueError as e:
         error = f"Failed to parse int value from game_id:\n{repr(e)}"
         return Result.Fail(error)
@@ -166,16 +174,8 @@ def validate_brooks_game_id(input_str):
         error = f"Failed to parse game_date from game_id:\n{repr(e)}"
         return Result.Fail(error)
 
-    if len(split[4]) != 6:
-        error = f"Failed to parse away team id from game_id:\n{input_str}"
-        return Result.Fail(error)
-
-    if len(split[5]) != 6:
-        error = f"Failed to parse home team id from game_id:\n{input_str}"
-        return Result.Fail(error)
-
-    away_team_id = split[4][:3].upper()
-    home_team_id = split[5][:3].upper()
+    away_team_id = captured["home_team"].upper()
+    home_team_id = captured["away_team"].upper()
 
     game_dict = dict(
         game_id=input_str,
@@ -191,10 +191,52 @@ def validate_pitch_app_id(pitch_app_id):
     match = PITCH_APP_REGEX.search(pitch_app_id)
     if not match:
         return Result.Fail(f"pitch_app_id: {pitch_app_id} is invalid")
-    id_dict = match.groupdict()
-    result = validate_bbref_game_id(id_dict["game_id"])
-    if result.failure:
-        return result
+    pitch_app_id = match[0]
+    captured = match.groupdict()
+    result = validate_bbref_game_id(pitch_app_id)
     game_dict = result.value
-    game_dict["pitcher_id"] = id_dict["mlb_id"]
-    return Result.Ok(game_dict)
+    game_dict["pitch_app_id"] = pitch_app_id
+    game_dict["pitcher_id"] = captured["mlb_id"]
+    pitch_app_dict = {
+        "pitch_app_id": pitch_app_id,
+        "game_id": game_dict["game_id"],
+        "game_date": game_dict["game_date"],
+        "home_team_id": game_dict["home_team_id"],
+        "game_number": game_dict["game_number"],
+        "pitcher_id": captured["mlb_id"],
+    }
+    return Result.Ok(pitch_app_dict)
+
+
+def validate_at_bat_id(at_bat_id):
+    match = AT_BAT_ID_REGEX.search(at_bat_id)
+    if not match:
+        return Result.Fail(f"at_bat_id: {at_bat_id} is invalid")
+    at_bat_id = match[0]
+    captured = match.groupdict()
+    result = validate_bbref_game_id(at_bat_id)
+    game_dict = result.value
+    away_team_id = (
+        captured["batter_team"]
+        if game_dict["home_team_id"] == captured["pitcher_team"]
+        else captured["pitcher_team"]
+    )
+    inning_half = "t" if game_dict["home_team_id"] == captured["pitcher_team"] else "b"
+    inning_label = f"{inning_half}{captured['inning']}"
+    at_bat_dict = {
+        "at_bat_id": at_bat_id,
+        "pitch_app_id": f"{game_dict['game_id']}_{captured['pitcher_mlb_id']}",
+        "game_id": game_dict["game_id"],
+        "game_date": game_dict["game_date"],
+        "game_number": game_dict["game_number"],
+        "away_team_id": away_team_id,
+        "home_team_id": game_dict["home_team_id"],
+        "inning_label": inning_label,
+        "inning": captured["inning"],
+        "pitcher_team": captured["pitcher_team"],
+        "pitcher_mlb_id": captured["pitcher_mlb_id"],
+        "batter_team": captured["batter_team"],
+        "batter_mlb_id": captured["batter_mlb_id"],
+        "at_bat_num": captured["at_bat_num"],
+    }
+    return Result.Ok(at_bat_dict)
