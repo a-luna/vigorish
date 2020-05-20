@@ -109,6 +109,17 @@ def single_date_prompt(prompt):
     return user_date
 
 
+def validate_scrape_dates(db_session, start_date, end_date):
+    result = Season.validate_date_range(db_session, start_date, end_date)
+    if result.failure:
+        error = f"The dates you entered are invalid:\n{result.error}"
+        print_message(error, fg="bright_red", bold=True)
+        pause(message="Press any key to continue...")
+        return Result.Fail("")
+    season = result.value
+    return Result.Ok(season)
+
+
 def user_options_prompt(choices, prompt):
     if len(choices) > 8:
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
@@ -157,3 +168,28 @@ def season_prompt(db_session, prompt=None):
     }
     choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
     return user_options_prompt(choices, prompt)
+
+
+def data_sets_prompt(prompt):
+    instructions = "(use SPACE BAR to select a data set, ENTER to confirm your selections)"
+    data_sets_prompt = Check(
+        prompt=f"{prompt}\n{instructions}",
+        check=EMOJI_DICT.get("CHECK", ""),
+        choices=[data_set for data_set in DATA_SET_NAMES_LONG.keys() if data_set != DataSet.ALL],
+        shift=1,
+        indent=2,
+        margin=2,
+        check_color=colors.foreground["default"],
+        check_on_switch=colors.foreground["default"],
+        background_color=colors.foreground["default"],
+        background_on_switch=colors.foreground["default"],
+        word_color=colors.foreground["default"],
+        word_on_switch=colors.bright(colors.foreground["cyan"]),
+    )
+    data_sets = []
+    while not data_sets:
+        subprocess.run(["clear"])
+        result = data_sets_prompt.launch()
+        if result:
+            data_sets = {DATA_SET_NAMES_LONG[sel]: sel for sel in result}
+    return data_sets

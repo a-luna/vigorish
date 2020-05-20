@@ -4,7 +4,13 @@ import subprocess
 from bullet import Input, VerticalPrompt
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import DateInput, prompt_user_yes_no, validate_scrape_dates, print_message
+from vigorish.cli.util import (
+    DateInput,
+    prompt_user_yes_no,
+    validate_scrape_dates,
+    print_message,
+    data_sets_prompt,
+)
 from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
@@ -23,18 +29,18 @@ class CreateJobMenuItem(MenuItem):
     def launch(self):
         job_confirmed = False
         while not job_confirmed:
-            data_sets = self.get_data_sets_to_scrape()
+            data_sets = data_sets_prompt("Select all data sets to scrape:")
             dates_validated = False
             while not dates_validated:
                 job_details = self.get_scrape_dates_from_user()
                 start_date = job_details[0][1]
                 end_date = job_details[1][1]
-                job_name = job_details[2][1]
                 result = validate_scrape_dates(self.db_session, start_date, end_date)
                 if result.failure:
                     continue
                 season = result.value
                 dates_validated = True
+            job_name = self.get_job_name_from_user()
             job_confirmed = self.confirm_job_details(data_sets, start_date, end_date, job_name)
 
         new_scrape_job = self.create_new_scrape_job(
@@ -55,48 +61,15 @@ class CreateJobMenuItem(MenuItem):
                 return result
         return Result.Ok(self.exit_menu)
 
-    def get_data_sets_to_scrape(self):
-        data_sets = []
-        while not data_sets:
-            subprocess.run(["clear"])
-            data_sets_prompt = self.get_data_sets_prompt()
-            result = data_sets_prompt.launch()
-            if result:
-                data_sets = {DISPLAY_NAME_DICT[sel]: sel for sel in result}
-        return data_sets
-
-    def get_data_sets_prompt(self):
-        return Check(
-            prompt=(
-                "Select all data sets to scrape:\n"
-                "(use SPACE BAR to select a data set, ENTER to confirm your selections)"
-            ),
-            check=EMOJI_DICT.get("CHECK", ""),
-            choices=[data_set for data_set in DISPLAY_NAME_DICT.keys() if data_set != DataSet.ALL],
-            shift=1,
-            indent=2,
-            margin=2,
-            check_color=colors.foreground["default"],
-            check_on_switch=colors.foreground["default"],
-            background_color=colors.foreground["default"],
-            background_on_switch=colors.foreground["default"],
-            word_color=colors.foreground["default"],
-            word_on_switch=colors.bright(colors.foreground["cyan"]),
-        )
-
-    def get_scrape_job_details(self):
-        job_details_prompt = self.get_scrape_job_details_prompt()
-        return job_details_prompt.launch()
-
-    def get_scrape_job_details_prompt(self):
+    def get_scrape_dates_from_user(self):
         subprocess.run(["clear"])
-        return VerticalPrompt(
+        job_details_prompt = VerticalPrompt(
             [
                 DateInput(prompt="Enter date to START scraping: "),
                 DateInput(prompt="Enter date to STOP scraping: "),
-                Input(prompt="Enter a name for this job: ", pattern=JOB_NAME_PATTERN),
             ]
         )
+        return job_details_prompt.launch()
 
     def get_date_from_user(self, prompt):
         user_date = None
