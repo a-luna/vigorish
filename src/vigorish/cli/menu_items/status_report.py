@@ -1,12 +1,15 @@
 """Menu item that allows the user to initialize/reset the database."""
 import subprocess
 
-from bullet import Numbers, Bullet, colors
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import prompt_user_yes_no, DateInput
-from vigorish.config.database import Season
+from vigorish.cli.util import (
+    prompt_user_yes_no,
+    user_options_prompt,
+    single_date_prompt,
+    season_prompt,
+)
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import StatusReport
 from vigorish.status.report_status import (
@@ -16,12 +19,12 @@ from vigorish.status.report_status import (
 )
 from vigorish.util.result import Result
 
+PROMPT_TEXT = "Choose the type of report you wish to generate from the options below:"
+
 
 class StatusReportMenuItem(MenuItem):
-    def __init__(self, db_session, config, scraped_data):
-        self.db_session = db_session
-        self.config = config
-        self.scraped_data = scraped_data
+    def __init__(self, app):
+        super().__init__(app)
         self.menu_item_text = f"Status Reports"
         self.menu_item_emoji = EMOJI_DICT.get("CHART")
         self.exit_menu = False
@@ -38,7 +41,7 @@ class StatusReportMenuItem(MenuItem):
             result = self.single_date_report()
         if report_type == "DATE_RANGE":
             result = self.date_range_report()
-        return result if result else Result.Ok()
+        return result if result.success else Result.Ok(self.exit_menu)
 
     def report_options_prompt(self):
         choices = {
@@ -47,7 +50,7 @@ class StatusReportMenuItem(MenuItem):
             f"{MENU_NUMBERS.get(3)}  Date Range": "DATE_RANGE",
             f"{EMOJI_DICT.get('BACK')} Return to Main Menu": None,
         }
-        return self.user_options_prompt(choices)
+        return user_options_prompt(choices, PROMPT_TEXT)
 
     def get_season_report_type_from_user(self):
         choice_text1 = f"{MENU_NUMBERS.get(1)}  Season Summary"
@@ -65,7 +68,7 @@ class StatusReportMenuItem(MenuItem):
             choice_text6: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
-        return self.user_options_prompt(choices)
+        return user_options_prompt(choices, PROMPT_TEXT)
 
     def get_single_date_report_type_from_user(self):
         choice_text1 = f"{MENU_NUMBERS.get(1)}  Detail Report"
@@ -77,7 +80,7 @@ class StatusReportMenuItem(MenuItem):
             choice_text3: StatusReport.SINGLE_DATE_WITH_GAME_STATUS,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
-        return self.user_options_prompt(choices)
+        return user_options_prompt(choices, PROMPT_TEXT)
 
     def get_date_range_report_type_from_user(self):
         choice_text1 = f"{MENU_NUMBERS.get(1)}  Dates Missing Data (Summary)"
@@ -93,29 +96,13 @@ class StatusReportMenuItem(MenuItem):
             choice_text5: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
-        return self.user_options_prompt(choices)
-
-    def user_options_prompt(self, choices):
-        prompt = Bullet(
-            "Choose the type of report you wish to generate from the options below:",
-            choices=[choice for choice in choices.keys()],
-            bullet="",
-            shift=1,
-            indent=2,
-            margin=2,
-            bullet_color=colors.foreground["default"],
-            background_color=colors.foreground["default"],
-            background_on_switch=colors.foreground["default"],
-            word_color=colors.foreground["default"],
-            word_on_switch=colors.bright(colors.foreground["cyan"]),
-        )
-        subprocess.run(["clear"])
-        choice_text = prompt.launch()
-        choice_value = choices.get(choice_text)
-        return Result.Ok(choice_value) if choice_value else Result.Fail("")
+        return user_options_prompt(choices, PROMPT_TEXT)
 
     def season_status_report(self):
-        year = self.get_mlb_season_from_user()
+        result = self.get_mlb_season_from_user()
+        if result.failure:
+            return result
+        year = result.value
         result = self.get_season_report_type_from_user()
         if result.failure:
             return result
@@ -129,7 +116,7 @@ class StatusReportMenuItem(MenuItem):
         return Result.Ok()
 
     def single_date_report(self):
-        game_date = self.get_date_from_user("Report status for date:")
+        game_date = single_date_prompt("Report status for date:")
         result = self.get_single_date_report_type_from_user()
         if result.failure:
             return result
@@ -145,8 +132,8 @@ class StatusReportMenuItem(MenuItem):
         return Result.Ok()
 
     def date_range_report(self):
-        start_date = self.get_date_from_user("Report status start date: ")
-        end_date = self.get_date_from_user("Report status end date: ")
+        start_date = single_date_prompt("Report status start date: ")
+        end_date = single_date_prompt("Report status end date: ")
         result = self.get_date_range_report_type_from_user()
         if result.failure:
             return result
@@ -162,28 +149,14 @@ class StatusReportMenuItem(MenuItem):
         return Result.Ok()
 
     def get_mlb_season_from_user(self):
-        year_is_valid = False
-        while not year_is_valid:
-            subprocess.run(["clear"])
-            prompt = Numbers("Enter a year of an MLB season: ")
-            year = prompt.launch()
-            season = Season.find_by_year(self.db_session, year)
-            if not season:
-                continue
-            year_is_valid = True
-        return year
-
-    def get_date_from_user(self, prompt):
-        user_date = None
-        while not user_date:
-            subprocess.run(["clear"])
-            date_prompt = DateInput(prompt=prompt)
-            result = date_prompt.launch()
-            if result:
-                user_date = result
-        return user_date
+        result = season_prompt(self.db_session, "Select the MLB Season to report:")
+        if result.failure:
+            return result
+        year = result.value
+        return Result.Ok(year)
 
     def prompt_user_refresh_data(self):
         prompt = "Would you like to refresh the data before generating the report?"
+        subprocess.run(["clear"])
         result = prompt_user_yes_no(prompt=prompt)
         return result.value
