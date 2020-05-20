@@ -33,7 +33,7 @@ def user_cancelled(db_session, active_job, spinner, signal_received, frame):
 
 class ScrapeTaskABC(ABC):
     data_set: DataSet
-    tracker: UrlTracker
+    url_tracker: UrlTracker
 
     def __init__(self, db_job, db_session, config, scraped_data):
         self.db_job = db_job
@@ -143,6 +143,8 @@ class ScrapeTaskABC(ABC):
                     continue
                 result = self.parse_html(url.html, url.identifier, url.url)
                 if result.failure:
+                    if "Unable to parse any game data" in result.error:
+                        continue
                     return result
                 parsed_data = result.value
                 result = self.scraped_data.save_json(self.data_set, parsed_data)
