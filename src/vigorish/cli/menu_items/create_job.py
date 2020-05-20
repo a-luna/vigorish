@@ -71,14 +71,8 @@ class CreateJobMenuItem(MenuItem):
         )
         return job_details_prompt.launch()
 
-    def get_date_from_user(self, prompt):
-        user_date = None
-        while not user_date:
-            date_prompt = DateInput(prompt=prompt)
-            result = date_prompt.launch()
-            if result:
-                user_date = result
-        return user_date
+    def get_job_name_from_user(self):
+        return Input(prompt="Enter a name for this job: ", pattern=JOB_NAME_PATTERN).launch()
 
     def confirm_job_details(self, data_sets, start_date, end_date, job_name):
         subprocess.run(["clear"])
