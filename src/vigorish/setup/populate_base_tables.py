@@ -3,16 +3,16 @@ from vigorish.models.runners_on_base import RunnersOnBase
 from vigorish.util.result import Result
 
 
-def populate_base_tables(session):
+def populate_base_tables(db_session):
     """Populate reference tables with data."""
-    result = __add_runners_on_base(session)
+    result = add_runners_on_base(db_session)
     if result.failure:
         return result
-    session.commit()
+    db_session.commit()
     return Result.Ok()
 
 
-def __add_runners_on_base(session):
+def add_runners_on_base(db_session):
     try:
         runners_on_base = [
             RunnersOnBase(
@@ -88,9 +88,9 @@ def __add_runners_on_base(session):
                 notation="123",
             ),
         ]
-        session.add_all(runners_on_base)
+        db_session.add_all(runners_on_base)
         return Result.Ok()
     except Exception as e:
         error = "Error: {error}".format(error=repr(e))
-        session.rollback()
+        db_session.rollback()
         return Result.Fail(error)

@@ -149,8 +149,8 @@ class FileHelper:
         storage_setting = self.file_storage_dict[doc_format][data_set]
         return "S3_BUCKET" in storage_setting.name or "BOTH" in storage_setting.name
 
-    def get_s3_bucket(self, data_set):
-        bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
+    def get_s3_bucket(self):
+        bucket_name = self.config.get_current_setting("S3_BUCKET", DataSet.ALL)
         return self.resource.Bucket(bucket_name)
 
     def perform_local_file_task(

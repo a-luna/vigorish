@@ -6,44 +6,43 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id_list
 
 
-def update_bbref_games_for_date_single_date(session, season, games_for_date):
+def update_bbref_games_for_date_single_date(db_session, season, games_for_date):
     game_date = games_for_date.game_date
     unscraped_bbref_dates = DateScrapeStatus.get_all_bbref_unscraped_dates_for_season(
-        session, season.id
+        db_session, season.id
     )
     update_bbref_dates = set([game_date]) & set(unscraped_bbref_dates)
     if not update_bbref_dates:
         return Result.Ok()
-    result = update_status_bbref_games_for_date(session, games_for_date)
+    result = update_status_bbref_games_for_date(db_session, games_for_date)
     if result.failure:
         return result
     new_bbref_game_ids = [Path(url).stem for url in games_for_date.boxscore_urls]
-    result = create_game_status_records(session, season, new_bbref_game_ids)
+    result = create_game_status_records(db_session, season, new_bbref_game_ids)
     if result.failure:
         return result
     return Result.Ok()
 
 
-def update_data_set_bbref_games_for_date(scraped_data, session, season):
+def update_data_set_bbref_games_for_date(scraped_data, db_session, season):
     result = scraped_data.get_all_bbref_dates_scraped(season.year)
     if result.failure:
         return result
     scraped_bbref_dates = result.value
     unscraped_bbref_dates = DateScrapeStatus.get_all_bbref_unscraped_dates_for_season(
-        session, season.id
+        db_session, season.id
     )
     update_bbref_dates = set(scraped_bbref_dates) & set(unscraped_bbref_dates)
     if not update_bbref_dates:
         return Result.Ok()
-    result = update_bbref_games_for_date_list(scraped_data, session, update_bbref_dates)
+    result = update_bbref_games_for_date_list(scraped_data, db_session, update_bbref_dates)
     if result.failure:
         return result
     new_bbref_game_ids = result.value
-    return create_game_status_records(session, season, new_bbref_game_ids)
+    return create_game_status_records(db_session, season, new_bbref_game_ids)
 
 
-def update_bbref_games_for_date_list(scraped_data, session, scraped_bbref_dates):
-    all_game_ids = []
+def update_bbref_games_for_date_list(scraped_data, db_session, scraped_bbref_dates):
     for game_date in scraped_bbref_dates:
         result = scraped_data.get_bbref_games_for_date(game_date)
         if result.failure:
@@ -51,7 +50,7 @@ def update_bbref_games_for_date_list(scraped_data, session, scraped_bbref_dates)
                 continue
             return result
         games_for_date = result.value
-        result = update_status_bbref_games_for_date(session, games_for_date)
+        result = update_status_bbref_games_for_date(db_session, games_for_date)
         if result.failure:
             return result
         game_ids = [Path(url).stem for url in games_for_date.boxscore_urls]

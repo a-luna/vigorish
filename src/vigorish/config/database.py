@@ -24,7 +24,7 @@ from vigorish.models.scrape_error import ScrapeError
 from vigorish.models.season import Season
 from vigorish.models.status_date import DateScrapeStatus
 from vigorish.models.status_game import GameScrapeStatus
-from vigorish.models.status_pitch_appearance import PitchAppearanceScrapeStatus
+from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus
 from vigorish.models.team import Team
 from vigorish.setup.populate_tables import populate_tables
 

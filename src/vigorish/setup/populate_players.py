@@ -15,21 +15,21 @@ PLAYER_ID_CSV = Path(__file__).parent / "csv" / "idmap.csv"
 PLAYER_CSV = Path(__file__).parent / "csv" / "People.csv"
 
 
-def populate_players(session):
+def populate_players(db_session):
     """Populate player_id and player tables with initial data."""
-    result = __import_idmap_csv(session)
+    result = import_idmap_csv(db_session)
     if result.failure:
         return result
-    session.commit()
-    result = __import_people_csv(session)
+    db_session.commit()
+    result = import_people_csv(db_session)
     if result.failure:
         return result
-    session.commit()
+    db_session.commit()
 
     return Result.Ok()
 
 
-def __import_idmap_csv(session):
+def import_idmap_csv(db_session):
     try:
         df_ids = pd.read_csv(
             PLAYER_ID_CSV,
@@ -62,6 +62,7 @@ def __import_idmap_csv(session):
             mininterval=0.12,
             maxinterval=5,
             unit_scale=True,
+            ncols=90,
         ) as pbar:
             for _, row in df_ids.iterrows():
                 if is_nan(row["mlb_id"]) or is_nan(row["bref_id"]):
@@ -91,16 +92,16 @@ def __import_idmap_csv(session):
                     rotowire_id=int(sanitize(row["rotowire_id"])),
                     rotowire_name=row["rotowire_name"],
                 )
-                session.add(pid)
+                db_session.add(pid)
                 pbar.update()
         return Result.Ok()
     except Exception as e:
         error = "Error: {error}".format(error=repr(e))
-        session.rollback()
+        db_session.rollback()
         return Result.Fail(error)
 
 
-def __import_people_csv(session):
+def import_people_csv(db_session):
     try:
         df_player = pd.read_csv(
             PLAYER_CSV,
@@ -133,6 +134,7 @@ def __import_people_csv(session):
             mininterval=0.12,
             maxinterval=5,
             unit_scale=True,
+            ncols=90,
         ) as pbar:
             for _, row in df_player.iterrows():
                 if (
@@ -143,9 +145,9 @@ def __import_people_csv(session):
                     pbar.update()
                     continue
 
-                player_id = PlayerId.find_by_retro_id(session, str(row["retroID"]))
+                player_id = PlayerId.find_by_retro_id(db_session, str(row["retroID"]))
                 if not player_id:
-                    player_id = PlayerId.find_by_bbref_id(session, str(row["bbrefID"]))
+                    player_id = PlayerId.find_by_bbref_id(db_session, str(row["bbrefID"]))
                 if not player_id:
                     pbar.update()
                     continue
@@ -173,10 +175,10 @@ def __import_people_csv(session):
                     birth_city=row["birthCity"],
                     missing_mlb_id=False,
                 )
-                session.add(p)
+                db_session.add(p)
                 pbar.update()
         return Result.Ok()
     except Exception as e:
         error = "Error: {error}".format(error=repr(e))
-        session.rollback()
+        db_session.rollback()
         return Result.Fail(error)

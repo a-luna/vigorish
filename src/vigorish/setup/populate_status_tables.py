@@ -5,21 +5,26 @@ from vigorish.models.status_date import DateScrapeStatus
 from vigorish.util.result import Result
 
 
-def populate_status_tables(session):
+def populate_status_tables(db_session):
     try:
-        mlb_seasons = Season.all_regular_seasons(session)
+        mlb_seasons = Season.all_regular_seasons(db_session)
         with tqdm(
-            total=len(mlb_seasons), unit="season", mininterval=0.12, maxinterval=5, position=0,
+            total=len(mlb_seasons),
+            unit="season",
+            mininterval=0.12,
+            maxinterval=5,
+            position=0,
+            ncols=90,
         ) as pbar:
             for season in mlb_seasons:
                 pbar.set_description(f"Populating status_date table.")
                 for game_date in season.get_date_range():
                     scrape_status = DateScrapeStatus(game_date, season.id)
-                    session.add(scrape_status)
+                    db_session.add(scrape_status)
                 pbar.update()
-        session.commit()
+        db_session.commit()
         return Result.Ok()
     except Exception as e:
         error = "Error: {error}".format(error=repr(e))
-        session.rollback()
+        db_session.rollback()
         return Result.Fail(error)

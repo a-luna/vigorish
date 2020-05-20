@@ -28,7 +28,7 @@ class MlbSeason(click.ParamType):
     name = "year-number"
 
     def convert(self, value, param, ctx):
-        session = ctx.obj["session"]
+        db_session = ctx.obj["db_session"]
         try:
             year = int(value)
         except Exception:
@@ -36,10 +36,10 @@ class MlbSeason(click.ParamType):
             self.fail(error, param, ctx)
 
         try:
-            season = Season.find_by_year(session, year)
+            season = Season.find_by_year(db_session, year)
             if season:
                 return season.year
-            valid_years = [s.year for s in Season.all_regular_seasons(session)]
+            valid_years = [s.year for s in Season.all_regular_seasons(db_session)]
             year_min = min(sorted(valid_years))
             year_max = max(sorted(valid_years))
             error = (

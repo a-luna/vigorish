@@ -97,5 +97,5 @@ class Team(Base):
         display_dict(season_dict, title=title)
 
     @classmethod
-    def find_by_name_and_year(cls, session, name, year):
-        return session.query(cls).filter_by(team_id=name).filter_by(year=year).first()
+    def find_by_name_and_year(cls, db_session, name, year):
+        return db_session.query(cls).filter_by(team_id=name).filter_by(year=year).first()

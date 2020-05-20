@@ -126,14 +126,15 @@ JOB_SPINNER_COLORS = {
     DataSet.BROOKS_PITCHFX: "magenta",
 }
 
-DATA_SET_CHOICES = {
-    "all": DataSet.ALL,
-    "bbref_games": DataSet.BBREF_GAMES_FOR_DATE,
-    "brooks_games": DataSet.BROOKS_GAMES_FOR_DATE,
-    "bbref_boxscores": DataSet.BBREF_BOXSCORES,
-    "brooks_pitch_logs": DataSet.BROOKS_PITCH_LOGS,
-    "brooks_pitchfx": DataSet.BROOKS_PITCHFX,
+DATA_SET_NAMES_LONG = {
+    "brooksbaseball.net Games for Date": DataSet.BROOKS_GAMES_FOR_DATE,
+    "brooksbaseball.net Pitch Logs for Game": DataSet.BROOKS_PITCH_LOGS,
+    "brooksbaseball.net PitchFX Logs": DataSet.BROOKS_PITCHFX,
+    "bbref.com Games for Date": DataSet.BBREF_GAMES_FOR_DATE,
+    "bbref.com Boxscores": DataSet.BBREF_BOXSCORES,
 }
+
+DATA_SET_NAMES_SHORT = {str(ds): ds for ds in DataSet}
 
 CLI_COLORS = [
     "black",

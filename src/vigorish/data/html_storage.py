@@ -16,7 +16,7 @@ class HtmlStorage:
         s3_object_key = None
         result_local = Result.Ok()
         result_s3 = Result.Ok()
-        if self.html_stored_local_folder(data_set):
+        if self.html_stored_local(data_set):
             result_local = self.save_html_local(data_set, url_id, html)
             if result_local.success:
                 local_filepath = result_local.value
@@ -29,7 +29,7 @@ class HtmlStorage:
             return result
         return Result.Ok({"local_filepath": local_filepath, "s3_object_key": s3_object_key})
 
-    def html_stored_local_folder(self, data_set):
+    def html_stored_local(self, data_set):
         return self.file_helper.check_file_stored_local(DocFormat.HTML, data_set)
 
     def html_stored_s3(self, data_set):

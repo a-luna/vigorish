@@ -34,13 +34,13 @@ class PlayerId(Base):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     @classmethod
-    def find_by_retro_id(cls, session, retro_id):
-        return session.query(cls).filter_by(retro_id=retro_id).first()
+    def find_by_retro_id(cls, db_session, retro_id):
+        return db_session.query(cls).filter_by(retro_id=retro_id).first()
 
     @classmethod
-    def find_by_bbref_id(cls, session, bbref_id):
-        return session.query(cls).filter_by(bbref_id=bbref_id).first()
+    def find_by_bbref_id(cls, db_session, bbref_id):
+        return db_session.query(cls).filter_by(bbref_id=bbref_id).first()
 
     @classmethod
-    def find_by_mlb_id(cls, session, mlb_id):
-        return session.query(cls).filter_by(mlb_id=mlb_id).first()
+    def find_by_mlb_id(cls, db_session, mlb_id):
+        return db_session.query(cls).filter_by(mlb_id=mlb_id).first()

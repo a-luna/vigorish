@@ -19,9 +19,7 @@ class DateScrapeStatus(Base):
 
     boxscores = relationship("Boxscore", backref="scrape_status_date")
     scrape_status_games = relationship("GameScrapeStatus", backref="scrape_status_date")
-    scrape_status_pitchfx = relationship(
-        "PitchAppearanceScrapeStatus", backref="scrape_status_date"
-    )
+    scrape_status_pitchfx = relationship("PitchAppScrapeStatus", backref="scrape_status_date")
 
     @hybrid_property
     def game_date_str(self):
@@ -136,7 +134,7 @@ class DateScrapeStatus(Base):
         return sum(pfx.no_pitchfx_data for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
-    def total_pitchfx_logs_scraped(self):
+    def total_pitch_apps_scraped_pitchfx(self):
         return sum(pfx.scraped_pitchfx for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
@@ -300,7 +298,7 @@ class DateScrapeStatus(Base):
         d["pitch_appearance_count_difference"] = self.pitch_appearance_count_difference
         d["pitch_appearance_count_differs"] = self.pitch_appearance_count_differs
         d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
-        d["total_pitchfx_logs_scraped"] = self.total_pitchfx_logs_scraped
+        d["total_pitch_apps_scraped_pitchfx"] = self.total_pitch_apps_scraped_pitchfx
         d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
         d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
         d["scraped_all_pitchfx_logs"] = self.scraped_all_pitchfx_logs
@@ -359,45 +357,45 @@ class DateScrapeStatus(Base):
         return "\n".join([game_status.status_report() for game_status in self.scrape_status_games])
 
     @classmethod
-    def find_by_date(cls, session, game_date):
+    def find_by_date(cls, db_session, game_date):
         date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
-        return session.query(cls).get(int(date_str))
+        return db_session.query(cls).get(int(date_str))
 
     @classmethod
-    def get_all_bbref_scraped_dates_for_season(cls, session, season_id):
+    def get_all_bbref_scraped_dates_for_season(cls, db_session, season_id):
         return [
             date_status.game_date
-            for date_status in session.query(cls).filter_by(season_id=season_id).all()
+            for date_status in db_session.query(cls).filter_by(season_id=season_id).all()
             if date_status.scraped_daily_dash_bbref == 1
         ]
 
     @classmethod
-    def get_all_bbref_unscraped_dates_for_season(cls, session, season_id):
+    def get_all_bbref_unscraped_dates_for_season(cls, db_session, season_id):
         return [
             date_status.game_date
-            for date_status in session.query(cls).filter_by(season_id=season_id).all()
+            for date_status in db_session.query(cls).filter_by(season_id=season_id).all()
             if date_status.scraped_daily_dash_bbref == 0
         ]
 
     @classmethod
-    def get_all_brooks_scraped_dates_for_season(cls, session, season_id):
+    def get_all_brooks_scraped_dates_for_season(cls, db_session, season_id):
         return [
             date_status.game_date
-            for date_status in session.query(cls).filter_by(season_id=season_id).all()
+            for date_status in db_session.query(cls).filter_by(season_id=season_id).all()
             if date_status.scraped_daily_dash_brooks == 1
         ]
 
     @classmethod
-    def get_all_brooks_unscraped_dates_for_season(cls, session, season_id):
+    def get_all_brooks_unscraped_dates_for_season(cls, db_session, season_id):
         return [
             date_status.game_date
-            for date_status in session.query(cls).filter_by(season_id=season_id).all()
+            for date_status in db_session.query(cls).filter_by(season_id=season_id).all()
             if date_status.scraped_daily_dash_brooks == 0
         ]
 
     @classmethod
-    def get_unscraped_pitch_appearances_for_date(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
+    def get_unscraped_pitch_appearances_for_date(cls, db_session, game_date):
+        date_status = cls.find_by_date(db_session, game_date)
         return [
             pitch_app
             for pitch_app in date_status.scrape_status_pitchfx
@@ -405,56 +403,45 @@ class DateScrapeStatus(Base):
         ]
 
     @classmethod
-    def get_unscraped_pitch_app_ids_for_date(cls, session, game_date):
-        unscraped_pitch_apps = cls.get_unscraped_pitch_appearances_for_date(session, game_date)
+    def get_unscraped_pitch_app_ids_for_date(cls, db_session, game_date):
+        unscraped_pitch_apps = cls.get_unscraped_pitch_appearances_for_date(db_session, game_date)
         return [pitch_app.pitch_app_id for pitch_app in unscraped_pitch_apps]
 
     @classmethod
-    def verify_bbref_daily_dashboard_scraped_for_date(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
+    def verify_bbref_daily_dashboard_scraped_for_date(cls, db_session, game_date):
+        date_status = cls.find_by_date(db_session, game_date)
         return date_status.scraped_daily_dash_bbref == 1 if date_status else False
 
     @classmethod
-    def verify_brooks_daily_dashboard_scraped_for_date(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
+    def verify_brooks_daily_dashboard_scraped_for_date(cls, db_session, game_date):
+        date_status = cls.find_by_date(db_session, game_date)
         return date_status.scraped_daily_dash_brooks == 1 if date_status else False
 
     @classmethod
-    def verify_all_bbref_boxscores_scraped_for_date(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
+    def verify_all_bbref_boxscores_scraped_for_date(cls, db_session, game_date):
+        date_status = cls.find_by_date(db_session, game_date)
         return date_status.scraped_all_bbref_boxscores if date_status else False
 
     @classmethod
-    def verify_all_brooks_pitch_logs_scraped_for_date(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
+    def verify_all_brooks_pitch_logs_scraped_for_date(cls, db_session, game_date):
+        date_status = cls.find_by_date(db_session, game_date)
         return date_status.scraped_all_brooks_pitch_logs if date_status else False
 
     @classmethod
-    def verify_all_brooks_pitchfx_scraped_for_date(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
+    def verify_all_brooks_pitchfx_scraped_for_date(cls, db_session, game_date):
+        date_status = cls.find_by_date(db_session, game_date)
         return date_status.scraped_all_pitchfx_logs if date_status else False
 
     @classmethod
-    def get_all_bbref_game_ids_for_date(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
+    def get_all_bbref_game_ids_for_date(cls, db_session, game_date):
+        date_status = cls.find_by_date(db_session, game_date)
         if not date_status:
             return None
         return [game_status.bbref_game_id for game_status in date_status.scrape_status_games]
 
     @classmethod
-    def get_all_brooks_game_ids_for_date(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
+    def get_all_brooks_game_ids_for_date(cls, db_session, game_date):
+        date_status = cls.find_by_date(db_session, game_date)
         if not date_status:
             return None
         return [game_status.bb_game_id for game_status in date_status.scrape_status_games]
-
-    @classmethod
-    def get_all_bbref_game_ids_scraped_pfx_not_audited(cls, session, game_date):
-        date_status = cls.find_by_date(session, game_date)
-        if not date_status:
-            return None
-        return [
-            game_status.bbref_game_id
-            for game_status in date_status.scrape_status_games
-            if game_status.scraped_all_pitchfx_logs and not game_status.pitch_data_was_audited
-        ]

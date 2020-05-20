@@ -43,16 +43,16 @@ class ChangeSetttingMenuItem(MenuItem):
     def setting_units(self):
         return NUMERIC_SETTING_UNITS.get(self.setting_name, "")
 
-    def launch(self) -> Result:
+    def launch(self):
         subprocess.run(["clear"])
-        data_sets = self.__get_data_sets_setting_will_apply_to()
+        data_sets = self.get_data_sets_setting_will_apply_to()
         if not data_sets:
             return Result.Ok(self.exit_menu)
         setting_changed = False
         while not setting_changed:
             subprocess.run(["clear"])
-            user_selections = self.__get_new_setting(data_sets)
-            updated_settings = self.__get_updated_settings(user_selections)
+            user_selections = self.get_new_setting(data_sets)
+            updated_settings = self.get_updated_settings(user_selections)
             for data_set, new_value in updated_settings:
                 result = self.config.change_setting(self.setting_name, data_set, new_value)
                 if result.failure:
@@ -64,7 +64,7 @@ class ChangeSetttingMenuItem(MenuItem):
             setting_changed = True
         return Result.Ok(self.exit_menu)
 
-    def __get_data_sets_setting_will_apply_to(self):
+    def get_data_sets_setting_will_apply_to(self):
         if self.setting.same_value_for_all_data_sets_is_required:
             return [DataSet.ALL]
         result = prompt_user_yes_no_cancel("Use same setting for all data sets?")
@@ -73,18 +73,18 @@ class ChangeSetttingMenuItem(MenuItem):
         use_same_setting = result.value
         return [DataSet.ALL] if use_same_setting else [ds for ds in DataSet if ds != DataSet.ALL]
 
-    def __get_new_setting(self, data_sets):
+    def get_new_setting(self, data_sets):
         if self.data_type == ConfigType.NUMERIC:
-            return [self.__get_numeric_menu(data_set) for data_set in data_sets]
-        setting_prompts = SlidePrompt(self.__get_menu_prompts(data_sets))
+            return [self.get_numeric_menu(data_set) for data_set in data_sets]
+        setting_prompts = SlidePrompt(self.get_menu_prompts(data_sets))
         return setting_prompts.launch()
 
-    def __get_menu_prompts(self, data_sets):
+    def get_menu_prompts(self, data_sets):
         if self.data_type == ConfigType.ENUM:
-            return [self.__get_enum_menu(data_set) for data_set in data_sets]
-        return [self.__get_str_menu(data_set) for data_set in data_sets]
+            return [self.get_enum_menu(data_set) for data_set in data_sets]
+        return [self.get_str_menu(data_set) for data_set in data_sets]
 
-    def __get_enum_menu(self, data_set):
+    def get_enum_menu(self, data_set):
         return Bullet(
             f"Select a value for {self.setting_name_title} (Data Set = {data_set.name}): ",
             choices=[choice for choice in self.enum_dict.keys()],
@@ -99,13 +99,13 @@ class ChangeSetttingMenuItem(MenuItem):
             word_on_switch=colors.bright(colors.foreground["cyan"]),
         )
 
-    def __get_str_menu(self, data_set):
+    def get_str_menu(self, data_set):
         return Input(
             f"Enter a value for {self.setting_name_title} (Data Set = {data_set.name}): ",
             word_color=colors.foreground["default"],
         )
 
-    def __get_numeric_menu(self, data_set):
+    def get_numeric_menu(self, data_set):
         if not self.setting.cannot_be_disabled:
             prompt = f"Enable {self.setting_name_title} (Data Set = {data_set.name})? "
             result = prompt_user_yes_no(prompt)
@@ -150,12 +150,12 @@ class ChangeSetttingMenuItem(MenuItem):
             new_value = new_value_prompt.launch()
             return (prompt, (True, is_random, int(new_value), None, None))
 
-    def __get_updated_settings(self, prompt_results):
+    def get_updated_settings(self, prompt_results):
         if self.data_type == ConfigType.ENUM:
-            return self.__get_updated_settings_enum(prompt_results)
-        return self.__get_updated_settings_str_num(prompt_results)
+            return self.get_updated_settings_enum(prompt_results)
+        return self.get_updated_settings_str_num(prompt_results)
 
-    def __get_updated_settings_enum(self, prompt_results):
+    def get_updated_settings_enum(self, prompt_results):
         updated_settings = []
         for prompt, selected_menu_item_text in prompt_results:
             for data_set in DataSet:
@@ -165,7 +165,7 @@ class ChangeSetttingMenuItem(MenuItem):
                     break
         return updated_settings
 
-    def __get_updated_settings_str_num(self, prompt_results):
+    def get_updated_settings_str_num(self, prompt_results):
         updated_settings = []
         for prompt, new_value in prompt_results:
             for data_set in DataSet:

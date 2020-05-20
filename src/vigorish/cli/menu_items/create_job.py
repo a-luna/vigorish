@@ -9,7 +9,6 @@ from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
 from vigorish.scrape.job_runner import JobRunner
-from vigorish.cli.util import DISPLAY_NAME_DICT
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 from vigorish.util.regex import JOB_NAME_PATTERN

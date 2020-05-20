@@ -27,7 +27,7 @@ class Season(Base):
 
     scrape_status_dates = relationship("DateScrapeStatus", backref="season")
     scrape_status_games = relationship("GameScrapeStatus", backref="season")
-    scrape_status_pitchfx = relationship("PitchAppearanceScrapeStatus", backref="season")
+    scrape_status_pitchfx = relationship("PitchAppScrapeStatus", backref="season")
     boxscores = relationship("Boxscore", backref="season")
     pitching_stats = relationship("GamePitchStats", backref="season")
     batting_stats = relationship("GameBatStats", backref="season")
@@ -271,7 +271,7 @@ class Season(Base):
         d["pitch_appearance_count_pitchfx"] = self.pitch_appearance_count_pitchfx
         d["pitch_appearance_count_difference"] = self.pitch_appearance_count_difference
         d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
-        d["total_pitchfx_logs_scraped"] = self.total_pitchfx_logs_scraped
+        d["total_pitch_apps_scraped_pitchfx"] = self.total_pitch_apps_scraped_pitchfx
         d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
         d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
         d["scraped_all_pitchfx_logs"] = self.scraped_all_pitchfx_logs
@@ -315,12 +315,14 @@ class Season(Base):
         return get_date_range(self.start_date, self.end_date)
 
     @classmethod
-    def find_by_year(cls, session, year, season_type=SeasonType.REGULAR_SEASON):
-        return session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
+    def find_by_year(cls, db_session, year, season_type=SeasonType.REGULAR_SEASON):
+        return (
+            db_session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
+        )
 
     @classmethod
-    def is_date_in_season(cls, session, check_date, season_type=SeasonType.REGULAR_SEASON):
-        season = cls.find_by_year(session, check_date.year)
+    def is_date_in_season(cls, db_session, check_date, season_type=SeasonType.REGULAR_SEASON):
+        season = cls.find_by_year(db_session, check_date.year)
         if not season:
             error = f"Database does not contain info for MLB {season_type} {check_date.year}"
             return Result.Fail(error)
@@ -332,7 +334,7 @@ class Season(Base):
         return Result.Ok(season)
 
     @classmethod
-    def validate_date_range(cls, session, start, end):
+    def validate_date_range(cls, db_session, start, end):
         if start.year != end.year:
             error = (
                 "Start and end dates must both be in the same year and within "
@@ -348,9 +350,9 @@ class Season(Base):
                 f"end: {end_str}"
             )
             return Result.Fail(error)
-        season = cls.find_by_year(session, start.year)
-        start_date_valid = cls.is_date_in_season(session, start).success
-        end_date_valid = cls.is_date_in_season(session, end).success
+        season = cls.find_by_year(db_session, start.year)
+        start_date_valid = cls.is_date_in_season(db_session, start).success
+        end_date_valid = cls.is_date_in_season(db_session, end).success
         if not start_date_valid or not end_date_valid:
             error = (
                 f"Start and end date must both be within the {season.name}:\n"
@@ -361,27 +363,11 @@ class Season(Base):
         return Result.Ok(season)
 
     @classmethod
-    def all_regular_seasons(cls, session):
-        matching_seasons = session.query(cls).filter_by(season_type=SeasonType.REGULAR_SEASON)
+    def all_regular_seasons(cls, db_session):
+        matching_seasons = db_session.query(cls).filter_by(season_type=SeasonType.REGULAR_SEASON)
         return [season for season in matching_seasons]
 
     @classmethod
-    def is_this_the_asg_date(cls, session, game_date):
-        season = cls.find_by_year(session, game_date.year)
+    def is_this_the_asg_date(cls, db_session, game_date):
+        season = cls.find_by_year(db_session, game_date.year)
         return game_date == season.asg_date if season else None
-
-    @classmethod
-    def get_all_bbref_game_ids_scraped_pfx_not_audited(cls, session, year):
-        season = cls.find_by_year(session, year)
-        if not season:
-            error = f"Database does not contain info for year={year}"
-            return Result.Fail(error)
-        game_ids = []
-        for date_status in season.scrape_status_dates:
-            eligible_game_ids = [
-                game_status.bbref_game_id
-                for game_status in date_status.scrape_status_games
-                if game_status.scraped_all_pitchfx_logs and not game_status.pitch_data_was_audited
-            ]
-            game_ids.extend(eligible_game_ids)
-        return Result.Ok(game_ids)

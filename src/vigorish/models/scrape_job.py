@@ -9,6 +9,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
 from vigorish.enums import JobStatus, DataSet
+from vigorish.constants import DATA_SET_NAMES_LONG
 from vigorish.config.database import Base
 from vigorish.util.datetime_util import (
     get_date_range,
@@ -109,6 +110,7 @@ class ScrapeJob(Base):
     @hybrid_property
     def job_details(self):
         job_name = f"{self.name} (ID: {self.id})" if self.name != self.id else self.id
+        data_set_dict = {value: name for name, value in DATA_SET_NAMES_LONG.items()}
         return {
             "Job Name": job_name,
             "Status": self.status.name,
@@ -116,7 +118,7 @@ class ScrapeJob(Base):
             "Start Date": self.start_date.strftime(DATE_ONLY),
             "End Date": self.end_date.strftime(DATE_ONLY),
             "Created At": self.created_date_str,
-            "Data Sets": "\n\t      ".join([str(ds) for ds in self.data_sets]),
+            "Data Sets": "\n\t      ".join([data_set_dict[ds] for ds in self.data_sets]),
         }
 
     @hybrid_property
@@ -130,22 +132,22 @@ class ScrapeJob(Base):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     @classmethod
-    def find_by_id(cls, session, job_id):
-        return session.query(cls).filter_by(id=job_id).first()
+    def find_by_id(cls, db_session, job_id):
+        return db_session.query(cls).filter_by(id=job_id).first()
 
     @classmethod
-    def get_all_active_jobs(cls, session):
-        return [job for job in session.query(cls).all() if job.status == JobStatus.INCOMPLETE]
+    def get_all_active_jobs(cls, db_session):
+        return [job for job in db_session.query(cls).all() if job.status == JobStatus.INCOMPLETE]
 
     @classmethod
-    def get_all_failed_jobs(cls, session):
-        return [job for job in session.query(cls).all() if job.status == JobStatus.ERROR]
+    def get_all_failed_jobs(cls, db_session):
+        return [job for job in db_session.query(cls).all() if job.status == JobStatus.ERROR]
 
     @classmethod
-    def get_all_complete_jobs(cls, session):
-        return [job for job in session.query(cls).all() if job.status == JobStatus.COMPLETE]
+    def get_all_complete_jobs(cls, db_session):
+        return [job for job in db_session.query(cls).all() if job.status == JobStatus.COMPLETE]
 
     @classmethod
-    def get_all_jobs_grouped_sorted(cls, session):
-        all_jobs = session.query(cls).all()
+    def get_all_jobs_grouped_sorted(cls, db_session):
+        all_jobs = db_session.query(cls).all()
         return group_and_sort_list(all_jobs, "status", "created_date", sort_all_desc=True)

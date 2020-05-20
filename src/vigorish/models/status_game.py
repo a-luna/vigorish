@@ -29,9 +29,7 @@ class GameScrapeStatus(Base):
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    scrape_status_pitchfx = relationship(
-        "PitchAppearanceScrapeStatus", backref="scrape_status_game"
-    )
+    scrape_status_pitchfx = relationship("PitchAppScrapeStatus", backref="scrape_status_game")
 
     @hybrid_property
     def game_start_time(self):
@@ -154,7 +152,7 @@ class GameScrapeStatus(Base):
         d["pitch_app_count_pitchfx"] = self.pitch_app_count_pitchfx
         d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
         d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
-        d["total_pitchfx_logs_scraped"] = self.total_pitchfx_logs_scraped
+        d["total_pitch_apps_scraped_pitchfx"] = self.total_pitch_apps_scraped_pitchfx
         d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
         d["total_pitch_count_bbref"] = self.total_pitch_count_bbref
         d["total_pitch_count_brooks"] = self.total_pitch_count_brooks
@@ -196,81 +194,71 @@ class GameScrapeStatus(Base):
         )
 
     @classmethod
-    def find_by_bbref_game_id(cls, session, bbref_game_id):
-        return session.query(cls).filter_by(bbref_game_id=bbref_game_id).first()
+    def find_by_bbref_game_id(cls, db_session, bbref_game_id):
+        return db_session.query(cls).filter_by(bbref_game_id=bbref_game_id).first()
 
     @classmethod
-    def find_by_bb_game_id(cls, session, bb_game_id):
-        return session.query(cls).filter_by(bb_game_id=bb_game_id).first()
+    def find_by_bb_game_id(cls, db_session, bb_game_id):
+        return db_session.query(cls).filter_by(bb_game_id=bb_game_id).first()
 
     @classmethod
-    def get_all_scraped_bbref_game_ids_for_season(cls, session, season_id):
+    def get_all_scraped_bbref_game_ids_for_season(cls, db_session, season_id):
         return [
             game_status.bbref_game_id
-            for game_status in session.query(cls).filter_by(season_id=season_id).all()
+            for game_status in db_session.query(cls).filter_by(season_id=season_id).all()
             if game_status.scraped_bbref_boxscore == 1
         ]
 
     @classmethod
-    def get_all_unscraped_bbref_game_ids_for_season(cls, session, season_id):
+    def get_all_unscraped_bbref_game_ids_for_season(cls, db_session, season_id):
         return [
             game_status.bbref_game_id
-            for game_status in session.query(cls).filter_by(season_id=season_id).all()
+            for game_status in db_session.query(cls).filter_by(season_id=season_id).all()
             if game_status.scraped_bbref_boxscore == 0
         ]
 
     @classmethod
-    def get_all_scraped_brooks_game_ids_for_season(cls, session, season_id):
+    def get_all_scraped_brooks_game_ids_for_season(cls, db_session, season_id):
         return [
             game_status.bb_game_id
-            for game_status in session.query(cls).filter_by(season_id=season_id).all()
+            for game_status in db_session.query(cls).filter_by(season_id=season_id).all()
             if game_status.scraped_brooks_pitch_logs == 1
         ]
 
     @classmethod
-    def get_all_unscraped_brooks_game_ids_for_season(cls, session, season_id):
+    def get_all_unscraped_brooks_game_ids_for_season(cls, db_session, season_id):
         return [
             game_status.bb_game_id
-            for game_status in session.query(cls).filter_by(season_id=season_id).all()
+            for game_status in db_session.query(cls).filter_by(season_id=season_id).all()
             if game_status.scraped_brooks_pitch_logs == 0
         ]
 
     @classmethod
-    def get_all_bbref_game_ids(cls, session, season_id):
+    def get_all_bbref_game_ids(cls, db_session, season_id):
         return [
             game_status.bbref_game_id
-            for game_status in session.query(cls).filter_by(season_id=season_id).all()
+            for game_status in db_session.query(cls).filter_by(season_id=season_id).all()
         ]
 
     @classmethod
-    def get_game_id_dict(cls, session, season_id):
+    def get_game_id_dict(cls, db_session, season_id):
         return {
             game_status.bbref_game_id: game_status.id
-            for game_status in session.query(cls).filter_by(season_id=season_id).all()
+            for game_status in db_session.query(cls).filter_by(season_id=season_id).all()
         }
 
     @classmethod
-    def get_all_bbref_game_ids_for_date(cls, session, date):
+    def get_all_bbref_game_ids_for_date(cls, db_session, date):
         date_id = date.strftime(DATE_ONLY_TABLE_ID)
         return [
             game.bbref_game_id
-            for game in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
+            for game in db_session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
         ]
 
     @classmethod
-    def get_all_brooks_game_ids_for_date(cls, session, date):
+    def get_all_brooks_game_ids_for_date(cls, db_session, date):
         date_id = date.strftime(DATE_ONLY_TABLE_ID)
         return [
             game.bb_game_id
-            for game in session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
-        ]
-
-    @classmethod
-    def get_all_bbref_game_ids_ready_to_combine(cls, session):
-        return [
-            game.bbref_game_id
-            for game in session.query(cls).all()
-            if game.scraped_bbref_boxscore
-            and game.scraped_all_pitchfx_logs
-            and not game.pitch_data_was_audited
+            for game in db_session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
         ]

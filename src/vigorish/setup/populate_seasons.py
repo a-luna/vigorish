@@ -8,16 +8,16 @@ from vigorish.models.season import Season
 from vigorish.util.result import Result
 
 
-def populate_seasons(session):
+def populate_seasons(db_session):
     """Populate mlb_season table with initial data."""
-    result = __add_mlb_seasons(session)
+    result = add_mlb_seasons(db_session)
     if result.failure:
         return result
-    session.commit()
+    db_session.commit()
     return Result.Ok()
 
 
-def __add_mlb_seasons(session):
+def add_mlb_seasons(db_session):
     try:
         mlb_seasons = [
             Season(
@@ -94,10 +94,11 @@ def __add_mlb_seasons(session):
             mininterval=0.12,
             maxinterval=5,
             unit_scale=True,
+            ncols=90,
         ):
-            session.add(season)
+            db_session.add(season)
         return Result.Ok()
     except Exception as e:
         error = "Error: {error}".format(error=repr(e))
-        session.rollback()
+        db_session.rollback()
         return Result.Fail(error)

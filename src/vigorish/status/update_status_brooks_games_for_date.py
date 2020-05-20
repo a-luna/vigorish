@@ -3,36 +3,35 @@ from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 
 
-def update_brooks_games_for_date_single_date(session, season, games_for_date, game_date):
-    result = update_date_status_records(session, games_for_date, game_date)
+def update_brooks_games_for_date_single_date(db_session, season, games_for_date, game_date):
+    result = update_date_status_records(db_session, games_for_date, game_date)
     if result.failure:
         return result
-    result = update_game_status_records(session, season, games_for_date.games)
+    result = update_game_status_records(db_session, season, games_for_date.games)
     if result.failure:
         return result
     return Result.Ok()
 
 
-def update_data_set_brooks_games_for_date(scraped_data, session, season):
+def update_data_set_brooks_games_for_date(scraped_data, db_session, season):
     result = scraped_data.get_all_brooks_dates_scraped(season.year)
     if result.failure:
         return result
     scraped_brooks_dates = result.value
     unscraped_brooks_dates = DateScrapeStatus.get_all_brooks_unscraped_dates_for_season(
-        session, season.id
+        db_session, season.id
     )
     new_brooks_dates = set(scraped_brooks_dates) & set(unscraped_brooks_dates)
     if not new_brooks_dates:
         return Result.Ok()
-    result = update_status_brooks_games_for_date_list(scraped_data, session, new_brooks_dates)
+    result = update_status_brooks_games_for_date_list(scraped_data, db_session, new_brooks_dates)
     if result.failure:
         return result
     new_brooks_games = result.value
-    return update_game_status_records(session, season, new_brooks_games)
+    return update_game_status_records(db_session, season, new_brooks_games)
 
 
-def update_status_brooks_games_for_date_list(scraped_data, session, scraped_brooks_dates):
-    new_brooks_games = []
+def update_status_brooks_games_for_date_list(scraped_data, db_session, scraped_brooks_dates):
     for game_date in scraped_brooks_dates:
         result = scraped_data.get_brooks_games_for_date(game_date)
         if "Size of file downloaded from S3 is less than 1KB" in result.error:
@@ -47,10 +46,10 @@ def update_status_brooks_games_for_date_list(scraped_data, session, scraped_broo
     return Result.Ok(new_brooks_games)
 
 
-def update_date_status_records(session, games_for_date, game_date):
+def update_date_status_records(db_session, games_for_date, game_date):
     try:
         date_id = game_date.strftime(DATE_ONLY_TABLE_ID)
-        date_status = session.query(DateScrapeStatus).get(date_id)
+        date_status = db_session.query(DateScrapeStatus).get(date_id)
         if not date_status:
             date_str = games_for_date.game_date.strftime(DATE_ONLY)
             error = f"scrape_status_date does not contain an entry for date: {date_str}"
@@ -62,15 +61,15 @@ def update_date_status_records(session, games_for_date, game_date):
         return Result.Fail(f"Error: {repr(e)}")
 
 
-def update_game_status_records(session, season, new_brooks_games):
+def update_game_status_records(db_session, season, new_brooks_games):
     for brooks_game_info in new_brooks_games:
         if not brooks_game_info.pitcher_appearance_count:
             continue
         try:
             bbref_game_id = brooks_game_info.bbref_game_id
             game_date = brooks_game_info.game_date
-            date_status = DateScrapeStatus.find_by_date(session, game_date)
-            game_status = GameScrapeStatus.find_by_bbref_game_id(session, bbref_game_id)
+            date_status = DateScrapeStatus.find_by_date(db_session, game_date)
+            game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
             if not game_status:
                 error = f"scrape_status_game does not contain a record for game: {bbref_game_id}"
                 return Result.Fail(error)
@@ -85,7 +84,7 @@ def update_game_status_records(session, season, new_brooks_games):
             )
             setattr(game_status, "scrape_status_date_id", date_status.id)
             setattr(game_status, "season_id", season.id)
-            session.add(game_status)
+            db_session.add(game_status)
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
     return Result.Ok()

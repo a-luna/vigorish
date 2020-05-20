@@ -12,7 +12,7 @@ from vigorish.cli.util import print_message, validate_scrape_dates
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.config.database import get_db_url, initialize_database, ScrapeJob
 from vigorish.config.config_file import ConfigFile
-from vigorish.constants import DATA_SET_CHOICES
+from vigorish.constants import DATA_SET_NAMES_SHORT
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import StatusReport
 from vigorish.scrape.job_runner import JobRunner
@@ -37,13 +37,13 @@ def cli(ctx):
     config = ConfigFile()
     engine = create_engine(get_db_url())
     session_maker = sessionmaker(bind=engine)
-    session = session_maker()
-    scraped_data = ScrapedData(db=session, config=config)
+    db_session = session_maker()
+    scraped_data = ScrapedData(db_session=db_session, config=config)
     ctx.obj = {
         "dotenv": dotenv,
         "config": config,
         "engine": engine,
-        "session": session,
+        "db_session": db_session,
         "scraped_data": scraped_data,
     }
 
@@ -70,7 +70,7 @@ def setup(app):
     deleted. This cannot be undone.
     """
     print()  # place an empty line between the command and the progress bars
-    result = initialize_database(app["engine"], app["session"])
+    result = initialize_database(app["engine"], app["db_session"])
     if result.failure:
         return exit_app_error(app, result.error)
     return exit_app_success(app, "Successfully populated database with initial data.")
@@ -79,7 +79,7 @@ def setup(app):
 @cli.command()
 @click.option(
     "--data-set",
-    type=click.Choice(DATA_SET_CHOICES.keys()),
+    type=click.Choice(DATA_SET_NAMES_SHORT.keys()),
     multiple=True,
     default=["all"],
     show_default=True,
@@ -117,8 +117,8 @@ def setup(app):
 @click.pass_obj
 def scrape(app, data_set, start, end, name):
     """Scrape MLB data from websites."""
-    data_sets_int = sum(int(DATA_SET_CHOICES[ds]) for ds in data_set)
-    result = validate_scrape_dates(app["session"], start, end)
+    data_sets_int = sum(int(DATA_SET_NAMES_SHORT[ds]) for ds in data_set)
+    result = validate_scrape_dates(app["db_session"], start, end)
     if result.failure:
         return exit_app_error(app, result.error)
     season = result.value
@@ -130,11 +130,11 @@ def scrape(app, data_set, start, end, name):
         "season_id": season.id,
     }
     new_scrape_job = ScrapeJob(**scrape_job_dict)
-    app["session"].add(new_scrape_job)
-    app["session"].commit()
+    app["db_session"].add(new_scrape_job)
+    app["db_session"].commit()
     job_runner = JobRunner(
         db_job=new_scrape_job,
-        db_session=app["session"],
+        db_session=app["db_session"],
         config=app["config"],
         scraped_data=app["scraped_data"],
     )
@@ -179,7 +179,7 @@ def status_date(app, game_date, missing_pitchfx, with_games):
     else:
         report_type = StatusReport.DATE_DETAIL_ALL_DATES
     result = report_status_single_date(
-        app["session"], app["scraped_data"], app["run_update"], game_date, report_type
+        app["db_session"], app["scraped_data"], app["run_update"], game_date, report_type
     )
     return exit_app_success(app) if result.success else exit_app_error(app, result.error)
 
@@ -227,7 +227,7 @@ def status_date_range(app, start, end, verbosity):
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(app, error)
     result = report_date_range_status(
-        app["session"], app["scraped_data"], app["run_update"], start, end, report_type
+        app["db_session"], app["scraped_data"], app["run_update"], start, end, report_type
     )
     return exit_app_success(app) if result.success else exit_app_error(app, result.error)
 
@@ -272,7 +272,7 @@ def status_season(app, year, verbosity):
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(app, error)
     result = report_season_status(
-        app["session"], app["scraped_data"], app["run_update"], year, report_type
+        app["db_session"], app["scraped_data"], app["run_update"], year, report_type
     )
     return exit_app_success(app) if result.success else exit_app_error(app, result.error)
 
@@ -280,13 +280,13 @@ def status_season(app, year, verbosity):
 def exit_app_success(app, message=None):
     if message:
         subprocess.run(["clear"])
-        print_message(wrap_text(f"\n{message}\n", max_len=70), fg="bright_green", bold=True)
-    app["session"].close()
+        print_message(f"\n{message}\n", fg="bright_green", bold=True)
+    app["db_session"].close()
     return 0
 
 
 def exit_app_error(app, message):
     subprocess.run(["clear"])
-    print_message(wrap_text(f"\n{message}\n", max_len=70), fg="bright_red", bold=True)
-    app["session"].close()
+    print_message(f"\n{message}\n", fg="bright_red", bold=True)
+    app["db_session"].close()
     return 1

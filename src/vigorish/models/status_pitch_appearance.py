@@ -5,7 +5,7 @@ from vigorish.util.list_helpers import display_dict
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 
 
-class PitchAppearanceScrapeStatus(Base):
+class PitchAppScrapeStatus(Base):
 
     __tablename__ = "scrape_status_pitch_app"
     id = Column(Integer, primary_key=True)
@@ -27,7 +27,7 @@ class PitchAppearanceScrapeStatus(Base):
     season_id = Column(Integer, ForeignKey("season.id"))
 
     def __repr__(self):
-        return f'<PitchAppearanceScrapeStatus pitch_app_id="{self.pitch_app_id}">'
+        return f'<PitchAppScrapeStatus pitch_app_id="{self.pitch_app_id}">'
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

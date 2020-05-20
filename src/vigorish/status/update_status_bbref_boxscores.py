@@ -2,24 +2,24 @@ from vigorish.config.database import GameScrapeStatus
 from vigorish.util.result import Result
 
 
-def update_data_set_bbref_boxscores(scraped_data, session, season):
+def update_data_set_bbref_boxscores(scraped_data, db_session, season):
     result = scraped_data.get_all_scraped_bbref_game_ids(season.year)
     if result.failure:
         return result
     scraped_bbref_gameids = result.value
     unscraped_bbref_gameids = GameScrapeStatus.get_all_unscraped_bbref_game_ids_for_season(
-        session, season.id
+        db_session, season.id
     )
     new_bbref_game_ids = set(scraped_bbref_gameids) & set(unscraped_bbref_gameids)
     if not new_bbref_game_ids:
         return Result.Ok([])
-    result = update_status_bbref_boxscore_list(scraped_data, session, new_bbref_game_ids)
+    result = update_status_bbref_boxscore_list(scraped_data, db_session, new_bbref_game_ids)
     if result.failure:
         return result
     return Result.Ok()
 
 
-def update_status_bbref_boxscore_list(scraped_data, session, new_bbref_game_ids):
+def update_status_bbref_boxscore_list(scraped_data, db_session, new_bbref_game_ids):
     for bbref_game_id in new_bbref_game_ids:
         result = scraped_data.get_bbref_boxscore(bbref_game_id)
         if result.failure:
@@ -27,15 +27,16 @@ def update_status_bbref_boxscore_list(scraped_data, session, new_bbref_game_ids)
                 continue
             return result
         boxscore = result.value
-        result = update_status_bbref_boxscore(session, boxscore)
+        result = update_status_bbref_boxscore(db_session, boxscore)
         if result.failure:
             return result
+        db_session.commit()
     return Result.Ok()
 
 
-def update_status_bbref_boxscore(session, boxscore):
+def update_status_bbref_boxscore(db_session, boxscore):
     try:
-        game_status = GameScrapeStatus.find_by_bbref_game_id(session, boxscore.bbref_game_id)
+        game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, boxscore.bbref_game_id)
         if not game_status:
             error = (
                 f"scrape_status_game does not contain an "

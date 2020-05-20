@@ -11,16 +11,16 @@ from vigorish.util.result import Result
 TEAM_CSV_FILE_PATH = Path(__file__).parent / "csv" / "Teams.csv"
 
 
-def populate_teams(session):
+def populate_teams(db_session):
     """Populate team table with initial data."""
-    result = __import_teams_csv(session)
+    result = import_teams_csv(db_session)
     if result.failure:
         return result
-    session.commit()
+    db_session.commit()
     return Result.Ok()
 
 
-def __import_teams_csv(session):
+def import_teams_csv(db_session):
     try:
         df_team = pd.read_csv(
             TEAM_CSV_FILE_PATH,
@@ -66,6 +66,7 @@ def __import_teams_csv(session):
             mininterval=0.12,
             maxinterval=5,
             unit_scale=True,
+            ncols=90,
         ) as pbar:
             for _, row in df_team.iterrows():
                 t = Team(
@@ -100,10 +101,10 @@ def __import_teams_csv(session):
                     team_id_br=row["teamIDBR"],
                     team_id_retro=row["teamIDretro"],
                 )
-                session.add(t)
+                db_session.add(t)
                 pbar.update()
         return Result.Ok()
     except Exception as e:
         error = "Error: {error}".format(error=repr(e))
-        session.rollback()
+        db_session.rollback()
         return Result.Fail(error)

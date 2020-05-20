@@ -25,7 +25,7 @@ class PlayerID:
     bbrefID: str = dataclasses.field(default=None)
 
 
-def scrape_mlb_player_info(session, name, bbref_id):
+def scrape_mlb_player_info(db_session, name, bbref_id):
     split = name.split()
     if not split or len(split) <= 1:
         return Result.Fail(f"Name was not in an expected format: {name}")
@@ -40,8 +40,8 @@ def scrape_mlb_player_info(session, name, bbref_id):
     mlb_player_info = result.value
     player_dict = parse_player_data(mlb_player_info, bbref_id)
     new_player = Player(**player_dict)
-    session.add(new_player)
-    session.commit()
+    db_session.add(new_player)
+    db_session.commit()
     return Result.Ok(new_player)
 
 

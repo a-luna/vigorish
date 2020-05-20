@@ -1,16 +1,16 @@
-from vigorish.config.database import PitchAppearanceScrapeStatus
+from vigorish.config.database import PitchAppScrapeStatus
 from vigorish.util.result import Result
 
 
-def update_data_set_brooks_pitchfx(scraped_data, session, season):
+def update_data_set_brooks_pitchfx(scraped_data, db_session, season):
     scraped_ids = scraped_data.get_all_scraped_pitchfx_pitch_app_ids(season.year)
-    unscraped_ids = PitchAppearanceScrapeStatus.get_all_unscraped_pitch_app_ids_for_season(
-        session, season.id
+    unscraped_ids = PitchAppScrapeStatus.get_all_unscraped_pitch_app_ids_for_season(
+        db_session, season.id
     )
     new_pitch_app_ids = set(scraped_ids) & set(unscraped_ids)
     if not new_pitch_app_ids:
         return Result.Ok()
-    result = update_status_brooks_pitchfx_log_list(scraped_data, session, new_pitch_app_ids)
+    result = update_status_brooks_pitchfx_log_list(scraped_data, db_session, new_pitch_app_ids)
     if result.failure:
         return result
     return Result.Ok()
@@ -30,10 +30,10 @@ def update_status_brooks_pitchfx_log_list(scraped_data, session, new_pitch_app_i
     return Result.Ok()
 
 
-def update_pitch_appearance_status_records(session, pitchfx_log):
+def update_pitch_appearance_status_records(db_session, pitchfx_log):
     try:
-        pitch_app_status = PitchAppearanceScrapeStatus.find_by_pitch_app_id(
-            session, pitchfx_log.pitch_app_id
+        pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(
+            db_session, pitchfx_log.pitch_app_id
         )
         if not pitch_app_status:
             error = (

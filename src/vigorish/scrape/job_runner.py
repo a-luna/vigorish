@@ -135,14 +135,14 @@ class JobRunner:
     def show_status_report(self):
         if self.status_report == StatusReport.SEASON_SUMMARY:
             return report_season_status(
-                session=self.db_session,
+                db_session=self.db_session,
                 scraped_data=self.scraped_data,
                 refresh_data=False,
                 year=self.season.year,
                 report_type=self.status_report,
             )
         return report_date_range_status(
-            session=self.db_session,
+            db_session=self.db_session,
             scraped_data=self.scraped_data,
             refresh_data=False,
             start_date=self.db_job.start_date,
@@ -177,4 +177,4 @@ class JobRunner:
         return self.config.s3_bucket_required(self.db_job.data_sets)
 
     def check_s3_bucket(self):
-        return self.scraped_data.check_s3_bucket(self.db_job.data_sets)
+        return self.scraped_data.check_s3_bucket()
