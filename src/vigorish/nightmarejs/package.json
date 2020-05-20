@@ -5,7 +5,7 @@
   "author": "Aaron Luna <contact@aaronluna.dev> (https://aaronluna.dev)",
   "license": "MIT",
   "dependencies": {
-    "cli-progress": "^3.8.1",
+    "cli-progress": "^3.8.2",
     "colors": "^1.4.0",
     "fs": "0.0.1-security",
     "minimist": "^1.2.5",
