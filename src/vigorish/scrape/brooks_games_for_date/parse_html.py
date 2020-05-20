@@ -31,13 +31,11 @@ def parse_brooks_dashboard_page(db_session, scraped_html, game_date, url, bbref_
     games_for_date.dashboard_url = url
     games_for_date.game_count = 0
     games_for_date.games = []
-
-    if Season.is_this_the_asg_date(session, game_date):
+    if Season.is_this_the_asg_date(db_session, game_date):
         return Result.Ok(games_for_date)
     game_tables = page_content.xpath(GAME_TABLE_XPATH)
     if not game_tables:
-        error = f"Unable to parse any game data from {url}"
-        return Result.Fail(error)
+        return Result.Ok(games_for_date)
     for i, game in enumerate(game_tables):
         game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
         required_game_data = validate_bbref_game_id_list(game_ids)
