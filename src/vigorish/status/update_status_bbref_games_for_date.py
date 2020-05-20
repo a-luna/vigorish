@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from vigorish.config.database import DateScrapeStatus, GameScrapeStatus
+from vigorish.config.database import DateScrapeStatus, GameScrapeStatus, Season
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id_list
@@ -43,7 +43,10 @@ def update_data_set_bbref_games_for_date(scraped_data, db_session, season):
 
 
 def update_bbref_games_for_date_list(scraped_data, db_session, scraped_bbref_dates):
+    season = None
     for game_date in scraped_bbref_dates:
+        if not season:
+            season = Season.find_by_year(db_session, game_date.year)
         result = scraped_data.get_bbref_games_for_date(game_date)
         if result.failure:
             if "Size of file downloaded from S3 is less than 1KB" in result.error:
@@ -54,14 +57,17 @@ def update_bbref_games_for_date_list(scraped_data, db_session, scraped_bbref_dat
         if result.failure:
             return result
         game_ids = [Path(url).stem for url in games_for_date.boxscore_urls]
-        all_game_ids.extend(game_ids)
-    return Result.Ok(all_game_ids)
+        result = create_game_status_records(db_session, season, game_ids)
+        if result.failure:
+            return result
+        db_session.commit()
+    return Result.Ok()
 
 
-def update_status_bbref_games_for_date(session, games_for_date):
+def update_status_bbref_games_for_date(db_session, games_for_date):
     try:
         date_id = games_for_date.game_date.strftime(DATE_ONLY_TABLE_ID)
-        date_status = session.query(DateScrapeStatus).get(date_id)
+        date_status = db_session.query(DateScrapeStatus).get(date_id)
         if not date_status:
             date_str = games_for_date.game_date.strftime(DATE_ONLY)
             error = f"scrape_status_date does not contain an entry for date: {date_str}"
@@ -73,21 +79,21 @@ def update_status_bbref_games_for_date(session, games_for_date):
         return Result.Fail(f"Error: {repr(e)}")
 
 
-def create_game_status_records(session, season, new_bbref_game_ids):
-    game_status_bbref_ids = GameScrapeStatus.get_all_bbref_game_ids(session, season.id)
+def create_game_status_records(db_session, season, new_bbref_game_ids):
+    game_status_bbref_ids = GameScrapeStatus.get_all_bbref_game_ids(db_session, season.id)
     missing_bbref_game_ids = set(new_bbref_game_ids).difference(set(game_status_bbref_ids))
     if not missing_bbref_game_ids:
         return Result.Ok()
     for game_dict in validate_bbref_game_id_list(missing_bbref_game_ids):
         try:
             game_date = game_dict["game_date"]
-            date_status = DateScrapeStatus.find_by_date(session, game_date)
+            date_status = DateScrapeStatus.find_by_date(db_session, game_date)
             game_status = GameScrapeStatus()
             setattr(game_status, "game_date", game_date)
             setattr(game_status, "bbref_game_id", game_dict["game_id"])
             setattr(game_status, "scrape_status_date_id", date_status.id)
             setattr(game_status, "season_id", season.id)
-            session.add(game_status)
+            db_session.add(game_status)
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
     return Result.Ok()

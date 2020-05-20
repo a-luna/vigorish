@@ -26,22 +26,21 @@ def update_data_set_brooks_pitch_logs(scraped_data, db_session, season):
     return Result.Ok()
 
 
-def update_status_brooks_pitch_logs_for_game_list(
-    scraped_data, session, season, new_brooks_game_ids
-):
+def update_status_brooks_pitch_logs_for_game_list(scraped_data, db_session, new_brooks_game_ids):
     for bb_game_id in new_brooks_game_ids:
         result = scraped_data.get_brooks_pitch_logs_for_game(bb_game_id)
-        if "Size of file downloaded from S3 is less than 1KB" in result.error:
-            continue
         if result.failure:
+            if "Size of file downloaded from S3 is less than 1KB" in result.error:
+                continue
             return result
         pitch_logs_for_game = result.value
-        result = update_game_status_records(session, pitch_logs_for_game)
+        result = update_game_status_records(db_session, pitch_logs_for_game)
         if result.failure:
             return result
-        result = create_pitch_appearance_status_records(session, season, pitch_logs_for_game)
+        result = create_pitch_appearance_status_records(db_session, pitch_logs_for_game)
         if result.failure:
             return result
+        db_session.commit()
     return Result.Ok()
 
 

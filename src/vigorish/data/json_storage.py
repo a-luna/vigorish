@@ -1,4 +1,6 @@
 """Functions for reading and writing files."""
+import json
+
 from vigorish.enums import DataSet, DocFormat, LocalFileTask, S3FileTask
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
@@ -171,6 +173,58 @@ class JsonStorage:
             bbref_game_id=boxscore.bbref_game_id,
         )
 
+    def save_json_combined_data(self, combined_data):
+        local_filepath = None
+        s3_object_key = None
+        result_local = Result.Ok()
+        result_s3 = Result.Ok()
+        if self.combined_data_stored_local_folder():
+            result_local = self.save_json_combined_data_local_file(combined_data)
+            if result_local.success:
+                local_filepath = result_local.value
+        if self.combined_data_stored_s3():
+            result_s3 = self.save_json_combined_data_s3(combined_data)
+            if result_s3.success:
+                s3_object_key = result_s3.value
+        result = Result.Combine([result_local, result_s3])
+        if result.failure:
+            return result
+        return Result.Ok({"local_filepath": local_filepath, "s3_object_key": s3_object_key})
+
+    def combined_data_stored_local_folder(self):
+        return self.file_helper.check_file_stored_local(DocFormat.COMBINED, DataSet.ALL)
+
+    def combined_data_stored_s3(self):
+        return self.file_helper.check_file_stored_s3(DocFormat.COMBINED, DataSet.ALL)
+
+    def save_json_combined_data_local_file(self, combined_data):
+        result = validate_bbref_game_id(combined_data["bbref_game_id"])
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.WRITE_FILE,
+            data_set=DataSet.ALL,
+            doc_format=DocFormat.COMBINED,
+            game_date=game_dict["game_date"],
+            scraped_data=combined_data,
+            bbref_game_id=combined_data["bbref_game_id"],
+        )
+
+    def save_json_combined_data_s3(self, combined_data):
+        result = validate_bbref_game_id(combined_data["bbref_game_id"])
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.UPLOAD,
+            data_set=DataSet.ALL,
+            doc_format=DocFormat.COMBINED,
+            game_date=game_dict["game_date"],
+            scraped_data=combined_data,
+            bbref_game_id=combined_data["bbref_game_id"],
+        )
+
     def get_json_brooks_games_for_date_local_file(self, game_date):
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
@@ -277,6 +331,40 @@ class JsonStorage:
             task=S3FileTask.DOWNLOAD,
             data_set=DataSet.BBREF_BOXSCORES,
             doc_format=DocFormat.JSON,
+            game_date=game_dict["game_date"],
+            bbref_game_id=bbref_game_id,
+        )
+
+    def get_json_combined_data(self, bbref_game_id):
+        result = self.decode_json_combined_data_local_file(bbref_game_id)
+        if result.failure:
+            result = self.decode_json_combined_data_s3(bbref_game_id)
+            if result.failure:
+                return None
+        return result.value
+
+    def get_json_combined_data_local_file(self, bbref_game_id):
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.READ_FILE,
+            data_set=DataSet.ALL,
+            doc_format=DocFormat.COMBINED,
+            game_date=game_dict["game_date"],
+            bbref_game_id=bbref_game_id,
+        )
+
+    def get_json_combined_data_s3(self, bbref_game_id):
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.DOWNLOAD,
+            data_set=DataSet.ALL,
+            doc_format=DocFormat.COMBINED,
             game_date=game_dict["game_date"],
             bbref_game_id=bbref_game_id,
         )
@@ -430,6 +518,30 @@ class JsonStorage:
             bbref_game_id=bbref_game_id,
             delete_file=True,
         )
+
+    def decode_json_combined_data_local_file(self, bbref_game_id):
+        result = self.get_json_combined_data_local_file(bbref_game_id)
+        if result.failure:
+            return result
+        filepath = result.value
+        try:
+            json_dict = json.loads(filepath.read_text())
+            return Result.Ok(json_dict)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+    def decode_json_combined_data_s3(self, bbref_game_id):
+        result = self.get_json_combined_data_s3(bbref_game_id)
+        if result.failure:
+            return result
+        filepath = result.value
+        try:
+            json_dict = json.loads(filepath.read_text())
+            return Result.Ok(json_dict)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
 
     def delete_brooks_games_for_date_local_file(self, game_date):
         return self.file_helper.perform_local_file_task(

@@ -72,6 +72,17 @@ class JsonStorageOption(Enum):
         return self.name
 
 
+class CombinedDataStorageOption(Enum):
+    """Allowed values for JSON_STORAGE config setting."""
+
+    LOCAL_FOLDER = auto()
+    S3_BUCKET = auto()
+    BOTH = auto()
+
+    def __str__(self):
+        return self.name
+
+
 class StatusReport(Enum):
     """The type of status report (if any) to display."""
 
@@ -128,6 +139,7 @@ class DocFormat(Enum):
 
     JSON = auto()
     HTML = auto()
+    COMBINED = auto()
 
     def __str__(self):
         return self.name

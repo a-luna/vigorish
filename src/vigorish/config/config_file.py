@@ -17,6 +17,7 @@ from vigorish.enums import (
     DataSet,
     HtmlStorageOption,
     JsonStorageOption,
+    CombinedDataStorageOption,
     ScrapeCondition,
     StatusReport,
 )
@@ -259,6 +260,9 @@ class ConfigFile:
             "JSON_STORAGE": JsonStorageOption.LOCAL_FOLDER.name,
             "JSON_LOCAL_FOLDER_PATH": "json_storage/{year}/{data_set}/",
             "JSON_S3_FOLDER_PATH": "{year}/{data_set}",
+            "COMBINED_DATA_STORAGE": CombinedDataStorageOption.LOCAL_FOLDER.name,
+            "COMBINED_DATA_LOCAL_FOLDER_PATH": "json_storage/{year}/combined_data",
+            "COMBINED_DATA_S3_FOLDER_PATH": "{year}/combined_data",
         }
         batch_delay_setting_dict = {
             "BBREF_GAMES_FOR_DATE": BatchScrapeDelay(True, True, None, 5, 10).to_dict(),
@@ -389,6 +393,33 @@ class ConfigFile:
                 "DESCRIPTION": (
                     "Path to a folder within an S3 bucket where parsed JSON data should be "
                     "stored."
+                ),
+                "SAME_SETTING_FOR_ALL_DATA_SETS": True,
+            },
+            "COMBINED_DATA_STORAGE": {
+                "CONFIG_TYPE": "Enum",
+                "ENUM_NAME": "CombinedDataStorageOption",
+                "DESCRIPTION": (
+                    "When all data sets have been scraped for a single game, the parsed data is "
+                    "audited and combined into a single JSON file. You can choose to store these "
+                    "files on your local file system, on S3, or both."
+                ),
+                "SAME_SETTING_FOR_ALL_DATA_SETS": True,
+            },
+            "COMBINED_DATA_LOCAL_FOLDER_PATH": {
+                "CONFIG_TYPE": "Path",
+                "CLASS_NAME": "LocalFolderPathSetting",
+                "DESCRIPTION": (
+                    "Local folder path where files containing combined game data should be stored."
+                ),
+                "SAME_SETTING_FOR_ALL_DATA_SETS": True,
+            },
+            "COMBINED_DATA_S3_FOLDER_PATH": {
+                "CONFIG_TYPE": "Path",
+                "CLASS_NAME": "S3FolderPathSetting",
+                "DESCRIPTION": (
+                    "Path to a folder within an S3 bucket where files containing combined game "
+                    "data should be stored."
                 ),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },

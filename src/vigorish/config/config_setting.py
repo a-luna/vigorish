@@ -8,6 +8,7 @@ from vigorish.enums import (
     DataSet,
     HtmlStorageOption,
     JsonStorageOption,
+    CombinedDataStorageOption,
     ScrapeCondition,
     StatusReport,
 )
@@ -56,7 +57,13 @@ class ConfigSetting:
 
     @property
     def same_value_for_all_data_sets_is_required(self):
-        return self.setting_name in ["STATUS_REPORT", "S3_BUCKET"]
+        return self.setting_name in [
+            "STATUS_REPORT",
+            "S3_BUCKET",
+            "COMBINED_DATA_STORAGE",
+            "COMBINED_DATA_LOCAL_FOLDER_PATH",
+            "COMBINED_DATA_S3_FOLDER_PATH",
+        ]
 
     @property
     def current_settings_report(self):
@@ -91,10 +98,10 @@ class PathConfigSetting(ConfigSetting):
 
     def current_setting(self, data_set):
         current_setting = super().current_setting(data_set)
-        return self.__get_object(self.config_dict.get("CLASS_NAME"), current_setting, data_set)
+        return self.get_object(self.config_dict.get("CLASS_NAME"), current_setting, data_set)
 
     @staticmethod
-    def __get_object(class_name, current_setting, data_set):
+    def get_object(class_name, current_setting, data_set):
         if class_name == "LocalFolderPathSetting":
             return LocalFolderPathSetting(path=current_setting, data_set=data_set)
         if class_name == "S3FolderPathSetting":
@@ -116,22 +123,26 @@ class EnumConfigSetting(ConfigSetting):
             return [member for member in HtmlStorageOption]
         if enum_name == "JsonStorageOption":
             return [member for member in JsonStorageOption]
+        if enum_name == "CombinedDataStorageOption":
+            return [member for member in CombinedDataStorageOption]
         if enum_name == "StatusReport":
             return [member for member in StatusReport]
         return []
 
     def current_setting(self, data_set):
         current_setting = super().current_setting(data_set)
-        return self.__get_enum(self.config_dict.get("ENUM_NAME"), current_setting)
+        return self.get_enum(self.config_dict.get("ENUM_NAME"), current_setting)
 
     @staticmethod
-    def __get_enum(enum_name, value):
+    def get_enum(enum_name, value):
         if enum_name == "ScrapeCondition":
             return ScrapeCondition[value]
         if enum_name == "HtmlStorageOption":
             return HtmlStorageOption[value]
         if enum_name == "JsonStorageOption":
             return JsonStorageOption[value]
+        if enum_name == "CombinedDataStorageOption":
+            return CombinedDataStorageOption[value]
         if enum_name == "StatusReport":
             return StatusReport[value]
         return None
@@ -144,10 +155,10 @@ class NumericConfigSetting(ConfigSetting):
 
     def current_setting(self, data_set):
         current_setting = super().current_setting(data_set)
-        return self.__get_object(self.config_dict.get("CLASS_NAME"), current_setting)
+        return self.get_object(self.config_dict.get("CLASS_NAME"), current_setting)
 
     @staticmethod
-    def __get_object(class_name, config_dict):
+    def get_object(class_name, config_dict):
         if class_name == "UrlScrapeDelay":
             return UrlScrapeDelay.from_config(config_dict)
         if class_name == "BatchJobSettings":

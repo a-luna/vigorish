@@ -37,6 +37,7 @@ class FileHelper:
     def local_folderpath_dict(self):
         html_local_folder = self.config.all_settings.get("HTML_LOCAL_FOLDER_PATH")
         json_local_folder = self.config.all_settings.get("JSON_LOCAL_FOLDER_PATH")
+        combined_local_folder = self.config.all_settings.get("COMBINED_DATA_LOCAL_FOLDER_PATH")
         html_folderpath_dict = {
             data_set: html_local_folder.current_setting(data_set=data_set)
             for data_set in DataSet
@@ -50,12 +51,16 @@ class FileHelper:
         return {
             DocFormat.HTML: html_folderpath_dict,
             DocFormat.JSON: json_folderpath_dict,
+            DocFormat.COMBINED: {
+                DataSet.ALL: combined_local_folder.current_setting(data_set=DataSet.ALL)
+            },
         }
 
     @property
     def s3_folderpath_dict(self):
         html_s3_folder = self.config.all_settings.get("HTML_S3_FOLDER_PATH")
         json_s3_folder = self.config.all_settings.get("JSON_S3_FOLDER_PATH")
+        combined_s3_folder = self.config.all_settings.get("COMBINED_DATA_S3_FOLDER_PATH")
         html_folderpath_dict = {
             data_set: html_s3_folder.current_setting(data_set=data_set)
             for data_set in DataSet
@@ -69,6 +74,9 @@ class FileHelper:
         return {
             DocFormat.HTML: html_folderpath_dict,
             DocFormat.JSON: json_folderpath_dict,
+            DocFormat.COMBINED: {
+                DataSet.ALL: combined_s3_folder.current_setting(data_set=DataSet.ALL)
+            },
         }
 
     @property
@@ -90,6 +98,7 @@ class FileHelper:
         return {
             DocFormat.HTML: html_filename_dict,
             DocFormat.JSON: json_filename_dict,
+            DocFormat.COMBINED: {DataSet.ALL: self.get_file_name_json_combined_data},
         }
 
     @property
@@ -106,6 +115,7 @@ class FileHelper:
     def file_storage_dict(self):
         html_storage = self.config.all_settings.get("HTML_STORAGE")
         json_storage = self.config.all_settings.get("JSON_STORAGE")
+        combined_storage = self.config.all_settings.get("COMBINED_DATA_STORAGE")
         html_storage_dict = {
             data_set: html_storage.current_setting(data_set=data_set)
             for data_set in DataSet
@@ -119,6 +129,9 @@ class FileHelper:
         return {
             DocFormat.HTML: html_storage_dict,
             DocFormat.JSON: json_storage_dict,
+            DocFormat.COMBINED: {
+                DataSet.ALL: combined_storage.current_setting(data_set=DataSet.ALL)
+            },
         }
 
     def create_all_folderpaths(self, year):
@@ -323,6 +336,9 @@ class FileHelper:
     def get_file_name_json_bbref_boxscore(self, bbref_game_id):
         return f"{bbref_game_id}.json"
 
+    def get_file_name_json_combined_data(self, bbref_game_id):
+        return f"{bbref_game_id}_COMBINED_DATA.json"
+
     def read_local_file(self, filepath):
         return (
             Result.Ok(filepath)
@@ -334,6 +350,8 @@ class FileHelper:
         """Write object in json format to file."""
         if doc_format == DocFormat.JSON:
             data = data.as_json()
+        if doc_format == DocFormat.COMBINED:
+            data = json.dumps(data, indent=2, sort_keys=False)
         try:
             filepath.write_text(data)
             return Result.Ok(filepath)
