@@ -1,61 +1,85 @@
 {
-  "S3_BUCKET": {
-    "CONFIG_TYPE": "str",
-    "DESCRIPTION": "The name of the S3 bucket to use for storing HTML and/or JSON files",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-    "ALL": "vig-data",
-    "BBREF_GAMES_FOR_DATE": null,
-    "BBREF_BOXSCORES": null,
-    "BROOKS_GAMES_FOR_DATE": null,
-    "BROOKS_PITCH_LOGS": null,
-    "BROOKS_PITCHFX": null
-  },
-  "HTML_STORAGE": {
-    "CONFIG_TYPE": "Enum",
-    "ENUM_NAME": "HtmlStorageOption",
-    "DESCRIPTION": "By default, HTML is NOT saved after it has been parsed. However, you can choose to save scraped HTML in a local folder, an S3 bucket, or both.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-    "ALL": "LOCAL_FOLDER",
-    "BBREF_GAMES_FOR_DATE": null,
-    "BBREF_BOXSCORES": null,
-    "BROOKS_GAMES_FOR_DATE": null,
-    "BROOKS_PITCH_LOGS": null,
-    "BROOKS_PITCHFX": null
-  },
-  "HTML_LOCAL_FOLDER_PATH": {
-    "CONFIG_TYPE": "Path",
-    "CLASS_NAME": "LocalFolderPathSetting",
-    "DESCRIPTION": "Local folder path where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-    "ALL": "tests/html_storage/{year}/{data_set}/",
-    "BBREF_GAMES_FOR_DATE": null,
-    "BBREF_BOXSCORES": null,
-    "BROOKS_GAMES_FOR_DATE": null,
-    "BROOKS_PITCH_LOGS": null,
-    "BROOKS_PITCHFX": null
-  },
-  "JSON_STORAGE": {
-    "CONFIG_TYPE": "Enum",
-    "ENUM_NAME": "JsonStorageOption",
-    "DESCRIPTION": "MLB data is parsed from HTML and stored in JSON docs. You can store the JSON docs in a local folder, an S3 bucket, or both.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-    "ALL": "LOCAL_FOLDER",
-    "BBREF_GAMES_FOR_DATE": null,
-    "BBREF_BOXSCORES": null,
-    "BROOKS_GAMES_FOR_DATE": null,
-    "BROOKS_PITCH_LOGS": null,
-    "BROOKS_PITCHFX": null
-  },
-  "JSON_LOCAL_FOLDER_PATH": {
-    "CONFIG_TYPE": "Path",
-    "CLASS_NAME": "LocalFolderPathSetting",
-    "DESCRIPTION": "Local folder path where parsed JSON data should be stored.",
-    "SAME_SETTING_FOR_ALL_DATA_SETS": true,
-    "ALL": "tests/json_storage/{year}/{data_set}/",
-    "BBREF_GAMES_FOR_DATE": null,
-    "BBREF_BOXSCORES": null,
-    "BROOKS_GAMES_FOR_DATE": null,
-    "BROOKS_PITCH_LOGS": null,
-    "BROOKS_PITCHFX": null
-  }
+    "S3_BUCKET": {
+        "CONFIG_TYPE": "str",
+        "DESCRIPTION": "The name of the S3 bucket to use for storing HTML and/or JSON files",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "vig-data",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
+    "HTML_STORAGE": {
+        "CONFIG_TYPE": "Enum",
+        "ENUM_NAME": "HtmlStorageOption",
+        "DESCRIPTION": "By default, HTML is NOT saved after it has been parsed. However, you can choose to save scraped HTML in a local folder, an S3 bucket, or both.",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "LOCAL_FOLDER",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
+    "HTML_LOCAL_FOLDER_PATH": {
+        "CONFIG_TYPE": "Path",
+        "CLASS_NAME": "LocalFolderPathSetting",
+        "DESCRIPTION": "Local folder path where scraped HTML should be stored. The application will always check for saved HTML content in this location before sending a request to the website.",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "tests/html_storage/{year}/{data_set}/",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
+    "JSON_STORAGE": {
+        "CONFIG_TYPE": "Enum",
+        "ENUM_NAME": "JsonStorageOption",
+        "DESCRIPTION": "MLB data is parsed from HTML and stored in JSON docs. You can store the JSON docs in a local folder, an S3 bucket, or both.",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "LOCAL_FOLDER",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
+    "JSON_LOCAL_FOLDER_PATH": {
+        "CONFIG_TYPE": "Path",
+        "CLASS_NAME": "LocalFolderPathSetting",
+        "DESCRIPTION": "Local folder path where parsed JSON data should be stored.",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "tests/json_storage/{year}/{data_set}/",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
+    "COMBINED_DATA_STORAGE": {
+        "CONFIG_TYPE": "Enum",
+        "ENUM_NAME": "CombinedDataStorageOption",
+        "DESCRIPTION": "When all data sets have been scraped for a single game, the parsed data is audited and combined into a single JSON file. You can choose to store these files on your local file system, on S3, or both.",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "LOCAL_FOLDER",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
+    "COMBINED_DATA_LOCAL_FOLDER_PATH": {
+        "CONFIG_TYPE": "Path",
+        "CLASS_NAME": "LocalFolderPathSetting",
+        "DESCRIPTION": "Local folder path where files containing combined game data should be stored.",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "tests/json_storage/{year}/combined_data/",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    }
 }
