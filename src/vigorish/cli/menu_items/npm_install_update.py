@@ -9,7 +9,6 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import wrap_text
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists, run_command
 
 APP_FOLDER = Path(__file__).parent.parent.parent

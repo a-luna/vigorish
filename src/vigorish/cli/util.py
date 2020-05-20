@@ -1,57 +1,42 @@
 """Shared functions and menus for CLI."""
-import click
-from dateutil import parser
-from bullet import Bullet, colors, Input
+from random import randint
 
+import click
+import subprocess
+from dateutil import parser
+from bullet import Bullet, ScrollBar, Check, colors, Input
 from getch import pause
 
 from vigorish.config.database import Season
-from vigorish.constants import MENU_NUMBERS, CLI_COLORS
+from vigorish.constants import MENU_NUMBERS, CLI_COLORS, EMOJI_DICT, DATA_SET_NAMES_LONG
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
-DISPLAY_NAME_DICT = {
-    "brooksbaseball.net Games for Date": DataSet.BROOKS_GAMES_FOR_DATE,
-    "brooksbaseball.net Pitch Logs for Game": DataSet.BROOKS_PITCH_LOGS,
-    "brooksbaseball.net PitchFX Logs": DataSet.BROOKS_PITCHFX,
-    "bbref.com Games for Date": DataSet.BBREF_GAMES_FOR_DATE,
-    "bbref.com Boxscores": DataSet.BBREF_BOXSCORES,
-}
+
+def get_random_cli_color():
+    colors = ["red", "blue", "green", "cyan", "magenta", "yellow"]
+    return colors[randint(0, len(colors) - 1)]
 
 
-def get_data_set_display_name(data_set: DataSet) -> str:
-    display_name_dict = {
-        data_set: display_name for display_name, data_set in DISPLAY_NAME_DICT.items()
-    }
-    return display_name_dict[data_set]
-
-
-def print_message(message, fg=None, bg=None, bold=None, underline=None):
+def print_message(
+    message, wrap=True, max_line_len=70, fg=None, bg=None, bold=None, underline=None
+):
     if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
         fg = None
         bg = None
+    if wrap:
+        message = wrap_text(message, max_len=max_line_len)
     click.secho(message, fg=fg, bg=bg, bold=bold, underline=underline)
 
 
-def validate_scrape_dates(db_session, start_date, end_date):
-    result = Season.validate_date_range(db_session, start_date, end_date)
-    if result.failure:
-        error = f"The dates you entered are invalid:\n{result.error}"
-        print_message(error, fg="bright_red", bold=True)
-        pause(message="Press any key to continue...")
-        return Result.Fail("")
-    season = result.value
-    return Result.Ok(season)
-
-
-def prompt_user_yes_no(prompt: str) -> Result:
+def prompt_user_yes_no(prompt):
     choices = {
         f"{MENU_NUMBERS.get(1)}  YES": True,
         f"{MENU_NUMBERS.get(2)}  NO": False,
     }
     prompt = Bullet(
-        f"\n{wrap_text(prompt, 70)}",
+        wrap_text(prompt, 70),
         choices=[choice for choice in choices.keys()],
         bullet="",
         shift=1,
@@ -68,14 +53,14 @@ def prompt_user_yes_no(prompt: str) -> Result:
     return Result.Ok(choice_value)
 
 
-def prompt_user_yes_no_cancel(prompt: str) -> Result:
+def prompt_user_yes_no_cancel(prompt):
     choices = {
         f"{MENU_NUMBERS.get(1)}  YES": True,
         f"{MENU_NUMBERS.get(2)}  NO": False,
         f"{MENU_NUMBERS.get(3)}  CANCEL": None,
     }
     prompt = Bullet(
-        f"\n{wrap_text(prompt, 70)}",
+        wrap_text(prompt, 70),
         choices=[choice for choice in choices.keys()],
         bullet="",
         shift=1,

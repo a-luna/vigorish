@@ -22,7 +22,6 @@ from vigorish.status.report_status import (
     report_season_status,
 )
 from vigorish.util.datetime_util import today_str, current_year
-from vigorish.util.string_helpers import wrap_text
 
 VIG_FOLDER = Path.home() / ".vig"
 
