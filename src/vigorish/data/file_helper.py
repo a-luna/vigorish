@@ -143,13 +143,9 @@ class FileHelper:
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
-    def check_s3_bucket(self, data_sets):
-        bucket_names = list(
-            set([self.config.get_current_setting("S3_BUCKET", data_set) for data_set in data_sets])
-        )
+    def check_s3_bucket(self):
         try:
-            for bucket_name in bucket_names:
-                self.resource.Bucket(bucket_name).objects.all()
+            self.get_all_object_keys_in_s3_bucket()
             return Result.Ok()
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
@@ -165,6 +161,9 @@ class FileHelper:
     def get_s3_bucket(self):
         bucket_name = self.config.get_current_setting("S3_BUCKET", DataSet.ALL)
         return self.resource.Bucket(bucket_name)
+
+    def get_all_object_keys_in_s3_bucket(self):
+        return self.get_s3_bucket().objects.all()
 
     def perform_local_file_task(
         self,
@@ -273,7 +272,7 @@ class FileHelper:
                 doc_format, data_set, scraped_data, bucket_name, s3_key, Path(filepath)
             )
         if task == S3FileTask.DOWNLOAD:
-            return self.download_from_s3(bucket_name, s3_key, Path(filepath))
+            return self.download_from_s3(doc_format, bucket_name, s3_key, Path(filepath))
         if task == S3FileTask.DELETE:
             return self.delete_from_s3(bucket_name, s3_key)
 
@@ -389,10 +388,10 @@ class FileHelper:
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
-    def download_from_s3(self, bucket_name, s3_key, filepath):
+    def download_from_s3(self, doc_format, bucket_name, s3_key, filepath):
         try:
             self.resource.Bucket(bucket_name).download_file(s3_key, str(filepath))
-            if filepath.stat().st_size < ONE_KB:
+            if doc_format == DocFormat.HTML and filepath.stat().st_size < ONE_KB:
                 self.resource.Object(bucket_name, s3_key).delete()
                 filepath.unlink()
                 error = f"Size of file downloaded from S3 is less than 1KB ({s3_key})"
