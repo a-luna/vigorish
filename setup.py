@@ -53,7 +53,6 @@ EXTRAS_REQUIRE = {
         "flake8",
         "ipdb",
         "ipython",
-        "mypy",
         "pip-review",
         "pre-commit",
         "pydocstyle",
@@ -63,7 +62,6 @@ EXTRAS_REQUIRE = {
         "pytest-cov",
         "pytest-dotenv",
         "pytest-flake8",
-        "pytest-mypy",
         "snoop",
         "tox",
     ]

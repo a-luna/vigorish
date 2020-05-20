@@ -1,7 +1,6 @@
 """Helper functions that handle and produce numeric values."""
 import math
 from datetime import date
-from typing import Union
 from vigorish.util.string_helpers import try_parse_int
 
 ONE_KB = 1024
@@ -27,7 +26,7 @@ def sanitize(x):
     return x
 
 
-def validate_year_value(year: Union[int, str]) -> bool:
+def validate_year_value(year):
     if not year:
         error = 'No value provided for "year" parameter, unable to resolve folder path.'
         raise ValueError(error)

@@ -48,7 +48,7 @@ def report_dict(dict, title="", title_prefix="### ", title_suffix=" ###", extra_
     return report.strip()
 
 
-def dict_to_param_list(input_dict: Dict) -> str:
+def dict_to_param_list(input_dict: Dict):
     params = []
     for name, value in input_dict.items():
         if isinstance(value, bool) and value:

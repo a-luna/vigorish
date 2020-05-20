@@ -6,7 +6,7 @@ from vigorish.util.regex import BBREF_BOXSCORE_URL_REGEX
 from vigorish.util.result import Result
 
 
-def create_url_set(db_job, data_set, scraped_data) -> Result:
+def create_url_set(db_job, data_set, scraped_data):
     url_set = {}
     for game_date in db_job.date_range:
         result = create_url_set_for_date(db_job, data_set, scraped_data, game_date)

@@ -16,13 +16,13 @@ class MenuItem(ABC):
     exit_menu: bool = False
 
     @property
-    def menu_item_text(self) -> str:
+    def menu_item_text(self):
         return f"{self.menu_item_emoji} {self._menu_item_text}"
 
     @menu_item_text.setter
-    def menu_item_text(self, menu_item_text: str) -> None:
+    def menu_item_text(self, menu_item_text):
         self._menu_item_text = menu_item_text
 
     @abstractmethod
-    def launch(self) -> Result:
+    def launch(self):
         pass

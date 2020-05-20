@@ -23,7 +23,7 @@ class CreateJobMenuItem(MenuItem):
         self.menu_item_text = "Create New Job"
         self.menu_item_emoji = EMOJI_DICT.get("KNIFE", "")
 
-    def launch(self) -> Result:
+    def launch(self):
         job_confirmed = False
         while not job_confirmed:
             data_sets = self.get_data_sets_to_scrape()

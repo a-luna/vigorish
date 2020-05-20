@@ -48,7 +48,7 @@ def initialize_database(db_engine, db_session):
     return populate_tables(db_session)
 
 
-def db_setup_complete(db_engine, db_session) -> bool:
+def db_setup_complete(db_engine, db_session):
     tables_missing = (
         "player" not in db_engine.table_names()
         or "season" not in db_engine.table_names()

@@ -121,7 +121,7 @@ class FileHelper:
             DocFormat.JSON: json_storage_dict,
         }
 
-    def create_all_folderpaths(self, year) -> Result:
+    def create_all_folderpaths(self, year):
         try:
             for folderpath_dict in self.local_folderpath_dict.values():
                 for folderpath in folderpath_dict.values():

@@ -1,7 +1,6 @@
 """Utility functions that transform and/or produce string values."""
 import re
 from datetime import datetime
-from typing import Union
 
 from rapidfuzz import process
 
@@ -18,7 +17,7 @@ def fuzzy_match(s, choices):
     return dict(best_match=match, score=score)
 
 
-def ellipsize(input_str: str, max_len: int) -> str:
+def ellipsize(input_str, max_len):
     if len(input_str) <= max_len:
         return input_str
     trunc = f"{input_str[:max_len - 1]} {ELLIPSIS}"
@@ -30,7 +29,7 @@ def ellipsize(input_str: str, max_len: int) -> str:
     return trunc
 
 
-def wrap_text(input_str: str, max_len: int) -> str:
+def wrap_text(input_str, max_len):
     last_word_boundary: int
     trunc_lines = []
     processing_text = True
@@ -48,7 +47,7 @@ def wrap_text(input_str: str, max_len: int) -> str:
     return "\n".join(trunc_lines)
 
 
-def try_parse_int(input_str: str) -> Union[None, int]:
+def try_parse_int(input_str):
     try:
         parsed = int(input_str)
         return parsed
@@ -56,7 +55,7 @@ def try_parse_int(input_str: str) -> Union[None, int]:
         return None
 
 
-def get_brooks_team_id(bbref_team_id: str) -> str:
+def get_brooks_team_id(bbref_team_id):
     bbref_id_to_brooks_id_map = {
         "CHW": "CHA",
         "CHC": "CHN",
@@ -84,7 +83,7 @@ def parse_timestamp(input):
     return dict(hour=int(time_dict["hour"]), minute=int(time_dict["minute"]))
 
 
-def string_is_null_or_blank(s: str) -> bool:
+def string_is_null_or_blank(s):
     """Check if a string is null or consists entirely of whitespace."""
     return not s or s.isspace()
 
