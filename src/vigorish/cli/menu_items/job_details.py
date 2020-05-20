@@ -14,18 +14,16 @@ from vigorish.util.result import Result
 
 
 class JobDetailsMenuItem(MenuItem):
-    def __init__(self, db_session, config, scraped_data, db_job, menu_item_number) -> None:
-        self.db_session = db_session
-        self.config = config
-        self.scraped_data = scraped_data
+    def __init__(self, app, db_job, menu_item_number):
+        super().__init__(app)
         self.db_job = db_job
         self.job_status = db_job.status
-        self.job_details = self.db_job.job_details
+        self.job_details = db_job.job_details
         self.menu_item_text = f" {db_job.name} (Status: {db_job.status.name}, ID: {db_job.id})"
         self.menu_item_emoji = MENU_NUMBERS.get(menu_item_number, f"{menu_item_number}. ")
         self.exit_menu = False
 
-    def launch(self) -> Result:
+    def launch(self):
         subprocess.run(["clear"])
         print_message("*** Job Details ***", fg="bright_yellow", bold=True)
         job_details = report_dict(self.job_details, title="", title_prefix="", title_suffix="")

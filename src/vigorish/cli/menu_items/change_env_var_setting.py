@@ -7,24 +7,23 @@ from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no, prompt_user_yes_no_cancel
-from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 
 RESTART_WARNING = "\nApplication must be restarted for these changes to take effect!"
 
 
-class DotEnvSettingMenuItem(MenuItem):
-    def __init__(self, setting_name: str, dotenv_file: DotEnvFile) -> None:
+class EnvVarSettingMenuItem(MenuItem):
+    def __init__(self, app, setting_name):
+        super().__init__(app)
         self.menu_item_text = setting_name
         self.menu_item_emoji = EMOJI_DICT.get("SPIRAL")
         self.setting_name = setting_name
-        self.dotenv_file = dotenv_file
-        self.current_setting = self.dotenv_file.get_current_value(self.setting_name)
-        self.restart_required = self.dotenv_file.restart_required_on_change(self.setting_name)
+        self.current_setting = self.dotenv.get_current_value(setting_name)
+        self.restart_required = self.dotenv.restart_required_on_change(setting_name)
         self.exit_menu = False
 
-    def launch(self) -> Result:
+    def launch(self):
         subprocess.run(["clear"])
         env_var_name = f"Environment Variable: {self.setting_name}\n"
         env_var_value = f"Current Value: {self.current_setting}\n"
@@ -46,7 +45,7 @@ class DotEnvSettingMenuItem(MenuItem):
             if result.failure:
                 return Result.Ok(self.exit_menu)
             user_confirmed = result.value
-        result = self.dotenv_file.change_value(self.setting_name, new_value)
+        result = self.dotenv.change_value(self.setting_name, new_value)
         if not self.restart_required:
             return result
         print_message(RESTART_WARNING, fg="bright_magenta", bold=True)

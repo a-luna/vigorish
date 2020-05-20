@@ -1,6 +1,5 @@
 import subprocess
 from abc import ABC, abstractmethod
-from typing import List, Union, Dict
 
 from bullet import Bullet, ScrollBar, colors
 
@@ -10,29 +9,32 @@ from vigorish.util.string_helpers import ellipsize
 
 
 class Menu(MenuItem, ABC):
-    menu_text: str = ""
-    menu_items: List[MenuItem] = []
-    selected_menu_item_text: str = ""
-    pointer: str = ""
-    bullet_color: str = colors.bright(colors.foreground["default"])
-    check_color: str = colors.bright(colors.foreground["default"])
-    check_on_switch: str = colors.bright(colors.foreground["default"])
-    pointer_color: str = colors.bright(colors.foreground["default"])
+    menu_text = ""
+    selected_menu_item_text = ""
+    pointer = ""
+    menu_items = []
+    bullet_color = colors.bright(colors.foreground["default"])
+    check_color = colors.bright(colors.foreground["default"])
+    check_on_switch = colors.bright(colors.foreground["default"])
+    pointer_color = colors.bright(colors.foreground["default"])
+
+    def __init__(self, app):
+        super().__init__(app)
 
     @property
-    def menu_item_text_list(self) -> List[str]:
+    def menu_item_text_list(self):
         return [menu_item_text for menu_item_text in self.menu_item_dict.keys()]
 
     @property
-    def menu_item_dict(self) -> Dict[str, MenuItem]:
+    def menu_item_dict(self):
         return {ellipsize(item.menu_item_text, 70): item for item in self.menu_items}
 
     @property
-    def menu_item_count(self) -> int:
+    def menu_item_count(self):
         return len(self.menu_items)
 
     @property
-    def selected_menu_item_pos(self) -> int:
+    def selected_menu_item_pos(self):
         if not self.selected_menu_item_text:
             return 0
         menu_item_pos_dict = {
@@ -41,32 +43,36 @@ class Menu(MenuItem, ABC):
         return menu_item_pos_dict.get(self.selected_menu_item_text, 0)
 
     @property
-    def selected_menu_item(self) -> Union[None, MenuItem]:
+    def selected_menu_item(self):
         return self.menu_item_dict.get(self.selected_menu_item_text)
 
-    def launch(self) -> Result:
-        result: Result
+    def launch(self):
         exit_menu = False
         while not exit_menu:
             subprocess.run(["clear"])
             self.populate_menu_items()
-            if self.menu_item_count <= 8:
-                menu = self._get_bullet_menu()
-                menu.pos = self.selected_menu_item_pos
-            else:
-                menu = self._get_scroll_menu()
-            self.selected_menu_item_text = menu.launch()
-            result = self.selected_menu_item.launch()
+            result = self.prompt_user_for_menu_selection()
             if result.failure:
-                break
-            exit_menu = self.selected_menu_item.exit_menu
-        return result
+                return result
+            exit_menu = result.value
+        return Result.Ok(exit_menu)
+
+    def prompt_user_for_menu_selection(self):
+        if self.menu_item_count <= 8:
+            menu = self._get_bullet_menu()
+            menu.pos = self.selected_menu_item_pos
+        else:
+            menu = self._get_scroll_menu()
+        self.selected_menu_item_text = menu.launch()
+        result = self.selected_menu_item.launch()
+        exit_menu = self.selected_menu_item.exit_menu
+        return Result.Ok(exit_menu) if result.success else result
 
     @abstractmethod
-    def populate_menu_items(self) -> None:
+    def populate_menu_items(self):
         pass
 
-    def _get_bullet_menu(self) -> Bullet:
+    def _get_bullet_menu(self):
         return Bullet(
             self.menu_text,
             choices=self.menu_item_text_list,
@@ -81,7 +87,7 @@ class Menu(MenuItem, ABC):
             word_on_switch=self.word_on_switch,
         )
 
-    def _get_scroll_menu(self) -> ScrollBar:
+    def _get_scroll_menu(self):
         return ScrollBar(
             self.menu_text,
             choices=self.menu_item_text_list,

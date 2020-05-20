@@ -3,17 +3,23 @@ from abc import ABC, abstractmethod
 
 from bullet import colors
 
-from vigorish.util.result import Result
-
 
 class MenuItem(ABC):
-    _menu_item_text: str = ""
-    menu_item_emoji: str = ""
-    background_color: str = colors.foreground["default"]
-    background_on_switch: str = colors.foreground["default"]
-    word_color: str = colors.foreground["default"]
-    word_on_switch: str = colors.bright(colors.foreground["cyan"])
-    exit_menu: bool = False
+    _menu_item_text = ""
+    menu_item_emoji = ""
+    background_color = colors.background["default"]
+    background_on_switch = colors.background["default"]
+    word_color = colors.foreground["default"]
+    word_on_switch = colors.bright(colors.foreground["cyan"])
+    exit_menu = False
+
+    def __init__(self, app):
+        self.app = app
+        self.dotenv = app["dotenv"]
+        self.config = app["config"]
+        self.db_engine = app["engine"]
+        self.db_session = app["db_session"]
+        self.scraped_data = app["scraped_data"]
 
     @property
     def menu_item_text(self):

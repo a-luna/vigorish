@@ -27,14 +27,15 @@ UPDATE_MESSAGE = (
 
 
 class NpmInstallUpdate(MenuItem):
-    def __init__(self) -> None:
-        self.menu_item_text = "NPM Packages"
+    def __init__(self, app):
+        super().__init__(app)
+        self.menu_item_text = "Node Packages"
         self.menu_item_emoji = EMOJI_DICT.get("PACKAGE")
 
-    def launch(self) -> Result:
+    def launch(self):
         subprocess.run(["clear"])
         if not node_is_installed():
-            print_message(wrap_text(INSTALL_ERROR, max_len=70), fg="bright_red", bold=True)
+            print_message(INSTALL_ERROR, fg="bright_red", bold=True)
             pause(message="Press any key to continue...")
             return
         if not NODEJS_INBOX.exists():
@@ -47,7 +48,7 @@ class NpmInstallUpdate(MenuItem):
             prompt = INSTALL_MESSAGE
             temp_folder = TemporaryDirectory(dir=NIGHTMAREJS_FOLDER)
             command = f"npm install --timeout=9999999 --cache={temp_folder.name}"
-        print_message(wrap_text(prompt, max_len=70))
+        print_message(prompt)
         result = prompt_user_yes_no("Would you like to continue?")
         yes_response = result.value
         if not yes_response:

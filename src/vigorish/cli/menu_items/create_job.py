@@ -1,7 +1,7 @@
 """Menu item that allows the user to create a record of a new scrape job."""
 import subprocess
 
-from bullet import Check, Input, VerticalPrompt, colors
+from bullet import Input, VerticalPrompt
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import DateInput, prompt_user_yes_no, validate_scrape_dates, print_message
@@ -15,10 +15,8 @@ from vigorish.util.regex import JOB_NAME_PATTERN
 
 
 class CreateJobMenuItem(MenuItem):
-    def __init__(self, db_session, config, scraped_data) -> None:
-        self.db_session = db_session
-        self.config = config
-        self.scraped_data = scraped_data
+    def __init__(self, app):
+        super().__init__(app)
         self.menu_item_text = "Create New Job"
         self.menu_item_emoji = EMOJI_DICT.get("KNIFE", "")
 
@@ -28,7 +26,7 @@ class CreateJobMenuItem(MenuItem):
             data_sets = self.get_data_sets_to_scrape()
             dates_validated = False
             while not dates_validated:
-                job_details = self.get_scrape_job_details()
+                job_details = self.get_scrape_dates_from_user()
                 start_date = job_details[0][1]
                 end_date = job_details[1][1]
                 job_name = job_details[2][1]
@@ -55,7 +53,7 @@ class CreateJobMenuItem(MenuItem):
             result = job_runner.execute()
             if result.failure:
                 return result
-        return Result.Ok()
+        return Result.Ok(self.exit_menu)
 
     def get_data_sets_to_scrape(self):
         data_sets = []

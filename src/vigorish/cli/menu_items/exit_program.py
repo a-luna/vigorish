@@ -5,10 +5,11 @@ from vigorish.util.result import Result
 
 
 class ExitProgramMenuItem(MenuItem):
-    def __init__(self) -> None:
+    def __init__(self, app):
+        super().__init__(app)
         self.menu_item_text = "Exit"
         self.menu_item_emoji = EMOJI_DICT.get("EXIT", "")
         self.exit_menu = True
 
-    def launch(self) -> Result:
+    def launch(self):
         return Result.Ok()

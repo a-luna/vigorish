@@ -6,7 +6,6 @@ from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import prompt_user_yes_no_cancel, prompt_user_yes_no, print_message
-from vigorish.config.config_file import ConfigFile
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import ConfigType, DataSet
 from vigorish.util.result import Result
@@ -20,17 +19,17 @@ NUMERIC_SETTING_UNITS = {
 
 
 class ChangeSetttingMenuItem(MenuItem):
-    def __init__(self, setting_name: str, config: ConfigFile) -> None:
+    def __init__(self, app, setting_name):
+        super().__init__(app)
         self.menu_item_text = "Change Setting"
         self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
         self.pointer = EMOJI_DICT.get("HAND_POINTER", "")
-        self.config = config
         self.setting = self.config.all_settings.get(setting_name)
         self.setting_name_title = self.setting.setting_name_title
         self.setting_name = self.setting.setting_name
         self.data_type = self.setting.data_type
         self.possible_values = self.setting.possible_values
-        self.exit_menu = True
+        self.exit_menu = False
 
     @property
     def enum_dict(self):
