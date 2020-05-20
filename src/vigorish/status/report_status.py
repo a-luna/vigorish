@@ -49,12 +49,18 @@ def report_status_single_date(db_session, scraped_data, refresh_data, game_date,
                 "Missing IDs cannot be reported until all pitch logs have been scraped."
             )
     date_str = game_date.strftime(DATE_MONTH_NAME)
-    print_message(f"\n### STATUS REPORT FOR {date_str} ###", fg="bright_cyan", bold=True)
-    print_message(date_status.status_report(), fg="bright_cyan")
-    if missing_pitchfx:
-        print_message(pformat(missing_ids_str), fg="bright_cyan")
+    print_message(f"\n### OVERALL STATUS FOR {date_str} ###", fg="bright_cyan", bold=True)
+    print_message(date_status.status_report(), wrap=False, fg="bright_cyan")
     if report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS:
-        print_message(date_status.games_status_report(), fg="bright_cyan")
+        print_message(
+            f"\n### STATUS FOR EACH GAME PLAYED {date_str} ###", fg="bright_green", bold=True
+        )
+        print_message(date_status.games_status_report(), wrap=False, fg="bright_green")
+    if missing_pitchfx:
+        print_message(
+            f"\n### MISSING PITCHFX LOGS FOR {date_str} ###", fg="bright_magenta", bold=True
+        )
+        print_message(pformat(missing_ids_str), wrap=False, fg="bright_magenta")
     return Result.Ok()
 
 
@@ -159,9 +165,9 @@ def display_detailed_report_for_date_range(db_session, status_date_range, missin
                     "Missing IDs cannot be reported until all pitch logs have been scraped."
                 )
         print_message(f"\n### STATUS REPORT FOR {game_date_str} ###", fg="bright_cyan", bold=True)
-        print_message(date_status.status_report(), fg="bright_cyan")
+        print_message(date_status.status_report(), wrap=False, fg="bright_cyan")
         if missing_pitchfx:
-            print_message(pformat(missing_ids_str), fg="bright_cyan")
+            print_message(pformat(missing_ids_str), wrap=False, fg="bright_cyan")
     return Result.Ok()
 
 
@@ -177,7 +183,7 @@ def display_summary_report_for_date_range(db_session, start_date, end_date, stat
     for status in status_date_range:
         date_str = status.game_date_str
         status_description = status.scrape_status_description
-        print_message(f"{date_str}: {status_description}", fg="bright_magenta")
+        print_message(f"{date_str}: {status_description}", wrap=False, fg="bright_magenta")
     return Result.Ok()
 
 
