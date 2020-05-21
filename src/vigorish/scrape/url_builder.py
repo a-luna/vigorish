@@ -34,7 +34,6 @@ def create_url_for_brooks_games_for_date(db_job, scraped_data, game_date):
         "fileName": get_filename(scraped_data, data_set, game_date),
         "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
         "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-        "s3KeyPrefix": get_s3_folderpath(scraped_data, data_set, game_date),
         "url": get_url_for_brooks_games_for_date(game_date),
     }
     return Result.Ok([from_dict(data_class=UrlDetails, data=url_data)])
@@ -57,7 +56,6 @@ def create_urls_for_brooks_pitch_logs_for_date(db_job, scraped_data, game_date):
                 "fileName": get_filename(scraped_data, data_set, pitch_app_id),
                 "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
                 "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-                "s3KeyPrefix": get_s3_folderpath(scraped_data, data_set, game_date),
                 "url": pitch_log_url,
             }
             urls.append(from_dict(data_class=UrlDetails, data=url_data))
@@ -81,7 +79,6 @@ def create_urls_for_brooks_pitchfx_logs_for_date(db_job, scraped_data, game_date
                 "fileName": get_filename(scraped_data, data_set, pitch_app_id),
                 "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
                 "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-                "s3KeyPrefix": get_s3_folderpath(scraped_data, data_set, game_date),
                 "url": pitch_log.pitchfx_url,
             }
             urls.append(from_dict(data_class=UrlDetails, data=url_data))
@@ -95,7 +92,6 @@ def create_url_for_bbref_games_for_date(db_job, scraped_data, game_date):
         "fileName": get_filename(scraped_data, data_set, game_date),
         "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
         "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-        "s3KeyPrefix": get_s3_folderpath(scraped_data, data_set, game_date),
         "url": get_url_for_bbref_games_for_date(game_date),
     }
     return Result.Ok([from_dict(data_class=UrlDetails, data=url_data)])
@@ -115,7 +111,6 @@ def create_urls_for_bbref_boxscores_for_date(db_job, scraped_data, game_date):
             "fileName": get_filename(scraped_data, data_set, bbref_game_id),
             "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
             "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-            "s3KeyPrefix": get_s3_folderpath(scraped_data, data_set, game_date),
             "url": boxscore_url,
         }
         urls.append(from_dict(data_class=UrlDetails, data=url_data))
@@ -149,12 +144,6 @@ def get_local_folderpath(scraped_data, data_set, game_date):
 def get_scraped_html_folderpath(db_job, data_set):
     folderpath = db_job.scraped_html_folders[data_set]
     return str(folderpath.resolve())
-
-
-def get_s3_folderpath(scraped_data, data_set, game_date):
-    return scraped_data.file_helper.get_s3_folderpath(
-        doc_format=DocFormat.HTML, data_set=data_set, game_date=game_date
-    )
 
 
 def get_bbref_game_id_from_url(url):

@@ -14,13 +14,6 @@ class UrlDetails:
     fileName: str
     htmlFolderPath: str
     scrapedHtmlFolderpath: str
-    s3KeyPrefix: str
-
-    @property
-    def s3_object_key(self):
-        if self.s3KeyPrefix[-1] != "/":
-            self.s3KeyPrefix += "/"
-        return f"{self.s3KeyPrefix}{self.fileName}"
 
     @property
     def scraped_file_path(self):
@@ -56,11 +49,13 @@ class UrlDetails:
 
     @property
     def html(self):
-        if self.local_file_exists_with_content:
-            return self.local_page_content
-        if self.scraped_file_exists_with_content:
-            return self.scraped_page_content
-        return ""
+        return (
+            self.local_page_content
+            if self.local_file_exists_with_content
+            else self.scraped_page_content
+            if self.scraped_file_exists_with_content
+            else None
+        )
 
     def move_scraped_file_to_local_folder(self):
         self.scraped_file_path.replace(self.local_file_path)
@@ -77,5 +72,4 @@ class UrlDetails:
             "fileName": self.fileName,
             "htmlFolderPath": self.htmlFolderPath,
             "scrapedHtmlFolderpath": self.scrapedHtmlFolderpath,
-            "s3KeyPrefix": self.s3KeyPrefix,
         }
