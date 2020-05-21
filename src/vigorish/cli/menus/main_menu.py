@@ -23,6 +23,7 @@ class MainMenu(Menu):
         self.node_is_installed = False
         self.node_modules_folder_exists = False
         self.db_setup_complete = False
+        self.initial_status_check = True
         self.audit_report = {}
 
     @property
@@ -58,6 +59,7 @@ class MainMenu(Menu):
         exit_menu = False
         subprocess.run(["clear"])
         self.check_app_status()
+        self.initial_status_check = False
         while not exit_menu:
             subprocess.run(["clear"])
             if self.is_refresh_needed:
@@ -72,7 +74,7 @@ class MainMenu(Menu):
 
     def check_app_status(self):
         spinner = Halo(spinner="dots3", color=get_random_cli_color())
-        spinner.text = "Initializing vigorish..."
+        spinner.text = "Initializing..." if self.initial_status_check else "Updating metrics..."
         spinner.start()
         self.node_is_installed = node_is_installed()
         self.node_modules_folder_exists = node_modules_folder_exists()
@@ -104,15 +106,15 @@ class MainMenu(Menu):
 
     def display_initial_task_status(self):
         if self.node_is_installed:
-            print_message("\nNode.js Installed........: YES", fg="bright_cyan", bold=True)
+            print_message("Node.js Installed........: YES", fg="bright_green", bold=True)
         else:
-            print_message("\nNode.js Installed........: NO", fg="bright_red", bold=True)
+            print_message("Node.js Installed........: NO", fg="bright_red", bold=True)
         if self.node_modules_folder_exists:
-            print_message("Node Packages Installed..: YES", fg="bright_cyan", bold=True)
+            print_message("Node Packages Installed..: YES", fg="bright_green", bold=True)
         else:
             print_message("Node Packages Installed..: NO", fg="bright_red", bold=True)
         if self.db_setup_complete:
-            print_message("SQLite DB Initialized....: YES", fg="bright_cyan", bold=True)
+            print_message("SQLite DB Initialized....: YES", fg="bright_green", bold=True)
         else:
             print_message("SQLite DB Initialized....: NO", fg="bright_red", bold=True)
 
