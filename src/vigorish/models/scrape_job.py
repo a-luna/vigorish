@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
 from vigorish.enums import JobStatus, DataSet
-from vigorish.constants import DATA_SET_NAMES_LONG
+from vigorish.constants import DATA_SET_NAMES_SHORT
 from vigorish.config.database import Base
 from vigorish.util.datetime_util import (
     get_date_range,
@@ -110,7 +110,7 @@ class ScrapeJob(Base):
     @hybrid_property
     def job_details(self):
         job_name = f"{self.name} (ID: {self.id})" if self.name != self.id else self.id
-        data_set_dict = {value: name for name, value in DATA_SET_NAMES_LONG.items()}
+        data_set_dict = {value: name for name, value in DATA_SET_NAMES_SHORT.items()}
         return {
             "Job Name": job_name,
             "Status": self.status.name,

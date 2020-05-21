@@ -44,12 +44,11 @@ def update_status_brooks_pitch_logs_for_game_list(scraped_data, db_session, new_
     return Result.Ok()
 
 
-def update_status_brooks_pitch_logs_for_game(db_session, game_date, pitch_logs_for_game):
+def update_status_brooks_pitch_logs_for_game(db_session, pitch_logs_for_game):
     result = update_game_status_records(db_session, pitch_logs_for_game)
     if result.failure:
         return result
-    season = Season.find_by_year(db_session, game_date.year)
-    return create_pitch_appearance_status_records(db_session, season, pitch_logs_for_game)
+    return create_pitch_appearance_status_records(db_session, pitch_logs_for_game)
 
 
 def update_game_status_records(db_session, pitch_logs_for_game):

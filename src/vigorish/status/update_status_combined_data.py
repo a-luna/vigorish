@@ -4,7 +4,7 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_at_bat_id
 
 
-def update_pitch_app_audit_successful(db_session, scraped_data, bbref_game_id):
+def update_pitch_apps_for_game_audit_successful(db_session, scraped_data, bbref_game_id):
     combined_data = scraped_data.get_json_combined_data(bbref_game_id)
     if not combined_data:
         return Result.Fail(f"Failed to retrieve combined data file for {bbref_game_id}")
@@ -117,8 +117,8 @@ def update_pitch_app_combined_data(pitch_app_status, pitch_stats):
     setattr(pitch_app_status, "batters_faced_bbref", pitch_stats["batters_faced_bbref"])
 
 
-def update_pitch_app_list_audit_failed(db_session, pitch_app_id_list):
-    for pitch_app_id in pitch_app_id_list:
+def update_pitch_appearances_audit_failed(db_session, pitch_app_ids):
+    for pitch_app_id in pitch_app_ids:
         result = get_pitch_app_status(db_session, pitch_app_id)
         if result.failure:
             return result

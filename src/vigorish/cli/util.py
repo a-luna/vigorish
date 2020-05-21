@@ -171,7 +171,9 @@ def season_prompt(db_session, prompt=None):
 
 
 def data_sets_prompt(prompt):
-    instructions = "(use SPACE BAR to select a data set, ENTER to confirm your selections)"
+    if not prompt:
+        prompt = "Select one or multiple data sets from the list below:"
+    instructions = "(use SPACE BAR to select each data set, ENTER to confirm your selections)"
     data_sets_prompt = Check(
         prompt=f"{prompt}\n{instructions}",
         check=EMOJI_DICT.get("CHECK", ""),

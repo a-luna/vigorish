@@ -127,11 +127,11 @@ JOB_SPINNER_COLORS = {
 }
 
 DATA_SET_NAMES_LONG = {
-    "brooksbaseball.net Games for Date": DataSet.BROOKS_GAMES_FOR_DATE,
-    "brooksbaseball.net Pitch Logs for Game": DataSet.BROOKS_PITCH_LOGS,
-    "brooksbaseball.net PitchFX Logs": DataSet.BROOKS_PITCHFX,
-    "bbref.com Games for Date": DataSet.BBREF_GAMES_FOR_DATE,
-    "bbref.com Boxscores": DataSet.BBREF_BOXSCORES,
+    "Games for Date (bbref.com)": DataSet.BBREF_GAMES_FOR_DATE,
+    "Games for Date (brooksbaseball.net)": DataSet.BROOKS_GAMES_FOR_DATE,
+    "Boxscores (bbref.com)": DataSet.BBREF_BOXSCORES,
+    "Pitch Logs for Game (brooksbaseball.net)": DataSet.BROOKS_PITCH_LOGS,
+    "PitchFX Logs (brooksbaseball.net)": DataSet.BROOKS_PITCHFX,
 }
 
 DATA_SET_NAMES_SHORT = {str(ds): ds for ds in DataSet}

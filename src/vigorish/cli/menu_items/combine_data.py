@@ -10,8 +10,8 @@ from vigorish.cli.util import print_message, user_options_prompt
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import combine_data
 from vigorish.status.update_status_combined_data import (
-    update_pitch_app_audit_successful,
-    update_pitch_app_list_audit_failed,
+    update_pitch_apps_for_game_audit_successful,
+    update_pitch_appearances_audit_failed,
 )
 from vigorish.util.regex import AT_BAT_ID_REGEX
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
@@ -102,11 +102,15 @@ class CombineGameDataMenuItem(MenuItem):
         spinner.stop()
         spinner.clear()
         if result.failure:
+            pitch_app_ids = self.parse_pitch_app_ids_from_error_message(result.error)
+            result = update_pitch_appearances_audit_failed(self.db_session, pitch_app_ids)
+            if result.failure:
+                return result
             error_message = f"Error prevented scraped data being combined for {combine_game_id}:"
             print_message(error_message, fg="bright_red", bold=True)
             print_message(result.error, fg="bright_red")
         else:
-            result = update_pitch_app_audit_successful(
+            result = update_pitch_apps_for_game_audit_successful(
                 self.db_session, self.scraped_data, combine_game_id
             )
             if result.failure:
@@ -129,13 +133,14 @@ class CombineGameDataMenuItem(MenuItem):
                 result = combine_data(self.db_session, self.scraped_data, bbref_game_id)
                 if result.failure:
                     audit_errors[bbref_game_id] = result.error
-                    result = self.update_pitch_app_list_audit_failed(result.error)
+                    pitch_app_ids = self.parse_pitch_app_ids_from_error_message(result.error)
+                    result = update_pitch_appearances_audit_failed(self.db_session, pitch_app_ids)
                     if result.failure:
                         return result
                     pbar.update()
                     continue
                 audit_complete[bbref_game_id] = result.value
-                result = update_pitch_app_audit_successful(
+                result = update_pitch_apps_for_game_audit_successful(
                     self.db_session, self.scraped_data, bbref_game_id
                 )
                 if result.failure:
@@ -165,14 +170,12 @@ class CombineGameDataMenuItem(MenuItem):
                 print_message(error_header, wrap=False, fg="bright_red", bold=True)
                 print_message(error_details, wrap=False, fg="bright_red")
 
-    @snoop
-    def update_pitch_app_list_audit_failed(self, error_message):
+    def parse_pitch_app_ids_from_error_message(self, error_message):
         failed_pitch_app_ids = []
         for match in AT_BAT_ID_REGEX.finditer(error_message):
             at_bat_data = validate_at_bat_id(match[0]).value
             failed_pitch_app_ids.append(at_bat_data["pitch_app_id"])
-        failed_pitch_app_ids = list(set(failed_pitch_app_ids))
-        return update_pitch_app_list_audit_failed(self.db_session, failed_pitch_app_ids)
+        return list(set(failed_pitch_app_ids))
 
     def audit_type_prompt(self):
         prompt = (

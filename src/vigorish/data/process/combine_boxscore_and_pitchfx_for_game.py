@@ -350,7 +350,6 @@ def create_error_report(missing_at_bat_ids, player_id_dict, ids_are_pfx_only=Tru
         at_bat["pitcher_name"] = get_player_name(at_bat["pitcher_mlb_id"], player_id_dict)
         at_bat["batter_name"] = get_player_name(at_bat["batter_mlb_id"], player_id_dict)
     missing_at_bat_pitch_app_ids = list(set(ab["pitch_app_id"] for ab in at_bat_data))
-    bbref_game_id = list(set(ab["game_id"] for ab in at_bat_data))[0]
     summary = (
         f'{len(missing_at_bat_ids)} at bat{"s" if len(missing_at_bat_ids) > 1 else ""} from '
         f'{"PitchFX" if ids_are_pfx_only else "BBRef boxscore"}, NOT found in '

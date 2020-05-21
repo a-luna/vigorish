@@ -27,7 +27,7 @@ class JobDetailsMenuItem(MenuItem):
         subprocess.run(["clear"])
         print_message("*** Job Details ***", fg="bright_yellow", bold=True)
         job_details = report_dict(self.job_details, title="", title_prefix="", title_suffix="")
-        print_message(f"{job_details}\n", fg="bright_yellow")
+        print_message(f"{job_details}\n", wrap=False, fg="bright_yellow")
         if self.db_job.errors:
             print_message("*** Errors ***", fg="bright_red", bold=True)
             print_message(self.db_job.error_messages, fg="bright_red")

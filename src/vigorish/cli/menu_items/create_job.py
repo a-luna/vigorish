@@ -83,7 +83,7 @@ class CreateJobMenuItem(MenuItem):
             f"End Date....: {end_date.strftime(DATE_ONLY_2)}\n"
             f"Data Sets...: {data_set_space.join(data_sets.values())}\n"
         )
-        print_message(f"{job_details}\n", fg="bright_yellow")
+        print_message(f"{job_details}\n", wrap=False, fg="bright_yellow")
         result = prompt_user_yes_no(prompt="Are the details above correct?")
         return result.value
 

@@ -80,4 +80,4 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         pass
 
     def update_status(self, game_date, parsed_data):
-        return update_status_brooks_pitch_logs_for_game(self.db_session, game_date, parsed_data)
+        return update_status_brooks_pitch_logs_for_game(self.db_session, parsed_data)
