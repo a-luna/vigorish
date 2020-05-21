@@ -1,9 +1,16 @@
 from datetime import datetime
 
+from vigorish.config.database import Season, DateScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
+from vigorish.status.update_status_bbref_games_for_date import (
+    update_bbref_games_for_date_single_date,
+)
+from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
+
+from tests.util import reset_date_scrape_status_after_parsed_bbref_games_for_date
 
 DATA_SET = DataSet.BBREF_GAMES_FOR_DATE
 GAME_DATE = datetime(2018, 7, 26)
@@ -48,6 +55,23 @@ def test_persist_bbref_games_for_date(scraped_data):
     assert result.success
     json_filepath.unlink()
     assert not json_filepath.exists()
+
+
+def test_update_database_bbref_games_for_date(db_session, scraped_data):
+    games_for_date = parse_bbref_games_for_date_from_html(scraped_data)
+    assert isinstance(games_for_date, BBRefGamesForDate)
+    date_status = db_session.query(DateScrapeStatus).get(GAME_DATE.strftime(DATE_ONLY_TABLE_ID))
+    assert date_status
+    assert date_status.scraped_daily_dash_bbref == 0
+    assert date_status.game_count_bbref == 0
+    result = Season.is_date_in_season(db_session, GAME_DATE)
+    assert result.success
+    season = result.value
+    result = update_bbref_games_for_date_single_date(db_session, season, games_for_date)
+    assert result.success
+    assert date_status.scraped_daily_dash_bbref == 1
+    assert date_status.game_count_bbref == 11
+    reset_date_scrape_status_after_parsed_bbref_games_for_date(db_session, GAME_DATE)
 
 
 def verify_bbref_games_for_date_jul_26_2018(games_for_date):

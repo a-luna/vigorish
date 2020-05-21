@@ -1,13 +1,24 @@
 from datetime import datetime
 
+from vigorish.config.database import Season, DateScrapeStatus, GameScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.parse_html import parse_brooks_dashboard_page
+from vigorish.status.update_status_brooks_games_for_date import (
+    update_brooks_games_for_date_single_date,
+)
+from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
+
+from tests.util import (
+    reset_date_scrape_status_after_parsed_brooks_games_for_date,
+    reset_game_scrape_status_after_parsed_brooks_games_for_date,
+)
 
 DATA_SET = DataSet.BROOKS_GAMES_FOR_DATE
 GAME_DATE = datetime(2018, 4, 17)
+GAME_ID = "gid_2018_04_17_lanmlb_sdnmlb_1"
 
 
 def get_brooks_url_for_date(game_date):
@@ -53,6 +64,36 @@ def test_persist_brooks_games_for_date(db_session, scraped_data):
     assert result.success
     json_filepath.unlink()
     assert not json_filepath.exists()
+
+
+def test_update_database_brooks_games_for_date(db_session, scraped_data):
+    games_for_date = parse_brooks_games_for_date_from_html(db_session, scraped_data)
+    assert isinstance(games_for_date, BrooksGamesForDate)
+    date_status = db_session.query(DateScrapeStatus).get(GAME_DATE.strftime(DATE_ONLY_TABLE_ID))
+    assert date_status
+    assert date_status.scraped_daily_dash_brooks == 0
+    assert date_status.game_count_brooks == 0
+    game_status = GameScrapeStatus.find_by_bb_game_id(db_session, GAME_ID)
+    assert game_status
+    assert game_status.game_time_hour is None
+    assert game_status.game_time_minute is None
+    assert game_status.game_time_zone is None
+    assert game_status.pitch_app_count_brooks == 0
+    result = Season.is_date_in_season(db_session, GAME_DATE)
+    assert result.success
+    season = result.value
+    result = update_brooks_games_for_date_single_date(
+        db_session, season, games_for_date, GAME_DATE
+    )
+    assert result.success
+    assert date_status.scraped_daily_dash_brooks == 1
+    assert date_status.game_count_brooks == 16
+    assert game_status.game_time_hour == 10
+    assert game_status.game_time_minute == 10
+    assert game_status.game_time_zone == "America/New_York"
+    assert game_status.pitch_app_count_brooks == 15
+    reset_date_scrape_status_after_parsed_brooks_games_for_date(db_session, GAME_DATE)
+    reset_game_scrape_status_after_parsed_brooks_games_for_date(db_session, games_for_date)
 
 
 def verify_brooks_games_for_date_apr_17_2018(games_for_date):

@@ -16,7 +16,7 @@ DB_FILE = TESTS_FOLDER.joinpath("vig_test.db")
 SQLITE_URL = f"sqlite:///{DB_FILE}"
 
 
-@pytest.fixture(scope="db_session")
+@pytest.fixture(scope="session")
 def dotenv(request):
     if DOTENV_FILE.exists():
         return DotEnvFile(dotenv_filepath=DOTENV_FILE)
@@ -24,12 +24,12 @@ def dotenv(request):
     return DotEnvFile(dotenv_filepath=DOTENV_FILE)
 
 
-@pytest.fixture(scope="db_session")
+@pytest.fixture(scope="session")
 def config(dotenv, request):
     return ConfigFile(config_file_path=CONFIG_FILE)
 
 
-@pytest.fixture(scope="db_session")
+@pytest.fixture(scope="session")
 def db_session(request):
     db_engine = create_engine(SQLITE_URL)
     session_maker = sessionmaker(bind=db_engine)
@@ -42,6 +42,6 @@ def db_session(request):
     return db_session
 
 
-@pytest.fixture(scope="db_session")
+@pytest.fixture(scope="session")
 def scraped_data(config, db_session):
     return ScrapedData(db_session=db_session, config=config)

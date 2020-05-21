@@ -1,9 +1,13 @@
 from datetime import datetime
 
+from vigorish.config.database import PitchAppScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.scrape.brooks_pitchfx.parse_html import parse_pitchfx_log
+from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
 from vigorish.util.result import Result
+
+from tests.util import reset_pitch_app_scrape_status_after_parsed_pitchfx
 
 DATA_SET = DataSet.BROOKS_PITCHFX
 GAME_DATE = datetime(2018, 4, 1)
@@ -46,6 +50,20 @@ def test_persist_brooks_pitchfx(scraped_data):
     assert result.success
     json_filepath.unlink()
     assert not json_filepath.exists()
+
+
+def test_update_database_pitchfx(db_session, scraped_data):
+    pitchfx_log = parse_brooks_pitchfx_from_html(scraped_data)
+    assert isinstance(pitchfx_log, BrooksPitchFxLog)
+    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, PITCH_APP_ID)
+    assert pitch_app_status
+    assert pitch_app_status.scraped_pitchfx == 0
+    assert pitch_app_status.pitch_count_pitchfx == 0
+    result = update_pitch_appearance_status_records(db_session, pitchfx_log)
+    assert result.success
+    assert pitch_app_status.scraped_pitchfx == 1
+    assert pitch_app_status.pitch_count_pitchfx == 92
+    reset_pitch_app_scrape_status_after_parsed_pitchfx(db_session, PITCH_APP_ID)
 
 
 def verify_brooks_pitchfx_OAK201804010_660271(pitchfx_log):

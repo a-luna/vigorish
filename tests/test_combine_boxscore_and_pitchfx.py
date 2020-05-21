@@ -2,22 +2,23 @@ from pathlib import PosixPath
 
 from vigorish.config.database import PitchAppScrapeStatus
 from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import combine_data
-from vigorish.status.update_status_combined_data import update_pitch_app_audit_successful
+from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_audit_successful
 
-BBREF_GAME_ID_NO_ERRORS = "TOR201906170"
-BBREF_GAME_ID_WITH_ERRORS = "NYA201906112"
-BBREF_GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
+from tests.util import reset_pitch_app_scrape_status_after_combined_data
+
+GAME_ID_NO_ERRORS = "TOR201906170"
+NO_ERRORS_PITCH_APP = "TOR201906170_429719"
+GAME_ID_WITH_ERRORS = "NYA201906112"
+GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
 
 
 def test_combine_data_no_errors(db_session, scraped_data):
-    result = combine_data(db_session, scraped_data, BBREF_GAME_ID_NO_ERRORS)
+    result = combine_data(db_session, scraped_data, GAME_ID_NO_ERRORS)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath and isinstance(json_filepath, PosixPath)
-    result = scraped_data.json_storage.decode_json_combined_data_local_file(
-        BBREF_GAME_ID_NO_ERRORS
-    )
+    result = scraped_data.json_storage.decode_json_combined_data_local_file(GAME_ID_NO_ERRORS)
     assert result.success
     combined_data = result.value
     assert "pitchfx_vs_bbref_audit" in combined_data
@@ -48,21 +49,51 @@ def test_combine_data_no_errors(db_session, scraped_data):
     assert "duplicate_pitchfx_removed_count" in data_audit
     assert data_audit["duplicate_pitchfx_removed_count"] == 1
 
-    result = update_pitch_app_audit_successful(db_session, scraped_data, BBREF_GAME_ID_NO_ERRORS)
-    assert result.success
-    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, "TOR201906170_429719")
+    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, NO_ERRORS_PITCH_APP)
     assert pitch_app_status
+    assert pitch_app_status.audit_successful == 0
+    assert pitch_app_status.audit_failed == 0
+    assert pitch_app_status.pitchfx_data_complete == 0
+    assert pitch_app_status.pitch_count_pitch_log == 38
+    assert pitch_app_status.pitch_count_bbref == 0
+    assert pitch_app_status.pitch_count_pitch_log == 38
+    assert pitch_app_status.pitch_count_pitchfx_audited == 0
+    assert pitch_app_status.duplicate_pitchfx_removed_count == 0
+    assert pitch_app_status.pitch_count_missing_pitchfx == 0
+    assert pitch_app_status.missing_pitchfx_is_valid == 0
+    assert pitch_app_status.batters_faced_bbref == 0
+    assert pitch_app_status.total_at_bats_pitchfx_complete == 0
+    assert pitch_app_status.total_at_bats_missing_pitchfx == 0
+
+    result = update_pitch_apps_for_game_audit_successful(
+        db_session, scraped_data, GAME_ID_NO_ERRORS
+    )
+    assert result.success
+
+    assert pitch_app_status.audit_successful == 1
+    assert pitch_app_status.audit_failed == 0
+    assert pitch_app_status.pitchfx_data_complete == 1
+    assert pitch_app_status.pitch_count_pitch_log == 38
+    assert pitch_app_status.pitch_count_bbref == 38
+    assert pitch_app_status.pitch_count_pitch_log == 38
+    assert pitch_app_status.pitch_count_pitchfx_audited == 38
+    assert pitch_app_status.duplicate_pitchfx_removed_count == 0
+    assert pitch_app_status.pitch_count_missing_pitchfx == 0
+    assert pitch_app_status.missing_pitchfx_is_valid == 1
+    assert pitch_app_status.batters_faced_bbref == 10
+    assert pitch_app_status.total_at_bats_pitchfx_complete == 10
+    assert pitch_app_status.total_at_bats_missing_pitchfx == 0
+
+    reset_pitch_app_scrape_status_after_combined_data(db_session, GAME_ID_NO_ERRORS)
 
 
 def test_combine_data_with_errors(db_session, scraped_data):
-    result = combine_data(db_session, scraped_data, BBREF_GAME_ID_WITH_ERRORS)
+    result = combine_data(db_session, scraped_data, GAME_ID_WITH_ERRORS)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath and isinstance(json_filepath, PosixPath)
-    result = scraped_data.json_storage.decode_json_combined_data_local_file(
-        BBREF_GAME_ID_WITH_ERRORS
-    )
+    result = scraped_data.json_storage.decode_json_combined_data_local_file(GAME_ID_WITH_ERRORS)
     assert result.success
     combined_data = result.value
     assert "pitchfx_vs_bbref_audit" in combined_data
@@ -102,13 +133,13 @@ def test_combine_data_with_errors(db_session, scraped_data):
 
 
 def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
-    result = combine_data(db_session, scraped_data, BBREF_GAME_ID_NO_PFX_FOR_PITCH_APP)
+    result = combine_data(db_session, scraped_data, GAME_ID_NO_PFX_FOR_PITCH_APP)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath and isinstance(json_filepath, PosixPath)
     result = scraped_data.json_storage.decode_json_combined_data_local_file(
-        BBREF_GAME_ID_NO_PFX_FOR_PITCH_APP
+        GAME_ID_NO_PFX_FOR_PITCH_APP
     )
     assert result.success
     combined_data = result.value

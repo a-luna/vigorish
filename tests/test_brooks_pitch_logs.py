@@ -1,14 +1,24 @@
 from datetime import datetime
 
+from vigorish.config.database import GameScrapeStatus, PitchAppScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from vigorish.scrape.brooks_pitch_logs.models.pitch_log import BrooksPitchLog
 from vigorish.scrape.brooks_pitch_logs.parse_html import parse_pitch_log
+from vigorish.status.update_status_brooks_pitch_logs import (
+    update_status_brooks_pitch_logs_for_game,
+)
 from vigorish.util.result import Result
+
+from tests.util import (
+    reset_game_scrape_status_after_parsed_pitch_logs,
+    reset_pitch_app_scrape_status_after_parsed_pitch_logs,
+)
 
 DATA_SET = DataSet.BROOKS_PITCH_LOGS
 GAME_DATE = datetime(2018, 6, 17)
 BB_GAME_ID = "gid_2018_06_17_wasmlb_tormlb_1"
+PITCH_APP_ID = "TOR201806170_461325"
 
 
 def parse_brooks_pitch_logs_for_game_from_html(scraped_data):
@@ -57,6 +67,26 @@ def test_persist_brooks_pitch_logs_for_game(scraped_data):
     assert result.success
     json_filepath.unlink()
     assert not json_filepath.exists()
+
+
+def test_update_database_brooks_pitch_logs_for_game(db_session, scraped_data):
+    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(scraped_data)
+    assert isinstance(pitch_logs_for_game, BrooksPitchLogsForGame)
+    game_status = GameScrapeStatus.find_by_bb_game_id(db_session, BB_GAME_ID)
+    assert game_status
+    assert game_status.scraped_brooks_pitch_logs == 0
+    assert game_status.total_pitch_count_brooks == 0
+    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, PITCH_APP_ID)
+    assert not pitch_app_status
+    result = update_status_brooks_pitch_logs_for_game(db_session, pitch_logs_for_game)
+    assert result.success
+    assert game_status.scraped_brooks_pitch_logs == 1
+    assert game_status.total_pitch_count_brooks == 329
+    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, PITCH_APP_ID)
+    assert pitch_app_status
+    assert pitch_app_status.pitch_count_pitch_log == 25
+    reset_game_scrape_status_after_parsed_pitch_logs(db_session, BB_GAME_ID)
+    reset_pitch_app_scrape_status_after_parsed_pitch_logs(db_session, pitch_logs_for_game)
 
 
 def verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game):
