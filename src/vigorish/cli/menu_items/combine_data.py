@@ -17,7 +17,6 @@ from vigorish.util.regex import AT_BAT_ID_REGEX
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.string_helpers import validate_bbref_game_id, validate_at_bat_id
 from vigorish.util.result import Result
-import snoop
 
 
 class CombineGameDataMenuItem(MenuItem):

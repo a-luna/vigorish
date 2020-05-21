@@ -25,7 +25,7 @@ PROMPT_TEXT = "Choose the type of report you wish to generate from the options b
 class StatusReportMenuItem(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.menu_item_text = f"Status Reports"
+        self.menu_item_text = "Status Reports"
         self.menu_item_emoji = EMOJI_DICT.get("CHART")
         self.exit_menu = False
 

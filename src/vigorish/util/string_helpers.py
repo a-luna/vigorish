@@ -65,7 +65,7 @@ def parse_date(input_str):
     if not input_str:
         raise ValueError("Input string was empty or None")
     if len(input_str) != 8:
-        raise ValueError(f"String is not in the expected YYYYMMDD format! (len(input_str) != 8)")
+        raise ValueError(f"String is not in the expected YYYYMMDD format! (len({input_str}) != 8)")
     year_str = input_str[0:4]
     month_str = input_str[4:6]
     day_str = input_str[6:8]

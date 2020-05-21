@@ -12,7 +12,6 @@ from vigorish.scrape.mlb_player_info.scrape_mlb_player_info import scrape_mlb_pl
 from vigorish.util.list_helpers import compare_lists, flatten_list2d, report_dict
 from vigorish.util.string_helpers import validate_at_bat_id
 from vigorish.util.result import Result
-import snoop
 
 
 def combine_data(db_session, scraped_data, bbref_game_id):
