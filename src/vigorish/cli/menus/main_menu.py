@@ -96,7 +96,7 @@ class MainMenu(Menu):
         if self.audit_report:
             for year, report in self.audit_report.items():
                 report_str = (
-                    f"MLB {year}: {len(report['scraped'])} Total, "
+                    f"MLB {year}: {len(report['scraped'])} Scraped, "
                     f"{len(report['successful'])} Combined, {len(report['failed'])} Failed"
                 )
                 print_message(report_str, wrap=False)

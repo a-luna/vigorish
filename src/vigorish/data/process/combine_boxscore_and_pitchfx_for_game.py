@@ -347,17 +347,22 @@ def reconcile_at_bat_ids(grouped_event_dict, all_pfx_data_for_game, player_id_di
 def create_error_report(missing_at_bat_ids, player_id_dict, ids_are_pfx_only=True):
     at_bat_data = [validate_at_bat_id(ab_id).value for ab_id in missing_at_bat_ids]
     for at_bat in at_bat_data:
+        at_bat["pitcher_bbref_id"] = get_player_bbref_id(at_bat["pitcher_mlb_id"], player_id_dict)
         at_bat["pitcher_name"] = get_player_name(at_bat["pitcher_mlb_id"], player_id_dict)
+        at_bat["batter_bbref_id"] = get_player_bbref_id(at_bat["batter_mlb_id"], player_id_dict)
         at_bat["batter_name"] = get_player_name(at_bat["batter_mlb_id"], player_id_dict)
     missing_at_bat_pitch_app_ids = list(set(ab["pitch_app_id"] for ab in at_bat_data))
     summary = (
         f'{len(missing_at_bat_ids)} at bat{"s" if len(missing_at_bat_ids) > 1 else ""} from '
         f'{"PitchFX" if ids_are_pfx_only else "BBRef boxscore"}, NOT found in '
-        f'{"BBRef boxscore" if ids_are_pfx_only else "PitchFX"}\n(at bat'
-        f'{"s are" if len(missing_at_bat_ids) > 1 else " is"} from '
-        f"{len(missing_at_bat_pitch_app_ids)} pithing appearance"
-        f'{"s" if len(missing_at_bat_ids) > 1 else ""})\n'
+        f'{"BBRef boxscore" if ids_are_pfx_only else "PitchFX"}'
     )
+    if len(missing_at_bat_ids) > 1:
+        summary += (
+            f'\n(at bat{"s are" if len(missing_at_bat_ids) > 1 else " is"} from '
+            f"{len(missing_at_bat_pitch_app_ids)} pithing appearance"
+            f'{"s" if len(missing_at_bat_ids) > 1 else ""})\n'
+        )
     detail = "\n\n".join(report_dict(at_bat) for at_bat in at_bat_data)
     return f"{summary}\n{detail}"
 

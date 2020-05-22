@@ -280,7 +280,7 @@ class ScrapedData:
             DataSet.BBREF_BOXSCORES: self.get_all_bbref_game_ids_scraped_html,
         }
         url_ids = scraped_html_s3_dict[data_set](year)
-        return self.validate_url_ids(data_set, url_ids)
+        return self.validate_url_ids(doc_format, data_set, url_ids)
 
     def validate_url_ids(self, doc_format, data_set, url_ids):
         url_ids = [uid for uid in url_ids if URL_ID_REGEX[doc_format][data_set].search(uid)]
