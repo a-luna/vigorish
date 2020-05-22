@@ -9,6 +9,7 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, user_options_prompt
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import combine_data
+from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.status.update_status_combined_data import (
     update_pitch_apps_for_game_audit_successful,
     update_pitch_appearances_audit_failed,
@@ -26,6 +27,9 @@ class CombineGameDataMenuItem(MenuItem):
         self.menu_item_text = "Combine Game Data"
         self.menu_item_emoji = EMOJI_DICT.get("BANG", "")
         self.exit_menu = False
+        self.combine_condition = self.config.get_current_setting(
+            "SCRAPED_DATA_COMBINE_CONDITION", DataSet.ALL
+        )
 
     def launch(self):
         subprocess.run(["clear"])
@@ -58,7 +62,13 @@ class CombineGameDataMenuItem(MenuItem):
             return result
         year = result.value
         print()
-        combine_games = self.audit_report[year]["scraped"]
+        combine_games = (
+            self.audit_report[year]["scraped"]
+            if self.combine_condition == ScrapeCondition.ONLY_MISSING_DATA
+            else self.get_all_eligible_game_ids(year)
+            if self.combine_condition == ScrapeCondition.ALWAYS
+            else None
+        )
         msg = f"Combining scraped data for {len(combine_games)} games (Season: MLB {year})..."
         print_message(msg, fg="bright_yellow", bold=True)
         (audit_errors, update_errors, audit_complete) = self.combine_selected_games(combine_games)
@@ -90,7 +100,13 @@ class CombineGameDataMenuItem(MenuItem):
         if result.failure:
             return result
         year = result.value
-        scraped_games = self.audit_report[year]["scraped"]
+        scraped_games = (
+            self.audit_report[year]["scraped"]
+            if self.combine_condition == ScrapeCondition.ONLY_MISSING_DATA
+            else self.get_all_eligible_game_ids(year)
+            if self.combine_condition == ScrapeCondition.ALWAYS
+            else None
+        )
         result = self.game_id_prompt(scraped_games)
         if result.failure:
             return result
@@ -217,7 +233,23 @@ class CombineGameDataMenuItem(MenuItem):
             list(set([map["game_date"] for map in self.get_scraped_game_date_map(year)]))
         )
 
+    def get_all_eligible_game_ids(self, year):
+        return (
+            self.audit_report[year]["scraped"]
+            + self.audit_report[year]["successful"]
+            + self.audit_report[year]["failed"]
+        )
+
     def get_scraped_game_date_map(self, year):
+        return (
+            self.get_never_audited_game_date_map(year)
+            if self.combine_condition == ScrapeCondition.ONLY_MISSING_DATA
+            else self.get_all_eligible_game_date_map(year)
+            if self.combine_condition == ScrapeCondition.ALWAYS
+            else None
+        )
+
+    def get_never_audited_game_date_map(self, year):
         return [self.get_game_id_date_map(gid) for gid in self.audit_report[year]["scraped"]]
 
     def get_successful_game_date_map(self, year):
@@ -225,6 +257,9 @@ class CombineGameDataMenuItem(MenuItem):
 
     def get_failed_game_date_map(self, year):
         return [self.get_game_id_date_map(gid) for gid in self.audit_report[year]["failed"]]
+
+    def get_all_eligible_game_date_map(self, year):
+        return [self.get_game_id_date_map(gid) for gid in self.get_all_eligible_game_ids(year)]
 
     def get_game_id_date_map(self, bbref_game_id):
         game_dict = validate_bbref_game_id(bbref_game_id).value

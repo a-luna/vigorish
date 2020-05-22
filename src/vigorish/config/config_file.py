@@ -396,6 +396,17 @@ class ConfigFile:
                 ),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
+            "SCRAPED_DATA_COMBINE_CONDITION": {
+                "CONFIG_TYPE": "Enum",
+                "ENUM_NAME": "ScrapeCondition",
+                "DESCRIPTION": (
+                    "By default, the process to combine and audit all scraped data for a "
+                    "single game is done only once (ONLY_MISSING_DATA). You can overwrite "
+                    "existing data by selecting ALWAYS, or prevent any data from being combined "
+                    "by selecting NEVER."
+                ),
+                "SAME_SETTING_FOR_ALL_DATA_SETS": True,
+            },
             "COMBINED_DATA_STORAGE": {
                 "CONFIG_TYPE": "Enum",
                 "ENUM_NAME": "CombinedDataStorageOption",

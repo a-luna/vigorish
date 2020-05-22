@@ -60,6 +60,7 @@ class ConfigSetting:
         return self.setting_name in [
             "STATUS_REPORT",
             "S3_BUCKET",
+            "SCRAPED_DATA_COMBINE_CONDITION",
             "COMBINED_DATA_STORAGE",
             "COMBINED_DATA_LOCAL_FOLDER_PATH",
             "COMBINED_DATA_S3_FOLDER_PATH",
