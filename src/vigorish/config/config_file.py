@@ -260,6 +260,7 @@ class ConfigFile:
             "JSON_STORAGE": JsonStorageOption.LOCAL_FOLDER.name,
             "JSON_LOCAL_FOLDER_PATH": "json_storage/{year}/{data_set}/",
             "JSON_S3_FOLDER_PATH": "{year}/{data_set}",
+            "SCRAPED_DATA_COMBINE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA.name,
             "COMBINED_DATA_STORAGE": CombinedDataStorageOption.LOCAL_FOLDER.name,
             "COMBINED_DATA_LOCAL_FOLDER_PATH": "json_storage/{year}/combined_data",
             "COMBINED_DATA_S3_FOLDER_PATH": "{year}/combined_data",

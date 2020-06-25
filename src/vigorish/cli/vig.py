@@ -25,6 +25,7 @@ from vigorish.util.datetime_util import today_str, current_year
 
 VIG_FOLDER = Path.home().joinpath(".vig")
 
+# TODO: Add Refresh Game Data menu option
 # TODO: New Status Report menu option - Single Game. User can provide either BB or BR ID
 # TODO: Another Status Report option - Pitch Appearance. Simply call .display() method
 # TODO: New Bulk Download menu option - Get all HTML, JSON, or BOTH from S3 for a single season

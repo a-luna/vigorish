@@ -42,9 +42,7 @@ def report_dict(dict, title="", title_prefix="### ", title_suffix=" ###", extra_
         if type(v) is datetime:
             v = v.strftime(DT_STR_FORMAT_ALL)
         c = max_length - len(k)
-        d = "." * c
-        dict_item = f"{k}{d}: {v}"
-        report += f"\n{wrap_text(dict_item, max_len=70)}"
+        report += f"\n{k}{'.' * c}: {v}"
     return report.strip()
 
 

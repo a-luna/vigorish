@@ -89,7 +89,7 @@ class ChangeSetttingMenuItem(MenuItem):
             choices=[choice for choice in self.enum_dict.keys()],
             bullet="",
             shift=1,
-            indent=2,
+            indent=0,
             margin=2,
             bullet_color=colors.foreground["default"],
             background_color=colors.foreground["default"],

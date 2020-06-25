@@ -152,8 +152,8 @@ class StatusReportMenuItem(MenuItem):
         result = season_prompt(self.db_session, "Select the MLB Season to report:")
         if result.failure:
             return result
-        year = result.value
-        return Result.Ok(year)
+        season = result.value
+        return Result.Ok(season.year)
 
     def prompt_user_refresh_data(self):
         prompt = "Would you like to refresh the data before generating the report?"

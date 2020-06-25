@@ -19,6 +19,10 @@ def get_random_cli_color():
     return colors[randint(0, len(colors) - 1)]
 
 
+def get_random_dots_spinner():
+    return f"dots{randint(2, 9)}"
+
+
 def print_message(
     message, wrap=True, max_line_len=70, fg=None, bg=None, bold=None, underline=None
 ):
@@ -30,17 +34,19 @@ def print_message(
     click.secho(message, fg=fg, bg=bg, bold=bold, underline=underline)
 
 
-def prompt_user_yes_no(prompt):
+def prompt_user_yes_no(prompt, wrap=True, max_line_len=70):
+    if wrap:
+        prompt = wrap_text(prompt, max_len=max_line_len)
     choices = {
         f"{MENU_NUMBERS.get(1)}  YES": True,
         f"{MENU_NUMBERS.get(2)}  NO": False,
     }
     prompt = Bullet(
-        wrap_text(prompt, 70),
+        prompt,
         choices=[choice for choice in choices.keys()],
         bullet="",
         shift=1,
-        indent=2,
+        indent=0,
         margin=2,
         bullet_color=colors.foreground["default"],
         background_color=colors.foreground["default"],
@@ -53,18 +59,20 @@ def prompt_user_yes_no(prompt):
     return Result.Ok(choice_value)
 
 
-def prompt_user_yes_no_cancel(prompt):
+def prompt_user_yes_no_cancel(prompt, wrap=True, max_line_len=70):
+    if wrap:
+        prompt = wrap_text(prompt, max_len=max_line_len)
     choices = {
         f"{MENU_NUMBERS.get(1)}  YES": True,
         f"{MENU_NUMBERS.get(2)}  NO": False,
         f"{MENU_NUMBERS.get(3)}  CANCEL": None,
     }
     prompt = Bullet(
-        wrap_text(prompt, 70),
+        prompt,
         choices=[choice for choice in choices.keys()],
         bullet="",
         shift=1,
-        indent=2,
+        indent=0,
         margin=2,
         bullet_color=colors.foreground["default"],
         background_color=colors.foreground["default"],
@@ -163,7 +171,7 @@ def season_prompt(db_session, prompt=None):
     if not prompt:
         prompt = "Please select a MLB Season from the list below:"
     choices = {
-        f"{MENU_NUMBERS.get(num)}  {season.year}": season.year
+        f"{MENU_NUMBERS.get(num)}  {season.year}": season
         for num, season in enumerate(Season.all_regular_seasons(db_session), start=1)
     }
     choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None

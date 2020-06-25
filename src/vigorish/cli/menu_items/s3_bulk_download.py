@@ -25,9 +25,9 @@ class BulkDownloadHtmlFromS3(MenuItem):
         result = season_prompt(self.db_session, prompt)
         if result.failure:
             return Result.Ok(False)
-        year = result.value
+        season = result.value
         data_sets = data_sets_prompt("Select data sets to download all HTML:")
-        self.download_all_html_from_s3(data_sets, year)
+        self.download_all_html_from_s3(data_sets, season.year)
 
     def download_all_html_from_s3(self, data_sets, year):
         subprocess.run(["clear"])

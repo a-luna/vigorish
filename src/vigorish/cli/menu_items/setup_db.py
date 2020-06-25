@@ -8,7 +8,10 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import print_message, prompt_user_yes_no
 from vigorish.config.database import initialize_database, db_setup_complete, Season
 from vigorish.constants import EMOJI_DICT
-from vigorish.status.update_status_local_files import update_all_data_sets
+from vigorish.status.update_status_local_files import (
+    local_folder_has_parsed_data_for_season,
+    update_all_data_sets,
+)
 from vigorish.util.result import Result
 
 SETUP_MESSAGE = (
@@ -53,16 +56,22 @@ class SetupDBMenuItem(MenuItem):
         print_message(DB_INITIALIZED, fg="bright_green", bold=True)
         pause(message="Press any key to continue...")
 
+        all_mlb_seasons = [season.year for season in Season.all_regular_seasons(self.db_session)]
+        local_folder_has_parsed_data = any(
+            local_folder_has_parsed_data_for_season(self.scraped_data, year)
+            for year in all_mlb_seasons
+        )
+        if not local_folder_has_parsed_data:
+            return Result.Ok(self.exit_menu)
+
         subprocess.run(["clear"])
         result = prompt_user_yes_no(UPDATE_PROMPT)
         yes_update = result.value
         if not yes_update:
             return Result.Ok(self.exit_menu)
 
-        all_mlb_seasons = [season.year for season in Season.all_regular_seasons(self.db_session)]
         for year in all_mlb_seasons:
             subprocess.run(["clear"])
             result = update_all_data_sets(self.scraped_data, self.db_session, year, True)
             time.sleep(2)
-        pause(message="Press any key to continue...")
         return Result.Ok(self.exit_menu)

@@ -36,10 +36,7 @@ class EnvVarSettingMenuItem(MenuItem):
         user_confirmed = False
         while not user_confirmed:
             subprocess.run(["clear"])
-            prompt = (
-                f"Enter a value for {self.setting_name} "
-                f"(Current Value: {self.current_setting}):\n"
-            )
+            prompt = f"Enter a new value for {self.setting_name}:\n"
             new_value = Input(prompt, word_color=colors.foreground["default"]).launch()
             result = self.confirm_new_value(new_value)
             if result.failure:
@@ -54,7 +51,8 @@ class EnvVarSettingMenuItem(MenuItem):
 
     def confirm_new_value(self, new_value):
         prompt = (
-            f"Select YES to update the value below, select NO to enter a different value, "
-            f"or select CANCEL to return to the Settings menu:\n{self.setting_name}={new_value}"
+            f"\nUpdate {self.setting_name} to the value below?"
+            f"\nCurrent Value..: {self.current_setting}"
+            f"\nNew Value......: {new_value}"
         )
-        return prompt_user_yes_no_cancel(prompt)
+        return prompt_user_yes_no_cancel(prompt, wrap=False)

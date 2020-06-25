@@ -24,8 +24,8 @@ class ConfigSettingMenuItem(MenuItem):
         setting_name = f"Setting: {self.setting_name_title} (Type: {self.data_type.name})"
         print_message(f"{setting_name}\n", fg="bright_magenta", bold=True)
         print_message(f"{self.setting.description}\n")
-        print_message(f"{self.current_settings}", fg="bright_yellow", bold=True)
-        result = prompt_user_yes_no(prompt="Change current setting?")
+        print_message(f"{self.current_settings}", wrap=False, fg="bright_yellow", bold=True)
+        result = prompt_user_yes_no(prompt="\nChange current setting?")
         change_setting = result.value
         if change_setting:
             change_setting_menu = ChangeSetttingMenuItem(self.app, self.setting_name)

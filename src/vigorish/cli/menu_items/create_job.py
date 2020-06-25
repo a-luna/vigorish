@@ -67,7 +67,8 @@ class CreateJobMenuItem(MenuItem):
             [
                 DateInput(prompt="Enter date to START scraping: "),
                 DateInput(prompt="Enter date to STOP scraping: "),
-            ]
+            ],
+            spacing=1,
         )
         return job_details_prompt.launch()
 

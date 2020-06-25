@@ -12,7 +12,7 @@ from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
 from vigorish.cli.menu_items.investigate_failures import InvestigateFailuresMenuItem
 from vigorish.cli.menu_items.status_report import StatusReportMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
-from vigorish.cli.util import print_message, get_random_cli_color
+from vigorish.cli.util import print_message, get_random_cli_color, get_random_dots_spinner
 from vigorish.config.database import db_setup_complete
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
@@ -61,11 +61,8 @@ class MainMenu(Menu):
         exit_menu = False
         subprocess.run(["clear"])
         self.check_app_status()
-        self.initial_status_check = False
         while not exit_menu:
             subprocess.run(["clear"])
-            if self.is_refresh_needed:
-                self.check_app_status()
             self.display_menu_text()
             self.populate_menu_items()
             result = self.prompt_user_for_menu_selection()
@@ -75,19 +72,23 @@ class MainMenu(Menu):
         return Result.Ok(exit_menu)
 
     def check_app_status(self):
-        spinner = Halo(spinner="dots3", color=get_random_cli_color())
+        spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = "Initializing..." if self.initial_status_check else "Updating metrics..."
         spinner.start()
-        self.node_is_installed = node_is_installed()
-        self.node_modules_folder_exists = node_modules_folder_exists()
-        self.db_setup_complete = db_setup_complete(self.db_engine, self.db_session)
+        self.perform_simple_tasks()
         if self.db_setup_complete:
             self.audit_report = self.scraped_data.get_audit_report()
         spinner.stop()
         spinner.clear()
 
+    def perform_simple_tasks(self):
+        self.node_is_installed = node_is_installed()
+        self.node_modules_folder_exists = node_modules_folder_exists()
+        self.db_setup_complete = db_setup_complete(self.db_engine, self.db_session)
+
     def display_menu_text(self):
         print_message("Welcome to vigorish!\n", fg="bright_cyan", bold=True)
+        self.perform_simple_tasks()
         if self.initial_setup_complete:
             self.display_audit_report()
         else:
@@ -99,7 +100,8 @@ class MainMenu(Menu):
             for year, report in self.audit_report.items():
                 report_str = (
                     f"MLB {year}: {len(report['scraped'])} Scraped, "
-                    f"{len(report['successful'])} Combined, {len(report['failed'])} Failed"
+                    f"{len(report['successful'])} Combined, "
+                    f"{len(report['failed'])+len(report['data_error'])} Failed"
                 )
                 print_message(report_str, wrap=False)
         else:
@@ -108,17 +110,17 @@ class MainMenu(Menu):
 
     def display_initial_task_status(self):
         if self.node_is_installed:
-            print_message("Node.js Installed........: YES", fg="bright_green", bold=True)
+            print_message("Node.js Installed.............: YES", fg="bright_green", bold=True)
         else:
-            print_message("Node.js Installed........: NO", fg="bright_red", bold=True)
+            print_message("Node.js Installed.............: NO", fg="bright_red", bold=True)
         if self.node_modules_folder_exists:
-            print_message("Node Packages Installed..: YES", fg="bright_green", bold=True)
+            print_message("Electron/Nightmare Installed..: YES", fg="bright_green", bold=True)
         else:
-            print_message("Node Packages Installed..: NO", fg="bright_red", bold=True)
+            print_message("Electron/Nightmare Installed..: NO", fg="bright_red", bold=True)
         if self.db_setup_complete:
-            print_message("SQLite DB Initialized....: YES", fg="bright_green", bold=True)
+            print_message("SQLite DB Initialized.........: YES", fg="bright_green", bold=True)
         else:
-            print_message("SQLite DB Initialized....: NO", fg="bright_red", bold=True)
+            print_message("SQLite DB Initialized.........: NO", fg="bright_red", bold=True)
 
     def populate_menu_items(self):
         main_menu_items = self.get_main_menu()

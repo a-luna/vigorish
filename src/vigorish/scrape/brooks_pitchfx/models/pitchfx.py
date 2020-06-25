@@ -99,7 +99,10 @@ class BrooksPitchFxData:
 
     @property
     def has_zone_location(self):
-        return False if self.zone_location == 99 else True
+        return True if self.zone_location != 99 else False
+
+    def seconds_since_pitch_thrown(self, ref_time):
+        return (self.timestamp_pitch_thrown - ref_time).total_seconds()
 
     def as_dict(self):
         """Convert pitch log to a dictionary."""

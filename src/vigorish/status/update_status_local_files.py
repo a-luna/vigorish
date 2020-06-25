@@ -14,6 +14,18 @@ from vigorish.status.update_status_brooks_pitchfx import update_status_brooks_pi
 from vigorish.util.result import Result
 
 
+def local_folder_has_parsed_data_for_season(scraped_data, year):
+    for data_set in DataSet:
+        if data_set == DataSet.ALL:
+            continue
+        scraped_ids = scraped_data.get_scraped_ids_from_local_folder(
+            DocFormat.JSON, data_set, year
+        )
+        if scraped_ids:
+            return True
+    return False
+
+
 def update_all_data_sets(scraped_data, db_session, year, overwrite_existing=False):
     for data_set in DataSet:
         if data_set == DataSet.ALL:

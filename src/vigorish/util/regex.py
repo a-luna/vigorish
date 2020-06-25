@@ -21,6 +21,16 @@ BB_DAILY_JSON_FILENAME_REGEX = re.compile(
     r"brooks_games_for_date_(?P<year>\d{4,4})-(?P<month>\d{2,2})-(?P<day>\d{2,2})"
 )
 
+PFX_TIMESTAMP_REGEX = re.compile(
+    r"(?P<year>\d{2,2})"
+    r"(?P<month>\d{2,2})"
+    r"(?P<day>\d{2,2})_"
+    r"(?P<hour>\d{2,2})"
+    r"(?P<minute>\d{2,2})"
+    r"(?P<second>\d{2,2})"
+    r"(?P<team_id>[a-z]{3,3})"
+)
+
 BBREF_GAME_ID_REGEX = re.compile(
     r"""
     (?P<home_team>[A-Z]{3,3})
