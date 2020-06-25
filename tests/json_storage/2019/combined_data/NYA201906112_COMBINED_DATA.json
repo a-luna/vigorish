@@ -2,7 +2,6 @@
   "bbref_game_id": "NYA201906112",
   "boxscore_url": "https://www.baseball-reference.com/boxes/NYA/NYA201906112.shtml",
   "pitchfx_vs_bbref_audit": {
-    "pitchfx_data_complete": false,
     "total_batters_faced_bbref": 83,
     "total_at_bats_pitchfx_complete": 78,
     "total_at_bats_missing_pitchfx": 5,
@@ -11,6 +10,8 @@
     "pitch_count_bbref_pitch_seq": 334,
     "pitch_count_pitchfx_audited": 320,
     "pitch_count_missing_pitchfx": 14,
+    "pitch_count_extra_pitchfx": 0,
+    "incorrect_extra_pitchfx_removed_count": 0,
     "missing_pitchfx_is_valid": true,
     "at_bat_ids_missing_pitchfx": [
       "NYA201906112_3_NYN_450306_NYA_457727_0",
@@ -19,6 +20,7 @@
       "NYA201906112_4_NYA_664856_NYN_605204_0",
       "NYA201906112_4_NYA_664856_NYN_624424_0"
     ],
+    "at_bat_ids_extra_pitchfx": [],
     "at_bat_ids_pitchfx_data_error": [],
     "duplicate_pitchfx_removed_count": 1
   },
@@ -1396,15 +1398,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 6,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 20,
         "pitch_count_pitchfx": 20,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -1412,18 +1415,19 @@
           "at_bat_id": "NYA201906112_1_NYA_572020_NYN_643446_0",
           "inning_id": "NYA201906112_INN_TOP01",
           "pbp_table_row_number": 1,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Jeff McNeil",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, no out (94mph Four-seam Fastball)",
             "Result.....: Double to RF (Ground Ball)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-1",
@@ -1510,12 +1514,6 @@
           "at_bat_id": "NYA201906112_1_NYA_572020_NYN_605204_0",
           "inning_id": "NYA201906112_INN_TOP01",
           "pbp_table_row_number": 2,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "J.D. Davis",
           "pitch_sequence_description": [
@@ -1523,6 +1521,13 @@
             "Pitch 2/2..: In play, no out (94mph Four-seam Fastball)",
             "Result.....: Single to LF (Line Drive to Short LF-CF); McNeil to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-2",
@@ -1667,12 +1672,6 @@
           "at_bat_id": "NYA201906112_1_NYA_572020_NYN_624413_0",
           "inning_id": "NYA201906112_INN_TOP01",
           "pbp_table_row_number": 3,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 8,
-          "pitch_count_pitchfx": 8,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Pete Alonso",
           "pitch_sequence_description": [
@@ -1686,6 +1685,13 @@
             "Pitch 8/8..: In play, run(s) (95mph Four-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep LF-CF); McNeil Scores; Davis Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 8,
+          "pitch_count_pitchfx": 8,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-3",
@@ -2178,18 +2184,19 @@
           "at_bat_id": "NYA201906112_1_NYA_572020_NYN_453943_0",
           "inning_id": "NYA201906112_INN_TOP01",
           "pbp_table_row_number": 4,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Todd Frazier",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (95mph Four-seam Fastball)",
             "Result.....: Flyball: RF (Short CF-RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-4",
@@ -2276,12 +2283,6 @@
           "at_bat_id": "NYA201906112_1_NYA_572020_NYN_624424_0",
           "inning_id": "NYA201906112_INN_TOP01",
           "pbp_table_row_number": 5,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Michael Conforto",
           "pitch_sequence_description": [
@@ -2289,6 +2290,13 @@
             "Pitch 2/2..: In play, out(s) (94mph Four-seam Fastball)",
             "Result.....: Groundout: SS-1B (Front of Home)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-5",
@@ -2433,12 +2441,6 @@
           "at_bat_id": "NYA201906112_1_NYA_572020_NYN_467092_0",
           "inning_id": "NYA201906112_INN_TOP01",
           "pbp_table_row_number": 6,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Wilson Ramos",
           "pitch_sequence_description": [
@@ -2450,6 +2452,13 @@
             "Pitch 6/6..: Called strike (95mph Four-seam Fastball)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-6",
@@ -2838,15 +2847,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 21,
         "pitch_count_pitchfx": 21,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -2854,12 +2864,6 @@
           "at_bat_id": "NYA201906112_1_NYN_450306_NYA_518934_0",
           "inning_id": "NYA201906112_INN_BOT01",
           "pbp_table_row_number": 9,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "DJ LeMahieu",
           "pitch_sequence_description": [
@@ -2868,6 +2872,13 @@
             "Pitch 3/3..: In play, out(s) (80mph Changeup)",
             "Result.....: Lineout: 2B (Deep SS-2B)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-7",
@@ -3070,12 +3081,6 @@
           "at_bat_id": "NYA201906112_1_NYN_450306_NYA_572228_0",
           "inning_id": "NYA201906112_INN_BOT01",
           "pbp_table_row_number": 10,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Luke Voit",
           "pitch_sequence_description": [
@@ -3083,6 +3088,13 @@
             "Pitch 2/2..: In play, no out (80mph Changeup)",
             "Result.....: Single to LF (Line Drive to Short LF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-8",
@@ -3227,12 +3239,6 @@
           "at_bat_id": "NYA201906112_1_NYN_450306_NYA_596142_0",
           "inning_id": "NYA201906112_INN_BOT01",
           "pbp_table_row_number": 11,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 10,
-          "pitch_count_pitchfx": 10,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gary Sanchez",
           "pitch_sequence_description": [
@@ -3248,6 +3254,13 @@
             "Pitch 10/10..: In play, out(s) (81mph Changeup)",
             "Result.......: Flyball: CF (Deep CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 10,
+          "pitch_count_pitchfx": 10,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-9",
@@ -3856,18 +3869,19 @@
           "at_bat_id": "NYA201906112_1_NYN_450306_NYA_650402_0",
           "inning_id": "NYA201906112_INN_BOT01",
           "pbp_table_row_number": 12,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gleyber Torres",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, no out (87mph Two-seam Fastball)",
             "Result.....: Single to CF (Line Drive); Voit to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-10",
@@ -3954,12 +3968,6 @@
           "at_bat_id": "NYA201906112_1_NYN_450306_NYA_640449_0",
           "inning_id": "NYA201906112_INN_BOT01",
           "pbp_table_row_number": 13,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Clint Frazier",
           "pitch_sequence_description": [
@@ -3970,6 +3978,13 @@
             "Pitch 5/5..: Called strike (87mph Four-seam Fastball)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-11",
@@ -4300,15 +4315,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 6,
         "pitch_count_pitchfx": 6,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -4316,18 +4332,19 @@
           "at_bat_id": "NYA201906112_2_NYA_572020_NYN_642708_0",
           "inning_id": "NYA201906112_INN_TOP02",
           "pbp_table_row_number": 16,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Amed Rosario",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (92mph Four-seam Fastball)",
             "Result.....: Groundout: P-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-12",
@@ -4414,18 +4431,19 @@
           "at_bat_id": "NYA201906112_2_NYA_572020_NYN_588751_0",
           "inning_id": "NYA201906112_INN_TOP02",
           "pbp_table_row_number": 17,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Adeiny Hechavarria",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Flyball: RF (Deep RF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-13",
@@ -4512,12 +4530,6 @@
           "at_bat_id": "NYA201906112_2_NYA_572020_NYN_460576_0",
           "inning_id": "NYA201906112_INN_TOP02",
           "pbp_table_row_number": 18,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Carlos Gomez",
           "pitch_sequence_description": [
@@ -4525,6 +4537,13 @@
             "Pitch 2/2..: In play, no out (80mph Knuckle ball Curve)",
             "Result.....: Single to LF (Fly Ball to LF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-14",
@@ -4669,12 +4688,6 @@
           "at_bat_id": "NYA201906112_2_NYA_572020_NYN_643446_0",
           "inning_id": "NYA201906112_INN_TOP02",
           "pbp_table_row_number": 19,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Jeff McNeil",
           "pitch_sequence_description": [
@@ -4682,6 +4695,13 @@
             "Pitch 2/2..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Flyball: CF (Deep CF-RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-15",
@@ -4838,15 +4858,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 14,
         "pitch_count_pitchfx": 14,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -4854,12 +4875,6 @@
           "at_bat_id": "NYA201906112_2_NYN_450306_NYA_570482_0",
           "inning_id": "NYA201906112_INN_BOT02",
           "pbp_table_row_number": 22,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gio Urshela",
           "pitch_sequence_description": [
@@ -4867,6 +4882,13 @@
             "Pitch 2/2..: In play, out(s) (71mph Knuckle ball Curve)",
             "Result.....: Flyball: CF (Deep CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-16",
@@ -5011,18 +5033,19 @@
           "at_bat_id": "NYA201906112_2_NYN_450306_NYA_457727_0",
           "inning_id": "NYA201906112_INN_BOT02",
           "pbp_table_row_number": 23,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Cameron Maybin",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (79mph Changeup)",
             "Result.....: Groundout: P-1B (Front of Home)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-17",
@@ -5109,12 +5132,6 @@
           "at_bat_id": "NYA201906112_2_NYN_450306_NYA_519222_0",
           "inning_id": "NYA201906112_INN_BOT02",
           "pbp_table_row_number": 24,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Austin Romine",
           "pitch_sequence_description": [
@@ -5125,6 +5142,13 @@
             "Pitch 5/5..: Ball (80mph Changeup)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-18",
@@ -5443,12 +5467,6 @@
           "at_bat_id": "NYA201906112_2_NYN_450306_NYA_458731_0",
           "inning_id": "NYA201906112_INN_BOT02",
           "pbp_table_row_number": 25,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Brett Gardner",
           "pitch_sequence_description": [
@@ -5461,6 +5479,13 @@
             "Pitch 6/6..: In play, out(s) (81mph Changeup)",
             "Result.....: Groundout: 1B unassisted"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-19",
@@ -5849,15 +5874,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 8,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 38,
         "pitch_count_pitchfx": 38,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -5865,12 +5891,6 @@
           "at_bat_id": "NYA201906112_3_NYA_572020_NYN_605204_0",
           "inning_id": "NYA201906112_INN_TOP03",
           "pbp_table_row_number": 28,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "J.D. Davis",
           "pitch_sequence_description": [
@@ -5880,6 +5900,13 @@
             "Pitch 4/4..: In play, out(s) (80mph Knuckle ball Curve)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-20",
@@ -6140,12 +6167,6 @@
           "at_bat_id": "NYA201906112_3_NYA_572020_NYN_624413_0",
           "inning_id": "NYA201906112_INN_TOP03",
           "pbp_table_row_number": 29,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Pete Alonso",
           "pitch_sequence_description": [
@@ -6157,6 +6178,13 @@
             "Pitch 6/6..: Ball (80mph Knuckle ball Curve)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-21",
@@ -6533,12 +6561,6 @@
           "at_bat_id": "NYA201906112_3_NYA_572020_NYN_453943_0",
           "inning_id": "NYA201906112_INN_TOP03",
           "pbp_table_row_number": 30,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Todd Frazier",
           "pitch_sequence_description": [
@@ -6550,6 +6572,13 @@
             "Pitch 6/6..: Ball (93mph Four-seam Fastball)",
             "Result.....: Walk; Alonso to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-22",
@@ -6926,12 +6955,6 @@
           "at_bat_id": "NYA201906112_3_NYA_572020_NYN_624424_0",
           "inning_id": "NYA201906112_INN_TOP03",
           "pbp_table_row_number": 31,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Michael Conforto",
           "pitch_sequence_description": [
@@ -6942,6 +6965,13 @@
             "Pitch 5/5..: In play, run(s) (88mph Cutter)",
             "Result.....: Single to CF (Line Drive to CF-RF); Alonso Scores; Frazier to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-23",
@@ -7260,12 +7290,6 @@
           "at_bat_id": "NYA201906112_3_NYA_572020_NYN_467092_0",
           "inning_id": "NYA201906112_INN_TOP03",
           "pbp_table_row_number": 32,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Wilson Ramos",
           "pitch_sequence_description": [
@@ -7276,6 +7300,13 @@
             "Pitch 5/5..: In play, run(s) (96mph Four-seam Fastball)",
             "Result.....: Single to LF (Line Drive to Deep SS-3B Hole); Frazier Scores; Conforto to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-24",
@@ -7594,12 +7625,6 @@
           "at_bat_id": "NYA201906112_3_NYA_572020_NYN_642708_0",
           "inning_id": "NYA201906112_INN_TOP03",
           "pbp_table_row_number": 33,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Amed Rosario",
           "pitch_sequence_description": [
@@ -7609,6 +7634,13 @@
             "Pitch 4/4..: In play, out(s) (80mph Knuckle ball Curve)",
             "Result.....: Flyball: RF (RF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-25",
@@ -7869,12 +7901,6 @@
           "at_bat_id": "NYA201906112_3_NYA_572020_NYN_588751_0",
           "inning_id": "NYA201906112_INN_TOP03",
           "pbp_table_row_number": 34,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "James Paxton",
           "batter_name": "Adeiny Hechavarria",
           "pitch_sequence_description": [
@@ -7887,6 +7913,13 @@
             "Pitch 7/7..: In play, run(s) (95mph Four-seam Fastball)",
             "Result.....: Single to CF (Line Drive); Conforto Scores; Ramos to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-26",
@@ -8321,12 +8354,6 @@
           "at_bat_id": "NYA201906112_3_NYA_664856_NYN_460576_0",
           "inning_id": "NYA201906112_INN_TOP03",
           "pbp_table_row_number": 36,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Carlos Gomez",
           "pitch_sequence_description": [
@@ -8334,6 +8361,13 @@
             "Pitch 1/1..: In play, out(s) (83mph Two-seam Fastball)",
             "Result.....: Flyball: LF"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "NYA201906112_INN_TOP03",
@@ -8445,19 +8479,20 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": false,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 3,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 25,
         "pitch_count_pitchfx": 17,
         "pitch_count_missing_pitchfx": 8,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [
           "NYA201906112_3_NYN_450306_NYA_457727_0",
           "NYA201906112_3_NYN_450306_NYA_570482_0",
           "NYA201906112_3_NYN_450306_NYA_572228_0"
         ],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -8465,12 +8500,6 @@
           "at_bat_id": "NYA201906112_3_NYN_450306_NYA_518934_0",
           "inning_id": "NYA201906112_INN_BOT03",
           "pbp_table_row_number": 39,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "DJ LeMahieu",
           "pitch_sequence_description": [
@@ -8478,6 +8507,13 @@
             "Pitch 2/2..: In play, no out (84mph Four-seam Fastball)",
             "Result.....: Single to CF (Ground Ball thru SS-2B)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-28",
@@ -8622,16 +8658,6 @@
           "at_bat_id": "NYA201906112_3_NYN_450306_NYA_572228_0",
           "inning_id": "NYA201906112_INN_BOT03",
           "pbp_table_row_number": 40,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 3,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            2,
-            3,
-            4
-          ],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Luke Voit",
           "pitch_sequence_description": [
@@ -8642,6 +8668,17 @@
             "Pitch 4/4..: Ball",
             "Result.....: Walk; LeMahieu to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 3,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            2,
+            3,
+            4
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-29",
@@ -8728,12 +8765,6 @@
           "at_bat_id": "NYA201906112_3_NYN_450306_NYA_596142_0",
           "inning_id": "NYA201906112_INN_BOT03",
           "pbp_table_row_number": 41,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gary Sanchez",
           "pitch_sequence_description": [
@@ -8746,6 +8777,13 @@
             "Pitch 7/7..: In play, no out (72mph Knuckle ball Curve)",
             "Result.....: Single to RF (Ground Ball thru 2B-1B); LeMahieu to 3B; Voit to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-30",
@@ -9180,12 +9218,6 @@
           "at_bat_id": "NYA201906112_3_NYN_450306_NYA_650402_0",
           "inning_id": "NYA201906112_INN_BOT03",
           "pbp_table_row_number": 42,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gleyber Torres",
           "pitch_sequence_description": [
@@ -9194,6 +9226,13 @@
             "Pitch 3/3..: In play, run(s) (73mph Knuckle ball Curve)",
             "Result.....: Single to LF (Ground Ball); LeMahieu Scores; Voit to 3B; Sanchez to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-31",
@@ -9396,12 +9435,6 @@
           "at_bat_id": "NYA201906112_3_NYN_450306_NYA_640449_0",
           "inning_id": "NYA201906112_INN_BOT03",
           "pbp_table_row_number": 43,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Clint Frazier",
           "pitch_sequence_description": [
@@ -9409,6 +9442,13 @@
             "Pitch 2/2..: In play, run(s) (86mph Two-seam Fastball)",
             "Result.....: Groundout: 1B-SS/Forceout at 2B (2B-1B); Voit Scores; Sanchez to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-32",
@@ -9553,15 +9593,6 @@
           "at_bat_id": "NYA201906112_3_NYN_450306_NYA_570482_0",
           "inning_id": "NYA201906112_INN_BOT03",
           "pbp_table_row_number": 44,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 2,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            2,
-            3
-          ],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gio Urshela",
           "pitch_sequence_description": [
@@ -9571,6 +9602,16 @@
             "Pitch 3/3..: Ball put into play by batter",
             "Result.....: Groundout: 2B-SS/Forceout at 2B; Sanchez Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 2,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            2,
+            3
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-33",
@@ -9657,16 +9698,6 @@
           "at_bat_id": "NYA201906112_3_NYN_450306_NYA_457727_0",
           "inning_id": "NYA201906112_INN_BOT03",
           "pbp_table_row_number": 45,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 3,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            2,
-            3,
-            4
-          ],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Cameron Maybin",
           "pitch_sequence_description": [
@@ -9678,6 +9709,17 @@
             "Pitch 4/4..: Ball put into play by batter",
             "Result.....: Flyball: RF (Short RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 3,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            2,
+            3,
+            4
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-34",
@@ -9776,18 +9818,19 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": false,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 2,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 26,
         "pitch_count_pitchfx": 20,
         "pitch_count_missing_pitchfx": 6,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [
           "NYA201906112_4_NYA_664856_NYN_605204_0",
           "NYA201906112_4_NYA_664856_NYN_624424_0"
         ],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -9795,18 +9838,19 @@
           "at_bat_id": "NYA201906112_4_NYA_664856_NYN_643446_0",
           "inning_id": "NYA201906112_INN_TOP04",
           "pbp_table_row_number": 48,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Jeff McNeil",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, no out (91mph Four-seam Fastball)",
             "Result.....: Reached on E5 (Pop Fly)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-35",
@@ -9893,14 +9937,6 @@
           "at_bat_id": "NYA201906112_4_NYA_664856_NYN_605204_0",
           "inning_id": "NYA201906112_INN_TOP04",
           "pbp_table_row_number": 49,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 1,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            2
-          ],
           "pitcher_name": "Chance Adams",
           "batter_name": "J.D. Davis",
           "pitch_sequence_description": [
@@ -9909,6 +9945,15 @@
             "Pitch 2/2..: Ball put into play by batter",
             "Result.....: Home Run (Fly Ball to Deep RF); McNeil Scores/unER"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 1,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            2
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-36",
@@ -9995,12 +10040,6 @@
           "at_bat_id": "NYA201906112_4_NYA_664856_NYN_624413_0",
           "inning_id": "NYA201906112_INN_TOP04",
           "pbp_table_row_number": 50,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Pete Alonso",
           "pitch_sequence_description": [
@@ -10011,6 +10050,13 @@
             "Pitch 5/5..: Called strike (82mph Slider)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-37",
@@ -10329,12 +10375,6 @@
           "at_bat_id": "NYA201906112_4_NYA_664856_NYN_453943_0",
           "inning_id": "NYA201906112_INN_TOP04",
           "pbp_table_row_number": 51,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Todd Frazier",
           "pitch_sequence_description": [
@@ -10346,6 +10386,13 @@
             "Pitch 6/6..: Ball (93mph Four-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-38",
@@ -10722,18 +10769,6 @@
           "at_bat_id": "NYA201906112_4_NYA_664856_NYN_624424_0",
           "inning_id": "NYA201906112_INN_TOP04",
           "pbp_table_row_number": 52,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 8,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 5,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            2,
-            3,
-            4,
-            5,
-            7
-          ],
           "pitcher_name": "Chance Adams",
           "batter_name": "Michael Conforto",
           "pitch_sequence_description": [
@@ -10748,6 +10783,19 @@
             "Pitch 8/8..: Ball",
             "Result.....: Walk; Frazier to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 8,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 5,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            2,
+            3,
+            4,
+            5,
+            7
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-39",
@@ -10950,12 +10998,6 @@
           "at_bat_id": "NYA201906112_4_NYA_664856_NYN_467092_0",
           "inning_id": "NYA201906112_INN_TOP04",
           "pbp_table_row_number": 53,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Wilson Ramos",
           "pitch_sequence_description": [
@@ -10965,6 +11007,13 @@
             "Pitch 4/4..: In play, out(s) (84mph Slider)",
             "Result.....: Ground Ball Double Play: 3B-2B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-40",
@@ -11237,15 +11286,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 15,
         "pitch_count_pitchfx": 15,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -11253,12 +11303,6 @@
           "at_bat_id": "NYA201906112_4_NYN_450306_NYA_519222_0",
           "inning_id": "NYA201906112_INN_BOT04",
           "pbp_table_row_number": 56,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Austin Romine",
           "pitch_sequence_description": [
@@ -11270,6 +11314,13 @@
             "Pitch 6/6..: Swinging strike (79mph Changeup)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-41",
@@ -11646,18 +11697,19 @@
           "at_bat_id": "NYA201906112_4_NYN_450306_NYA_458731_0",
           "inning_id": "NYA201906112_INN_BOT04",
           "pbp_table_row_number": 57,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Brett Gardner",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, no out (85mph Four-seam Fastball)",
             "Result.....: Single to RF (Ground Ball thru 2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-42",
@@ -11744,12 +11796,6 @@
           "at_bat_id": "NYA201906112_4_NYN_450306_NYA_518934_0",
           "inning_id": "NYA201906112_INN_BOT04",
           "pbp_table_row_number": 58,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "DJ LeMahieu",
           "pitch_sequence_description": [
@@ -11758,6 +11804,13 @@
             "Pitch 3/3..: In play, no out (80mph Changeup)",
             "Result.....: Single to CF (Line Drive to Deep CF); Gardner to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-43",
@@ -11960,12 +12013,6 @@
           "at_bat_id": "NYA201906112_4_NYN_450306_NYA_572228_0",
           "inning_id": "NYA201906112_INN_BOT04",
           "pbp_table_row_number": 59,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Luke Voit",
           "pitch_sequence_description": [
@@ -11974,6 +12021,13 @@
             "Pitch 3/3..: In play, out(s) (79mph Changeup)",
             "Result.....: Lineout: CF (Deep CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-44",
@@ -12176,12 +12230,6 @@
           "at_bat_id": "NYA201906112_4_NYN_450306_NYA_596142_0",
           "inning_id": "NYA201906112_INN_BOT04",
           "pbp_table_row_number": 60,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gary Sanchez",
           "pitch_sequence_description": [
@@ -12189,6 +12237,13 @@
             "Pitch 2/2..: In play, out(s) (80mph Changeup)",
             "Result.....: Groundout: 3B-2B/Forceout at 2B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-45",
@@ -12345,15 +12400,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 23,
         "pitch_count_pitchfx": 23,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -12361,12 +12417,6 @@
           "at_bat_id": "NYA201906112_5_NYA_664856_NYN_642708_0",
           "inning_id": "NYA201906112_INN_TOP05",
           "pbp_table_row_number": 63,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Amed Rosario",
           "pitch_sequence_description": [
@@ -12374,6 +12424,13 @@
             "Pitch 2/2..: In play, out(s) (92mph Four-seam Fastball)",
             "Result.....: Lineout: RF"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-46",
@@ -12518,12 +12575,6 @@
           "at_bat_id": "NYA201906112_5_NYA_664856_NYN_588751_0",
           "inning_id": "NYA201906112_INN_TOP05",
           "pbp_table_row_number": 64,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Adeiny Hechavarria",
           "pitch_sequence_description": [
@@ -12534,6 +12585,13 @@
             "Pitch 5/5..: In play, out(s) (84mph Slider)",
             "Result.....: Flyball: CF (Deep CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-47",
@@ -12852,12 +12910,6 @@
           "at_bat_id": "NYA201906112_5_NYA_664856_NYN_460576_0",
           "inning_id": "NYA201906112_INN_TOP05",
           "pbp_table_row_number": 65,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Carlos Gomez",
           "pitch_sequence_description": [
@@ -12869,6 +12921,13 @@
             "Pitch 6/6..: In play, run(s) (93mph Four-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-48",
@@ -13245,12 +13304,6 @@
           "at_bat_id": "NYA201906112_5_NYA_664856_NYN_643446_0",
           "inning_id": "NYA201906112_INN_TOP05",
           "pbp_table_row_number": 66,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Jeff McNeil",
           "pitch_sequence_description": [
@@ -13259,6 +13312,13 @@
             "Pitch 3/3..: In play, no out (94mph Four-seam Fastball)",
             "Result.....: Single to LF (Ground Ball)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-49",
@@ -13461,12 +13521,6 @@
           "at_bat_id": "NYA201906112_5_NYA_664856_NYN_605204_0",
           "inning_id": "NYA201906112_INN_TOP05",
           "pbp_table_row_number": 67,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "J.D. Davis",
           "pitch_sequence_description": [
@@ -13479,6 +13533,13 @@
             "Pitch 7/7..: In play, out(s) (81mph Curveball)",
             "Result.....: Lineout: CF (Deep CF-RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-50",
@@ -13925,15 +13986,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 7,
         "pitch_count_pitchfx": 7,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -13941,12 +14003,6 @@
           "at_bat_id": "NYA201906112_5_NYN_450306_NYA_650402_0",
           "inning_id": "NYA201906112_INN_BOT05",
           "pbp_table_row_number": 70,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gleyber Torres",
           "pitch_sequence_description": [
@@ -13956,6 +14012,13 @@
             "Pitch 4/4..: Swinging strike (77mph Changeup)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-51",
@@ -14216,18 +14279,19 @@
           "at_bat_id": "NYA201906112_5_NYN_450306_NYA_640449_0",
           "inning_id": "NYA201906112_INN_BOT05",
           "pbp_table_row_number": 71,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Clint Frazier",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (85mph Four-seam Fastball)",
             "Result.....: Flyball: RF (Deep RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-52",
@@ -14314,12 +14378,6 @@
           "at_bat_id": "NYA201906112_5_NYN_450306_NYA_570482_0",
           "inning_id": "NYA201906112_INN_BOT05",
           "pbp_table_row_number": 72,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Gio Urshela",
           "pitch_sequence_description": [
@@ -14327,6 +14385,13 @@
             "Pitch 2/2..: In play, out(s) (79mph Changeup)",
             "Result.....: Groundout: 3B-1B (SS-3B Hole)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-53",
@@ -14483,15 +14548,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 19,
         "pitch_count_pitchfx": 19,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -14499,12 +14565,6 @@
           "at_bat_id": "NYA201906112_6_NYA_664856_NYN_624413_0",
           "inning_id": "NYA201906112_INN_TOP06",
           "pbp_table_row_number": 75,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Pete Alonso",
           "pitch_sequence_description": [
@@ -14517,6 +14577,13 @@
             "Pitch 7/7..: Ball (82mph Slider)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-54",
@@ -14951,12 +15018,6 @@
           "at_bat_id": "NYA201906112_6_NYA_664856_NYN_453943_0",
           "inning_id": "NYA201906112_INN_TOP06",
           "pbp_table_row_number": 76,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Todd Frazier",
           "pitch_sequence_description": [
@@ -14967,6 +15028,13 @@
             "Pitch 5/5..: In play, out(s) (81mph Curveball)",
             "Result.....: Flyball: LF (Deep LF)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-55",
@@ -15285,12 +15353,6 @@
           "at_bat_id": "NYA201906112_6_NYA_664856_NYN_624424_0",
           "inning_id": "NYA201906112_INN_TOP06",
           "pbp_table_row_number": 77,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Michael Conforto",
           "pitch_sequence_description": [
@@ -15302,6 +15364,13 @@
             "Pitch 6/6..: In play, out(s) (92mph Four-seam Fastball)",
             "Result.....: Groundout: 2B-SS/Forceout at 2B (2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-56",
@@ -15678,18 +15747,19 @@
           "at_bat_id": "NYA201906112_6_NYA_664856_NYN_467092_0",
           "inning_id": "NYA201906112_INN_TOP06",
           "pbp_table_row_number": 78,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Wilson Ramos",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Groundout: SS-2B/Forceout at 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-57",
@@ -15788,15 +15858,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 11,
         "pitch_count_pitchfx": 11,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -15804,18 +15875,19 @@
           "at_bat_id": "NYA201906112_6_NYN_450306_NYA_457727_0",
           "inning_id": "NYA201906112_INN_BOT06",
           "pbp_table_row_number": 81,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Cameron Maybin",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (77mph Changeup)",
             "Result.....: Flyball: RF (RF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-58",
@@ -15902,12 +15974,6 @@
           "at_bat_id": "NYA201906112_6_NYN_450306_NYA_519222_0",
           "inning_id": "NYA201906112_INN_BOT06",
           "pbp_table_row_number": 82,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Austin Romine",
           "pitch_sequence_description": [
@@ -15918,6 +15984,13 @@
             "Pitch 5/5..: In play, out(s) (85mph Four-seam Fastball)",
             "Result.....: Flyball: CF (Deep CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-59",
@@ -16236,12 +16309,6 @@
           "at_bat_id": "NYA201906112_6_NYN_450306_NYA_458731_0",
           "inning_id": "NYA201906112_INN_BOT06",
           "pbp_table_row_number": 83,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jason Vargas",
           "batter_name": "Brett Gardner",
           "pitch_sequence_description": [
@@ -16252,6 +16319,13 @@
             "Pitch 5/5..: In play, out(s) (85mph Slider)",
             "Result.....: Lineout: CF (Deep CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-60",
@@ -16582,15 +16656,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 19,
         "pitch_count_pitchfx": 19,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -16598,12 +16673,6 @@
           "at_bat_id": "NYA201906112_7_NYA_664856_NYN_642708_0",
           "inning_id": "NYA201906112_INN_TOP07",
           "pbp_table_row_number": 86,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Amed Rosario",
           "pitch_sequence_description": [
@@ -16614,6 +16683,13 @@
             "Pitch 5/5..: Swinging strike (80mph Curveball)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-61",
@@ -16932,12 +17008,6 @@
           "at_bat_id": "NYA201906112_7_NYA_664856_NYN_588751_0",
           "inning_id": "NYA201906112_INN_TOP07",
           "pbp_table_row_number": 87,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Adeiny Hechavarria",
           "pitch_sequence_description": [
@@ -16950,6 +17020,13 @@
             "Pitch 7/7..: In play, out(s) (91mph Four-seam Fastball)",
             "Result.....: Groundout: 2B-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-62",
@@ -17384,12 +17461,6 @@
           "at_bat_id": "NYA201906112_7_NYA_664856_NYN_460576_0",
           "inning_id": "NYA201906112_INN_TOP07",
           "pbp_table_row_number": 88,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Chance Adams",
           "batter_name": "Carlos Gomez",
           "pitch_sequence_description": [
@@ -17402,6 +17473,13 @@
             "Pitch 7/7..: Swinging strike (91mph Four-seam Fastball)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-63",
@@ -17848,15 +17926,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 18,
         "pitch_count_pitchfx": 18,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -17864,12 +17943,6 @@
           "at_bat_id": "NYA201906112_7_NYN_544727_NYA_518934_0",
           "inning_id": "NYA201906112_INN_BOT07",
           "pbp_table_row_number": 92,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jeurys Familia",
           "batter_name": "DJ LeMahieu",
           "pitch_sequence_description": [
@@ -17880,6 +17953,13 @@
             "Pitch 4/4..: Called strike (98mph Four-seam Fastball)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "NYA201906112_INN_BOT07",
@@ -18153,12 +18233,6 @@
           "at_bat_id": "NYA201906112_7_NYN_544727_NYA_572228_0",
           "inning_id": "NYA201906112_INN_BOT07",
           "pbp_table_row_number": 93,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jeurys Familia",
           "batter_name": "Luke Voit",
           "pitch_sequence_description": [
@@ -18170,6 +18244,13 @@
             "Pitch 6/6..: Swinging strike (88mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-65",
@@ -18546,12 +18627,6 @@
           "at_bat_id": "NYA201906112_7_NYN_544727_NYA_596142_0",
           "inning_id": "NYA201906112_INN_BOT07",
           "pbp_table_row_number": 94,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jeurys Familia",
           "batter_name": "Gary Sanchez",
           "pitch_sequence_description": [
@@ -18560,6 +18635,13 @@
             "Pitch 3/3..: In play, no out (95mph Sinker)",
             "Result.....: Single to LF (Line Drive to Deep LF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-66",
@@ -18762,12 +18844,6 @@
           "at_bat_id": "NYA201906112_7_NYN_544727_NYA_650402_0",
           "inning_id": "NYA201906112_INN_BOT07",
           "pbp_table_row_number": 95,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jeurys Familia",
           "batter_name": "Gleyber Torres",
           "pitch_sequence_description": [
@@ -18777,6 +18853,13 @@
             "Pitch 4/4..: Ball (96mph Sinker)",
             "Result.....: Walk; Sanchez to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-67",
@@ -19037,18 +19120,19 @@
           "at_bat_id": "NYA201906112_7_NYN_544727_NYA_640449_0",
           "inning_id": "NYA201906112_INN_BOT07",
           "pbp_table_row_number": 96,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Jeurys Familia",
           "batter_name": "Clint Frazier",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (96mph Sinker)",
             "Result.....: Groundout: 2B unassisted/Forceout at 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-68",
@@ -19147,15 +19231,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 18,
         "pitch_count_pitchfx": 18,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -19163,12 +19248,6 @@
           "at_bat_id": "NYA201906112_8_NYA_570666_NYN_643446_0",
           "inning_id": "NYA201906112_INN_TOP08",
           "pbp_table_row_number": 100,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Luis Cessa",
           "batter_name": "Jeff McNeil",
           "pitch_sequence_description": [
@@ -19179,6 +19258,13 @@
             "Pitch 4/4..: In play, out(s) (95mph Four-seam Fastball)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "NYA201906112_INN_TOP08",
@@ -19452,12 +19538,6 @@
           "at_bat_id": "NYA201906112_8_NYA_570666_NYN_605204_0",
           "inning_id": "NYA201906112_INN_TOP08",
           "pbp_table_row_number": 101,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 8,
-          "pitch_count_pitchfx": 8,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Luis Cessa",
           "batter_name": "J.D. Davis",
           "pitch_sequence_description": [
@@ -19471,6 +19551,13 @@
             "Pitch 8/8..: In play, out(s) (95mph Four-seam Fastball)",
             "Result.....: Groundout: 3B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 8,
+          "pitch_count_pitchfx": 8,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-70",
@@ -19963,12 +20050,6 @@
           "at_bat_id": "NYA201906112_8_NYA_570666_NYN_624413_0",
           "inning_id": "NYA201906112_INN_TOP08",
           "pbp_table_row_number": 102,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Luis Cessa",
           "batter_name": "Pete Alonso",
           "pitch_sequence_description": [
@@ -19980,6 +20061,13 @@
             "Pitch 6/6..: In play, out(s) (85mph Slider)",
             "Result.....: Groundout: 3B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-71",
@@ -20368,15 +20456,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 13,
         "pitch_count_pitchfx": 13,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -20384,12 +20473,6 @@
           "at_bat_id": "NYA201906112_8_NYN_607625_NYA_570482_0",
           "inning_id": "NYA201906112_INN_BOT08",
           "pbp_table_row_number": 106,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Seth Lugo",
           "batter_name": "Gio Urshela",
           "pitch_sequence_description": [
@@ -20404,6 +20487,13 @@
             "Pitch 6/6..: Called strike (96mph Four-seam Fastball)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "NYA201906112_INN_BOT08",
@@ -20819,12 +20909,6 @@
           "at_bat_id": "NYA201906112_8_NYN_607625_NYA_457727_0",
           "inning_id": "NYA201906112_INN_BOT08",
           "pbp_table_row_number": 107,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Seth Lugo",
           "batter_name": "Cameron Maybin",
           "pitch_sequence_description": [
@@ -20833,6 +20917,13 @@
             "Pitch 3/3..: Swinging strike (97mph Four-seam Fastball)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-73",
@@ -21035,12 +21126,6 @@
           "at_bat_id": "NYA201906112_8_NYN_607625_NYA_519222_0",
           "inning_id": "NYA201906112_INN_BOT08",
           "pbp_table_row_number": 108,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Seth Lugo",
           "batter_name": "Austin Romine",
           "pitch_sequence_description": [
@@ -21050,6 +21135,13 @@
             "Pitch 4/4..: Swinging strike (97mph Four-seam Fastball)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-74",
@@ -21322,15 +21414,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 21,
         "pitch_count_pitchfx": 21,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -21338,12 +21431,6 @@
           "at_bat_id": "NYA201906112_9_NYA_605501_NYN_453943_0",
           "inning_id": "NYA201906112_INN_TOP09",
           "pbp_table_row_number": 112,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Stephen Tarpley",
           "batter_name": "Todd Frazier",
           "pitch_sequence_description": [
@@ -21352,6 +21439,13 @@
             "Pitch 2/2..: Hit batter (80mph Slider)",
             "Result.....: Hit By Pitch"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "NYA201906112_INN_TOP09",
@@ -21509,12 +21603,6 @@
           "at_bat_id": "NYA201906112_9_NYA_605501_NYN_624424_0",
           "inning_id": "NYA201906112_INN_TOP09",
           "pbp_table_row_number": 113,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Stephen Tarpley",
           "batter_name": "Michael Conforto",
           "pitch_sequence_description": [
@@ -21526,6 +21614,13 @@
             "Pitch 6/6..: Foul tip (93mph Sinker)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-76",
@@ -21902,12 +21997,6 @@
           "at_bat_id": "NYA201906112_9_NYA_605501_NYN_467092_0",
           "inning_id": "NYA201906112_INN_TOP09",
           "pbp_table_row_number": 115,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Stephen Tarpley",
           "batter_name": "Wilson Ramos",
           "pitch_sequence_description": [
@@ -21915,6 +22004,13 @@
             "Pitch 1/1..: In play, out(s) (93mph Sinker)",
             "Result.....: Groundout: 3B-1B (Front of Home); Guillorme to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "NYA201906112_INN_TOP09",
@@ -22014,12 +22110,6 @@
           "at_bat_id": "NYA201906112_9_NYA_605501_NYN_642708_0",
           "inning_id": "NYA201906112_INN_TOP09",
           "pbp_table_row_number": 116,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Stephen Tarpley",
           "batter_name": "Amed Rosario",
           "pitch_sequence_description": [
@@ -22027,6 +22117,13 @@
             "Pitch 2/2..: In play, run(s) (94mph Sinker)",
             "Result.....: Double to RF (Line Drive to Deep CF-RF); Guillorme Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-78",
@@ -22171,12 +22268,6 @@
           "at_bat_id": "NYA201906112_9_NYA_605501_NYN_588751_0",
           "inning_id": "NYA201906112_INN_TOP09",
           "pbp_table_row_number": 117,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 10,
-          "pitch_count_pitchfx": 10,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Stephen Tarpley",
           "batter_name": "Adeiny Hechavarria",
           "pitch_sequence_description": [
@@ -22192,6 +22283,13 @@
             "Pitch 10/10..: Swinging strike (82mph Changeup)",
             "Result.......: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 10,
+          "pitch_count_pitchfx": 10,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-79",
@@ -22812,15 +22910,16 @@
         "home_team_runs_after_inning": 4
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 20,
         "pitch_count_pitchfx": 20,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -22828,12 +22927,6 @@
           "at_bat_id": "NYA201906112_9_NYN_543193_NYA_458731_0",
           "inning_id": "NYA201906112_INN_BOT09",
           "pbp_table_row_number": 121,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Drew Gagnon",
           "batter_name": "Brett Gardner",
           "pitch_sequence_description": [
@@ -22845,6 +22938,13 @@
             "Pitch 4/4..: In play, run(s) (94mph Four-seam Fastball)",
             "Result.....: Home Run (Line Drive to Deep RF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "NYA201906112_INN_BOT09",
@@ -23131,12 +23231,6 @@
           "at_bat_id": "NYA201906112_9_NYN_543193_NYA_518934_0",
           "inning_id": "NYA201906112_INN_BOT09",
           "pbp_table_row_number": 122,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Drew Gagnon",
           "batter_name": "DJ LeMahieu",
           "pitch_sequence_description": [
@@ -23148,6 +23242,13 @@
             "Pitch 6/6..: In play, out(s) (83mph Changeup)",
             "Result.....: Groundout: 3B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-81",
@@ -23524,12 +23625,6 @@
           "at_bat_id": "NYA201906112_9_NYN_543193_NYA_572228_0",
           "inning_id": "NYA201906112_INN_BOT09",
           "pbp_table_row_number": 123,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Drew Gagnon",
           "batter_name": "Luke Voit",
           "pitch_sequence_description": [
@@ -23541,6 +23636,13 @@
             "Pitch 6/6..: In play, out(s) (82mph Changeup)",
             "Result.....: Groundout: SS-1B (Weak SS)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-82",
@@ -23917,12 +24019,6 @@
           "at_bat_id": "NYA201906112_9_NYN_543193_NYA_596142_0",
           "inning_id": "NYA201906112_INN_BOT09",
           "pbp_table_row_number": 124,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Drew Gagnon",
           "batter_name": "Gary Sanchez",
           "pitch_sequence_description": [
@@ -23932,6 +24028,13 @@
             "Pitch 4/4..: In play, out(s) (94mph Four-seam Fastball)",
             "Result.....: Foul Popfly: 1B (1B into Foul Terr.)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "NYA201906112-83",
@@ -24192,6 +24295,161 @@
     }
   ],
   "player_id_dict": {
+    "lasteto01": {
+      "name": "Tommy La Stella",
+      "mlb_id": 600303,
+      "team_id_bbref": "LAA"
+    },
+    "troutmi01": {
+      "name": "Mike Trout",
+      "mlb_id": 545361,
+      "team_id_bbref": "LAA"
+    },
+    "ohtansh01": {
+      "name": "Shohei Ohtani",
+      "mlb_id": 660271,
+      "team_id_bbref": "LAA"
+    },
+    "uptonju01": {
+      "name": "Justin Upton",
+      "mlb_id": 457708,
+      "team_id_bbref": "LAA"
+    },
+    "calhoko01": {
+      "name": "Kole Calhoun",
+      "mlb_id": 594777,
+      "team_id_bbref": "LAA"
+    },
+    "fletcda02": {
+      "name": "David Fletcher",
+      "mlb_id": 664058,
+      "team_id_bbref": "LAA"
+    },
+    "bourju01": {
+      "name": "Justin Bour",
+      "mlb_id": 571506,
+      "team_id_bbref": "LAA"
+    },
+    "lucrojo01": {
+      "name": "Jonathan Lucroy",
+      "mlb_id": 518960,
+      "team_id_bbref": "LAA"
+    },
+    "tovarwi01": {
+      "name": "Wilfredo Tovar",
+      "mlb_id": 541600,
+      "team_id_bbref": "LAA"
+    },
+    "garcilu03": {
+      "name": "Luis Garcia",
+      "mlb_id": 472610,
+      "team_id_bbref": "LAA"
+    },
+    "penafe01": {
+      "name": "Felix Pena",
+      "mlb_id": 570240,
+      "team_id_bbref": "LAA"
+    },
+    "ramirno01": {
+      "name": "Noe Ramirez",
+      "mlb_id": 598287,
+      "team_id_bbref": "LAA"
+    },
+    "buttrty01": {
+      "name": "Ty Buttrey",
+      "mlb_id": 621142,
+      "team_id_bbref": "LAA"
+    },
+    "anderju01": {
+      "name": "Justin Anderson",
+      "mlb_id": 605121,
+      "team_id_bbref": "LAA"
+    },
+    "sogarer01": {
+      "name": "Eric Sogard",
+      "mlb_id": 519299,
+      "team_id_bbref": "TOR"
+    },
+    "biggica01": {
+      "name": "Cavan Biggio",
+      "mlb_id": 624415,
+      "team_id_bbref": "TOR"
+    },
+    "guerrvl02": {
+      "name": "Vladimir Guerrero Jr.",
+      "mlb_id": 665489,
+      "team_id_bbref": "TOR"
+    },
+    "tellero01": {
+      "name": "Rowdy Tellez",
+      "mlb_id": 642133,
+      "team_id_bbref": "TOR"
+    },
+    "hernate01": {
+      "name": "Teoscar Hernandez",
+      "mlb_id": 606192,
+      "team_id_bbref": "TOR"
+    },
+    "gurrilo01": {
+      "name": "Lourdes Gurriel Jr.",
+      "mlb_id": 666971,
+      "team_id_bbref": "TOR"
+    },
+    "grichra01": {
+      "name": "Randal Grichuk",
+      "mlb_id": 545341,
+      "team_id_bbref": "TOR"
+    },
+    "galvifr01": {
+      "name": "Freddy Galvis",
+      "mlb_id": 520471,
+      "team_id_bbref": "TOR"
+    },
+    "drurybr01": {
+      "name": "Brandon Drury",
+      "mlb_id": 592273,
+      "team_id_bbref": "TOR"
+    },
+    "mailelu01": {
+      "name": "Luke Maile",
+      "mlb_id": 571912,
+      "team_id_bbref": "TOR"
+    },
+    "lawde01": {
+      "name": "Derek Law",
+      "mlb_id": 571882,
+      "team_id_bbref": "TOR"
+    },
+    "jacksed01": {
+      "name": "Edwin Jackson",
+      "mlb_id": 429719,
+      "team_id_bbref": "TOR"
+    },
+    "gavigsa01": {
+      "name": "Sam Gaviglio",
+      "mlb_id": 543208,
+      "team_id_bbref": "TOR"
+    },
+    "kinghni01": {
+      "name": "Nick Kingham",
+      "mlb_id": 592468,
+      "team_id_bbref": "TOR"
+    },
+    "phelpda01": {
+      "name": "David Phelps",
+      "mlb_id": 475479,
+      "team_id_bbref": "TOR"
+    },
+    "mayzati01": {
+      "name": "Tim Mayza",
+      "mlb_id": 641835,
+      "team_id_bbref": "TOR"
+    },
+    "hudsoda01": {
+      "name": "Daniel Hudson",
+      "mlb_id": 543339,
+      "team_id_bbref": "TOR"
+    },
     "mcneije01": {
       "name": "Jeff McNeil",
       "mlb_id": 643446,

@@ -2,7 +2,6 @@
   "bbref_game_id": "TOR201906170",
   "boxscore_url": "https://www.baseball-reference.com/boxes/TOR/TOR201906170.shtml",
   "pitchfx_vs_bbref_audit": {
-    "pitchfx_data_complete": true,
     "total_batters_faced_bbref": 82,
     "total_at_bats_pitchfx_complete": 82,
     "total_at_bats_missing_pitchfx": 0,
@@ -11,8 +10,11 @@
     "pitch_count_bbref_pitch_seq": 298,
     "pitch_count_pitchfx_audited": 298,
     "pitch_count_missing_pitchfx": 0,
+    "pitch_count_extra_pitchfx": 0,
+    "incorrect_extra_pitchfx_removed_count": 0,
     "missing_pitchfx_is_valid": true,
     "at_bat_ids_missing_pitchfx": [],
+    "at_bat_ids_extra_pitchfx": [],
     "at_bat_ids_pitchfx_data_error": [],
     "duplicate_pitchfx_removed_count": 1
   },
@@ -1684,15 +1686,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 17,
         "pitch_count_pitchfx": 17,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -1700,12 +1703,6 @@
           "at_bat_id": "TOR201906170_1_TOR_571882_ANA_600303_0",
           "inning_id": "TOR201906170_INN_TOP01",
           "pbp_table_row_number": 1,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Derek Law",
           "batter_name": "Tommy La Stella",
           "pitch_sequence_description": [
@@ -1716,6 +1713,13 @@
             "Pitch 5/5..: Swinging strike (86mph Changeup)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-1",
@@ -2034,12 +2038,6 @@
           "at_bat_id": "TOR201906170_1_TOR_571882_ANA_545361_0",
           "inning_id": "TOR201906170_INN_TOP01",
           "pbp_table_row_number": 2,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Derek Law",
           "batter_name": "Mike Trout",
           "pitch_sequence_description": [
@@ -2050,6 +2048,13 @@
             "Pitch 5/5..: In play, out(s) (94mph Four-seam Fastball)",
             "Result.....: Lineout: LF (Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-2",
@@ -2368,12 +2373,6 @@
           "at_bat_id": "TOR201906170_1_TOR_571882_ANA_660271_0",
           "inning_id": "TOR201906170_INN_TOP01",
           "pbp_table_row_number": 3,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Derek Law",
           "batter_name": "Shohei Ohtani",
           "pitch_sequence_description": [
@@ -2386,6 +2385,13 @@
             "Pitch 7/7..: Swinging strike (84mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-3",
@@ -2832,15 +2838,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 15,
         "pitch_count_pitchfx": 15,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -2848,12 +2855,6 @@
           "at_bat_id": "TOR201906170_1_ANA_472610_TOR_519299_0",
           "inning_id": "TOR201906170_INN_BOT01",
           "pbp_table_row_number": 6,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Luis Garcia",
           "batter_name": "Eric Sogard",
           "pitch_sequence_description": [
@@ -2861,6 +2862,13 @@
             "Pitch 2/2..: In play, out(s) (96mph Two-seam Fastball)",
             "Result.....: Groundout: 1B unassisted"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-4",
@@ -3005,12 +3013,6 @@
           "at_bat_id": "TOR201906170_1_ANA_472610_TOR_624415_0",
           "inning_id": "TOR201906170_INN_BOT01",
           "pbp_table_row_number": 7,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Luis Garcia",
           "batter_name": "Cavan Biggio",
           "pitch_sequence_description": [
@@ -3022,6 +3024,13 @@
             "Pitch 6/6..: In play, run(s) (97mph Two-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-5",
@@ -3398,18 +3407,19 @@
           "at_bat_id": "TOR201906170_1_ANA_472610_TOR_665489_0",
           "inning_id": "TOR201906170_INN_BOT01",
           "pbp_table_row_number": 8,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Luis Garcia",
           "batter_name": "Vladimir Guerrero Jr.",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (99mph Two-seam Fastball)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-6",
@@ -3496,12 +3506,6 @@
           "at_bat_id": "TOR201906170_1_ANA_472610_TOR_642133_0",
           "inning_id": "TOR201906170_INN_BOT01",
           "pbp_table_row_number": 9,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Luis Garcia",
           "batter_name": "Rowdy Tellez",
           "pitch_sequence_description": [
@@ -3513,6 +3517,13 @@
             "Pitch 6/6..: Swinging strike (86mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-7",
@@ -3901,15 +3912,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 11,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 40,
         "pitch_count_pitchfx": 40,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -3917,12 +3929,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_457708_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 13,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Justin Upton",
           "pitch_sequence_description": [
@@ -3930,6 +3936,13 @@
             "Pitch 1/1..: In play, run(s) (92mph Four-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_TOP02",
@@ -4029,12 +4042,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_594777_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 14,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Kole Calhoun",
           "pitch_sequence_description": [
@@ -4042,6 +4049,13 @@
             "Pitch 2/2..: In play, run(s) (90mph Four-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-9",
@@ -4186,12 +4200,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_664058_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 15,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "David Fletcher",
           "pitch_sequence_description": [
@@ -4202,6 +4210,13 @@
             "Pitch 5/5..: In play, out(s) (84mph Slider)",
             "Result.....: Groundout: 3B-1B (SS-3B Hole)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-10",
@@ -4520,12 +4535,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_571506_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 16,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Justin Bour",
           "pitch_sequence_description": [
@@ -4535,6 +4544,13 @@
             "Pitch 4/4..: In play, out(s) (94mph Four-seam Fastball)",
             "Result.....: Flyball: CF (Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-11",
@@ -4795,12 +4811,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_518960_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 17,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Jonathan Lucroy",
           "pitch_sequence_description": [
@@ -4811,6 +4821,13 @@
             "Pitch 5/5..: Ball (93mph Four-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-12",
@@ -5129,12 +5146,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_541600_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 18,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Wilfredo Tovar",
           "pitch_sequence_description": [
@@ -5142,6 +5153,13 @@
             "Pitch 2/2..: In play, no out (95mph Four-seam Fastball)",
             "Result.....: Single to 3B (Ground Ball to Weak 3B); Lucroy to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-13",
@@ -5286,12 +5304,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_600303_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 19,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Tommy La Stella",
           "pitch_sequence_description": [
@@ -5301,6 +5313,13 @@
             "Pitch 4/4..: Ball (91mph Four-seam Fastball)",
             "Result.....: Walk; Lucroy to 3B; Tovar to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-14",
@@ -5561,12 +5580,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_545361_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 20,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Mike Trout",
           "pitch_sequence_description": [
@@ -5575,6 +5588,13 @@
             "Pitch 3/3..: In play, run(s) (95mph Four-seam Fastball)",
             "Result.....: Double to LF (Line Drive to Deep LF-CF); Lucroy Scores; Tovar Scores; La\u00a0Stella to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-15",
@@ -5777,18 +5797,19 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_660271_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 21,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Shohei Ohtani",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, run(s) (87mph Slider)",
             "Result.....: Home Run (Fly Ball to Deep LF Line); La\u00a0Stella Scores; Trout Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-16",
@@ -5875,12 +5896,6 @@
           "at_bat_id": "TOR201906170_2_TOR_429719_ANA_457708_1",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 22,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 11,
-          "pitch_count_pitchfx": 11,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Justin Upton",
           "pitch_sequence_description": [
@@ -5897,6 +5912,13 @@
             "Pitch 11/11..: In play, no out (86mph Slider)",
             "Result.......: Single to LF (Line Drive to Deep 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 11,
+          "pitch_count_pitchfx": 11,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-17",
@@ -6563,12 +6585,6 @@
           "at_bat_id": "TOR201906170_2_TOR_543208_ANA_594777_0",
           "inning_id": "TOR201906170_INN_TOP02",
           "pbp_table_row_number": 24,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Kole Calhoun",
           "pitch_sequence_description": [
@@ -6577,6 +6593,13 @@
             "Pitch 2/2..: In play, out(s) (90mph Splitter)",
             "Result.....: Groundout: 2B-1B (2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_TOP02",
@@ -6746,15 +6769,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 13,
         "pitch_count_pitchfx": 13,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -6762,12 +6786,6 @@
           "at_bat_id": "TOR201906170_2_ANA_570240_TOR_606192_0",
           "inning_id": "TOR201906170_INN_BOT02",
           "pbp_table_row_number": 28,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Teoscar Hernandez",
           "pitch_sequence_description": [
@@ -6780,6 +6798,13 @@
             "Pitch 6/6..: In play, out(s) (94mph Four-seam Fastball)",
             "Result.....: Foul Popfly: 1B (1B into Foul Terr.)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_BOT02",
@@ -7169,12 +7194,6 @@
           "at_bat_id": "TOR201906170_2_ANA_570240_TOR_545341_0",
           "inning_id": "TOR201906170_INN_BOT02",
           "pbp_table_row_number": 29,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Randal Grichuk",
           "pitch_sequence_description": [
@@ -7183,6 +7202,13 @@
             "Pitch 3/3..: Swinging strike (82mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-20",
@@ -7385,12 +7411,6 @@
           "at_bat_id": "TOR201906170_2_ANA_570240_TOR_520471_0",
           "inning_id": "TOR201906170_INN_BOT02",
           "pbp_table_row_number": 30,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Freddy Galvis",
           "pitch_sequence_description": [
@@ -7400,6 +7420,13 @@
             "Pitch 4/4..: Swinging strike (86mph Slider) (pitch was blocked by catcher)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-21",
@@ -7672,15 +7699,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 14,
         "pitch_count_pitchfx": 14,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -7688,12 +7716,6 @@
           "at_bat_id": "TOR201906170_3_TOR_543208_ANA_664058_0",
           "inning_id": "TOR201906170_INN_TOP03",
           "pbp_table_row_number": 33,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "David Fletcher",
           "pitch_sequence_description": [
@@ -7702,6 +7724,13 @@
             "Pitch 3/3..: In play, out(s) (90mph Slider)",
             "Result.....: Groundout: P-1B (Front of Home)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-22",
@@ -7904,18 +7933,19 @@
           "at_bat_id": "TOR201906170_3_TOR_543208_ANA_571506_0",
           "inning_id": "TOR201906170_INN_TOP03",
           "pbp_table_row_number": 34,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Justin Bour",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, no out (90mph Slider)",
             "Result.....: Double to LF (Fly Ball to Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-23",
@@ -8002,12 +8032,6 @@
           "at_bat_id": "TOR201906170_3_TOR_543208_ANA_518960_0",
           "inning_id": "TOR201906170_INN_TOP03",
           "pbp_table_row_number": 35,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Jonathan Lucroy",
           "pitch_sequence_description": [
@@ -8015,6 +8039,13 @@
             "Pitch 2/2..: In play, out(s) (90mph Sinker)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-24",
@@ -8159,12 +8190,6 @@
           "at_bat_id": "TOR201906170_3_TOR_543208_ANA_541600_0",
           "inning_id": "TOR201906170_INN_TOP03",
           "pbp_table_row_number": 36,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Wilfredo Tovar",
           "pitch_sequence_description": [
@@ -8174,6 +8199,13 @@
             "Pitch 4/4..: In play, run(s) (91mph Sinker)",
             "Result.....: Single to SS (Ground Ball to SS-2B); Bour Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-25",
@@ -8434,12 +8466,6 @@
           "at_bat_id": "TOR201906170_3_TOR_543208_ANA_600303_0",
           "inning_id": "TOR201906170_INN_TOP03",
           "pbp_table_row_number": 37,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Tommy La Stella",
           "pitch_sequence_description": [
@@ -8450,6 +8476,13 @@
             "Pitch 4/4..: Foul tip (92mph Sinker)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-26",
@@ -8722,15 +8755,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 10,
         "pitch_count_pitchfx": 10,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -8738,12 +8772,6 @@
           "at_bat_id": "TOR201906170_3_ANA_570240_TOR_592273_0",
           "inning_id": "TOR201906170_INN_BOT03",
           "pbp_table_row_number": 40,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Brandon Drury",
           "pitch_sequence_description": [
@@ -8752,6 +8780,13 @@
             "Pitch 3/3..: In play, out(s) (91mph Two-seam Fastball)",
             "Result.....: Groundout: 2B-1B (2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-27",
@@ -8954,12 +8989,6 @@
           "at_bat_id": "TOR201906170_3_ANA_570240_TOR_571912_0",
           "inning_id": "TOR201906170_INN_BOT03",
           "pbp_table_row_number": 41,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Luke Maile",
           "pitch_sequence_description": [
@@ -8968,6 +8997,13 @@
             "Pitch 3/3..: In play, out(s) (93mph Two-seam Fastball)",
             "Result.....: Groundout: 2B-1B (2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-28",
@@ -9170,12 +9206,6 @@
           "at_bat_id": "TOR201906170_3_ANA_570240_TOR_519299_0",
           "inning_id": "TOR201906170_INN_BOT03",
           "pbp_table_row_number": 42,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Eric Sogard",
           "pitch_sequence_description": [
@@ -9185,6 +9215,13 @@
             "Pitch 4/4..: In play, out(s) (93mph Two-seam Fastball)",
             "Result.....: Popfly: SS (Deep SS-3B Hole)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-29",
@@ -9457,15 +9494,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 15,
         "pitch_count_pitchfx": 15,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -9473,12 +9511,6 @@
           "at_bat_id": "TOR201906170_4_TOR_543208_ANA_545361_0",
           "inning_id": "TOR201906170_INN_TOP04",
           "pbp_table_row_number": 45,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Mike Trout",
           "pitch_sequence_description": [
@@ -9488,6 +9520,13 @@
             "Pitch 4/4..: In play, no out (90mph Sinker)",
             "Result.....: Single to LF (Line Drive to Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-30",
@@ -9748,12 +9787,6 @@
           "at_bat_id": "TOR201906170_4_TOR_543208_ANA_660271_0",
           "inning_id": "TOR201906170_INN_TOP04",
           "pbp_table_row_number": 46,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Shohei Ohtani",
           "pitch_sequence_description": [
@@ -9767,6 +9800,13 @@
             "Pitch 6/6..: Called strike (89mph Sinker)",
             "Result.....: Double Play: Strikeout Looking, Trout Caught Stealing 2B (C-SS)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-31",
@@ -10143,12 +10183,6 @@
           "at_bat_id": "TOR201906170_4_TOR_543208_ANA_457708_0",
           "inning_id": "TOR201906170_INN_TOP04",
           "pbp_table_row_number": 47,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Justin Upton",
           "pitch_sequence_description": [
@@ -10159,6 +10193,13 @@
             "Pitch 5/5..: In play, out(s) (89mph Sinker)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-32",
@@ -10489,15 +10530,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 11,
         "pitch_count_pitchfx": 11,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -10505,12 +10547,6 @@
           "at_bat_id": "TOR201906170_4_ANA_570240_TOR_624415_0",
           "inning_id": "TOR201906170_INN_BOT04",
           "pbp_table_row_number": 50,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Cavan Biggio",
           "pitch_sequence_description": [
@@ -10520,6 +10556,13 @@
             "Pitch 4/4..: Ball (91mph Two-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-33",
@@ -10780,12 +10823,6 @@
           "at_bat_id": "TOR201906170_4_ANA_570240_TOR_665489_0",
           "inning_id": "TOR201906170_INN_BOT04",
           "pbp_table_row_number": 51,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Vladimir Guerrero Jr.",
           "pitch_sequence_description": [
@@ -10796,6 +10833,13 @@
             "Pitch 4/4..: In play, out(s) (83mph Slider)",
             "Result.....: Foul Popfly: 1B (1B into Foul Terr.)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-34",
@@ -11075,12 +11119,6 @@
           "at_bat_id": "TOR201906170_4_ANA_570240_TOR_642133_0",
           "inning_id": "TOR201906170_INN_BOT04",
           "pbp_table_row_number": 53,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Rowdy Tellez",
           "pitch_sequence_description": [
@@ -11088,6 +11126,13 @@
             "Pitch 2/2..: In play, out(s) (91mph Two-seam Fastball)",
             "Result.....: Groundout: SS-1B; Biggio to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-36",
@@ -11232,18 +11277,19 @@
           "at_bat_id": "TOR201906170_4_ANA_570240_TOR_606192_0",
           "inning_id": "TOR201906170_INN_BOT04",
           "pbp_table_row_number": 54,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Teoscar Hernandez",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (83mph Slider)",
             "Result.....: Foul Popfly: 1B (1B into Foul Terr.)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-37",
@@ -11342,15 +11388,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 8,
         "pitch_count_pitchfx": 8,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -11358,18 +11405,19 @@
           "at_bat_id": "TOR201906170_5_TOR_543208_ANA_594777_0",
           "inning_id": "TOR201906170_INN_TOP05",
           "pbp_table_row_number": 57,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Kole Calhoun",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, no out (83mph Slider)",
             "Result.....: Ground-rule Double (Fly Ball to Deep RF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-38",
@@ -11456,18 +11504,19 @@
           "at_bat_id": "TOR201906170_5_TOR_543208_ANA_664058_0",
           "inning_id": "TOR201906170_INN_TOP05",
           "pbp_table_row_number": 58,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "David Fletcher",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (84mph Slider)",
             "Result.....: Flyball: CF (Deep LF-CF); Calhoun to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-39",
@@ -11554,12 +11603,6 @@
           "at_bat_id": "TOR201906170_5_TOR_543208_ANA_571506_0",
           "inning_id": "TOR201906170_INN_TOP05",
           "pbp_table_row_number": 59,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Justin Bour",
           "pitch_sequence_description": [
@@ -11570,6 +11613,13 @@
             "Pitch 5/5..: In play, run(s) (91mph Sinker)",
             "Result.....: Flyball: LF/Sacrifice Fly (Deep LF); Calhoun Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-40",
@@ -11888,18 +11938,19 @@
           "at_bat_id": "TOR201906170_5_TOR_543208_ANA_518960_0",
           "inning_id": "TOR201906170_INN_TOP05",
           "pbp_table_row_number": 60,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Jonathan Lucroy",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (90mph Sinker)",
             "Result.....: Lineout: SS (Deep SS-3B Hole)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-41",
@@ -11998,15 +12049,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 8,
         "pitch_count_pitchfx": 8,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -12014,12 +12066,6 @@
           "at_bat_id": "TOR201906170_5_ANA_570240_TOR_545341_0",
           "inning_id": "TOR201906170_INN_BOT05",
           "pbp_table_row_number": 63,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Randal Grichuk",
           "pitch_sequence_description": [
@@ -12028,6 +12074,13 @@
             "Pitch 3/3..: Swinging strike (83mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-42",
@@ -12230,12 +12283,6 @@
           "at_bat_id": "TOR201906170_5_ANA_570240_TOR_520471_0",
           "inning_id": "TOR201906170_INN_BOT05",
           "pbp_table_row_number": 64,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Freddy Galvis",
           "pitch_sequence_description": [
@@ -12243,6 +12290,13 @@
             "Pitch 2/2..: In play, no out (84mph Changeup)",
             "Result.....: Single to RF (Ground Ball)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-43",
@@ -12387,12 +12441,6 @@
           "at_bat_id": "TOR201906170_5_ANA_570240_TOR_592273_0",
           "inning_id": "TOR201906170_INN_BOT05",
           "pbp_table_row_number": 65,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Brandon Drury",
           "pitch_sequence_description": [
@@ -12401,6 +12449,13 @@
             "Pitch 3/3..: In play, out(s) (91mph Two-seam Fastball)",
             "Result.....: Ground Ball Double Play: 3B-2B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-44",
@@ -12615,15 +12670,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 6,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 18,
         "pitch_count_pitchfx": 18,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -12631,12 +12687,6 @@
           "at_bat_id": "TOR201906170_6_TOR_592468_ANA_541600_0",
           "inning_id": "TOR201906170_INN_TOP06",
           "pbp_table_row_number": 69,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Nick Kingham",
           "batter_name": "Wilfredo Tovar",
           "pitch_sequence_description": [
@@ -12645,6 +12695,13 @@
             "Pitch 2/2..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Lineout: RF (Deep RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_TOP06",
@@ -12802,12 +12859,6 @@
           "at_bat_id": "TOR201906170_6_TOR_592468_ANA_600303_0",
           "inning_id": "TOR201906170_INN_TOP06",
           "pbp_table_row_number": 70,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Nick Kingham",
           "batter_name": "Tommy La Stella",
           "pitch_sequence_description": [
@@ -12815,6 +12866,13 @@
             "Pitch 2/2..: In play, out(s) (85mph Changeup)",
             "Result.....: Flyball: LF (Deep LF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-46",
@@ -12959,12 +13017,6 @@
           "at_bat_id": "TOR201906170_6_TOR_592468_ANA_545361_0",
           "inning_id": "TOR201906170_INN_TOP06",
           "pbp_table_row_number": 71,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Nick Kingham",
           "batter_name": "Mike Trout",
           "pitch_sequence_description": [
@@ -12972,6 +13024,13 @@
             "Pitch 2/2..: In play, run(s) (93mph Four-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-47",
@@ -13116,12 +13175,6 @@
           "at_bat_id": "TOR201906170_6_TOR_592468_ANA_660271_0",
           "inning_id": "TOR201906170_INN_TOP06",
           "pbp_table_row_number": 72,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Nick Kingham",
           "batter_name": "Shohei Ohtani",
           "pitch_sequence_description": [
@@ -13132,6 +13185,13 @@
             "Pitch 5/5..: In play, no out (83mph Curveball)",
             "Result.....: Double to CF (Line Drive to Deep CF-RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-48",
@@ -13450,12 +13510,6 @@
           "at_bat_id": "TOR201906170_6_TOR_592468_ANA_457708_0",
           "inning_id": "TOR201906170_INN_TOP06",
           "pbp_table_row_number": 73,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Nick Kingham",
           "batter_name": "Justin Upton",
           "pitch_sequence_description": [
@@ -13465,6 +13519,13 @@
             "Pitch 4/4..: Ball (91mph Four-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-49",
@@ -13725,12 +13786,6 @@
           "at_bat_id": "TOR201906170_6_TOR_592468_ANA_594777_0",
           "inning_id": "TOR201906170_INN_TOP06",
           "pbp_table_row_number": 74,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Nick Kingham",
           "batter_name": "Kole Calhoun",
           "pitch_sequence_description": [
@@ -13739,6 +13794,13 @@
             "Pitch 3/3..: Swinging strike (81mph Curveball) (pitch was blocked by catcher)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-50",
@@ -13953,15 +14015,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 15,
         "pitch_count_pitchfx": 15,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -13969,12 +14032,6 @@
           "at_bat_id": "TOR201906170_6_ANA_570240_TOR_571912_0",
           "inning_id": "TOR201906170_INN_BOT06",
           "pbp_table_row_number": 77,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Luke Maile",
           "pitch_sequence_description": [
@@ -13984,6 +14041,13 @@
             "Pitch 4/4..: Swinging strike (84mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-51",
@@ -14244,12 +14308,6 @@
           "at_bat_id": "TOR201906170_6_ANA_570240_TOR_519299_0",
           "inning_id": "TOR201906170_INN_BOT06",
           "pbp_table_row_number": 78,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Eric Sogard",
           "pitch_sequence_description": [
@@ -14259,6 +14317,13 @@
             "Pitch 4/4..: In play, no out (84mph Slider)",
             "Result.....: Single to CF (Fly Ball to Short CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-52",
@@ -14519,12 +14584,6 @@
           "at_bat_id": "TOR201906170_6_ANA_570240_TOR_624415_0",
           "inning_id": "TOR201906170_INN_BOT06",
           "pbp_table_row_number": 79,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Cavan Biggio",
           "pitch_sequence_description": [
@@ -14536,6 +14595,13 @@
             "Pitch 6/6..: Ball (84mph Slider) (pitch was blocked by catcher)",
             "Result.....: Walk; Sogard to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-53",
@@ -14912,18 +14978,19 @@
           "at_bat_id": "TOR201906170_6_ANA_570240_TOR_665489_0",
           "inning_id": "TOR201906170_INN_BOT06",
           "pbp_table_row_number": 80,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Vladimir Guerrero Jr.",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (83mph Slider)",
             "Result.....: Ground Ball Double Play: SS-2B-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-54",
@@ -15022,15 +15089,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 13,
         "pitch_count_pitchfx": 13,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -15038,12 +15106,6 @@
           "at_bat_id": "TOR201906170_7_TOR_475479_ANA_664058_0",
           "inning_id": "TOR201906170_INN_TOP07",
           "pbp_table_row_number": 84,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "David Phelps",
           "batter_name": "David Fletcher",
           "pitch_sequence_description": [
@@ -15057,6 +15119,13 @@
             "Pitch 4/4..: Ball (90mph Four-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_TOP07",
@@ -15369,12 +15438,6 @@
           "at_bat_id": "TOR201906170_7_TOR_475479_ANA_571506_0",
           "inning_id": "TOR201906170_INN_TOP07",
           "pbp_table_row_number": 85,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "David Phelps",
           "batter_name": "Justin Bour",
           "pitch_sequence_description": [
@@ -15384,6 +15447,13 @@
             "Pitch 4/4..: In play, out(s) (89mph Slider)",
             "Result.....: Popfly: SS (Deep SS-2B)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-56",
@@ -15644,12 +15714,6 @@
           "at_bat_id": "TOR201906170_7_TOR_475479_ANA_518960_0",
           "inning_id": "TOR201906170_INN_TOP07",
           "pbp_table_row_number": 86,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "David Phelps",
           "batter_name": "Jonathan Lucroy",
           "pitch_sequence_description": [
@@ -15658,6 +15722,13 @@
             "Pitch 3/3..: Swinging strike (89mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-57",
@@ -15860,12 +15931,6 @@
           "at_bat_id": "TOR201906170_7_TOR_475479_ANA_541600_0",
           "inning_id": "TOR201906170_INN_TOP07",
           "pbp_table_row_number": 87,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "David Phelps",
           "batter_name": "Wilfredo Tovar",
           "pitch_sequence_description": [
@@ -15873,6 +15938,13 @@
             "Pitch 2/2..: In play, out(s) (79mph Slider)",
             "Result.....: Popfly: SS (Short CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-58",
@@ -16029,15 +16101,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 6,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 20,
         "pitch_count_pitchfx": 20,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -16045,12 +16118,6 @@
           "at_bat_id": "TOR201906170_7_ANA_570240_TOR_642133_0",
           "inning_id": "TOR201906170_INN_BOT07",
           "pbp_table_row_number": 90,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Rowdy Tellez",
           "pitch_sequence_description": [
@@ -16058,6 +16125,13 @@
             "Pitch 2/2..: In play, out(s) (85mph Changeup)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-59",
@@ -16202,12 +16276,6 @@
           "at_bat_id": "TOR201906170_7_ANA_570240_TOR_666971_0",
           "inning_id": "TOR201906170_INN_BOT07",
           "pbp_table_row_number": 91,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Lourdes Gurriel Jr.",
           "pitch_sequence_description": [
@@ -16219,6 +16287,13 @@
             "Pitch 6/6..: Ball (84mph Slider)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-60",
@@ -16595,12 +16670,6 @@
           "at_bat_id": "TOR201906170_7_ANA_570240_TOR_545341_0",
           "inning_id": "TOR201906170_INN_BOT07",
           "pbp_table_row_number": 92,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Randal Grichuk",
           "pitch_sequence_description": [
@@ -16609,6 +16678,13 @@
             "Pitch 3/3..: In play, run(s) (92mph Two-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep LF Line); Gurriel Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-61",
@@ -16811,12 +16887,6 @@
           "at_bat_id": "TOR201906170_7_ANA_570240_TOR_520471_0",
           "inning_id": "TOR201906170_INN_BOT07",
           "pbp_table_row_number": 93,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Freddy Galvis",
           "pitch_sequence_description": [
@@ -16828,6 +16898,13 @@
             "Pitch 5/5..: In play, no out (93mph Two-seam Fastball)",
             "Result.....: Single to CF (Line Drive to Deep CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-62",
@@ -17146,12 +17223,6 @@
           "at_bat_id": "TOR201906170_7_ANA_570240_TOR_592273_0",
           "inning_id": "TOR201906170_INN_BOT07",
           "pbp_table_row_number": 94,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Brandon Drury",
           "pitch_sequence_description": [
@@ -17160,6 +17231,13 @@
             "Pitch 3/3..: Swinging strike (83mph Slider) (pitch was blocked by catcher)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-63",
@@ -17362,18 +17440,19 @@
           "at_bat_id": "TOR201906170_7_ANA_570240_TOR_571912_0",
           "inning_id": "TOR201906170_INN_BOT07",
           "pbp_table_row_number": 95,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Luke Maile",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (91mph Two-seam Fastball)",
             "Result.....: Groundout: 2B-1B (2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-64",
@@ -17472,15 +17551,16 @@
         "home_team_runs_after_inning": 3
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 16,
         "pitch_count_pitchfx": 16,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -17488,12 +17568,6 @@
           "at_bat_id": "TOR201906170_8_TOR_641835_ANA_600303_0",
           "inning_id": "TOR201906170_INN_TOP08",
           "pbp_table_row_number": 99,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Tim Mayza",
           "batter_name": "Tommy La Stella",
           "pitch_sequence_description": [
@@ -17505,6 +17579,13 @@
             "Pitch 5/5..: In play, out(s) (93mph Two-seam Fastball)",
             "Result.....: Groundout: 2B-1B (2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_TOP08",
@@ -17836,12 +17917,6 @@
           "at_bat_id": "TOR201906170_8_TOR_641835_ANA_545361_0",
           "inning_id": "TOR201906170_INN_TOP08",
           "pbp_table_row_number": 100,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Tim Mayza",
           "batter_name": "Mike Trout",
           "pitch_sequence_description": [
@@ -17852,6 +17927,13 @@
             "Pitch 5/5..: In play, no out (95mph Two-seam Fastball)",
             "Result.....: Single to RF (Ground Ball thru 2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-66",
@@ -18170,18 +18252,19 @@
           "at_bat_id": "TOR201906170_8_TOR_641835_ANA_660271_0",
           "inning_id": "TOR201906170_INN_TOP08",
           "pbp_table_row_number": 101,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Tim Mayza",
           "batter_name": "Shohei Ohtani",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (95mph Two-seam Fastball)",
             "Result.....: Groundout: SS unassisted/Forceout at 2B (SS-2B)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-67",
@@ -18268,12 +18351,6 @@
           "at_bat_id": "TOR201906170_8_TOR_641835_ANA_457708_0",
           "inning_id": "TOR201906170_INN_TOP08",
           "pbp_table_row_number": 102,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Tim Mayza",
           "batter_name": "Justin Upton",
           "pitch_sequence_description": [
@@ -18284,6 +18361,13 @@
             "Pitch 5/5..: In play, out(s) (94mph Four-seam Fastball)",
             "Result.....: Lineout: CF (CF-RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-68",
@@ -18614,15 +18698,16 @@
         "home_team_runs_after_inning": 5
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 7,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 30,
         "pitch_count_pitchfx": 30,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -18630,12 +18715,6 @@
           "at_bat_id": "TOR201906170_8_ANA_570240_TOR_519299_0",
           "inning_id": "TOR201906170_INN_BOT08",
           "pbp_table_row_number": 105,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Eric Sogard",
           "pitch_sequence_description": [
@@ -18643,6 +18722,13 @@
             "Pitch 2/2..: In play, no out (89mph Two-seam Fastball)",
             "Result.....: Single to CF (Fly Ball)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-69",
@@ -18787,12 +18873,6 @@
           "at_bat_id": "TOR201906170_8_ANA_570240_TOR_624415_0",
           "inning_id": "TOR201906170_INN_BOT08",
           "pbp_table_row_number": 106,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Felix Pena",
           "batter_name": "Cavan Biggio",
           "pitch_sequence_description": [
@@ -18804,6 +18884,13 @@
             "Pitch 6/6..: In play, run(s) (90mph Two-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep RF Line); Sogard Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-70",
@@ -19180,12 +19267,6 @@
           "at_bat_id": "TOR201906170_8_ANA_598287_TOR_665489_0",
           "inning_id": "TOR201906170_INN_BOT08",
           "pbp_table_row_number": 108,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Noe Ramirez",
           "batter_name": "Vladimir Guerrero Jr.",
           "pitch_sequence_description": [
@@ -19195,6 +19276,13 @@
             "Pitch 3/3..: Swinging strike (78mph Curveball)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_BOT08",
@@ -19410,12 +19498,6 @@
           "at_bat_id": "TOR201906170_8_ANA_598287_TOR_642133_0",
           "inning_id": "TOR201906170_INN_BOT08",
           "pbp_table_row_number": 109,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Noe Ramirez",
           "batter_name": "Rowdy Tellez",
           "pitch_sequence_description": [
@@ -19426,6 +19508,13 @@
             "Pitch 5/5..: In play, no out (85mph Changeup)",
             "Result.....: Reached on E6 (Ground Ball to SS-2B)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-72",
@@ -19744,12 +19833,6 @@
           "at_bat_id": "TOR201906170_8_ANA_598287_TOR_666971_0",
           "inning_id": "TOR201906170_INN_BOT08",
           "pbp_table_row_number": 110,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Noe Ramirez",
           "batter_name": "Lourdes Gurriel Jr.",
           "pitch_sequence_description": [
@@ -19757,6 +19840,13 @@
             "Pitch 2/2..: In play, out(s) (77mph Curveball)",
             "Result.....: Foul Popfly: 3B (3B into Foul Terr.)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-73",
@@ -19901,12 +19991,6 @@
           "at_bat_id": "TOR201906170_8_ANA_598287_TOR_545341_0",
           "inning_id": "TOR201906170_INN_BOT08",
           "pbp_table_row_number": 111,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Noe Ramirez",
           "batter_name": "Randal Grichuk",
           "pitch_sequence_description": [
@@ -19918,6 +20002,13 @@
             "Pitch 6/6..: In play, no out (79mph Curveball)",
             "Result.....: Single to P (Ground Ball to Front of Home); Tellez to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-74",
@@ -20294,12 +20385,6 @@
           "at_bat_id": "TOR201906170_8_ANA_621142_TOR_520471_0",
           "inning_id": "TOR201906170_INN_BOT08",
           "pbp_table_row_number": 113,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Ty Buttrey",
           "batter_name": "Freddy Galvis",
           "pitch_sequence_description": [
@@ -20312,6 +20397,13 @@
             "Pitch 6/6..: Swinging strike (84mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_BOT08",
@@ -20713,15 +20805,16 @@
         "home_team_runs_after_inning": 5
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 28,
         "pitch_count_pitchfx": 28,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -20729,12 +20822,6 @@
           "at_bat_id": "TOR201906170_9_TOR_543339_ANA_594777_0",
           "inning_id": "TOR201906170_INN_TOP09",
           "pbp_table_row_number": 117,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Daniel Hudson",
           "batter_name": "Kole Calhoun",
           "pitch_sequence_description": [
@@ -20746,6 +20833,13 @@
             "Pitch 5/5..: Ball (96mph Four-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_TOP09",
@@ -21077,12 +21171,6 @@
           "at_bat_id": "TOR201906170_9_TOR_543339_ANA_664058_0",
           "inning_id": "TOR201906170_INN_TOP09",
           "pbp_table_row_number": 118,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Daniel Hudson",
           "batter_name": "David Fletcher",
           "pitch_sequence_description": [
@@ -21092,6 +21180,13 @@
             "Pitch 4/4..: In play, out(s) (96mph Four-seam Fastball)",
             "Result.....: Lineout: CF-SS/Forceout at 2B (Deep CF-RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-77",
@@ -21352,12 +21447,6 @@
           "at_bat_id": "TOR201906170_9_TOR_543339_ANA_571506_0",
           "inning_id": "TOR201906170_INN_TOP09",
           "pbp_table_row_number": 119,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Daniel Hudson",
           "batter_name": "Justin Bour",
           "pitch_sequence_description": [
@@ -21367,6 +21456,13 @@
             "Pitch 2/2..: In play, out(s) (90mph Changeup)",
             "Result.....: Groundout: P-1B (Front of Home); Fletcher to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-78",
@@ -21511,12 +21607,6 @@
           "at_bat_id": "TOR201906170_9_TOR_543339_ANA_518960_0",
           "inning_id": "TOR201906170_INN_TOP09",
           "pbp_table_row_number": 120,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Daniel Hudson",
           "batter_name": "Jonathan Lucroy",
           "pitch_sequence_description": [
@@ -21528,6 +21618,13 @@
             "Pitch 6/6..: Ball (96mph Four-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-79",
@@ -21904,12 +22001,6 @@
           "at_bat_id": "TOR201906170_9_TOR_543339_ANA_541600_0",
           "inning_id": "TOR201906170_INN_TOP09",
           "pbp_table_row_number": 121,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 11,
-          "pitch_count_pitchfx": 11,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Daniel Hudson",
           "batter_name": "Wilfredo Tovar",
           "pitch_sequence_description": [
@@ -21926,6 +22017,13 @@
             "Pitch 11/11..: In play, out(s) (87mph Slider)",
             "Result.......: Foul Popfly: 1B (1B into Foul Terr.)"
           ],
+          "pitch_count_bbref_pitch_seq": 11,
+          "pitch_count_pitchfx": 11,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-80",
@@ -22604,15 +22702,16 @@
         "home_team_runs_after_inning": 5
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 7,
         "pitch_count_pitchfx": 7,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -22620,12 +22719,6 @@
           "at_bat_id": "TOR201906170_9_ANA_605121_TOR_592273_0",
           "inning_id": "TOR201906170_INN_BOT09",
           "pbp_table_row_number": 125,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Justin Anderson",
           "batter_name": "Brandon Drury",
           "pitch_sequence_description": [
@@ -22633,6 +22726,13 @@
             "Pitch 1/1..: In play, out(s) (96mph Four-seam Fastball)",
             "Result.....: Popfly: SS"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "TOR201906170_INN_BOT09",
@@ -22732,12 +22832,6 @@
           "at_bat_id": "TOR201906170_9_ANA_605121_TOR_571912_0",
           "inning_id": "TOR201906170_INN_BOT09",
           "pbp_table_row_number": 126,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Justin Anderson",
           "batter_name": "Luke Maile",
           "pitch_sequence_description": [
@@ -22747,6 +22841,13 @@
             "Pitch 4/4..: In play, out(s) (96mph Two-seam Fastball)",
             "Result.....: Popfly: 2B (Deep 1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-82",
@@ -23007,12 +23108,6 @@
           "at_bat_id": "TOR201906170_9_ANA_605121_TOR_519299_0",
           "inning_id": "TOR201906170_INN_BOT09",
           "pbp_table_row_number": 127,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Justin Anderson",
           "batter_name": "Eric Sogard",
           "pitch_sequence_description": [
@@ -23020,6 +23115,13 @@
             "Pitch 2/2..: In play, out(s) (96mph Two-seam Fastball)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "TOR201906170-83",

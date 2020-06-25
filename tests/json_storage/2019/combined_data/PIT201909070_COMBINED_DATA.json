@@ -2,15 +2,16 @@
   "bbref_game_id": "PIT201909070",
   "boxscore_url": "https://www.baseball-reference.com/boxes/PIT/PIT201909070.shtml",
   "pitchfx_vs_bbref_audit": {
-    "pitchfx_data_complete": false,
     "total_batters_faced_bbref": 79,
-    "total_at_bats_pitchfx_complete": 72,
+    "total_at_bats_pitchfx_complete": 69,
     "total_at_bats_missing_pitchfx": 7,
     "total_at_bats_extra_pitchfx": 0,
     "pitch_count_bbref_stats_table": 310,
     "pitch_count_bbref_pitch_seq": 310,
     "pitch_count_pitchfx_audited": 276,
     "pitch_count_missing_pitchfx": 34,
+    "pitch_count_extra_pitchfx": 0,
+    "incorrect_extra_pitchfx_removed_count": 0,
     "missing_pitchfx_is_valid": true,
     "at_bat_ids_missing_pitchfx": [
       "PIT201909070_9_PIT_571917_SLN_592660_0",
@@ -21,6 +22,7 @@
       "PIT201909070_9_SLN_594965_PIT_592567_0",
       "PIT201909070_9_SLN_594965_PIT_622569_0"
     ],
+    "at_bat_ids_extra_pitchfx": [],
     "at_bat_ids_pitchfx_data_error": [],
     "duplicate_pitchfx_removed_count": 1
   },
@@ -1458,15 +1460,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 20,
         "pitch_count_pitchfx": 20,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -1474,18 +1477,19 @@
           "at_bat_id": "PIT201909070_1_PIT_643230_SLN_451594_0",
           "inning_id": "PIT201909070_INN_TOP01",
           "pbp_table_row_number": 1,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Dexter Fowler",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Flyball: RF (Deep RF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-1",
@@ -1572,12 +1576,6 @@
           "at_bat_id": "PIT201909070_1_PIT_643230_SLN_543939_0",
           "inning_id": "PIT201909070_INN_TOP01",
           "pbp_table_row_number": 2,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Kolten Wong",
           "pitch_sequence_description": [
@@ -1589,6 +1587,13 @@
             "Pitch 6/6..: Swinging strike (83mph Slider)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-2",
@@ -1965,12 +1970,6 @@
           "at_bat_id": "PIT201909070_1_PIT_643230_SLN_502671_0",
           "inning_id": "PIT201909070_INN_TOP01",
           "pbp_table_row_number": 3,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Paul Goldschmidt",
           "pitch_sequence_description": [
@@ -1981,6 +1980,13 @@
             "Pitch 5/5..: Ball (85mph Changeup)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-3",
@@ -2299,12 +2305,6 @@
           "at_bat_id": "PIT201909070_1_PIT_643230_SLN_542303_0",
           "inning_id": "PIT201909070_INN_TOP01",
           "pbp_table_row_number": 4,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 8,
-          "pitch_count_pitchfx": 8,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Marcell Ozuna",
           "pitch_sequence_description": [
@@ -2319,6 +2319,13 @@
             "Pitch 8/8..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Lineout: LF (Deep LF)"
           ],
+          "pitch_count_bbref_pitch_seq": 8,
+          "pitch_count_pitchfx": 8,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-4",
@@ -2842,15 +2849,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 20,
         "pitch_count_pitchfx": 20,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -2858,12 +2866,6 @@
           "at_bat_id": "PIT201909070_1_SLN_425794_PIT_621028_0",
           "inning_id": "PIT201909070_INN_BOT01",
           "pbp_table_row_number": 8,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Kevin Newman",
           "pitch_sequence_description": [
@@ -2874,6 +2876,13 @@
             "Pitch 5/5..: In play, out(s) (76mph Curveball)",
             "Result.....: Groundout: 3B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-6",
@@ -3192,12 +3201,6 @@
           "at_bat_id": "PIT201909070_1_SLN_425794_PIT_668804_0",
           "inning_id": "PIT201909070_INN_BOT01",
           "pbp_table_row_number": 9,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Bryan Reynolds",
           "pitch_sequence_description": [
@@ -3208,6 +3211,13 @@
             "Pitch 5/5..: In play, out(s) (92mph Four-seam Fastball)",
             "Result.....: Single to RF (Ground Ball thru 2B-1B); Reynolds out at 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-7",
@@ -3526,12 +3536,6 @@
           "at_bat_id": "PIT201909070_1_SLN_425794_PIT_516782_0",
           "inning_id": "PIT201909070_INN_BOT01",
           "pbp_table_row_number": 11,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Starling Marte",
           "pitch_sequence_description": [
@@ -3539,6 +3543,13 @@
             "Pitch 2/2..: In play, no out (91mph Sinker)",
             "Result.....: Triple to RF (Ground Ball)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_BOT01",
@@ -3691,12 +3702,6 @@
           "at_bat_id": "PIT201909070_1_SLN_425794_PIT_605137_0",
           "inning_id": "PIT201909070_INN_BOT01",
           "pbp_table_row_number": 12,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Josh Bell",
           "pitch_sequence_description": [
@@ -3708,6 +3713,13 @@
             "Pitch 6/6..: Ball (93mph Four-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-9",
@@ -4084,12 +4096,6 @@
           "at_bat_id": "PIT201909070_1_SLN_425794_PIT_592567_0",
           "inning_id": "PIT201909070_INN_BOT01",
           "pbp_table_row_number": 13,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Colin Moran",
           "pitch_sequence_description": [
@@ -4097,6 +4103,13 @@
             "Pitch 2/2..: In play, out(s) (77mph Curveball)",
             "Result.....: Groundout: 1B unassisted"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-10",
@@ -4253,15 +4266,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 13,
         "pitch_count_pitchfx": 13,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -4269,18 +4283,19 @@
           "at_bat_id": "PIT201909070_2_PIT_643230_SLN_657557_0",
           "inning_id": "PIT201909070_INN_TOP02",
           "pbp_table_row_number": 16,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Paul DeJong",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (91mph Four-seam Fastball)",
             "Result.....: Flyball: RF"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-11",
@@ -4367,12 +4382,6 @@
           "at_bat_id": "PIT201909070_2_PIT_643230_SLN_425877_0",
           "inning_id": "PIT201909070_INN_TOP02",
           "pbp_table_row_number": 17,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Yadier Molina",
           "pitch_sequence_description": [
@@ -4382,6 +4391,13 @@
             "Pitch 4/4..: In play, out(s) (92mph Four-seam Fastball)",
             "Result.....: Groundout: 3B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-12",
@@ -4642,12 +4658,6 @@
           "at_bat_id": "PIT201909070_2_PIT_643230_SLN_669242_0",
           "inning_id": "PIT201909070_INN_TOP02",
           "pbp_table_row_number": 18,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Tommy Edman",
           "pitch_sequence_description": [
@@ -4656,6 +4666,13 @@
             "Pitch 3/3..: Hit batter (91mph Four-seam Fastball)",
             "Result.....: Hit By Pitch"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-13",
@@ -4858,12 +4875,6 @@
           "at_bat_id": "PIT201909070_2_PIT_643230_SLN_664056_0",
           "inning_id": "PIT201909070_INN_TOP02",
           "pbp_table_row_number": 19,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Harrison Bader",
           "pitch_sequence_description": [
@@ -4876,6 +4887,13 @@
             "Pitch 5/5..: Called strike (93mph Four-seam Fastball)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-14",
@@ -5225,15 +5243,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 11,
         "pitch_count_pitchfx": 11,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -5241,12 +5260,6 @@
           "at_bat_id": "PIT201909070_2_SLN_425794_PIT_591741_0",
           "inning_id": "PIT201909070_INN_BOT02",
           "pbp_table_row_number": 23,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Jose Osuna",
           "pitch_sequence_description": [
@@ -5254,6 +5267,13 @@
             "Pitch 2/2..: In play, out(s) (85mph Cutter)",
             "Result.....: Groundout: P-1B (Front of Home)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-16",
@@ -5398,12 +5418,6 @@
           "at_bat_id": "PIT201909070_2_SLN_425794_PIT_624428_0",
           "inning_id": "PIT201909070_INN_BOT02",
           "pbp_table_row_number": 24,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Adam Frazier",
           "pitch_sequence_description": [
@@ -5414,6 +5428,13 @@
             "Pitch 5/5..: Called strike (91mph Sinker)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-17",
@@ -5732,12 +5753,6 @@
           "at_bat_id": "PIT201909070_2_SLN_425794_PIT_553869_0",
           "inning_id": "PIT201909070_INN_BOT02",
           "pbp_table_row_number": 25,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Elias Diaz",
           "pitch_sequence_description": [
@@ -5747,6 +5762,13 @@
             "Pitch 4/4..: In play, out(s) (76mph Curveball)",
             "Result.....: Groundout: SS-1B (SS-3B Hole)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-18",
@@ -6019,15 +6041,16 @@
         "home_team_runs_after_inning": 0
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 7,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 25,
         "pitch_count_pitchfx": 25,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -6035,12 +6058,6 @@
           "at_bat_id": "PIT201909070_3_PIT_643230_SLN_425794_0",
           "inning_id": "PIT201909070_INN_TOP03",
           "pbp_table_row_number": 28,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Adam Wainwright",
           "pitch_sequence_description": [
@@ -6049,6 +6066,13 @@
             "Pitch 3/3..: In play, no out (92mph Four-seam Fastball)",
             "Result.....: Double to LF (Line Drive to Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-19",
@@ -6251,12 +6275,6 @@
           "at_bat_id": "PIT201909070_3_PIT_643230_SLN_451594_0",
           "inning_id": "PIT201909070_INN_TOP03",
           "pbp_table_row_number": 29,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Dexter Fowler",
           "pitch_sequence_description": [
@@ -6266,6 +6284,13 @@
             "Pitch 4/4..: In play, run(s) (92mph Two-seam Fastball)",
             "Result.....: Single to CF (Line Drive); Wainwright Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-20",
@@ -6526,18 +6551,19 @@
           "at_bat_id": "PIT201909070_3_PIT_643230_SLN_543939_0",
           "inning_id": "PIT201909070_INN_TOP03",
           "pbp_table_row_number": 30,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Kolten Wong",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, no out (83mph Slider)",
             "Result.....: Single to 1B (Bunt to Short 1B Line); Fowler to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-21",
@@ -6624,12 +6650,6 @@
           "at_bat_id": "PIT201909070_3_PIT_643230_SLN_502671_0",
           "inning_id": "PIT201909070_INN_TOP03",
           "pbp_table_row_number": 31,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 8,
-          "pitch_count_pitchfx": 8,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Paul Goldschmidt",
           "pitch_sequence_description": [
@@ -6643,6 +6663,13 @@
             "Pitch 8/8..: In play, out(s) (94mph Four-seam Fastball)",
             "Result.....: Popfly: SS"
           ],
+          "pitch_count_bbref_pitch_seq": 8,
+          "pitch_count_pitchfx": 8,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-22",
@@ -7135,12 +7162,6 @@
           "at_bat_id": "PIT201909070_3_PIT_643230_SLN_542303_0",
           "inning_id": "PIT201909070_INN_TOP03",
           "pbp_table_row_number": 32,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Marcell Ozuna",
           "pitch_sequence_description": [
@@ -7149,6 +7170,13 @@
             "Pitch 2/2..: In play, run(s) (92mph Four-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep CF-RF); Fowler Scores; Wong Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-23",
@@ -7312,12 +7340,6 @@
           "at_bat_id": "PIT201909070_3_PIT_643230_SLN_657557_0",
           "inning_id": "PIT201909070_INN_TOP03",
           "pbp_table_row_number": 34,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Paul DeJong",
           "pitch_sequence_description": [
@@ -7326,6 +7348,13 @@
             "Pitch 3/3..: In play, no out (86mph Changeup)",
             "Result.....: Reached on E3 (throw) (Ground Ball)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-25",
@@ -7528,12 +7557,6 @@
           "at_bat_id": "PIT201909070_3_PIT_643230_SLN_425877_0",
           "inning_id": "PIT201909070_INN_TOP03",
           "pbp_table_row_number": 35,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Yadier Molina",
           "pitch_sequence_description": [
@@ -7543,6 +7566,13 @@
             "Pitch 4/4..: In play, out(s) (94mph Four-seam Fastball)",
             "Result.....: Ground Ball Double Play: 3B-2B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-26",
@@ -7815,15 +7845,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 5,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 17,
         "pitch_count_pitchfx": 17,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -7831,12 +7862,6 @@
           "at_bat_id": "PIT201909070_3_SLN_425794_PIT_643230_0",
           "inning_id": "PIT201909070_INN_BOT03",
           "pbp_table_row_number": 38,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Steven Brault",
           "pitch_sequence_description": [
@@ -7844,6 +7869,13 @@
             "Pitch 2/2..: In play, out(s) (74mph Curveball)",
             "Result.....: Groundout: 1B-P (2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-27",
@@ -7988,12 +8020,6 @@
           "at_bat_id": "PIT201909070_3_SLN_425794_PIT_621028_0",
           "inning_id": "PIT201909070_INN_BOT03",
           "pbp_table_row_number": 39,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Kevin Newman",
           "pitch_sequence_description": [
@@ -8003,6 +8029,13 @@
             "Pitch 4/4..: In play, no out (92mph Sinker)",
             "Result.....: Single to LF (Line Drive to Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-28",
@@ -8263,12 +8296,6 @@
           "at_bat_id": "PIT201909070_3_SLN_425794_PIT_668804_0",
           "inning_id": "PIT201909070_INN_BOT03",
           "pbp_table_row_number": 40,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Bryan Reynolds",
           "pitch_sequence_description": [
@@ -8281,6 +8308,13 @@
             "Pitch 6/6..: Swinging strike (77mph Curveball)",
             "Result.....: Strikeout Swinging, Newman Steals 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-29",
@@ -8657,12 +8691,6 @@
           "at_bat_id": "PIT201909070_3_SLN_425794_PIT_516782_0",
           "inning_id": "PIT201909070_INN_BOT03",
           "pbp_table_row_number": 41,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Starling Marte",
           "pitch_sequence_description": [
@@ -8672,6 +8700,13 @@
             "Pitch 4/4..: In play, run(s) (79mph Curveball)",
             "Result.....: Single to RF (Line Drive to Short CF-RF); Newman Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-30",
@@ -8932,12 +8967,6 @@
           "at_bat_id": "PIT201909070_3_SLN_425794_PIT_605137_0",
           "inning_id": "PIT201909070_INN_BOT03",
           "pbp_table_row_number": 42,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Josh Bell",
           "pitch_sequence_description": [
@@ -8945,6 +8974,13 @@
             "Pitch 1/1..: In play, out(s) (87mph Cutter)",
             "Result.....: Groundout: 2B-1B (Short RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-31",
@@ -9043,15 +9079,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 8,
         "pitch_count_pitchfx": 8,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -9059,12 +9096,6 @@
           "at_bat_id": "PIT201909070_4_PIT_643230_SLN_669242_0",
           "inning_id": "PIT201909070_INN_TOP04",
           "pbp_table_row_number": 45,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Tommy Edman",
           "pitch_sequence_description": [
@@ -9072,6 +9103,13 @@
             "Pitch 2/2..: In play, out(s) (84mph Changeup)",
             "Result.....: Groundout: 3B-1B (SS-3B Hole)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-32",
@@ -9216,12 +9254,6 @@
           "at_bat_id": "PIT201909070_4_PIT_643230_SLN_664056_0",
           "inning_id": "PIT201909070_INN_TOP04",
           "pbp_table_row_number": 46,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Harrison Bader",
           "pitch_sequence_description": [
@@ -9229,6 +9261,13 @@
             "Pitch 2/2..: In play, out(s) (81mph Slider)",
             "Result.....: Lineout: LF (Deep LF)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-33",
@@ -9373,12 +9412,6 @@
           "at_bat_id": "PIT201909070_4_PIT_643230_SLN_425794_0",
           "inning_id": "PIT201909070_INN_TOP04",
           "pbp_table_row_number": 47,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Adam Wainwright",
           "pitch_sequence_description": [
@@ -9388,6 +9421,13 @@
             "Pitch 4/4..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Lineout: LF (Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-34",
@@ -9660,15 +9700,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 4,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 16,
         "pitch_count_pitchfx": 16,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -9676,12 +9717,6 @@
           "at_bat_id": "PIT201909070_4_SLN_425794_PIT_592567_0",
           "inning_id": "PIT201909070_INN_BOT04",
           "pbp_table_row_number": 50,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Colin Moran",
           "pitch_sequence_description": [
@@ -9692,6 +9727,13 @@
             "Pitch 5/5..: In play, out(s) (77mph Curveball)",
             "Result.....: Groundout: P-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-35",
@@ -10010,12 +10052,6 @@
           "at_bat_id": "PIT201909070_4_SLN_425794_PIT_591741_0",
           "inning_id": "PIT201909070_INN_BOT04",
           "pbp_table_row_number": 51,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Jose Osuna",
           "pitch_sequence_description": [
@@ -10026,6 +10062,13 @@
             "Pitch 5/5..: In play, out(s) (77mph Curveball)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-36",
@@ -10344,12 +10387,6 @@
           "at_bat_id": "PIT201909070_4_SLN_425794_PIT_624428_0",
           "inning_id": "PIT201909070_INN_BOT04",
           "pbp_table_row_number": 52,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Adam Frazier",
           "pitch_sequence_description": [
@@ -10357,6 +10394,13 @@
             "Pitch 2/2..: In play, no out (85mph Cutter)",
             "Result.....: Single to RF (Fly Ball to Short CF-RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-37",
@@ -10501,12 +10545,6 @@
           "at_bat_id": "PIT201909070_4_SLN_425794_PIT_553869_0",
           "inning_id": "PIT201909070_INN_BOT04",
           "pbp_table_row_number": 53,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Elias Diaz",
           "pitch_sequence_description": [
@@ -10518,6 +10556,13 @@
             "Pitch 4/4..: In play, out(s) (77mph Curveball)",
             "Result.....: Groundout: 2B-1B (Weak SS-2B)"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-38",
@@ -10790,15 +10835,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 11,
         "pitch_count_pitchfx": 11,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -10806,12 +10852,6 @@
           "at_bat_id": "PIT201909070_5_PIT_643230_SLN_451594_0",
           "inning_id": "PIT201909070_INN_TOP05",
           "pbp_table_row_number": 56,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Dexter Fowler",
           "pitch_sequence_description": [
@@ -10820,6 +10860,13 @@
             "Pitch 3/3..: In play, out(s) (87mph Changeup)",
             "Result.....: Groundout: P-1B (P's Right)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-39",
@@ -11022,12 +11069,6 @@
           "at_bat_id": "PIT201909070_5_PIT_643230_SLN_543939_0",
           "inning_id": "PIT201909070_INN_TOP05",
           "pbp_table_row_number": 57,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Kolten Wong",
           "pitch_sequence_description": [
@@ -11039,6 +11080,13 @@
             "Pitch 6/6..: In play, out(s) (93mph Two-seam Fastball)",
             "Result.....: Groundout: P-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-40",
@@ -11415,12 +11463,6 @@
           "at_bat_id": "PIT201909070_5_PIT_643230_SLN_502671_0",
           "inning_id": "PIT201909070_INN_TOP05",
           "pbp_table_row_number": 58,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Paul Goldschmidt",
           "pitch_sequence_description": [
@@ -11428,6 +11470,13 @@
             "Pitch 2/2..: In play, out(s) (87mph Changeup)",
             "Result.....: Groundout: SS-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-41",
@@ -11584,15 +11633,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 9,
         "pitch_count_pitchfx": 9,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -11600,12 +11650,6 @@
           "at_bat_id": "PIT201909070_5_SLN_425794_PIT_643230_0",
           "inning_id": "PIT201909070_INN_BOT05",
           "pbp_table_row_number": 61,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Steven Brault",
           "pitch_sequence_description": [
@@ -11613,6 +11657,13 @@
             "Pitch 2/2..: In play, no out (74mph Curveball)",
             "Result.....: Single to RF (Line Drive)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-42",
@@ -11757,18 +11808,19 @@
           "at_bat_id": "PIT201909070_5_SLN_425794_PIT_621028_0",
           "inning_id": "PIT201909070_INN_BOT05",
           "pbp_table_row_number": 62,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Kevin Newman",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (76mph Curveball)",
             "Result.....: Ground Ball Double Play: SS-2B-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-43",
@@ -11855,12 +11907,6 @@
           "at_bat_id": "PIT201909070_5_SLN_425794_PIT_668804_0",
           "inning_id": "PIT201909070_INN_BOT05",
           "pbp_table_row_number": 63,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Bryan Reynolds",
           "pitch_sequence_description": [
@@ -11872,6 +11918,13 @@
             "Pitch 6/6..: Swinging strike (75mph Curveball)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-44",
@@ -12260,15 +12313,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 7,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 30,
         "pitch_count_pitchfx": 30,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -12276,12 +12330,6 @@
           "at_bat_id": "PIT201909070_6_PIT_643230_SLN_542303_0",
           "inning_id": "PIT201909070_INN_TOP06",
           "pbp_table_row_number": 66,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Marcell Ozuna",
           "pitch_sequence_description": [
@@ -12292,6 +12340,13 @@
             "Pitch 5/5..: Ball (86mph Changeup)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-45",
@@ -12610,12 +12665,6 @@
           "at_bat_id": "PIT201909070_6_PIT_643230_SLN_657557_0",
           "inning_id": "PIT201909070_INN_TOP06",
           "pbp_table_row_number": 67,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Paul DeJong",
           "pitch_sequence_description": [
@@ -12625,6 +12674,13 @@
             "Pitch 3/3..: In play, no out (86mph Changeup)",
             "Result.....: Reached on E9 (Fly Ball to Deep RF Line); Ozuna to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-46",
@@ -12846,12 +12902,6 @@
           "at_bat_id": "PIT201909070_6_PIT_643230_SLN_425877_0",
           "inning_id": "PIT201909070_INN_TOP06",
           "pbp_table_row_number": 69,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Yadier Molina",
           "pitch_sequence_description": [
@@ -12866,6 +12916,13 @@
             "Pitch 7/7..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Groundout: 3B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-48",
@@ -13319,18 +13376,19 @@
           "at_bat_id": "PIT201909070_6_PIT_643230_SLN_669242_0",
           "inning_id": "PIT201909070_INN_TOP06",
           "pbp_table_row_number": 71,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Tommy Edman",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, run(s) (84mph Cutter)",
             "Result.....: Single to LF (Ground Ball thru SS-3B Hole); Ozuna Scores; DeJong to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-50",
@@ -13417,12 +13475,6 @@
           "at_bat_id": "PIT201909070_6_PIT_643230_SLN_664056_0",
           "inning_id": "PIT201909070_INN_TOP06",
           "pbp_table_row_number": 72,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Steven Brault",
           "batter_name": "Harrison Bader",
           "pitch_sequence_description": [
@@ -13432,6 +13484,13 @@
             "Pitch 3/3..: In play, run(s) (93mph Four-seam Fastball)",
             "Result.....: Single to LF (Line Drive to Deep SS); DeJong Scores/unER; Edman to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-51",
@@ -13634,12 +13693,6 @@
           "at_bat_id": "PIT201909070_6_PIT_605280_SLN_425794_0",
           "inning_id": "PIT201909070_INN_TOP06",
           "pbp_table_row_number": 74,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Clay Holmes",
           "batter_name": "Adam Wainwright",
           "pitch_sequence_description": [
@@ -13655,6 +13708,13 @@
             "Pitch 6/6..: Called strike (89mph Slider)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_TOP06",
@@ -14063,12 +14123,6 @@
           "at_bat_id": "PIT201909070_6_PIT_605280_SLN_451594_0",
           "inning_id": "PIT201909070_INN_TOP06",
           "pbp_table_row_number": 76,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Clay Holmes",
           "batter_name": "Dexter Fowler",
           "pitch_sequence_description": [
@@ -14079,6 +14133,13 @@
             "Pitch 5/5..: Swinging strike (84mph Curveball)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-54",
@@ -14409,15 +14470,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 16,
         "pitch_count_pitchfx": 16,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -14425,12 +14487,6 @@
           "at_bat_id": "PIT201909070_6_SLN_425794_PIT_516782_0",
           "inning_id": "PIT201909070_INN_BOT06",
           "pbp_table_row_number": 79,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Starling Marte",
           "pitch_sequence_description": [
@@ -14442,6 +14498,13 @@
             "Pitch 6/6..: In play, out(s) (77mph Curveball)",
             "Result.....: Flyball: CF (LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-55",
@@ -14818,12 +14881,6 @@
           "at_bat_id": "PIT201909070_6_SLN_425794_PIT_605137_0",
           "inning_id": "PIT201909070_INN_BOT06",
           "pbp_table_row_number": 80,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Josh Bell",
           "pitch_sequence_description": [
@@ -14835,6 +14892,13 @@
             "Pitch 6/6..: In play, out(s) (75mph Curveball)",
             "Result.....: Groundout: 2B-1B (Deep 2B-1B)"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-56",
@@ -15211,12 +15275,6 @@
           "at_bat_id": "PIT201909070_6_SLN_425794_PIT_592567_0",
           "inning_id": "PIT201909070_INN_BOT06",
           "pbp_table_row_number": 81,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Colin Moran",
           "pitch_sequence_description": [
@@ -15226,6 +15284,13 @@
             "Pitch 4/4..: In play, out(s) (75mph Curveball)",
             "Result.....: Groundout: 1B unassisted"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-57",
@@ -15498,15 +15563,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 6,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 23,
         "pitch_count_pitchfx": 23,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -15514,18 +15580,19 @@
           "at_bat_id": "PIT201909070_7_PIT_605280_SLN_543939_0",
           "inning_id": "PIT201909070_INN_TOP07",
           "pbp_table_row_number": 84,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Clay Holmes",
           "batter_name": "Kolten Wong",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, no out (97mph Sinker)",
             "Result.....: Double to CF (Line Drive to Deep LF-CF)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-58",
@@ -15612,12 +15679,6 @@
           "at_bat_id": "PIT201909070_7_PIT_605280_SLN_502671_0",
           "inning_id": "PIT201909070_INN_TOP07",
           "pbp_table_row_number": 85,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Clay Holmes",
           "batter_name": "Paul Goldschmidt",
           "pitch_sequence_description": [
@@ -15629,6 +15690,13 @@
             "Pitch 6/6..: Called strike (95mph Sinker)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-59",
@@ -16005,12 +16073,6 @@
           "at_bat_id": "PIT201909070_7_PIT_605280_SLN_542303_0",
           "inning_id": "PIT201909070_INN_TOP07",
           "pbp_table_row_number": 86,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Clay Holmes",
           "batter_name": "Marcell Ozuna",
           "pitch_sequence_description": [
@@ -16022,6 +16084,13 @@
             "Pitch 6/6..: Ball (96mph Sinker)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-60",
@@ -16398,12 +16467,6 @@
           "at_bat_id": "PIT201909070_7_PIT_605280_SLN_657557_0",
           "inning_id": "PIT201909070_INN_TOP07",
           "pbp_table_row_number": 87,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Clay Holmes",
           "batter_name": "Paul DeJong",
           "pitch_sequence_description": [
@@ -16412,6 +16475,13 @@
             "Pitch 3/3..: In play, run(s) (83mph Curveball)",
             "Result.....: Double to CF (Fly Ball to Deep CF); Wong Scores; Ozuna Scores"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-61",
@@ -16614,18 +16684,19 @@
           "at_bat_id": "PIT201909070_7_PIT_605280_SLN_425877_0",
           "inning_id": "PIT201909070_INN_TOP07",
           "pbp_table_row_number": 88,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Clay Holmes",
           "batter_name": "Yadier Molina",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (95mph Sinker)",
             "Result.....: Groundout: 3B-1B (Weak 3B)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-62",
@@ -16712,12 +16783,6 @@
           "at_bat_id": "PIT201909070_7_PIT_605280_SLN_669242_0",
           "inning_id": "PIT201909070_INN_TOP07",
           "pbp_table_row_number": 89,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 6,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Clay Holmes",
           "batter_name": "Tommy Edman",
           "pitch_sequence_description": [
@@ -16729,6 +16794,13 @@
             "Pitch 6/6..: Called strike (83mph Curveball)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 6,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-63",
@@ -17117,15 +17189,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 6,
         "pitch_count_pitchfx": 6,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -17133,18 +17206,19 @@
           "at_bat_id": "PIT201909070_7_SLN_425794_PIT_591741_0",
           "inning_id": "PIT201909070_INN_BOT07",
           "pbp_table_row_number": 92,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 1,
-          "pitch_count_pitchfx": 1,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Jose Osuna",
           "pitch_sequence_description": [
             "Pitch 1/1..: In play, out(s) (73mph Curveball)",
             "Result.....: Flyball: RF (CF-RF)"
           ],
+          "pitch_count_bbref_pitch_seq": 1,
+          "pitch_count_pitchfx": 1,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-64",
@@ -17231,12 +17305,6 @@
           "at_bat_id": "PIT201909070_7_SLN_425794_PIT_624428_0",
           "inning_id": "PIT201909070_INN_BOT07",
           "pbp_table_row_number": 93,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Adam Frazier",
           "pitch_sequence_description": [
@@ -17244,6 +17312,13 @@
             "Pitch 2/2..: In play, out(s) (72mph Curveball)",
             "Result.....: Flyball: LF (LF Line)"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-65",
@@ -17388,12 +17463,6 @@
           "at_bat_id": "PIT201909070_7_SLN_425794_PIT_553869_0",
           "inning_id": "PIT201909070_INN_BOT07",
           "pbp_table_row_number": 94,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Adam Wainwright",
           "batter_name": "Elias Diaz",
           "pitch_sequence_description": [
@@ -17402,6 +17471,13 @@
             "Pitch 3/3..: In play, out(s) (74mph Curveball)",
             "Result.....: Popfly: 1B"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-66",
@@ -17616,15 +17692,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 6,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 29,
         "pitch_count_pitchfx": 29,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -17632,12 +17709,6 @@
           "at_bat_id": "PIT201909070_8_PIT_664129_SLN_664056_0",
           "inning_id": "PIT201909070_INN_TOP08",
           "pbp_table_row_number": 98,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Geoff Hartlieb",
           "batter_name": "Harrison Bader",
           "pitch_sequence_description": [
@@ -17648,6 +17719,13 @@
             "Pitch 4/4..: Ball (95mph Four-seam Fastball)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_TOP08",
@@ -17921,12 +17999,6 @@
           "at_bat_id": "PIT201909070_8_PIT_664129_SLN_425794_0",
           "inning_id": "PIT201909070_INN_TOP08",
           "pbp_table_row_number": 99,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Geoff Hartlieb",
           "batter_name": "Adam Wainwright",
           "pitch_sequence_description": [
@@ -17935,6 +18007,13 @@
             "Pitch 3/3..: In play, no out (97mph Four-seam Fastball)",
             "Result.....: Single to RF (Fly Ball to Short RF); Bader to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-68",
@@ -18137,12 +18216,6 @@
           "at_bat_id": "PIT201909070_8_PIT_664129_SLN_451594_0",
           "inning_id": "PIT201909070_INN_TOP08",
           "pbp_table_row_number": 100,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Geoff Hartlieb",
           "batter_name": "Dexter Fowler",
           "pitch_sequence_description": [
@@ -18153,6 +18226,13 @@
             "Pitch 5/5..: Called strike (99mph Four-seam Fastball)",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-69",
@@ -18471,12 +18551,6 @@
           "at_bat_id": "PIT201909070_8_PIT_664129_SLN_543939_0",
           "inning_id": "PIT201909070_INN_TOP08",
           "pbp_table_row_number": 101,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Geoff Hartlieb",
           "batter_name": "Kolten Wong",
           "pitch_sequence_description": [
@@ -18487,6 +18561,13 @@
             "Pitch 5/5..: In play, out(s) (98mph Four-seam Fastball)",
             "Result.....: Groundout: 1B-SS/Forceout at 2B (2B-1B); Bader to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-70",
@@ -18805,12 +18886,6 @@
           "at_bat_id": "PIT201909070_8_PIT_664129_SLN_502671_0",
           "inning_id": "PIT201909070_INN_TOP08",
           "pbp_table_row_number": 102,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 7,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Geoff Hartlieb",
           "batter_name": "Paul Goldschmidt",
           "pitch_sequence_description": [
@@ -18824,6 +18899,13 @@
             "Pitch 7/7..: Ball (87mph Slider)",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 7,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-71",
@@ -19277,12 +19359,6 @@
           "at_bat_id": "PIT201909070_8_PIT_664129_SLN_542303_0",
           "inning_id": "PIT201909070_INN_TOP08",
           "pbp_table_row_number": 104,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Geoff Hartlieb",
           "batter_name": "Marcell Ozuna",
           "pitch_sequence_description": [
@@ -19293,6 +19369,13 @@
             "Pitch 5/5..: In play, out(s) (98mph Four-seam Fastball)",
             "Result.....: Groundout: P-1B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-73",
@@ -19623,15 +19706,16 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": true,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 13,
         "pitch_count_pitchfx": 13,
         "pitch_count_missing_pitchfx": 0,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -19639,12 +19723,6 @@
           "at_bat_id": "PIT201909070_8_SLN_658551_PIT_596012_0",
           "inning_id": "PIT201909070_INN_BOT08",
           "pbp_table_row_number": 108,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Junior Fernandez",
           "batter_name": "Kevin Kramer",
           "pitch_sequence_description": [
@@ -19657,6 +19735,13 @@
             "Pitch 5/5..: Swinging strike (87mph Changeup)",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_BOT08",
@@ -20001,12 +20086,6 @@
           "at_bat_id": "PIT201909070_8_SLN_658551_PIT_621028_0",
           "inning_id": "PIT201909070_INN_BOT08",
           "pbp_table_row_number": 109,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Junior Fernandez",
           "batter_name": "Kevin Newman",
           "pitch_sequence_description": [
@@ -20015,6 +20094,13 @@
             "Pitch 3/3..: In play, out(s) (85mph Slider)",
             "Result.....: Lineout: SS"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-75",
@@ -20217,12 +20303,6 @@
           "at_bat_id": "PIT201909070_8_SLN_658551_PIT_668804_0",
           "inning_id": "PIT201909070_INN_BOT08",
           "pbp_table_row_number": 110,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 5,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Junior Fernandez",
           "batter_name": "Bryan Reynolds",
           "pitch_sequence_description": [
@@ -20233,6 +20313,13 @@
             "Pitch 5/5..: In play, out(s) (97mph Sinker)",
             "Result.....: Groundout: 3B-1B (SS-3B Hole)"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 5,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-76",
@@ -20563,19 +20650,20 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": false,
-        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_missing_pitchfx": 3,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 22,
         "pitch_count_pitchfx": 9,
         "pitch_count_missing_pitchfx": 13,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [
           "PIT201909070_9_PIT_571917_SLN_592660_0",
           "PIT201909070_9_PIT_571917_SLN_664056_0",
           "PIT201909070_9_PIT_571917_SLN_668227_0"
         ],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -20583,12 +20671,6 @@
           "at_bat_id": "PIT201909070_9_PIT_571917_SLN_624641_0",
           "inning_id": "PIT201909070_INN_TOP09",
           "pbp_table_row_number": 114,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 4,
-          "pitch_count_pitchfx": 4,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Parker Markel",
           "batter_name": "Edmundo Sosa",
           "pitch_sequence_description": [
@@ -20600,6 +20682,13 @@
             "Pitch 4/4..: Hit batter (97mph Four-seam Fastball)",
             "Result.....: Hit By Pitch"
           ],
+          "pitch_count_bbref_pitch_seq": 4,
+          "pitch_count_pitchfx": 4,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_TOP09",
@@ -20886,12 +20975,6 @@
           "at_bat_id": "PIT201909070_9_PIT_571917_SLN_425877_0",
           "inning_id": "PIT201909070_INN_TOP09",
           "pbp_table_row_number": 115,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 2,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Parker Markel",
           "batter_name": "Yadier Molina",
           "pitch_sequence_description": [
@@ -20899,6 +20982,13 @@
             "Pitch 2/2..: In play, no out (96mph Four-seam Fastball)",
             "Result.....: Single to CF (Line Drive to Deep CF); Sosa to 2B"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 2,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-78",
@@ -21043,12 +21133,6 @@
           "at_bat_id": "PIT201909070_9_PIT_571917_SLN_669242_0",
           "inning_id": "PIT201909070_INN_TOP09",
           "pbp_table_row_number": 117,
-          "pitchfx_data_complete": true,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 3,
-          "missing_pitchfx_count": 0,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [],
           "pitcher_name": "Parker Markel",
           "batter_name": "Tommy Edman",
           "pitch_sequence_description": [
@@ -21058,6 +21142,13 @@
             "Pitch 3/3..: In play, out(s) (85mph Slider)",
             "Result.....: Popfly: 3B (SS-3B Hole)"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 3,
+          "missing_pitchfx_count": 0,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_TOP09",
@@ -21273,18 +21364,6 @@
           "at_bat_id": "PIT201909070_9_PIT_571917_SLN_664056_0",
           "inning_id": "PIT201909070_INN_TOP09",
           "pbp_table_row_number": 118,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 0,
-          "missing_pitchfx_count": 5,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
           "pitcher_name": "Parker Markel",
           "batter_name": "Harrison Bader",
           "pitch_sequence_description": [
@@ -21295,6 +21374,19 @@
             "Pitch 5/5..: Ball put into play by batter",
             "Result.....: Double/Fan Interference (Fly Ball to Deep CF-RF); Sosa Scores; Knizner to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 0,
+          "missing_pitchfx_count": 5,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-80",
@@ -21322,19 +21414,6 @@
           "at_bat_id": "PIT201909070_9_PIT_571917_SLN_592660_0",
           "inning_id": "PIT201909070_INN_TOP09",
           "pbp_table_row_number": 120,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 0,
-          "missing_pitchfx_count": 6,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6
-          ],
           "pitcher_name": "Parker Markel",
           "batter_name": "Rangel Ravelo",
           "pitch_sequence_description": [
@@ -21347,6 +21426,20 @@
             "Pitch 6/6..: Ball put into play by batter",
             "Result.....: Groundout: SS-1B; Knizner Scores; Bader to 3B"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 0,
+          "missing_pitchfx_count": 6,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_TOP09",
@@ -21387,15 +21480,6 @@
           "at_bat_id": "PIT201909070_9_PIT_571917_SLN_668227_0",
           "inning_id": "PIT201909070_INN_TOP09",
           "pbp_table_row_number": 122,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 2,
-          "pitch_count_pitchfx": 0,
-          "missing_pitchfx_count": 2,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            1,
-            2
-          ],
           "pitcher_name": "Parker Markel",
           "batter_name": "Randy Arozarena",
           "pitch_sequence_description": [
@@ -21404,6 +21488,16 @@
             "Pitch 2/2..: Ball put into play by batter",
             "Result.....: Flyball: CF"
           ],
+          "pitch_count_bbref_pitch_seq": 2,
+          "pitch_count_pitchfx": 0,
+          "missing_pitchfx_count": 2,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            1,
+            2
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_TOP09",
@@ -21456,20 +21550,21 @@
         "home_team_runs_after_inning": 1
       },
       "inning_pitchfx_audit": {
-        "pitchfx_data_complete": false,
-        "total_at_bats_pitchfx_complete": 0,
         "total_at_bats_missing_pitchfx": 4,
         "total_at_bats_extra_pitchfx": 0,
         "pitch_count_bbref_pitch_seq": 21,
         "pitch_count_pitchfx": 0,
         "pitch_count_missing_pitchfx": 21,
+        "pitch_count_extra_pitchfx": 0,
         "missing_pitchfx_is_valid": true,
+        "incorrect_extra_pitchfx_removed_count": 0,
         "at_bat_ids_missing_pitchfx": [
           "PIT201909070_9_SLN_594965_PIT_571467_0",
           "PIT201909070_9_SLN_594965_PIT_591741_0",
           "PIT201909070_9_SLN_594965_PIT_592567_0",
           "PIT201909070_9_SLN_594965_PIT_622569_0"
         ],
+        "at_bat_ids_extra_pitchfx": [],
         "at_bat_ids_pitchfx_data_error": []
       },
       "inning_events": [
@@ -21477,20 +21572,6 @@
           "at_bat_id": "PIT201909070_9_SLN_594965_PIT_622569_0",
           "inning_id": "PIT201909070_INN_BOT09",
           "pbp_table_row_number": 126,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 7,
-          "pitch_count_pitchfx": 0,
-          "missing_pitchfx_count": 7,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7
-          ],
           "pitcher_name": "Daniel Ponce de Leon",
           "batter_name": "Pablo Reyes",
           "pitch_sequence_description": [
@@ -21511,6 +21592,21 @@
             "Pitch 7/7..: Ball",
             "Result.....: Walk"
           ],
+          "pitch_count_bbref_pitch_seq": 7,
+          "pitch_count_pitchfx": 0,
+          "missing_pitchfx_count": 7,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_BOT09",
@@ -21642,19 +21738,6 @@
           "at_bat_id": "PIT201909070_9_SLN_594965_PIT_571467_0",
           "inning_id": "PIT201909070_INN_BOT09",
           "pbp_table_row_number": 128,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 6,
-          "pitch_count_pitchfx": 0,
-          "missing_pitchfx_count": 6,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6
-          ],
           "pitcher_name": "Daniel Ponce de Leon",
           "batter_name": "Steven Baron",
           "pitch_sequence_description": [
@@ -21667,6 +21750,20 @@
             "Pitch 6/6..: Called strike",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 6,
+          "pitch_count_pitchfx": 0,
+          "missing_pitchfx_count": 6,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "inning_id": "PIT201909070_INN_BOT09",
@@ -21707,18 +21804,6 @@
           "at_bat_id": "PIT201909070_9_SLN_594965_PIT_592567_0",
           "inning_id": "PIT201909070_INN_BOT09",
           "pbp_table_row_number": 129,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 5,
-          "pitch_count_pitchfx": 0,
-          "missing_pitchfx_count": 5,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
           "pitcher_name": "Daniel Ponce de Leon",
           "batter_name": "Colin Moran",
           "pitch_sequence_description": [
@@ -21729,6 +21814,19 @@
             "Pitch 5/5..: Swinging strike",
             "Result.....: Strikeout Swinging"
           ],
+          "pitch_count_bbref_pitch_seq": 5,
+          "pitch_count_pitchfx": 0,
+          "missing_pitchfx_count": 5,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-85",
@@ -21756,16 +21854,6 @@
           "at_bat_id": "PIT201909070_9_SLN_594965_PIT_591741_0",
           "inning_id": "PIT201909070_INN_BOT09",
           "pbp_table_row_number": 130,
-          "pitchfx_data_complete": false,
-          "pitch_count_bbref_pitch_seq": 3,
-          "pitch_count_pitchfx": 0,
-          "missing_pitchfx_count": 3,
-          "missing_pitchfx_is_valid": true,
-          "missing_pitch_numbers": [
-            1,
-            2,
-            3
-          ],
           "pitcher_name": "Daniel Ponce de Leon",
           "batter_name": "Jose Osuna",
           "pitch_sequence_description": [
@@ -21774,6 +21862,17 @@
             "Pitch 3/3..: Called strike",
             "Result.....: Strikeout Looking"
           ],
+          "pitch_count_bbref_pitch_seq": 3,
+          "pitch_count_pitchfx": 0,
+          "missing_pitchfx_count": 3,
+          "missing_pitchfx_is_valid": true,
+          "error_message": "",
+          "missing_pitch_numbers": [
+            1,
+            2,
+            3
+          ],
+          "incorrect_extra_pitchfx_removed_count": 0,
           "pbp_events": [
             {
               "event_id": "PIT201909070-86",
@@ -21801,6 +21900,301 @@
     }
   ],
   "player_id_dict": {
+    "lasteto01": {
+      "name": "Tommy La Stella",
+      "mlb_id": 600303,
+      "team_id_bbref": "LAA"
+    },
+    "troutmi01": {
+      "name": "Mike Trout",
+      "mlb_id": 545361,
+      "team_id_bbref": "LAA"
+    },
+    "ohtansh01": {
+      "name": "Shohei Ohtani",
+      "mlb_id": 660271,
+      "team_id_bbref": "LAA"
+    },
+    "uptonju01": {
+      "name": "Justin Upton",
+      "mlb_id": 457708,
+      "team_id_bbref": "LAA"
+    },
+    "calhoko01": {
+      "name": "Kole Calhoun",
+      "mlb_id": 594777,
+      "team_id_bbref": "LAA"
+    },
+    "fletcda02": {
+      "name": "David Fletcher",
+      "mlb_id": 664058,
+      "team_id_bbref": "LAA"
+    },
+    "bourju01": {
+      "name": "Justin Bour",
+      "mlb_id": 571506,
+      "team_id_bbref": "LAA"
+    },
+    "lucrojo01": {
+      "name": "Jonathan Lucroy",
+      "mlb_id": 518960,
+      "team_id_bbref": "LAA"
+    },
+    "tovarwi01": {
+      "name": "Wilfredo Tovar",
+      "mlb_id": 541600,
+      "team_id_bbref": "LAA"
+    },
+    "garcilu03": {
+      "name": "Luis Garcia",
+      "mlb_id": 472610,
+      "team_id_bbref": "LAA"
+    },
+    "penafe01": {
+      "name": "Felix Pena",
+      "mlb_id": 570240,
+      "team_id_bbref": "LAA"
+    },
+    "ramirno01": {
+      "name": "Noe Ramirez",
+      "mlb_id": 598287,
+      "team_id_bbref": "LAA"
+    },
+    "buttrty01": {
+      "name": "Ty Buttrey",
+      "mlb_id": 621142,
+      "team_id_bbref": "LAA"
+    },
+    "anderju01": {
+      "name": "Justin Anderson",
+      "mlb_id": 605121,
+      "team_id_bbref": "LAA"
+    },
+    "sogarer01": {
+      "name": "Eric Sogard",
+      "mlb_id": 519299,
+      "team_id_bbref": "TOR"
+    },
+    "biggica01": {
+      "name": "Cavan Biggio",
+      "mlb_id": 624415,
+      "team_id_bbref": "TOR"
+    },
+    "guerrvl02": {
+      "name": "Vladimir Guerrero Jr.",
+      "mlb_id": 665489,
+      "team_id_bbref": "TOR"
+    },
+    "tellero01": {
+      "name": "Rowdy Tellez",
+      "mlb_id": 642133,
+      "team_id_bbref": "TOR"
+    },
+    "hernate01": {
+      "name": "Teoscar Hernandez",
+      "mlb_id": 606192,
+      "team_id_bbref": "TOR"
+    },
+    "gurrilo01": {
+      "name": "Lourdes Gurriel Jr.",
+      "mlb_id": 666971,
+      "team_id_bbref": "TOR"
+    },
+    "grichra01": {
+      "name": "Randal Grichuk",
+      "mlb_id": 545341,
+      "team_id_bbref": "TOR"
+    },
+    "galvifr01": {
+      "name": "Freddy Galvis",
+      "mlb_id": 520471,
+      "team_id_bbref": "TOR"
+    },
+    "drurybr01": {
+      "name": "Brandon Drury",
+      "mlb_id": 592273,
+      "team_id_bbref": "TOR"
+    },
+    "mailelu01": {
+      "name": "Luke Maile",
+      "mlb_id": 571912,
+      "team_id_bbref": "TOR"
+    },
+    "lawde01": {
+      "name": "Derek Law",
+      "mlb_id": 571882,
+      "team_id_bbref": "TOR"
+    },
+    "jacksed01": {
+      "name": "Edwin Jackson",
+      "mlb_id": 429719,
+      "team_id_bbref": "TOR"
+    },
+    "gavigsa01": {
+      "name": "Sam Gaviglio",
+      "mlb_id": 543208,
+      "team_id_bbref": "TOR"
+    },
+    "kinghni01": {
+      "name": "Nick Kingham",
+      "mlb_id": 592468,
+      "team_id_bbref": "TOR"
+    },
+    "phelpda01": {
+      "name": "David Phelps",
+      "mlb_id": 475479,
+      "team_id_bbref": "TOR"
+    },
+    "mayzati01": {
+      "name": "Tim Mayza",
+      "mlb_id": 641835,
+      "team_id_bbref": "TOR"
+    },
+    "hudsoda01": {
+      "name": "Daniel Hudson",
+      "mlb_id": 543339,
+      "team_id_bbref": "TOR"
+    },
+    "mcneije01": {
+      "name": "Jeff McNeil",
+      "mlb_id": 643446,
+      "team_id_bbref": "NYM"
+    },
+    "davisjd01": {
+      "name": "J.D. Davis",
+      "mlb_id": 605204,
+      "team_id_bbref": "NYM"
+    },
+    "lagarju01": {
+      "name": "Juan Lagares",
+      "mlb_id": 501571,
+      "team_id_bbref": ""
+    },
+    "alonspe01": {
+      "name": "Pete Alonso",
+      "mlb_id": 624413,
+      "team_id_bbref": "NYM"
+    },
+    "frazito01": {
+      "name": "Todd Frazier",
+      "mlb_id": 453943,
+      "team_id_bbref": "NYM"
+    },
+    "guilllu01": {
+      "name": "Luis Guillorme",
+      "mlb_id": 641645,
+      "team_id_bbref": ""
+    },
+    "confomi01": {
+      "name": "Michael Conforto",
+      "mlb_id": 624424,
+      "team_id_bbref": "NYM"
+    },
+    "ramoswi01": {
+      "name": "Wilson Ramos",
+      "mlb_id": 467092,
+      "team_id_bbref": "NYM"
+    },
+    "rosaram01": {
+      "name": "Amed Rosario",
+      "mlb_id": 642708,
+      "team_id_bbref": "NYM"
+    },
+    "hechaad01": {
+      "name": "Adeiny Hechavarria",
+      "mlb_id": 588751,
+      "team_id_bbref": "NYM"
+    },
+    "gomezca01": {
+      "name": "Carlos Gomez",
+      "mlb_id": 460576,
+      "team_id_bbref": "NYM"
+    },
+    "vargaja01": {
+      "name": "Jason Vargas",
+      "mlb_id": 450306,
+      "team_id_bbref": "NYM"
+    },
+    "familje01": {
+      "name": "Jeurys Familia",
+      "mlb_id": 544727,
+      "team_id_bbref": "NYM"
+    },
+    "lugose01": {
+      "name": "Seth Lugo",
+      "mlb_id": 607625,
+      "team_id_bbref": "NYM"
+    },
+    "gagnodr01": {
+      "name": "Drew Gagnon",
+      "mlb_id": 543193,
+      "team_id_bbref": "NYM"
+    },
+    "lemahdj01": {
+      "name": "DJ LeMahieu",
+      "mlb_id": 518934,
+      "team_id_bbref": "NYY"
+    },
+    "voitlu01": {
+      "name": "Luke Voit",
+      "mlb_id": 572228,
+      "team_id_bbref": "NYY"
+    },
+    "sanchga02": {
+      "name": "Gary Sanchez",
+      "mlb_id": 596142,
+      "team_id_bbref": "NYY"
+    },
+    "torregl01": {
+      "name": "Gleyber Torres",
+      "mlb_id": 650402,
+      "team_id_bbref": "NYY"
+    },
+    "frazicl01": {
+      "name": "Clint Frazier",
+      "mlb_id": 640449,
+      "team_id_bbref": "NYY"
+    },
+    "urshegi01": {
+      "name": "Gio Urshela",
+      "mlb_id": 570482,
+      "team_id_bbref": "NYY"
+    },
+    "maybica01": {
+      "name": "Cameron Maybin",
+      "mlb_id": 457727,
+      "team_id_bbref": "NYY"
+    },
+    "rominau01": {
+      "name": "Austin Romine",
+      "mlb_id": 519222,
+      "team_id_bbref": "NYY"
+    },
+    "gardnbr01": {
+      "name": "Brett Gardner",
+      "mlb_id": 458731,
+      "team_id_bbref": "NYY"
+    },
+    "paxtoja01": {
+      "name": "James Paxton",
+      "mlb_id": 572020,
+      "team_id_bbref": "NYY"
+    },
+    "adamsch01": {
+      "name": "Chance Adams",
+      "mlb_id": 664856,
+      "team_id_bbref": "NYY"
+    },
+    "cessalu01": {
+      "name": "Luis Cessa",
+      "mlb_id": 570666,
+      "team_id_bbref": "NYY"
+    },
+    "tarplst01": {
+      "name": "Stephen Tarpley",
+      "mlb_id": 605501,
+      "team_id_bbref": "NYY"
+    },
     "fowlede01": {
       "name": "Dexter Fowler",
       "mlb_id": 451594,
