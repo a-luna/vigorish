@@ -32,7 +32,7 @@ def create_url_for_brooks_games_for_date(db_job, scraped_data, game_date):
     url_data = {
         "identifier": game_date,
         "fileName": get_filename(scraped_data, data_set, game_date),
-        "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
+        "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
         "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
         "url": get_url_for_brooks_games_for_date(game_date),
     }
@@ -54,7 +54,9 @@ def create_urls_for_brooks_pitch_logs_for_date(db_job, scraped_data, game_date):
             url_data = {
                 "identifier": pitch_app_id,
                 "fileName": get_filename(scraped_data, data_set, pitch_app_id),
-                "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
+                "cachedHtmlFolderPath": get_cached_html_folderpath(
+                    scraped_data, data_set, game_date
+                ),
                 "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
                 "url": pitch_log_url,
             }
@@ -77,7 +79,9 @@ def create_urls_for_brooks_pitchfx_logs_for_date(db_job, scraped_data, game_date
             url_data = {
                 "identifier": pitch_app_id,
                 "fileName": get_filename(scraped_data, data_set, pitch_app_id),
-                "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
+                "cachedHtmlFolderPath": get_cached_html_folderpath(
+                    scraped_data, data_set, game_date
+                ),
                 "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
                 "url": pitch_log.pitchfx_url,
             }
@@ -90,7 +94,7 @@ def create_url_for_bbref_games_for_date(db_job, scraped_data, game_date):
     url_data = {
         "identifier": game_date,
         "fileName": get_filename(scraped_data, data_set, game_date),
-        "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
+        "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
         "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
         "url": get_url_for_bbref_games_for_date(game_date),
     }
@@ -109,7 +113,7 @@ def create_urls_for_bbref_boxscores_for_date(db_job, scraped_data, game_date):
         url_data = {
             "identifier": bbref_game_id,
             "fileName": get_filename(scraped_data, data_set, bbref_game_id),
-            "htmlFolderPath": get_local_folderpath(scraped_data, data_set, game_date),
+            "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
             "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
             "url": boxscore_url,
         }
@@ -135,7 +139,7 @@ def get_filename(scraped_data, data_set, identifier):
     return scraped_data.file_helper.filename_dict[DocFormat.HTML][data_set](identifier)
 
 
-def get_local_folderpath(scraped_data, data_set, game_date):
+def get_cached_html_folderpath(scraped_data, data_set, game_date):
     return scraped_data.file_helper.get_local_folderpath(
         doc_format=DocFormat.HTML, data_set=data_set, game_date=game_date
     )

@@ -12,7 +12,7 @@ class UrlDetails:
     url: str
     identifier: Union[str, datetime]
     fileName: str
-    htmlFolderPath: str
+    cachedHtmlFolderPath: str
     scrapedHtmlFolderpath: str
 
     @property
@@ -24,41 +24,38 @@ class UrlDetails:
         return self.scraped_file_path.exists() and self.scraped_file_path.stat().st_size > ONE_KB
 
     @property
-    def scraped_page_content(self):
+    def scraped_html(self):
         if not self.scraped_file_exists_with_content:
             return None
         return self.scraped_file_path.read_text()
 
     @property
-    def local_file_path(self):
-        return Path(self.htmlFolderPath).joinpath(self.fileName)
+    def cached_file_path(self):
+        return Path(self.cachedHtmlFolderPath).joinpath(self.fileName)
 
     @property
-    def local_file_exists_with_content(self):
-        return self.local_file_path.exists() and self.local_file_path.stat().st_size > ONE_KB
+    def cached_file_exists_with_content(self):
+        return self.cached_file_path.exists() and self.cached_file_path.stat().st_size > ONE_KB
 
     @property
-    def local_page_content(self):
-        if not self.local_file_exists_with_content:
+    def cached_html(self):
+        if not self.cached_file_exists_with_content:
             return None
-        return self.local_file_path.read_text()
+        return self.cached_file_path.read_text()
 
     @property
     def file_exists_with_content(self):
-        return self.local_file_exists_with_content or self.scraped_file_exists_with_content
+        return self.cached_file_exists_with_content or self.scraped_file_exists_with_content
 
     @property
     def html(self):
         return (
-            self.local_page_content
-            if self.local_file_exists_with_content
-            else self.scraped_page_content
+            self.cached_html
+            if self.cached_file_exists_with_content
+            else self.scraped_html
             if self.scraped_file_exists_with_content
             else None
         )
-
-    def move_scraped_file_to_local_folder(self):
-        self.scraped_file_path.replace(self.local_file_path)
 
     def as_dict(self):
         valid_json_id = (
@@ -70,6 +67,6 @@ class UrlDetails:
             "url": self.url,
             "identifier": valid_json_id,
             "fileName": self.fileName,
-            "htmlFolderPath": self.htmlFolderPath,
+            "cachedHtmlFolderPath": self.cachedHtmlFolderPath,
             "scrapedHtmlFolderpath": self.scrapedHtmlFolderpath,
         }
