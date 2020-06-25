@@ -6,6 +6,9 @@ import subprocess
 from pathlib import Path
 from typing import Tuple, Union
 
+from Naked.toolshed.shell import execute_js
+from Naked.toolshed.shell import execute as execute_shell_command
+
 from vigorish.util.result import Result
 
 
@@ -18,6 +21,20 @@ def run_command(command, cwd=None, shell=True, text=True):
             line = line[:-1] if line.endswith("\n") else line
             yield line
     print()
+
+
+def execute_nodejs_script(script_file_path, script_args):
+    result = validate_file_path(script_file_path)
+    if result.failure:
+        return result
+    valid_filepath = result.value
+    if program_is_installed("node"):
+        success = execute_js(str(valid_filepath), arguments=script_args)
+    elif program_is_installed("nodejs"):
+        success = execute_shell_command(f"nodejs {valid_filepath} {script_args}")
+    else:
+        return Result.Fail("Node.js is NOT installed!")
+    return Result.Ok() if success else Result.Fail("nodejs script failed")
 
 
 def node_is_installed():
@@ -35,7 +52,7 @@ def program_is_installed(exe_name, version_option="--version"):
         output = check_version.stdout.strip()
         return True if re.compile(r"[vV]?\d+\.").match(output) else False
     except FileNotFoundError:
-        return False
+        return False8
 
 
 def node_modules_folder_exists():

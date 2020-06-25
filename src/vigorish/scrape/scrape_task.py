@@ -8,8 +8,6 @@ from sys import exit
 
 from getch import pause
 from halo import Halo
-from Naked.toolshed.shell import execute_js
-from Naked.toolshed.shell import execute as execute_shell_command
 
 from vigorish.cli.util import print_message
 from vigorish.constants import JOB_SPINNER_COLORS
@@ -17,7 +15,7 @@ from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.url_tracker import UrlTracker
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.result import Result
-from vigorish.util.sys_helpers import program_is_installed
+from vigorish.util.sys_helpers import execute_nodejs_script
 
 APP_FOLDER = Path(__file__).parent.parent
 NODEJS_SCRIPT = APP_FOLDER / "nightmarejs" / "scrape_job.js"
@@ -125,14 +123,9 @@ class ScrapeTaskABC(ABC):
     def invoke_nodejs_script(self):
         missing_urls_filepath = self.url_tracker.create_missing_urls_json_file()
         script_args = self.config.get_nodejs_script_args(self.data_set, missing_urls_filepath)
-        if program_is_installed("node"):
-            success = execute_js(str(NODEJS_SCRIPT), arguments=script_args)
-        elif program_is_installed("nodejs"):
-            success = execute_shell_command(f"nodejs {NODEJS_SCRIPT} {script_args}")
-        else:
-            return Result.Fail("Node.js is NOT installed!")
+        result = execute_nodejs_script(NODEJS_SCRIPT, script_args)
         missing_urls_filepath.unlink()
-        return Result.Ok() if success else Result.Fail("nodejs script failed")
+        return result
 
     def parse_scraped_html(self):
         parsed = 0
