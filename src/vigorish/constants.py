@@ -179,6 +179,7 @@ EMOJI_DICT = dict(
     DIZZY="💫",
     BOLT="⚡",
     BOMB="💣",
+    FLASHLIGHT="🔦",
     CIRCLE="🔵",
     GEAR="⚙️ ",
     BANG="💥",

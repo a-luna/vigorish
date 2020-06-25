@@ -9,6 +9,7 @@ from vigorish.cli.menus.admin_menu import SettingsAdminMenu
 from vigorish.cli.menu_items.combine_data import CombineGameDataMenuItem
 from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
+from vigorish.cli.menu_items.investigate_failures import InvestigateFailuresMenuItem
 from vigorish.cli.menu_items.status_report import StatusReportMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
 from vigorish.cli.util import print_message, get_random_cli_color
@@ -50,6 +51,7 @@ class MainMenu(Menu):
             "create_job": CreateJobMenuItem(self.app),
             "all_jobs": AllJobsMenu(self.app),
             "combine_data": CombineGameDataMenuItem(self.app, self.audit_report),
+            "investigate_failures": InvestigateFailuresMenuItem(self.app, self.audit_report),
             "status_reports": StatusReportMenuItem(self.app),
             "settings_admin": SettingsAdminMenu(self.app),
             "exit_program": ExitProgramMenuItem(self.app),
@@ -128,3 +130,18 @@ class MainMenu(Menu):
             self.menu_items.insert(0, SetupDBMenuItem(self.app))
         if not self.audit_report:
             self.menu_items.remove(main_menu_items["combine_data"])
+            if not self.data_failures_exist():
+                self.menu_items.remove(main_menu_items["investigate_failures"])
+
+    def data_failures_exist(self):
+        audit_failures_exist = (
+            any(len(audit_report["failed"]) > 0 for audit_report in self.audit_report.values())
+            if self.audit_report
+            else False
+        )
+        data_errors_exist = (
+            any(len(audit_report["data_error"]) > 0 for audit_report in self.audit_report.values())
+            if self.audit_report
+            else False
+        )
+        return audit_failures_exist or data_errors_exist
