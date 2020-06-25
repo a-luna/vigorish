@@ -52,7 +52,7 @@ def program_is_installed(exe_name, version_option="--version"):
         output = check_version.stdout.strip()
         return True if re.compile(r"[vV]?\d+\.").match(output) else False
     except FileNotFoundError:
-        return False8
+        return False
 
 
 def node_modules_folder_exists():

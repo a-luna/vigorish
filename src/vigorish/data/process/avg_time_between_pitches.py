@@ -1,11 +1,7 @@
-import math
-import re
 from datetime import datetime, timezone
 
-from vigorish.config.database import PitchAppScrapeStatus
 from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
 from vigorish.util.regex import PFX_TIMESTAMP_REGEX
-from vigorish.util.result import Result
 
 
 def calc_avg_time_between_pitches(combined_data):
@@ -19,9 +15,7 @@ def calc_avg_time_between_pitches(combined_data):
                 continue
             for pfx_count, pfx in enumerate(at_bat["pitchfx"], start=1):
                 if pfx_count == 1 and prev_inning_last_pfx and ab_num == 1:
-                    this_pitch_sv_id = pfx["park_sv_id"]
                     this_pitch = get_timestamp_pitch_thrown(pfx)
-                    last_pitch_sv_id = prev_inning_last_pfx["park_sv_id"]
                     last_pitch = get_timestamp_pitch_thrown(prev_inning_last_pfx)
                     delta = this_pitch - last_pitch
                     if delta.total_seconds() > 0:
@@ -72,25 +66,3 @@ def get_timestamp_pitch_thrown(pfx):
     )
     pfx_timestamp = timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
     return pfx_timestamp
-
-
-def trim_data_set(samples, st_dev_limit=2):
-    mean = sum(samples) / len(samples)
-    st_dev = get_standard_deviation(samples)
-    return [
-        x
-        for x in samples
-        if x > (mean - st_dev_limit * st_dev) and x < (mean + st_dev_limit * st_dev)
-    ]
-
-
-def get_standard_deviation(samples):
-    mean = sum(samples) / len(samples)
-    summed_squares = sum(math.pow((sample - mean), 2) for sample in samples)
-    return math.sqrt(summed_squares / (len(samples) - 1))
-
-
-def get_coefficient_of_variation(samples):
-    mean = sum(samples) / len(samples)
-    st_dev = get_standard_deviation(samples)
-    return st_dev * 100 / mean

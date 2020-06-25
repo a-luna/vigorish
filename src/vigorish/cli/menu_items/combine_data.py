@@ -4,7 +4,6 @@ import subprocess
 from getch import pause
 from halo import Halo
 from pprint import pformat
-from tqdm import tqdm
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import (
@@ -22,12 +21,10 @@ from vigorish.status.update_status_combined_data import (
     update_pitch_appearances_audit_failed,
     get_pitch_app_status,
 )
-from vigorish.util.regex import AT_BAT_ID_REGEX
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.list_helpers import report_dict
 from vigorish.util.string_helpers import (
     validate_bbref_game_id,
-    validate_at_bat_id,
     parse_pitch_app_details_from_string,
 )
 from vigorish.util.result import Result
@@ -107,7 +104,6 @@ class CombineGameDataMenuItem(MenuItem):
             season_update_errors.update(update_errors)
             season_pitchfx_data_errors.extend(pitchfx_data_errors)
             total_games += len(combine_games)
-            game_date_str = game_date.strftime(DATE_MONTH_NAME)
             percent_complete = num / float(len(all_dates_in_season))
             total_errors = (
                 len(season_audit_errors)
@@ -226,7 +222,6 @@ class CombineGameDataMenuItem(MenuItem):
             )
             print_message(success_message, fg="bright_cyan", bold=True)
         else:
-            total_errors = len(audit_errors) + len(update_errors) + len(pitchfx_data_errors)
             if audit_errors:
                 for game_id, error_detail in audit_errors.items():
                     failed_pitch_app_dict = parse_pitch_app_details_from_string(error_detail)
@@ -253,7 +248,10 @@ class CombineGameDataMenuItem(MenuItem):
                         pitch_app_status = get_pitch_app_status(
                             self.db_session, pitch_app_id
                         ).value
-                        error_header = f"{'#'*10} Pitch Appearance #{num} (Pitch Appearance ID: {pitch_app_id}) {'#'*10}"
+                        error_header = (
+                            f"{'#'*10} Pitch Appearance #{num} "
+                            f"(Pitch Appearance ID: {pitch_app_id}) {'#'*10}"
+                        )
                         error_details = f"\n{report_dict(pitch_app_status.as_dict())}\n"
                         print_message(error_header, wrap=False, fg="bright_red", bold=True)
                         print_message(error_details, wrap=False, fg="bright_red")

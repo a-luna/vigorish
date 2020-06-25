@@ -385,8 +385,10 @@ class CombineScrapedData:
             return Result.Ok(self.at_bat_ids)
         error_report = self.create_error_report(at_bat_ids_pfx_only, self.player_id_dict, True)
         if at_bat_ids_boxscore_only:
-            error_report += f"\n\n{'=' * 60}"
-            error_report += f"\n{self.create_error_report(at_bat_ids_boxscore_only, self.player_id_dict, False)}"
+            boxscore_errors = self.create_error_report(
+                at_bat_ids_boxscore_only, self.player_id_dict, False
+            )
+            error_report += f"\n\n{'=' * 60}\n{boxscore_errors}"
         return Result.Fail(error_report)
 
     def create_error_report(self, missing_at_bat_ids, ids_are_pfx_only):
@@ -525,7 +527,6 @@ class CombineScrapedData:
     def find_pfx_out_of_sequence_first_at_bat(
         self, at_bat_id, pfx_data_for_at_bat, pitch_count_pitch_seq, avg_pitch_times,
     ):
-        next_ab_id = 1
         pfx_data_for_next_at_bat = self.get_all_pfx_data_for_at_bat(at_bat_id)
         matches = [pfx for pfx in pfx_data_for_next_at_bat if pfx["ab_count"] == 1]
         if not matches:
@@ -539,7 +540,7 @@ class CombineScrapedData:
         if len(matches) == 1:
             first_pitch_next_at_bat = matches[0]
         else:
-            # TODO: Implement function to choose best pfx for next ab where only one valid pfx exists
+            # TODO: Add function to choose best pfx for next ab where only one valid pfx exists
             first_pitch_next_at_bat = matches[0]
         next_pitch_thrown = self.get_timestamp_pitch_thrown(first_pitch_next_at_bat)
 
@@ -798,7 +799,6 @@ class CombineScrapedData:
         return Result.Ok()
 
     def update_inning_with_combined_data(self, inning):
-        player_team_dict = self.boxscore.player_team_dict
         inning_events = [
             event
             for event in self.game_events_combined_data

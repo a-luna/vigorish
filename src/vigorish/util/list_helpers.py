@@ -6,7 +6,6 @@ from random import randint
 from typing import Dict
 
 from vigorish.util.dt_format_strings import DT_STR_FORMAT_ALL
-from vigorish.util.string_helpers import wrap_text
 
 
 def display_dict(dict, title="", title_prefix="[", title_suffix="]", extra_dots=2):

@@ -1,7 +1,6 @@
 from vigorish.config.database import PitchAppScrapeStatus
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import validate_at_bat_id
 
 
 def update_pitch_apps_for_game_audit_successful(db_session, scraped_data, bbref_game_id):

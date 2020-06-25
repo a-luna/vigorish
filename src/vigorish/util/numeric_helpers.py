@@ -41,3 +41,19 @@ def validate_year_value(year):
         raise ValueError(f"Data is not collected for year={year}")
     if year > date.today().year:
         raise ValueError(f'"{year}" is not valid since it is a future year')
+
+
+def trim_data_set(samples, st_dev_limit=2):
+    mean = sum(samples) / len(samples)
+    st_dev = get_standard_deviation(samples)
+    return [
+        x
+        for x in samples
+        if x > (mean - st_dev_limit * st_dev) and x < (mean + st_dev_limit * st_dev)
+    ]
+
+
+def get_standard_deviation(samples):
+    mean = sum(samples) / len(samples)
+    summed_squares = sum(math.pow((sample - mean), 2) for sample in samples)
+    return math.sqrt(summed_squares / (len(samples) - 1))

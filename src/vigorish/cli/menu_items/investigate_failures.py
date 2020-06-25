@@ -30,7 +30,7 @@ class InvestigateFailuresMenuItem(MenuItem):
             [audit["data_error"] for audit in self.audit_report.values()]
         )
         self.combine_data = CombineScrapedData(self.db_session, self.scraped_data)
-        self.menu_item_text = f"Investigate Failures"
+        self.menu_item_text = "Investigate Failures"
         self.menu_item_emoji = EMOJI_DICT.get("FLASHLIGHT")
         self.exit_menu = False
 

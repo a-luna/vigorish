@@ -8,6 +8,7 @@ from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
 from vigorish.data.process.avg_time_between_pitches import calc_avg_time_between_pitches
 from vigorish.enums import DataSet, DocFormat
+from vigorish.util.numeric_helpers import trim_data_set
 from vigorish.util.regex import URL_ID_REGEX, URL_ID_CONVERT_REGEX
 from vigorish.util.result import Result
 
@@ -357,7 +358,7 @@ class ScrapedData:
                 pitch_delta,
                 inning_deltas,
                 inning_delta,
-            ) = calc_avg_time_between_pitches(scraped_data, bbref_game_id)
+            ) = calc_avg_time_between_pitches(combined_data)
             pitch_delta_samples.extend(pitch_deltas)
             inning_delta_samples.extend(inning_deltas)
         pitch_delta_combined = {}
