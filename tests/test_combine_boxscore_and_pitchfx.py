@@ -1,7 +1,7 @@
 from pathlib import PosixPath
 
 from vigorish.config.database import PitchAppScrapeStatus
-from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import combine_data
+from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import CombineScrapedData
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_audit_successful
 
 from tests.util import reset_pitch_app_scrape_status_after_combined_data
@@ -13,7 +13,8 @@ GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
 
 
 def test_combine_data_no_errors(db_session, scraped_data):
-    result = combine_data(db_session, scraped_data, GAME_ID_NO_ERRORS)
+    combine_data = CombineScrapedData(db_session, scraped_data)
+    result = combine_data.execute(GAME_ID_NO_ERRORS)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
@@ -23,7 +24,6 @@ def test_combine_data_no_errors(db_session, scraped_data):
     combined_data = result.value
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "pitchfx_data_complete" in data_audit and data_audit["pitchfx_data_complete"]
     assert "total_batters_faced_bbref" in data_audit
     assert data_audit["total_batters_faced_bbref"] == 82
     assert "total_at_bats_pitchfx_complete" in data_audit
@@ -53,10 +53,9 @@ def test_combine_data_no_errors(db_session, scraped_data):
     assert pitch_app_status
     assert pitch_app_status.audit_successful == 0
     assert pitch_app_status.audit_failed == 0
-    assert pitch_app_status.pitchfx_data_complete == 0
     assert pitch_app_status.pitch_count_pitch_log == 38
     assert pitch_app_status.pitch_count_bbref == 0
-    assert pitch_app_status.pitch_count_pitch_log == 38
+    assert pitch_app_status.pitch_count_pitchfx == 38
     assert pitch_app_status.pitch_count_pitchfx_audited == 0
     assert pitch_app_status.duplicate_pitchfx_removed_count == 0
     assert pitch_app_status.pitch_count_missing_pitchfx == 0
@@ -72,7 +71,6 @@ def test_combine_data_no_errors(db_session, scraped_data):
 
     assert pitch_app_status.audit_successful == 1
     assert pitch_app_status.audit_failed == 0
-    assert pitch_app_status.pitchfx_data_complete == 1
     assert pitch_app_status.pitch_count_pitch_log == 38
     assert pitch_app_status.pitch_count_bbref == 38
     assert pitch_app_status.pitch_count_pitch_log == 38
@@ -88,7 +86,8 @@ def test_combine_data_no_errors(db_session, scraped_data):
 
 
 def test_combine_data_with_errors(db_session, scraped_data):
-    result = combine_data(db_session, scraped_data, GAME_ID_WITH_ERRORS)
+    combine_data = CombineScrapedData(db_session, scraped_data)
+    result = combine_data.execute(GAME_ID_WITH_ERRORS)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
@@ -98,7 +97,6 @@ def test_combine_data_with_errors(db_session, scraped_data):
     combined_data = result.value
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "pitchfx_data_complete" in data_audit and not data_audit["pitchfx_data_complete"]
     assert "total_batters_faced_bbref" in data_audit
     assert data_audit["total_batters_faced_bbref"] == 83
     assert "total_at_bats_pitchfx_complete" in data_audit
@@ -133,7 +131,8 @@ def test_combine_data_with_errors(db_session, scraped_data):
 
 
 def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
-    result = combine_data(db_session, scraped_data, GAME_ID_NO_PFX_FOR_PITCH_APP)
+    combine_data = CombineScrapedData(db_session, scraped_data)
+    result = combine_data.execute(GAME_ID_NO_PFX_FOR_PITCH_APP)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
@@ -145,11 +144,10 @@ def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
     combined_data = result.value
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "pitchfx_data_complete" in data_audit and not data_audit["pitchfx_data_complete"]
     assert "total_batters_faced_bbref" in data_audit
     assert data_audit["total_batters_faced_bbref"] == 79
     assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 72
+    assert data_audit["total_at_bats_pitchfx_complete"] == 69
     assert "total_at_bats_missing_pitchfx" in data_audit
     assert data_audit["total_at_bats_missing_pitchfx"] == 7
     assert "total_at_bats_extra_pitchfx" in data_audit
