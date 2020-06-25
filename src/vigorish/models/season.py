@@ -8,7 +8,7 @@ from sqlalchemy.types import Enum
 
 from vigorish.enums import SeasonType
 from vigorish.config.database import Base
-from vigorish.util.datetime_util import get_date_range
+from vigorish.util.datetime_util import get_date_range as get_date_range_util
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.list_helpers import display_dict
 from vigorish.util.result import Result
@@ -169,6 +169,10 @@ class Season(Base):
         return sum(pfx.audit_failed for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
+    def pitch_appearance_count_pitchfx_data_error(self):
+        return sum(not pfx.missing_pitchfx_is_valid for pfx in self.scrape_status_pitchfx)
+
+    @hybrid_property
     def pitch_appearance_count_missing_pfx_is_valid(self):
         return sum(pfx.missing_pitchfx_is_valid for pfx in self.scrape_status_pitchfx)
 
@@ -238,6 +242,16 @@ class Season(Base):
         if not self.scrape_status_pitchfx:
             return True
         return any(pfx.audit_failed for pfx in self.scrape_status_pitchfx)
+
+    @hybrid_property
+    def pitchfx_data_error_for_any_pitchfx_logs(self):
+        if not self.scraped_all_pitchfx_logs:
+            return False
+        if not self.scrape_status_pitchfx:
+            return True
+        if not self.audit_attempted_for_all_pitchfx_logs:
+            return False
+        return any(not pfx.missing_pitchfx_is_valid for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def all_missing_pitchfx_is_valid(self):
@@ -356,22 +370,22 @@ class Season(Base):
         )
 
     def get_date_range(self):
-        return get_date_range(self.start_date, self.end_date)
+        return get_date_range_util(self.start_date, self.end_date)
 
     def get_all_bbref_game_ids_eligible_for_audit(self):
         return [
             game.bbref_game_id
             for game in self.scrape_status_games
-            if game.scraped_all_pitchfx_logs
-            and not game.audit_failed_for_any_pitchfx_logs
-            and not game.audit_successful_for_all_pitchfx_logs
+            if game.scraped_all_pitchfx_logs and not game.audit_attempted_for_all_pitchfx_logs
         ]
 
     def get_all_bbref_game_ids_audit_successful(self):
         return [
             game.bbref_game_id
             for game in self.scrape_status_games
-            if game.scraped_all_pitchfx_logs and game.audit_successful_for_all_pitchfx_logs
+            if game.scraped_all_pitchfx_logs
+            and game.audit_successful_for_all_pitchfx_logs
+            and game.all_missing_pitchfx_is_valid
         ]
 
     def get_all_bbref_game_ids_audit_failed(self):
@@ -379,6 +393,13 @@ class Season(Base):
             game.bbref_game_id
             for game in self.scrape_status_games
             if game.scraped_all_pitchfx_logs and game.audit_failed_for_any_pitchfx_logs
+        ]
+
+    def get_all_bbref_game_ids_pitchfx_data_error(self):
+        return [
+            game.bbref_game_id
+            for game in self.scrape_status_games
+            if game.scraped_all_pitchfx_logs and game.pitchfx_data_error_for_any_pitchfx_logs
         ]
 
     @classmethod

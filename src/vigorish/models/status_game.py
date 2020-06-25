@@ -100,6 +100,10 @@ class GameScrapeStatus(Base):
         return sum(pfx.audit_failed for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
+    def pitch_appearance_count_pitchfx_data_error(self):
+        return sum(not pfx.missing_pitchfx_is_valid for pfx in self.scrape_status_pitchfx)
+
+    @hybrid_property
     def total_pitch_apps_missing_pfx_is_valid(self):
         return sum(pfx.missing_pitchfx_is_valid for pfx in self.scrape_status_pitchfx)
 
@@ -136,7 +140,7 @@ class GameScrapeStatus(Base):
         if not self.scraped_all_pitchfx_logs:
             return False
         if not self.scrape_status_pitchfx:
-            return True
+            return False
         return all(
             (pfx.audit_successful or pfx.audit_failed) for pfx in self.scrape_status_pitchfx
         )
@@ -146,7 +150,7 @@ class GameScrapeStatus(Base):
         if not self.scraped_all_pitchfx_logs:
             return False
         if not self.scrape_status_pitchfx:
-            return True
+            return False
         return all(pfx.audit_successful for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
@@ -154,8 +158,20 @@ class GameScrapeStatus(Base):
         if not self.scraped_all_pitchfx_logs:
             return False
         if not self.scrape_status_pitchfx:
-            return True
+            return False
+        if not self.audit_attempted_for_all_pitchfx_logs:
+            return False
         return any(pfx.audit_failed for pfx in self.scrape_status_pitchfx)
+
+    @hybrid_property
+    def pitchfx_data_error_for_any_pitchfx_logs(self):
+        if not self.scraped_all_pitchfx_logs:
+            return False
+        if not self.scrape_status_pitchfx:
+            return False
+        if not self.audit_attempted_for_all_pitchfx_logs:
+            return False
+        return any(not pfx.missing_pitchfx_is_valid for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def all_missing_pitchfx_is_valid(self):

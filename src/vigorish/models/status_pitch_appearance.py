@@ -17,17 +17,19 @@ class PitchAppScrapeStatus(Base):
     no_pitchfx_data = Column(Integer, default=0)
     audit_successful = Column(Integer, default=0)
     audit_failed = Column(Integer, default=0)
-    pitchfx_data_complete = Column(Integer, default=0)
     pitch_count_pitch_log = Column(Integer, default=0)
     pitch_count_bbref = Column(Integer, default=0)
     pitch_count_pitchfx = Column(Integer, default=0)
     pitch_count_pitchfx_audited = Column(Integer, default=0)
     duplicate_pitchfx_removed_count = Column(Integer, default=0)
+    incorrect_extra_pitchfx_removed_count = Column(Integer, default=0)
     pitch_count_missing_pitchfx = Column(Integer, default=0)
+    pitch_count_extra_pitchfx = Column(Integer, default=0)
     missing_pitchfx_is_valid = Column(Integer, default=0)
     batters_faced_bbref = Column(Integer, default=0)
     total_at_bats_pitchfx_complete = Column(Integer, default=0)
     total_at_bats_missing_pitchfx = Column(Integer, default=0)
+    total_at_bats_extra_pitchfx = Column(Integer, default=0)
     scrape_status_game_id = Column(Integer, ForeignKey("scrape_status_game.id"))
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
@@ -126,3 +128,16 @@ class PitchAppScrapeStatus(Base):
             .filter_by(scraped_pitchfx=1)
             .all()
         ]
+
+    @classmethod
+    def get_bbref_game_ids_all_missing_pfx_is_valid(cls, db_session):
+        return list(
+            set(
+                [
+                    pitch_app_status.bbref_game_id
+                    for pitch_app_status in db_session.query(cls)
+                    .filter_by(missing_pitchfx_is_valid=1)
+                    .all()
+                ]
+            )
+        )
