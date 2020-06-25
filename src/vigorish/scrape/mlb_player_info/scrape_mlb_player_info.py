@@ -1,6 +1,6 @@
 """Scrape MLB player data"""
 import dataclasses
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
@@ -25,7 +25,7 @@ class PlayerID:
     bbrefID: str = dataclasses.field(default=None)
 
 
-def scrape_mlb_player_info(db_session, name, bbref_id):
+def scrape_mlb_player_info(db_session, name, bbref_id, game_date):
     split = name.split()
     if not split or len(split) <= 1:
         return Result.Fail(f"Name was not in an expected format: {name}")
@@ -34,7 +34,7 @@ def scrape_mlb_player_info(db_session, name, bbref_id):
         f"{MLB_PLAYER_SEARCH_URL}?sport_code='mlb'&name_part='{name_part}%25'&active_sw='Y'"
     )
     response = requests.get(search_url)
-    result = parse_search_results(response, name, name_part, search_url)
+    result = parse_search_results(response, name, name_part, search_url, game_date)
     if result.failure:
         return result
     mlb_player_info = result.value
@@ -45,7 +45,7 @@ def scrape_mlb_player_info(db_session, name, bbref_id):
     return Result.Ok(new_player)
 
 
-def parse_search_results(response, name, name_part, search_url):
+def parse_search_results(response, name, name_part, search_url, game_date):
     try:
         resp_json = response.json()
     except JSONDecodeError:
@@ -65,20 +65,35 @@ def parse_search_results(response, name, name_part, search_url):
 
     if num_results > 1:
         player_list = resp_json["search_player_all"]["queryResults"]["row"]
-        mlb_player_info = find_best_match(name, player_list)
+        mlb_player_info = find_best_match(name, player_list, game_date)
     else:
         mlb_player_info = resp_json["search_player_all"]["queryResults"]["row"]
     return Result.Ok(mlb_player_info)
 
 
-def find_best_match(name, player_list):
-    player_name_dict = {
-        player["name_display_first_last"]: player["player_id"] for player in player_list
+def find_best_match(name, player_list, game_date):
+    player_id_name_map = {
+        player["player_id"]: player["name_display_first_last"] for player in player_list
     }
     player_info_dict = {player["player_id"]: player for player in player_list}
-    match_results = fuzzy_match(name, player_name_dict.keys())
-    best_match = match_results["best_match"]
-    return player_info_dict[player_name_dict[best_match]]
+    match_results = fuzzy_match(name, player_id_name_map)
+    if len(match_results) == 1:
+        return player_info_dict[match_results[0]["result"]]
+    return compare_mlb_debut(match_results, player_info_dict, game_date)
+
+
+def compare_mlb_debut(possible_matches, player_info_dict, game_date):
+    info_dict_list = [
+        player_info_dict[possible_match["result"]] for possible_match in possible_matches
+    ]
+    for player_info in info_dict_list:
+        if not player_info["pro_debut_date"]:
+            player_info["since_debut"] = timedelta.max.days
+            continue
+        player_mlb_debut = datetime.strptime(player_info["pro_debut_date"], MLB_DATE_FORMAT)
+        player_info["since_debut"] = abs((game_date - player_mlb_debut.date()).days)
+    info_dict_list.sort(key=lambda x: x["since_debut"])
+    return info_dict_list[0]
 
 
 def parse_player_data(player_info, bbref_id):

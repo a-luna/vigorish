@@ -18,9 +18,21 @@ ELLIPSIS = b"\xe2\x80\xa6".decode("utf-8")
 WORD_REGEX = re.compile(r"\s?(?P<word>\b\w+\b)\s?")
 
 
-def fuzzy_match(s, choices):
-    (match, score) = process.extractOne(s, choices)
-    return dict(best_match=match, score=score)
+def fuzzy_match(query, mapped_choices, score_cutoff=88):
+    best_matches = [
+        {"match": match, "score": score, "result": result}
+        for (match, score, result) in process.extract(
+            query, mapped_choices, score_cutoff=score_cutoff
+        )
+    ]
+    return (
+        best_matches
+        if best_matches
+        else [
+            {"match": match, "score": score, "result": result}
+            for (match, score, result) in process.extract(query, mapped_choices, limit=3)
+        ]
+    )
 
 
 def ellipsize(input_str, max_len):
