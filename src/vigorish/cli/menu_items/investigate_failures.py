@@ -7,7 +7,6 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import (
     print_message,
     user_options_prompt,
-    parse_pitch_app_details_from_string,
 )
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import CombineScrapedData
@@ -16,6 +15,7 @@ from vigorish.status.update_status_combined_data import (
     update_pitch_appearances_audit_failed,
 )
 from vigorish.util.list_helpers import flatten_list2d
+from vigorish.util.string_helpers import parse_pitch_app_details_from_string
 from vigorish.util.result import Result
 
 

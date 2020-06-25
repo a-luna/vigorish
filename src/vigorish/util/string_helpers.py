@@ -240,3 +240,20 @@ def validate_at_bat_id(at_bat_id):
         "at_bat_num": captured["at_bat_num"],
     }
     return Result.Ok(at_bat_dict)
+
+
+def parse_pitch_app_details_from_string(input):
+    at_bat_dicts = []
+    pitch_app_ids = []
+    failed_pitch_app_dict = {}
+    for match in AT_BAT_ID_REGEX.finditer(input):
+        at_bat_data = validate_at_bat_id(match[0]).value
+        at_bat_dicts.append(at_bat_data)
+        pitch_app_ids.append(at_bat_data["pitch_app_id"])
+    for pitch_app_id in list(set(pitch_app_ids)):
+        failed_pitch_app_dict[pitch_app_id] = [
+            at_bat["at_bat_id"]
+            for at_bat in at_bat_dicts
+            if at_bat["pitch_app_id"] == pitch_app_id
+        ]
+    return failed_pitch_app_dict
