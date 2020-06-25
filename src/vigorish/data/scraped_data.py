@@ -6,6 +6,7 @@ from vigorish.config.database import DateScrapeStatus, PitchAppScrapeStatus, Sea
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
+from vigorish.data.process.avg_time_between_pitches import calc_avg_time_between_pitches
 from vigorish.enums import DataSet, DocFormat
 from vigorish.util.regex import URL_ID_REGEX, URL_ID_CONVERT_REGEX
 from vigorish.util.result import Result
@@ -235,17 +236,24 @@ class ScrapedData:
         scraped = self.get_all_bbref_game_ids_eligible_for_audit()
         successful = self.get_all_bbref_game_ids_audit_successful()
         failed = self.get_all_bbref_game_ids_audit_failed()
+        data_error = self.get_all_bbref_game_ids_pitchfx_data_error()
         mlb_seasons = list(
-            set(list(scraped.keys()) + list(successful.keys()) + list(failed.keys()))
+            set(
+                list(scraped.keys())
+                + list(successful.keys())
+                + list(failed.keys())
+                + list(data_error.keys())
+            )
         )
         return {
             year: {
                 "scraped": scraped[year],
                 "successful": successful[year],
                 "failed": failed[year],
+                "data_error": data_error[year],
             }
             for year in mlb_seasons
-            if scraped[year] or successful[year] or failed[year]
+            if scraped[year] or successful[year] or failed[year] or data_error[year]
         }
 
     def get_all_bbref_game_ids_eligible_for_audit(self):
@@ -263,6 +271,12 @@ class ScrapedData:
     def get_all_bbref_game_ids_audit_failed(self):
         return {
             s.year: s.get_all_bbref_game_ids_audit_failed()
+            for s in Season.all_regular_seasons(self.db_session)
+        }
+
+    def get_all_bbref_game_ids_pitchfx_data_error(self):
+        return {
+            s.year: s.get_all_bbref_game_ids_pitchfx_data_error()
             for s in Season.all_regular_seasons(self.db_session)
         }
 
@@ -307,3 +321,65 @@ class ScrapedData:
                 raise ValueError(error)
             converted_url_ids.append(game_date)
         return converted_url_ids
+
+    def get_cached_avg_pitch_times(self):
+        return {
+            "pitch_delta": {
+                "total": 3903840.0,
+                "count": 158291,
+                "avg": 25.0,
+                "max": 77.0,
+                "min": 1.0,
+                "range": 76.0,
+            },
+            "inning_delta": {
+                "total": 1843148.0,
+                "count": 11837,
+                "avg": 156.0,
+                "max": 242.0,
+                "min": 92.0,
+                "range": 150.0,
+            },
+        }
+
+    def calculate_avg_pitch_times(self):
+        game_ids = PitchAppScrapeStatus.get_bbref_game_ids_all_missing_pfx_is_valid(
+            self.db_session
+        )
+        pitch_delta_samples = []
+        inning_delta_samples = []
+        for bbref_game_id in game_ids:
+            combined_data = self.get_json_combined_data(bbref_game_id)
+            if not combined_data:
+                continue
+            (
+                pitch_deltas,
+                pitch_delta,
+                inning_deltas,
+                inning_delta,
+            ) = calc_avg_time_between_pitches(scraped_data, bbref_game_id)
+            pitch_delta_samples.extend(pitch_deltas)
+            inning_delta_samples.extend(inning_deltas)
+        pitch_delta_combined = {}
+        if len(pitch_delta_samples):
+            pitch_delta_samples = trim_data_set(pitch_delta_samples, st_dev_limit=0.5)
+            pitch_delta_combined = {
+                "total": sum(pitch_delta_samples),
+                "count": len(pitch_delta_samples),
+                "avg": sum(pitch_delta_samples) / len(pitch_delta_samples),
+                "max": max(pitch_delta_samples),
+                "min": min(pitch_delta_samples),
+                "range": max(pitch_delta_samples) - min(pitch_delta_samples),
+            }
+        inning_delta_combined = {}
+        if len(inning_delta_samples):
+            inning_delta_samples = trim_data_set(inning_delta_samples, st_dev_limit=0.5)
+            inning_delta_combined = {
+                "total": sum(inning_delta_samples),
+                "count": len(inning_delta_samples),
+                "avg": sum(inning_delta_samples) / len(inning_delta_samples),
+                "max": max(inning_delta_samples),
+                "min": min(inning_delta_samples),
+                "range": max(inning_delta_samples) - min(inning_delta_samples),
+            }
+        return {"pitch_delta": pitch_delta_combined, "inning_delta": inning_delta_combined}
