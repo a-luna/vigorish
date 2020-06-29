@@ -22,126 +22,144 @@ const PBAR_MAX_LEN_LT_1K_URLS = 22
 const PBAR_MAX_LEN_LT_10K_URLS = 24
 const PBAR_MAX_LEN_GT_10K_URLS = 26
 
+const readUrlSetFromFile = (urlSetFilepath) =>
+    JSON.parse(readFileSync(urlSetFilepath, { encoding: "utf8" }))
+
+const createBatchJob = (
+    allUrls,
+    { batchSizeIsRandom, minBatchSize, maxBatchSize, uniformBatchSize }
+) =>
+    batchSizeIsRandom
+        ? makeIrregularChunkedList(allUrls, minBatchSize, maxBatchSize)
+        : makeChunkedList(allUrls, uniformBatchSize)
+
+const set_pbar_max_length = (totalBatches, totalUrls) =>
+    (PBAR_MAX_LENGTH =
+        totalBatches == 1
+            ? PBAR_MAX_LEN_SINGLE_BATCH
+            : totalUrls < 100
+            ? PBAR_MAX_LEN_LT_100_URLS
+            : totalUrls < 1000
+            ? PBAR_MAX_LEN_LT_1K_URLS
+            : totalUrls < 10000
+            ? PBAR_MAX_LEN_LT_10K_URLS
+            : PBAR_MAX_LEN_GT_10K_URLS)
+
+const pBarMessage = (input) =>
+    input.length >= PBAR_MAX_LENGTH
+        ? input
+        : `${" ".repeat(PBAR_MAX_LENGTH - input.length)}${input}`
+
+const urlRangeMessage = (urlCounter, nextBatchSize) =>
+    pBarMessage(`Scraping URLs ${urlCounter + 1}-${urlCounter + nextBatchSize}`)
+
+const urlBatchMessage = (batchSize, isTimeout = false) =>
+    pBarMessage(`${batchSize} URLs ${isTimeout ? "next" : "this"} batch`)
+
+const sleep = (timeoutMs) => new Promise((resolve) => setTimeout(resolve, timeoutMs))
+
+const getRandomInt = (min, max) =>
+    Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min)
+
 async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeoutParams) {
     let batchCounter = 0
     let urlCounter = 0
     const allUrls = readUrlSetFromFile(urlSetFilepath)
     let batchList = createBatchJob(allUrls, batchJobParams)
-    let [batchBar, urlBar, timeoutBar] = initializeProgressBars(batchList, allUrls.length)
+    let [batchBar, urlBar, comboBar] = initializeProgressBars(batchList, allUrls.length)
     for await (const urlBatch of batchList) {
         batchBar.update(batchCounter, { message: urlBatchMessage(batchList[batchCounter].length) })
-        urlCounter = await scrapeUrlBatch(nightmare, urlBatch, timeoutParams, urlCounter, urlBar)
+        urlCounter = await scrapeUrlBatch(
+            nightmare,
+            urlBatch,
+            timeoutParams,
+            urlCounter,
+            urlBar,
+            comboBar
+        )
         batchCounter += 1
         if (batchCounter < batchList.length) {
             const nextBatchSize = batchList[batchCounter].length
             batchBar.update(batchCounter, { message: urlBatchMessage(nextBatchSize, true) })
             if (timeoutParams.batchTimeoutRequired) {
-                await batchTimeout(timeoutParams, timeoutBar, urlCounter, nextBatchSize)
+                await batchTimeout(timeoutParams, comboBar, urlCounter, nextBatchSize)
             }
         }
     }
     batchBar.update(batchCounter, { message: pBarMessage("Scraped all batches") })
     multibar.stop()
-    return
+}
 
-    function createBatchJob(
-        allUrls,
-        { batchSizeIsRandom, minBatchSize, maxBatchSize, uniformBatchSize }
-    ) {
-        return batchSizeIsRandom
-            ? makeIrregularChunkedList(allUrls, minBatchSize, maxBatchSize)
-            : makeChunkedList(allUrls, uniformBatchSize)
-    }
+function initializeProgressBars(batchList, totalUrls) {
+    set_pbar_max_length(batchList.length, totalUrls)
+    const comboBar = multibar.create(0, 0, {
+        message: urlRangeMessage(0, batchList[0].length),
+        unit: "",
+    })
+    const batchBar = multibar.create(batchList.length, 0, {
+        message: urlBatchMessage(batchList[0].length),
+        unit: "Batches",
+    })
+    const urlBar = multibar.create(totalUrls, 0, {
+        message: pBarMessage("In Progress"),
+        unit: "URLs",
+    })
+    return [batchBar, urlBar, comboBar]
+}
 
-    function initializeProgressBars(batchList, totalUrls) {
-        set_pbar_max_length(batchList.length, totalUrls)
-        const timeoutBar = multibar.create(0, 0, {
-            message: urlRangeMessage(0, batchList[0].length),
-            unit: "",
-        })
-        const batchBar = multibar.create(batchList.length, 0, {
-            message: urlBatchMessage(batchList[0].length),
-            unit: "Batches",
-        })
-        const urlBar = multibar.create(totalUrls, 0, {
-            message: pBarMessage("In Progress"),
+async function scrapeUrlBatch(nightmare, urlSet, timeoutParams, urlCounter, urlBar, comboBar) {
+    comboBar.setTotal(urlSet.length)
+    const urlCounterStart = urlCounter
+    for await (const { url, fileName, identifier, scrapedHtmlFolderpath } of urlSet) {
+        comboBar.update(urlCounter - urlCounterStart, {
+            message: urlRangeMessage(urlCounterStart, urlSet.length),
             unit: "URLs",
         })
-        return [batchBar, urlBar, timeoutBar]
+        urlBar.update(urlCounter, { message: pBarMessage(identifier) })
+        await scrapeUrl(nightmare, url, fileName, scrapedHtmlFolderpath, timeoutParams)
+        urlCounter += 1
     }
+    urlBar.update(urlCounter)
+    comboBar.update(urlCounter - urlCounterStart)
+    return urlCounter
+}
 
-    function set_pbar_max_length(totalBatches, totalUrls) {
-        PBAR_MAX_LENGTH =
-            totalBatches == 1
-                ? PBAR_MAX_LEN_SINGLE_BATCH
-                : totalUrls < 100
-                ? PBAR_MAX_LEN_LT_100_URLS
-                : totalUrls < 1000
-                ? PBAR_MAX_LEN_LT_1K_URLS
-                : totalUrls < 10000
-                ? PBAR_MAX_LEN_LT_10K_URLS
-                : PBAR_MAX_LEN_GT_10K_URLS
-    }
-
-    function urlRangeMessage(urlCounter, nextBatchSize) {
-        return pBarMessage(`Scraping URLs ${urlCounter + 1}-${urlCounter + nextBatchSize}`)
-    }
-
-    function urlBatchMessage(batchSize, isTimeout = false) {
-        return pBarMessage(`${batchSize} URLs ${isTimeout ? "next" : "this"} batch`)
-    }
-
-    function pBarMessage(input) {
-        return input.length >= PBAR_MAX_LENGTH
-            ? input
-            : `${" ".repeat(PBAR_MAX_LENGTH - input.length)}${input}`
-    }
-
-    async function scrapeUrlBatch(nightmare, urlSet, timeoutParams, urlCounter, progressBar) {
-        for await (const { url, fileName, identifier, scrapedHtmlFolderpath } of urlSet) {
-            progressBar.update(urlCounter, { message: pBarMessage(identifier) })
-            await scrapeUrl(nightmare, url, fileName, scrapedHtmlFolderpath, timeoutParams)
-            urlCounter += 1
+async function batchTimeout(timeoutParams, comboBar, urlCounter, nextBatchSize) {
+    let [timeoutList, minutes, seconds] = getRandomTimeout(timeoutParams)
+    let secondsRemaining = timeoutList.length
+    comboBar.setTotal(secondsRemaining)
+    comboBar.update(secondsRemaining, {
+        message: timeoutMessage(minutes, seconds),
+        unit: "Seconds",
+    })
+    for await (const timeout of timeoutList) {
+        await sleep(timeout)
+        if (seconds == 0) {
+            minutes -= 1
+            seconds = 59
+        } else {
+            seconds -= 1
         }
-        progressBar.update(urlCounter)
-        return urlCounter
+        secondsRemaining -= 1
+        comboBar.update(secondsRemaining, { message: timeoutMessage(minutes, seconds) })
     }
+    comboBar.setTotal(0)
+    comboBar.update(0, { message: urlRangeMessage(urlCounter, nextBatchSize), unit: "" })
+}
 
-    async function batchTimeout(timeoutParams, progressBar, urlCounter, nextBatchSize) {
-        let [timeoutList, minutes, seconds] = getRandomTimeout(timeoutParams)
-        let secondsRemaining = timeoutList.length
-        progressBar.setTotal(secondsRemaining)
-        progressBar.update(secondsRemaining, { message: timeoutMessage(minutes, seconds), unit: "Seconds" })
-        for await (const timeout of timeoutList) {
-            await sleep(timeout)
-            if (seconds == 0) {
-                minutes -= 1
-                seconds = 59
-            } else {
-                seconds -= 1
-            }
-            secondsRemaining -= 1
-            progressBar.update(secondsRemaining, { message: timeoutMessage(minutes, seconds) })
-        }
-        progressBar.setTotal(0)
-        progressBar.update(0, { message: urlRangeMessage(urlCounter, nextBatchSize), unit: "" })
-        return
+function getRandomTimeout({ batchTimeoutMinMs, batchTimeoutMaxMs }) {
+    const timeoutMs = getRandomInt(batchTimeoutMinMs, batchTimeoutMaxMs)
+    const minutes = Math.floor(timeoutMs / 60000)
+    const seconds = Math.floor((timeoutMs - minutes * 60000) / 1000)
+    const totalSeconds = Math.floor(timeoutMs / 1000)
+    const timeoutList = Array(totalSeconds).fill(1000)
+    return [timeoutList, minutes, seconds]
+}
 
-        function getRandomTimeout({ batchTimeoutMinMs, batchTimeoutMaxMs }) {
-            const timeoutMs = getRandomInt(batchTimeoutMinMs, batchTimeoutMaxMs)
-            const minutes = Math.floor(timeoutMs / 60000)
-            const seconds = Math.floor((timeoutMs - minutes * 60000) / 1000)
-            const totalSeconds = Math.floor(timeoutMs / 1000)
-            const timeoutList = Array(totalSeconds).fill(1000)
-            return [timeoutList, minutes, seconds]
-        }
-
-        function timeoutMessage(minutes, seconds) {
-            const minPad = minutes.toString().padStart(2, "0")
-            const secPad = seconds.toString().padStart(2, "0")
-            return pBarMessage(`${minPad}:${secPad} until next batch`)
-        }
-    }
+function timeoutMessage(minutes, seconds) {
+    const minPad = minutes.toString().padStart(2, "0")
+    const secPad = seconds.toString().padStart(2, "0")
+    return pBarMessage(`${minPad}:${secPad} until next batch`)
 }
 
 async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams) {
@@ -154,7 +172,6 @@ async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams) {
         counter += 1
     }
     urlBar.stop()
-    return
 }
 
 async function scrapeUrl(nightmare, url, outputFileName, outputFolderPath, timeoutParams) {
@@ -175,18 +192,6 @@ async function scrapeUrl(nightmare, url, outputFileName, outputFolderPath, timeo
             console.log(e)
         }
     }
-}
-
-function readUrlSetFromFile(urlSetFilepath) {
-    return JSON.parse(readFileSync(urlSetFilepath, { encoding: "utf8" }))
-}
-
-function sleep(timeoutMs) {
-    return new Promise((resolve) => setTimeout(resolve, timeoutMs))
-}
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min)
 }
 
 module.exports = {
