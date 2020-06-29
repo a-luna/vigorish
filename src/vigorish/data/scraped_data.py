@@ -7,6 +7,7 @@ from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
 from vigorish.data.process.avg_time_between_pitches import calc_avg_time_between_pitches
+from vigorish.data.process.combine_scraped_data import CombineScrapedData
 from vigorish.enums import DataSet, DocFormat
 from vigorish.util.numeric_helpers import trim_data_set
 from vigorish.util.regex import URL_ID_REGEX, URL_ID_CONVERT_REGEX
@@ -20,6 +21,7 @@ class ScrapedData:
         self.file_helper = FileHelper(config)
         self.html_storage = HtmlStorage(config, self.file_helper)
         self.json_storage = JsonStorage(config, self.file_helper)
+        self.combine_data = CombineScrapedData(db_session)
 
     def get_local_folderpath(self, doc_format, data_set, year):
         return self.file_helper.local_folderpath_dict[doc_format][data_set].resolve(year=year)
@@ -384,3 +386,30 @@ class ScrapedData:
                 "range": max(inning_delta_samples) - min(inning_delta_samples),
             }
         return {"pitch_delta": pitch_delta_combined, "inning_delta": inning_delta_combined}
+
+    def combine_boxscore_and_pfx_data(self, bbref_game_id):
+        result = self.get_bbref_boxscore(bbref_game_id)
+        if result.failure:
+            return result
+        boxscore = result.value
+        result = self.get_all_pitchfx_logs_for_game(bbref_game_id)
+        if result.failure:
+            return result
+        pitchfx_logs = result.value
+        avg_pitch_times = self.get_cached_avg_pitch_times()
+        result = self.combine_data.execute(boxscore, pitchfx_logs, avg_pitch_times)
+        if result.failure:
+            return result
+        updated_boxscore_dict = result.value
+        return self.save_json_combined_data(updated_boxscore_dict)
+
+    def generate_investigative_materials(self, bbref_game_id):
+        result = self.get_bbref_boxscore(bbref_game_id)
+        if result.failure:
+            return result
+        boxscore = result.value
+        result = self.get_all_pitchfx_logs_for_game(bbref_game_id)
+        if result.failure:
+            return result
+        pitchfx_logs = result.value
+        return self.combine_data.generate_investigative_materials(boxscore, pitchfx_logs)

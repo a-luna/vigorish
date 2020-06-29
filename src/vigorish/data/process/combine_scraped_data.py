@@ -31,30 +31,49 @@ class CombineScrapedData:
     game_events_combined_data: List[Dict] = []
     updated_boxscore_dict: Dict = {}
 
-    def __init__(self, db_session, scraped_data):
+    def __init__(self, db_session):
         self.db_session = db_session
-        self.scraped_data = scraped_data
 
-    def execute(self, bbref_game_id):
-        result = self.get_all_pbp_events_for_game(bbref_game_id)
+    def execute(self, bbref_boxscore, pitchfx_logs_for_game, avg_pitch_times):
+        self.bbref_game_id = bbref_boxscore.bbref_game_id
+        self.boxscore = bbref_boxscore
+        self.pitchfx_logs_for_game = pitchfx_logs_for_game
+        self.avg_pitch_times = avg_pitch_times
+        result = self.get_all_pbp_events_for_game()
         if result.failure:
             return result
-        result = self.get_all_pfx_data_for_game(bbref_game_id)
+        result = self.get_all_pfx_data_for_game()
         if result.failure:
             return result
         result = self.combine_pbp_events_with_pfx_data()
         if result.failure:
             return result
-        result = self.update_boxscore_with_combined_data()
-        if result.failure:
-            return result
-        return self.scraped_data.save_json_combined_data(self.updated_boxscore_dict)
+        return self.update_boxscore_with_combined_data()
 
-    def get_all_pbp_events_for_game(self, bbref_game_id):
-        result = self.scraped_data.get_bbref_boxscore(bbref_game_id)
+    def generate_investigative_materials(self, bbref_boxscore, pitchfx_logs_for_game):
+        self.bbref_game_id = bbref_boxscore.bbref_game_id
+        self.boxscore = bbref_boxscore
+        self.pitchfx_logs_for_game = pitchfx_logs_for_game
+        result = self.get_all_pbp_events_for_game()
         if result.failure:
             return result
-        self.boxscore = result.value
+        result = self.get_all_pfx_data_for_game()
+        if result.failure:
+            return result
+        result = self.reconcile_at_bat_ids()
+        if result.success:
+            return Result.Fail("")
+        game_data = {
+            "error_message": result.error,
+            "boxscore": self.boxscore,
+            "player_id_dict": self.player_id_dict,
+            "at_bat_event_groups": self.at_bat_event_groups,
+            "pitchfx_logs_for_game": self.pitchfx_logs_for_game,
+            "all_pfx_data_for_game": self.all_pfx_data_for_game,
+        }
+        return Result.Ok(game_data)
+
+    def get_all_pbp_events_for_game(self):
         result = self.get_player_id_dict_for_game()
         if result.failure:
             return result
@@ -64,7 +83,7 @@ class CombineScrapedData:
         for game_event in all_events:
             if at_bat_events and game_event.inning_label != at_bat_events[-1].inning_label:
                 prev_event = at_bat_events[-1]
-                self.update_at_bat_event_groups(prev_event, at_bat_events, bbref_game_id)
+                self.update_at_bat_event_groups(prev_event, at_bat_events)
                 at_bat_events = []
             at_bat_events.append(game_event)
             if self.event_is_player_substitution_or_misc(game_event):
@@ -72,7 +91,7 @@ class CombineScrapedData:
             if game_event.pitch_sequence:
                 game_event.pitch_sequence = game_event.pitch_sequence.replace("^", "")
                 result = self.pitch_sequence_is_complete_at_bat(
-                    game_event.pitch_sequence, game_event.pbp_table_row_number, bbref_game_id
+                    game_event.pitch_sequence, game_event.pbp_table_row_number
                 )
                 if result.failure:
                     return result
@@ -84,11 +103,11 @@ class CombineScrapedData:
                 error = f"Error! No pitch sequence was found for row# {row_num}"
                 return Result.Fail(error)
             if game_event_is_complete_at_bat or self.event_resulted_in_third_out(game_event):
-                self.add_new_at_bat_event_group(game_event, at_bat_events, bbref_game_id)
+                self.add_new_at_bat_event_group(game_event, at_bat_events)
                 at_bat_events = []
         if at_bat_events:
             prev_event = at_bat_events[-1]
-            self.update_at_bat_event_groups(prev_event, at_bat_events, bbref_game_id)
+            self.update_at_bat_event_groups(prev_event, at_bat_events)
         return Result.Ok()
 
     def get_player_id_dict_for_game(self):
@@ -124,11 +143,11 @@ class CombineScrapedData:
         all_events.sort(key=lambda x: x.pbp_table_row_number)
         return all_events
 
-    def update_at_bat_event_groups(self, game_event, at_bat_events, bbref_game_id):
+    def update_at_bat_event_groups(self, game_event, at_bat_events):
         return (
             self.update_existing_at_bat_event_group(game_event, at_bat_events)
             if self.event_is_player_substitution_or_misc(game_event)
-            else self.add_new_at_bat_event_group(game_event, at_bat_events, bbref_game_id)
+            else self.add_new_at_bat_event_group(game_event, at_bat_events)
         )
 
     def update_existing_at_bat_event_group(self, game_event, at_bat_events):
@@ -137,8 +156,8 @@ class CombineScrapedData:
             self.create_bbref_game_event_dict(game_event, prev_at_bat_id)
         )
 
-    def add_new_at_bat_event_group(self, game_event, at_bat_events, bbref_game_id):
-        at_bat_id = self.get_new_at_bat_id(bbref_game_id, game_event)
+    def add_new_at_bat_event_group(self, game_event, at_bat_events):
+        at_bat_id = self.get_new_at_bat_id(game_event)
         self.at_bat_ids.append(at_bat_id)
         self.at_bat_event_groups[at_bat_id] = [
             self.create_bbref_game_event_dict(event, at_bat_id) for event in at_bat_events
@@ -149,7 +168,7 @@ class CombineScrapedData:
             type(event)
         )
 
-    def pitch_sequence_is_complete_at_bat(self, pitch_seq, row_num, bbref_game_id):
+    def pitch_sequence_is_complete_at_bat(self, pitch_seq, row_num):
         last_pitch = pitch_seq[-1]
         if last_pitch in ["X", "H", "Y"]:
             return Result.Ok(True)
@@ -165,7 +184,7 @@ class CombineScrapedData:
             if pitch in ["U"]:
                 error = (
                     f"Error! Unknown pitch type occurred in sequence: {pitch_seq} "
-                    f"(row# {row_num}, game_id: {bbref_game_id})"
+                    f"(row# {row_num}, game_id: {self.bbref_game_id})"
                 )
                 return Result.Fail(error)
         return Result.Ok(True) if strikes == 3 or balls == 4 else Result.Ok(False)
@@ -173,13 +192,13 @@ class CombineScrapedData:
     def event_resulted_in_third_out(self, game_event):
         return "O" in game_event.runs_outs_result and game_event.outs_before_play == 2
 
-    def get_new_at_bat_id(self, bbref_game_id, game_event):
+    def get_new_at_bat_id(self, game_event):
         instance_num = 0
-        at_bat_id = self.get_at_bat_id_for_pbp_event(bbref_game_id, game_event, instance_num)
+        at_bat_id = self.get_at_bat_id_for_pbp_event(game_event, instance_num)
         id_exists = at_bat_id in self.at_bat_ids
         while id_exists:
             instance_num += 1
-            at_bat_id = self.get_at_bat_id_for_pbp_event(bbref_game_id, game_event, instance_num)
+            at_bat_id = self.get_at_bat_id_for_pbp_event(game_event, instance_num)
             id_exists = at_bat_id in self.at_bat_ids
         return at_bat_id
 
@@ -192,29 +211,25 @@ class CombineScrapedData:
         event_dict["event_type"] = event.event_type.name
         return event_dict
 
-    def get_at_bat_id_for_pbp_event(self, game_id, game_event, instance_number=0):
+    def get_at_bat_id_for_pbp_event(self, game_event, instance_number=0):
         inn = game_event.inning_label[1:]
         pteam = self.get_brooks_team_id(game_event.team_pitching_id_br)
         pid = self.player_id_dict[game_event.pitcher_id_br]["mlb_id"]
         bteam = self.get_brooks_team_id(game_event.team_batting_id_br)
         bid = self.player_id_dict[game_event.batter_id_br]["mlb_id"]
-        return f"{game_id}_{inn}_{pteam}_{pid}_{bteam}_{bid}_{instance_number}"
+        return f"{self.bbref_game_id}_{inn}_{pteam}_{pid}_{bteam}_{bid}_{instance_number}"
 
     def get_brooks_team_id(self, br_team_id):
         if br_team_id in TEAM_ID_DICT:
             return TEAM_ID_DICT[br_team_id]
         return br_team_id
 
-    def get_all_pfx_data_for_game(self, bbref_game_id):
-        result = self.scraped_data.get_all_pitchfx_logs_for_game(bbref_game_id)
-        if result.failure:
-            return result
-        pitchfx_logs_for_game = result.value
-        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, bbref_game_id)
+    def get_all_pfx_data_for_game(self):
+        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, self.bbref_game_id)
         game_start_time = game_status.game_start_time
         self.pitchfx_logs_for_game = [
             self.remove_duplicate_pitchfx_data(pitchfx_log, game_start_time)
-            for pitchfx_log in pitchfx_logs_for_game
+            for pitchfx_log in self.pitchfx_logs_for_game
         ]
         for pitchfx_log in self.pitchfx_logs_for_game:
             for pfx in pitchfx_log.pitchfx_log:
@@ -301,6 +316,7 @@ class CombineScrapedData:
         result = self.reconcile_at_bat_ids()
         if result.failure:
             return result
+        self.at_bat_ids = result.value
         for ab_id in self.at_bat_ids:
             pbp_events_for_at_bat = self.get_all_pbp_events_for_at_bat(ab_id)
             pfx_data_for_at_bat = self.get_all_pfx_data_for_at_bat(ab_id)
@@ -381,13 +397,11 @@ class CombineScrapedData:
         at_bat_ids_boxscore_only = list(set(at_bat_ids_from_boxscore) - set(at_bat_ids_from_pfx))
         at_bat_ids_pfx_only = list(set(at_bat_ids_from_pfx) - set(at_bat_ids_from_boxscore))
         if at_bat_ids_match_exactly or (at_bat_ids_boxscore_only and not at_bat_ids_pfx_only):
-            self.at_bat_ids = self.order_at_bat_ids_by_time(at_bat_ids_from_boxscore)
-            return Result.Ok(self.at_bat_ids)
-        error_report = self.create_error_report(at_bat_ids_pfx_only, self.player_id_dict, True)
+            at_bat_ids = self.order_at_bat_ids_by_time(at_bat_ids_from_boxscore)
+            return Result.Ok(at_bat_ids)
+        error_report = self.create_error_report(at_bat_ids_pfx_only, True)
         if at_bat_ids_boxscore_only:
-            boxscore_errors = self.create_error_report(
-                at_bat_ids_boxscore_only, self.player_id_dict, False
-            )
+            boxscore_errors = self.create_error_report(at_bat_ids_boxscore_only, False)
             error_report += f"\n\n{'=' * 60}\n{boxscore_errors}"
         return Result.Fail(error_report)
 
@@ -478,11 +492,10 @@ class CombineScrapedData:
     def find_pfx_out_of_sequence(
         self, at_bat_id, pfx_data_for_at_bat, pitch_count_pitch_seq,
     ):
-        avg_pitch_times = self.scraped_data.get_cached_avg_pitch_times()
         ab_index = self.at_bat_ids.index(at_bat_id)
         if ab_index == 0:
             return self.find_pfx_out_of_sequence_first_at_bat(
-                at_bat_id, pfx_data_for_at_bat, pitch_count_pitch_seq, avg_pitch_times,
+                at_bat_id, pfx_data_for_at_bat, pitch_count_pitch_seq
             )
         prev_ab_id = self.at_bat_ids[ab_index - 1]
         pfx_data_for_prev_at_bat = self.get_all_pfx_data_for_at_bat(prev_ab_id)
@@ -515,7 +528,7 @@ class CombineScrapedData:
                 prev_pitch_thrown = self.get_timestamp_pitch_thrown(matches[0])
             else:
                 result = self.determine_best_pfx_from_prev_pitch(
-                    at_bat_id, matches, pitch_num, prev_pitch_thrown, avg_pitch_times
+                    at_bat_id, matches, pitch_num, prev_pitch_thrown
                 )
                 if result.failure:
                     return result
@@ -525,7 +538,7 @@ class CombineScrapedData:
         return Result.Ok(valid_pfx_sequence_for_at_bat)
 
     def find_pfx_out_of_sequence_first_at_bat(
-        self, at_bat_id, pfx_data_for_at_bat, pitch_count_pitch_seq, avg_pitch_times,
+        self, at_bat_id, pfx_data_for_at_bat, pitch_count_pitch_seq
     ):
         pfx_data_for_next_at_bat = self.get_all_pfx_data_for_at_bat(at_bat_id)
         matches = [pfx for pfx in pfx_data_for_next_at_bat if pfx["ab_count"] == 1]
@@ -558,12 +571,7 @@ class CombineScrapedData:
                 next_pitch_thrown = self.get_timestamp_pitch_thrown(matches[0])
             else:
                 result = self.determine_best_pfx_from_next_pitch(
-                    at_bat_id,
-                    matches,
-                    pitch_count_pitch_seq,
-                    pitch_num,
-                    next_pitch_thrown,
-                    avg_pitch_times,
+                    at_bat_id, matches, pitch_count_pitch_seq, pitch_num, next_pitch_thrown,
                 )
                 if result.failure:
                     return result
@@ -589,17 +597,17 @@ class CombineScrapedData:
         return timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
 
     def determine_best_pfx_from_prev_pitch(
-        self, at_bat_id, possible_pfx, this_pitch_num, prev_pitch_thrown, avg_pitch_times
+        self, at_bat_id, possible_pfx, this_pitch_num, prev_pitch_thrown
     ):
         time_since_last_pitch_min = (
-            self.get_min_time_between_innings(avg_pitch_times)
+            self.get_min_time_between_innings()
             if this_pitch_num == 1
-            else self.get_min_time_between_pitches(avg_pitch_times)
+            else self.get_min_time_between_pitches()
         )
         time_since_last_pitch_max = (
-            self.get_max_time_between_innings(avg_pitch_times)
+            self.get_max_time_between_innings()
             if this_pitch_num == 1
-            else self.get_max_time_between_pitches(avg_pitch_times)
+            else self.get_max_time_between_pitches()
         )
         for pfx in possible_pfx:
             pfx_thrown = self.get_timestamp_pitch_thrown(pfx)
@@ -622,9 +630,9 @@ class CombineScrapedData:
             return Result.Ok(possible_pfx[0])
         compare_deltas = []
         time_since_last_pitch_avg = (
-            self.get_avg_time_between_innings(avg_pitch_times)
+            self.get_avg_time_between_innings()
             if this_pitch_num == 1
-            else self.get_avg_time_between_pitches(avg_pitch_times)
+            else self.get_avg_time_between_pitches()
         )
         for pfx in possible_pfx:
             compare_deltas.append(
@@ -642,23 +650,17 @@ class CombineScrapedData:
         return Result.Ok(compare_deltas[0]["pfx"])
 
     def determine_best_pfx_from_next_pitch(
-        self,
-        at_bat_id,
-        possible_pfx,
-        pitch_count_pitch_seq,
-        this_pitch_num,
-        next_pitch_thrown,
-        avg_pitch_times,
+        self, at_bat_id, possible_pfx, pitch_count_pitch_seq, this_pitch_num, next_pitch_thrown,
     ):
         time_since_last_pitch_min = (
-            self.get_min_time_between_innings(avg_pitch_times)
+            self.get_min_time_between_innings()
             if this_pitch_num == pitch_count_pitch_seq
-            else self.get_min_time_between_pitches(avg_pitch_times)
+            else self.get_min_time_between_pitches()
         )
         time_since_last_pitch_max = (
-            self.get_max_time_between_innings(avg_pitch_times)
+            self.get_max_time_between_innings()
             if this_pitch_num == pitch_count_pitch_seq
-            else self.get_max_time_between_pitches(avg_pitch_times)
+            else self.get_max_time_between_pitches()
         )
         for pfx in possible_pfx:
             pfx_thrown = self.get_timestamp_pitch_thrown(pfx)
@@ -680,9 +682,9 @@ class CombineScrapedData:
             return Result.Ok(possible_pfx[0])
         compare_deltas = []
         time_since_last_pitch_avg = (
-            self.get_avg_time_between_innings(avg_pitch_times)
+            self.get_avg_time_between_innings()
             if this_pitch_num == pitch_count_pitch_seq
-            else self.get_avg_time_between_pitches(avg_pitch_times)
+            else self.get_avg_time_between_pitches()
         )
         for pfx in possible_pfx:
             compare_deltas.append(
@@ -699,23 +701,23 @@ class CombineScrapedData:
         compare_deltas.sort(key=lambda x: x["delta"])
         return Result.Ok(compare_deltas[0]["pfx"])
 
-    def get_min_time_between_innings(self, avg_pitch_times):
-        return avg_pitch_times["inning_delta"]["min"]
+    def get_min_time_between_innings(self):
+        return self.avg_pitch_times["inning_delta"]["min"]
 
-    def get_max_time_between_innings(self, avg_pitch_times):
-        return avg_pitch_times["inning_delta"]["max"]
+    def get_max_time_between_innings(self):
+        return self.avg_pitch_times["inning_delta"]["max"]
 
-    def get_avg_time_between_innings(self, avg_pitch_times):
-        return avg_pitch_times["inning_delta"]["avg"]
+    def get_avg_time_between_innings(self):
+        return self.avg_pitch_times["inning_delta"]["avg"]
 
-    def get_min_time_between_pitches(self, avg_pitch_times):
-        return avg_pitch_times["pitch_delta"]["min"]
+    def get_min_time_between_pitches(self):
+        return self.avg_pitch_times["pitch_delta"]["min"]
 
-    def get_max_time_between_pitches(self, avg_pitch_times):
-        return avg_pitch_times["pitch_delta"]["max"]
+    def get_max_time_between_pitches(self):
+        return self.avg_pitch_times["pitch_delta"]["max"]
 
-    def get_avg_time_between_pitches(self, avg_pitch_times):
-        return avg_pitch_times["pitch_delta"]["avg"]
+    def get_avg_time_between_pitches(self):
+        return self.avg_pitch_times["pitch_delta"]["avg"]
 
     def construct_pitch_sequence_description(self, game_event, pfx_data=None):
         total_pitches = self.get_total_pitches_in_sequence(game_event["pitch_sequence"])
@@ -786,8 +788,8 @@ class CombineScrapedData:
         pitchfx_vs_bbref_audit = self.audit_pitchfx_vs_bbref_data(
             updated_innings_list, home_team_pitching_stats, away_team_pitching_stats
         )
-        self.updated_boxscore_dict = {
-            "bbref_game_id": self.boxscore.bbref_game_id,
+        updated_boxscore_dict = {
+            "bbref_game_id": self.bbref_game_id,
             "boxscore_url": self.boxscore.boxscore_url,
             "pitchfx_vs_bbref_audit": pitchfx_vs_bbref_audit,
             "game_meta_info": game_meta_info,
@@ -796,7 +798,7 @@ class CombineScrapedData:
             "play_by_play_data": updated_innings_list,
             "player_id_dict": self.player_id_dict,
         }
-        return Result.Ok()
+        return Result.Ok(updated_boxscore_dict)
 
     def update_inning_with_combined_data(self, inning):
         inning_events = [
@@ -943,14 +945,13 @@ class CombineScrapedData:
         }
 
     def handle_pitch_stats_without_pitchfx_data(self, player_pitch_stats):
-        bbref_game_id = self.boxscore.bbref_game_id
         bbref_id = player_pitch_stats.player_id_br
         pitcher_team_id_br = player_pitch_stats.player_team_id_br
         pitcher_team_id_bb = self.get_brooks_team_id(pitcher_team_id_br)
         opponent_team_id_br = player_pitch_stats.opponent_team_id_br
         opponent_team_id_bb = self.get_brooks_team_id(opponent_team_id_br)
         mlb_id = self.player_id_dict[bbref_id].get("mlb_id", "")
-        pitch_app_id = f"{bbref_game_id}_{mlb_id}"
+        pitch_app_id = f"{self.bbref_game_id}_{mlb_id}"
         pitcher_name = self.player_id_dict[bbref_id].get("name", "")
         self.at_bat_ids = sorted(
             list(
@@ -977,7 +978,7 @@ class CombineScrapedData:
             "opponent_team_id_bb": opponent_team_id_bb,
             "opponent_team_id_bbref": opponent_team_id_br,
             "bb_game_id": self.boxscore.bb_game_id,
-            "bbref_game_id": bbref_game_id,
+            "bbref_game_id": self.bbref_game_id,
             "batters_faced_bbref": player_pitch_stats.batters_faced,
             "batters_faced_pitchfx": len(self.at_bat_ids),
             "total_pitch_count_bbref": player_pitch_stats.pitch_count,

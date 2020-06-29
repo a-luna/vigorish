@@ -1,7 +1,6 @@
 from pathlib import PosixPath
 
 from vigorish.config.database import PitchAppScrapeStatus
-from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import CombineScrapedData
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_audit_successful
 
 from tests.util import reset_pitch_app_scrape_status_after_combined_data
@@ -13,8 +12,7 @@ GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
 
 
 def test_combine_data_no_errors(db_session, scraped_data):
-    combine_data = CombineScrapedData(db_session, scraped_data)
-    result = combine_data.execute(GAME_ID_NO_ERRORS)
+    result = scraped_data.combine_boxscore_and_pfx_data(GAME_ID_NO_ERRORS)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
@@ -86,8 +84,7 @@ def test_combine_data_no_errors(db_session, scraped_data):
 
 
 def test_combine_data_with_errors(db_session, scraped_data):
-    combine_data = CombineScrapedData(db_session, scraped_data)
-    result = combine_data.execute(GAME_ID_WITH_ERRORS)
+    result = scraped_data.combine_boxscore_and_pfx_data(GAME_ID_WITH_ERRORS)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
@@ -131,8 +128,7 @@ def test_combine_data_with_errors(db_session, scraped_data):
 
 
 def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
-    combine_data = CombineScrapedData(db_session, scraped_data)
-    result = combine_data.execute(GAME_ID_NO_PFX_FOR_PITCH_APP)
+    result = scraped_data.combine_boxscore_and_pfx_data(GAME_ID_NO_PFX_FOR_PITCH_APP)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]

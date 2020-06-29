@@ -9,7 +9,6 @@ from vigorish.cli.util import (
     user_options_prompt,
 )
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import CombineScrapedData
 from vigorish.status.update_status_combined_data import (
     update_pitch_apps_for_game_audit_successful,
     update_pitch_appearances_audit_failed,
@@ -29,7 +28,6 @@ class InvestigateFailuresMenuItem(MenuItem):
         self.data_error_game_ids = flatten_list2d(
             [audit["data_error"] for audit in self.audit_report.values()]
         )
-        self.combine_data = CombineScrapedData(self.db_session, self.scraped_data)
         self.menu_item_text = "Investigate Failures"
         self.menu_item_emoji = EMOJI_DICT.get("FLASHLIGHT")
         self.exit_menu = False
@@ -100,14 +98,8 @@ class InvestigateFailuresMenuItem(MenuItem):
         return user_options_prompt(choices, prompt)
 
     def generate_investigative_materials(self, selected_game_id):
-        result = self.combine_data.get_all_pbp_events_for_game(selected_game_id)
+        result = self.scraped_data.generate_investigative_materials(selected_game_id)
         if result.failure:
-            return result
-        result = self.combine_data.get_all_pfx_data_for_game(selected_game_id)
-        if result.failure:
-            return result
-        result = self.combine_data.reconcile_at_bat_ids()
-        if result.success:
             no_errors = (
                 f"The selected game ({selected_game_id}) did not raise any errors when attempting "
                 "to combine pitch data. Please try to combine all scraped data for this "
@@ -116,14 +108,15 @@ class InvestigateFailuresMenuItem(MenuItem):
             print_message(no_errors, fg="bright_yellow", bold=True)
             pause(message="Press any key to continue...")
             return Result.Fail("")
-        print_message(result.error, wrap=False, fg="bright_red")
+        game_data = result.value
+        print_message(game_data.error_message, wrap=False, fg="bright_red")
         pause(message="Press any key to continue...")
-        self.failed_pitch_app_dict = parse_pitch_app_details_from_string(result.error)
-        self.boxscore = self.combine_data.boxscore
-        self.player_id_dict = self.combine_data.player_id_dict
-        self.at_bat_event_groups = self.combine_data.at_bat_event_groups
-        self.pitchfx_logs_for_game = self.combine_data.pitchfx_logs_for_game
-        self.all_pfx_data_for_game = self.combine_data.all_pfx_data_for_game
+        self.failed_pitch_app_dict = parse_pitch_app_details_from_string(game_data.error_message)
+        self.boxscore = game_data.boxscore
+        self.player_id_dict = game_data.player_id_dict
+        self.at_bat_event_groups = game_data.at_bat_event_groups
+        self.pitchfx_logs_for_game = game_data.pitchfx_logs_for_game
+        self.all_pfx_data_for_game = game_data.all_pfx_data_for_game
         breakpoint()
         return Result.Ok(False)
 
@@ -135,7 +128,7 @@ class InvestigateFailuresMenuItem(MenuItem):
         spinner = Halo(color="yellow", spinner="dots3")
         spinner.start()
         spinner.text = f"Combining scraped data for {combine_game_id}..."
-        result = self.combine_data.execute(combine_game_id)
+        result = self.scraped_data.combine_boxscore_and_pfx_data(combine_game_id)
         if result.failure:
             spinner.stop()
             spinner.clear()

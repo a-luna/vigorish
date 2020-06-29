@@ -14,7 +14,6 @@ from vigorish.cli.util import (
 )
 from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.data.process.combine_boxscore_and_pitchfx_for_game import CombineScrapedData
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.status.update_status_combined_data import (
     update_pitch_apps_for_game_audit_successful,
@@ -35,7 +34,6 @@ class CombineGameDataMenuItem(MenuItem):
     def __init__(self, app, audit_report):
         super().__init__(app)
         self.audit_report = audit_report
-        self.combine_data = CombineScrapedData(self.db_session, self.scraped_data)
         self.menu_item_text = "Combine Game Data"
         self.menu_item_emoji = EMOJI_DICT.get("BANG", "")
         self.exit_menu = False
@@ -180,7 +178,7 @@ class CombineGameDataMenuItem(MenuItem):
         )
         spinner.start()
         for num, bbref_game_id in enumerate(selected_game_ids, start=1):
-            result = self.combine_data(bbref_game_id)
+            result = self.scraped_data.combine_boxscore_and_pfx_data(bbref_game_id)
             if result.failure:
                 audit_errors[bbref_game_id] = result.error
                 failed_pitch_app_dict = parse_pitch_app_details_from_string(result.error)
@@ -261,7 +259,7 @@ class CombineGameDataMenuItem(MenuItem):
         spinner = Halo(color="yellow", spinner="dots3")
         spinner.text = f"Combining scraped data for {combine_game_id}..."
         spinner.start()
-        result = self.combine_data(combine_game_id)
+        result = self.scraped_data.combine_boxscore_and_pfx_data(combine_game_id)
         if result.failure:
             spinner.stop()
             spinner.clear()
