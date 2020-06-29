@@ -71,7 +71,7 @@ class JobDetailsMenuItem(MenuItem):
                     return result
                 return Result.Ok(True)
         else:
-            pause(message="Press any key to return to the previous menu...")
+            pause(message="\nPress any key to return to the previous menu...")
             return Result.Ok(self.exit_menu)
 
     def incomplete_job_options_prompt(self):
