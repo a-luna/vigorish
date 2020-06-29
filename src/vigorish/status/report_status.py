@@ -3,13 +3,12 @@ from pprint import pformat
 from vigorish.cli.util import print_message
 from vigorish.config.database import Season, DateScrapeStatus
 from vigorish.enums import StatusReport
-from vigorish.status.update_status import update_status_for_mlb_season
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY
 from vigorish.util.result import Result
 
 
-def report_status_single_date(db_session, scraped_data, refresh_data, game_date, report_type):
+def report_status_single_date(db_session, game_date, report_type):
     season = Season.find_by_year(db_session, game_date.year)
     date_is_valid = Season.is_date_in_season(db_session, game_date).success
     date_str = game_date.strftime(DATE_ONLY)
@@ -20,10 +19,6 @@ def report_status_single_date(db_session, scraped_data, refresh_data, game_date,
             f"season_end_date: {season.end_date_str}"
         )
         return Result.Fail(error)
-    if refresh_data:
-        result = refresh_season_data(db_session, scraped_data, season.year)
-        if result.failure:
-            return result
     date_status = DateScrapeStatus.find_by_date(db_session, game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
@@ -64,33 +59,23 @@ def report_status_single_date(db_session, scraped_data, refresh_data, game_date,
     return Result.Ok()
 
 
-def report_season_status(db_session, scraped_data, refresh_data, year, report_type):
+def report_season_status(db_session, year, report_type):
     if report_type == StatusReport.NONE:
         return Result.Ok()
     season = Season.find_by_year(db_session, year)
     if report_type == StatusReport.SEASON_SUMMARY:
-        if refresh_data:
-            result = refresh_season_data(db_session, scraped_data, season.year)
-            if result.failure:
-                return result
         print_message(f"\n### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
         print_message(season.status_report(), wrap=False, fg="bright_yellow")
         return Result.Ok()
     start_date = season.start_date
     end_date = season.end_date
-    return report_date_range_status(
-        db_session, scraped_data, refresh_data, start_date, end_date, report_type
-    )
+    return report_date_range_status(db_session, start_date, end_date, report_type)
 
 
-def report_date_range_status(
-    db_session, scraped_data, refresh_data, start_date, end_date, report_type
-):
+def report_date_range_status(db_session, start_date, end_date, report_type):
     if report_type == StatusReport.NONE:
         return Result.Ok()
-    result = construct_date_range_status(
-        db_session, scraped_data, refresh_data, start_date, end_date, report_type
-    )
+    result = construct_date_range_status(db_session, start_date, end_date, report_type)
     if result.failure:
         return result
     status_date_range = result.value
@@ -99,17 +84,7 @@ def report_date_range_status(
     )
 
 
-def construct_date_range_status(
-    db_session, scraped_data, refresh_data, start_date, end_date, report_type
-):
-    result = Season.validate_date_range(db_session, start_date, end_date)
-    if result.failure:
-        return result
-    season = result.value
-    if refresh_data:
-        result = refresh_season_data(db_session, scraped_data, season.year)
-        if result.failure:
-            return result
+def construct_date_range_status(db_session, start_date, end_date, report_type):
     show_all = False
     if (
         report_type == StatusReport.DATE_SUMMARY_ALL_DATES
@@ -184,11 +159,4 @@ def display_summary_report_for_date_range(db_session, start_date, end_date, stat
         date_str = status.game_date_str
         status_description = status.scrape_status_description
         print_message(f"{date_str}: {status_description}", wrap=False, fg="bright_magenta")
-    return Result.Ok()
-
-
-def refresh_season_data(db_session, scraped_data, year):
-    result = update_status_for_mlb_season(db_session, scraped_data, year)
-    if result.failure:
-        return result
     return Result.Ok()

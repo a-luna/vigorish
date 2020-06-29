@@ -5,7 +5,6 @@ from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import (
-    prompt_user_yes_no,
     user_options_prompt,
     single_date_prompt,
     season_prompt,
@@ -107,9 +106,8 @@ class StatusReportMenuItem(MenuItem):
         if result.failure:
             return result
         report = result.value
-        refresh = self.prompt_user_refresh_data()
         subprocess.run(["clear"])
-        result = report_season_status(self.db_session, self.scraped_data, refresh, year, report)
+        result = report_season_status(self.db_session, year, report)
         if result.failure:
             return result
         pause(message="Press any key to continue...")
@@ -121,11 +119,8 @@ class StatusReportMenuItem(MenuItem):
         if result.failure:
             return result
         report = result.value
-        refresh = self.prompt_user_refresh_data()
         subprocess.run(["clear"])
-        result = report_status_single_date(
-            self.db_session, self.scraped_data, refresh, game_date, report
-        )
+        result = report_status_single_date(self.db_session, game_date, report)
         if result.failure:
             return result
         pause(message="Press any key to continue...")
@@ -138,11 +133,8 @@ class StatusReportMenuItem(MenuItem):
         if result.failure:
             return result
         report = result.value
-        refresh = self.prompt_user_refresh_data()
         subprocess.run(["clear"])
-        result = report_date_range_status(
-            self.db_session, self.scraped_data, refresh, start_date, end_date, report
-        )
+        result = report_date_range_status(self.db_session, start_date, end_date, report)
         if result.failure:
             return result
         pause(message="Press any key to continue...")
@@ -154,9 +146,3 @@ class StatusReportMenuItem(MenuItem):
             return result
         season = result.value
         return Result.Ok(season.year)
-
-    def prompt_user_refresh_data(self):
-        prompt = "Would you like to refresh the data before generating the report?"
-        subprocess.run(["clear"])
-        result = prompt_user_yes_no(prompt=prompt)
-        return result.value

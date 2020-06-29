@@ -149,12 +149,6 @@ def scrape(app, data_set, start, end, name):
 
 
 @cli.group()
-@click.option(
-    "--update/--no-update",
-    default=False,
-    show_default=True,
-    help="Update statistics for scraped dates and games before generating status report.",
-)
 @click.pass_obj
 def status(app, update):
     """Report progress of scraped data, by date or MLB season."""
@@ -184,9 +178,7 @@ def status_date(app, game_date, missing_pitchfx, with_games):
         report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
         report_type = StatusReport.DATE_DETAIL_ALL_DATES
-    result = report_status_single_date(
-        app["db_session"], app["scraped_data"], app["run_update"], game_date, report_type
-    )
+    result = report_status_single_date(app["db_session"], game_date, report_type)
     return exit_app_success(app) if result.success else exit_app_error(app, result.error)
 
 
@@ -232,9 +224,7 @@ def status_date_range(app, start, end, verbosity):
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(app, error)
-    result = report_date_range_status(
-        app["db_session"], app["scraped_data"], app["run_update"], start, end, report_type
-    )
+    result = report_date_range_status(app["db_session"], start, end, report_type)
     return exit_app_success(app) if result.success else exit_app_error(app, result.error)
 
 
@@ -277,9 +267,7 @@ def status_season(app, year, verbosity):
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(app, error)
-    result = report_season_status(
-        app["db_session"], app["scraped_data"], app["run_update"], year, report_type
-    )
+    result = report_season_status(app["db_session"], year, report_type)
     return exit_app_success(app) if result.success else exit_app_error(app, result.error)
 
 

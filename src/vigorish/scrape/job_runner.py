@@ -135,16 +135,10 @@ class JobRunner:
     def show_status_report(self):
         if self.status_report == StatusReport.SEASON_SUMMARY:
             return report_season_status(
-                db_session=self.db_session,
-                scraped_data=self.scraped_data,
-                refresh_data=False,
-                year=self.season.year,
-                report_type=self.status_report,
+                db_session=self.db_session, year=self.season.year, report_type=self.status_report,
             )
         return report_date_range_status(
             db_session=self.db_session,
-            scraped_data=self.scraped_data,
-            refresh_data=False,
             start_date=self.db_job.start_date,
             end_date=self.db_job.end_date,
             report_type=self.status_report,
