@@ -5,7 +5,7 @@ from vigorish.enums import DataSet, DocFormat
 
 
 TIMESTAMP_REGEX = re.compile(r"(?P<hour>\d?\d):(?P<minute>\d\d)")
-JOB_NAME_PATTERN = r"^[\w-]+$"
+JOB_NAME_PATTERN = r"^[\w\s-]+$"
 JOB_NAME_REGEX = re.compile(JOB_NAME_PATTERN)
 DATE_ONLY_TABLE_ID_REGEX = re.compile(r"(?P<year>\d{4,4})(?P<month>\d{2,2})(?P<day>\d{2,2})")
 BBREF_BOXSCORE_URL_PATTERN = (
