@@ -48,8 +48,8 @@ def ellipsize(input_str, max_len):
 
 
 def wrap_text(input_str, max_len):
-    last_word_boundary: int
     trunc_lines = []
+    last_word_boundary = max_len
     processing_text = True
     while processing_text:
         if len(input_str) <= max_len:
