@@ -6,12 +6,8 @@ from halo import Halo
 from pprint import pformat
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import (
-    print_message,
-    user_options_prompt,
-    get_random_cli_color,
-    get_random_dots_spinner,
-)
+from vigorish.cli.prompts import user_options_prompt
+from vigorish.cli.util import print_message, get_random_cli_color, get_random_dots_spinner
 from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import DataSet, ScrapeCondition

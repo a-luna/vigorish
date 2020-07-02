@@ -4,7 +4,7 @@ import subprocess
 from halo import Halo
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import season_prompt, data_sets_prompt
+from vigorish.cli.prompts import season_prompt, data_sets_prompt
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DocFormat
 from vigorish.util.numeric_helpers import ONE_KB

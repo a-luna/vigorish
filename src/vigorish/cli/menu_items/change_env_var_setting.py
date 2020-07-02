@@ -6,7 +6,8 @@ from bullet import Input, colors
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import print_message, prompt_user_yes_no, prompt_user_yes_no_cancel
+from vigorish.cli.prompts import prompt_user_yes_no, prompt_user_yes_no_cancel
+from vigorish.cli.util import print_message
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 

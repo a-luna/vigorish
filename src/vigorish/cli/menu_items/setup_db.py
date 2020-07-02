@@ -5,7 +5,8 @@ import time
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import print_message, prompt_user_yes_no
+from vigorish.cli.prompts import prompt_user_yes_no
+from vigorish.cli.util import print_message
 from vigorish.config.database import initialize_database, db_setup_complete, Season
 from vigorish.constants import EMOJI_DICT
 from vigorish.status.update_status_local_files import (

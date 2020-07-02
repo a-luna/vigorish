@@ -1,23 +1,18 @@
 """Menu item that allows the user to create a record of a new scrape job."""
 import subprocess
 
-from bullet import Input, VerticalPrompt
+from bullet import VerticalPrompt
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import (
-    DateInput,
-    prompt_user_yes_no,
-    validate_scrape_dates,
-    print_message,
-    data_sets_prompt,
-)
+from vigorish.cli.input_types import DEFAULT_JOB_NAME, DateInput, JobNameInput
+from vigorish.cli.prompts import prompt_user_yes_no, data_sets_prompt
+from vigorish.cli.util import print_message, validate_scrape_dates
 from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
-from vigorish.util.regex import JOB_NAME_PATTERN
 
 
 class CreateJobMenuItem(MenuItem):
@@ -28,19 +23,21 @@ class CreateJobMenuItem(MenuItem):
 
     def launch(self):
         job_confirmed = False
+        data_sets = {}
+        start_date = None
+        end_date = None
+        job_name = None
         while not job_confirmed:
-            data_sets = data_sets_prompt("Select all data sets to scrape:")
+            data_sets = data_sets_prompt("Select all data sets to scrape:", data_sets)
             dates_validated = False
             while not dates_validated:
-                job_details = self.get_scrape_dates_from_user()
-                start_date = job_details[0][1]
-                end_date = job_details[1][1]
+                (start_date, end_date) = self.get_scrape_dates_from_user(start_date, end_date)
                 result = validate_scrape_dates(self.db_session, start_date, end_date)
                 if result.failure:
                     continue
                 season = result.value
                 dates_validated = True
-            job_name = self.get_job_name_from_user()
+            job_name = self.get_job_name_from_user(job_name)
             job_confirmed = self.confirm_job_details(data_sets, start_date, end_date, job_name)
 
         new_scrape_job = self.create_new_scrape_job(
@@ -61,25 +58,32 @@ class CreateJobMenuItem(MenuItem):
                 return result
         return Result.Ok(self.exit_menu)
 
-    def get_scrape_dates_from_user(self):
+    def get_scrape_dates_from_user(self, start_date, end_date):
         subprocess.run(["clear"])
-        job_details_prompt = VerticalPrompt(
+        scrape_dates_prompt = VerticalPrompt(
             [
-                DateInput(prompt="Enter date to START scraping: "),
-                DateInput(prompt="Enter date to STOP scraping: "),
+                DateInput(prompt="Enter date to START scraping: ", default=start_date),
+                DateInput(prompt="Enter date to STOP scraping: ", default=end_date),
             ],
             spacing=1,
         )
-        return job_details_prompt.launch()
+        scrape_dates = scrape_dates_prompt.launch()
+        start_date = scrape_dates[0][1]
+        end_date = scrape_dates[1][1]
+        return (start_date, end_date)
 
-    def get_job_name_from_user(self):
-        return Input(prompt="Enter a name for this job: ", pattern=JOB_NAME_PATTERN).launch()
+    def get_job_name_from_user(self, job_name):
+        job_name = JobNameInput(prompt="Enter a name for this job: ", default=job_name).launch()
+        return job_name if job_name != DEFAULT_JOB_NAME else None
 
     def confirm_job_details(self, data_sets, start_date, end_date, job_name):
         subprocess.run(["clear"])
         data_set_space = "\n\t      "
+        confirm_job_name = ""
+        if job_name:
+            confirm_job_name = f"Job Name....: {job_name}\n"
         job_details = (
-            f"Job Name....: {job_name}\n"
+            f"{confirm_job_name}"
             f"Start date..: {start_date.strftime(DATE_ONLY_2)}\n"
             f"End Date....: {end_date.strftime(DATE_ONLY_2)}\n"
             f"Data Sets...: {data_set_space.join(data_sets.values())}\n"
@@ -94,18 +98,21 @@ class CreateJobMenuItem(MenuItem):
             start_date=start_date,
             end_date=end_date,
             season=season,
-            job_name=job_name,
         )
         new_scrape_job = ScrapeJob(**scrape_job_dict)
         self.db_session.add(new_scrape_job)
         self.db_session.commit()
+        if job_name:
+            new_scrape_job.name = job_name
+        else:
+            new_scrape_job.name = str(new_scrape_job.id)
+        self.db_session.commit()
         return new_scrape_job
 
-    def get_scrape_job_dict(self, selected_data_sets, start_date, end_date, season, job_name):
+    def get_scrape_job_dict(self, selected_data_sets, start_date, end_date, season):
         scrape_job_dict = {
             "start_date": start_date,
             "end_date": end_date,
-            "name": job_name,
             "season_id": season.id,
         }
         ds_int = 0

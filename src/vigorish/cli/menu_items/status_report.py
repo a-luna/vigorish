@@ -4,7 +4,7 @@ import subprocess
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import (
+from vigorish.cli.prompts import (
     user_options_prompt,
     single_date_prompt,
     season_prompt,

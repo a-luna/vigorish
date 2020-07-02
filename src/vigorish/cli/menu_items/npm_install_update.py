@@ -6,7 +6,8 @@ from tempfile import TemporaryDirectory
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import print_message, prompt_user_yes_no
+from vigorish.cli.prompts import prompt_user_yes_no
+from vigorish.cli.util import print_message
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists, run_command

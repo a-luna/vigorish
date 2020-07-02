@@ -5,7 +5,8 @@ from bullet import Bullet, Input, Numbers, SlidePrompt, colors
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import prompt_user_yes_no_cancel, prompt_user_yes_no, print_message
+from vigorish.cli.prompts import prompt_user_yes_no_cancel, prompt_user_yes_no
+from vigorish.cli.util import print_message
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import ConfigType, DataSet
 from vigorish.util.result import Result

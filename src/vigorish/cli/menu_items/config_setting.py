@@ -3,7 +3,8 @@ import subprocess
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.change_config_setting import ChangeSetttingMenuItem
-from vigorish.cli.util import print_message, prompt_user_yes_no
+from vigorish.cli.prompts import prompt_user_yes_no
+from vigorish.cli.util import print_message
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 

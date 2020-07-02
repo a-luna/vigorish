@@ -4,10 +4,8 @@ from getch import pause
 from halo import Halo
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import (
-    print_message,
-    user_options_prompt,
-)
+from vigorish.cli.prompts import user_options_prompt
+from vigorish.cli.util import print_message
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.status.update_status_combined_data import (
     update_pitch_apps_for_game_audit_successful,
