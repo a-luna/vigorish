@@ -434,8 +434,8 @@ class Season(Base):
             end_str = end.strftime(DATE_ONLY)
             error = (
                 '"start" must be a date before (or the same date as) "end":\n'
-                f"start: {start_str}\n"
-                f"end: {end_str}"
+                f"start..: {start_str}\n"
+                f"end....: {end_str}"
             )
             return Result.Fail(error)
         season = cls.find_by_year(db_session, start.year)
@@ -444,8 +444,8 @@ class Season(Base):
         if not start_date_valid or not end_date_valid:
             error = (
                 f"Start and end date must both be within the {season.name}:\n"
-                f"season_start_date: {season.start_date_str}\n"
-                f"season_end_date: {season.end_date_str}"
+                f"{season.name} Start Date..: {season.start_date_str}\n"
+                f"{season.name} End Date....: {season.end_date_str}"
             )
             return Result.Fail(error)
         return Result.Ok(season)

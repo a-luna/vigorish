@@ -33,8 +33,7 @@ def print_message(
 def validate_scrape_dates(db_session, start_date, end_date):
     result = Season.validate_date_range(db_session, start_date, end_date)
     if result.failure:
-        error = f"The dates you entered are invalid:\n{result.error}"
-        print_message(error, fg="bright_red", bold=True)
+        print_message(result.error, wrap=False, fg="bright_red", bold=True)
         pause(message="Press any key to continue...")
         return Result.Fail("")
     season = result.value
