@@ -2,7 +2,9 @@
 from pathlib import Path
 from setuptools import setup, find_packages
 
-DESCRIPTION = "MLB data scraping tool"
+DESCRIPTION = (
+    "Hybrid Python/Node.js web scraping application for Major League Baseball (MLB) data."
+)
 APP_ROOT = Path(__file__).parent
 README = (APP_ROOT / "README.md").read_text().strip()
 AUTHOR = "Aaron Luna"
@@ -10,6 +12,7 @@ AUTHOR_EMAIL = "contact@aaronluna.dev"
 PROJECT_URLS = {
     "Bug Tracker": "https://github.com/a-luna/vigorish/issues",
     "Source Code": "https://github.com/a-luna/vigorish",
+    "Documentation": "https://aaronluna.dev/projects/vigorish",
 }
 CLASSIFIERS = [
     "Development Status :: 4 - Beta",
@@ -72,7 +75,7 @@ setup(
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
-    version="0.2.21",
+    version="0.2.22",
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     maintainer=AUTHOR,
