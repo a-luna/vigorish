@@ -30,6 +30,7 @@ NPM_PACKAGES_INSTALL_ERROR = (
     "Nightmare is not installed, you must install it and other node dependencies in "
     "order to scrape any data."
 )
+SPINNER = {"interval": 140, "frames": ["⚡", "⚡"]}
 
 
 class JobRunner:
@@ -42,7 +43,7 @@ class JobRunner:
         self.db_session = db_session
         self.config = config
         self.scraped_data = scraped_data
-        self.spinners = defaultdict(lambda: Halo(spinner="dots3"))
+        self.spinners = defaultdict(lambda: Halo(spinner=SPINNER))
         self.task_results = []
         self.status_report = self.config.get_current_setting("STATUS_REPORT", DataSet.ALL)
 
