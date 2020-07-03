@@ -907,15 +907,15 @@ def _match_player_id(name, id_dict):
         match["id"] = id_dict[name]
         match["score"] = 1
     else:
-        match_dict = fuzzy_match(name, id_dict.keys())
-        best_match = match_dict["best_match"]
-        player_id = id_dict[best_match]
+        mapped_choices = {player_id: player_name for player_name, player_id in id_dict.items()}
+        best_matches = fuzzy_match(name, mapped_choices)
+        player_id = best_matches[0]["result"]
         name_dict = {v: k for k, v in id_dict.items()}
         match["type"] = "Fuzzy match"
         match["name"] = name
         match["best_match"] = name_dict[player_id]
         match["id"] = player_id
-        match["score"] = match_dict["score"]
+        match["score"] = best_matches[0]["score"]
     return match
 
 
