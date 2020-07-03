@@ -62,8 +62,8 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeou
     let batchCounter = 0
     let urlCounter = 0
     const allUrls = readUrlSetFromFile(urlSetFilepath)
-    let batchList = createBatchJob(allUrls, batchJobParams)
-    let [batchBar, urlBar, comboBar] = initializeProgressBars(batchList, allUrls.length)
+    const batchList = createBatchJob(allUrls, batchJobParams)
+    const [batchBar, urlBar, comboBar] = initializeProgressBars(batchList, allUrls.length)
     for await (const urlBatch of batchList) {
         batchBar.update(batchCounter, { message: urlBatchMessage(batchList[batchCounter].length) })
         urlCounter = await scrapeUrlBatch(
@@ -172,22 +172,22 @@ async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams) {
 }
 
 async function scrapeUrl(nightmare, url, outputFileName, outputFolderPath, timeoutParams) {
-    let html = await fetchUrl(url, timeoutParams)
-    let filePath = joinPath(outputFolderPath, outputFileName)
+    const html = await fetchUrl(url, timeoutParams)
+    const filePath = joinPath(outputFolderPath, outputFileName)
     writeFileSync(filePath, html)
     return filePath
+}
 
-    async function fetchUrl(url, { urlTimeoutMinMs, urlTimeoutMaxMs }) {
-        try {
-            await nightmare.on("did-get-response-details", () => (startTime = Date.now()))
-            await nightmare.goto(url)
-            await nightmare.waitUntilNetworkIdle(500)
-            let html = await nightmare.evaluate(() => document.body.innerHTML)
-            await nightmare.wait(getRandomInt(urlTimeoutMinMs, urlTimeoutMaxMs))
-            return html
-        } catch (e) {
-            console.log(e)
-        }
+async function fetchUrl(url, { urlTimeoutMinMs, urlTimeoutMaxMs }) {
+    try {
+        await nightmare.on("did-get-response-details", () => (startTime = Date.now()))
+        await nightmare.goto(url)
+        await nightmare.waitUntilNetworkIdle(500)
+        const html = await nightmare.evaluate(() => document.body.innerHTML)
+        await nightmare.wait(getRandomInt(urlTimeoutMinMs, urlTimeoutMaxMs))
+        return html
+    } catch (e) {
+        console.log(e)
     }
 }
 
