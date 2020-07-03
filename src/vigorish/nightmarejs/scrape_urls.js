@@ -17,7 +17,6 @@ const multibar = new cliProgress.MultiBar({
 
 let PBAR_MAX_LENGTH
 const PBAR_MAX_LEN_SINGLE_BATCH = 20
-const PBAR_MAX_LEN_LT_100_URLS = 20
 const PBAR_MAX_LEN_LT_1K_URLS = 22
 const PBAR_MAX_LEN_LT_10K_URLS = 24
 const PBAR_MAX_LEN_GT_10K_URLS = 26
@@ -37,8 +36,6 @@ const set_pbar_max_length = (totalBatches, totalUrls) =>
     (PBAR_MAX_LENGTH =
         totalBatches == 1
             ? PBAR_MAX_LEN_SINGLE_BATCH
-            : totalUrls < 100
-            ? PBAR_MAX_LEN_LT_100_URLS
             : totalUrls < 1000
             ? PBAR_MAX_LEN_LT_1K_URLS
             : totalUrls < 10000
