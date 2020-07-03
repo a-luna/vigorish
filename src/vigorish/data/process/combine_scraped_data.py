@@ -39,16 +39,12 @@ class CombineScrapedData:
         self.boxscore = bbref_boxscore
         self.pitchfx_logs_for_game = pitchfx_logs_for_game
         self.avg_pitch_times = avg_pitch_times
-        result = self.get_all_pbp_events_for_game()
-        if result.failure:
-            return result
-        result = self.get_all_pfx_data_for_game()
-        if result.failure:
-            return result
-        result = self.combine_pbp_events_with_pfx_data()
-        if result.failure:
-            return result
-        return self.update_boxscore_with_combined_data()
+        return (
+            self.get_all_pbp_events_for_game()
+            .on_success(self.get_all_pfx_data_for_game)
+            .on_success(self.combine_pbp_events_with_pfx_data)
+            .on_success(self.update_boxscore_with_combined_data)
+        )
 
     def generate_investigative_materials(self, bbref_boxscore, pitchfx_logs_for_game):
         self.bbref_game_id = bbref_boxscore.bbref_game_id

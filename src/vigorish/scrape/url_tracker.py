@@ -1,7 +1,7 @@
 import json
 
 from vigorish.enums import DataSet
-from vigorish.scrape.url_builder import create_url_set
+from vigorish.scrape.url_builder import create_url_set as get_url_set
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
 
@@ -85,7 +85,7 @@ class UrlTracker:
         )
 
     def create_url_set(self):
-        result = create_url_set(self.db_job, self.data_set, self.scraped_data)
+        result = get_url_set(self.db_job, self.data_set, self.scraped_data)
         if result.failure:
             return result
         self.all_urls = result.value
