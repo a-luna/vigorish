@@ -1,5 +1,4 @@
 """Pitchfx measurements for a single pitch scraped from brooksbaseball.com."""
-import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
