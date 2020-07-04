@@ -4,17 +4,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 
 from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
+from vigorish.util.regex import PFX_TIMESTAMP_REGEX
 from vigorish.util.string_helpers import validate_bbref_game_id
-
-TIMESTAMP_REGEX = re.compile(
-    r"(?P<year>\d{2,2})"
-    r"(?P<month>\d{2,2})"
-    r"(?P<day>\d{2,2})_"
-    r"(?P<hour>\d{2,2})"
-    r"(?P<minute>\d{2,2})"
-    r"(?P<second>\d{2,2})"
-    r"(?P<team_id>[a-z]{3,3})"
-)
 
 
 @dataclass
@@ -79,7 +70,7 @@ class BrooksPitchFxData:
 
     @property
     def timestamp_pitch_thrown(self):
-        match = TIMESTAMP_REGEX.match(self.park_sv_id)
+        match = PFX_TIMESTAMP_REGEX.match(self.park_sv_id)
         if not match:
             return None
         group_dict = match.groupdict()
