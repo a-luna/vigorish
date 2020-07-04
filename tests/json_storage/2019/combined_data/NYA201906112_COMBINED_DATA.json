@@ -8357,7 +8357,7 @@
           "pitcher_name": "Chance Adams",
           "batter_name": "Carlos Gomez",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Chance Adams replaces James Paxton pitching)",
             "Pitch 1/1..: In play, out(s) (83mph Two-seam Fastball)",
             "Result.....: Flyball: LF"
           ],
@@ -17946,7 +17946,7 @@
           "pitcher_name": "Jeurys Familia",
           "batter_name": "DJ LeMahieu",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Jeurys Familia replaces Jason Vargas pitching)",
             "Pitch 1/4..: Called strike (96mph Sinker)",
             "Pitch 2/4..: Ball (88mph Slider)",
             "Pitch 3/4..: Swinging strike (87mph Slider)",
@@ -19251,7 +19251,7 @@
           "pitcher_name": "Luis Cessa",
           "batter_name": "Jeff McNeil",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Luis Cessa replaces Chance Adams pitching)",
             "Pitch 1/4..: Ball (94mph Four-seam Fastball)",
             "Pitch 2/4..: Foul (94mph Four-seam Fastball)",
             "Pitch 3/4..: Swinging strike (88mph Changeup)",
@@ -20476,9 +20476,9 @@
           "pitcher_name": "Seth Lugo",
           "batter_name": "Gio Urshela",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
-            "(Play not involving the batter)",
-            "(Play not involving the batter)",
+            "(Seth Lugo replaces Jeurys Familia pitching)",
+            "(Carlos Gomez moves from CF to LF)",
+            "(Juan Lagares replaces J.D. Davis (LF) playing CF batting 2nd)",
             "Pitch 1/6..: Ball (87mph Slider)",
             "Pitch 2/6..: Ball (89mph Slider)",
             "Pitch 3/6..: Foul (94mph Four-seam Fastball)",
@@ -21434,7 +21434,7 @@
           "pitcher_name": "Stephen Tarpley",
           "batter_name": "Todd Frazier",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Stephen Tarpley replaces Luis Cessa pitching)",
             "Pitch 1/2..: Ball (91mph Sinker)",
             "Pitch 2/2..: Hit batter (80mph Slider)",
             "Result.....: Hit By Pitch"
@@ -22000,7 +22000,7 @@
           "pitcher_name": "Stephen Tarpley",
           "batter_name": "Wilson Ramos",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Luis Guillorme pinch runs for Todd Frazier (DH) batting 4th)",
             "Pitch 1/1..: In play, out(s) (93mph Sinker)",
             "Result.....: Groundout: 3B-1B (Front of Home); Guillorme to 2B"
           ],
@@ -22930,8 +22930,8 @@
           "pitcher_name": "Drew Gagnon",
           "batter_name": "Brett Gardner",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
-            "(Play not involving the batter)",
+            "(Drew Gagnon replaces Seth Lugo pitching)",
+            "(Luis Guillorme pinch hit for DH and is now DH)",
             "Pitch 1/4..: Ball (93mph Four-seam Fastball)",
             "Pitch 2/4..: Ball (93mph Four-seam Fastball)",
             "Pitch 3/4..: Called strike (93mph Four-seam Fastball)",

@@ -1,5 +1,5 @@
 """Aggregate pitchfx data and play-by-play data into a single object."""
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, OrderedDict
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Dict, List
@@ -356,7 +356,9 @@ class CombineScrapedData:
             else:
                 pfx_data_copy = None
             pitch_sequence_description = self.construct_pitch_sequence_description(
-                final_event_this_at_bat, pfx_data_copy
+                final_event_this_at_bat,
+                self.get_all_other_events_for_at_bat(ab_id, final_event_this_at_bat),
+                pfx_data_copy,
             )
             pitcher_name = self.player_id_dict[first_event_this_at_bat["pitcher_id_br"]].get(
                 "name", ""
@@ -454,6 +456,12 @@ class CombineScrapedData:
             if event["event_type"] == "AT_BAT"
         ]
         at_bat_events.sort(key=lambda x: x["pbp_table_row_number"])
+        return at_bat_events
+
+    def get_all_other_events_for_at_bat(self, at_bat_id, final_event_this_at_bat):
+        at_bat_events = [event for event in self.at_bat_event_groups[at_bat_id]]
+        at_bat_events.sort(key=lambda x: x["pbp_table_row_number"])
+        at_bat_events.remove(final_event_this_at_bat)
         return at_bat_events
 
     def get_all_pfx_data_for_at_bat(self, at_bat_id):
@@ -715,12 +723,28 @@ class CombineScrapedData:
     def get_avg_time_between_pitches(self):
         return self.avg_pitch_times["pitch_delta"]["avg"]
 
-    def construct_pitch_sequence_description(self, game_event, pfx_data=None):
-        total_pitches = self.get_total_pitches_in_sequence(game_event["pitch_sequence"])
+    def construct_pitch_sequence_description(
+        self, final_event_in_ab, all_other_events, pfx_data=None
+    ):
+        pitch_sequence = final_event_in_ab["pitch_sequence"]
+        total_pitches = self.get_total_pitches_in_sequence(pitch_sequence)
+        non_batter_events = OrderedDict()
+        if all_other_events:
+            counter = 1
+            for event in all_other_events:
+                non_batter_events[counter] = {
+                    "processed": False,
+                    "event": event,
+                }
+                counter += 1
         current_pitch = 0
         next_pitch_blocked_by_c = False
         sequence_description = []
-        for abbrev in game_event["pitch_sequence"]:
+        for abbrev in pitch_sequence:
+            pitch_number = ""
+            outcome = ""
+            pfx_des = ""
+            blocked_by_c = ""
             if abbrev == "*":
                 next_pitch_blocked_by_c = True
                 continue
@@ -729,32 +753,52 @@ class CombineScrapedData:
                 space_count = 1
                 if total_pitches >= 10 and current_pitch < 10:
                     space_count = 2
-                elif total_pitches >= 10 and current_pitch >= 10:
-                    space_count = 1
                 pitch_number = f"Pitch{' '*space_count}{current_pitch}/{total_pitches}"
-                pitch_description = (
-                    f"{pitch_number}..: {PPB_PITCH_LOG_DICT[abbrev]['description']}"
-                )
+                outcome = PPB_PITCH_LOG_DICT[abbrev]["description"]
                 if pfx_data:
                     pfx = pfx_data[current_pitch - 1]
                     if abbrev == "X":
-                        pfx_des = pfx["pdes"] if "missing_pdes" not in pfx["pdes"] else pfx["des"]
-                        pitch_description = f"{pitch_number}..: {pfx_des}"
+                        outcome = pfx["pdes"] if "missing_pdes" not in pfx["pdes"] else pfx["des"]
                     pitch_type = PITCH_TYPE_DICT[pfx["mlbam_pitch_name"]]
-                    pitch_description += f' ({pfx["start_speed"]:02.0f}mph {pitch_type})'
+                    pfx_des = f' ({pfx["start_speed"]:02.0f}mph {pitch_type})'
+                if next_pitch_blocked_by_c:
+                    blocked_by_c = " (pitch was blocked by catcher)"
+                    next_pitch_blocked_by_c = False
+                sequence_description.append(f"{pitch_number}..: {outcome}{pfx_des}{blocked_by_c}")
             else:
-                pitch_description = PPB_PITCH_LOG_DICT[abbrev]["description"]
-            if next_pitch_blocked_by_c:
-                pitch_description += " (pitch was blocked by catcher)"
-                next_pitch_blocked_by_c = False
-            sequence_description.append(pitch_description)
+                if abbrev != ".":
+                    sequence_description.append(PPB_PITCH_LOG_DICT[abbrev]["description"])
+                else:
+                    default_outcome = PPB_PITCH_LOG_DICT[abbrev]["description"]
+                    outcome = self.get_next_event_description(non_batter_events, default_outcome)
+                    sequence_description.append(outcome)
+        if any(not event_dict["processed"] for event_dict in non_batter_events.values()):
+            outcome = self.get_next_event_description(non_batter_events)
+            if outcome:
+                sequence_description.append(outcome)
         extra_dots = 0
         if total_pitches >= 10:
             extra_dots = 2
         sequence_description.append(
-            f'Result.....{"."*extra_dots}: {game_event["play_description"]}'
+            f'Result.....{"."*extra_dots}: {final_event_in_ab["play_description"]}'
         )
         return sequence_description
+
+    def get_next_event_description(self, non_batter_events, default_outcome=""):
+        outcome = default_outcome
+        for event_dict in non_batter_events.values():
+            if not event_dict["processed"]:
+                event = event_dict["event"]
+                outcome = (
+                    f'({event["play_description"]})'
+                    if event["event_type"] == "AT_BAT"
+                    else f'({event["sub_description"]})'
+                    if event["event_type"] == "SUBSTITUTION"
+                    else f'({event["description"]})'
+                )
+                event_dict["processed"] = True
+                break
+        return outcome
 
     def update_boxscore_with_combined_data(self):
         updated_innings_list = []

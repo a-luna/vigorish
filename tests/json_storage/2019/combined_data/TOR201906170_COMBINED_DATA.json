@@ -3932,7 +3932,7 @@
           "pitcher_name": "Edwin Jackson",
           "batter_name": "Justin Upton",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Edwin Jackson replaces Derek Law pitching)",
             "Pitch 1/1..: In play, run(s) (92mph Four-seam Fastball)",
             "Result.....: Home Run (Fly Ball to Deep LF-CF)"
           ],
@@ -6588,7 +6588,7 @@
           "pitcher_name": "Sam Gaviglio",
           "batter_name": "Kole Calhoun",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Sam Gaviglio replaces Edwin Jackson pitching)",
             "Pitch 1/2..: Called strike (88mph Slider)",
             "Pitch 2/2..: In play, out(s) (90mph Splitter)",
             "Result.....: Groundout: 2B-1B (2B-1B)"
@@ -6789,7 +6789,7 @@
           "pitcher_name": "Felix Pena",
           "batter_name": "Teoscar Hernandez",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Felix Pena replaces Luis Garcia pitching)",
             "Pitch 1/6..: Called strike (92mph Four-seam Fastball)",
             "Pitch 2/6..: Ball (93mph Four-seam Fastball)",
             "Pitch 3/6..: Ball (94mph Four-seam Fastball)",
@@ -10829,7 +10829,7 @@
             "Pitch 1/4..: Called strike (91mph Two-seam Fastball)",
             "Pitch 2/4..: Swinging strike (83mph Slider)",
             "Pitch 3/4..: Ball (84mph Slider)",
-            "(Play not involving the batter)",
+            "(Wild Pitch; Biggio to 2B)",
             "Pitch 4/4..: In play, out(s) (83mph Slider)",
             "Result.....: Foul Popfly: 1B (1B into Foul Terr.)"
           ],
@@ -12690,7 +12690,7 @@
           "pitcher_name": "Nick Kingham",
           "batter_name": "Wilfredo Tovar",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Nick Kingham replaces Sam Gaviglio pitching)",
             "Pitch 1/2..: Called strike (92mph Four-seam Fastball)",
             "Pitch 2/2..: In play, out(s) (93mph Four-seam Fastball)",
             "Result.....: Lineout: RF (Deep RF)"
@@ -15109,10 +15109,10 @@
           "pitcher_name": "David Phelps",
           "batter_name": "David Fletcher",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
-            "(Play not involving the batter)",
-            "(Play not involving the batter)",
-            "(Play not involving the batter)",
+            "(David Phelps replaces Nick Kingham pitching)",
+            "(Lourdes Gurriel replaces Teoscar Hernandez (CF) playing LF batting 5th)",
+            "(Randal Grichuk moves from RF to CF)",
+            "(Cavan Biggio moves from LF to RF)",
             "Pitch 1/4..: Ball (79mph Curveball)",
             "Pitch 2/4..: Ball (91mph Four-seam Fastball)",
             "Pitch 3/4..: Ball (91mph Four-seam Fastball)",
@@ -17571,7 +17571,7 @@
           "pitcher_name": "Tim Mayza",
           "batter_name": "Tommy La Stella",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Tim Mayza replaces David Phelps pitching)",
             "Pitch 1/5..: Foul (93mph Two-seam Fastball)",
             "Pitch 2/5..: Ball (94mph Two-seam Fastball)",
             "Pitch 3/5..: Swinging strike (92mph Two-seam Fastball)",
@@ -19270,7 +19270,7 @@
           "pitcher_name": "Noe Ramirez",
           "batter_name": "Vladimir Guerrero Jr.",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Noe Ramirez replaces Felix Pena pitching)",
             "Pitch 1/3..: Called strike (76mph Curveball)",
             "Pitch 2/3..: Swinging strike (78mph Curveball)",
             "Pitch 3/3..: Swinging strike (78mph Curveball)",
@@ -20388,7 +20388,7 @@
           "pitcher_name": "Ty Buttrey",
           "batter_name": "Freddy Galvis",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Ty Buttrey replaces Noe Ramirez pitching)",
             "Pitch 1/6..: Called strike (96mph Four-seam Fastball)",
             "Pitch 2/6..: Foul (84mph Slider)",
             "Pitch 3/6..: Foul (98mph Four-seam Fastball)",
@@ -20825,7 +20825,7 @@
           "pitcher_name": "Daniel Hudson",
           "batter_name": "Kole Calhoun",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Daniel Hudson replaces Tim Mayza pitching)",
             "Pitch 1/5..: Swinging strike (96mph Four-seam Fastball)",
             "Pitch 2/5..: Ball (89mph Slider)",
             "Pitch 3/5..: Ball (89mph Slider)",
@@ -22722,7 +22722,7 @@
           "pitcher_name": "Justin Anderson",
           "batter_name": "Brandon Drury",
           "pitch_sequence_description": [
-            "(Play not involving the batter)",
+            "(Justin Anderson replaces Ty Buttrey pitching)",
             "Pitch 1/1..: In play, out(s) (96mph Four-seam Fastball)",
             "Result.....: Popfly: SS"
           ],
