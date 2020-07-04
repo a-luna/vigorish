@@ -23,7 +23,6 @@ from vigorish.util.string_helpers import (
     parse_pitch_app_details_from_string,
 )
 from vigorish.util.result import Result
-import snoop
 
 
 class CombineGameDataMenuItem(MenuItem):
@@ -206,7 +205,6 @@ class CombineGameDataMenuItem(MenuItem):
         spinner.clear()
         return (audit_errors, update_errors, pitchfx_data_errors)
 
-    @snoop
     def display_results(self, total_games, audit_errors, update_errors, pitchfx_data_errors):
         subprocess.run(["clear"])
         if not audit_errors and not update_errors and not pitchfx_data_errors:
