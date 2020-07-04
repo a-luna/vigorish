@@ -172,13 +172,13 @@ async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams) {
 }
 
 async function scrapeUrl(nightmare, url, outputFileName, outputFolderPath, timeoutParams) {
-    const html = await fetchUrl(url, timeoutParams)
+    const html = await fetchUrl(nightmare, url, timeoutParams)
     const filePath = joinPath(outputFolderPath, outputFileName)
     writeFileSync(filePath, html)
     return filePath
 }
 
-async function fetchUrl(url, { urlTimeoutMinMs, urlTimeoutMaxMs }) {
+async function fetchUrl(nightmare, url, { urlTimeoutMinMs, urlTimeoutMaxMs }) {
     try {
         await nightmare.on("did-get-response-details", () => (startTime = Date.now()))
         await nightmare.goto(url)
