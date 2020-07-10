@@ -43,16 +43,10 @@ def update_data_set(data_set, scraped_data, db_session, year, overwrite_existing
     spinner = Halo(spinner="dots3", color=get_random_cli_color())
     spinner.text = f"Updating {data_set} for MLB {year}..."
     spinner.start()
-    if overwrite_existing:
-        result = update_status_for_data_set(data_set, scraped_data, db_session, scraped_ids)
-        if result.failure:
-            spinner.fail(f"Error occurred while updating {data_set} for MLB {year}")
-            return result
-        spinner.succeed(f"Successfully updated {data_set} for MLB {year}!")
-        return Result.Ok()
-    existing_scraped_ids = get_scraped_ids_from_database(scraped_data, data_set, year)
-    new_stats_ids = list(set(scraped_ids) - set(existing_scraped_ids))
-    result = update_status_for_data_set(data_set, scraped_data, db_session, new_stats_ids)
+    if not overwrite_existing:
+        existing_scraped_ids = get_scraped_ids_from_database(scraped_data, data_set, year)
+        scraped_ids = list(set(scraped_ids) - set(existing_scraped_ids))
+    result = update_status_for_data_set(data_set, scraped_data, db_session, scraped_ids)
     if result.failure:
         spinner.fail(f"Error occurred while updating {data_set} for MLB {year}")
         return result
