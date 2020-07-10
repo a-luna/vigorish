@@ -70,5 +70,9 @@ class SetupDBMenuItem(MenuItem):
         for year in all_mlb_seasons:
             subprocess.run(["clear"])
             result = update_all_data_sets(self.scraped_data, self.db_session, year, True)
-            time.sleep(2)
+            if result.error:
+                print_message(result.error, fg="bright_red")
+                pause(message="Press any key to continue...")
+            else:
+                time.sleep(2)
         return Result.Ok(self.exit_menu)
