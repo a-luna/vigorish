@@ -59,9 +59,6 @@ def update_game_status_records(db_session, pitch_logs_for_game):
             error = f"scrape_status_game does not contain an entry for bb_game_id: {bb_game_id}"
             return Result.Fail(error)
         setattr(game_status, "scraped_brooks_pitch_logs", 1)
-        setattr(
-            game_status, "total_pitch_count_brooks", pitch_logs_for_game.total_pitch_count,
-        )
         return Result.Ok()
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")

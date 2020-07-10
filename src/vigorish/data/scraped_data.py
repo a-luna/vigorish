@@ -2,16 +2,24 @@ from datetime import datetime
 from dateutil import parser
 from pathlib import Path
 
-from vigorish.config.database import DateScrapeStatus, PitchAppScrapeStatus, Season
+from vigorish.config.database import (
+    DateScrapeStatus,
+    GameScrapeStatus,
+    PitchAppScrapeStatus,
+    Season,
+)
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
 from vigorish.data.process.avg_time_between_pitches import calc_avg_time_between_pitches
 from vigorish.data.process.combine_scraped_data import CombineScrapedData
 from vigorish.enums import DataSet, DocFormat
+from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
+from vigorish.util.dt_format_strings import DT_AWARE, DATE_ONLY_2
 from vigorish.util.numeric_helpers import trim_data_set
 from vigorish.util.regex import URL_ID_REGEX, URL_ID_CONVERT_REGEX
 from vigorish.util.result import Result
+from vigorish.util.string_helpers import validate_bbref_game_id
 
 
 class ScrapedData:
@@ -237,8 +245,8 @@ class ScrapedData:
 
     def get_audit_report(self):
         scraped = self.get_all_bbref_game_ids_eligible_for_audit()
-        successful = self.get_all_bbref_game_ids_audit_successful()
-        failed = self.get_all_bbref_game_ids_audit_failed()
+        successful = self.get_all_bbref_game_ids_all_pitchfx_logs_are_valid()
+        failed = self.get_all_bbref_game_ids_combined_data_fail()
         data_error = self.get_all_bbref_game_ids_pitchfx_data_error()
         mlb_seasons = list(
             set(
@@ -265,21 +273,21 @@ class ScrapedData:
             for s in Season.all_regular_seasons(self.db_session)
         }
 
-    def get_all_bbref_game_ids_audit_successful(self):
+    def get_all_bbref_game_ids_combined_data_fail(self):
         return {
-            s.year: s.get_all_bbref_game_ids_audit_successful()
-            for s in Season.all_regular_seasons(self.db_session)
-        }
-
-    def get_all_bbref_game_ids_audit_failed(self):
-        return {
-            s.year: s.get_all_bbref_game_ids_audit_failed()
+            s.year: s.get_all_bbref_game_ids_combined_data_fail()
             for s in Season.all_regular_seasons(self.db_session)
         }
 
     def get_all_bbref_game_ids_pitchfx_data_error(self):
         return {
             s.year: s.get_all_bbref_game_ids_pitchfx_data_error()
+            for s in Season.all_regular_seasons(self.db_session)
+        }
+
+    def get_all_bbref_game_ids_all_pitchfx_logs_are_valid(self):
+        return {
+            s.year: s.get_all_bbref_game_ids_all_pitchfx_logs_are_valid()
             for s in Season.all_regular_seasons(self.db_session)
         }
 
@@ -388,28 +396,95 @@ class ScrapedData:
         return {"pitch_delta": pitch_delta_combined, "inning_delta": inning_delta_combined}
 
     def combine_boxscore_and_pfx_data(self, bbref_game_id):
+        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, bbref_game_id)
         result = self.get_bbref_boxscore(bbref_game_id)
         if result.failure:
-            return result
+            return {"gather_scraped_data_success": False, "error": result.error}
         boxscore = result.value
         result = self.get_all_pitchfx_logs_for_game(bbref_game_id)
         if result.failure:
-            return result
+            return {"gather_scraped_data_success": False, "error": result.error}
         pitchfx_logs = result.value
-        avg_pitch_times = self.get_cached_avg_pitch_times()
-        result = self.combine_data.execute(boxscore, pitchfx_logs, avg_pitch_times)
+        result = self.combine_data.execute(boxscore, pitchfx_logs)
+        if result.failure:
+            setattr(game_status, "combined_data_success", 0)
+            setattr(game_status, "combined_data_fail", 1)
+            self.db_session.commit()
+            return {
+                "gather_scraped_data_success": True,
+                "combined_data_success": False,
+                "error": result.error,
+            }
+        setattr(game_status, "combined_data_success", 1)
+        setattr(game_status, "combined_data_fail", 0)
+        self.db_session.commit()
+        combined_data = result.value
+        result = self.save_json_combined_data(combined_data)
         if result.failure:
             return result
-        updated_boxscore_dict = result.value
-        return self.save_json_combined_data(updated_boxscore_dict)
+        result = update_pitch_apps_for_game_combined_data(self.db_session, combined_data)
+        if result.failure:
+            return {
+                "gather_scraped_data_success": True,
+                "combined_data_success": True,
+                "update_pitch_apps_success": False,
+                "error": result.error,
+            }
+        return {
+            "gather_scraped_data_success": True,
+            "combined_data_success": True,
+            "update_pitch_apps_success": True,
+            "results": result.value,
+        }
 
-    def generate_investigative_materials(self, bbref_game_id):
+    def investigate_errors(self, bbref_game_id):
         result = self.get_bbref_boxscore(bbref_game_id)
         if result.failure:
-            return result
+            return {"gather_scraped_data_success": False, "error": result.error}
         boxscore = result.value
         result = self.get_all_pitchfx_logs_for_game(bbref_game_id)
         if result.failure:
-            return result
+            return {"gather_scraped_data_success": False, "error": result.error}
         pitchfx_logs = result.value
-        return self.combine_data.generate_investigative_materials(boxscore, pitchfx_logs)
+        return self.combine_data.investigate(boxscore, pitchfx_logs)
+
+    def prune_pitchfx_data_for_display(self, pfx):
+        return {
+            "pitcher_name": pfx["pitcher_name"],
+            "pitch_app_id": pfx["pitch_app_id"],
+            "pitcher_id": pfx["pitcher_id"],
+            "batter_id": pfx["batter_id"],
+            "pitcher_team_id_bb": pfx["pitcher_team_id_bb"],
+            "opponent_team_id_bb": pfx["opponent_team_id_bb"],
+            "bb_game_id": pfx["bb_game_id"],
+            "bbref_game_id": pfx["bbref_game_id"],
+            "ab_total": pfx["ab_total"],
+            "ab_count": pfx["ab_count"],
+            "ab_id": pfx["ab_id"],
+            "des": pfx["des"],
+            "type": pfx["type"],
+            "id": pfx["id"],
+            "sz_top": pfx["sz_top"],
+            "sz_bot": pfx["sz_bot"],
+            "mlbam_pitch_name": pfx["mlbam_pitch_name"],
+            "zone_location": pfx["zone_location"],
+            "stand": pfx["stand"],
+            "strikes": pfx["strikes"],
+            "balls": pfx["balls"],
+            "p_throws": pfx["p_throws"],
+            "pdes": pfx["pdes"],
+            "spin": pfx["spin"],
+            "inning": pfx["inning"],
+            "pfx_x": pfx["pfx_x"],
+            "pfx_z": pfx["pfx_z"],
+            "x0": pfx["x0"],
+            "y0": pfx["y0"],
+            "z0": pfx["z0"],
+            "start_speed": pfx["start_speed"],
+            "px": pfx["px"],
+            "pz": pfx["pz"],
+            "at_bat_id": pfx["at_bat_id"],
+            "has_zone_location": pfx["has_zone_location"],
+            "timestamp_pitch_thrown": pfx["timestamp_pitch_thrown"],
+            "seconds_since_game_start": pfx["seconds_since_game_start"],
+        }

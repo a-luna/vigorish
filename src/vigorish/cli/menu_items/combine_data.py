@@ -12,11 +12,10 @@ from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS, FAKE_SPINNER
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.status.update_status_combined_data import (
-    update_pitch_apps_for_game_audit_successful,
-    update_pitch_appearances_audit_failed,
+    update_pitch_apps_for_game_combined_data,
     get_pitch_app_status,
 )
-from vigorish.util.dt_format_strings import DATE_MONTH_NAME
+from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY_2
 from vigorish.util.list_helpers import report_dict
 from vigorish.util.string_helpers import (
     validate_bbref_game_id,
@@ -56,8 +55,15 @@ class CombineGameDataMenuItem(MenuItem):
                     continue
             if result.failure:
                 continue
-            (total_games, audit_errors, update_errors, pitchfx_data_errors) = result.value
-            self.display_results(total_games, audit_errors, update_errors, pitchfx_data_errors)
+            (
+                total_games,
+                combined_data_fail,
+                pitchfx_data_errors,
+                total_pitch_apps_data_error,
+            ) = result.value
+            self.display_results(
+                total_games, combined_data_fail, pitchfx_data_errors, total_pitch_apps_data_error
+            )
             pause(message="Press any key to continue...")
         return Result.Ok(self.exit_menu)
 
@@ -72,12 +78,14 @@ class CombineGameDataMenuItem(MenuItem):
         total_games = 0
         spinner = Halo(spinner=FAKE_SPINNER)
         spinner.text = (
-            f"Completed {total_games} games (0% Complete) for MLB {season.year} (0 Errors)..."
+            f"Completed {total_games} games (0%) for MLB {season.year} "
+            "(0 Games Failed to Combine) (0 Pitch App. Errors from 0 Total Games) "
+            f"(Current Game Date: {all_dates_in_season[0].strftime(DATE_ONLY_2)})"
         )
         spinner.start()
-        season_audit_errors = {}
-        season_update_errors = {}
-        season_pitchfx_data_errors = []
+        season_combined_data_fail = {}
+        season_pitchfx_data_errors = {}
+        season_total_pitch_apps_data_error = 0
         for num, game_date in enumerate(all_dates_in_season, start=1):
             combine_games = list(
                 set(
@@ -89,29 +97,39 @@ class CombineGameDataMenuItem(MenuItem):
                 )
             )
             spinner.stop_and_persist()
-            (audit_errors, update_errors, pitchfx_data_errors,) = self.combine_selected_games(
-                combine_games
-            )
+            (
+                combined_data_fail,
+                pitchfx_data_errors,
+                total_pitch_apps_data_error,
+            ) = self.combine_selected_games(combine_games)
             subprocess.run(["clear"])
-            season_audit_errors.update(audit_errors)
-            season_update_errors.update(update_errors)
-            season_pitchfx_data_errors.extend(pitchfx_data_errors)
+            season_combined_data_fail.update(combined_data_fail)
+            season_pitchfx_data_errors.update(pitchfx_data_errors)
+            season_total_pitch_apps_data_error += total_pitch_apps_data_error
             total_games += len(combine_games)
             percent_complete = num / float(len(all_dates_in_season))
-            total_errors = (
-                len(season_audit_errors)
-                + len(season_update_errors)
-                + len(season_pitchfx_data_errors)
+            total_game_combine_errors = len(season_combined_data_fail)
+            total_game_pitch_app_data_errors = len(season_pitchfx_data_errors)
+            next_game_date = (
+                all_dates_in_season[num] if num < len(all_dates_in_season) else game_date
             )
             spinner.text = (
                 f"Completed {total_games} games ({percent_complete:.0%}) for MLB {season.year} "
-                f"({total_errors} Errors)..."
+                f"({total_game_combine_errors} Games Failed to Combine) "
+                f"({season_total_pitch_apps_data_error} Pitch App. Errors "
+                f"from {total_game_pitch_app_data_errors} Total Games) "
+                f"(Current Game Date: {next_game_date.strftime(DATE_ONLY_2)})"
             )
             spinner.start()
         spinner.stop()
         spinner.clear()
         return Result.Ok(
-            (total_games, season_audit_errors, season_update_errors, season_pitchfx_data_errors)
+            (
+                total_games,
+                season_combined_data_fail,
+                season_pitchfx_data_errors,
+                total_pitch_apps_data_error,
+            )
         )
 
     def combine_games_for_date(self):
@@ -139,10 +157,19 @@ class CombineGameDataMenuItem(MenuItem):
             f"(Game Date: {game_date_str})..."
         )
         print_message(msg, fg="bright_magenta", bold=True)
-        (audit_errors, update_errors, pitchfx_data_errors) = self.combine_selected_games(
-            combine_games
+        (
+            combined_data_fail,
+            pitchfx_data_errors,
+            total_pitch_apps_data_error,
+        ) = self.combine_selected_games(combine_games)
+        return Result.Ok(
+            (
+                len(combine_games),
+                combined_data_fail,
+                pitchfx_data_errors,
+                total_pitch_apps_data_error,
+            )
         )
-        return Result.Ok((len(combine_games), audit_errors, update_errors, pitchfx_data_errors))
 
     def combine_single_game(self):
         result = self.season_prompt()
@@ -163,71 +190,64 @@ class CombineGameDataMenuItem(MenuItem):
         return self.combine_scraped_data_for_game(combine_game_id)
 
     def combine_selected_games(self, selected_game_ids):
-        audit_errors = {}
-        update_errors = {}
+        combined_data_success = []
+        combined_data_fail = {}
         pitchfx_data_errors = {}
+        total_pitch_apps_data_error = 0
+        total_game_pitch_app_data_errors = 0
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = (
             f"Combined 0/{len(selected_game_ids)} Games Successfully, "
-            f"0 Errors (Current Game ID: {selected_game_ids[0]})"
+            f"(0 Games Failed to Combine) (0 Pitch App. Errors from 0 Total Games) "
+            f"(Current Game ID: {selected_game_ids[0]})"
         )
         spinner.start()
         for num, bbref_game_id in enumerate(selected_game_ids, start=1):
             result = self.scraped_data.combine_boxscore_and_pfx_data(bbref_game_id)
-            if result.failure:
-                audit_errors[bbref_game_id] = result.error
-                failed_pitch_app_dict = parse_pitch_app_details_from_string(result.error)
-                pitch_app_ids = failed_pitch_app_dict.keys()
-                result = update_pitch_appearances_audit_failed(self.db_session, pitch_app_ids)
-                if result.failure:
-                    spinner.stop()
-                    spinner.clear()
-                    update_errors[bbref_game_id] = result.error
-                    return result
+            if not result["gather_scraped_data_success"]:
+                return Result.Fail(result["error"])
+            if not result["combined_data_success"]:
+                combined_data_fail[bbref_game_id] = result["error"]
                 continue
-            result = update_pitch_apps_for_game_audit_successful(
-                self.db_session, self.scraped_data, bbref_game_id
-            )
-            if result.failure:
+            combined_data_success.append(bbref_game_id)
+            if not result["update_pitch_apps_success"]:
                 spinner.stop()
                 spinner.clear()
-                update_errors[bbref_game_id] = result.error
-                continue
-            game_results = result.value
+                return Result.Fail(result["error"])
+            game_results = result["results"]
             if len(game_results["failed"]):
                 pitchfx_data_errors[bbref_game_id] = game_results["failed"]
-            total_errors = len(audit_errors) + len(update_errors) + len(pitchfx_data_errors)
+                total_pitch_apps_data_error += len(game_results["failed"])
+                total_game_pitch_app_data_errors = len(pitchfx_data_errors)
+            next_game_id = (
+                selected_game_ids[num] if num < len(selected_game_ids) else bbref_game_id
+            )
             spinner.text = (
                 f"Combined {num}/{len(selected_game_ids)} Games Successfully, "
-                f"{total_errors} Errors (Current Game ID: {bbref_game_id})"
+                f"({len(combined_data_fail)} Games Failed to Combine) "
+                f"({total_pitch_apps_data_error} Pitch App. Errors "
+                f"from {total_game_pitch_app_data_errors} Total Games) "
+                f"(Current Game ID: {next_game_id})"
             )
         spinner.stop()
         spinner.clear()
-        return (audit_errors, update_errors, pitchfx_data_errors)
+        return (combined_data_fail, pitchfx_data_errors, total_pitch_apps_data_error)
 
-    def display_results(self, total_games, audit_errors, update_errors, pitchfx_data_errors):
+    def display_results(
+        self, total_games, failed_game_ids, pitchfx_data_errors, total_pitchfx_data_errors
+    ):
         subprocess.run(["clear"])
-        if not audit_errors and not update_errors and not pitchfx_data_errors:
+        if not failed_game_ids and not total_pitchfx_data_errors:
             success_message = (
                 f"\nAll game data ({total_games} game{'s' if total_games > 1 else ''} "
                 "total) was successfully combined"
             )
             print_message(success_message, fg="bright_cyan", bold=True)
         else:
-            if audit_errors:
-                for game_id, error_detail in audit_errors.items():
-                    failed_pitch_app_dict = parse_pitch_app_details_from_string(error_detail)
-                    pitch_app_ids = failed_pitch_app_dict.keys()
-                    error_message = f"Error prevented scraped data being combined for {game_id}:"
-                    print_message(error_message, wrap=False, fg="bright_red", bold=True)
-                    print_message(error_detail, wrap=False, fg="bright_red")
-            if update_errors:
-                error_message = (
-                    f"{len(update_errors)} game_ids exited due to error when updating "
-                    "the database:"
-                )
+            if failed_game_ids:
+                error_message = f"Error prevented scraped data being combined for {len(failed_game_ids)} games:"
                 print_message(error_message, wrap=False, fg="bright_red", bold=True)
-                print_message(pformat(update_errors), wrap=False, fg="bright_red")
+                print_message(", ".join(failed_game_ids), wrap=False, fg="bright_red")
             if pitchfx_data_errors:
                 for game_id, pitch_app_ids in pitchfx_data_errors.items():
                     all_errors = (
@@ -245,8 +265,8 @@ class CombineGameDataMenuItem(MenuItem):
                             f"(Pitch Appearance ID: {pitch_app_id}) {'#'*10}"
                         )
                         error_details = f"\n{report_dict(pitch_app_status.as_dict())}\n"
-                        print_message(error_header, wrap=False, fg="bright_red", bold=True)
-                        print_message(error_details, wrap=False, fg="bright_red")
+                        print_message(error_header, wrap=False, fg="bright_yellow", bold=True)
+                        print_message(error_details, wrap=False, fg="bright_yellow")
 
     def combine_scraped_data_for_game(self, combine_game_id):
         subprocess.run(["clear"])
@@ -254,29 +274,28 @@ class CombineGameDataMenuItem(MenuItem):
         spinner.text = f"Combining scraped data for {combine_game_id}..."
         spinner.start()
         result = self.scraped_data.combine_boxscore_and_pfx_data(combine_game_id)
-        if result.failure:
-            spinner.stop()
-            spinner.clear()
-            failed_pitch_app_dict = parse_pitch_app_details_from_string(result.error)
-            pitch_app_ids = failed_pitch_app_dict.keys()
-            result = update_pitch_appearances_audit_failed(self.db_session, pitch_app_ids)
-            if result.failure:
-                return result
-            error_message = f"Error prevented scraped data being combined for {combine_game_id}:"
-            print_message(error_message, fg="bright_red", bold=True)
-            print_message(result.error, fg="bright_red")
+        spinner.stop()
+        spinner.clear()
+        if (
+            not result["gather_scraped_data_success"]
+            or not result["combined_data_success"]
+            or not result["update_pitch_apps_success"]
+        ):
+            return Result.Fail(result["error"])
+        game_results = result["results"]
+        if len(game_results["failed"]):
+            for num, pitch_app_id in enumerate(game_results["failed"], start=1):
+                pitch_app_status = get_pitch_app_status(self.db_session, pitch_app_id).value
+                error_header = (
+                    f"{'#'*10} Pitch Appearance #{num} "
+                    f"(Pitch Appearance ID: {pitch_app_id}) {'#'*10}"
+                )
+                error_details = f"\n{report_dict(pitch_app_status.as_dict())}\n"
+                print_message(error_header, wrap=False, fg="bright_yellow", bold=True)
+                print_message(error_details, wrap=False, fg="bright_yellow")
         else:
-            result = update_pitch_apps_for_game_audit_successful(
-                self.db_session, self.scraped_data, combine_game_id
-            )
-            if result.failure:
-                spinner.stop()
-                spinner.clear()
-                error = f"Error occurred updating database with combined data ({combine_game_id})"
-                print_message(error, fg="bright_red", bold=True)
-                print_message(result.error, fg="bright_red")
-            else:
-                spinner.succeed(f"Successfully combined all data for game: {combine_game_id}")
+            message = f"All scraped data for {combine_game_id} was successfully combined!"
+            print_message(message, fg="bright_cyan", bold=True)
         return Result.Ok()
 
     def audit_type_prompt(self):
