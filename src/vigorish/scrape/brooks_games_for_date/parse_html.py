@@ -16,7 +16,6 @@ from vigorish.util.string_helpers import (
     validate_bbref_game_id_list,
 )
 
-
 GAME_TABLE_XPATH = '//td[@class="dashcell"]/table'
 GAME_INFO_XPATH = "./tbody//tr[1]//td[1]//text()"
 PITCH_LOG_URL_XPATH = './tbody//a[text()="Game Log"]/@href'
@@ -107,11 +106,19 @@ def _is_game_required(game_date, game_time, url, required_game_data):
 
 
 def _parse_gameinfo(game_date, game_time, url):
+    game_time_hour_adjusted = game_time["hour"] + 12
+    game_time_hour = (
+        game_time["hour"]
+        if game_time["hour"] in [11, 12]
+        else game_time_hour_adjusted
+        if game_time["hour"] in range(1, 11)
+        else 0
+    )
     gameinfo = BrooksGameInfo()
     gameinfo.game_date_year = game_date.year
     gameinfo.game_date_month = game_date.month
     gameinfo.game_date_day = game_date.day
-    gameinfo.game_time_hour = game_time["hour"]
+    gameinfo.game_time_hour = game_time_hour
     gameinfo.game_time_minute = game_time["minute"]
     gameinfo.time_zone_name = "America/New_York"
     return _parse_gameinfo_from_url(gameinfo, url)

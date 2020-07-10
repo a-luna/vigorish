@@ -1,4 +1,8 @@
 """A single pitching appearance scraped from brooksbaseball.com."""
+from datetime import datetime
+
+from dateutil import tz
+
 from vigorish.util.string_helpers import validate_brooks_game_id
 
 
@@ -15,16 +19,31 @@ class BrooksPitchLog:
     opponent_team_id_bb = ""
     bb_game_id = ""
     bbref_game_id = ""
+    game_date_year = ""
+    game_date_month = ""
+    game_date_day = ""
+    game_time_hour = ""
+    game_time_minute = ""
+    time_zone_name = ""
     pitchfx_url = ""
     pitch_log_url = ""
 
     @property
     def game_date(self):
-        result = validate_brooks_game_id(self.bb_game_id)
-        if result.failure:
+        return datetime(self.game_date_year, self.game_date_month, self.game_date_day).date()
+
+    @property
+    def game_start_time(self):
+        if not self.game_time_hour:
             return None
-        game_dict = result.value
-        return game_dict["game_date"]
+        game_start_time = datetime(
+            year=self.game_date.year,
+            month=self.game_date.month,
+            day=self.game_date.day,
+            hour=self.game_time_hour,
+            minute=self.game_time_minute,
+        )
+        return game_start_time.replace(tzinfo=tz.gettz(self.time_zone_name))
 
     def as_dict(self):
         """Convert pitch log to a dictionary."""
@@ -40,6 +59,12 @@ class BrooksPitchLog:
             "opponent_team_id_bb": "{}".format(self.opponent_team_id_bb),
             "bb_game_id": "{}".format(self.bb_game_id),
             "bbref_game_id": "{}".format(self.bbref_game_id),
+            "game_date_year": int(self.game_date_year),
+            "game_date_month": int(self.game_date_month),
+            "game_date_day": int(self.game_date_day),
+            "game_time_hour": int(self.game_time_hour),
+            "game_time_minute": int(self.game_time_minute),
+            "time_zone_name": self.time_zone_name,
             "pitchfx_url": "{}".format(self.pitchfx_url),
             "pitch_log_url": "{}".format(self.pitch_log_url),
         }

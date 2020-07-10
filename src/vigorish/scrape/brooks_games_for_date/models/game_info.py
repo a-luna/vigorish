@@ -31,14 +31,13 @@ class BrooksGameInfo:
 
     @property
     def game_start_time(self):
-        hour_adjusted = self.game_time_hour
-        if self.game_time_hour not in [0, 11, 12]:
-            hour_adjusted = self.game_time_hour + 12
+        if not self.game_time_hour:
+            return None
         game_start_time = datetime(
             year=self.game_date.year,
             month=self.game_date.month,
             day=self.game_date.day,
-            hour=hour_adjusted,
+            hour=self.game_time_hour,
             minute=self.game_time_minute,
         )
         return game_start_time.replace(tzinfo=tz.gettz(self.time_zone_name))

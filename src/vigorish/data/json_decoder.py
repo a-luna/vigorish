@@ -443,6 +443,12 @@ def decode_brooks_pitch_log(json_dict):
             pitch_log.opponent_team_id_bb = json_dict["opponent_team_id_bb"]
             pitch_log.bb_game_id = json_dict["bb_game_id"]
             pitch_log.bbref_game_id = json_dict["bbref_game_id"]
+            pitch_log.game_date_year = json_dict["game_date_year"]
+            pitch_log.game_date_month = json_dict["game_date_month"]
+            pitch_log.game_date_day = json_dict["game_date_day"]
+            pitch_log.game_time_hour = json_dict["game_time_hour"]
+            pitch_log.game_time_minute = json_dict["game_time_minute"]
+            pitch_log.time_zone_name = json_dict["time_zone_name"]
             pitch_log.pitchfx_url = json_dict["pitchfx_url"]
             pitch_log.pitch_log_url = json_dict["pitch_log_url"]
             return Result.Ok(pitch_log)
@@ -471,6 +477,12 @@ def decode_brooks_pitchfx_log(json_dict):
                 opponent_team_id_bb=json_dict["opponent_team_id_bb"],
                 bb_game_id=json_dict["bb_game_id"],
                 bbref_game_id=json_dict["bbref_game_id"],
+                game_date_year=json_dict["game_date_year"],
+                game_date_month=json_dict["game_date_month"],
+                game_date_day=json_dict["game_date_day"],
+                game_time_hour=json_dict["game_time_hour"],
+                game_time_minute=json_dict["game_time_minute"],
+                time_zone_name=json_dict["time_zone_name"],
                 pitchfx_url=json_dict["pitchfx_url"],
             )
             return Result.Ok(pitchfx_log)

@@ -1,9 +1,8 @@
 """Pitchfx measurements for a single pitch scraped from brooksbaseball.com."""
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime
 
-from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
-from vigorish.util.regex import PFX_TIMESTAMP_REGEX
+from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.string_helpers import validate_bbref_game_id
 
 
@@ -66,33 +65,26 @@ class BrooksPitchFxData:
     pzold: str = "0"
     tm_spin: str = "0"
     sb: str = "0"
+    game_start_time_str: str = ""
+    timestamp_pitch_thrown_str: str = ""
+    seconds_since_game_start: int = 0
+    has_zone_location: bool = False
+
+    @property
+    def game_start_time(self):
+        return (
+            datetime.strptime(self.game_start_time_str, DT_AWARE)
+            if self.game_start_time_str
+            else None
+        )
 
     @property
     def timestamp_pitch_thrown(self):
-        match = PFX_TIMESTAMP_REGEX.match(self.park_sv_id)
-        if not match:
-            return None
-        group_dict = match.groupdict()
-        result = validate_bbref_game_id(self.bbref_game_id)
-        if result.failure:
-            return None
-        game_date = result.value["game_date"]
-        timestamp = datetime(
-            game_date.year,
-            int(group_dict["month"]),
-            int(group_dict["day"]),
-            int(group_dict["hour"]),
-            int(group_dict["minute"]),
-            int(group_dict["second"]),
+        return (
+            datetime.strptime(self.timestamp_pitch_thrown_str, DT_AWARE)
+            if self.timestamp_pitch_thrown_str
+            else None
         )
-        return timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
-
-    @property
-    def has_zone_location(self):
-        return True if self.zone_location != 99 else False
-
-    def seconds_since_pitch_thrown(self, ref_time):
-        return (self.timestamp_pitch_thrown - ref_time).total_seconds()
 
     def as_dict(self):
         """Convert pitch log to a dictionary."""
@@ -153,4 +145,8 @@ class BrooksPitchFxData:
             pzold=float(self.pzold),
             tm_spin=int(self.tm_spin),
             sb=int(self.sb),
+            game_start_time_str=self.game_start_time_str,
+            timestamp_pitch_thrown_str=self.timestamp_pitch_thrown_str,
+            seconds_since_game_start=self.seconds_since_game_start,
+            has_zone_location=self.has_zone_location,
         )

@@ -1,11 +1,14 @@
 """Scrape brooksbaseball daily dashboard page."""
 import uuid
+from collections import defaultdict
 from string import Template
 
 from lxml import html
 
+from vigorish.data.process.avg_time_between_pitches import get_timestamp_pitch_thrown
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
+from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.result import Result
 
 PITCHFX_COLUMN_NAMES = "//tr/th/text()"
@@ -31,6 +34,12 @@ def parse_pitchfx_log(scraped_html, pitch_log):
     pitchfx_log_dict["opponent_team_id_bb"] = pitch_log.opponent_team_id_bb
     pitchfx_log_dict["bb_game_id"] = pitch_log.bb_game_id
     pitchfx_log_dict["bbref_game_id"] = pitch_log.bbref_game_id
+    pitchfx_log_dict["game_date_year"] = pitch_log.game_date_year
+    pitchfx_log_dict["game_date_month"] = pitch_log.game_date_month
+    pitchfx_log_dict["game_date_day"] = pitch_log.game_date_day
+    pitchfx_log_dict["game_time_hour"] = pitch_log.game_time_hour
+    pitchfx_log_dict["game_time_minute"] = pitch_log.game_time_minute
+    pitchfx_log_dict["time_zone_name"] = pitch_log.time_zone_name
     pitchfx_log_dict["pitchfx_url"] = pitch_log.pitchfx_url
     pitchfx_log = BrooksPitchFxLog(**pitchfx_log_dict)
     return Result.Ok(pitchfx_log)
@@ -87,6 +96,20 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     pitchfx_dict["bbref_game_id"] = pitch_log.bbref_game_id
     pitchfx_dict["table_row_number"] = row_num
     pitchfx = BrooksPitchFxData(**pitchfx_dict)
+
+    game_start_time = pitch_log.game_start_time
+    pitch_thrown = get_timestamp_pitch_thrown(pitchfx_dict["park_sv_id"], pitch_log.bbref_game_id)
+    pitchfx.game_start_time_str = game_start_time.strftime(DT_AWARE) if game_start_time else ""
+    pitchfx.timestamp_pitch_thrown_str = pitch_thrown.strftime(DT_AWARE) if pitch_thrown else ""
+    seconds_since_game_start = (
+        (pitch_thrown - game_start_time).total_seconds()
+        if pitch_thrown and game_start_time
+        else ""
+    )
+    pitchfx.seconds_since_game_start = (
+        int(seconds_since_game_start) if seconds_since_game_start else 0
+    )
+    pitchfx.has_zone_location = True if pitchfx_dict["zone_location"] != 99 else False
     return Result.Ok(pitchfx)
 
 
@@ -126,8 +149,7 @@ def fix_missing_des(pitchfx_data, pitch_log):
 
 
 def get_pitch_count_by_inning(pitchfx_data):
-    innings = sorted(list(set([pitchfx.inning for pitchfx in pitchfx_data])))
-    pitch_count_dict = {inning: 0 for inning in innings}
-    for pitchfx in pitchfx_data:
-        pitch_count_dict[pitchfx.inning] += 1
-    return pitch_count_dict
+    pitch_count_by_inning = defaultdict(int)
+    for pfx in pitchfx_data:
+        pitch_count_by_inning[pfx.inning] += 1
+    return pitch_count_by_inning

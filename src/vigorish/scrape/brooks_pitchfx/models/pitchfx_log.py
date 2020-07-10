@@ -1,6 +1,9 @@
 import json
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
+
+from dateutil import tz
 
 from vigorish.util.string_helpers import validate_brooks_game_id
 from vigorish.util.list_helpers import as_dict_list
@@ -18,15 +21,30 @@ class BrooksPitchFxLog:
     opponent_team_id_bb: str = ""
     bb_game_id: str = ""
     bbref_game_id: str = ""
+    game_date_year: str = ""
+    game_date_month: str = ""
+    game_date_day: str = ""
+    game_time_hour: str = ""
+    game_time_minute: str = ""
+    time_zone_name: str = ""
     pitchfx_url: str = ""
 
     @property
     def game_date(self):
-        result = validate_brooks_game_id(self.bb_game_id)
-        if result.failure:
+        return datetime(self.game_date_year, self.game_date_month, self.game_date_day).date()
+
+    @property
+    def game_start_time(self):
+        if not self.game_time_hour:
             return None
-        game_dict = result.value
-        return game_dict["game_date"]
+        game_start_time = datetime(
+            year=self.game_date.year,
+            month=self.game_date.month,
+            day=self.game_date.day,
+            hour=self.game_time_hour,
+            minute=self.game_time_minute,
+        )
+        return game_start_time.replace(tzinfo=tz.gettz(self.time_zone_name))
 
     def as_dict(self):
         return dict(
@@ -41,6 +59,12 @@ class BrooksPitchFxLog:
             opponent_team_id_bb=self.opponent_team_id_bb,
             bb_game_id=self.bb_game_id,
             bbref_game_id=self.bbref_game_id,
+            game_date_year=int(self.game_date_year),
+            game_date_month=int(self.game_date_month),
+            game_date_day=int(self.game_date_day),
+            game_time_hour=int(self.game_time_hour),
+            game_time_minute=int(self.game_time_minute),
+            time_zone_name=self.time_zone_name,
             pitchfx_url=self.pitchfx_url,
         )
 

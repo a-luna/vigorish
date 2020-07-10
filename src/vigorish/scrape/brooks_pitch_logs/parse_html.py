@@ -57,6 +57,12 @@ def _initialize_pitch_log(game, pitcher_id, url):
     pitch_log.pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
     pitch_log.bb_game_id = game.bb_game_id
     pitch_log.bbref_game_id = game.bbref_game_id
+    pitch_log.game_date_year = game.game_date_year
+    pitch_log.game_date_month = game.game_date_month
+    pitch_log.game_date_day = game.game_date_day
+    pitch_log.game_time_hour = game.game_time_hour
+    pitch_log.game_time_minute = game.game_time_minute
+    pitch_log.time_zone_name = game.time_zone_name
     pitch_log.pitch_log_url = url
     pitch_log.pitcher_name = ""
     pitch_log.pitcher_team_id_bb = ""
