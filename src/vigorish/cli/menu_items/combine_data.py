@@ -9,7 +9,7 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.prompts import user_options_prompt
 from vigorish.cli.util import print_message, get_random_cli_color, get_random_dots_spinner
 from vigorish.config.database import Season
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJI_DICT, MENU_NUMBERS, FAKE_SPINNER
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.status.update_status_combined_data import (
     update_pitch_apps_for_game_audit_successful,
@@ -70,7 +70,7 @@ class CombineGameDataMenuItem(MenuItem):
         subprocess.run(["clear"])
         all_dates_in_season = self.get_all_dates_in_season(year)
         total_games = 0
-        spinner = Halo(spinner="weather", color=get_random_cli_color())
+        spinner = Halo(spinner=FAKE_SPINNER)
         spinner.text = (
             f"Completed {total_games} games (0% Complete) for MLB {season.year} (0 Errors)..."
         )

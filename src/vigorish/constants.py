@@ -206,3 +206,5 @@ MENU_NUMBERS = {
     9: "9️⃣",
     10: "🔟",
 }
+
+FAKE_SPINNER = {"interval": 140, "frames": ["⚡", "⚡"]}

@@ -8,7 +8,7 @@ from getch import pause
 
 from vigorish.cli.util import print_message
 from vigorish.config.database import ScrapeError
-from vigorish.constants import JOB_SPINNER_COLORS
+from vigorish.constants import JOB_SPINNER_COLORS, FAKE_SPINNER
 from vigorish.enums import DataSet, StatusReport, JobStatus
 from vigorish.scrape.bbref_boxscores.scrape_task import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_task import ScrapeBBRefGamesForDate
@@ -30,7 +30,6 @@ NPM_PACKAGES_INSTALL_ERROR = (
     "Nightmare is not installed, you must install it and other node dependencies in "
     "order to scrape any data."
 )
-SPINNER = {"interval": 140, "frames": ["⚡", "⚡"]}
 
 
 class JobRunner:
@@ -43,7 +42,7 @@ class JobRunner:
         self.db_session = db_session
         self.config = config
         self.scraped_data = scraped_data
-        self.spinners = defaultdict(lambda: Halo(spinner=SPINNER))
+        self.spinners = defaultdict(lambda: Halo(spinner=FAKE_SPINNER))
         self.task_results = []
         self.status_report = self.config.get_current_setting("STATUS_REPORT", DataSet.ALL)
 
