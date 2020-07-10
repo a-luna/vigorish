@@ -120,8 +120,7 @@ class MainMenu(Menu):
         if not self.audit_report:
             self.menu_items.remove(main_menu_items["combine_data"])
         if not self.data_failures_exist():
-            if not self.data_failures_exist():
-                self.menu_items.remove(main_menu_items["investigate_failures"])
+            self.menu_items.remove(main_menu_items["investigate_failures"])
 
     def get_menu_items(self):
         return {
