@@ -45,9 +45,7 @@ class SetupDBMenuItem(MenuItem):
             print_message(WARNING, fg="bright_red", bold=True)
         else:
             print_message(SETUP_MESSAGE)
-        result = prompt_user_yes_no("Would you like to continue?")
-        did_confirm_yes = result.value
-        if not did_confirm_yes:
+        if not prompt_user_yes_no("Would you like to continue?"):
             return Result.Ok(self.exit_menu)
 
         subprocess.run(["clear"])
@@ -66,9 +64,7 @@ class SetupDBMenuItem(MenuItem):
             return Result.Ok(self.exit_menu)
 
         subprocess.run(["clear"])
-        result = prompt_user_yes_no(UPDATE_PROMPT)
-        yes_update = result.value
-        if not yes_update:
+        if not prompt_user_yes_no(UPDATE_PROMPT):
             return Result.Ok(self.exit_menu)
 
         for year in all_mlb_seasons:

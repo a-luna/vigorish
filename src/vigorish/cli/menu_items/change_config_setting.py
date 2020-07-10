@@ -108,14 +108,9 @@ class ChangeSetttingMenuItem(MenuItem):
     def get_numeric_menu(self, data_set):
         if not self.setting.cannot_be_disabled:
             prompt = f"Enable {self.setting_name_title} (Data Set = {data_set.name})? "
-            result = prompt_user_yes_no(prompt)
-            is_enabled = result.value
-            if not is_enabled:
+            if not prompt_user_yes_no(prompt):
                 return (prompt, (is_enabled, None, None, None, None))
-        prompt = f"Use random values (Data Set = {data_set.name})? "
-        result = prompt_user_yes_no(prompt)
-        is_random = result.value
-        if is_random:
+        if prompt_user_yes_no(f"Use random values (Data Set = {data_set.name})? "):
             min_max_are_valid = False
             while not min_max_are_valid:
                 subprocess.run(["clear"])

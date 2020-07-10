@@ -31,8 +31,7 @@ def prompt_user_yes_no(prompt, wrap=True, max_line_len=70):
         word_on_switch=colors.bright(colors.foreground["cyan"]),
     )
     choice_text = prompt.launch()
-    choice_value = choices.get(choice_text)
-    return Result.Ok(choice_value)
+    return choices.get(choice_text)
 
 
 def prompt_user_yes_no_cancel(prompt, wrap=True, max_line_len=70):

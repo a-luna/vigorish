@@ -44,9 +44,7 @@ class CreateJobMenuItem(MenuItem):
             data_sets, start_date, end_date, season, job_name
         )
         subprocess.run(["clear"])
-        result = prompt_user_yes_no(prompt="Would you like to begin executing this job?")
-        start_now = result.value
-        if start_now:
+        if prompt_user_yes_no(prompt="Would you like to begin executing this job?"):
             job_runner = JobRunner(
                 db_job=new_scrape_job,
                 db_session=self.db_session,
@@ -89,8 +87,7 @@ class CreateJobMenuItem(MenuItem):
             f"Data Sets...: {data_set_space.join(data_sets.values())}\n"
         )
         print_message(f"{job_details}\n", wrap=False, fg="bright_yellow")
-        result = prompt_user_yes_no(prompt="Are the details above correct?")
-        return result.value
+        return prompt_user_yes_no(prompt="Are the details above correct?")
 
     def create_new_scrape_job(self, data_sets, start_date, end_date, season, job_name):
         scrape_job_dict = self.get_scrape_job_dict(

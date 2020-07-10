@@ -30,9 +30,7 @@ class EnvVarSettingMenuItem(MenuItem):
         env_var_value = f"Current Value: {self.current_setting}\n"
         print_message(env_var_name, fg="bright_magenta", bold=True)
         print_message(env_var_value, fg="bright_yellow", bold=True)
-        result = prompt_user_yes_no(prompt="Change current setting?")
-        change_setting = result.value
-        if not change_setting:
+        if not prompt_user_yes_no(prompt="Change current setting?"):
             return Result.Ok(self.exit_menu)
         user_confirmed = False
         while not user_confirmed:

@@ -49,9 +49,7 @@ class NpmInstallUpdate(MenuItem):
             temp_folder = TemporaryDirectory(dir=NIGHTMAREJS_FOLDER)
             command = f"npm install --timeout=9999999 --cache={temp_folder.name}"
         print_message(prompt)
-        result = prompt_user_yes_no("Would you like to continue?")
-        yes_response = result.value
-        if not yes_response:
+        if not prompt_user_yes_no("Would you like to continue?"):
             return Result.Ok(self.exit_menu)
         subprocess.run(["clear"])
         for line in run_command(command, cwd=str(NIGHTMAREJS_FOLDER)):
