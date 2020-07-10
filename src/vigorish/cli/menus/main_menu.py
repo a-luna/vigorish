@@ -37,25 +37,10 @@ class MainMenu(Menu):
     def is_refresh_needed(self):
         check_refresh_dict = {
             SetupDBMenuItem: True,
-            CreateJobMenuItem: True,
-            AllJobsMenu: True,
             CombineGameDataMenuItem: True,
-            StatusReportMenuItem: False,
-            SettingsAdminMenu: False,
         }
         selected_menu_item = type(self.selected_menu_item)
         return check_refresh_dict.get(selected_menu_item, False)
-
-    def get_main_menu(self):
-        return {
-            "create_job": CreateJobMenuItem(self.app),
-            "all_jobs": AllJobsMenu(self.app),
-            "combine_data": CombineGameDataMenuItem(self.app, self.audit_report),
-            "investigate_failures": InvestigateFailuresMenuItem(self.app, self.audit_report),
-            "status_reports": StatusReportMenuItem(self.app),
-            "settings_admin": SettingsAdminMenu(self.app),
-            "exit_program": ExitProgramMenuItem(self.app),
-        }
 
     def launch(self):
         exit_menu = False
@@ -63,6 +48,8 @@ class MainMenu(Menu):
         self.check_app_status()
         while not exit_menu:
             subprocess.run(["clear"])
+            if self.is_refresh_needed:
+                self.check_app_status()
             self.display_menu_text()
             self.populate_menu_items()
             result = self.prompt_user_for_menu_selection()
@@ -123,7 +110,7 @@ class MainMenu(Menu):
             print_message("SQLite DB Initialized.........: NO", fg="bright_red", bold=True)
 
     def populate_menu_items(self):
-        main_menu_items = self.get_main_menu()
+        main_menu_items = self.get_menu_items()
         self.menu_items = [menu_item for menu_item in main_menu_items.values()]
         if not self.db_setup_complete:
             self.menu_items.remove(main_menu_items["create_job"])
@@ -132,8 +119,20 @@ class MainMenu(Menu):
             self.menu_items.insert(0, SetupDBMenuItem(self.app))
         if not self.audit_report:
             self.menu_items.remove(main_menu_items["combine_data"])
+        if not self.data_failures_exist():
             if not self.data_failures_exist():
                 self.menu_items.remove(main_menu_items["investigate_failures"])
+
+    def get_menu_items(self):
+        return {
+            "create_job": CreateJobMenuItem(self.app),
+            "all_jobs": AllJobsMenu(self.app),
+            "combine_data": CombineGameDataMenuItem(self.app, self.audit_report),
+            "investigate_failures": InvestigateFailuresMenuItem(self.app, self.audit_report),
+            "status_reports": StatusReportMenuItem(self.app),
+            "settings_admin": SettingsAdminMenu(self.app),
+            "exit_program": ExitProgramMenuItem(self.app),
+        }
 
     def data_failures_exist(self):
         audit_failures_exist = (
