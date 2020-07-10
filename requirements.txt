@@ -14,7 +14,7 @@ halo==0.0.29
 idna==2.10
 jmespath==0.10.0
 log-symbols==0.0.14
-lxml==4.5.1
+lxml==4.5.2
 Naked==0.1.31
 numpy==1.19.0
 pandas==1.0.5
