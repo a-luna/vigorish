@@ -11,7 +11,7 @@ from vigorish.config.database import (
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
-from vigorish.data.process.avg_time_between_pitches import calc_avg_time_between_pitches
+from vigorish.data.util import calc_pitch_metrics, process_data_set
 from vigorish.data.process.combine_scraped_data import CombineScrapedData
 from vigorish.enums import DataSet, DocFormat
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
