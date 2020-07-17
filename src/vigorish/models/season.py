@@ -101,6 +101,14 @@ class Season(Base):
         return len(self.scrape_status_games) if self.scrape_status_games else 0
 
     @hybrid_property
+    def total_games_combined_success(self):
+        return sum(game.combined_data_success for game in self.scrape_status_games)
+
+    @hybrid_property
+    def total_games_combined_fail(self):
+        return sum(game.combined_data_fail for game in self.scrape_status_games)
+
+    @hybrid_property
     def total_bbref_boxscores_scraped(self):
         return sum(game.scraped_bbref_boxscore for game in self.scrape_status_games)
 
@@ -262,6 +270,8 @@ class Season(Base):
         d["percent_complete_brooks_games_for_date"] = self.percent_complete_brooks_games_for_date
         d["scraped_all_brooks_games_for_date"] = self.scraped_all_brooks_games_for_date
         d["total_games"] = self.total_games
+        d["total_games_combined_success"] = self.total_games_combined_success
+        d["total_games_combined_fail"] = self.total_games_combined_fail
         d["total_bbref_boxscores_scraped"] = self.total_bbref_boxscores_scraped
         d[
             "percent_complete_bbref_boxscores_scraped"
@@ -314,29 +324,30 @@ class Season(Base):
             self.total_duplicate_pitchfx_removed_count + self.total_extra_pitchfx_removed_count
         )
         return (
-            f"BBref Daily Dash Scraped.................: "
+            f"BBref Daily Dash Scraped....................: "
             f"{self.total_days_scraped_bbref:,}/{self.total_days:,} days "
             f"({self.percent_complete_bbref_games_for_date:.0%})\n"
-            f"Brooks Daily Dash Scraped................: "
+            f"Brooks Daily Dash Scraped...................: "
             f"{self.total_days_scraped_brooks:,}/{self.total_days:,} days "
             f"({self.percent_complete_brooks_games_for_date:.0%})\n"
-            f"BBref Boxscores Scraped..................: {scraped_bbref_boxscores} "
+            f"BBref Boxscores Scraped.....................: {scraped_bbref_boxscores} "
             f"{self.total_bbref_boxscores_scraped}/{self.total_games}\n"
-            f"Brooks Games Scraped.....................: {scraped_brooks_pitch_logs} "
+            f"Brooks Games Scraped........................: {scraped_brooks_pitch_logs} "
             f"{self.total_brooks_pitch_logs_scraped}/{self.total_games}\n"
-            f"PitchFx Logs Scraped.....................: {scraped_all_pitchfx_logs} "
+            f"PitchFx Logs Scraped........................: {scraped_all_pitchfx_logs} "
             f"{self.total_pitch_apps_scraped_pitchfx}/{self.pitch_app_count_pitchfx} "
             f"({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
-            f"Combined BBRef/PitchFX Data..............: {combined_data_for_all_pitchfx_logs}\n"
-            f"PitchFX Data Errors (Error/Total)........: {pitchfx_data_error_for_any_pitchfx_logs} "
+            f"Combined BBRef/PitchFX Data (Success/Fail)..: {combined_data_for_all_pitchfx_logs} "
+            f"{self.total_games_combined_success}/{self.total_games_combined_fail}\n"
+            f"PitchFX Data Errors (Error/Total)...........: {pitchfx_data_error_for_any_pitchfx_logs} "
             f"{self.total_pitch_apps_pitchfx_data_error}/{self.pitch_app_count_pitchfx}\n"
-            f"Pitch App Count (BBRef/Brooks)...........: "
+            f"Pitch App Count (BBRef/Brooks)..............: "
             f"{self.pitch_app_count_bbref}/{self.pitch_app_count_brooks}\n"
-            f"Pitch App Count (PFx/data/no data).......: {self.pitch_app_count_pitchfx}/"
+            f"Pitch App Count (PFx/data/no data)..........: {self.pitch_app_count_pitchfx}/"
             f"{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
-            f"Pitch Count (BBRef/Brooks/PFx)...........: {self.total_pitch_count_bbref}/"
+            f"Pitch Count (BBRef/Brooks/PFx)..............: {self.total_pitch_count_bbref}/"
             f"{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}\n"
-            f"Pitch Count Audited (BBRef/PFx/Removed)..: {self.total_pitch_count_bbref_audited}/"
+            f"Pitch Count Audited (BBRef/PFx/Removed).....: {self.total_pitch_count_bbref_audited}/"
             f"{self.total_pitch_count_pitchfx_audited}/{total_pitchfx_removed_count}\n"
         )
 
@@ -348,6 +359,11 @@ class Season(Base):
             game.bbref_game_id
             for game in self.scrape_status_games
             if game.scraped_all_pitchfx_logs and not game.combined_data_for_all_pitchfx_logs
+        ]
+
+    def get_all_bbref_game_ids_combined_data_success(self):
+        return [
+            game.bbref_game_id for game in self.scrape_status_games if game.combined_data_success
         ]
 
     def get_all_bbref_game_ids_combined_data_fail(self):
