@@ -5,7 +5,6 @@ from string import Template
 
 from lxml import html
 
-from vigorish.data.process.avg_time_between_pitches import get_timestamp_pitch_thrown
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
 from vigorish.util.dt_format_strings import DT_AWARE
@@ -98,17 +97,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     pitchfx = BrooksPitchFxData(**pitchfx_dict)
 
     game_start_time = pitch_log.game_start_time
-    pitch_thrown = get_timestamp_pitch_thrown(pitchfx_dict["park_sv_id"], pitch_log.bbref_game_id)
     pitchfx.game_start_time_str = game_start_time.strftime(DT_AWARE) if game_start_time else ""
-    pitchfx.timestamp_pitch_thrown_str = pitch_thrown.strftime(DT_AWARE) if pitch_thrown else ""
-    seconds_since_game_start = (
-        (pitch_thrown - game_start_time).total_seconds()
-        if pitch_thrown and game_start_time
-        else ""
-    )
-    pitchfx.seconds_since_game_start = (
-        int(seconds_since_game_start) if seconds_since_game_start else 0
-    )
     pitchfx.has_zone_location = True if pitchfx_dict["zone_location"] != 99 else False
     return Result.Ok(pitchfx)
 

@@ -10,12 +10,10 @@ from vigorish.constants import (
     PITCH_TYPE_DICT,
 )
 from vigorish.config.database import Player, GameScrapeStatus
-from vigorish.data.process.avg_time_between_pitches import get_timestamp_pitch_thrown
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
 from vigorish.scrape.mlb_player_info.scrape_mlb_player_info import scrape_mlb_player_info
-from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.list_helpers import compare_lists, flatten_list2d, report_dict
 from vigorish.util.string_helpers import validate_at_bat_id
@@ -24,7 +22,7 @@ from vigorish.util.result import Result
 
 
 class CombineScrapedData:
-    _game_start_time: datetime
+    game_status: GameScrapeStatus
     bbref_game_id: str
     boxscore: BBRefBoxscore
     pitchfx_logs_for_game: BrooksPitchFxLog
@@ -32,6 +30,7 @@ class CombineScrapedData:
     at_bat_ids: List
     at_bat_event_groups: Dict
     all_pfx_data_for_game: List
+    at_bat_id_inning_map: Dict
     game_events_combined_data: List
 
     def __init__(self, db_session):
@@ -40,17 +39,18 @@ class CombineScrapedData:
 
     @property
     def game_start_time(self):
-        return self._game_start_time if self._game_start_time else None
+        return self.game_status.game_start_time
 
-    @game_start_time.setter
-    def game_start_time(self, start_time):
-        if not self._game_start_time:
-            self._game_start_time = start_time
+    @property
+    def game_start_time_str(self):
+        return self.game_start_time.strftime(DT_AWARE)
 
-    def execute(self, bbref_boxscore, pitchfx_logs_for_game):
+    def execute(self, game_status, bbref_boxscore, pitchfx_logs_for_game):
+        self.game_status = game_status
         self.bbref_game_id = bbref_boxscore.bbref_game_id
         self.boxscore = bbref_boxscore
         self.pitchfx_logs_for_game = pitchfx_logs_for_game
+        self.check_pfx_game_start_time()
         return (
             self.get_all_pbp_events_for_game()
             .on_success(self.get_all_pfx_data_for_game)
@@ -58,10 +58,11 @@ class CombineScrapedData:
             .on_success(self.update_boxscore_with_combined_data)
         )
 
-    def investigate(self, bbref_boxscore, pitchfx_logs_for_game):
+    def investigate(self, game_status, bbref_boxscore, pitchfx_logs_for_game):
         self.bbref_game_id = bbref_boxscore.bbref_game_id
         self.boxscore = bbref_boxscore
         self.pitchfx_logs_for_game = pitchfx_logs_for_game
+        self.check_pfx_game_start_time()
         audit_results = {
             "bbref_game_id": self.bbref_game_id,
             "boxscore": self.boxscore,
@@ -98,6 +99,31 @@ class CombineScrapedData:
         audit_results["update_boxscore_success"] = True
         audit_results["updated_boxscore_dict"] = result.value
         return audit_results
+
+    def check_pfx_game_start_time(self):
+        if not self.game_status.game_start_time:
+            self.update_game_start_time()
+        for pitchfx_log in self.pitchfx_logs_for_game:
+            if pitchfx_log.game_start_time:
+                continue
+            pitchfx_log.game_date_year = self.game_start_time.year
+            pitchfx_log.game_date_month = self.game_start_time.month
+            pitchfx_log.game_date_day = self.game_start_time.day
+            pitchfx_log.game_time_hour = self.game_start_time.hour
+            pitchfx_log.game_time_minute = self.game_start_time.minute
+            pitchfx_log.time_zone_name = "America/New_York"
+            for pfx in pitchfx_log.pitchfx_log:
+                pfx.game_start_time_str = self.game_start_time_str
+
+    def update_game_start_time(self):
+        all_pfx = [pfx for pfx_log in self.pitchfx_logs_for_game for pfx in pfx_log.pitchfx_log]
+        all_pfx.sort(key=lambda x: x.park_sv_id)
+        first_pitch_thrown = all_pfx[0].time_pitch_thrown
+        game_start_time = first_pitch_thrown.replace(second=0)
+        setattr(self.game_status, "game_time_hour", game_start_time.hour)
+        setattr(self.game_status, "game_time_minute", game_start_time.minute)
+        setattr(self.game_status, "game_time_zone", "America/New_York")
+        self.db_session.commit()
 
     def get_all_pbp_events_for_game(self):
         result = self.get_player_id_dict_for_game()
@@ -267,7 +293,6 @@ class CombineScrapedData:
             self.remove_duplicate_guids_from_pfx(pitchfx_log)
             for pitchfx_log in self.pitchfx_logs_for_game
         ]
-        self.check_pfx_game_start_time()
         self.all_pfx_data_for_game = []
         for pitchfx_log in self.pitchfx_logs_for_game:
             for pfx in pitchfx_log.pitchfx_log:
@@ -327,45 +352,6 @@ class CombineScrapedData:
         pfx_log_copy = None
         return pitchfx_log
 
-    def check_pfx_game_start_time(self):
-        for pitchfx_log in self.pitchfx_logs_for_game:
-            if pitchfx_log.game_start_time:
-                self.game_start_time = pitchfx_log.game_start_time
-                continue
-            if not self.game_start_time:
-                self.game_start_time = self.get_start_time_from_pfx()
-            self.update_game_start_time()
-            pitchfx_log.game_date_year = game_start_time.year
-            pitchfx_log.game_date_month = game_start_time.month
-            pitchfx_log.game_date_day = game_start_time.day
-            pitchfx_log.game_time_hour = game_start_time.hour
-            pitchfx_log.game_time_minute = game_start_time.minute
-            pitchfx_log.time_zone_name = "America/New_York"
-            for pfx in pitchfx_log.pitchfx_log:
-                pfx.game_start_time_str = game_start_time.strftime(DT_AWARE)
-                pitch_thrown = pfx.timestamp_pitch_thrown
-                pfx.seconds_since_game_start = int(
-                    (pitch_thrown - game_start_time).total_seconds()
-                )
-
-    def get_start_time_from_pfx(self):
-        first_park_sv_id = min(
-            pfx.park_sv_id
-            for pitchfx_log in self.pitchfx_logs_for_game
-            for pfx in pitchfx_log.pitchfx_log
-        )
-        if not first_park_sv_id:
-            return None
-        first_pitch_thrown = get_timestamp_pitch_thrown(first_park_sv_id, self.bbref_game_id)
-        return first_pitch_thrown.replace(second=0)
-
-    def update_game_start_time(self):
-        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, self.bbref_game_id)
-        setattr(game_status, "game_time_hour", self.game_start_time.hour)
-        setattr(game_status, "game_time_minute", self.game_start_time.minute)
-        setattr(game_status, "game_time_zone", "America/New_York")
-        self.db_session.commit()
-
     def get_pitch_count_by_inning(self, pitchfx_log):
         pitch_count_by_inning = defaultdict(int)
         for pfx in pitchfx_log:
@@ -395,31 +381,30 @@ class CombineScrapedData:
             pitch_seq = final_event_this_at_bat["pitch_sequence"]
             pitch_count = self.get_total_pitches_in_sequence(pitch_seq)
             pfx_data = self.get_all_pfx_data_for_at_bat(ab_id)
-            (pfx_data, removed_count) = self.remove_duplicate_pitches_pfx(pfx_data, pitch_count)
-            extra_pitchfx_removed_count = removed_count
-            extra_pitchfx_count = len(pfx_data) - pitch_count
+            (pfx_no_dupes, removed_pfx) = self.remove_duplicate_pitches_pfx(pfx_data, pitch_count)
+            extra_pitchfx_count = len(pfx_no_dupes) - pitch_count
             if extra_pitchfx_count > 0:
                 breakpoint()
                 error_messages.append(
                     "At bat still contains extra PitchFX data: "
                     f"Total from Pitch Sequence: {pitch_count}, "
-                    f"Total PitchFX Scraped: {len(pfx_data)}"
+                    f"Total PitchFX Scraped: {len(pfx_no_dupes)}"
                 )
-            missing_pitchfx_count = pitch_count - len(pfx_data)
-            missing_pitch_numbers = self.get_missing_pitch_numbers(pfx_data, pitch_count)
+            missing_pitchfx_count = pitch_count - len(pfx_no_dupes)
+            missing_pitch_numbers = self.get_missing_pitch_numbers(pfx_no_dupes, pitch_count)
             if missing_pitchfx_count != len(missing_pitch_numbers):
-                total_unidentified = pitch_count - len(pfx_data) - len(missing_pitch_numbers)
+                total_unidentified = pitch_count - len(pfx_no_dupes) - len(missing_pitch_numbers)
                 missing_pitch_ids = ", ".join(str(num) for num in missing_pitch_numbers)
                 error_messages.append(
                     f"Identified {len(missing_pitch_numbers)} pitches missing from "
                     f"PitchFX data ({missing_pitch_ids}), however this "
                     "does not account for all pitches in the at bat: "
                     f"Total from Pitch Sequence: {pitch_count}, "
-                    f"Total PitchFX Scraped: {len(pfx_data)}, "
+                    f"Total PitchFX Scraped: {len(pfx_no_dupes)}, "
                     f"Total Identified Missing: {len(missing_pitch_numbers)}, "
                     f"Total Unidentified Missing: {total_unidentified}"
                 )
-            pfx_data_copy = deepcopy(pfx_data) if not missing_pitch_numbers else None
+            pfx_data_copy = deepcopy(pfx_no_dupes) if not missing_pitch_numbers else None
             pitch_sequence_description = self.construct_pitch_sequence_description(
                 ab_id, final_event_this_at_bat, pfx_data_copy,
             )
@@ -434,17 +419,18 @@ class CombineScrapedData:
                 "pitcher_name": pitcher_name,
                 "batter_name": batter_name,
                 "pitch_count_bbref": pitch_count,
-                "pitch_count_pitchfx": len(pfx_data),
+                "pitch_count_pitchfx": len(pfx_no_dupes),
                 "missing_pitchfx_count": missing_pitchfx_count if missing_pitchfx_count > 0 else 0,
                 "missing_pitch_numbers": missing_pitch_numbers,
                 "extra_pitchfx_count": extra_pitchfx_count if extra_pitchfx_count > 0 else 0,
-                "extra_pitchfx_removed_count": extra_pitchfx_removed_count,
+                "extra_pitchfx_removed_count": len(removed_pfx),
                 "pitchfx_data_error": len(error_messages) > 0,
                 "error_messages": error_messages,
                 "is_complete_at_bat": final_event_this_at_bat["is_complete_at_bat"],
                 "pitch_sequence_description": pitch_sequence_description,
                 "pbp_events": self.at_bat_event_groups[ab_id],
-                "pitchfx": pfx_data,
+                "pitchfx": pfx_no_dupes,
+                "removed_pitchfx": removed_pfx,
             }
             self.game_events_combined_data.append(combined_at_bat_data)
         return Result.Ok()
@@ -540,7 +526,7 @@ class CombineScrapedData:
         unique_pitch_numbers_pfx = Counter(list(set(pitch_numbers_pfx)))
         duplicate_pitch_numbers_pfx = Counter(pitch_numbers_pfx) - unique_pitch_numbers_pfx
         if not duplicate_pitch_numbers_pfx:
-            return (pfx_data, 0)
+            return (pfx_data, [])
         dupe_rank_dict = defaultdict(list)
         for pfx in pfx_data:
             if pfx["ab_count"] in duplicate_pitch_numbers_pfx:
@@ -548,20 +534,22 @@ class CombineScrapedData:
                 dupe_rank_dict[pfx["ab_count"]].sort(
                     key=lambda x: (-x["has_zone_location"], x["seconds_since_game_start"])
                 )
-        pfx_data_no_dupes = []
+        pfx_no_dupes = []
         dupe_tracker = {pitch_num: False for pitch_num in unique_pitch_numbers_pfx.keys()}
         for pfx in pfx_data:
             if dupe_tracker[pfx["ab_count"]]:
                 continue
             if pfx["ab_count"] in duplicate_pitch_numbers_pfx:
-                best_pfx = dupe_rank_dict[pfx["ab_count"]][0]
-                pfx_data_no_dupes.append(best_pfx)
+                best_pfx = dupe_rank_dict[pfx["ab_count"]].pop(0)
+                pfx_no_dupes.append(best_pfx)
             else:
-                pfx_data_no_dupes.append(pfx)
+                pfx_no_dupes.append(pfx)
             dupe_tracker[pfx["ab_count"]] = True
-        pfx_data_no_dupes.sort(key=lambda x: x["ab_count"])
-        removed_count = len(pfx_data) - len(pfx_data_no_dupes)
-        return (pfx_data_no_dupes, removed_count)
+        pfx_no_dupes.sort(key=lambda x: x["ab_count"])
+        removed_dupes = flatten_list2d([dupes for dupes in dupe_rank_dict.values()])
+        removed_dupes.sort(key=lambda x: (x["ab_id"], x["ab_count"]))
+        removed_pfx = {"removed_count": len(removed_dupes), "removed_dupes": removed_dupes}
+        return (pfx_no_dupes, removed_pfx)
 
     def get_missing_pitch_numbers(self, pfx_data, pitch_count):
         pitch_numbers = set(range(1, pitch_count + 1))
@@ -671,6 +659,14 @@ class CombineScrapedData:
         pitchfx_vs_bbref_audit = self.audit_pitchfx_vs_bbref_data(
             updated_innings_list, pitch_stats_away, pitch_stats_home
         )
+
+        removed_pfx = defaultdict(dict)
+        for inning in updated_innings_list:
+            for event in inning["inning_events"]:
+                if not event["removed_pitchfx"]:
+                    continue
+                removed_pfx[inning["inning_id"]][event["at_bat_id"]] = event["removed_pitchfx"]
+
         updated_boxscore_dict = {
             "bbref_game_id": self.bbref_game_id,
             "boxscore_url": self.boxscore.boxscore_url,
@@ -679,6 +675,7 @@ class CombineScrapedData:
             "away_team_data": away_team_data,
             "home_team_data": home_team_data,
             "play_by_play_data": updated_innings_list,
+            "removed_pitchfx": removed_pfx,
             "player_id_dict": self.player_id_dict,
         }
         return Result.Ok(updated_boxscore_dict)

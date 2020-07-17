@@ -1,8 +1,10 @@
 """Pitchfx measurements for a single pitch scraped from brooksbaseball.com."""
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
 from vigorish.util.dt_format_strings import DT_AWARE
+from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
+from vigorish.util.regex import PFX_TIMESTAMP_REGEX
 from vigorish.util.string_helpers import validate_bbref_game_id
 
 
@@ -66,8 +68,7 @@ class BrooksPitchFxData:
     tm_spin: str = "0"
     sb: str = "0"
     game_start_time_str: str = ""
-    timestamp_pitch_thrown_str: str = ""
-    seconds_since_game_start: int = 0
+    time_pitch_thrown_str: str = ""
     has_zone_location: bool = False
 
     @property
@@ -79,12 +80,26 @@ class BrooksPitchFxData:
         )
 
     @property
-    def timestamp_pitch_thrown(self):
-        return (
-            datetime.strptime(self.timestamp_pitch_thrown_str, DT_AWARE)
-            if self.timestamp_pitch_thrown_str
-            else None
+    def time_pitch_thrown(self):
+        match = PFX_TIMESTAMP_REGEX.match(self.park_sv_id)
+        if not match:
+            return None
+        group_dict = match.groupdict()
+        game_dict = validate_bbref_game_id(self.bbref_game_id).value
+        timestamp = datetime(
+            game_dict["game_date"].year,
+            int(group_dict["month"]),
+            int(group_dict["day"]),
+            int(group_dict["hour"]),
+            int(group_dict["minute"]),
+            int(group_dict["second"]),
         )
+        return timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
+
+    @property
+    def seconds_since_game_start(self):
+        time_since_game_start = self.time_pitch_thrown - self.game_start_time
+        return int(time_since_game_start.total_seconds())
 
     def as_dict(self):
         """Convert pitch log to a dictionary."""
@@ -146,7 +161,6 @@ class BrooksPitchFxData:
             tm_spin=int(self.tm_spin),
             sb=int(self.sb),
             game_start_time_str=self.game_start_time_str,
-            timestamp_pitch_thrown_str=self.timestamp_pitch_thrown_str,
-            seconds_since_game_start=self.seconds_since_game_start,
+            time_pitch_thrown_str=self.time_pitch_thrown.strftime(DT_AWARE),
             has_zone_location=self.has_zone_location,
         )

@@ -335,7 +335,7 @@ class ScrapedData:
 
     def get_cached_avg_pitch_times(self):
         return {
-            "pitch_delta": {
+            "pitch_metrics": {
                 "total": 3903840.0,
                 "count": 158291,
                 "avg": 25.0,
@@ -343,7 +343,7 @@ class ScrapedData:
                 "min": 1.0,
                 "range": 76.0,
             },
-            "inning_delta": {
+            "inning_metrics": {
                 "total": 1843148.0,
                 "count": 11837,
                 "avg": 156.0,
@@ -357,43 +357,18 @@ class ScrapedData:
         game_ids = PitchAppScrapeStatus.get_bbref_game_ids_all_missing_pfx_is_valid(
             self.db_session
         )
-        pitch_delta_samples = []
-        inning_delta_samples = []
+        pitch_samples = []
+        inning_samples = []
         for bbref_game_id in game_ids:
             combined_data = self.get_json_combined_data(bbref_game_id)
             if not combined_data:
                 continue
-            (
-                pitch_deltas,
-                pitch_delta,
-                inning_deltas,
-                inning_delta,
-            ) = calc_avg_time_between_pitches(combined_data)
-            pitch_delta_samples.extend(pitch_deltas)
-            inning_delta_samples.extend(inning_deltas)
-        pitch_delta_combined = {}
-        if len(pitch_delta_samples):
-            pitch_delta_samples = trim_data_set(pitch_delta_samples, st_dev_limit=0.5)
-            pitch_delta_combined = {
-                "total": sum(pitch_delta_samples),
-                "count": len(pitch_delta_samples),
-                "avg": sum(pitch_delta_samples) / len(pitch_delta_samples),
-                "max": max(pitch_delta_samples),
-                "min": min(pitch_delta_samples),
-                "range": max(pitch_delta_samples) - min(pitch_delta_samples),
-            }
-        inning_delta_combined = {}
-        if len(inning_delta_samples):
-            inning_delta_samples = trim_data_set(inning_delta_samples, st_dev_limit=0.5)
-            inning_delta_combined = {
-                "total": sum(inning_delta_samples),
-                "count": len(inning_delta_samples),
-                "avg": sum(inning_delta_samples) / len(inning_delta_samples),
-                "max": max(inning_delta_samples),
-                "min": min(inning_delta_samples),
-                "range": max(inning_delta_samples) - min(inning_delta_samples),
-            }
-        return {"pitch_delta": pitch_delta_combined, "inning_delta": inning_delta_combined}
+            (game_pitch_samples, _, game_inning_samples, _,) = calc_pitch_metrics(combined_data)
+            pitch_samples.extend(game_pitch_samples)
+            inning_samples.extend(game_inning_samples)
+        pitch_metrics = process_data_set(pitch_samples, trim=True, st_dev=0.5)
+        inning_metrics = process_data_set(inning_samples, trim=True, st_dev=0.5)
+        return {"pitch_metrics": pitch_metrics, "inning_metrics": inning_metrics}
 
     def combine_boxscore_and_pfx_data(self, bbref_game_id):
         game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, bbref_game_id)
@@ -405,7 +380,7 @@ class ScrapedData:
         if result.failure:
             return {"gather_scraped_data_success": False, "error": result.error}
         pitchfx_logs = result.value
-        result = self.combine_data.execute(boxscore, pitchfx_logs)
+        result = self.combine_data.execute(game_status, boxscore, pitchfx_logs)
         if result.failure:
             setattr(game_status, "combined_data_success", 0)
             setattr(game_status, "combined_data_fail", 1)
@@ -438,6 +413,7 @@ class ScrapedData:
         }
 
     def investigate_errors(self, bbref_game_id):
+        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, bbref_game_id)
         result = self.get_bbref_boxscore(bbref_game_id)
         if result.failure:
             return {"gather_scraped_data_success": False, "error": result.error}
@@ -446,7 +422,7 @@ class ScrapedData:
         if result.failure:
             return {"gather_scraped_data_success": False, "error": result.error}
         pitchfx_logs = result.value
-        return self.combine_data.investigate(boxscore, pitchfx_logs)
+        return self.combine_data.investigate(game_status, boxscore, pitchfx_logs)
 
     def prune_pitchfx_data_for_display(self, pfx):
         return {
@@ -485,6 +461,6 @@ class ScrapedData:
             "pz": pfx["pz"],
             "at_bat_id": pfx["at_bat_id"],
             "has_zone_location": pfx["has_zone_location"],
-            "timestamp_pitch_thrown": pfx["timestamp_pitch_thrown"],
+            "time_pitch_thrown_str": pfx["time_pitch_thrown_str"],
             "seconds_since_game_start": pfx["seconds_since_game_start"],
         }
