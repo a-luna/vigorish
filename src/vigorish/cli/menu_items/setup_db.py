@@ -3,6 +3,7 @@ import subprocess
 import time
 
 from getch import pause
+from sqlalchemy.orm import sessionmaker
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.prompts import prompt_user_yes_no
@@ -29,6 +30,7 @@ UPDATE_PROMPT = (
     "Would you like to update the database based on files that currently exist in the local file "
     "system? (This relies on the value of the JSON_LOCAL_FOLDER_PATH setting in the config file)"
 )
+RESTART_WARNING = "\nApplication must be restarted for these changes to take effect!"
 
 
 class SetupDBMenuItem(MenuItem):
@@ -67,6 +69,12 @@ class SetupDBMenuItem(MenuItem):
         if not prompt_user_yes_no(UPDATE_PROMPT):
             return Result.Ok(self.exit_menu)
 
+        restart_required = self.db_initialized
+        if restart_required:
+            self.db_session.close()
+            session_maker = sessionmaker(bind=self.db_engine)
+            self.db_session = session_maker()
+
         for year in all_mlb_seasons:
             subprocess.run(["clear"])
             result = update_all_data_sets(self.scraped_data, self.db_session, year, True)
@@ -75,4 +83,8 @@ class SetupDBMenuItem(MenuItem):
                 pause(message="Press any key to continue...")
             else:
                 time.sleep(2)
-        return Result.Ok(self.exit_menu)
+        if not restart_required:
+            return Result.Ok(self.exit_menu)
+        print_message(RESTART_WARNING, fg="bright_magenta", bold=True)
+        pause(message="Press any key to continue...")
+        exit(0)
