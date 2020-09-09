@@ -17,7 +17,7 @@ log-symbols==0.0.14
 lxml==4.5.1
 Naked==0.1.31
 numpy==1.19.0
-pandas==1.0.5
+pandas==1.1.2
 py-getch==1.0.1
 python-dateutil==2.8.1
 python-dotenv==0.14.0
