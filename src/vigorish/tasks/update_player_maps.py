@@ -5,7 +5,6 @@ import requests
 from dacite import from_dict
 
 from vigorish.config.project_paths import PLAYER_ID_MAP_CSV, PLAYER_TEAM_MAP_CSV
-from vigorish.scrape.bbref_player_data.models import BBRefBatStats, BBRefPitchStats
 from vigorish.tasks.base import Task
 from vigorish.util.result import Result
 
@@ -13,6 +12,105 @@ ALL_PITCH_STATS_URL = "https://www.baseball-reference.com/data/war_daily_pitch.t
 ALL_BAT_STATS_URL = "https://www.baseball-reference.com/data/war_daily_bat.txt"
 YEAR_PITCH_STATS_URL = "https://www.baseball-reference.com/data/war_daily_pitch_year.txt"
 YEAR_BAT_STATS_URL = "https://www.baseball-reference.com/data/war_daily_bat_year.txt"
+
+
+@dataclass(eq=True, frozen=True)
+class BBRefBatStats:
+    name_common: str
+    age: str
+    mlb_ID: str
+    player_ID: str
+    year_ID: str
+    team_ID: str
+    stint_ID: str
+    lg_ID: str
+    PA: str
+    G: str
+    Inn: str
+    runs_bat: str
+    runs_br: str
+    runs_dp: str
+    runs_field: str
+    runs_infield: str
+    runs_outfield: str
+    runs_catcher: str
+    runs_good_plays: str
+    runs_defense: str
+    runs_position: str
+    runs_position_p: str
+    runs_replacement: str
+    runs_above_rep: str
+    runs_above_avg: str
+    runs_above_avg_off: str
+    runs_above_avg_def: str
+    WAA: str
+    WAA_off: str
+    WAA_def: str
+    WAR: str
+    WAR_def: str
+    WAR_off: str
+    WAR_rep: str
+    salary: str
+    pitcher: str
+    teamRpG: str
+    oppRpG: str
+    oppRpPA_rep: str
+    oppRpG_rep: str
+    pyth_exponent: str
+    pyth_exponent_rep: str
+    waa_win_perc: str
+    waa_win_perc_off: str
+    waa_win_perc_def: str
+    waa_win_perc_rep: str
+    OPS_plus: str
+    TOB_lg: str
+    TB_lg: str
+
+
+@dataclass(eq=True, frozen=True)
+class BBRefPitchStats:
+    name_common: str
+    age: str
+    mlb_ID: str
+    player_ID: str
+    year_ID: str
+    team_ID: str
+    stint_ID: str
+    lg_ID: str
+    G: str
+    GS: str
+    IPouts: str
+    IPouts_start: str
+    IPouts_relief: str
+    RA: str
+    xRA: str
+    xRA_sprp_adj: str
+    xRA_def_pitcher: str
+    PPF: str
+    PPF_custom: str
+    xRA_final: str
+    BIP: str
+    BIP_perc: str
+    RS_def_total: str
+    runs_above_avg: str
+    runs_above_avg_adj: str
+    runs_above_rep: str
+    RpO_replacement: str
+    GR_leverage_index_avg: str
+    WAR: str
+    salary: str
+    teamRpG: str
+    oppRpG: str
+    pyth_exponent: str
+    waa_win_perc: str
+    WAA: str
+    WAA_adj: str
+    oppRpG_rep: str
+    pyth_exponent_rep: str
+    waa_win_perc_rep: str
+    WAR_rep: str
+    ERA_plus: str
+    ER_lg: str
 
 
 @dataclass(eq=True, frozen=True)
