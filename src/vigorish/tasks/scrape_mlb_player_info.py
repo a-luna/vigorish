@@ -1,77 +1,64 @@
 """Scrape MLB player data"""
-import dataclasses
 from datetime import datetime, date, timedelta
 from json.decoder import JSONDecodeError
-from pathlib import Path
 
-import requests
-from dataclass_csv import DataclassReader, accept_whitespaces
+from sqlalchemy.exc import SQLAlchemyError, DBAPIError
 
 from vigorish.config.database import Player
 from vigorish.util.result import Result
+from vigorish.util.request_url import request_url_with_retries
 from vigorish.util.string_helpers import fuzzy_match
 
 
-APP_FOLDER = Path(__file__).parent.parent.parent
-PEOPLE_CSV = APP_FOLDER.joinpath("setup/csv/People.csv")
 MLB_PLAYER_SEARCH_URL = "http://lookup-service-prod.mlb.com/json/named.search_player_all.bam"
 MLB_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 
-@accept_whitespaces
-@dataclasses.dataclass
-class PlayerID:
-    retroID: str = dataclasses.field(default=None)
-    bbrefID: str = dataclasses.field(default=None)
-
-
 def scrape_mlb_player_info(db_session, name, bbref_id, game_date):
+    return (
+        get_search_url(name)
+        .on_success(request_url_with_retries)
+        .on_success(decode_json_response)
+        .on_success(get_player_data, name, game_date)
+        .on_success(parse_player_data, bbref_id, db_session)
+    )
+
+
+def get_search_url(name):
     split = name.split()
     if not split or len(split) <= 1:
         return Result.Fail(f"Name was not in an expected format: {name}")
     name_part = ("%20".join(split[1:])).upper()
-    search_url = (
-        f"{MLB_PLAYER_SEARCH_URL}?sport_code='mlb'&name_part='{name_part}%25'&active_sw='Y'"
-    )
-    response = requests.get(search_url)
-    result = parse_search_results(response, name, name_part, search_url, game_date)
-    if result.failure:
-        return result
-    mlb_player_info = result.value
-    player_dict = parse_player_data(mlb_player_info, bbref_id)
-    new_player = Player(**player_dict)
-    db_session.add(new_player)
-    db_session.commit()
-    return Result.Ok(new_player)
+    url = f"{MLB_PLAYER_SEARCH_URL}?sport_code='mlb'&name_part='{name_part}%25'&active_sw='Y'"
+    return Result.Ok(url)
 
 
-def parse_search_results(response, name, name_part, search_url, game_date):
+def decode_json_response(response):
     try:
         resp_json = response.json()
-    except JSONDecodeError:
-        search_dict = {
-            "player_name": name,
-            "name_part": name_part,
-            "search_url": search_url,
-        }
-        return Result.Fail(f"Failed to retrieve MLB player data: {search_dict}")
-    num_results_str = resp_json["search_player_all"]["queryResults"]["totalSize"]
-
-    try:
-        num_results = int(num_results_str)
+        query_results = resp_json["search_player_all"]["queryResults"]
+        num_results = int(query_results["totalSize"])
+        return Result.Ok((query_results, num_results))
+    except (JSONDecodeError, KeyError) as e:
+        error = f"Failed to decode HTTP response as JSON: {repr(e)}\n{e.response.text}"
+        return Result.Fail(error)
     except ValueError:
-        error = f"Failed to parse number of results from search response: {resp_json}"
+        error = f"Failed to parse number of results from search response: {query_results}"
         return Result.Fail(error)
 
+
+def get_player_data(results_tuple, name, game_date):
+    results = results_tuple[0]
+    num_results = results_tuple[1]
     if num_results > 1:
-        player_list = resp_json["search_player_all"]["queryResults"]["row"]
-        mlb_player_info = find_best_match(name, player_list, game_date)
+        player_list = results["row"]
+        player_data = find_best_match(player_list, name, game_date)
     else:
-        mlb_player_info = resp_json["search_player_all"]["queryResults"]["row"]
-    return Result.Ok(mlb_player_info)
+        player_data = results["row"]
+    return Result.Ok(player_data)
 
 
-def find_best_match(name, player_list, game_date):
+def find_best_match(player_list, name, game_date):
     player_id_name_map = {
         player["player_id"]: player["name_display_first_last"] for player in player_list
     }
@@ -96,7 +83,7 @@ def compare_mlb_debut(possible_matches, player_info_dict, game_date):
     return info_dict_list[0]
 
 
-def parse_player_data(player_info, bbref_id):
+def parse_player_data(player_info, bbref_id, db_session):
     try:
         feet = int(player_info["height_feet"])
         inches = int(player_info["height_inches"])
@@ -105,12 +92,8 @@ def parse_player_data(player_info, bbref_id):
         height_total_inches = 0
 
     try:
-        debut_str = player_info["pro_debut_date"]
-        debut = datetime.strptime(debut_str, MLB_DATE_FORMAT)
-        debut = debut.date()
-        birth_date_str = player_info["birth_date"]
-        birth_date = datetime.strptime(birth_date_str, MLB_DATE_FORMAT)
-        birth_date = birth_date.date()
+        debut = datetime.strptime(player_info["pro_debut_date"], MLB_DATE_FORMAT).date()
+        birth_date = datetime.strptime(player_info["birth_date"], MLB_DATE_FORMAT).date()
     except ValueError:
         debut = date.min
         birth_date = date.min
@@ -131,17 +114,14 @@ def parse_player_data(player_info, bbref_id):
         "birth_state": player_info["birth_state"],
         "birth_city": player_info["birth_city"],
         "bbref_id": bbref_id,
-        "retro_id": retrieve_retro_id(bbref_id),
         "mlb_id": player_info["player_id"],
         "missing_mlb_id": False,
     }
-    return player_dict
 
-
-def retrieve_retro_id(bbref_id):
-    with open(PEOPLE_CSV) as people_csv:
-        people_csv_reader = DataclassReader(people_csv, PlayerID)
-        player_retro_id = [
-            id_map.retroID for id_map in list(people_csv_reader) if id_map.bbrefID == bbref_id
-        ]
-    return player_retro_id[0] if player_retro_id else ""
+    try:
+        new_player = Player(**player_dict)
+        db_session.add(new_player)
+        db_session.commit()
+        return Result.Ok(new_player)
+    except (SQLAlchemyError, DBAPIError) as e:
+        return Result.Fail(f"Error: {repr(e)}")
