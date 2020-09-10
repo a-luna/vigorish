@@ -421,7 +421,7 @@ class CombineGameDataMenuItem(MenuItem):
         }
 
     def combine_games_for_date(self):
-        result = self.season_prompt()
+        result = audit_report_season_prompt(self.audit_report)
         if result.failure:
             return result
         self.scrape_year = result.value
@@ -444,7 +444,7 @@ class CombineGameDataMenuItem(MenuItem):
         return result
 
     def combine_single_game(self):
-        result = self.season_prompt()
+        result = audit_report_season_prompt(self.audit_report)
         if result.failure:
             return result
         self.scrape_year = result.value
