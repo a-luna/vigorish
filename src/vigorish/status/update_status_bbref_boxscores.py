@@ -1,4 +1,5 @@
 from vigorish.config.database import GameScrapeStatus
+from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
 
@@ -21,12 +22,10 @@ def update_data_set_bbref_boxscores(scraped_data, db_session, season):
 
 def update_status_bbref_boxscore_list(scraped_data, db_session, new_bbref_game_ids):
     for bbref_game_id in new_bbref_game_ids:
-        result = scraped_data.get_bbref_boxscore(bbref_game_id)
-        if result.failure:
-            if "Size of file downloaded from S3 is less than 1KB" in result.error:
-                continue
-            return result
-        boxscore = result.value
+        boxscore = scraped_data.get_bbref_boxscore(bbref_game_id)
+        if not boxscore:
+            error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {bbref_game_id})"
+            return Result.Fail(error)
         result = update_status_bbref_boxscore(db_session, boxscore)
         if result.failure:
             return result

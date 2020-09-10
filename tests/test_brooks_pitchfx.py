@@ -16,9 +16,7 @@ PITCH_APP_ID = "OAK201804010_660271"
 
 
 def parse_brooks_pitchfx_from_html(scraped_data):
-    result = scraped_data.get_brooks_pitch_logs_for_game(BB_GAME_ID)
-    assert result.success
-    pitch_logs = result.value
+    pitch_logs = scraped_data.get_brooks_pitch_logs_for_game(BB_GAME_ID)
     pitch_log = [plog for plog in pitch_logs.pitch_logs if plog.pitch_app_id == PITCH_APP_ID][0]
     html_path = scraped_data.get_html(DATA_SET, PITCH_APP_ID)
     result = parse_pitchfx_log(html_path.read_text(), pitch_log)
@@ -42,9 +40,7 @@ def test_persist_brooks_pitchfx(scraped_data):
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "OAK201804010_660271.json"
-    result = scraped_data.get_brooks_pitchfx_log(PITCH_APP_ID)
-    assert result.success
-    pitchfx_log_decoded = result.value
+    pitchfx_log_decoded = scraped_data.get_brooks_pitchfx_log(PITCH_APP_ID)
     assert isinstance(pitchfx_log_decoded, BrooksPitchFxLog)
     result = verify_brooks_pitchfx_OAK201804010_660271(pitchfx_log_decoded)
     assert result.success

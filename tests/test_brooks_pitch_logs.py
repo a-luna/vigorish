@@ -22,9 +22,7 @@ PITCH_APP_ID = "TOR201806170_461325"
 
 
 def parse_brooks_pitch_logs_for_game_from_html(scraped_data):
-    result = scraped_data.get_brooks_games_for_date(GAME_DATE)
-    assert result.success
-    brooks_games_for_date = result.value
+    brooks_games_for_date = scraped_data.get_brooks_games_for_date(GAME_DATE)
     game_info = [game for game in brooks_games_for_date.games if game.bb_game_id == BB_GAME_ID][0]
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game_info.bb_game_id
@@ -59,9 +57,7 @@ def test_persist_brooks_pitch_logs_for_game(scraped_data):
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "gid_2018_06_17_wasmlb_tormlb_1.json"
-    result = scraped_data.get_brooks_pitch_logs_for_game(BB_GAME_ID)
-    assert result.success
-    pitch_logs_for_game_decoded = result.value
+    pitch_logs_for_game_decoded = scraped_data.get_brooks_pitch_logs_for_game(BB_GAME_ID)
     assert isinstance(pitch_logs_for_game_decoded, BrooksPitchLogsForGame)
     result = verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game_decoded)
     assert result.success

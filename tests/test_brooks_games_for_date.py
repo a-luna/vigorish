@@ -29,9 +29,7 @@ def get_brooks_url_for_date(game_date):
 
 
 def parse_brooks_games_for_date_from_html(db_session, scraped_data):
-    result = scraped_data.get_bbref_games_for_date(GAME_DATE)
-    assert result.success
-    games_for_date = result.value
+    games_for_date = scraped_data.get_bbref_games_for_date(GAME_DATE)
     url = get_brooks_url_for_date(GAME_DATE)
     html_path = scraped_data.get_html(DATA_SET, GAME_DATE)
     page_content = html_path.read_text()
@@ -56,9 +54,7 @@ def test_persist_brooks_games_for_date(db_session, scraped_data):
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "brooks_games_for_date_2018-04-17.json"
-    result = scraped_data.get_brooks_games_for_date(GAME_DATE)
-    assert result.success
-    games_for_date_decoded = result.value
+    games_for_date_decoded = scraped_data.get_brooks_games_for_date(GAME_DATE)
     assert isinstance(games_for_date_decoded, BrooksGamesForDate)
     result = verify_brooks_games_for_date_apr_17_2018(games_for_date_decoded)
     assert result.success

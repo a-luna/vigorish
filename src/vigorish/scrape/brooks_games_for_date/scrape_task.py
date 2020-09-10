@@ -36,10 +36,9 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
         return Result.Ok()
 
     def parse_html(self, html, url_id, url):
-        result = self.scraped_data.get_bbref_games_for_date(url_id)
-        if result.failure:
-            return result
-        bbref_games_for_date = result.value
+        bbref_games_for_date = self.scraped_data.get_bbref_games_for_date(url_id)
+        if not bbref_games_for_date:
+            return Result.Fail(f"Failed to retrieve {self.data_set} (URL ID: {url_id})")
         return parse_brooks_dashboard_page(
             self.db_session, html, url_id, url, bbref_games_for_date
         )
