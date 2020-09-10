@@ -1,23 +1,53 @@
 """Populate player_id and player tables with initial data."""
+from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
 
-import pandas as pd
+from dataclass_csv import accept_whitespaces, DataclassReader, dateformat
 from tqdm import tqdm
 
-from vigorish.models.player import Player
-from vigorish.models.player_id import PlayerId
-from vigorish.util.dt_format_strings import DATE_ONLY as PLAYER_DEBUT
-from vigorish.util.numeric_helpers import sanitize, is_nan
+from vigorish.config.database import Player, PlayerId
+from vigorish.config.project_paths import APP_FOLDER
+from vigorish.tasks.update_player_maps import UpdatePlayerIdMap
+from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
-PLAYER_ID_CSV = Path(__file__).parent / "csv" / "idmap.csv"
-PLAYER_CSV = Path(__file__).parent / "csv" / "People.csv"
+PLAYER_CSV = APP_FOLDER.joinpath("setup/csv/People.csv")
 
 
-def populate_players(db_session):
+@accept_whitespaces
+@dateformat(DATE_ONLY)
+@dataclass
+class PlayerCsvRow:
+    playerID: str = None
+    birthYear: int = None
+    birthMonth: int = None
+    birthDay: int = None
+    birthCountry: str = None
+    birthState: str = None
+    birthCity: str = None
+    deathYear: int = None
+    deathMonth: int = None
+    deathDay: int = None
+    deathCountry: str = None
+    deathState: str = None
+    deathCity: str = None
+    nameFirst: str = None
+    nameLast: str = None
+    nameGiven: str = None
+    weight: int = None
+    height: int = None
+    bats: str = None
+    throws: str = None
+    debut: datetime = None
+    finalGame: datetime = None
+    retroID: str = None
+    bbrefID: str = None
+
+
+def populate_players(app):
+    db_session = app["db_session"]
     """Populate player_id and player tables with initial data."""
-    result = import_idmap_csv(db_session)
+    result = import_idmap_csv(db_session, app)
     if result.failure:
         return result
     db_session.commit()
@@ -25,38 +55,15 @@ def populate_players(db_session):
     if result.failure:
         return result
     db_session.commit()
-
     return Result.Ok()
 
 
-def import_idmap_csv(db_session):
+def import_idmap_csv(db_session, app):
     try:
-        df_ids = pd.read_csv(
-            PLAYER_ID_CSV,
-            usecols=[
-                "mlb_id",
-                "mlb_name",
-                "bp_id",
-                "bref_id",
-                "bref_name",
-                "espn_id",
-                "espn_name",
-                "fg_id",
-                "fg_name",
-                "lahman_id",
-                "nfbc_id",
-                "retro_id",
-                "yahoo_id",
-                "yahoo_name",
-                "ottoneu_id",
-                "rotowire_id",
-                "rotowire_name",
-            ],
-        )
-        df_ids.columns = df_ids.columns.str.strip()
-
+        update_player_id_map = UpdatePlayerIdMap(app)
+        player_id_map = update_player_id_map.read_bbref_player_id_map_from_file()
         with tqdm(
-            total=len(df_ids),
+            total=len(player_id_map),
             desc="Populating player_id table...",
             unit="row",
             mininterval=0.12,
@@ -64,35 +71,15 @@ def import_idmap_csv(db_session):
             unit_scale=True,
             ncols=90,
         ) as pbar:
-            for _, row in df_ids.iterrows():
-                if is_nan(row["mlb_id"]) or is_nan(row["bref_id"]):
-                    pbar.update()
-                    continue
-                if is_nan(row["retro_id"]):
-                    retro_id = None
-                else:
-                    retro_id = row["retro_id"]
-
-                pid = PlayerId(
-                    mlb_id=int(sanitize(row["mlb_id"])),
-                    mlb_name=row["mlb_name"],
-                    bp_id=int(sanitize(row["bp_id"])),
-                    bbref_id=row["bref_id"],
-                    bbref_name=row["bref_name"],
-                    espn_id=int(sanitize(row["espn_id"])),
-                    espn_name=row["espn_name"],
-                    fg_id=row["fg_id"],
-                    fg_name=row["fg_name"],
-                    lahman_id=row["lahman_id"],
-                    nfbc_id=int(sanitize(row["nfbc_id"])),
-                    retro_id=retro_id,
-                    yahoo_id=int(sanitize(row["yahoo_id"])),
-                    yahoo_name=row["yahoo_name"],
-                    ottoneu_id=int(sanitize(row["ottoneu_id"])),
-                    rotowire_id=int(sanitize(row["rotowire_id"])),
-                    rotowire_name=row["rotowire_name"],
+            for id_map in player_id_map:
+                db_session.add(
+                    PlayerId(
+                        mlb_id=int(id_map.mlb_ID),
+                        mlb_name=id_map.name_common,
+                        bbref_id=id_map.player_ID,
+                        bbref_name=None,
+                    )
                 )
-                db_session.add(pid)
                 pbar.update()
         return Result.Ok()
     except Exception as e:
@@ -102,81 +89,50 @@ def import_idmap_csv(db_session):
 
 
 def import_people_csv(db_session):
+    csv_text = PLAYER_CSV.read_text()
+    total_rows = len([row for row in csv_text.split("\n") if row])
     try:
-        df_player = pd.read_csv(
-            PLAYER_CSV,
-            usecols=[
-                "nameFirst",
-                "nameLast",
-                "nameGiven",
-                "bats",
-                "throws",
-                "weight",
-                "height",
-                "debut",
-                "birthYear",
-                "birthMonth",
-                "birthDay",
-                "birthCountry",
-                "birthState",
-                "birthCity",
-                "playerID",
-                "retroID",
-                "bbrefID",
-            ],
-        )
-        df_player.columns = df_player.columns.str.strip()
-
-        with tqdm(
-            total=len(df_player),
-            desc="Populating player table......",
-            unit="row",
-            mininterval=0.12,
-            maxinterval=5,
-            unit_scale=True,
-            ncols=90,
-        ) as pbar:
-            for _, row in df_player.iterrows():
-                if (
-                    is_nan(row["birthYear"])
-                    or is_nan(row["birthMonth"])
-                    or is_nan(row["birthDay"])
-                ):
+        with open(PLAYER_CSV) as player_csv:
+            reader = DataclassReader(player_csv, PlayerCsvRow)
+            with tqdm(
+                total=total_rows,
+                desc="Populating player table......",
+                unit="row",
+                mininterval=0.12,
+                maxinterval=5,
+                unit_scale=True,
+                ncols=90,
+            ) as pbar:
+                for row in reader:
+                    if not (row.birthYear or row.birthMonth or row.birthDay or row.debut):
+                        pbar.update()
+                        continue
+                    player_id = PlayerId.find_by_bbref_id(db_session, row.bbrefID)
+                    if not player_id:
+                        pbar.update()
+                        continue
+                    p = Player(
+                        mlb_id=player_id.mlb_id,
+                        bbref_id=row.bbrefID,
+                        name_first=row.nameFirst,
+                        name_last=row.nameLast,
+                        name_given=row.nameGiven,
+                        bats=row.bats,
+                        throws=row.throws,
+                        weight=row.weight,
+                        height=row.height,
+                        debut=row.debut,
+                        birth_year=row.birthYear,
+                        birth_month=row.birthMonth,
+                        birth_day=row.birthDay,
+                        birth_country=row.birthCountry,
+                        birth_state=row.birthState,
+                        birth_city=row.birthCity,
+                        missing_mlb_id=False,
+                    )
+                    db_session.add(p)
+                    setattr(player_id, "db_player_id", p.id)
                     pbar.update()
-                    continue
-
-                player_id = PlayerId.find_by_retro_id(db_session, str(row["retroID"]))
-                if not player_id:
-                    player_id = PlayerId.find_by_bbref_id(db_session, str(row["bbrefID"]))
-                if not player_id:
-                    pbar.update()
-                    continue
-                debut = None
-                if row["debut"]:
-                    debut = datetime.strptime(str(row["debut"]), PLAYER_DEBUT)
-
-                p = Player(
-                    mlb_id=player_id.mlb_id,
-                    retro_id=row["retroID"],
-                    bbref_id=row["bbrefID"],
-                    name_first=row["nameFirst"],
-                    name_last=row["nameLast"],
-                    name_given=row["nameGiven"],
-                    bats=row["bats"],
-                    throws=row["throws"],
-                    weight=int(sanitize(row["weight"])),
-                    height=int(sanitize(row["height"])),
-                    debut=debut,
-                    birth_year=int(sanitize(row["birthYear"])),
-                    birth_month=int(sanitize(row["birthMonth"])),
-                    birth_day=int(sanitize(row["birthDay"])),
-                    birth_country=row["birthCountry"],
-                    birth_state=row["birthState"],
-                    birth_city=row["birthCity"],
-                    missing_mlb_id=False,
-                )
-                db_session.add(p)
-                pbar.update()
         return Result.Ok()
     except Exception as e:
         error = "Error: {error}".format(error=repr(e))
