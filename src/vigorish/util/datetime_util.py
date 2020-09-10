@@ -50,6 +50,13 @@ def get_local_utcoffset():
     return timezone(offset=utc_offset)
 
 
+def dtaware_fromtimestamp(timestamp, use_tz=None):
+    """Time-zone aware datetime object from UNIX timestamp."""
+    timestamp_naive = datetime.fromtimestamp(timestamp)
+    timestamp_aware = timestamp_naive.replace(tzinfo=get_local_utcoffset())
+    return timestamp_aware.astimezone(use_tz) if use_tz else timestamp_aware
+
+
 def today_str():
     return date.today().strftime(DATE_ONLY_2)
 
