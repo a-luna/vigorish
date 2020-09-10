@@ -1,69 +1,100 @@
+from collections import defaultdict
+
 from vigorish.config.database import PitchAppScrapeStatus
-from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
 
 
 def update_pitch_apps_for_game_combined_data(db_session, combined_data):
-    audit_results = {}
-    audit_results["success"] = []
-    audit_results["failed"] = []
+    pfx_errors = defaultdict(dict)
+    combined_success = []
     away_team_pitch_stats = combined_data["away_team_data"]["pitching_stats"]
     home_team_pitch_stats = combined_data["home_team_data"]["pitching_stats"]
     all_pitch_stats = away_team_pitch_stats + home_team_pitch_stats
     for pitch_stats in all_pitch_stats:
-        result = update_pitch_app_combined_data(db_session, pitch_stats)
+        pitch_app_id = pitch_stats["pitch_app_id"]
+        result = get_pitch_app_status(db_session, pitch_app_id)
         if result.failure:
             return result
         pitch_app_status = result.value
-        if pitch_app_status.pitchfx_data_error:
-            audit_results["failed"].append(pitch_stats["pitch_app_id"])
-        else:
-            audit_results["success"].append(pitch_stats["pitch_app_id"])
-    return Result.Ok(audit_results)
+        pitch_app_status = update_pitch_app_combined_data(
+            db_session, pitch_app_status, pitch_stats
+        )
+        pitchfx_audit = pitch_stats["pitch_app_pitchfx_audit"]
+        if pitch_app_status.pitchfx_error:
+            at_bat_ids = pitchfx_audit["at_bat_ids_pitchfx_error"]
+            pfx_errors["pitchfx_error"][pitch_app_id] = at_bat_ids
+        if pitch_app_status.invalid_pitchfx:
+            at_bat_ids = pitchfx_audit["at_bat_ids_invalid_pitchfx"]
+            pfx_errors["invalid_pitchfx"][pitch_app_id] = at_bat_ids
+        if not (pitch_app_status.pitchfx_error or pitch_app_status.invalid_pitchfx):
+            combined_success.append(pitch_app_id)
+    db_session.commit()
+    return Result.Ok({"combined_success": combined_success, "pfx_errors": pfx_errors})
 
 
-def update_pitch_app_combined_data(db_session, pitch_stats):
-    result = get_pitch_app_status(db_session, pitch_stats["pitch_app_id"])
-    if result.failure:
-        return result
-    pitch_app_status = result.value
-    pitchfx_data_error = 1 if pitch_stats["pitchfx_data_error"] else 0
+def update_pitch_app_combined_data(db_session, pitch_app_status, pitch_stats):
+    pitchfx_audit = pitch_stats["pitch_app_pitchfx_audit"]
+    no_pitchfx_data = 1 if pitchfx_audit["pitch_count_pitchfx"] == 0 else 0
+    pitchfx_error = 1 if pitchfx_audit["pitchfx_error"] else 0
+    invalid_pitchfx = 1 if pitchfx_audit["invalid_pitchfx"] else 0
     setattr(pitch_app_status, "combined_pitchfx_bbref_data", 1)
-    setattr(pitch_app_status, "pitch_count_bbref", pitch_stats["pitch_count_bbref"])
-    setattr(pitch_app_status, "pitch_count_pitchfx_audited", pitch_stats["pitch_count_pitchfx"])
-    setattr(pitch_app_status, "missing_pitchfx_count", pitch_stats["missing_pitchfx_count"])
-    setattr(pitch_app_status, "extra_pitchfx_count", pitch_stats["extra_pitchfx_count"])
+    setattr(pitch_app_status, "no_pitchfx_data", no_pitchfx_data)
+    setattr(pitch_app_status, "batters_faced_bbref", pitchfx_audit["batters_faced_bbref"])
+    setattr(pitch_app_status, "batters_faced_pitchfx", pitchfx_audit["batters_faced_pitchfx"])
     setattr(
         pitch_app_status,
-        "duplicate_pitchfx_removed_count",
-        pitch_stats["duplicate_pitchfx_removed_count"],
+        "duplicate_guid_removed_count",
+        pitchfx_audit["duplicate_guid_removed_count"],
     )
-    setattr(
-        pitch_app_status, "extra_pitchfx_removed_count", pitch_stats["extra_pitchfx_removed_count"]
-    )
-    setattr(pitch_app_status, "pitchfx_data_error", pitchfx_data_error)
-    setattr(pitch_app_status, "batters_faced_bbref", pitch_stats["batters_faced_bbref"])
-    setattr(pitch_app_status, "batters_faced_pitchfx", pitch_stats["batters_faced_pitchfx"])
+    setattr(pitch_app_status, "pitch_count_bbref", pitchfx_audit["pitch_count_bbref"])
+    setattr(pitch_app_status, "pitch_count_pitchfx_audited", pitchfx_audit["pitch_count_pitchfx"])
     setattr(
         pitch_app_status,
         "total_at_bats_pitchfx_complete",
-        pitch_stats["total_at_bats_pitchfx_complete"],
+        pitchfx_audit["total_at_bats_pitchfx_complete"],
     )
+    setattr(pitch_app_status, "patched_pitchfx_count", pitchfx_audit["patched_pitchfx_count"])
+    setattr(
+        pitch_app_status,
+        "total_at_bats_patched_pitchfx",
+        pitchfx_audit["total_at_bats_patched_pitchfx"],
+    )
+    setattr(pitch_app_status, "missing_pitchfx_count", pitchfx_audit["missing_pitchfx_count"])
     setattr(
         pitch_app_status,
         "total_at_bats_missing_pitchfx",
-        pitch_stats["total_at_bats_missing_pitchfx"],
+        pitchfx_audit["total_at_bats_missing_pitchfx"],
     )
+    setattr(pitch_app_status, "extra_pitchfx_count", pitchfx_audit["extra_pitchfx_count"])
     setattr(
-        pitch_app_status, "total_at_bats_extra_pitchfx", pitch_stats["total_at_bats_extra_pitchfx"]
+        pitch_app_status,
+        "total_at_bats_extra_pitchfx",
+        pitchfx_audit["total_at_bats_extra_pitchfx"],
     )
     setattr(
         pitch_app_status,
-        "total_at_bats_pitchfx_data_error",
-        pitch_stats["total_at_bats_pitchfx_data_error"],
+        "extra_pitchfx_removed_count",
+        pitchfx_audit["extra_pitchfx_removed_count"],
     )
-    db_session.commit()
-    return Result.Ok(pitch_app_status)
+    setattr(
+        pitch_app_status,
+        "total_at_bats_extra_pitchfx_removed",
+        pitchfx_audit["total_at_bats_extra_pitchfx_removed"],
+    )
+    setattr(pitch_app_status, "invalid_pitchfx", invalid_pitchfx)
+    setattr(pitch_app_status, "invalid_pitchfx_count", pitchfx_audit["invalid_pitchfx_count"])
+    setattr(
+        pitch_app_status,
+        "total_at_bats_invalid_pitchfx",
+        pitchfx_audit["total_at_bats_invalid_pitchfx"],
+    )
+    setattr(pitch_app_status, "pitchfx_error", pitchfx_error)
+    setattr(
+        pitch_app_status,
+        "total_at_bats_pitchfx_error",
+        pitchfx_audit["total_at_bats_pitchfx_error"],
+    )
+    return pitch_app_status
 
 
 def get_pitch_app_status(db_session, pitch_app_id):
