@@ -1,4 +1,6 @@
 """Update bbref_player_id_map.json file."""
+import subprocess
+from getch import pause
 from halo import Halo
 from tabulate import tabulate
 
@@ -17,6 +19,7 @@ class UpdatePlayerIdMap(MenuItem):
         self.menu_item_emoji = EMOJI_DICT.get("TABBED_FILES")
 
     def launch(self):
+        subprocess.run(["clear"])
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = "Updating Player ID map..."
         spinner.start()
@@ -32,4 +35,5 @@ class UpdatePlayerIdMap(MenuItem):
             new_player_ids_table = tabulate(new_player_ids, headers="keys")
             print_message(new_player_ids_table, wrap=False, fg="bright_yellow")
             print()
+        pause(message="Press any key to continue...")
         return Result.Ok(new_player_ids)
