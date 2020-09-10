@@ -108,9 +108,7 @@ class UpdatePlayerTeamMap(Task):
         new_team_map = current_team_map - team_map
         if new_team_map:
             team_map.update(new_team_map)
-        sorted_team_map = sorted(
-            list(team_map), key=lambda x: (x.player_ID, x.year_ID, x.stint_ID)
-        )
+        sorted_team_map = sorted(list(team_map), key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
         self.write_bbref_player_team_map_to_file(sorted_team_map)
         new_team_dicts = [asdict(team_map) for team_map in new_team_map] if new_team_map else None
         return Result.Ok(new_team_dicts)
@@ -148,9 +146,7 @@ class UpdatePlayerTeamMap(Task):
                     for stats in list(stats_list)
                 }
             )
-        sorted_team_map = sorted(
-            list(team_map), key=lambda x: (x.player_ID, x.year_ID, x.stint_ID)
-        )
+        sorted_team_map = sorted(list(team_map), key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
         return set(sorted_team_map)
 
     def write_bbref_player_team_map_to_file(self, new_id_map):

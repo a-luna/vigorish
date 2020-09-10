@@ -24,7 +24,7 @@ SYNC_STATUS_TEXT_COLOR = {
 class SyncScrapedDataNoPrompts:
     def __init__(self, app):
         super().__init__(app)
-        self.s3_sync = SyncScrapedDataTask(self.app)
+        self.s3_sync = SyncScrapedData(self.app)
         self.s3_sync.events.error_occurred += self.error_occurred
         self.s3_sync.events.get_sync_files_start += self.get_sync_files_start
         self.s3_sync.events.get_sync_files_complete += self.get_sync_files_complete

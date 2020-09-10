@@ -235,9 +235,7 @@ class SyncScrapedData(MenuItem):
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinner.start()
         if self.sync_direction == SyncDirection.UP_TO_S3:
-            self.s3_sync.upload_files_to_s3(
-                new_files, update_files, file_type, data_set, self.year
-            )
+            self.s3_sync.upload_files_to_s3(new_files, update_files, file_type, data_set, self.year)
             message = (
                 f"All changes have been applied, MLB {self.year} {data_set} {file_type} files "
                 "in local folder have been synced to s3 bucket!"

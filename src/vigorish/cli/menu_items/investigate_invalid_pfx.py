@@ -357,9 +357,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         subprocess.run(["clear"])
         total_pitch_apps = sum(len(f.keys()) for f in fail_results if f)
         pitch_apps_plural = "pitch appearances" if total_pitch_apps > 1 else "pitch appearance"
-        total_at_bats = sum(
-            len(at_bat_ids) for f in fail_results for at_bat_ids in f.values() if f
-        )
+        total_at_bats = sum(len(at_bat_ids) for f in fail_results for at_bat_ids in f.values() if f)
         at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
         error_header = f"PitchFX data could not be reconciled for game: {self.game_id}\n"
         error_message = (

@@ -237,9 +237,7 @@ class GameScrapeStatus(Base):
             return False
         if not self.scrape_status_pitchfx:
             return False
-        return any(
-            (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
-        )
+        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def pitchfx_is_valid_for_all_pitchfx_logs(self):
