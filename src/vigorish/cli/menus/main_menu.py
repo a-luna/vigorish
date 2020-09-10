@@ -2,14 +2,16 @@
 import subprocess
 
 from halo import Halo
+from tabulate import tabulate
 
 from vigorish.cli.menu import Menu
 from vigorish.cli.menus.all_jobs_menu import AllJobsMenu
-from vigorish.cli.menus.admin_menu import SettingsAdminMenu
+from vigorish.cli.menus.admin_tasks_menu import AdminTasksMenu
+from vigorish.cli.menus.scraped_data_errors_menu import ScrapedDataErrorsMenu
+from vigorish.cli.menus.settings_menu import SettingsMenu
 from vigorish.cli.menu_items.combine_data import CombineGameDataMenuItem
 from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
-from vigorish.cli.menu_items.investigate_failures import InvestigateFailuresMenuItem
 from vigorish.cli.menu_items.status_report import StatusReportMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
 from vigorish.cli.util import print_message, get_random_cli_color, get_random_dots_spinner
@@ -38,6 +40,7 @@ class MainMenu(Menu):
         check_refresh_dict = {
             SetupDBMenuItem: True,
             CombineGameDataMenuItem: True,
+            ScrapedDataErrorsMenu: True,
         }
         selected_menu_item = type(self.selected_menu_item)
         return check_refresh_dict.get(selected_menu_item, False)
@@ -66,7 +69,7 @@ class MainMenu(Menu):
         if self.db_setup_complete:
             self.audit_report = self.scraped_data.get_audit_report()
         spinner.stop()
-        spinner.clear()
+        self.initial_status_check = False
 
     def perform_simple_tasks(self):
         self.node_is_installed = node_is_installed()
@@ -84,13 +87,17 @@ class MainMenu(Menu):
 
     def display_audit_report(self):
         if self.audit_report:
+            table_rows = []
             for year, report in self.audit_report.items():
-                report_str = (
-                    f"MLB {year}: {len(report['scraped'])} Scraped, "
-                    f"{len(report['successful'])} Combined, "
-                    f"{len(report['failed'])+len(report['data_error'])} Failed"
+                row = {}
+                row["season"] = f"MLB {year} ({report['total_games']} games)"
+                row["scraped"] = len(report["scraped"])
+                row["combined"] = len(report["successful"])
+                row["failed"] = (
+                    len(report["failed"]) + len(report["pfx_error"]) + len(report["invalid_pfx"])
                 )
-                print_message(report_str, wrap=False)
+                table_rows.append(row)
+            print_message(tabulate(table_rows, headers="keys"), wrap=False)
         else:
             message = "All prerequisites are installed and database is initialized."
             print_message(message)
@@ -116,20 +123,23 @@ class MainMenu(Menu):
             self.menu_items.remove(main_menu_items["create_job"])
             self.menu_items.remove(main_menu_items["all_jobs"])
             self.menu_items.remove(main_menu_items["status_reports"])
-            self.menu_items.insert(0, SetupDBMenuItem(self.app))
+        else:
+            self.menu_items.remove(main_menu_items["setup_db"])
         if not self.audit_report:
             self.menu_items.remove(main_menu_items["combine_data"])
         if not self.data_failures_exist():
-            self.menu_items.remove(main_menu_items["investigate_failures"])
+            self.menu_items.remove(main_menu_items["scraped_data_errors"])
 
     def get_menu_items(self):
         return {
+            "setup_db": SetupDBMenuItem(self.app),
             "create_job": CreateJobMenuItem(self.app),
             "all_jobs": AllJobsMenu(self.app),
             "combine_data": CombineGameDataMenuItem(self.app, self.audit_report),
-            "investigate_failures": InvestigateFailuresMenuItem(self.app, self.audit_report),
+            "scraped_data_errors": ScrapedDataErrorsMenu(self.app, self.audit_report),
             "status_reports": StatusReportMenuItem(self.app),
-            "settings_admin": SettingsAdminMenu(self.app),
+            "settings": SettingsMenu(self.app),
+            "admin_tasks": AdminTasksMenu(self.app),
             "exit_program": ExitProgramMenuItem(self.app),
         }
 
@@ -139,9 +149,16 @@ class MainMenu(Menu):
             if self.audit_report
             else False
         )
-        data_errors_exist = (
-            any(len(audit_report["data_error"]) > 0 for audit_report in self.audit_report.values())
+        pfx_errors_exist = (
+            any(len(audit_report["pfx_error"]) > 0 for audit_report in self.audit_report.values())
             if self.audit_report
             else False
         )
-        return audit_failures_exist or data_errors_exist
+        invalid_pfx_errors_exist = (
+            any(
+                len(audit_report["invalid_pfx"]) > 0 for audit_report in self.audit_report.values()
+            )
+            if self.audit_report
+            else False
+        )
+        return audit_failures_exist or pfx_errors_exist or invalid_pfx_errors_exist
