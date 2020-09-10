@@ -5,6 +5,19 @@ from aenum import IntFlag
 from aenum import auto as auto_flag
 
 
+class VigFile(IntFlag):
+    """File types that are scraped, created and stored by vigorish."""
+
+    SCRAPED_HTML = auto_flag()
+    PARSED_JSON = auto_flag()
+    COMBINED_GAME_DATA = auto_flag()
+    PATCH_LIST = auto_flag()
+    ALL = SCRAPED_HTML | PARSED_JSON | COMBINED_GAME_DATA | PATCH_LIST
+
+    def __str__(self):
+        return self.name
+
+
 class DataSet(IntFlag):
     """MLB data sets."""
 
@@ -129,17 +142,6 @@ class LocalFileTask(Enum):
     READ_FILE = auto()
     DELETE_FILE = auto()
     DECODE_JSON = auto()
-
-    def __str__(self):
-        return self.name
-
-
-class DocFormat(Enum):
-    """Document formats scraped, created and stored by this program."""
-
-    JSON = auto()
-    HTML = auto()
-    COMBINED = auto()
 
     def __str__(self):
         return self.name

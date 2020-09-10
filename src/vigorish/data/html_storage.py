@@ -1,5 +1,5 @@
 """Functions for reading and writing files."""
-from vigorish.enums import DataSet, DocFormat, LocalFileTask, S3FileTask
+from vigorish.enums import DataSet, VigFile, LocalFileTask, S3FileTask
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id, validate_pitch_app_id
 
@@ -30,10 +30,10 @@ class HtmlStorage:
         return Result.Ok({"local_filepath": local_filepath, "s3_object_key": s3_object_key})
 
     def html_stored_local(self, data_set):
-        return self.file_helper.check_file_stored_local(DocFormat.HTML, data_set)
+        return self.file_helper.check_file_stored_local(VigFile.SCRAPED_HTML, data_set)
 
     def html_stored_s3(self, data_set):
-        return self.file_helper.check_file_stored_s3(DocFormat.HTML, data_set)
+        return self.file_helper.check_file_stored_s3(VigFile.SCRAPED_HTML, data_set)
 
     def save_html_local(self, data_set, url_id, html):
         save_html_local_dict = {
@@ -87,7 +87,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_date,
             scraped_data=html,
         )
@@ -100,7 +100,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_PITCH_LOGS,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_dict["game_date"],
             scraped_data=html,
             pitch_app_id=pitch_app_id,
@@ -114,7 +114,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BROOKS_PITCHFX,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_dict["game_date"],
             scraped_data=html,
             pitch_app_id=pitch_app_id,
@@ -124,7 +124,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_date,
             scraped_data=html,
         )
@@ -137,7 +137,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
             data_set=DataSet.BBREF_BOXSCORES,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_dict["game_date"],
             scraped_data=html,
             bbref_game_id=bbref_game_id,
@@ -147,7 +147,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_date,
         )
 
@@ -159,7 +159,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BROOKS_PITCH_LOGS,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_dict["game_date"],
             pitch_app_id=pitch_app_id,
         )
@@ -172,7 +172,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BROOKS_PITCHFX,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_dict["game_date"],
             pitch_app_id=pitch_app_id,
         )
@@ -181,7 +181,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_date,
         )
 
@@ -193,7 +193,7 @@ class HtmlStorage:
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.READ_FILE,
             data_set=DataSet.BBREF_BOXSCORES,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_dict["game_date"],
             bbref_game_id=bbref_game_id,
         )
@@ -204,7 +204,7 @@ class HtmlStorage:
             return result
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
             game_date=game_date,
         )
@@ -219,7 +219,7 @@ class HtmlStorage:
         game_dict = result.value
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             data_set=DataSet.BROOKS_PITCH_LOGS,
             game_date=game_dict["game_date"],
             pitch_app_id=pitch_app_id,
@@ -235,7 +235,7 @@ class HtmlStorage:
         game_dict = result.value
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             data_set=DataSet.BROOKS_PITCHFX,
             game_date=game_dict["game_date"],
             pitch_app_id=pitch_app_id,
@@ -247,7 +247,7 @@ class HtmlStorage:
             return result
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
             game_date=game_date,
         )
@@ -262,7 +262,7 @@ class HtmlStorage:
         game_dict = result.value
         return self.file_helper.perform_s3_task(
             task=S3FileTask.UPLOAD,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             data_set=DataSet.BBREF_BOXSCORES,
             game_date=game_dict["game_date"],
             bbref_game_id=bbref_game_id,
@@ -273,7 +273,7 @@ class HtmlStorage:
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
             data_set=DataSet.BROOKS_GAMES_FOR_DATE,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_date,
         )
 
@@ -286,7 +286,7 @@ class HtmlStorage:
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
             data_set=DataSet.BROOKS_PITCH_LOGS,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_dict["game_date"],
             pitch_app_id=pitch_app_id,
         )
@@ -299,7 +299,7 @@ class HtmlStorage:
         game_dict = result.value
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             data_set=DataSet.BROOKS_PITCHFX,
             game_date=game_dict["game_date"],
             pitch_app_id=pitch_app_id,
@@ -310,7 +310,7 @@ class HtmlStorage:
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
             data_set=DataSet.BBREF_GAMES_FOR_DATE,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_date,
         )
 
@@ -322,7 +322,11 @@ class HtmlStorage:
         game_dict = result.value
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
-            doc_format=DocFormat.HTML,
+            file_type=VigFile.SCRAPED_HTML,
+            data_set=DataSet.BBREF_BOXSCORES,
+            game_date=game_dict["game_date"],
+            bbref_game_id=bbref_game_id,
+        )
             data_set=DataSet.BBREF_BOXSCORES,
             game_date=game_dict["game_date"],
             bbref_game_id=bbref_game_id,
