@@ -83,6 +83,35 @@ class HtmlStorage:
         }
         return get_html_s3_dict[data_set](url_id)
 
+    def delete_html(self, data_set, url_id):
+        result_local = Result.Ok()
+        result_s3 = Result.Ok()
+        if self.html_stored_local(data_set):
+            result_local = self.delete_html_local(data_set, url_id)
+        if self.html_stored_s3(data_set):
+            result_s3 = self.delete_html_s3(data_set, url_id)
+        return Result.Combine([result_local, result_s3])
+
+    def delete_html_local(self, data_set, url_id):
+        delete_html_local_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.delete_html_brooks_games_for_date_local_file,
+            DataSet.BROOKS_PITCH_LOGS: self.delete_html_brooks_pitch_logs_local_file,
+            DataSet.BROOKS_PITCHFX: self.delete_html_brooks_pitchfx_log_local_file,
+            DataSet.BBREF_GAMES_FOR_DATE: self.delete_html_bbref_games_for_date_local_file,
+            DataSet.BBREF_BOXSCORES: self.delete_html_bbref_boxscore_local_file,
+        }
+        return delete_html_local_dict[data_set](url_id)
+
+    def delete_html_s3(self, data_set, url_id):
+        delete_html_s3_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.delete_html_brooks_games_for_date_s3,
+            DataSet.BROOKS_PITCH_LOGS: self.delete_html_brooks_pitch_logs_s3,
+            DataSet.BROOKS_PITCHFX: self.delete_html_brooks_pitchfx_log_s3,
+            DataSet.BBREF_GAMES_FOR_DATE: self.delete_html_bbref_games_for_date_s3,
+            DataSet.BBREF_BOXSCORES: self.delete_html_bbref_boxscore_s3,
+        }
+        return delete_html_s3_dict[data_set](url_id)
+
     def save_html_brooks_games_for_date_local_file(self, game_date, html):
         return self.file_helper.perform_local_file_task(
             task=LocalFileTask.WRITE_FILE,
@@ -327,7 +356,122 @@ class HtmlStorage:
             game_date=game_dict["game_date"],
             bbref_game_id=bbref_game_id,
         )
+
+    def delete_html_brooks_games_for_date_local_file(self, game_date):
+        """Delete scraped HTML for brooks daily scoreboard page from local folder."""
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.DELETE_FILE,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_date,
+        )
+
+    def delete_html_brooks_games_for_date_s3(self, game_date):
+        """Delete scraped HTML for brooks daily scoreboard page from S3."""
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.DELETE,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_date,
+        )
+
+    def delete_html_bbref_games_for_date_local_file(self, game_date):
+        """Delete scraped HTML for bbref daily scoreboard page from local folder."""
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.DELETE_FILE,
+            data_set=DataSet.BBREF_GAMES_FOR_DATE,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_date,
+        )
+
+    def delete_html_bbref_games_for_date_s3(self, game_date):
+        """Delete scraped HTML for bbref daily scoreboard page from S3."""
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.DELETE,
+            data_set=DataSet.BBREF_GAMES_FOR_DATE,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_date,
+        )
+
+    def delete_html_bbref_boxscore_local_file(self, bbref_game_id):
+        """Delete scraped HTML for bbref boxscore page from local folder."""
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.DELETE_FILE,
             data_set=DataSet.BBREF_BOXSCORES,
+            file_type=VigFile.SCRAPED_HTML,
             game_date=game_dict["game_date"],
             bbref_game_id=bbref_game_id,
+        )
+
+    def delete_html_bbref_boxscore_s3(self, bbref_game_id):
+        """Delete scraped HTML for bbref boxscore page from S3."""
+        result = validate_bbref_game_id(bbref_game_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.DELETE,
+            data_set=DataSet.BBREF_BOXSCORES,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_dict["game_date"],
+            bbref_game_id=bbref_game_id,
+        )
+
+    def delete_html_brooks_pitch_logs_local_file(self, pitch_app_id):
+        """Delete scraped HTML for brooks pitch log page from local folder."""
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.DELETE_FILE,
+            data_set=DataSet.BROOKS_PITCH_LOGS,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
+        )
+
+    def delete_html_brooks_pitch_logs_s3(self, pitch_app_id):
+        """Delete scraped HTML for brooks pitch log page from S3."""
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.DELETE,
+            data_set=DataSet.BROOKS_PITCH_LOGS,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
+        )
+
+    def delete_html_brooks_pitchfx_log_local_file(self, pitch_app_id):
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.DELETE_FILE,
+            data_set=DataSet.BROOKS_PITCHFX,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
+        )
+
+    def delete_html_brooks_pitchfx_log_s3(self, pitch_app_id):
+        """Delete scraped HTML for brooks pitchfx data from s3."""
+        result = validate_pitch_app_id(pitch_app_id)
+        if result.failure:
+            return result
+        game_dict = result.value
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.DELETE,
+            data_set=DataSet.BROOKS_PITCHFX,
+            file_type=VigFile.SCRAPED_HTML,
+            game_date=game_dict["game_date"],
+            pitch_app_id=pitch_app_id,
         )
