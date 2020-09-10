@@ -1,6 +1,6 @@
 """Scrape brooksbaseball daily dashboard page."""
 import uuid
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from string import Template
 
 from lxml import html
@@ -138,7 +138,10 @@ def fix_missing_des(pitchfx_data, pitch_log):
 
 
 def get_pitch_count_by_inning(pitchfx_data):
-    pitch_count_by_inning = defaultdict(int)
+    pitch_count_unordered = defaultdict(int)
     for pfx in pitchfx_data:
-        pitch_count_by_inning[pfx.inning] += 1
-    return pitch_count_by_inning
+        pitch_count_unordered[pfx.inning] += 1
+    pitch_count_ordered = OrderedDict()
+    for k in sorted(pitch_count_unordered.keys()):
+        pitch_count_ordered[k] = pitch_count_unordered[k]
+    return pitch_count_ordered

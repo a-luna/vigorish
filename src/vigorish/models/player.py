@@ -26,7 +26,7 @@ class Player(Base):
     birth_state = Column(String)
     birth_city = Column(String)
     bbref_id = Column(String, index=True)
-    retro_id = Column(String, index=True)
+    retro_id = Column(String, default="")
     mlb_id = Column(Integer, index=True)
     scraped_transactions = Column(Boolean, default=False)
     minor_league_player = Column(Boolean, default=False)

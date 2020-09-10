@@ -2,7 +2,6 @@
 import subprocess
 from abc import ABC, abstractmethod
 from functools import partial
-from pathlib import Path
 from signal import signal, SIGINT
 from sys import exit
 
@@ -10,15 +9,13 @@ from getch import pause
 from halo import Halo
 
 from vigorish.cli.util import print_message
+from vigorish.config.project_paths import NODEJS_SCRIPT
 from vigorish.constants import JOB_SPINNER_COLORS
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.url_tracker import UrlTracker
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import execute_nodejs_script
-
-APP_FOLDER = Path(__file__).parent.parent
-NODEJS_SCRIPT = APP_FOLDER / "nightmarejs" / "scrape_job.js"
 
 
 def user_cancelled(db_session, active_job, spinner, signal_received, frame):

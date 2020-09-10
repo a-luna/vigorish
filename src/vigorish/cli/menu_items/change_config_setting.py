@@ -109,7 +109,7 @@ class ChangeSetttingMenuItem(MenuItem):
         if not self.setting.cannot_be_disabled:
             prompt = f"Enable {self.setting_name_title} (Data Set = {data_set.name})? "
             if not prompt_user_yes_no(prompt):
-                return (prompt, (is_enabled, None, None, None, None))
+                return (prompt, (True, None, None, None, None))
         if prompt_user_yes_no(f"Use random values (Data Set = {data_set.name})? "):
             min_max_are_valid = False
             while not min_max_are_valid:
@@ -135,7 +135,7 @@ class ChangeSetttingMenuItem(MenuItem):
                 )
                 print_message(error, fg="bright_red", bold=True)
                 pause(message="Press any key to continue...")
-            return (prompt, (True, is_random, None, int(random_min), int(random_max)))
+            return (prompt, (True, True, None, int(random_min), int(random_max)))
         else:
             prompt = (
                 f"Enter the value (in {self.setting_units}) for {self.setting_name_title} "
@@ -143,7 +143,7 @@ class ChangeSetttingMenuItem(MenuItem):
             )
             new_value_prompt = Numbers(prompt, word_color=colors.foreground["default"])
             new_value = new_value_prompt.launch()
-            return (prompt, (True, is_random, int(new_value), None, None))
+            return (prompt, (True, False, int(new_value), None, None))
 
     def get_updated_settings(self, prompt_results):
         if self.data_type == ConfigType.ENUM:

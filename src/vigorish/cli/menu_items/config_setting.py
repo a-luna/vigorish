@@ -26,7 +26,7 @@ class ConfigSettingMenuItem(MenuItem):
         print_message(f"{setting_name}\n", fg="bright_magenta", bold=True)
         print_message(f"{self.setting.description}\n")
         print_message(f"{self.current_settings}", wrap=False, fg="bright_yellow", bold=True)
-        if prompt_user_yes_no(prompt="\nChange current setting?"):
+        if prompt_user_yes_no("\nChange current setting?"):
             change_setting_menu = ChangeSetttingMenuItem(self.app, self.setting_name)
             return change_setting_menu.launch()
         return Result.Ok(self.exit_menu)

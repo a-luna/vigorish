@@ -35,6 +35,8 @@ NPM_PACKAGES_INSTALL_ERROR = (
 class JobRunner:
     def __init__(self, db_job, db_session, config, scraped_data):
         self.db_job = db_job
+        self.job_id = self.db_job.id
+        self.job_name = self.db_job.name
         self.data_sets = self.db_job.data_sets
         self.start_date = self.db_job.start_date
         self.end_date = self.db_job.end_date
@@ -106,7 +108,11 @@ class JobRunner:
         subprocess.run(["clear"])
         start_date_str = self.start_date.strftime(DATE_ONLY_2)
         end_date_str = self.end_date.strftime(DATE_ONLY_2)
-        print_message(f"Date Range: {start_date_str}-{end_date_str}", fg="cyan", bold=True)
+        job_name_id = f"Job Name: {self.job_name} (ID: {self.job_id.upper()})"
+        if self.job_name == self.job_id:
+            job_name_id = f"Job ID: {self.job_id.upper()}"
+        job_heading = f"{job_name_id} Date Range: {start_date_str}-{end_date_str}\n"
+        print_message(job_heading, wrap=False, fg="bright_yellow", bold=True, underline=True)
         if not self.task_results:
             return
         for task_result in self.task_results:
@@ -165,10 +171,10 @@ class JobRunner:
         return self.scraped_data.create_all_folderpaths(self.season.year)
 
     def check_url_delay_settings(self):
-        return self.config.check_url_delay_settings(self.db_job.data_sets)
+        return self.config.check_url_delay_settings(self.data_sets)
 
     def s3_bucket_required(self):
-        return self.config.s3_bucket_required(self.db_job.data_sets)
+        return self.config.s3_bucket_required(self.data_sets)
 
     def check_s3_bucket(self):
         return self.scraped_data.check_s3_bucket()
