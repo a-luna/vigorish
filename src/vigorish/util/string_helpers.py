@@ -4,12 +4,14 @@ from datetime import datetime
 
 from rapidfuzz import process
 
+from vigorish.constants import TEAM_ID_DICT
 from vigorish.util.regex import (
     PITCH_APP_REGEX,
     TIMESTAMP_REGEX,
     BBREF_GAME_ID_REGEX,
     BB_GAME_ID_REGEX,
     AT_BAT_ID_REGEX,
+    INNING_LABEL_REGEX,
 )
 from vigorish.util.result import Result
 
@@ -93,21 +95,7 @@ def parse_date(input_str):
 
 
 def get_brooks_team_id(bbref_team_id):
-    bbref_id_to_brooks_id_map = {
-        "CHW": "CHA",
-        "CHC": "CHN",
-        "KCR": "KCA",
-        "LAA": "ANA",
-        "LAD": "LAN",
-        "NYY": "NYA",
-        "NYM": "NYN",
-        "SDP": "SDN",
-        "SFG": "SFN",
-        "STL": "SLN",
-        "TBR": "TBA",
-        "WSN": "WAS",
-    }
-    return bbref_id_to_brooks_id_map.get(bbref_team_id, bbref_team_id)
+    return TEAM_ID_DICT.get(bbref_team_id, bbref_team_id)
 
 
 def parse_timestamp(input):
@@ -159,9 +147,7 @@ def validate_bbref_game_id(input_str):
 
 def validate_bbref_game_id_list(game_ids):
     return [
-        validate_bbref_game_id(gid).value
-        for gid in game_ids
-        if validate_bbref_game_id(gid).success
+        validate_bbref_game_id(gid).value for gid in game_ids if validate_bbref_game_id(gid).success
     ]
 
 
@@ -235,6 +221,11 @@ def validate_at_bat_id(at_bat_id):
     )
     inning_half = "t" if game_dict["home_team_id"] == captured["pitcher_team"] else "b"
     inning_label = f"{inning_half}{captured['inning']}"
+    which_half = "TOP" if inning_label[0] == "t" else "BOT"
+    inning = int(captured["inning"])
+    inning_str = f"{0}{inning}" if inning < 10 else inning
+    inning_id = f'{game_dict["game_id"]}_INN_{which_half}{inning_str}'
+
     at_bat_dict = {
         "at_bat_id": at_bat_id,
         "pitch_app_id": f"{game_dict['game_id']}_{captured['pitcher_mlb_id']}",
@@ -243,6 +234,7 @@ def validate_at_bat_id(at_bat_id):
         "game_number": game_dict["game_number"],
         "away_team_id": away_team_id,
         "home_team_id": game_dict["home_team_id"],
+        "inning_id": inning_id,
         "inning_label": inning_label,
         "inning": captured["inning"],
         "pitcher_team": captured["pitcher_team"],
@@ -264,8 +256,37 @@ def parse_pitch_app_details_from_string(input):
         pitch_app_ids.append(at_bat_data["pitch_app_id"])
     for pitch_app_id in list(set(pitch_app_ids)):
         failed_pitch_app_dict[pitch_app_id] = [
-            at_bat["at_bat_id"]
-            for at_bat in at_bat_dicts
-            if at_bat["pitch_app_id"] == pitch_app_id
+            at_bat["at_bat_id"] for at_bat in at_bat_dicts if at_bat["pitch_app_id"] == pitch_app_id
         ]
     return failed_pitch_app_dict
+
+
+def get_inning_id_from_at_bat_id(at_bat_id):
+    at_bat_dict = validate_at_bat_id(at_bat_id).value
+    inning_label = at_bat_dict["inning_label"]
+    which_half = "TOP" if inning_label[0] == "t" else "BOT"
+    inning = int(at_bat_dict["inning"])
+    inning_str = f"{0}{inning}" if inning < 10 else inning
+    return f'{at_bat_dict["game_id"]}_INN_{which_half}{inning_str}'
+
+
+def inning_number_to_string(inning_str):
+    match = INNING_LABEL_REGEX.search(inning_str)
+    if not match:
+        return Result.Fail(f"inning_str: {inning_str} is invalid")
+    inn_half = match[1]
+    inn_number = match[2]
+    inn_half_str = "top" if inn_half == "TOP" else "bottom"
+    inning_num_map = {
+        "01": "first",
+        "02": "second",
+        "03": "third",
+        "04": "fourth",
+        "05": "fifth",
+        "06": "sixth",
+        "07": "seventh",
+        "08": "eighth",
+        "09": "ninth",
+    }
+    inn_num_str = inning_num_map.get(inn_number, f"{inn_number}th")
+    return f"{inn_half_str} of the {inn_num_str} inning"
