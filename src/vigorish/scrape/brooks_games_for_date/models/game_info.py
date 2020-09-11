@@ -42,6 +42,13 @@ class BrooksGameInfo:
         )
         return game_start_time.replace(tzinfo=tz.gettz(self.time_zone_name))
 
+    @property
+    def all_pitch_app_ids(self):
+        return [
+            f"{self.bbref_game_id}_{pitch_app_id}"
+            for pitch_app_id in self.pitcher_appearance_dict.keys()
+        ]
+
     def as_dict(self):
         """Convert pitcher appearance list/game log links to a dictionary."""
         return dict(

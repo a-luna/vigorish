@@ -2,7 +2,7 @@
 import json
 from collections import ChainMap
 
-from vigorish.util.list_helpers import as_dict_list
+from vigorish.util.list_helpers import as_dict_list, flatten_list2d
 
 
 class BrooksGamesForDate:
@@ -18,6 +18,10 @@ class BrooksGamesForDate:
     def game_id_dict(self):
         dict_list = [g.game_id_dict for g in self.games if not g.might_be_postponed]
         return dict(ChainMap(*dict_list))
+
+    @property
+    def all_pitch_app_ids_for_date(self):
+        return sorted(flatten_list2d([g.all_pitch_app_ids for g in self.games]))
 
     def as_dict(self):
         """Convert daily boxscore URL values to a dictionary."""
