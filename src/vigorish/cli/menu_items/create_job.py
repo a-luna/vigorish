@@ -9,7 +9,6 @@ from vigorish.cli.prompts import prompt_user_yes_no, data_sets_prompt
 from vigorish.cli.util import print_message, validate_scrape_dates
 from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
-from vigorish.enums import DataSet
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
@@ -90,13 +89,13 @@ class CreateJobMenuItem(MenuItem):
         return prompt_user_yes_no(prompt="Are the details above correct?")
 
     def create_new_scrape_job(self, data_sets, start_date, end_date, season, job_name):
-        scrape_job_dict = self.get_scrape_job_dict(
-            selected_data_sets=data_sets.keys(),
-            start_date=start_date,
-            end_date=end_date,
-            season=season,
-        )
-        new_scrape_job = ScrapeJob(**scrape_job_dict)
+        new_job_dict = {
+            "data_sets_int": sum(int(ds) for ds in data_sets.keys()),
+            "start_date": start_date,
+            "end_date": end_date,
+            "season_id": season.id,
+        }
+        new_scrape_job = ScrapeJob(**new_job_dict)
         self.db_session.add(new_scrape_job)
         self.db_session.commit()
         if job_name:
@@ -105,18 +104,3 @@ class CreateJobMenuItem(MenuItem):
             new_scrape_job.name = str(new_scrape_job.id)
         self.db_session.commit()
         return new_scrape_job
-
-    def get_scrape_job_dict(self, selected_data_sets, start_date, end_date, season):
-        scrape_job_dict = {
-            "start_date": start_date,
-            "end_date": end_date,
-            "season_id": season.id,
-        }
-        ds_int = 0
-        for ds in DataSet:
-            if ds == DataSet.ALL:
-                continue
-            if ds in selected_data_sets:
-                ds_int += int(ds)
-        scrape_job_dict["data_sets_int"] = ds_int
-        return scrape_job_dict
