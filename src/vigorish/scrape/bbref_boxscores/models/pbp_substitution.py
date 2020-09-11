@@ -12,11 +12,14 @@ class BBRefInGameSubstitution:
     inning_label: str = ""
     pbp_table_row_number: str = "0"
     sub_description: str = ""
+    incoming_player_name: str = ""
+    outgoing_player_name: str = ""
     incoming_player_id_br: str = ""
     outgoing_player_id_br: str = ""
     incoming_player_pos: str = ""
     outgoing_player_pos: str = ""
     lineup_slot: str = "0"
+    sub_team: str = ""
 
     @property
     def event_type(self):
@@ -39,3 +42,14 @@ class BBRefInGameSubstitution:
 
     def display(self):
         display_dict(self.as_dict())
+
+    def get_sub_team_id(self, away_team_id, home_team_id):
+        if self.inning_label.startswith("t") and "bat" in self.sub_team:
+            return away_team_id
+        elif self.inning_label.startswith("t") and "pitch" in self.sub_team:
+            return home_team_id
+        elif self.inning_label.startswith("b") and "bat" in self.sub_team:
+            return home_team_id
+        elif self.inning_label.startswith("b") and "pitch" in self.sub_team:
+            return away_team_id
+        return None
