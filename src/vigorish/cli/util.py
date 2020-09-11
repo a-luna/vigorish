@@ -4,10 +4,10 @@ from random import randint
 import click
 from getch import pause
 
-from vigorish.config.database import Season
+from vigorish.config.database import Season, PlayerId
 from vigorish.constants import CLI_COLORS
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import wrap_text
+from vigorish.util.string_helpers import wrap_text, validate_at_bat_id
 
 
 def get_random_cli_color():
@@ -15,13 +15,23 @@ def get_random_cli_color():
     return colors[randint(0, len(colors) - 1)]
 
 
+def get_random_bright_cli_color():
+    colors = [
+        "bright_red",
+        "bright_blue",
+        "bright_green",
+        "bright_cyan",
+        "bright_magenta",
+        "bright_yellow",
+    ]
+    return colors[randint(0, len(colors) - 1)]
+
+
 def get_random_dots_spinner():
     return f"dots{randint(2, 9)}"
 
 
-def print_message(
-    message, wrap=True, max_line_len=70, fg=None, bg=None, bold=None, underline=None
-):
+def print_message(message, wrap=True, max_line_len=70, fg=None, bg=None, bold=None, underline=None):
     if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
         fg = None
         bg = None
@@ -38,3 +48,13 @@ def validate_scrape_dates(db_session, start_date, end_date):
         return Result.Fail("")
     season = result.value
     return Result.Ok(season)
+
+
+def describe_at_bat(db_session, at_bat_id):
+    id_dict = PlayerId.get_player_ids_from_at_bat_id(db_session, at_bat_id)
+    at_bat = validate_at_bat_id(at_bat_id).value
+    at_bat["pitcher_bbref_id"] = id_dict["pitcher_id_bbref"]
+    at_bat["pitcher_name"] = id_dict["pitcher_name"]
+    at_bat["batter_bbref_id"] = id_dict["batter_id_bbref"]
+    at_bat["batter_name"] = id_dict["batter_name"]
+    return at_bat
