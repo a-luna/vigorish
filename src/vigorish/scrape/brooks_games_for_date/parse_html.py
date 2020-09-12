@@ -93,8 +93,8 @@ def _is_game_required(game_date, game_time, url, required_game_data):
     result = validate_brooks_game_id(gameinfo.bb_game_id)
     if result.failure:
         return result
-    game_date = result.value["game_date"]
-    if game_date != game_date:
+    game_date_check = result.value["game_date"]
+    if game_date != game_date_check:
         return Result.Fail("Game did not occur on the current date.")
     game_is_required = any(
         [gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data]

@@ -80,7 +80,7 @@ class ConfigSetting:
 
     def current_setting(self, data_set: DataSet):
         return (
-            self.config_dict.get(data_set.ALL.name)
+            self.config_dict.get(DataSet.ALL.name)
             if self.is_same_for_all_data_sets
             else self.config_dict.get(data_set.name)
         )

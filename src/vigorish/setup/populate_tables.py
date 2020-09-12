@@ -6,12 +6,13 @@ from vigorish.setup.populate_players import populate_players
 from vigorish.setup.populate_teams import populate_teams
 
 
-def populate_tables(db_session):
+def populate_tables(app):
+    db_session = app["db_session"]
     result = (
         populate_base_tables(db_session)
         .on_success(populate_seasons, db_session)
         .on_success(populate_status_tables, db_session)
-        .on_success(populate_players, db_session)
+        .on_success(populate_players, app)
         .on_success(populate_teams, db_session)
         .on_success(create_relationships, db_session)
     )

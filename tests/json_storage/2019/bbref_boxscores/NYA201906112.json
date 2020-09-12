@@ -3004,7 +3004,19 @@
       "misc_events": []
     }
   ],
-  "player_id_match_log": [],
+  "player_id_match_log": [
+    {
+      "type": "Fuzzy match",
+      "name": "Luis Guillorme",
+      "team_id": "NYY",
+      "best_match": [
+        "Luis Guillorme",
+        "NYM"
+      ],
+      "id": "guilllu01",
+      "score": 100.0
+    }
+  ],
   "umpires": [
     {
       "field_location": "HP",
@@ -3052,33 +3064,33 @@
     "gagnodr01": "NYM"
   },
   "player_name_dict": {
-    "Jeff McNeil": "mcneije01",
-    "J.D. Davis": "davisjd01",
-    "Juan Lagares": "lagarju01",
-    "Pete Alonso": "alonspe01",
-    "Todd Frazier": "frazito01",
-    "Luis Guillorme": "guilllu01",
-    "Michael Conforto": "confomi01",
-    "Wilson Ramos": "ramoswi01",
-    "Amed Rosario": "rosaram01",
-    "Adeiny Hechavarria": "hechaad01",
-    "Carlos Gomez": "gomezca01",
-    "Jason Vargas": "vargaja01",
-    "Jeurys Familia": "familje01",
-    "Seth Lugo": "lugose01",
-    "Drew Gagnon": "gagnodr01",
-    "DJ LeMahieu": "lemahdj01",
-    "Luke Voit": "voitlu01",
-    "Gary Sanchez": "sanchga02",
-    "Gleyber Torres": "torregl01",
-    "Clint Frazier": "frazicl01",
-    "Gio Urshela": "urshegi01",
-    "Cameron Maybin": "maybica01",
-    "Austin Romine": "rominau01",
-    "Brett Gardner": "gardnbr01",
-    "James Paxton": "paxtoja01",
-    "Chance Adams": "adamsch01",
-    "Luis Cessa": "cessalu01",
-    "Stephen Tarpley": "tarplst01"
+    "Jeff McNeil, NYM": "mcneije01",
+    "J.D. Davis, NYM": "davisjd01",
+    "Juan Lagares, NYM": "lagarju01",
+    "Pete Alonso, NYM": "alonspe01",
+    "Todd Frazier, NYM": "frazito01",
+    "Luis Guillorme, NYM": "guilllu01",
+    "Michael Conforto, NYM": "confomi01",
+    "Wilson Ramos, NYM": "ramoswi01",
+    "Amed Rosario, NYM": "rosaram01",
+    "Adeiny Hechavarria, NYM": "hechaad01",
+    "Carlos Gomez, NYM": "gomezca01",
+    "Jason Vargas, NYM": "vargaja01",
+    "Jeurys Familia, NYM": "familje01",
+    "Seth Lugo, NYM": "lugose01",
+    "Drew Gagnon, NYM": "gagnodr01",
+    "DJ LeMahieu, NYY": "lemahdj01",
+    "Luke Voit, NYY": "voitlu01",
+    "Gary Sanchez, NYY": "sanchga02",
+    "Gleyber Torres, NYY": "torregl01",
+    "Clint Frazier, NYY": "frazicl01",
+    "Gio Urshela, NYY": "urshegi01",
+    "Cameron Maybin, NYY": "maybica01",
+    "Austin Romine, NYY": "rominau01",
+    "Brett Gardner, NYY": "gardnbr01",
+    "James Paxton, NYY": "paxtoja01",
+    "Chance Adams, NYY": "adamsch01",
+    "Luis Cessa, NYY": "cessalu01",
+    "Stephen Tarpley, NYY": "tarplst01"
   }
 }

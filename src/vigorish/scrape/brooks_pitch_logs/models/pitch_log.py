@@ -3,8 +3,6 @@ from datetime import datetime
 
 from dateutil import tz
 
-from vigorish.util.string_helpers import validate_brooks_game_id
-
 
 class BrooksPitchLog:
     """A single pitching appearance scraped from brooksbaseball.com."""

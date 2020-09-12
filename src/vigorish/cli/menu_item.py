@@ -17,7 +17,7 @@ class MenuItem(ABC):
         self.app = app
         self.dotenv = app["dotenv"]
         self.config = app["config"]
-        self.db_engine = app["engine"]
+        self.db_engine = app["db_engine"]
         self.db_session = app["db_session"]
         self.scraped_data = app["scraped_data"]
 

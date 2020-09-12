@@ -11,10 +11,6 @@ from vigorish.status.update_status_brooks_games_for_date import (
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 
-from tests.util import (
-    reset_date_scrape_status_after_parsed_brooks_games_for_date,
-    reset_game_scrape_status_after_parsed_brooks_games_for_date,
-)
 
 DATA_SET = DataSet.BROOKS_GAMES_FOR_DATE
 GAME_DATE = datetime(2018, 4, 17)
@@ -29,9 +25,7 @@ def get_brooks_url_for_date(game_date):
 
 
 def parse_brooks_games_for_date_from_html(db_session, scraped_data):
-    result = scraped_data.get_bbref_games_for_date(GAME_DATE)
-    assert result.success
-    games_for_date = result.value
+    games_for_date = scraped_data.get_bbref_games_for_date(GAME_DATE)
     url = get_brooks_url_for_date(GAME_DATE)
     html_path = scraped_data.get_html(DATA_SET, GAME_DATE)
     page_content = html_path.read_text()
@@ -56,9 +50,7 @@ def test_persist_brooks_games_for_date(db_session, scraped_data):
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "brooks_games_for_date_2018-04-17.json"
-    result = scraped_data.get_brooks_games_for_date(GAME_DATE)
-    assert result.success
-    games_for_date_decoded = result.value
+    games_for_date_decoded = scraped_data.get_brooks_games_for_date(GAME_DATE)
     assert isinstance(games_for_date_decoded, BrooksGamesForDate)
     result = verify_brooks_games_for_date_apr_17_2018(games_for_date_decoded)
     assert result.success
@@ -88,12 +80,12 @@ def test_update_database_brooks_games_for_date(db_session, scraped_data):
     assert result.success
     assert date_status.scraped_daily_dash_brooks == 1
     assert date_status.game_count_brooks == 16
-    assert game_status.game_time_hour == 10
+    assert game_status.game_time_hour == 22
     assert game_status.game_time_minute == 10
     assert game_status.game_time_zone == "America/New_York"
     assert game_status.pitch_app_count_brooks == 15
     reset_date_scrape_status_after_parsed_brooks_games_for_date(db_session, GAME_DATE)
-    reset_game_scrape_status_after_parsed_brooks_games_for_date(db_session, games_for_date)
+    reset_game_scrape_status_after_parsed_brooks_games_for_date(db_session, GAME_DATE)
 
 
 def verify_brooks_games_for_date_apr_17_2018(games_for_date):
@@ -110,7 +102,7 @@ def verify_brooks_games_for_date_apr_17_2018(games_for_date):
     assert game0.game_date_year == 2018
     assert game0.game_date_month == 4
     assert game0.game_date_day == 17
-    assert game0.game_time_hour == 3
+    assert game0.game_time_hour == 15
     assert game0.game_time_minute == 7
     assert game0.time_zone_name == "America/New_York"
     assert game0.bb_game_id == "gid_2018_04_17_kcamlb_tormlb_1"
@@ -140,7 +132,7 @@ def verify_brooks_games_for_date_apr_17_2018(games_for_date):
     assert game8.game_date_year == 2018
     assert game8.game_date_month == 4
     assert game8.game_date_day == 17
-    assert game8.game_time_hour == 7
+    assert game8.game_time_hour == 19
     assert game8.game_time_minute == 35
     assert game8.time_zone_name == "America/New_York"
     assert game8.bb_game_id == "gid_2018_04_17_phimlb_atlmlb_1"
@@ -155,7 +147,7 @@ def verify_brooks_games_for_date_apr_17_2018(games_for_date):
     assert game15.game_date_year == 2018
     assert game15.game_date_month == 4
     assert game15.game_date_day == 17
-    assert game15.game_time_hour == 10
+    assert game15.game_time_hour == 22
     assert game15.game_time_minute == 10
     assert game15.time_zone_name == "America/New_York"
     assert game15.bb_game_id == "gid_2018_04_17_lanmlb_sdnmlb_1"
@@ -197,3 +189,21 @@ def verify_brooks_games_for_date_apr_17_2018(games_for_date):
         "&prevGame=gid_2018_04_17_clemlb_minmlb_1/"
     )
     return Result.Ok()
+
+
+def reset_date_scrape_status_after_parsed_brooks_games_for_date(db_session, game_date):
+    date_status = db_session.query(DateScrapeStatus).get(game_date.strftime(DATE_ONLY_TABLE_ID))
+    setattr(date_status, "scraped_daily_dash_brooks", 0)
+    setattr(date_status, "game_count_brooks", 0)
+    db_session.commit()
+
+
+def reset_game_scrape_status_after_parsed_brooks_games_for_date(db_session, game_date):
+    bbref_game_ids = DateScrapeStatus.get_all_bbref_game_ids_for_date(db_session, game_date)
+    for bbref_game_id in bbref_game_ids:
+        game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
+        setattr(game_status, "game_time_hour", None)
+        setattr(game_status, "game_time_minute", None)
+        setattr(game_status, "game_time_zone", None)
+        setattr(game_status, "pitch_app_count_brooks", 0)
+        db_session.commit()

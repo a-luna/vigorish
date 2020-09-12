@@ -107,4 +107,5 @@ class DataSetCheck(Check):
             margin,
             shift,
         )
-        self.checked = [choice in checked_data_sets.values() for choice in choices]
+        if checked_data_sets:
+            self.checked = [choice in checked_data_sets.values() for choice in choices]

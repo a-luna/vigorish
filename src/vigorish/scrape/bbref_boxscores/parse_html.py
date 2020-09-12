@@ -144,7 +144,7 @@ _INNING_TOTALS_PATTERN = (
     r"(?P<runs>\d{1,2}) (run|runs), "
     r"(?P<hits>\d{1,2}) (hit|hits), "
     r"(?P<errors>\d{1,2}) (error|errors), "
-    r"(?P<left_on_base>\d{1,2}) LOB."
+    r"(?P<left_on_base>-?\d{1,2}) LOB."
     r"(?P<away_team_name>\s\b\w+\b){1,2} "
     r"(?P<away_team_runs>\d{1,2}),"
     r"(?P<home_team_name>\s\b\w+\b){1,2} "
@@ -182,7 +182,12 @@ def parse_bbref_boxscore(scraped_html, url):
     )
 
     player_name_dict = _create_player_name_dict(
-        away_team_bat_table, home_team_bat_table, away_team_pitch_table, home_team_pitch_table,
+        away_team_bat_table,
+        home_team_bat_table,
+        away_team_pitch_table,
+        home_team_pitch_table,
+        away_team_id,
+        home_team_id,
     )
 
     result = _parse_game_meta_info(page_content)
@@ -203,6 +208,9 @@ def parse_bbref_boxscore(scraped_html, url):
     innings_list = result_dict["innings_list"]
     player_id_match_log = result_dict["player_id_match_log"]
     player_team_dict = result_dict["player_team_dict"]
+    player_name_dict = {
+        f"{name}, {team_id}": player_id for (name, team_id), player_id in player_name_dict.items()
+    }
 
     boxscore = BBRefBoxscore(
         boxscore_url=url,
@@ -669,21 +677,26 @@ def _parse_umpires(page_content):
 
 
 def _create_player_name_dict(
-    away_team_bat_table, home_team_bat_table, away_team_pitch_table, home_team_pitch_table,
+    away_team_bat_table,
+    home_team_bat_table,
+    away_team_pitch_table,
+    home_team_pitch_table,
+    away_team_id,
+    home_team_id,
 ):
-    away_team_batter_name_dict = _parse_batter_name_dict(away_team_bat_table)
+    away_team_batter_name_dict = _parse_batter_name_dict(away_team_bat_table, away_team_id)
     if not away_team_batter_name_dict:
         error = "Failed to parse away team batter name dictionary"
         return Result.Fail(error)
-    home_team_batter_name_dict = _parse_batter_name_dict(home_team_bat_table)
+    home_team_batter_name_dict = _parse_batter_name_dict(home_team_bat_table, home_team_id)
     if not home_team_batter_name_dict:
         error = "Failed to parse home team batter name dictionary"
         return Result.Fail(error)
-    away_team_pitcher_name_dict = _parse_pitcher_name_dict(away_team_pitch_table)
+    away_team_pitcher_name_dict = _parse_pitcher_name_dict(away_team_pitch_table, away_team_id)
     if not away_team_pitcher_name_dict:
         error = "Failed to parse away team pitcher name dictionary"
         return Result.Fail(error)
-    home_team_pitcher_name_dict = _parse_pitcher_name_dict(home_team_pitch_table)
+    home_team_pitcher_name_dict = _parse_pitcher_name_dict(home_team_pitch_table, home_team_id)
     if not home_team_pitcher_name_dict:
         error = "Failed to parse home team pitcher name dictionary"
         return Result.Fail(error)
@@ -693,24 +706,26 @@ def _create_player_name_dict(
     return player_name_dict
 
 
-def _parse_batter_name_dict(team_batting_table):
+def _parse_batter_name_dict(team_batting_table, team_id_br):
     batter_ids = team_batting_table.xpath(_BATTER_IDS_XPATH)
     batter_names = team_batting_table.xpath(_BATTER_NAMES_XPATH)
     if not batter_ids or not batter_names:
         return None
     if len(batter_ids) != len(batter_names):
         return None
-    return dict(zip(batter_names, batter_ids))
+    dict_keys = [(name, team_id_br) for name in batter_names]
+    return dict(zip(dict_keys, batter_ids))
 
 
-def _parse_pitcher_name_dict(team_pitching_table):
+def _parse_pitcher_name_dict(team_pitching_table, team_id_br):
     pitcher_ids = team_pitching_table.xpath(_PITCHER_IDS_XPATH)
     pitcher_names = team_pitching_table.xpath(_PITCHER_NAMES_XPATH)
     if not pitcher_ids or not pitcher_names:
         return None
     if len(pitcher_ids) != len(pitcher_names):
         return None
-    return dict(zip(pitcher_names, pitcher_ids))
+    dict_keys = [(name, team_id_br) for name in pitcher_names]
+    return dict(zip(dict_keys, pitcher_ids))
 
 
 def _parse_all_game_events(
@@ -748,20 +763,23 @@ def _parse_all_game_events(
         return Result.Fail(error)
     result_dict = result.value
     in_game_substitutions = result_dict["sub_list"]
-    player_id_match_log.extend(result_dict["player_id_match_log"])
-    if player_id_match_log:
-        unique = {tuple(d.items()) for d in player_id_match_log}
-        player_id_match_log = [dict(t) for t in unique]
 
     misc_events = []
     missing_row_ids = _find_missing_pbp_events(
-        inning_summaries_top, inning_summaries_bottom, play_by_play_events, in_game_substitutions,
+        inning_summaries_top,
+        inning_summaries_bottom,
+        play_by_play_events,
+        in_game_substitutions,
     )
     if missing_row_ids:
         misc_events = _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id)
 
     result = _create_innings_list(
         game_id,
+        away_team_id,
+        home_team_id,
+        player_name_dict,
+        player_id_match_log,
         inning_summaries_top,
         inning_summaries_bottom,
         play_by_play_events,
@@ -771,7 +789,7 @@ def _parse_all_game_events(
     if result.failure:
         error = f"Error occurred constructing inning list:\n{result.error}"
         return Result.Fail(error)
-    innings_list = result.value
+    (innings_list, player_id_match_log) = result.value
     result_dict = dict(
         innings_list=innings_list,
         player_id_match_log=player_id_match_log,
@@ -838,13 +856,13 @@ def _parse_play_by_play(pbp_table, player_id_dict, away_team_id, home_team_id, g
             event_dict["team_pitching_id_br"] = away_team_id
 
         batter = _get_pbp_event_stat_value(pbp_table, "batter", event_num).replace("\xa0", " ")
-        match = _match_player_id(batter, player_id_dict)
+        match = _match_player_id(batter, event_dict["team_batting_id_br"], player_id_dict)
         if match["type"] != "Exact match":
             player_id_match_log.append(match)
         event_dict["batter_id_br"] = match["id"]
 
         pitcher = _get_pbp_event_stat_value(pbp_table, "pitcher", event_num).replace("\xa0", " ")
-        match = _match_player_id(pitcher, player_id_dict)
+        match = _match_player_id(pitcher, event_dict["team_pitching_id_br"], player_id_dict)
         if match["type"] != "Exact match":
             player_id_match_log.append(match)
         event_dict["pitcher_id_br"] = match["id"]
@@ -899,20 +917,24 @@ def _get_pbp_event_stat_value(pbp_table, stat_name, event_number):
     return pbp_value
 
 
-def _match_player_id(name, id_dict):
+def _match_player_id(name, team_id, id_dict):
     match = {}
-    if name in id_dict:
+    if (name, team_id) in id_dict:
         match["type"] = "Exact match"
         match["name"] = name
-        match["id"] = id_dict[name]
+        match["team_id"] = team_id
+        match["id"] = id_dict[(name, team_id)]
         match["score"] = 1
     else:
-        mapped_choices = {player_id: player_name for player_name, player_id in id_dict.items()}
+        mapped_choices = {
+            player_id: player_name for (player_name, team_id), player_id in id_dict.items()
+        }
         best_matches = fuzzy_match(name, mapped_choices)
         player_id = best_matches[0]["result"]
         name_dict = {v: k for k, v in id_dict.items()}
         match["type"] = "Fuzzy match"
         match["name"] = name
+        match["team_id"] = team_id
         match["best_match"] = name_dict[player_id]
         match["id"] = player_id
         match["score"] = best_matches[0]["score"]
@@ -941,7 +963,6 @@ def _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict):
         error = "No in game substitutions found in play-by-play table"
         return Result.Fail(error)
     sub_list = []
-    player_id_match_log = []
     for n in row_numbers:
         row_num = int(n)
         subs_xpath = Template(_T_PBP_IN_GAME_SUBSTITUTION_XPATH).substitute(row=row_num)
@@ -954,28 +975,19 @@ def _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict):
             if result.failure:
                 return result
             sub_dict = result.value
-            result = _get_sub_player_ids(
-                sub_dict["incoming_player_name"],
-                sub_dict["outgoing_player_name"],
-                player_name_dict,
-            )
-            if result.failure:
-                return result
-            id_dict = result.value
-            if id_dict["player_id_match_log"]:
-                player_id_match_log.extend(id_dict["player_id_match_log"])
             substitution = BBRefInGameSubstitution(
                 pbp_table_row_number=row_num,
                 sub_description=sub_dict["description"],
-                outgoing_player_id_br=id_dict["outgoing_player_id_br"],
-                incoming_player_id_br=id_dict["incoming_player_id_br"],
+                incoming_player_name=sub_dict["incoming_player_name"],
+                outgoing_player_name=sub_dict["outgoing_player_name"],
                 incoming_player_pos=sub_dict["incoming_player_pos"],
                 outgoing_player_pos=sub_dict["outgoing_player_pos"],
                 lineup_slot=sub_dict["lineup_slot"],
+                sub_team=sub_dict["sub_team"],
             )
             sub_list.append(substitution)
 
-    result = dict(sub_list=sub_list, player_id_match_log=player_id_match_log)
+    result = dict(sub_list=sub_list)
     return Result.Ok(result)
 
 
@@ -985,8 +997,21 @@ def _parse_substitution_description(sub_description):
     split = None
     pre_split = [s.strip() for s in sub_description.split("(change occurred mid-batter)")]
     sub_description = pre_split[0]
+    if "running at second base to start the extra inning" in sub_description:
+        des = "running at second base to start the extra inning"
+        split = [s.strip() for s in sub_description.split(des)]
+        parsed_sub["incoming_player_name"] = split[0]
+        parsed_sub["incoming_player_pos"] = "PR"
+        parsed_sub["outgoing_player_name"] = "N/A"
+        parsed_sub["outgoing_player_pos"] = "N/A"
+        parsed_sub["lineup_slot"] = 0
+        parsed_sub["sub_team"] = "bat"
+        remaining_description = split[1]
+        if not remaining_description:
+            return Result.Ok(parsed_sub)
     if "replaces" in sub_description:
         split = [s.strip() for s in sub_description.split("replaces")]
+        parsed_sub["sub_team"] = "pitch"
     elif "pinch hit for" and "and is now" in sub_description:
         split = [s.strip() for s in sub_description.split("pinch hit for")]
         parsed_sub["incoming_player_name"] = split[0]
@@ -996,15 +1021,19 @@ def _parse_substitution_description(sub_description):
         parsed_sub["outgoing_player_pos"] = split[0]
         parsed_sub["outgoing_player_name"] = "N/A"
         parsed_sub["lineup_slot"] = 0
+        parsed_sub["sub_team"] = "bat"
         return Result.Ok(parsed_sub)
     elif "pinch hits for" in sub_description:
         parsed_sub["incoming_player_pos"] = "PH"
+        parsed_sub["sub_team"] = "bat"
         split = [s.strip() for s in sub_description.split("pinch hits for")]
     elif "pinch runs for" in sub_description:
         parsed_sub["incoming_player_pos"] = "PR"
+        parsed_sub["sub_team"] = "bat"
         split = [s.strip() for s in sub_description.split("pinch runs for")]
     elif "moves" in sub_description:
         split = [s.strip() for s in sub_description.split("moves")]
+        parsed_sub["sub_team"] = "pitch"
     else:
         error = "Substitution description was in an unrecognized format. (Before first split)"
         return Result.Fail(error)
@@ -1065,6 +1094,7 @@ def _parse_substitution_description(sub_description):
     split4 = None
     if "pitching" in remaining_description:
         parsed_sub["incoming_player_pos"] = "P"
+        parsed_sub["sub_team"] = "pitch"
         split4 = [s.strip() for s in remaining_description.split("pitching")]
         if not split4 or len(split4) != 2:
             error = "Fourth split operation did not produce a list with length=2."
@@ -1097,39 +1127,15 @@ def _parse_substitution_description(sub_description):
     elif "pinch hit" in sub_description:
         parsed_sub["outgoing_player_name"] = remaining_description
         parsed_sub["outgoing_player_pos"] = "PH"
+        parsed_sub["sub_team"] = "bat"
     elif "pinch run" in sub_description:
         parsed_sub["outgoing_player_name"] = remaining_description
         parsed_sub["outgoing_player_pos"] = "PR"
+        parsed_sub["sub_team"] = "bat"
 
     if "outgoing_player_pos" not in parsed_sub:
         parsed_sub["outgoing_player_pos"] = parsed_sub["incoming_player_pos"]
     return Result.Ok(parsed_sub)
-
-
-def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_dict):
-    player_id_match_log = []
-    if outgoing_player_name != "N/A":
-        match = _match_player_id(outgoing_player_name, player_name_dict)
-        outgoing_player_id_br = match["id"]
-        if match["type"] != "Exact match":
-            player_id_match_log.append(match)
-    else:
-        outgoing_player_id_br = "N/A"
-
-    if incoming_player_name != "N/A":
-        match = _match_player_id(incoming_player_name, player_name_dict)
-        incoming_player_id_br = match["id"]
-        if match["type"] != "Exact match":
-            player_id_match_log.append(match)
-    else:
-        incoming_player_id_br = "N/A"
-
-    result = dict(
-        incoming_player_id_br=incoming_player_id_br,
-        outgoing_player_id_br=outgoing_player_id_br,
-        player_id_match_log=player_id_match_log,
-    )
-    return Result.Ok(result)
 
 
 def _find_missing_pbp_events(summaries_begin, summaries_end, game_events, substitutions):
@@ -1167,7 +1173,16 @@ def _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id):
 
 
 def _create_innings_list(
-    game_id, summaries_begin, summaries_end, game_events, substitutions, misc_events
+    game_id,
+    away_team_id,
+    home_team_id,
+    player_name_dict,
+    player_id_match_log,
+    summaries_begin,
+    summaries_end,
+    game_events,
+    substitutions,
+    misc_events,
 ):
     if len(summaries_begin) != len(summaries_end):
         error = "Begin inning and end inning summary list lengths do not match."
@@ -1205,6 +1220,20 @@ def _create_innings_list(
         for sub in inning_substitutions:
             sub.inning_id = inning_id
             sub.inning_label = inning_label
+            sub_team_id = sub.get_sub_team_id(away_team_id, home_team_id)
+            result = _get_sub_player_ids(
+                sub.incoming_player_name,
+                sub.outgoing_player_name,
+                player_name_dict,
+                sub_team_id,
+            )
+            if result.failure:
+                return result
+            id_dict = result.value
+            sub.incoming_player_id_br = id_dict["incoming_player_id_br"]
+            sub.outgoing_player_id_br = id_dict["outgoing_player_id_br"]
+            if id_dict["player_id_match_log"]:
+                player_id_match_log.extend(id_dict["player_id_match_log"])
 
         misc = [
             misc_event
@@ -1236,4 +1265,30 @@ def _create_innings_list(
             inning.home_team_runs_after_inning = inning_totals["home_team_runs"]
 
         innings_list.append(inning)
-    return Result.Ok(innings_list)
+    return Result.Ok((innings_list, player_id_match_log))
+
+
+def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_dict, sub_team_id):
+    player_id_match_log = []
+    if outgoing_player_name != "N/A":
+        match = _match_player_id(outgoing_player_name, sub_team_id, player_name_dict)
+        outgoing_player_id_br = match["id"]
+        if match["type"] != "Exact match":
+            player_id_match_log.append(match)
+    else:
+        outgoing_player_id_br = "N/A"
+
+    if incoming_player_name != "N/A":
+        match = _match_player_id(incoming_player_name, sub_team_id, player_name_dict)
+        incoming_player_id_br = match["id"]
+        if match["type"] != "Exact match":
+            player_id_match_log.append(match)
+    else:
+        incoming_player_id_br = "N/A"
+
+    result = dict(
+        incoming_player_id_br=incoming_player_id_br,
+        outgoing_player_id_br=outgoing_player_id_br,
+        player_id_match_log=player_id_match_log,
+    )
+    return Result.Ok(result)

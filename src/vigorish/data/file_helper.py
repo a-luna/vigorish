@@ -6,15 +6,18 @@ import boto3
 from botocore.exceptions import ClientError
 
 from vigorish.data.json_decoder import (
+    decode_bbref_boxscore,
+    decode_bbref_games_for_date,
     decode_brooks_games_for_date,
     decode_brooks_pitch_logs_for_game,
     decode_brooks_pitchfx_log,
-    decode_bbref_games_for_date,
-    decode_bbref_boxscore,
+    decode_bbref_boxscore_patch_list,
+    decode_bbref_games_for_date_patch_list,
+    decode_brooks_pitchfx_patch_list,
 )
 from vigorish.enums import (
     DataSet,
-    DocFormat,
+    VigFile,
     LocalFileTask,
     S3FileTask,
 )
@@ -49,9 +52,10 @@ class FileHelper:
             if data_set != DataSet.ALL
         }
         return {
-            DocFormat.HTML: html_folderpath_dict,
-            DocFormat.JSON: json_folderpath_dict,
-            DocFormat.COMBINED: {
+            VigFile.SCRAPED_HTML: html_folderpath_dict,
+            VigFile.PARSED_JSON: json_folderpath_dict,
+            VigFile.PATCH_LIST: json_folderpath_dict,
+            VigFile.COMBINED_GAME_DATA: {
                 DataSet.ALL: combined_local_folder.current_setting(data_set=DataSet.ALL)
             },
         }
@@ -72,9 +76,10 @@ class FileHelper:
             if data_set != DataSet.ALL
         }
         return {
-            DocFormat.HTML: html_folderpath_dict,
-            DocFormat.JSON: json_folderpath_dict,
-            DocFormat.COMBINED: {
+            VigFile.SCRAPED_HTML: html_folderpath_dict,
+            VigFile.PARSED_JSON: json_folderpath_dict,
+            VigFile.PATCH_LIST: json_folderpath_dict,
+            VigFile.COMBINED_GAME_DATA: {
                 DataSet.ALL: combined_s3_folder.current_setting(data_set=DataSet.ALL)
             },
         }
@@ -95,20 +100,35 @@ class FileHelper:
             DataSet.BBREF_GAMES_FOR_DATE: self.get_file_name_json_bbref_games_for_date,
             DataSet.BBREF_BOXSCORES: self.get_file_name_json_bbref_boxscore,
         }
+        patch_list_filename_dict = {
+            DataSet.BROOKS_PITCHFX: self.get_file_name_brooks_pitchfx_patch_list,
+            DataSet.BBREF_GAMES_FOR_DATE: self.get_file_name_bbref_games_for_date_patch_list,
+            DataSet.BBREF_BOXSCORES: self.get_file_name_bbref_boxscore_patch_list,
+        }
         return {
-            DocFormat.HTML: html_filename_dict,
-            DocFormat.JSON: json_filename_dict,
-            DocFormat.COMBINED: {DataSet.ALL: self.get_file_name_json_combined_data},
+            VigFile.SCRAPED_HTML: html_filename_dict,
+            VigFile.PARSED_JSON: json_filename_dict,
+            VigFile.PATCH_LIST: patch_list_filename_dict,
+            VigFile.COMBINED_GAME_DATA: {DataSet.ALL: self.get_file_name_json_combined_data},
         }
 
     @property
     def json_decoder_dict(self):
-        return {
+        scraped_data_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: decode_brooks_games_for_date,
             DataSet.BROOKS_PITCH_LOGS: decode_brooks_pitch_logs_for_game,
             DataSet.BROOKS_PITCHFX: decode_brooks_pitchfx_log,
             DataSet.BBREF_GAMES_FOR_DATE: decode_bbref_games_for_date,
             DataSet.BBREF_BOXSCORES: decode_bbref_boxscore,
+        }
+        patch_file_dict = {
+            DataSet.BROOKS_PITCHFX: decode_brooks_pitchfx_patch_list,
+            DataSet.BBREF_GAMES_FOR_DATE: decode_bbref_games_for_date_patch_list,
+            DataSet.BBREF_BOXSCORES: decode_bbref_boxscore_patch_list,
+        }
+        return {
+            VigFile.PARSED_JSON: scraped_data_dict,
+            VigFile.PATCH_LIST: patch_file_dict,
         }
 
     @property
@@ -127,9 +147,10 @@ class FileHelper:
             if data_set != DataSet.ALL
         }
         return {
-            DocFormat.HTML: html_storage_dict,
-            DocFormat.JSON: json_storage_dict,
-            DocFormat.COMBINED: {
+            VigFile.SCRAPED_HTML: html_storage_dict,
+            VigFile.PARSED_JSON: json_storage_dict,
+            VigFile.PATCH_LIST: json_storage_dict,
+            VigFile.COMBINED_GAME_DATA: {
                 DataSet.ALL: combined_storage.current_setting(data_set=DataSet.ALL)
             },
         }
@@ -150,12 +171,12 @@ class FileHelper:
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
-    def check_file_stored_local(self, doc_format, data_set):
-        storage_setting = self.file_storage_dict[doc_format][data_set]
+    def check_file_stored_local(self, file_type, data_set):
+        storage_setting = self.file_storage_dict[file_type][data_set]
         return "LOCAL_FOLDER" in storage_setting.name or "BOTH" in storage_setting.name
 
-    def check_file_stored_s3(self, doc_format, data_set):
-        storage_setting = self.file_storage_dict[doc_format][data_set]
+    def check_file_stored_s3(self, file_type, data_set):
+        storage_setting = self.file_storage_dict[file_type][data_set]
         return "S3_BUCKET" in storage_setting.name or "BOTH" in storage_setting.name
 
     def get_s3_bucket(self):
@@ -169,7 +190,7 @@ class FileHelper:
         self,
         task,
         data_set,
-        doc_format,
+        file_type,
         game_date,
         scraped_data=None,
         bbref_game_id=None,
@@ -179,7 +200,7 @@ class FileHelper:
     ):
         filepath = self.get_local_filepath(
             data_set=data_set,
-            doc_format=doc_format,
+            file_type=file_type,
             game_date=game_date,
             bbref_game_id=bbref_game_id,
             bb_game_id=bb_game_id,
@@ -188,40 +209,45 @@ class FileHelper:
         if task == LocalFileTask.READ_FILE:
             return self.read_local_file(Path(filepath))
         if task == LocalFileTask.WRITE_FILE:
-            return self.write_to_file(doc_format, scraped_data, Path(filepath))
+            return self.write_to_file(file_type, scraped_data, Path(filepath))
         if task == LocalFileTask.DELETE_FILE:
             return self.delete_file(Path(filepath))
         if task == LocalFileTask.DECODE_JSON:
-            return self.decode_json(data_set, Path(filepath))
+            return self.decode_json(file_type, data_set, Path(filepath))
 
     def get_local_filepath(
         self,
         data_set,
-        doc_format,
+        file_type,
         game_date,
         bbref_game_id=None,
         bb_game_id=None,
         pitch_app_id=None,
     ):
-        folderpath = self.get_local_folderpath(doc_format, data_set, game_date)
+        folderpath = self.get_local_folderpath(file_type, data_set, game_date)
         filename = self.get_file_name(
-            data_set, doc_format, game_date, bbref_game_id, bb_game_id, pitch_app_id,
+            data_set,
+            file_type,
+            game_date,
+            bbref_game_id,
+            bb_game_id,
+            pitch_app_id,
         )
         return str(Path(folderpath).joinpath(filename))
 
-    def get_local_folderpath(self, doc_format, data_set, game_date=None, year=None):
+    def get_local_folderpath(self, file_type, data_set, game_date=None, year=None):
         if not game_date and not year:
             error = (
                 "You must provide either the game_date or year argument to construct a folderpath"
             )
             raise ValueError(error)
         year = year if year else game_date.year
-        return self.local_folderpath_dict[doc_format][data_set].resolve(year=year)
+        return self.local_folderpath_dict[file_type][data_set].resolve(year=year)
 
     def get_file_name(
         self,
         data_set,
-        doc_format,
+        file_type,
         game_date,
         bbref_game_id=None,
         bb_game_id=None,
@@ -237,13 +263,13 @@ class FileHelper:
             identifier = game_date
         else:
             raise ValueError("Unable to construct file name.")
-        return self.filename_dict[doc_format][data_set](identifier)
+        return self.filename_dict[file_type][data_set](identifier)
 
     def perform_s3_task(
         self,
         task,
         data_set,
-        doc_format,
+        file_type,
         game_date,
         scraped_data=None,
         bbref_game_id=None,
@@ -252,7 +278,7 @@ class FileHelper:
     ):
         s3_key = self.get_object_key(
             data_set=data_set,
-            doc_format=doc_format,
+            file_type=file_type,
             game_date=game_date,
             bbref_game_id=bbref_game_id,
             bb_game_id=bb_game_id,
@@ -260,7 +286,7 @@ class FileHelper:
         )
         filepath = self.get_local_filepath(
             data_set=data_set,
-            doc_format=doc_format,
+            file_type=file_type,
             game_date=game_date,
             bbref_game_id=bbref_game_id,
             bb_game_id=bb_game_id,
@@ -269,26 +295,26 @@ class FileHelper:
         bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
         if task == S3FileTask.UPLOAD:
             return self.upload_to_s3(
-                doc_format, data_set, scraped_data, bucket_name, s3_key, Path(filepath)
+                file_type, data_set, scraped_data, bucket_name, s3_key, Path(filepath)
             )
         if task == S3FileTask.DOWNLOAD:
-            return self.download_from_s3(doc_format, bucket_name, s3_key, Path(filepath))
+            return self.download_from_s3(file_type, bucket_name, s3_key, Path(filepath))
         if task == S3FileTask.DELETE:
             return self.delete_from_s3(bucket_name, s3_key)
 
     def get_object_key(
         self,
         data_set,
-        doc_format,
+        file_type,
         game_date,
         bbref_game_id=None,
         bb_game_id=None,
         pitch_app_id=None,
     ):
-        folderpath = self.get_s3_folderpath(doc_format, data_set, game_date)
+        folderpath = self.get_s3_folderpath(file_type, data_set, game_date)
         filename = self.get_file_name(
             data_set=data_set,
-            doc_format=doc_format,
+            file_type=file_type,
             game_date=game_date,
             bbref_game_id=bbref_game_id,
             bb_game_id=bb_game_id,
@@ -296,14 +322,14 @@ class FileHelper:
         )
         return f"{folderpath}{filename}"
 
-    def get_s3_folderpath(self, doc_format, data_set, game_date=None, year=None):
+    def get_s3_folderpath(self, file_type, data_set, game_date=None, year=None):
         if not game_date and not year:
             error = (
                 "You must provide either the game_date or year argument to construct a folderpath"
             )
             raise ValueError(error)
         year = year if year else game_date.year
-        return self.s3_folderpath_dict[doc_format][data_set].resolve(year=year)
+        return self.s3_folderpath_dict[file_type][data_set].resolve(year=year)
 
     def get_file_name_html_brooks_games_for_date(self, game_date):
         return f"{game_date.strftime(DATE_ONLY_TABLE_ID)}.html"
@@ -311,11 +337,17 @@ class FileHelper:
     def get_file_name_json_brooks_games_for_date(self, game_date):
         return f"brooks_games_for_date_{game_date.strftime(DATE_ONLY)}.json"
 
+    def get_file_name_brooks_games_for_date_patch_list(self, game_date):
+        return f"brooks_games_for_date_{game_date.strftime(DATE_ONLY)}_PATCH_LIST.json"
+
     def get_file_name_html_brooks_pitch_log(self, pitch_app_id):
         return f"{pitch_app_id}.html"
 
     def get_file_name_json_brooks_pitch_log_for_game(self, bb_game_id):
         return f"{bb_game_id}.json"
+
+    def get_file_name_brooks_pitch_log_for_game_patch_list(self, bb_game_id):
+        return f"{bb_game_id}_PATCH_LIST.json"
 
     def get_file_name_html_brooks_pitchfx(self, pitch_app_id):
         return f"{pitch_app_id}.html"
@@ -323,17 +355,26 @@ class FileHelper:
     def get_file_name_json_brooks_pitchfx(self, pitch_app_id):
         return f"{pitch_app_id}.json"
 
+    def get_file_name_brooks_pitchfx_patch_list(self, bbref_game_id):
+        return f"{bbref_game_id}_PATCH_LIST.json"
+
     def get_file_name_html_bbref_games_for_date(self, game_date):
         return f"{game_date.strftime(DATE_ONLY_TABLE_ID)}.html"
 
     def get_file_name_json_bbref_games_for_date(self, game_date):
         return f"bbref_games_for_date_{game_date.strftime(DATE_ONLY)}.json"
 
+    def get_file_name_bbref_games_for_date_patch_list(self, game_date):
+        return f"bbref_games_for_date_{game_date.strftime(DATE_ONLY)}_PATCH_LIST.json"
+
     def get_file_name_html_bbref_boxscore(self, bbref_game_id):
         return f"{bbref_game_id}.html"
 
     def get_file_name_json_bbref_boxscore(self, bbref_game_id):
         return f"{bbref_game_id}.json"
+
+    def get_file_name_bbref_boxscore_patch_list(self, bbref_game_id):
+        return f"{bbref_game_id}_PATCH_LIST.json"
 
     def get_file_name_json_combined_data(self, bbref_game_id):
         return f"{bbref_game_id}_COMBINED_DATA.json"
@@ -345,11 +386,11 @@ class FileHelper:
             else Result.Fail(f"File not found: {filepath.resolve()}.")
         )
 
-    def write_to_file(self, doc_format, data, filepath):
+    def write_to_file(self, file_type, data, filepath):
         """Write object in json format to file."""
-        if doc_format == DocFormat.JSON:
+        if file_type in [VigFile.PARSED_JSON, VigFile.PATCH_LIST]:
             data = data.as_json()
-        if doc_format == DocFormat.COMBINED:
+        if file_type == VigFile.COMBINED_GAME_DATA:
             data = json.dumps(data, indent=2, sort_keys=False)
         try:
             filepath.write_text(data)
@@ -363,21 +404,21 @@ class FileHelper:
             filepath.unlink()
         return Result.Ok()
 
-    def decode_json(self, data_set, filepath):
-        delete_file = not self.check_file_stored_local(DocFormat.JSON, data_set)
+    def decode_json(self, file_type, data_set, filepath):
+        delete_file = not self.check_file_stored_local(VigFile.PARSED_JSON, data_set)
         try:
             contents = filepath.read_text()
             if delete_file:
                 filepath.unlink()
-            return self.json_decoder_dict[data_set](json.loads(contents))
+            return self.json_decoder_dict[file_type][data_set](json.loads(contents))
         except Exception as e:
             error = f"Error: {repr(e)}"
             return Result.Fail(error)
 
-    def upload_to_s3(self, doc_format, data_set, scraped_data, bucket_name, s3_key, filepath):
-        delete_file = not self.check_file_stored_local(doc_format, data_set)
-        if doc_format == DocFormat.JSON:
-            result = self.write_to_file(doc_format, scraped_data, filepath)
+    def upload_to_s3(self, file_type, data_set, scraped_data, bucket_name, s3_key, filepath):
+        delete_file = not self.check_file_stored_local(file_type, data_set)
+        if file_type == VigFile.PARSED_JSON:
+            result = self.write_to_file(file_type, scraped_data, filepath)
             if result.failure:
                 return result
         try:
@@ -388,10 +429,10 @@ class FileHelper:
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
-    def download_from_s3(self, doc_format, bucket_name, s3_key, filepath):
+    def download_from_s3(self, file_type, bucket_name, s3_key, filepath):
         try:
             self.resource.Bucket(bucket_name).download_file(s3_key, str(filepath))
-            if doc_format == DocFormat.HTML and filepath.stat().st_size < ONE_KB:
+            if file_type == VigFile.SCRAPED_HTML and filepath.stat().st_size < ONE_KB:
                 self.resource.Object(bucket_name, s3_key).delete()
                 filepath.unlink()
                 error = f"Size of file downloaded from S3 is less than 1KB ({s3_key})"

@@ -72,6 +72,18 @@ def add_mlb_seasons(db_session):
                 end_date=date(2019, 10, 30),
                 season_type=SeasonType.POST_SEASON,
             ),
+            Season(
+                year=2020,
+                start_date=date(2020, 7, 23),
+                end_date=date(2020, 9, 27),
+                season_type=SeasonType.REGULAR_SEASON,
+            ),
+            Season(
+                year=2020,
+                start_date=date(2020, 9, 29),
+                end_date=date(2020, 10, 31),
+                season_type=SeasonType.POST_SEASON,
+            ),
         ]
 
         for season in tqdm(

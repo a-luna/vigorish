@@ -5,7 +5,6 @@ from typing import Any
 
 from dateutil import tz
 
-from vigorish.util.string_helpers import validate_brooks_game_id
 from vigorish.util.list_helpers import as_dict_list
 
 

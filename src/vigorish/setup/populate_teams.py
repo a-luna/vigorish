@@ -1,14 +1,65 @@
 """Populate team table with initial data."""
-from pathlib import Path
+from dataclasses import dataclass
 
-import pandas as pd
+from dataclass_csv import accept_whitespaces, DataclassReader
 from tqdm import tqdm
 
+from vigorish.config.project_paths import TEAM_CSV
 from vigorish.models.team import Team
-from vigorish.util.numeric_helpers import sanitize
 from vigorish.util.result import Result
 
-TEAM_CSV_FILE_PATH = Path(__file__).parent / "csv" / "Teams.csv"
+
+@accept_whitespaces
+@dataclass
+class TeamCsvRow:
+    yearID: int = None
+    lgID: str = None
+    teamID: str = None
+    franchID: str = None
+    divID: str = None
+    Rank: int = None
+    G: int = None
+    Ghome: int = None
+    W: int = None
+    L: int = None
+    DivWin: str = None
+    WCWin: str = None
+    LgWin: str = None
+    WSWin: str = None
+    R: int = None
+    AB: int = None
+    H: int = None
+    doubles: int = None
+    triples: int = None
+    HR: int = None
+    BB: int = None
+    SO: int = None
+    SB: int = None
+    CS: int = None
+    HBP: int = None
+    SF: int = None
+    RA: int = None
+    ER: int = None
+    ERA: float = None
+    CG: int = None
+    SHO: int = None
+    SV: int = None
+    IPouts: int = None
+    HA: int = None
+    HRA: int = None
+    BBA: int = None
+    SOA: int = None
+    E: int = None
+    DP: int = None
+    FP: float = None
+    name: str = None
+    park: str = None
+    attendance: int = None
+    BPF: int = None
+    PPF: int = None
+    teamIDBR: str = None
+    teamIDlahman45: str = None
+    teamIDretro: str = None
 
 
 def populate_teams(db_session):
@@ -21,88 +72,57 @@ def populate_teams(db_session):
 
 
 def import_teams_csv(db_session):
+    csv_text = TEAM_CSV.read_text()
+    total_rows = len([row for row in csv_text.split("\n") if row])
     try:
-        df_team = pd.read_csv(
-            TEAM_CSV_FILE_PATH,
-            usecols=[
-                "yearID",
-                "lgID",
-                "teamID",
-                "franchID",
-                "divID",
-                "G",
-                "Ghome",
-                "W",
-                "L",
-                "R",
-                "AB",
-                "H",
-                "2B",
-                "3B",
-                "HR",
-                "BB",
-                "SO",
-                "SB",
-                "CS",
-                "RA",
-                "ER",
-                "SV",
-                "IPouts",
-                "E",
-                "name",
-                "park",
-                "BPF",
-                "PPF",
-                "teamIDBR",
-                "teamIDretro",
-            ],
-        )
-        df_team.columns = df_team.columns.str.strip()
-
-        with tqdm(
-            total=len(df_team),
-            desc="Populating team table........",
-            unit="row",
-            mininterval=0.12,
-            maxinterval=5,
-            unit_scale=True,
-            ncols=90,
-        ) as pbar:
-            for _, row in df_team.iterrows():
-                t = Team(
-                    year=int(sanitize(row["yearID"])),
-                    league=row["lgID"],
-                    team_id=row["teamID"],
-                    franch_id=row["franchID"],
-                    division=row["divID"],
-                    games=int(sanitize(row["G"])),
-                    games_at_home=int(sanitize(row["Ghome"])),
-                    wins=int(sanitize(row["W"])),
-                    losses=int(sanitize(row["L"])),
-                    runs=int(sanitize(row["R"])),
-                    at_bats=int(sanitize(row["AB"])),
-                    hits=int(sanitize(row["H"])),
-                    doubles=int(sanitize(row["2B"])),
-                    triples=int(sanitize(row["3B"])),
-                    homeruns=int(sanitize(row["HR"])),
-                    base_on_balls=int(sanitize(row["BB"])),
-                    strikeouts=int(sanitize(row["SO"])),
-                    stolen_bases=int(sanitize(row["SB"])),
-                    caught_stealing=int(sanitize(row["CS"])),
-                    runs_against=int(sanitize(row["RA"])),
-                    earned_runs=int(sanitize(row["ER"])),
-                    saves=int(sanitize(row["SV"])),
-                    ip_outs=int(sanitize(row["IPouts"])),
-                    errors=int(sanitize(row["E"])),
-                    name=row["name"],
-                    park=row["park"],
-                    batting_park_factor=int(sanitize(row["BPF"])),
-                    pitching_park_factor=int(sanitize(row["PPF"])),
-                    team_id_br=row["teamIDBR"],
-                    team_id_retro=row["teamIDretro"],
-                )
-                db_session.add(t)
-                pbar.update()
+        with open(TEAM_CSV) as team_csv:
+            reader = DataclassReader(team_csv, TeamCsvRow)
+            reader.map("2B").to("doubles")
+            reader.map("3B").to("triples")
+            with tqdm(
+                total=total_rows,
+                desc="Populating team table........",
+                unit="row",
+                mininterval=0.12,
+                maxinterval=5,
+                unit_scale=True,
+                ncols=90,
+            ) as pbar:
+                for row in reader:
+                    t = Team(
+                        year=row.yearID,
+                        league=row.lgID,
+                        team_id=row.teamID,
+                        franch_id=row.franchID,
+                        division=row.divID,
+                        games=row.G,
+                        games_at_home=row.Ghome,
+                        wins=row.W,
+                        losses=row.L,
+                        runs=row.R,
+                        at_bats=row.AB,
+                        hits=row.H,
+                        doubles=row.doubles,
+                        triples=row.triples,
+                        homeruns=row.HR,
+                        base_on_balls=row.BB,
+                        strikeouts=row.SO,
+                        stolen_bases=row.SB,
+                        caught_stealing=row.CS,
+                        runs_against=row.RA,
+                        earned_runs=row.ER,
+                        saves=row.SV,
+                        ip_outs=row.IPouts,
+                        errors=row.E,
+                        name=row.name,
+                        park=row.park,
+                        batting_park_factor=row.BPF,
+                        pitching_park_factor=row.PPF,
+                        team_id_br=row.teamIDBR,
+                        team_id_retro=row.teamIDretro,
+                    )
+                    db_session.add(t)
+                    pbar.update()
         return Result.Ok()
     except Exception as e:
         error = "Error: {error}".format(error=repr(e))

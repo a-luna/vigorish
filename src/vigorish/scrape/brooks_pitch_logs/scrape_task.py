@@ -6,7 +6,7 @@ from vigorish.scrape.scrape_task import ScrapeTaskABC
 from vigorish.status.update_status_brooks_pitch_logs import (
     update_status_brooks_pitch_logs_for_game,
 )
-from vigorish.util.dt_format_strings import DATE_ONLY_2
+from vigorish.util.dt_format_strings import DATE_ONLY_2, DATE_MONTH_NAME
 from vigorish.util.result import Result
 
 
@@ -42,13 +42,15 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
     def parse_scraped_html(self):
         parsed = 0
         for game_date in self.date_range:
-            result = self.scraped_data.get_brooks_games_for_date(game_date)
-            if result.failure:
-                return result
-            brooks_games_for_date = result.value
+            brooks_games_for_date = self.scraped_data.get_brooks_games_for_date(game_date)
+            if not brooks_games_for_date:
+                date_str = game_date.strftime(DATE_MONTH_NAME)
+                return Result.Fail(f"Failed to retrieve {self.data_set} (Date: {date_str})")
             for game in brooks_games_for_date.games:
                 game_id = game.bbref_game_id
                 if game_id not in self.url_tracker.parse_url_ids:
+                    continue
+                if game.might_be_postponed:
                     continue
                 self.spinner.text = self.url_tracker.parse_html_report(parsed, game_id)
                 pitch_logs_for_game = BrooksPitchLogsForGame()

@@ -57,7 +57,10 @@
       "pxold": 0.02,
       "pzold": 3.11,
       "tm_spin": 0,
-      "sb": 0
+      "sb": 0,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:43:40 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -115,7 +118,10 @@
       "pxold": 1.71,
       "pzold": -0.24,
       "tm_spin": 0,
-      "sb": 1
+      "sb": 1,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:43:56 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -173,7 +179,10 @@
       "pxold": 0.27,
       "pzold": 1.55,
       "tm_spin": 0,
-      "sb": 11
+      "sb": 11,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:44:20 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -231,7 +240,10 @@
       "pxold": 0.74,
       "pzold": 2.27,
       "tm_spin": 0,
-      "sb": 12
+      "sb": 12,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:44:39 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -289,7 +301,10 @@
       "pxold": 0.12,
       "pzold": 1.73,
       "tm_spin": 0,
-      "sb": 32
+      "sb": 32,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:46:59 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -347,7 +362,10 @@
       "pxold": 0.3,
       "pzold": 2.6,
       "tm_spin": 0,
-      "sb": 31
+      "sb": 31,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:46:39 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -405,7 +423,10 @@
       "pxold": -0.4,
       "pzold": 1.87,
       "tm_spin": 0,
-      "sb": 21
+      "sb": 21,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:46:14 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -463,7 +484,10 @@
       "pxold": 1.48,
       "pzold": 2.53,
       "tm_spin": 0,
-      "sb": 11
+      "sb": 11,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:45:53 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -521,7 +545,10 @@
       "pxold": 0.13,
       "pzold": 1.18,
       "tm_spin": 0,
-      "sb": 1
+      "sb": 1,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:45:29 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -579,7 +606,10 @@
       "pxold": 0.28,
       "pzold": 2.8,
       "tm_spin": 0,
-      "sb": 0
+      "sb": 0,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:45:15 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -637,7 +667,10 @@
       "pxold": 0.16,
       "pzold": 1.88,
       "tm_spin": 0,
-      "sb": 11
+      "sb": 11,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:48:25 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -695,7 +728,10 @@
       "pxold": 0.04,
       "pzold": 2.52,
       "tm_spin": 0,
-      "sb": 10
+      "sb": 10,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:48:02 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -753,7 +789,10 @@
       "pxold": 2.35,
       "pzold": -0.65,
       "tm_spin": 0,
-      "sb": 0
+      "sb": 0,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:47:40 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -811,7 +850,10 @@
       "pxold": 1.3,
       "pzold": 2.0,
       "tm_spin": 0,
-      "sb": 0
+      "sb": 0,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:49:04 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -869,7 +911,10 @@
       "pxold": 1.41,
       "pzold": 0.47,
       "tm_spin": 0,
-      "sb": 10
+      "sb": 10,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:49:22 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -927,7 +972,10 @@
       "pxold": -1.15,
       "pzold": 3.57,
       "tm_spin": 0,
-      "sb": 20
+      "sb": 20,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:49:54 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -985,7 +1033,10 @@
       "pxold": 2.29,
       "pzold": 1.68,
       "tm_spin": 0,
-      "sb": 30
+      "sb": 30,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:50:17 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -1043,7 +1094,10 @@
       "pxold": -0.06,
       "pzold": 2.34,
       "tm_spin": 0,
-      "sb": 0
+      "sb": 0,
+      "game_start_time_str": "06/11/2019 07:05:00 PM -0400",
+      "time_pitch_thrown_str": "06/11/2019 09:51:04 PM -0400",
+      "has_zone_location": true
     }
   ],
   "pitch_count_by_inning": {
@@ -1057,5 +1111,11 @@
   "opponent_team_id_bb": "NYA",
   "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
   "bbref_game_id": "NYA201906112",
+  "game_date_year": 2019,
+  "game_date_month": 6,
+  "game_date_day": 11,
+  "game_time_hour": 19,
+  "game_time_minute": 5,
+  "time_zone_name": "America/New_York",
   "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=544727&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500"
 }

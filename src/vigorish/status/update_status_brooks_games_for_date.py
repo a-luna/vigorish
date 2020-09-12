@@ -1,4 +1,5 @@
 from vigorish.config.database import DateScrapeStatus, GameScrapeStatus, Season
+from vigorish.enums import DataSet
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 
@@ -36,12 +37,11 @@ def update_status_brooks_games_for_date_list(scraped_data, db_session, scraped_b
     for game_date in scraped_brooks_dates:
         if not season:
             season = Season.find_by_year(db_session, game_date.year)
-        result = scraped_data.get_brooks_games_for_date(game_date)
-        if result.failure:
-            if "Size of file downloaded from S3 is less than 1KB" in result.error:
-                continue
-            return result
-        games_for_date = result.value
+        games_for_date = scraped_data.get_brooks_games_for_date(game_date)
+        if not games_for_date:
+            date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
+            error = f"Failed to retrieve {DataSet.BROOKS_GAMES_FOR_DATE} (URL ID: {date_str})"
+            return Result.Fail(error)
         result = update_date_status_records(db_session, games_for_date, game_date)
         if result.failure:
             return result
@@ -86,7 +86,9 @@ def update_game_status_records(db_session, season, new_brooks_games):
             setattr(game_status, "game_time_minute", brooks_game_info.game_time_minute)
             setattr(game_status, "game_time_zone", brooks_game_info.time_zone_name)
             setattr(
-                game_status, "pitch_app_count_brooks", brooks_game_info.pitcher_appearance_count,
+                game_status,
+                "pitch_app_count_brooks",
+                brooks_game_info.pitcher_appearance_count,
             )
             setattr(game_status, "scrape_status_date_id", date_status.id)
             setattr(game_status, "season_id", season.id)

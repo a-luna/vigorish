@@ -5,6 +5,19 @@ from aenum import IntFlag
 from aenum import auto as auto_flag
 
 
+class VigFile(IntFlag):
+    """File types that are scraped, created and stored by vigorish."""
+
+    SCRAPED_HTML = auto_flag()
+    PARSED_JSON = auto_flag()
+    COMBINED_GAME_DATA = auto_flag()
+    PATCH_LIST = auto_flag()
+    ALL = SCRAPED_HTML | PARSED_JSON | COMBINED_GAME_DATA | PATCH_LIST
+
+    def __str__(self):
+        return self.name
+
+
 class DataSet(IntFlag):
     """MLB data sets."""
 
@@ -73,7 +86,7 @@ class JsonStorageOption(Enum):
 
 
 class CombinedDataStorageOption(Enum):
-    """Allowed values for JSON_STORAGE config setting."""
+    """Allowed values for COMBINED_DATA_STORAGE config setting."""
 
     LOCAL_FOLDER = auto()
     S3_BUCKET = auto()
@@ -134,17 +147,6 @@ class LocalFileTask(Enum):
         return self.name
 
 
-class DocFormat(Enum):
-    """Document formats scraped, created and stored by this program."""
-
-    JSON = auto()
-    HTML = auto()
-    COMBINED = auto()
-
-    def __str__(self):
-        return self.name
-
-
 class JobStatus(IntEnum):
     """Status of a scrape job created by a user."""
 
@@ -156,7 +158,7 @@ class JobStatus(IntEnum):
         return self.name
 
 
-class DefensePosition(Enum):
+class DefensePosition(IntEnum):
     """Defensive positions and position numbers used when scoring a game."""
 
     NONE = 0
@@ -208,6 +210,49 @@ class PlayByPlayEvent(Enum):
     AT_BAT = auto()
     SUBSTITUTION = auto()
     MISC = auto()
+
+    def __str__(self):
+        return self.name
+
+
+class AuditError(Enum):
+    FAILED_TO_COMBINE = auto()
+    PITCHFX_ERROR = auto()
+    INVALID_PITCHFX_DATA = auto()
+
+    def __str__(self):
+        error_type_dict = {
+            "FAILED_TO_COMBINE": "Failed to combine scraped data",
+            "PITCHFX_ERROR": "PitchFX error",
+            "INVALID_PITCHFX_DATA": "Invalid PitchFX data",
+        }
+        return error_type_dict.get(self.name, self.name)
+
+
+class AuditTask(IntEnum):
+    GET_SCRAPED_DATA = 1
+    GET_PLAY_BY_PLAY_DATA = 2
+    GET_PITCHFX_DATA = 3
+    COMBINE_PBP_AND_PFX_DATA = 4
+    UPDATE_BOXSCORE = 5
+
+    def __str__(self):
+        return self.name
+
+
+class PatchType(Enum):
+    CHANGE_BBREF_GAME_ID = auto()
+    CHANGE_PITCH_SEQUENCE = auto()
+    CHANGE_BATTER_ID = auto()
+    CHANGE_PITCHER_ID = auto()
+
+    def __str__(self):
+        return self.name
+
+
+class SyncDirection(Enum):
+    UP_TO_S3 = auto()
+    DOWN_TO_LOCAL = auto()
 
     def __str__(self):
         return self.name

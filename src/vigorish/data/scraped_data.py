@@ -7,23 +7,22 @@ from vigorish.config.database import (
     GameScrapeStatus,
     PitchAppScrapeStatus,
     Season,
+    Season_Game_PitchApp_View as Season_View,
 )
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
 from vigorish.data.util import calc_pitch_metrics, process_data_set
-from vigorish.data.process.combine_scraped_data import CombineScrapedData
-from vigorish.enums import DataSet, DocFormat
+from vigorish.tasks.combine_scraped_data import CombineScrapedData
+from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
-from vigorish.util.dt_format_strings import DT_AWARE, DATE_ONLY_2
-from vigorish.util.numeric_helpers import trim_data_set
 from vigorish.util.regex import URL_ID_REGEX, URL_ID_CONVERT_REGEX
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import validate_bbref_game_id
 
 
 class ScrapedData:
-    def __init__(self, db_session, config):
+    def __init__(self, db_engine, db_session, config):
+        self.db_engine = db_engine
         self.db_session = db_session
         self.config = config
         self.file_helper = FileHelper(config)
@@ -31,8 +30,11 @@ class ScrapedData:
         self.json_storage = JsonStorage(config, self.file_helper)
         self.combine_data = CombineScrapedData(db_session)
 
-    def get_local_folderpath(self, doc_format, data_set, year):
-        return self.file_helper.local_folderpath_dict[doc_format][data_set].resolve(year=year)
+    def get_local_folderpath(self, file_type, data_set, year):
+        return self.file_helper.local_folderpath_dict[file_type][data_set].resolve(year=year)
+
+    def get_s3_folderpath(self, file_type, data_set, year):
+        return self.file_helper.s3_folderpath_dict[file_type][data_set].resolve(year=year)
 
     def check_s3_bucket(self):
         return self.file_helper.check_s3_bucket()
@@ -49,38 +51,44 @@ class ScrapedData:
     def get_html(self, data_set, url_id):
         return self.html_storage.get_html(data_set, url_id)
 
+    def delete_html(self, data_set, url_id):
+        return self.html_storage.delete_html(data_set, url_id)
+
     def save_json(self, data_set, parsed_data):
         return self.json_storage.save_json(data_set, parsed_data)
 
+    def get_json(self, data_set, url_id):
+        return self.json_storage.get_json(data_set, url_id)
+
+    def get_scraped_data(self, data_set, url_id):
+        return self.json_storage.get_scraped_data(data_set, url_id)
+
+    def save_patch_list(self, data_set, patch_list):
+        return self.json_storage.save_patch_list(data_set, patch_list)
+
+    def get_patch_list(self, data_set, url_id):
+        return self.json_storage.get_patch_list(data_set, url_id)
+
+    def apply_patch_list(self, data_set, url_id, scraped_data, boxscore=None):
+        patch_list = self.get_patch_list(data_set, url_id)
+        if not patch_list:
+            return Result.Ok(scraped_data)
+        return patch_list.apply(scraped_data, self.db_session, boxscore)
+
     def get_brooks_games_for_date(self, game_date):
-        result = self.json_storage.decode_json_brooks_games_for_date_local_file(game_date)
-        if result.success:
-            return result
-        return self.json_storage.decode_json_brooks_games_for_date_s3(game_date)
+        return self.json_storage.get_scraped_data(DataSet.BROOKS_GAMES_FOR_DATE, game_date)
 
     def get_brooks_pitch_logs_for_game(self, bb_game_id):
-        result = self.json_storage.decode_json_brooks_pitch_logs_for_game_local_file(bb_game_id)
-        if result.success:
-            return result
-        return self.json_storage.decode_json_brooks_pitch_logs_for_game_s3(bb_game_id)
+        return self.json_storage.get_scraped_data(DataSet.BROOKS_PITCH_LOGS, bb_game_id)
 
     def get_brooks_pitchfx_log(self, pitch_app_id):
-        result = self.json_storage.decode_json_brooks_pitchfx_log_local_file(pitch_app_id)
-        if result.success:
-            return result
-        return self.json_storage.decode_json_brooks_pitchfx_log_s3(pitch_app_id)
+        return self.json_storage.get_scraped_data(DataSet.BROOKS_PITCHFX, pitch_app_id)
 
     def get_bbref_games_for_date(self, game_date):
-        result = self.json_storage.decode_json_bbref_games_for_date_local_file(game_date)
-        if result.success:
-            return result
-        return self.json_storage.decode_json_bbref_games_for_date_s3(game_date)
+        return self.json_storage.get_scraped_data(DataSet.BBREF_GAMES_FOR_DATE, game_date)
 
     def get_bbref_boxscore(self, bbref_game_id):
-        result = self.json_storage.decode_json_bbref_boxscore_local_file(bbref_game_id)
-        if result.success:
-            return result
-        return self.json_storage.decode_json_bbref_boxscore_s3(bbref_game_id)
+        return self.json_storage.get_scraped_data(DataSet.BBREF_BOXSCORES, bbref_game_id)
 
     def save_json_combined_data(self, combined_data):
         return self.json_storage.save_json_combined_data(combined_data)
@@ -104,23 +112,14 @@ class ScrapedData:
         p_app_ids = PitchAppScrapeStatus.get_all_scraped_pitch_app_ids_for_game_with_pitchfx_data(
             self.db_session, bbref_game_id
         )
-        fetch_tasks = [self.get_brooks_pitchfx_log(pitch_app_id) for pitch_app_id in p_app_ids]
-        task_failed = any(result.failure for result in fetch_tasks)
-        if task_failed:
-            s3_errors = "\n".join(
-                [f"Error: {result.error}" for result in fetch_tasks if result.failure]
-            )
-            error = (
-                "The following errors occurred attempting to retrieve all pitchfx logs for game "
-                f"{bbref_game_id}:\n{s3_errors}"
-            )
-            return Result.Fail(error)
-        pitchfx_logs = [result.value for result in fetch_tasks]
+        pitchfx_logs = [self.get_brooks_pitchfx_log(pitch_app_id) for pitch_app_id in p_app_ids]
+        if any(not pfx_log for pfx_log in pitchfx_logs):
+            return Result.Fail(f"Failed to retrieve all pitchfx logs for game {bbref_game_id}")
         return Result.Ok(pitchfx_logs)
 
     def get_all_brooks_dates_scraped_html(self, year):
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_GAMES_FOR_DATE, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BROOKS_GAMES_FOR_DATE, year=year
         )
         scraped_dates = [
             Path(obj.key).stem
@@ -131,10 +130,10 @@ class ScrapedData:
 
     def get_all_brooks_dates_scraped(self, year):
         json_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.JSON, data_set=DataSet.BROOKS_GAMES_FOR_DATE, year=year
+            file_type=VigFile.PARSED_JSON, data_set=DataSet.BROOKS_GAMES_FOR_DATE, year=year
         )
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_GAMES_FOR_DATE, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BROOKS_GAMES_FOR_DATE, year=year
         )
         scraped_dates = [
             parser.parse(Path(obj.key).stem[-10:])
@@ -145,7 +144,7 @@ class ScrapedData:
 
     def get_all_brooks_pitch_logs_scraped_html(self, year):
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_PITCH_LOGS, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BROOKS_PITCH_LOGS, year=year
         )
         scraped_gameids = [
             Path(obj.key).stem
@@ -156,10 +155,10 @@ class ScrapedData:
 
     def get_all_scraped_brooks_game_ids(self, year):
         json_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.JSON, data_set=DataSet.BROOKS_PITCH_LOGS, year=year
+            file_type=VigFile.PARSED_JSON, data_set=DataSet.BROOKS_PITCH_LOGS, year=year
         )
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_PITCH_LOGS, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BROOKS_PITCH_LOGS, year=year
         )
         scraped_gameids = [
             Path(obj.key).stem
@@ -170,7 +169,7 @@ class ScrapedData:
 
     def get_all_pitchfx_pitch_app_ids_scraped_html(self, year):
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_PITCHFX, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BROOKS_PITCHFX, year=year
         )
         scraped_pitch_app_ids = [
             Path(obj.key).stem
@@ -181,10 +180,10 @@ class ScrapedData:
 
     def get_all_scraped_pitchfx_pitch_app_ids(self, year):
         json_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.JSON, data_set=DataSet.BROOKS_PITCHFX, year=year
+            file_type=VigFile.PARSED_JSON, data_set=DataSet.BROOKS_PITCHFX, year=year
         )
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BROOKS_PITCHFX, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BROOKS_PITCHFX, year=year
         )
         scraped_pitch_app_ids = [
             Path(obj.key).stem
@@ -195,7 +194,7 @@ class ScrapedData:
 
     def get_all_bbref_dates_scraped_html(self, year):
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BBREF_GAMES_FOR_DATE, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BBREF_GAMES_FOR_DATE, year=year
         )
         scraped_dates = [
             Path(obj.key).stem
@@ -206,10 +205,10 @@ class ScrapedData:
 
     def get_all_bbref_dates_scraped(self, year):
         json_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.JSON, data_set=DataSet.BBREF_GAMES_FOR_DATE, year=year
+            file_type=VigFile.PARSED_JSON, data_set=DataSet.BBREF_GAMES_FOR_DATE, year=year
         )
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BBREF_GAMES_FOR_DATE, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BBREF_GAMES_FOR_DATE, year=year
         )
         scraped_dates = [
             parser.parse(Path(obj.key).stem[-10:])
@@ -220,7 +219,7 @@ class ScrapedData:
 
     def get_all_bbref_game_ids_scraped_html(self, year):
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BBREF_BOXSCORES, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BBREF_BOXSCORES, year=year
         )
         scraped_game_ids = [
             Path(obj.key).stem
@@ -231,10 +230,10 @@ class ScrapedData:
 
     def get_all_scraped_bbref_game_ids(self, year):
         json_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.JSON, data_set=DataSet.BBREF_BOXSCORES, year=year
+            file_type=VigFile.PARSED_JSON, data_set=DataSet.BBREF_BOXSCORES, year=year
         )
         html_folder = self.file_helper.get_s3_folderpath(
-            doc_format=DocFormat.HTML, data_set=DataSet.BBREF_BOXSCORES, year=year
+            file_type=VigFile.SCRAPED_HTML, data_set=DataSet.BBREF_BOXSCORES, year=year
         )
         scraped_game_ids = [
             Path(obj.key).stem
@@ -244,59 +243,87 @@ class ScrapedData:
         return Result.Ok(scraped_game_ids)
 
     def get_audit_report(self):
-        scraped = self.get_all_bbref_game_ids_eligible_for_audit()
-        successful = self.get_all_bbref_game_ids_all_pitchfx_logs_are_valid()
-        failed = self.get_all_bbref_game_ids_combined_data_fail()
-        data_error = self.get_all_bbref_game_ids_pitchfx_data_error()
+        all_seasons = Season.all_regular_seasons(self.db_session)
+        total_games = self.get_total_games_for_all_seasons(all_seasons)
+        scraped = self.get_all_bbref_game_ids_eligible_for_audit(all_seasons)
+        successful = self.get_all_bbref_game_ids_all_pitchfx_logs_are_valid(all_seasons)
+        failed = self.get_all_bbref_game_ids_combined_data_fail(all_seasons)
+        pfx_error = self.get_all_bbref_game_ids_pitchfx_error(all_seasons)
+        invalid_pfx = self.get_all_bbref_game_ids_invalid_pitchfx(all_seasons)
         mlb_seasons = list(
             set(
                 list(scraped.keys())
                 + list(successful.keys())
                 + list(failed.keys())
-                + list(data_error.keys())
+                + list(pfx_error.keys())
+                + list(invalid_pfx.keys())
             )
         )
         return {
             year: {
+                "total_games": total_games[year],
                 "scraped": scraped[year],
                 "successful": successful[year],
                 "failed": failed[year],
-                "data_error": data_error[year],
+                "pfx_error": pfx_error[year],
+                "invalid_pfx": invalid_pfx[year],
             }
             for year in mlb_seasons
-            if scraped[year] or successful[year] or failed[year] or data_error[year]
+            if scraped[year]
+            or successful[year]
+            or failed[year]
+            or pfx_error[year]
+            or invalid_pfx[year]
         }
 
-    def get_all_bbref_game_ids_eligible_for_audit(self):
+    def get_total_games_for_all_seasons(self, all_seasons):
+        return {s.year: s.total_games for s in all_seasons}
+
+    def get_all_bbref_game_ids_eligible_for_audit(self, all_seasons):
         return {
-            s.year: s.get_all_bbref_game_ids_eligible_for_audit()
-            for s in Season.all_regular_seasons(self.db_session)
+            s.year: Season_View.get_all_bbref_game_ids_eligible_for_audit(self.db_engine, s.year)
+            for s in all_seasons
         }
 
-    def get_all_bbref_game_ids_combined_data_fail(self):
+    def get_all_bbref_game_ids_combined_data_fail(self, all_seasons):
+        return {s.year: s.get_all_bbref_game_ids_combined_data_fail() for s in all_seasons}
+
+    def get_all_bbref_game_ids_pitchfx_error(self, all_seasons):
         return {
-            s.year: s.get_all_bbref_game_ids_combined_data_fail()
-            for s in Season.all_regular_seasons(self.db_session)
+            s.year: Season_View.get_all_bbref_game_ids_pitchfx_error(self.db_engine, s.year)
+            for s in all_seasons
         }
 
-    def get_all_bbref_game_ids_pitchfx_data_error(self):
+    def get_all_bbref_game_ids_invalid_pitchfx(self, all_seasons):
         return {
-            s.year: s.get_all_bbref_game_ids_pitchfx_data_error()
-            for s in Season.all_regular_seasons(self.db_session)
+            s.year: Season_View.get_all_bbref_game_ids_invalid_pitchfx(self.db_engine, s.year)
+            for s in all_seasons
         }
 
-    def get_all_bbref_game_ids_all_pitchfx_logs_are_valid(self):
+    def get_all_bbref_game_ids_all_pitchfx_logs_are_valid(self, all_seasons):
         return {
-            s.year: s.get_all_bbref_game_ids_all_pitchfx_logs_are_valid()
-            for s in Season.all_regular_seasons(self.db_session)
+            s.year: Season_View.get_all_bbref_game_ids_all_pitchfx_logs_are_valid(
+                self.db_engine, s.year
+            )
+            for s in all_seasons
         }
 
-    def get_scraped_ids_from_local_folder(self, doc_format, data_set, year):
-        folderpath = self.get_local_folderpath(doc_format, data_set, year)
+    def get_scraped_ids_from_local_folder(self, file_type, data_set, year):
+        folderpath = self.get_local_folderpath(file_type, data_set, year)
         url_ids = [file.stem for file in Path(folderpath).glob("*.*")]
-        return self.validate_url_ids(doc_format, data_set, url_ids)
+        return self.validate_url_ids(file_type, data_set, url_ids)
 
-    def get_scraped_ids_from_s3(self, doc_format, data_set, year):
+    def get_scraped_ids_from_database(self, data_set, year):
+        get_scraped_ids_from_db_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.get_all_brooks_dates_scraped,
+            DataSet.BROOKS_PITCH_LOGS: self.get_all_scraped_brooks_game_ids,
+            DataSet.BROOKS_PITCHFX: self.get_all_scraped_pitchfx_pitch_app_ids,
+            DataSet.BBREF_GAMES_FOR_DATE: self.get_all_bbref_dates_scraped,
+            DataSet.BBREF_BOXSCORES: self.get_all_scraped_bbref_game_ids,
+        }
+        return get_scraped_ids_from_db_dict[data_set](year)
+
+    def get_scraped_ids_from_s3(self, file_type, data_set, year):
         scraped_html_s3_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.get_all_brooks_dates_scraped_html,
             DataSet.BROOKS_PITCH_LOGS: self.get_all_brooks_pitch_logs_scraped_html,
@@ -305,17 +332,17 @@ class ScrapedData:
             DataSet.BBREF_BOXSCORES: self.get_all_bbref_game_ids_scraped_html,
         }
         url_ids = scraped_html_s3_dict[data_set](year)
-        return self.validate_url_ids(doc_format, data_set, url_ids)
+        return self.validate_url_ids(file_type, data_set, url_ids)
 
-    def validate_url_ids(self, doc_format, data_set, url_ids):
-        url_ids = [uid for uid in url_ids if URL_ID_REGEX[doc_format][data_set].search(uid)]
-        url_ids = self.convert_url_ids(doc_format, data_set, url_ids)
+    def validate_url_ids(self, file_type, data_set, url_ids):
+        url_ids = [uid for uid in url_ids if URL_ID_REGEX[file_type][data_set].search(uid)]
+        url_ids = self.convert_url_ids(file_type, data_set, url_ids)
         return sorted(url_ids)
 
-    def convert_url_ids(self, doc_format, data_set, url_ids):
-        if data_set not in URL_ID_CONVERT_REGEX[doc_format]:
+    def convert_url_ids(self, file_type, data_set, url_ids):
+        if data_set not in URL_ID_CONVERT_REGEX[file_type]:
             return url_ids
-        convert_regex = URL_ID_CONVERT_REGEX[doc_format][data_set]
+        convert_regex = URL_ID_CONVERT_REGEX[file_type][data_set]
         converted_url_ids = []
         for url_id in url_ids:
             match = convert_regex.search(url_id)
@@ -333,54 +360,83 @@ class ScrapedData:
             converted_url_ids.append(game_date)
         return converted_url_ids
 
-    def get_cached_avg_pitch_times(self):
+    def get_avg_pitch_times(self, use_cached=True):
+        return self.cached_avg_pitch_times() if use_cached else self.calculate_avg_pitch_times()
+
+    def cached_avg_pitch_times(self):
         return {
             "pitch_metrics": {
-                "total": 3903840.0,
-                "count": 158291,
-                "avg": 25.0,
-                "max": 77.0,
-                "min": 1.0,
-                "range": 76.0,
+                "total": 15891882.0,
+                "count": 665238,
+                "avg": 23.9,
+                "max": 49.0,
+                "min": 3.0,
+                "range": 46.0,
+                "trim": True,
+                "trim_stdev": 0.2,
+            },
+            "at_bat_metrics": {
+                "total": 6794841.0,
+                "count": 158161,
+                "avg": 43.0,
+                "max": 79.0,
+                "min": 28.0,
+                "range": 51.0,
+                "trim": True,
+                "trim_stdev": 0.25,
             },
             "inning_metrics": {
-                "total": 1843148.0,
-                "count": 11837,
-                "avg": 156.0,
-                "max": 242.0,
-                "min": 92.0,
-                "range": 150.0,
+                "total": 8063474.0,
+                "count": 50328,
+                "avg": 160.2,
+                "max": 310.0,
+                "min": 131.0,
+                "range": 179.0,
+                "trim": True,
+                "trim_stdev": 0.007,
             },
         }
 
     def calculate_avg_pitch_times(self):
-        game_ids = PitchAppScrapeStatus.get_bbref_game_ids_all_missing_pfx_is_valid(
-            self.db_session
-        )
+        game_ids = Season_View.get_all_bbref_game_ids_combined_no_missing_pfx(self.db_engine)
         pitch_samples = []
+        at_bat_samples = []
         inning_samples = []
         for bbref_game_id in game_ids:
             combined_data = self.get_json_combined_data(bbref_game_id)
             if not combined_data:
                 continue
-            (game_pitch_samples, _, game_inning_samples, _,) = calc_pitch_metrics(combined_data)
-            pitch_samples.extend(game_pitch_samples)
-            inning_samples.extend(game_inning_samples)
-        pitch_metrics = process_data_set(pitch_samples, trim=True, st_dev=0.5)
-        inning_metrics = process_data_set(inning_samples, trim=True, st_dev=0.5)
-        return {"pitch_metrics": pitch_metrics, "inning_metrics": inning_metrics}
+            result = calc_pitch_metrics(combined_data)
+            pitch_samples.extend(result[0])
+            at_bat_samples.extend(result[2])
+            inning_samples.extend(result[4])
+        return {
+            "pitch_metrics": process_data_set(pitch_samples, trim=True, st_dev=0.2),
+            "at_bat_metrics": process_data_set(at_bat_samples, trim=True, st_dev=0.25),
+            "inning_metrics": process_data_set(inning_samples, trim=True, st_dev=0.007),
+        }
 
-    def combine_boxscore_and_pfx_data(self, bbref_game_id):
+    def combine_boxscore_and_pfx_data(self, bbref_game_id, apply_patches=True, write_json=True):
         game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, bbref_game_id)
-        result = self.get_bbref_boxscore(bbref_game_id)
-        if result.failure:
-            return {"gather_scraped_data_success": False, "error": result.error}
-        boxscore = result.value
+        boxscore = self.get_bbref_boxscore(bbref_game_id)
+        if apply_patches:
+            result = self.apply_patch_list(DataSet.BBREF_BOXSCORES, bbref_game_id, boxscore)
+            if result.failure:
+                return {"gather_scraped_data_success": False, "error": result.error}
+            boxscore = result.value
         result = self.get_all_pitchfx_logs_for_game(bbref_game_id)
         if result.failure:
             return {"gather_scraped_data_success": False, "error": result.error}
-        pitchfx_logs = result.value
-        result = self.combine_data.execute(game_status, boxscore, pitchfx_logs)
+        pfx_logs = result.value
+        if apply_patches:
+            result = self.apply_patch_list(
+                DataSet.BROOKS_PITCHFX, bbref_game_id, pfx_logs, boxscore
+            )
+            if result.failure:
+                return {"gather_scraped_data_success": False, "error": result.error}
+            pfx_logs = result.value
+        avg_pitch_times = self.get_avg_pitch_times()
+        result = self.combine_data.execute(game_status, boxscore, pfx_logs, avg_pitch_times)
         if result.failure:
             setattr(game_status, "combined_data_success", 0)
             setattr(game_status, "combined_data_fail", 1)
@@ -394,7 +450,8 @@ class ScrapedData:
         setattr(game_status, "combined_data_fail", 0)
         self.db_session.commit()
         combined_data = result.value
-        result = self.save_json_combined_data(combined_data)
+        if write_json:
+            result = self.save_json_combined_data(combined_data)
         if result.failure:
             return result
         result = update_pitch_apps_for_game_combined_data(self.db_session, combined_data)
@@ -414,7 +471,11 @@ class ScrapedData:
 
     def investigate_errors(self, bbref_game_id):
         game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, bbref_game_id)
-        result = self.get_bbref_boxscore(bbref_game_id)
+        boxscore = self.get_bbref_boxscore(bbref_game_id)
+        if not boxscore:
+            error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {bbref_game_id})"
+            return {"gather_scraped_data_success": False, "error": error}
+        result = self.apply_patch_list(DataSet.BBREF_BOXSCORES, bbref_game_id, boxscore)
         if result.failure:
             return {"gather_scraped_data_success": False, "error": result.error}
         boxscore = result.value
@@ -422,7 +483,14 @@ class ScrapedData:
         if result.failure:
             return {"gather_scraped_data_success": False, "error": result.error}
         pitchfx_logs = result.value
-        return self.combine_data.investigate(game_status, boxscore, pitchfx_logs)
+        result = self.apply_patch_list(
+            DataSet.BROOKS_PITCHFX, bbref_game_id, pitchfx_logs, boxscore
+        )
+        if result.failure:
+            return {"gather_scraped_data_success": False, "error": result.error}
+        pitchfx_logs = result.value
+        avg_pitch_times = self.get_avg_pitch_times()
+        return self.combine_data.investigate(game_status, boxscore, pitchfx_logs, avg_pitch_times)
 
     def prune_pitchfx_data_for_display(self, pfx):
         return {

@@ -2,9 +2,7 @@
 from pathlib import Path
 from setuptools import setup, find_packages
 
-DESCRIPTION = (
-    "Hybrid Python/Node.js web scraping application for Major League Baseball (MLB) data."
-)
+DESCRIPTION = "Hybrid Python/Node.js web scraper for Major League Baseball (MLB) data."
 APP_ROOT = Path(__file__).parent
 README = (APP_ROOT / "README.md").read_text().strip()
 AUTHOR = "Aaron Luna"
@@ -33,19 +31,19 @@ INSTALL_REQUIRES = [
     "aenum",
     "boto3",
     "bullet",
-    "Click",
+    "click",
     "dacite",
     "dataclass-csv",
     "rapidfuzz",
     "halo",
     "lxml",
     "naked",
-    "pandas",
     "py-getch",
     "python-dateutil",
     "python-dotenv",
     "requests",
-    "SQLAlchemy",
+    "sqlalchemy",
+    "sqlalchemy-utils",
     "tqdm",
     "urllib3",
     "w3lib",
@@ -55,10 +53,6 @@ EXTRAS_REQUIRE = {
         "black",
         "coverage",
         "flake8",
-        "ipdb",
-        "ipython",
-        "pip-review",
-        "pre-commit",
         "pydocstyle",
         "pytest",
         "pytest-black",
@@ -66,7 +60,6 @@ EXTRAS_REQUIRE = {
         "pytest-cov",
         "pytest-dotenv",
         "pytest-flake8",
-        "snoop",
         "tox",
     ]
 }
@@ -76,7 +69,7 @@ setup(
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
-    version="0.2.23",
+    version="0.3.0",
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     maintainer=AUTHOR,

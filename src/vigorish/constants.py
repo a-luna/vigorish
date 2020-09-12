@@ -1,5 +1,7 @@
 """Constant values that are referenced from multiple places."""
-from vigorish.enums import DataSet
+from bullet import colors
+
+from vigorish.enums import DataSet, VigFile
 
 ENV_VAR_NAMES = [
     "AWS_ACCESS_KEY_ID",
@@ -56,6 +58,7 @@ PITCH_TYPE_DICT = dict(
     SC="Screwball",
     SI="Sinker",
     SL="Slider",
+    UN="Unknown",
 )
 
 AT_BAT_RESULTS_ALL = [
@@ -134,7 +137,8 @@ DATA_SET_NAMES_LONG = {
     "PitchFX Logs (brooksbaseball.net)": DataSet.BROOKS_PITCHFX,
 }
 
-DATA_SET_NAMES_SHORT = {str(ds): ds for ds in DataSet}
+FILE_TYPE_NAME_MAP = {str(ft): ft for ft in VigFile}
+DATA_SET_NAME_MAP = {str(ds): ds for ds in DataSet}
 
 CLI_COLORS = [
     "black",
@@ -155,6 +159,25 @@ CLI_COLORS = [
     "bright_white",
 ]
 
+BULLET_COLORS = {
+    "black": colors.foreground["black"],
+    "red": colors.foreground["red"],
+    "green": colors.foreground["green"],
+    "yellow": colors.foreground["yellow"],
+    "blue": colors.foreground["blue"],
+    "magenta": colors.foreground["magenta"],
+    "cyan": colors.foreground["cyan"],
+    "white": colors.foreground["white"],
+    "bright_black": colors.bright(colors.foreground["black"]),
+    "bright_red": colors.bright(colors.foreground["red"]),
+    "bright_green": colors.bright(colors.foreground["green"]),
+    "bright_yellow": colors.bright(colors.foreground["yellow"]),
+    "bright_blue": colors.bright(colors.foreground["blue"]),
+    "bright_magenta": colors.bright(colors.foreground["magenta"]),
+    "bright_cyan": colors.bright(colors.foreground["cyan"]),
+    "bright_white": colors.bright(colors.foreground["white"]),
+}
+
 EMOJI_DICT = dict(
     HAND_POINTER="👉",
     BOOKMARK="🔖",
@@ -169,10 +192,14 @@ EMOJI_DICT = dict(
     BASKET="🧺",
     PACKAGE="📦",
     BAGS="🛍️",
+    HONEY_POT="🍯",
     CLOCK="🕚",
+    PAGER="📟",
     SHRUG="🤷‍♂️",
     CRYING="😢",
     WEARY="😩",
+    UPSIDE_DOWN="🙃",
+    CONFUSED="😕",
     THUMBS_UP="👍",
     CLOUD="🌧",
     SPIRAL="🌀",
@@ -187,7 +214,7 @@ EMOJI_DICT = dict(
     CHECK="☑️",
     ASTERISK="✳️",
     PASSED="✅",
-    FAILED="🚫",
+    FAILED="❌",
     QUESTION="❔",
     COOL="🆒",
     BACK="👈",

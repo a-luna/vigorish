@@ -1,6 +1,21 @@
 """Decode json dicts of scraped data to custom objects."""
+from dacite import from_dict
 from dateutil import parser
 
+from vigorish.patch.bbref_boxscores import (
+    BBRefBoxscorePatchList,
+    PatchBBRefBoxscorePitchSequence,
+)
+from vigorish.patch.bbref_games_for_date import (
+    BBRefGamesForDatePatchList,
+    PatchBBRefGamesForDateGameID,
+)
+from vigorish.patch.brooks_pitchfx import (
+    BrooksPitchFxPatchList,
+    PatchBrooksPitchFxBatterId,
+    PatchBrooksPitchFxDeletePitchFx,
+    PatchBrooksPitchFxPitcherId,
+)
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.scrape.bbref_boxscores.models.bat_stats import BBRefBatStats
 from vigorish.scrape.bbref_boxscores.models.bat_stats_detail import BBRefBatStatsDetail
@@ -497,6 +512,137 @@ def decode_brooks_pitchfx_data(json_dict):
             del json_dict["__brooks_pitchfx_data__"]
             pitchfx = BrooksPitchFxData(**json_dict)
             return Result.Ok(pitchfx)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+
+def decode_bbref_games_for_date_patch_list(json_dict):
+    if "__bbref_games_for_date_patch_list__" not in json_dict:
+        return Result.Fail("JSON file is not in the expected format.")
+    try:
+        patch_list = []
+        for patch_json in json_dict["patch_list"]:
+            if "__patch_bbref_games_for_date_game_id__" in patch_json:
+                result = decode_patch_bbref_games_for_date_game_id(patch_json)
+            else:
+                return Result.Fail("JSON file is not in the expected format.")
+            if result.failure:
+                return result
+            patch = result.value
+            patch_list.append(patch)
+        bbref_games_for_date_patch_list = BBRefGamesForDatePatchList(
+            patch_list=patch_list,
+            url_id=json_dict["url_id"],
+        )
+        return Result.Ok(bbref_games_for_date_patch_list)
+    except Exception as e:
+        error = f"Error: {repr(e)}"
+        return Result.Fail(error)
+
+
+def decode_bbref_boxscore_patch_list(json_dict):
+    if "__bbref_boxscore_patch_list__" not in json_dict:
+        return Result.Fail("JSON file is not in the expected format.")
+    try:
+        patch_list = []
+        for patch_json in json_dict["patch_list"]:
+            if "__patch_bbref_boxscore_pitch_sequence__" in patch_json:
+                result = decode_patch_bbref_boxscore_pitch_sequence(patch_json)
+            else:
+                return Result.Fail("JSON file is not in the expected format.")
+            if result.failure:
+                return result
+            patch = result.value
+            patch_list.append(patch)
+        boxscore_patch_list = BBRefBoxscorePatchList(
+            patch_list=patch_list,
+            url_id=json_dict["url_id"],
+        )
+        return Result.Ok(boxscore_patch_list)
+    except Exception as e:
+        error = f"Error: {repr(e)}"
+        return Result.Fail(error)
+
+
+def decode_brooks_pitchfx_patch_list(json_dict):
+    if "__brooks_pitchfx_patch_list__" not in json_dict:
+        return Result.Fail("JSON file is not in the expected format.")
+    try:
+        patch_list = []
+        for patch_json in json_dict["patch_list"]:
+            if "__patch_brooks_pitchfx_batter_id__" in patch_json:
+                result = decode_patch_brooks_pitchfx_batter_id(patch_json)
+            elif "__patch_brooks_pitchfx_pitcher_id__" in patch_json:
+                result = decode_patch_brooks_pitchfx_pitcher_id(patch_json)
+            elif "__patch_brooks_pitchfx_delete_pitchfx__" in patch_json:
+                result = decode_patch_brooks_pitchfx_delete_pitchfx(patch_json)
+            else:
+                return Result.Fail("JSON file is not in the expected format.")
+            if result.failure:
+                return result
+            patch = result.value
+            patch_list.append(patch)
+        pitchfx_patch_list = BrooksPitchFxPatchList(
+            patch_list=patch_list,
+            url_id=json_dict["url_id"],
+        )
+        return Result.Ok(pitchfx_patch_list)
+    except Exception as e:
+        error = f"Error: {repr(e)}"
+        return Result.Fail(error)
+
+
+def decode_patch_bbref_games_for_date_game_id(json_dict):
+    if "__patch_bbref_games_for_date_game_id__" in json_dict:
+        try:
+            del json_dict["__patch_bbref_games_for_date_game_id__"]
+            patch = from_dict(data_class=PatchBBRefGamesForDateGameID, data=json_dict)
+            return Result.Ok(patch)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+
+def decode_patch_bbref_boxscore_pitch_sequence(json_dict):
+    if "__patch_bbref_boxscore_pitch_sequence__" in json_dict:
+        try:
+            del json_dict["__patch_bbref_boxscore_pitch_sequence__"]
+            patch = from_dict(data_class=PatchBBRefBoxscorePitchSequence, data=json_dict)
+            return Result.Ok(patch)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+
+def decode_patch_brooks_pitchfx_batter_id(json_dict):
+    if "__patch_brooks_pitchfx_batter_id__" in json_dict:
+        try:
+            del json_dict["__patch_brooks_pitchfx_batter_id__"]
+            patch = from_dict(data_class=PatchBrooksPitchFxBatterId, data=json_dict)
+            return Result.Ok(patch)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+
+def decode_patch_brooks_pitchfx_delete_pitchfx(json_dict):
+    if "__patch_brooks_pitchfx_delete_pitchfx__" in json_dict:
+        try:
+            del json_dict["__patch_brooks_pitchfx_delete_pitchfx__"]
+            patch = from_dict(data_class=PatchBrooksPitchFxDeletePitchFx, data=json_dict)
+            return Result.Ok(patch)
+        except Exception as e:
+            error = f"Error: {repr(e)}"
+            return Result.Fail(error)
+
+
+def decode_patch_brooks_pitchfx_pitcher_id(json_dict):
+    if "__patch_brooks_pitchfx_pitcher_id__" in json_dict:
+        try:
+            del json_dict["__patch_brooks_pitchfx_pitcher_id__"]
+            patch = from_dict(data_class=PatchBrooksPitchFxPitcherId, data=json_dict)
+            return Result.Ok(patch)
         except Exception as e:
             error = f"Error: {repr(e)}"
             return Result.Fail(error)

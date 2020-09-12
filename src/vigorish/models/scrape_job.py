@@ -1,7 +1,6 @@
 """Record of a job to scrape data for a specified date range."""
 from datetime import timezone
 from uuid import uuid4
-from pathlib import Path
 
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -9,8 +8,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
 from vigorish.enums import JobStatus, DataSet
-from vigorish.constants import DATA_SET_NAMES_SHORT
+from vigorish.constants import DATA_SET_NAME_MAP
 from vigorish.config.database import Base
+from vigorish.config.project_paths import NODEJS_INBOX, NODEJS_OUTBOX
 from vigorish.util.datetime_util import (
     get_date_range,
     utc_now,
@@ -20,10 +20,6 @@ from vigorish.util.datetime_util import (
 )
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.list_helpers import group_and_sort_list
-
-APP_FOLDER = Path(__file__).parent.parent
-NODEJS_INBOX = APP_FOLDER / "nightmarejs" / "inbox"
-NODEJS_OUTBOX = APP_FOLDER / "nightmarejs" / "outbox"
 
 
 class ScrapeJob(Base):
@@ -110,7 +106,7 @@ class ScrapeJob(Base):
     @hybrid_property
     def job_details(self):
         job_name = f"{self.name} (ID: {self.id})" if self.name != self.id else self.id
-        data_set_dict = {value: name for name, value in DATA_SET_NAMES_SHORT.items()}
+        data_set_dict = {value: name for name, value in DATA_SET_NAME_MAP.items()}
         return {
             "Job Name": job_name,
             "Status": self.status.name,
