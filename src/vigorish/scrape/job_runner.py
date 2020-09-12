@@ -141,7 +141,9 @@ class JobRunner:
     def show_status_report(self):
         if self.status_report == StatusReport.SEASON_SUMMARY:
             return report_season_status(
-                db_session=self.db_session, year=self.season.year, report_type=self.status_report,
+                db_session=self.db_session,
+                year=self.season.year,
+                report_type=self.status_report,
             )
         return report_date_range_status(
             db_session=self.db_session,

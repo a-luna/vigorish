@@ -27,11 +27,18 @@ class Season_Game_View(Base):
                 func.sum(GameScrapeStatus.pitch_app_count_brooks).label(
                     "total_pitch_app_count_brooks"
                 ),
-                func.sum(GameScrapeStatus.total_pitch_count_bbref).label("total_pitch_count_bbref"),
+                func.sum(GameScrapeStatus.total_pitch_count_bbref).label(
+                    "total_pitch_count_bbref"
+                ),
             ]
         )
         .select_from(
-            join(Season, GameScrapeStatus, Season.id == GameScrapeStatus.season_id, isouter=True,)
+            join(
+                Season,
+                GameScrapeStatus,
+                Season.id == GameScrapeStatus.season_id,
+                isouter=True,
+            )
         )
         .group_by(Season.id),
         metadata=Base.metadata,

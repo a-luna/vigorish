@@ -22,7 +22,12 @@ class Season_Date_View(Base):
             ]
         )
         .select_from(
-            join(Season, DateScrapeStatus, Season.id == DateScrapeStatus.season_id, isouter=True,)
+            join(
+                Season,
+                DateScrapeStatus,
+                Season.id == DateScrapeStatus.season_id,
+                isouter=True,
+            )
         )
         .group_by(Season.id),
         metadata=Base.metadata,

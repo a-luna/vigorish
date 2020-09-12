@@ -532,7 +532,8 @@ def decode_bbref_games_for_date_patch_list(json_dict):
             patch = result.value
             patch_list.append(patch)
         bbref_games_for_date_patch_list = BBRefGamesForDatePatchList(
-            patch_list=patch_list, url_id=json_dict["url_id"],
+            patch_list=patch_list,
+            url_id=json_dict["url_id"],
         )
         return Result.Ok(bbref_games_for_date_patch_list)
     except Exception as e:
@@ -555,7 +556,8 @@ def decode_bbref_boxscore_patch_list(json_dict):
             patch = result.value
             patch_list.append(patch)
         boxscore_patch_list = BBRefBoxscorePatchList(
-            patch_list=patch_list, url_id=json_dict["url_id"],
+            patch_list=patch_list,
+            url_id=json_dict["url_id"],
         )
         return Result.Ok(boxscore_patch_list)
     except Exception as e:
@@ -582,7 +584,8 @@ def decode_brooks_pitchfx_patch_list(json_dict):
             patch = result.value
             patch_list.append(patch)
         pitchfx_patch_list = BrooksPitchFxPatchList(
-            patch_list=patch_list, url_id=json_dict["url_id"],
+            patch_list=patch_list,
+            url_id=json_dict["url_id"],
         )
         return Result.Ok(pitchfx_patch_list)
     except Exception as e:

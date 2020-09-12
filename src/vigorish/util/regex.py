@@ -1,7 +1,7 @@
 """Compiled regular expressions and patterns."""
 import re
 
-from vigorish.enums import DataSet, DocFormat
+from vigorish.enums import DataSet, VigFile
 
 
 TIMESTAMP_REGEX = re.compile(r"(?P<hour>\d?\d):(?P<minute>\d\d)")
@@ -22,13 +22,16 @@ BB_DAILY_JSON_FILENAME_REGEX = re.compile(
 )
 
 PFX_TIMESTAMP_REGEX = re.compile(
-    r"(?P<year>\d{2,2})"
-    r"(?P<month>\d{2,2})"
-    r"(?P<day>\d{2,2})_"
-    r"(?P<hour>\d{2,2})"
-    r"(?P<minute>\d{2,2})"
-    r"(?P<second>\d{2,2})"
-    r"(?P<team_id>[a-z]{3,3})"
+    r"""
+    (?P<year>\d{2,2})
+    (?P<month>\d{2,2})
+    (?P<day>\d{2,2})_
+    (?P<hour>\d{2,2})
+    (?P<minute>\d{2,2})
+    (?P<second>\d{2,2})
+    (?P<team_id>[a-z]{3,3})
+""",
+    re.VERBOSE,
 )
 
 BBREF_GAME_ID_REGEX = re.compile(
@@ -38,6 +41,45 @@ BBREF_GAME_ID_REGEX = re.compile(
     (?P<month>\d{2,2})
     (?P<day>\d{2,2})
     (?P<game_num>\d)
+""",
+    re.VERBOSE,
+)
+
+BBREF_GAME_ID_REGEX_STRICT = re.compile(
+    r"""
+    ^
+    (?P<home_team>[A-Z]{3,3})
+    (?P<year>\d{4,4})
+    (?P<month>\d{2,2})
+    (?P<day>\d{2,2})
+    (?P<game_num>\d)
+    $
+""",
+    re.VERBOSE,
+)
+
+BBREF_BOXSCORE_PATCH_LIST_FILENAME_REGEX = re.compile(
+    r"""
+    (?P<home_team>[A-Z]{3,3})
+    (?P<year>\d{4,4})
+    (?P<month>\d{2,2})
+    (?P<day>\d{2,2})
+    (?P<game_num>\d)
+    _PATCH_LIST
+""",
+    re.VERBOSE,
+)
+
+PITCHFX_LOG_PATCH_LIST_FILENAME_REGEX = BBREF_BOXSCORE_PATCH_LIST_FILENAME_REGEX
+
+COMBINED_DATA_FILENAME_REGEX = re.compile(
+    r"""
+    (?P<home_team>[A-Z]{3,3})
+    (?P<year>\d{4,4})
+    (?P<month>\d{2,2})
+    (?P<day>\d{2,2})
+    (?P<game_num>\d)
+    _COMBINED_DATA
 """,
     re.VERBOSE,
 )
@@ -84,29 +126,42 @@ PITCH_APP_REGEX = re.compile(
     re.VERBOSE,
 )
 
+INNING_LABEL_REGEX = re.compile(
+    r"""
+    (?P<inning_half>TOP|BOT)
+    (?P<inning_number>[0-9]{2,2})
+""",
+    re.VERBOSE,
+)
+
 URL_ID_REGEX = {
-    DocFormat.HTML: {
+    VigFile.SCRAPED_HTML: {
         DataSet.BROOKS_GAMES_FOR_DATE: DATE_ONLY_TABLE_ID_REGEX,
         DataSet.BROOKS_PITCH_LOGS: PITCH_APP_REGEX,
         DataSet.BROOKS_PITCHFX: PITCH_APP_REGEX,
         DataSet.BBREF_GAMES_FOR_DATE: DATE_ONLY_TABLE_ID_REGEX,
-        DataSet.BBREF_BOXSCORES: BBREF_GAME_ID_REGEX,
+        DataSet.BBREF_BOXSCORES: BBREF_GAME_ID_REGEX_STRICT,
     },
-    DocFormat.JSON: {
+    VigFile.PARSED_JSON: {
         DataSet.BROOKS_GAMES_FOR_DATE: BB_DAILY_JSON_FILENAME_REGEX,
         DataSet.BROOKS_PITCH_LOGS: BB_GAME_ID_REGEX,
         DataSet.BROOKS_PITCHFX: PITCH_APP_REGEX,
         DataSet.BBREF_GAMES_FOR_DATE: BBREF_DAILY_JSON_FILENAME_REGEX,
-        DataSet.BBREF_BOXSCORES: BBREF_GAME_ID_REGEX,
+        DataSet.BBREF_BOXSCORES: BBREF_GAME_ID_REGEX_STRICT,
     },
+    VigFile.PATCH_LIST: {
+        DataSet.BROOKS_PITCHFX: PITCHFX_LOG_PATCH_LIST_FILENAME_REGEX,
+        DataSet.BBREF_BOXSCORES: BBREF_BOXSCORE_PATCH_LIST_FILENAME_REGEX,
+    },
+    VigFile.COMBINED_GAME_DATA: {DataSet.ALL: COMBINED_DATA_FILENAME_REGEX},
 }
 
 URL_ID_CONVERT_REGEX = {
-    DocFormat.HTML: {
+    VigFile.SCRAPED_HTML: {
         DataSet.BROOKS_GAMES_FOR_DATE: DATE_ONLY_TABLE_ID_REGEX,
         DataSet.BBREF_GAMES_FOR_DATE: DATE_ONLY_TABLE_ID_REGEX,
     },
-    DocFormat.JSON: {
+    VigFile.PARSED_JSON: {
         DataSet.BROOKS_GAMES_FOR_DATE: BB_DAILY_JSON_FILENAME_REGEX,
         DataSet.BBREF_GAMES_FOR_DATE: BBREF_DAILY_JSON_FILENAME_REGEX,
     },

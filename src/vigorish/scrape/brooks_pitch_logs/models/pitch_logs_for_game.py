@@ -46,7 +46,9 @@ class BrooksPitchLogsForGame:
     @property
     def pitch_app_ids_no_data(self):
         return [
-            pitch_log.pitch_app_id for pitch_log in self.pitch_logs if not pitch_log.parsed_all_info
+            pitch_log.pitch_app_id
+            for pitch_log in self.pitch_logs
+            if not pitch_log.parsed_all_info
         ]
 
     def as_dict(self):

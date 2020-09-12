@@ -35,10 +35,14 @@ class Player(Base):
     id_map = relationship("PlayerId", backref=backref("player", uselist=False))
 
     game_events_as_pitcher = relationship(
-        "GameEvent", primaryjoin="Player.id==GameEvent.pitcher_id", back_populates="pitcher",
+        "GameEvent",
+        primaryjoin="Player.id==GameEvent.pitcher_id",
+        back_populates="pitcher",
     )
     game_events_as_batter = relationship(
-        "GameEvent", primaryjoin="Player.id==GameEvent.batter_id", back_populates="batter",
+        "GameEvent",
+        primaryjoin="Player.id==GameEvent.batter_id",
+        back_populates="batter",
     )
     pitching_stats = relationship("GamePitchStats", backref="player")
     batting_stats = relationship("GameBatStats", backref="player")

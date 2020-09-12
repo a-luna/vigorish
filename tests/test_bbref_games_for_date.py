@@ -10,8 +10,6 @@ from vigorish.status.update_status_bbref_games_for_date import (
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 
-from tests.util import reset_date_scrape_status_after_parsed_bbref_games_for_date
-
 DATA_SET = DataSet.BBREF_GAMES_FOR_DATE
 GAME_DATE = datetime(2018, 7, 26)
 
@@ -103,3 +101,10 @@ def verify_bbref_games_for_date_jul_26_2018(games_for_date):
     assert games_for_date.boxscore_urls[9] == url9
     assert games_for_date.boxscore_urls[10] == url10
     return Result.Ok()
+
+
+def reset_date_scrape_status_after_parsed_bbref_games_for_date(db_session, game_date):
+    date_status = db_session.query(DateScrapeStatus).get(game_date.strftime(DATE_ONLY_TABLE_ID))
+    setattr(date_status, "scraped_daily_dash_bbref", 0)
+    setattr(date_status, "game_count_bbref", 0)
+    db_session.commit()

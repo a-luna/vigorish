@@ -70,6 +70,10 @@ class BrooksPitchFxData:
     game_start_time_str: str = ""
     time_pitch_thrown_str: str = ""
     has_zone_location: bool = False
+    is_patched: bool = False
+    is_duplicate_guid: bool = False
+    is_duplicate_pitch_number: bool = False
+    is_out_of_sequence: bool = False
 
     @property
     def game_start_time(self):
@@ -85,6 +89,8 @@ class BrooksPitchFxData:
         if not match:
             return None
         group_dict = match.groupdict()
+        if int(group_dict["second"]) >= 60:
+            group_dict["second"] = 0
         game_dict = validate_bbref_game_id(self.bbref_game_id).value
         timestamp = datetime(
             game_dict["game_date"].year,
@@ -98,8 +104,9 @@ class BrooksPitchFxData:
 
     @property
     def seconds_since_game_start(self):
-        time_since_game_start = self.time_pitch_thrown - self.game_start_time
-        return int(time_since_game_start.total_seconds())
+        if not self.time_pitch_thrown or not self.game_start_time:
+            return 0
+        return int((self.time_pitch_thrown - self.game_start_time).total_seconds())
 
     def as_dict(self):
         """Convert pitch log to a dictionary."""
@@ -161,6 +168,48 @@ class BrooksPitchFxData:
             tm_spin=int(self.tm_spin),
             sb=int(self.sb),
             game_start_time_str=self.game_start_time_str,
-            time_pitch_thrown_str=self.time_pitch_thrown.strftime(DT_AWARE),
+            time_pitch_thrown_str=self.get_time_pitch_thrown_str(),
             has_zone_location=self.has_zone_location,
+            is_patched=self.is_patched,
+            is_duplicate_guid=self.is_duplicate_guid,
+            is_duplicate_pitch_number=self.is_duplicate_pitch_number,
+            is_out_of_sequence=self.is_out_of_sequence,
         )
+
+    def get_time_pitch_thrown_str(self):
+        return self.time_pitch_thrown.strftime(DT_AWARE) if self.time_pitch_thrown else None
+
+    def get_db_dict(self):
+        pfx_dict = self.as_dict()
+        pfx_dict["game_start_time"] = self.game_start_time
+        pfx_dict["time_pitch_thrown"] = self.time_pitch_thrown
+        pfx_dict["seconds_since_game_start"] = self.seconds_since_game_start
+        pfx_dict["basic_type"] = pfx_dict.pop("type")
+        pfx_dict["pitch_id"] = pfx_dict.pop("id")
+        pfx_dict["pitcher_id_mlb"] = pfx_dict.pop("pitcher_id")
+        pfx_dict["batter_id_mlb"] = pfx_dict.pop("batter_id")
+        pfx_dict["zone_location"] = int(pfx_dict["zone_location"])
+        pfx_dict.pop("play_guid", None)
+        pfx_dict.pop("pitcher_name", None)
+        pfx_dict.pop("pitch_con", None)
+        pfx_dict.pop("norm_ht", None)
+        pfx_dict.pop("tstart", None)
+        pfx_dict.pop("vystart", None)
+        pfx_dict.pop("ftime", None)
+        pfx_dict.pop("x0", None)
+        pfx_dict.pop("y0", None)
+        pfx_dict.pop("z0", None)
+        pfx_dict.pop("vx0", None)
+        pfx_dict.pop("vy0", None)
+        pfx_dict.pop("vz0", None)
+        pfx_dict.pop("ax", None)
+        pfx_dict.pop("ay", None)
+        pfx_dict.pop("az", None)
+        pfx_dict.pop("tm_spin", None)
+        pfx_dict.pop("sb", None)
+        pfx_dict.pop("game_start_time_str", None)
+        pfx_dict.pop("time_pitch_thrown_str", None)
+        pfx_dict.pop("is_duplicate_guid", None)
+        pfx_dict.pop("is_duplicate_pitch_number", None)
+        pfx_dict.pop("is_out_of_sequence", None)
+        return pfx_dict

@@ -3255,14 +3255,88 @@
     {
       "type": "Fuzzy match",
       "name": "Vladimir Guerrero",
-      "best_match": "Vladimir Guerrero Jr.",
+      "team_id": "TOR",
+      "best_match": [
+        "Vladimir Guerrero Jr.",
+        "TOR"
+      ],
+      "id": "guerrvl02",
+      "score": 95.0
+    },
+    {
+      "type": "Fuzzy match",
+      "name": "Vladimir Guerrero",
+      "team_id": "TOR",
+      "best_match": [
+        "Vladimir Guerrero Jr.",
+        "TOR"
+      ],
+      "id": "guerrvl02",
+      "score": 95.0
+    },
+    {
+      "type": "Fuzzy match",
+      "name": "Vladimir Guerrero",
+      "team_id": "TOR",
+      "best_match": [
+        "Vladimir Guerrero Jr.",
+        "TOR"
+      ],
+      "id": "guerrvl02",
+      "score": 95.0
+    },
+    {
+      "type": "Fuzzy match",
+      "name": "Vladimir Guerrero",
+      "team_id": "TOR",
+      "best_match": [
+        "Vladimir Guerrero Jr.",
+        "TOR"
+      ],
       "id": "guerrvl02",
       "score": 95.0
     },
     {
       "type": "Fuzzy match",
       "name": "Lourdes Gurriel",
-      "best_match": "Lourdes Gurriel Jr.",
+      "team_id": "TOR",
+      "best_match": [
+        "Lourdes Gurriel Jr.",
+        "TOR"
+      ],
+      "id": "gurrilo01",
+      "score": 95.0
+    },
+    {
+      "type": "Fuzzy match",
+      "name": "Vladimir Guerrero",
+      "team_id": "TOR",
+      "best_match": [
+        "Vladimir Guerrero Jr.",
+        "TOR"
+      ],
+      "id": "guerrvl02",
+      "score": 95.0
+    },
+    {
+      "type": "Fuzzy match",
+      "name": "Lourdes Gurriel",
+      "team_id": "TOR",
+      "best_match": [
+        "Lourdes Gurriel Jr.",
+        "TOR"
+      ],
+      "id": "gurrilo01",
+      "score": 95.0
+    },
+    {
+      "type": "Fuzzy match",
+      "name": "Lourdes Gurriel",
+      "team_id": "TOR",
+      "best_match": [
+        "Lourdes Gurriel Jr.",
+        "TOR"
+      ],
       "id": "gurrilo01",
       "score": 95.0
     }
@@ -3319,36 +3393,36 @@
     "anderju01": "LAA"
   },
   "player_name_dict": {
-    "Tommy La Stella": "lasteto01",
-    "Mike Trout": "troutmi01",
-    "Shohei Ohtani": "ohtansh01",
-    "Justin Upton": "uptonju01",
-    "Kole Calhoun": "calhoko01",
-    "David Fletcher": "fletcda02",
-    "Justin Bour": "bourju01",
-    "Jonathan Lucroy": "lucrojo01",
-    "Wilfredo Tovar": "tovarwi01",
-    "Luis Garcia": "garcilu03",
-    "Felix Pena": "penafe01",
-    "Noe Ramirez": "ramirno01",
-    "Ty Buttrey": "buttrty01",
-    "Justin Anderson": "anderju01",
-    "Eric Sogard": "sogarer01",
-    "Cavan Biggio": "biggica01",
-    "Vladimir Guerrero Jr.": "guerrvl02",
-    "Rowdy Tellez": "tellero01",
-    "Teoscar Hernandez": "hernate01",
-    "Lourdes Gurriel Jr.": "gurrilo01",
-    "Randal Grichuk": "grichra01",
-    "Freddy Galvis": "galvifr01",
-    "Brandon Drury": "drurybr01",
-    "Luke Maile": "mailelu01",
-    "Derek Law": "lawde01",
-    "Edwin Jackson": "jacksed01",
-    "Sam Gaviglio": "gavigsa01",
-    "Nick Kingham": "kinghni01",
-    "David Phelps": "phelpda01",
-    "Tim Mayza": "mayzati01",
-    "Daniel Hudson": "hudsoda01"
+    "Tommy La Stella, LAA": "lasteto01",
+    "Mike Trout, LAA": "troutmi01",
+    "Shohei Ohtani, LAA": "ohtansh01",
+    "Justin Upton, LAA": "uptonju01",
+    "Kole Calhoun, LAA": "calhoko01",
+    "David Fletcher, LAA": "fletcda02",
+    "Justin Bour, LAA": "bourju01",
+    "Jonathan Lucroy, LAA": "lucrojo01",
+    "Wilfredo Tovar, LAA": "tovarwi01",
+    "Luis Garcia, LAA": "garcilu03",
+    "Felix Pena, LAA": "penafe01",
+    "Noe Ramirez, LAA": "ramirno01",
+    "Ty Buttrey, LAA": "buttrty01",
+    "Justin Anderson, LAA": "anderju01",
+    "Eric Sogard, TOR": "sogarer01",
+    "Cavan Biggio, TOR": "biggica01",
+    "Vladimir Guerrero Jr., TOR": "guerrvl02",
+    "Rowdy Tellez, TOR": "tellero01",
+    "Teoscar Hernandez, TOR": "hernate01",
+    "Lourdes Gurriel Jr., TOR": "gurrilo01",
+    "Randal Grichuk, TOR": "grichra01",
+    "Freddy Galvis, TOR": "galvifr01",
+    "Brandon Drury, TOR": "drurybr01",
+    "Luke Maile, TOR": "mailelu01",
+    "Derek Law, TOR": "lawde01",
+    "Edwin Jackson, TOR": "jacksed01",
+    "Sam Gaviglio, TOR": "gavigsa01",
+    "Nick Kingham, TOR": "kinghni01",
+    "David Phelps, TOR": "phelpda01",
+    "Tim Mayza, TOR": "mayzati01",
+    "Daniel Hudson, TOR": "hudsoda01"
   }
 }
