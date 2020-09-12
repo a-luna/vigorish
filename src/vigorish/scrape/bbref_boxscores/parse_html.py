@@ -868,7 +868,9 @@ def _parse_play_by_play(pbp_table, player_id_dict, away_team_id, home_team_id, g
             event_dict["play_index_url"] = (
                 "https://www.baseball-reference.com" + event_dict["play_index_url"]
             )
-            event_dict["event_id"] = url_query_parameter(event_dict["play_index_url"], "game-event")
+            event_dict["event_id"] = url_query_parameter(
+                event_dict["play_index_url"], "game-event"
+            )
 
         event = BBRefPlayByPlayEvent(**event_dict)
         play_by_play.append(event)
@@ -1160,7 +1162,9 @@ def _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id):
         description = ""
         for des in event_descriptions:
             description += des.strip().replace("\xa0", " ")
-        misc_event = BBRefPlayByPlayMiscEvent(pbp_table_row_number=row_num, description=description)
+        misc_event = BBRefPlayByPlayMiscEvent(
+            pbp_table_row_number=row_num, description=description
+        )
         misc_events.append(misc_event)
     return misc_events
 

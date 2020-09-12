@@ -27,7 +27,9 @@ class Season_Game_View(Base):
                 func.sum(GameScrapeStatus.pitch_app_count_brooks).label(
                     "total_pitch_app_count_brooks"
                 ),
-                func.sum(GameScrapeStatus.total_pitch_count_bbref).label("total_pitch_count_bbref"),
+                func.sum(GameScrapeStatus.total_pitch_count_bbref).label(
+                    "total_pitch_count_bbref"
+                ),
             ]
         )
         .select_from(

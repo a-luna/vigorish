@@ -21,12 +21,16 @@ def calc_pitch_metrics(combined_data):
                 continue
             for count, pfx in enumerate(at_bat["pitchfx"], start=1):
                 if count == 1 and prev_inning_last_pfx and ab_num == 1:
-                    seconds_between_innings = get_seconds_between_pitches(prev_inning_last_pfx, pfx)
+                    seconds_between_innings = get_seconds_between_pitches(
+                        prev_inning_last_pfx, pfx
+                    )
                     if seconds_between_innings > 0:
                         inning_samples.append(seconds_between_innings)
                     prev_inning_last_pfx = None
                 if count == 1 and prev_at_bat_last_pfx and ab_num != 1:
-                    seconds_between_at_bats = get_seconds_between_pitches(prev_at_bat_last_pfx, pfx)
+                    seconds_between_at_bats = get_seconds_between_pitches(
+                        prev_at_bat_last_pfx, pfx
+                    )
                     if seconds_between_at_bats > 0:
                         at_bat_samples.append(seconds_between_at_bats)
                     prev_at_bat_last_pfx = None
@@ -36,7 +40,9 @@ def calc_pitch_metrics(combined_data):
                     else:
                         prev_at_bat_last_pfx = pfx
                     continue
-                seconds_between_pitches = get_seconds_between_pitches(pfx, at_bat["pitchfx"][count])
+                seconds_between_pitches = get_seconds_between_pitches(
+                    pfx, at_bat["pitchfx"][count]
+                )
                 if seconds_between_pitches > 0:
                     pitch_samples.append(seconds_between_pitches)
     return (

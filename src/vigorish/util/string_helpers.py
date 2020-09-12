@@ -147,7 +147,9 @@ def validate_bbref_game_id(input_str):
 
 def validate_bbref_game_id_list(game_ids):
     return [
-        validate_bbref_game_id(gid).value for gid in game_ids if validate_bbref_game_id(gid).success
+        validate_bbref_game_id(gid).value
+        for gid in game_ids
+        if validate_bbref_game_id(gid).success
     ]
 
 
@@ -256,7 +258,9 @@ def parse_pitch_app_details_from_string(input):
         pitch_app_ids.append(at_bat_data["pitch_app_id"])
     for pitch_app_id in list(set(pitch_app_ids)):
         failed_pitch_app_dict[pitch_app_id] = [
-            at_bat["at_bat_id"] for at_bat in at_bat_dicts if at_bat["pitch_app_id"] == pitch_app_id
+            at_bat["at_bat_id"]
+            for at_bat in at_bat_dicts
+            if at_bat["pitch_app_id"] == pitch_app_id
         ]
     return failed_pitch_app_dict
 
