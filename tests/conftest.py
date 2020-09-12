@@ -9,6 +9,8 @@ from vigorish.config.config_file import ConfigFile
 from vigorish.config.dotenv_file import DotEnvFile, create_default_dotenv_file
 from vigorish.data.scraped_data import ScrapedData
 
+from tests.util import reset_database_before_session_start
+
 TESTS_FOLDER = Path(__file__).parent
 DOTENV_FILE = TESTS_FOLDER.joinpath(".env")
 CONFIG_FILE = TESTS_FOLDER.joinpath("vig.config.json")
@@ -30,8 +32,12 @@ def config(dotenv, request):
 
 
 @pytest.fixture(scope="session")
-def db_session(request):
-    db_engine = create_engine(SQLITE_URL)
+def db_engine(request):
+    return create_engine(SQLITE_URL)
+
+
+@pytest.fixture(scope="session")
+def db_session(request, db_engine):
     session_maker = sessionmaker(bind=db_engine)
     db_session = session_maker()
 
@@ -43,5 +49,10 @@ def db_session(request):
 
 
 @pytest.fixture(scope="session")
-def scraped_data(config, db_session):
-    return ScrapedData(db_session=db_session, config=config)
+def scraped_data(config, db_engine, db_session):
+    return ScrapedData(db_engine=db_engine, db_session=db_session, config=config)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def do_something(request, db_session):
+    reset_database_before_session_start(db_session)

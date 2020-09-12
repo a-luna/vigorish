@@ -8,7 +8,7 @@
     "field_type": "On Grass",
     "day_night": "Night Game",
     "first_pitch_temperature": 73,
-    "first_pitch_precipitation": "No Precipitation",
+    "first_pitch_precipitation": "",
     "first_pitch_wind": "Wind 6mph out to Leftfield",
     "first_pitch_clouds": "Cloudy",
     "game_duration": "3:24",
@@ -852,7 +852,7 @@
         "total_pitches": 16,
         "total_strikes": 10,
         "wpa_bat": -0.077,
-        "avg_lvg_index": 0.71,
+        "avg_lvg_index": 0.72,
         "wpa_bat_pos": 0.0,
         "wpa_bat_neg": -0.077,
         "re24_bat": -1.1,
@@ -924,7 +924,7 @@
         "total_pitches": 11,
         "total_strikes": 8,
         "wpa_bat": -0.036,
-        "avg_lvg_index": 0.42,
+        "avg_lvg_index": 0.43,
         "wpa_bat_pos": 0.0,
         "wpa_bat_neg": -0.036,
         "re24_bat": -0.4,
@@ -1196,7 +1196,7 @@
           "play_description": "Flyball: RF (Deep RF Line)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "fowlede01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-1"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-1"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1214,7 +1214,7 @@
           "play_description": "Strikeout Swinging",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "wongko01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-2"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-2"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1232,7 +1232,7 @@
           "play_description": "Walk",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "goldspa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-3"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-3"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1250,7 +1250,7 @@
           "play_description": "Wild Pitch; Goldschmidt to 2B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "ozunama01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-4"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-4"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1268,7 +1268,7 @@
           "play_description": "Lineout: LF (Deep LF)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "ozunama01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-5"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-5"
         }
       ],
       "substitutions": [],
@@ -1303,7 +1303,7 @@
           "play_description": "Groundout: 3B-1B (Weak 3B)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "newmake01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-6"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-6"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1318,10 +1318,10 @@
           "runs_outs_result": "O",
           "team_batting_id_br": "PIT",
           "team_pitching_id_br": "STL",
-          "play_description": "Single to RF (Ground Ball thru 2B-1B); Reynolds out at 2B",
+          "play_description": "Single to RF (Ground Ball thru 2B-1B); Reynolds out at 2B/RF-SS",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "reynobr01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-7"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-7"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1339,7 +1339,7 @@
           "play_description": "Triple to RF (Ground Ball)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "martest01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-8"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-8"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1357,7 +1357,7 @@
           "play_description": "Walk",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "belljo02",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-9"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-9"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1375,7 +1375,7 @@
           "play_description": "Groundout: 1B unassisted",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "moranco01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-10"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-10"
         }
       ],
       "substitutions": [],
@@ -1418,7 +1418,7 @@
           "play_description": "Flyball: RF",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "dejonpa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-11"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-11"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1436,7 +1436,7 @@
           "play_description": "Groundout: 3B-1B (Weak 3B)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "molinya01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-12"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-12"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1454,7 +1454,7 @@
           "play_description": "Hit By Pitch",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "edmanto01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-13"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-13"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1472,7 +1472,7 @@
           "play_description": "Wild Pitch; Edman to 2B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "baderha01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-14"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-14"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1490,7 +1490,7 @@
           "play_description": "Strikeout Looking",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "baderha01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-15"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-15"
         }
       ],
       "substitutions": [],
@@ -1525,7 +1525,7 @@
           "play_description": "Groundout: P-1B (Front of Home)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "osunajo01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-16"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-16"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1543,7 +1543,7 @@
           "play_description": "Strikeout Looking",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "fraziad01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-17"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-17"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1561,7 +1561,7 @@
           "play_description": "Groundout: SS-1B (SS-3B Hole)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "diazel01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-18"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-18"
         }
       ],
       "substitutions": [],
@@ -1596,7 +1596,7 @@
           "play_description": "Double to LF (Line Drive to Deep LF-CF)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "wainwad01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-19"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-19"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1614,7 +1614,7 @@
           "play_description": "Single to CF (Line Drive); Wainwright Scores",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "fowlede01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-20"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-20"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1632,7 +1632,7 @@
           "play_description": "Single to 1B (Bunt to Short 1B Line); Fowler to 2B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "wongko01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-21"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-21"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1650,7 +1650,7 @@
           "play_description": "Popfly: SS",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "goldspa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-22"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-22"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1661,14 +1661,14 @@
           "score": "1-0",
           "outs_before_play": 1,
           "runners_on_base": "12-",
-          "pitch_sequence": "",
+          "pitch_sequence": "N",
           "runs_outs_result": "",
           "team_batting_id_br": "STL",
           "team_pitching_id_br": "PIT",
           "play_description": "Balk; Fowler to 3B; Wong to 2B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "ozunama01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-23"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-23"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1679,14 +1679,14 @@
           "score": "1-0",
           "outs_before_play": 1,
           "runners_on_base": "-23",
-          "pitch_sequence": ".*BX",
+          "pitch_sequence": "N.*BX",
           "runs_outs_result": "RRR",
           "team_batting_id_br": "STL",
           "team_pitching_id_br": "PIT",
           "play_description": "Home Run (Fly Ball to Deep CF-RF); Fowler Scores; Wong Scores",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "ozunama01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-24"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-24"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1704,7 +1704,7 @@
           "play_description": "Reached on E3 (throw) (Ground Ball)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "dejonpa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-25"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-25"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1722,7 +1722,7 @@
           "play_description": "Ground Ball Double Play: 3B-2B-1B (Weak 3B)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "molinya01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-26"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-26"
         }
       ],
       "substitutions": [],
@@ -1757,7 +1757,7 @@
           "play_description": "Groundout: 1B-P (2B-1B)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "braulst01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-27"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-27"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1775,7 +1775,7 @@
           "play_description": "Single to LF (Line Drive to Deep LF-CF)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "newmake01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-28"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-28"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1786,14 +1786,14 @@
           "score": "0-4",
           "outs_before_play": 1,
           "runners_on_base": "1--",
-          "pitch_sequence": "B*BBCF>S",
+          "pitch_sequence": "B*BBCFS",
           "runs_outs_result": "O",
           "team_batting_id_br": "PIT",
           "team_pitching_id_br": "STL",
           "play_description": "Strikeout Swinging, Newman Steals 2B",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "reynobr01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-29"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-29"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1811,7 +1811,7 @@
           "play_description": "Single to RF (Line Drive to Short CF-RF); Newman Scores",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "martest01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-30"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-30"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1829,7 +1829,7 @@
           "play_description": "Groundout: 2B-1B (Short RF)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "belljo02",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-31"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-31"
         }
       ],
       "substitutions": [],
@@ -1864,7 +1864,7 @@
           "play_description": "Groundout: 3B-1B (SS-3B Hole)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "edmanto01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-32"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-32"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1882,7 +1882,7 @@
           "play_description": "Lineout: LF (Deep LF)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "baderha01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-33"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-33"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1900,7 +1900,7 @@
           "play_description": "Lineout: LF (Deep LF-CF)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "wainwad01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-34"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-34"
         }
       ],
       "substitutions": [],
@@ -1935,7 +1935,7 @@
           "play_description": "Groundout: P-1B",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "moranco01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-35"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-35"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1953,7 +1953,7 @@
           "play_description": "Groundout: SS-1B",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "osunajo01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-36"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-36"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1971,7 +1971,7 @@
           "play_description": "Single to RF (Fly Ball to Short CF-RF)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "fraziad01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-37"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-37"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -1989,7 +1989,7 @@
           "play_description": "Groundout: 2B-1B (Weak SS-2B)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "diazel01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-38"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-38"
         }
       ],
       "substitutions": [],
@@ -2024,7 +2024,7 @@
           "play_description": "Groundout: P-1B (P's Right)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "fowlede01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-39"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-39"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2042,7 +2042,7 @@
           "play_description": "Groundout: P-1B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "wongko01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-40"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-40"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2060,7 +2060,7 @@
           "play_description": "Groundout: SS-1B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "goldspa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-41"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-41"
         }
       ],
       "substitutions": [],
@@ -2095,7 +2095,7 @@
           "play_description": "Single to RF (Line Drive)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "braulst01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-42"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-42"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2113,7 +2113,7 @@
           "play_description": "Ground Ball Double Play: SS-2B-1B",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "newmake01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-43"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-43"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2131,7 +2131,7 @@
           "play_description": "Strikeout Swinging",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "reynobr01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-44"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-44"
         }
       ],
       "substitutions": [],
@@ -2166,7 +2166,7 @@
           "play_description": "Walk",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "ozunama01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-45"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-45"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2184,7 +2184,7 @@
           "play_description": "Passed Ball; Ozuna to 2B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "dejonpa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-46"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-46"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2202,7 +2202,7 @@
           "play_description": "Reached on E9 (Fly Ball to Deep RF Line); Ozuna to 3B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "dejonpa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-47"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-47"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2213,14 +2213,14 @@
           "score": "4-1",
           "outs_before_play": 0,
           "runners_on_base": "1-3",
-          "pitch_sequence": "*BSF>B",
+          "pitch_sequence": "*BSFB",
           "runs_outs_result": "",
           "team_batting_id_br": "STL",
           "team_pitching_id_br": "PIT",
           "play_description": "DeJong Steals 2B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "molinya01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-48"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-48"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2231,14 +2231,14 @@
           "score": "4-1",
           "outs_before_play": 0,
           "runners_on_base": "-23",
-          "pitch_sequence": "*BSF>B.BFX",
+          "pitch_sequence": "*BSFB.BFX",
           "runs_outs_result": "O",
           "team_batting_id_br": "STL",
           "team_pitching_id_br": "PIT",
           "play_description": "Groundout: 3B-1B (Weak 3B)",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "molinya01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-49"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-49"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2256,7 +2256,7 @@
           "play_description": "Single to LF (Ground Ball thru SS-3B Hole); Ozuna Scores; DeJong to 3B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "edmanto01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-50"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-50"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2274,7 +2274,7 @@
           "play_description": "Single to LF (Line Drive to Deep SS); DeJong Scores/unER; Edman to 3B",
           "pitcher_id_br": "braulst01",
           "batter_id_br": "baderha01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-51"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-51"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2285,14 +2285,14 @@
           "score": "6-1",
           "outs_before_play": 1,
           "runners_on_base": "1-3",
-          "pitch_sequence": ".1C>B",
+          "pitch_sequence": ".1CB",
           "runs_outs_result": "",
           "team_batting_id_br": "STL",
           "team_pitching_id_br": "PIT",
           "play_description": "Bader Steals 2B",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "wainwad01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-52"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-52"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2303,14 +2303,14 @@
           "score": "6-1",
           "outs_before_play": 1,
           "runners_on_base": "-23",
-          "pitch_sequence": ".1C>B.BSFC",
+          "pitch_sequence": ".1CB.BSFC",
           "runs_outs_result": "O",
           "team_batting_id_br": "STL",
           "team_pitching_id_br": "PIT",
           "play_description": "Strikeout Looking",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "wainwad01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-53"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-53"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2328,7 +2328,7 @@
           "play_description": "Strikeout Swinging",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "fowlede01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-54"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-54"
         }
       ],
       "substitutions": [
@@ -2376,7 +2376,7 @@
           "play_description": "Flyball: CF (LF-CF)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "martest01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-55"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-55"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2394,7 +2394,7 @@
           "play_description": "Groundout: 2B-1B (Deep 2B-1B)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "belljo02",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-56"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-56"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2412,7 +2412,7 @@
           "play_description": "Groundout: 1B unassisted",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "moranco01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-57"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-57"
         }
       ],
       "substitutions": [],
@@ -2447,7 +2447,7 @@
           "play_description": "Double to CF (Line Drive to Deep LF-CF)",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "wongko01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-58"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-58"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2465,7 +2465,7 @@
           "play_description": "Strikeout Looking",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "goldspa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-59"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-59"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2483,7 +2483,7 @@
           "play_description": "Walk",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "ozunama01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-60"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-60"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2501,7 +2501,7 @@
           "play_description": "Double to CF (Fly Ball to Deep CF); Wong Scores; Ozuna Scores",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "dejonpa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-61"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-61"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2519,7 +2519,7 @@
           "play_description": "Groundout: 3B-1B (Weak 3B)",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "molinya01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-62"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-62"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2537,7 +2537,7 @@
           "play_description": "Strikeout Looking",
           "pitcher_id_br": "holmecl01",
           "batter_id_br": "edmanto01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-63"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-63"
         }
       ],
       "substitutions": [],
@@ -2572,7 +2572,7 @@
           "play_description": "Flyball: RF (CF-RF)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "osunajo01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-64"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-64"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2590,7 +2590,7 @@
           "play_description": "Flyball: LF (LF Line)",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "fraziad01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-65"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-65"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2608,7 +2608,7 @@
           "play_description": "Popfly: 1B",
           "pitcher_id_br": "wainwad01",
           "batter_id_br": "diazel01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-66"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-66"
         }
       ],
       "substitutions": [],
@@ -2643,7 +2643,7 @@
           "play_description": "Walk",
           "pitcher_id_br": "hartlge01",
           "batter_id_br": "baderha01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-67"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-67"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2661,7 +2661,7 @@
           "play_description": "Single to RF (Fly Ball to Short RF); Bader to 2B",
           "pitcher_id_br": "hartlge01",
           "batter_id_br": "wainwad01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-68"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-68"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2679,7 +2679,7 @@
           "play_description": "Strikeout Looking",
           "pitcher_id_br": "hartlge01",
           "batter_id_br": "fowlede01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-69"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-69"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2697,7 +2697,7 @@
           "play_description": "Groundout: 1B-SS/Forceout at 2B (2B-1B); Bader to 3B",
           "pitcher_id_br": "hartlge01",
           "batter_id_br": "wongko01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-70"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-70"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2715,7 +2715,7 @@
           "play_description": "Wild Pitch; Wong to 2B",
           "pitcher_id_br": "hartlge01",
           "batter_id_br": "goldspa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-71"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-71"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2733,7 +2733,7 @@
           "play_description": "Walk",
           "pitcher_id_br": "hartlge01",
           "batter_id_br": "goldspa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-72"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-72"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2751,7 +2751,7 @@
           "play_description": "Groundout: P-1B",
           "pitcher_id_br": "hartlge01",
           "batter_id_br": "ozunama01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-73"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-73"
         }
       ],
       "substitutions": [
@@ -2799,7 +2799,7 @@
           "play_description": "Strikeout Swinging",
           "pitcher_id_br": "fernaju01",
           "batter_id_br": "krameke01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-74"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-74"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2817,7 +2817,7 @@
           "play_description": "Lineout: SS",
           "pitcher_id_br": "fernaju01",
           "batter_id_br": "newmake01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-75"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-75"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2835,7 +2835,7 @@
           "play_description": "Groundout: 3B-1B (SS-3B Hole)",
           "pitcher_id_br": "fernaju01",
           "batter_id_br": "reynobr01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-76"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-76"
         }
       ],
       "substitutions": [
@@ -2895,7 +2895,7 @@
           "play_description": "Hit By Pitch",
           "pitcher_id_br": "markepa01",
           "batter_id_br": "sosaed01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-77"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-77"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2913,7 +2913,7 @@
           "play_description": "Single to CF (Line Drive to Deep CF); Sosa to 2B",
           "pitcher_id_br": "markepa01",
           "batter_id_br": "molinya01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-78"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-78"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2931,7 +2931,7 @@
           "play_description": "Popfly: 3B (SS-3B Hole)",
           "pitcher_id_br": "markepa01",
           "batter_id_br": "edmanto01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-79"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-79"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2949,7 +2949,7 @@
           "play_description": "Double/Fan Interference (Fly Ball to Deep CF-RF); Sosa Scores; Knizner to 3B",
           "pitcher_id_br": "markepa01",
           "batter_id_br": "baderha01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-80"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-80"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2967,7 +2967,7 @@
           "play_description": "Groundout: SS-1B; Knizner Scores; Bader to 3B",
           "pitcher_id_br": "markepa01",
           "batter_id_br": "ravelra01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-81"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-81"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -2985,7 +2985,7 @@
           "play_description": "Flyball: CF",
           "pitcher_id_br": "markepa01",
           "batter_id_br": "arozara01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-82"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-82"
         }
       ],
       "substitutions": [
@@ -3081,7 +3081,7 @@
           "play_description": "Walk",
           "pitcher_id_br": "ponceda01",
           "batter_id_br": "reyespa01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-83"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-83"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -3099,7 +3099,7 @@
           "play_description": "Strikeout Looking",
           "pitcher_id_br": "ponceda01",
           "batter_id_br": "baronst01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-84"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-84"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -3117,7 +3117,7 @@
           "play_description": "Strikeout Swinging",
           "pitcher_id_br": "ponceda01",
           "batter_id_br": "moranco01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-85"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-85"
         },
         {
           "__bbref_pbp_game_event__": true,
@@ -3135,7 +3135,7 @@
           "play_description": "Strikeout Looking",
           "pitcher_id_br": "ponceda01",
           "batter_id_br": "osunajo01",
-          "play_index_url": "https://www.baseball-reference.com/play-index/def.cgi?html=1&game-event=PIT201909070-86"
+          "play_index_url": "https://www.baseball-reference.com/tools/def.cgi?html=1&game-event=PIT201909070-86"
         }
       ],
       "substitutions": [
@@ -3302,37 +3302,37 @@
     "baronst01": "PIT"
   },
   "player_name_dict": {
-    "Dexter Fowler": "fowlede01",
-    "Randy Arozarena": "arozara01",
-    "Kolten Wong": "wongko01",
-    "Yairo Munoz": "munozya01",
-    "Paul Goldschmidt": "goldspa01",
-    "Daniel Ponce de Leon": "ponceda01",
-    "Marcell Ozuna": "ozunama01",
-    "Tyler O'Neill": "oneilty01",
-    "Paul DeJong": "dejonpa01",
-    "Edmundo Sosa": "sosaed01",
-    "Yadier Molina": "molinya01",
-    "Andrew Knizner": "kniznan01",
-    "Tommy Edman": "edmanto01",
-    "Harrison Bader": "baderha01",
-    "Adam Wainwright": "wainwad01",
-    "Junior Fernandez": "fernaju01",
-    "Rangel Ravelo": "ravelra01",
-    "Kevin Newman": "newmake01",
-    "Bryan Reynolds": "reynobr01",
-    "Starling Marte": "martest01",
-    "Pablo Reyes": "reyespa01",
-    "Josh Bell": "belljo02",
-    "Steven Baron": "baronst01",
-    "Colin Moran": "moranco01",
-    "Jose Osuna": "osunajo01",
-    "Adam Frazier": "fraziad01",
-    "Elias Diaz": "diazel01",
-    "Steven Brault": "braulst01",
-    "Clay Holmes": "holmecl01",
-    "Geoff Hartlieb": "hartlge01",
-    "Kevin Kramer": "krameke01",
-    "Parker Markel": "markepa01"
+    "Dexter Fowler, STL": "fowlede01",
+    "Randy Arozarena, STL": "arozara01",
+    "Kolten Wong, STL": "wongko01",
+    "Yairo Munoz, STL": "munozya01",
+    "Paul Goldschmidt, STL": "goldspa01",
+    "Daniel Ponce de Leon, STL": "ponceda01",
+    "Marcell Ozuna, STL": "ozunama01",
+    "Tyler O'Neill, STL": "oneilty01",
+    "Paul DeJong, STL": "dejonpa01",
+    "Edmundo Sosa, STL": "sosaed01",
+    "Yadier Molina, STL": "molinya01",
+    "Andrew Knizner, STL": "kniznan01",
+    "Tommy Edman, STL": "edmanto01",
+    "Harrison Bader, STL": "baderha01",
+    "Adam Wainwright, STL": "wainwad01",
+    "Junior Fernandez, STL": "fernaju01",
+    "Rangel Ravelo, STL": "ravelra01",
+    "Kevin Newman, PIT": "newmake01",
+    "Bryan Reynolds, PIT": "reynobr01",
+    "Starling Marte, PIT": "martest01",
+    "Pablo Reyes, PIT": "reyespa01",
+    "Josh Bell, PIT": "belljo02",
+    "Steven Baron, PIT": "baronst01",
+    "Colin Moran, PIT": "moranco01",
+    "Jose Osuna, PIT": "osunajo01",
+    "Adam Frazier, PIT": "fraziad01",
+    "Elias Diaz, PIT": "diazel01",
+    "Steven Brault, PIT": "braulst01",
+    "Clay Holmes, PIT": "holmecl01",
+    "Geoff Hartlieb, PIT": "hartlge01",
+    "Kevin Kramer, PIT": "krameke01",
+    "Parker Markel, PIT": "markepa01"
   }
 }

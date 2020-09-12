@@ -57,7 +57,10 @@
       "pxold": -0.95,
       "pzold": 2.56,
       "tm_spin": 0,
-      "sb": 0
+      "sb": 0,
+      "game_start_time_str": "06/17/2019 07:07:00 PM -0400",
+      "time_pitch_thrown_str": "06/17/2019 10:10:19 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -115,7 +118,10 @@
       "pxold": -1.02,
       "pzold": 2.14,
       "tm_spin": 0,
-      "sb": 0
+      "sb": 0,
+      "game_start_time_str": "06/17/2019 07:07:00 PM -0400",
+      "time_pitch_thrown_str": "06/17/2019 10:11:03 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -173,7 +179,10 @@
       "pxold": 0.38,
       "pzold": 0.62,
       "tm_spin": 0,
-      "sb": 1
+      "sb": 1,
+      "game_start_time_str": "06/17/2019 07:07:00 PM -0400",
+      "time_pitch_thrown_str": "06/17/2019 10:11:27 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -231,7 +240,10 @@
       "pxold": -1.16,
       "pzold": 1.91,
       "tm_spin": 0,
-      "sb": 11
+      "sb": 11,
+      "game_start_time_str": "06/17/2019 07:07:00 PM -0400",
+      "time_pitch_thrown_str": "06/17/2019 10:11:52 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -289,7 +301,10 @@
       "pxold": -0.26,
       "pzold": 2.65,
       "tm_spin": 0,
-      "sb": 21
+      "sb": 21,
+      "game_start_time_str": "06/17/2019 07:07:00 PM -0400",
+      "time_pitch_thrown_str": "06/17/2019 10:12:16 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -347,7 +362,10 @@
       "pxold": -0.98,
       "pzold": 2.02,
       "tm_spin": 0,
-      "sb": 0
+      "sb": 0,
+      "game_start_time_str": "06/17/2019 07:07:00 PM -0400",
+      "time_pitch_thrown_str": "06/17/2019 10:13:06 PM -0400",
+      "has_zone_location": true
     },
     {
       "__brooks_pitchfx_data__": true,
@@ -405,7 +423,10 @@
       "pxold": -0.65,
       "pzold": 2.44,
       "tm_spin": 0,
-      "sb": 10
+      "sb": 10,
+      "game_start_time_str": "06/17/2019 07:07:00 PM -0400",
+      "time_pitch_thrown_str": "06/17/2019 10:13:31 PM -0400",
+      "has_zone_location": true
     }
   ],
   "pitch_count_by_inning": {
@@ -419,5 +440,11 @@
   "opponent_team_id_bb": "TOR",
   "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
   "bbref_game_id": "TOR201906170",
+  "game_date_year": 2019,
+  "game_date_month": 6,
+  "game_date_day": 17,
+  "game_time_hour": 19,
+  "game_time_minute": 7,
+  "time_zone_name": "America/New_York",
   "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605121&game=gid_2019_06_17_anamlb_tormlb_1/&s_type=3&h_size=700&v_size=500"
 }

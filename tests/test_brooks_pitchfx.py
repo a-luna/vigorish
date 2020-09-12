@@ -7,8 +7,6 @@ from vigorish.scrape.brooks_pitchfx.parse_html import parse_pitchfx_log
 from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
 from vigorish.util.result import Result
 
-from tests.util import reset_pitch_app_scrape_status_after_parsed_pitchfx
-
 DATA_SET = DataSet.BROOKS_PITCHFX
 GAME_DATE = datetime(2018, 4, 1)
 BB_GAME_ID = "gid_2018_04_01_anamlb_oakmlb_1"
@@ -64,3 +62,10 @@ def test_update_database_pitchfx(db_session, scraped_data):
 
 def verify_brooks_pitchfx_OAK201804010_660271(pitchfx_log):
     return Result.Ok()
+
+
+def reset_pitch_app_scrape_status_after_parsed_pitchfx(db_session, pitch_app_id):
+    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
+    setattr(pitch_app_status, "scraped_pitchfx", 0)
+    setattr(pitch_app_status, "pitch_count_pitchfx", 0)
+    db_session.commit()
