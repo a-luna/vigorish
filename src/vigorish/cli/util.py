@@ -1,4 +1,5 @@
 """Shared functions and menus for CLI."""
+from functools import partial
 from random import randint
 
 import click
@@ -40,6 +41,14 @@ def print_message(
     if wrap:
         message = wrap_text(message, max_len=max_line_len)
     click.secho(message, fg=fg, bg=bg, bold=bold, underline=underline)
+
+
+def print_heading(message, fg=None, bg=None):
+    print_message(f"{message}\n", wrap=False, fg=fg, bg=bg, bold=True, underline=True)
+
+
+print_error = partial(print_message, fg="bright_red", bg=None, bold=True, underline=None)
+print_success = partial(print_message, fg="bright_green", bg=None, bold=True, underline=None)
 
 
 def validate_scrape_dates(db_session, start_date, end_date):
