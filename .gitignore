@@ -11,6 +11,7 @@ node_modules
 .mypy_cache
 json_storage
 html_storage
+release2pypi.sh
 !tests/html_storage
 !tests/json_storage
 src/vigorish/nightmarejs/node_modules
