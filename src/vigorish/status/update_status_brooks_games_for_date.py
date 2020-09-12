@@ -86,7 +86,9 @@ def update_game_status_records(db_session, season, new_brooks_games):
             setattr(game_status, "game_time_minute", brooks_game_info.game_time_minute)
             setattr(game_status, "game_time_zone", brooks_game_info.time_zone_name)
             setattr(
-                game_status, "pitch_app_count_brooks", brooks_game_info.pitcher_appearance_count,
+                game_status,
+                "pitch_app_count_brooks",
+                brooks_game_info.pitcher_appearance_count,
             )
             setattr(game_status, "scrape_status_date_id", date_status.id)
             setattr(game_status, "season_id", season.id)

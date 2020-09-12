@@ -49,7 +49,9 @@ class GamePitchStats(Base):
         "Team", foreign_keys=[player_team_id], back_populates="team_pitching_stats"
     )
     opponent_team = relationship(
-        "Team", foreign_keys=[opponent_team_id], back_populates="opponent_pitching_stats",
+        "Team",
+        foreign_keys=[opponent_team_id],
+        back_populates="opponent_pitching_stats",
     )
 
     def __repr__(self):

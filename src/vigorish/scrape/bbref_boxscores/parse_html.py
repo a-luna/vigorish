@@ -766,7 +766,10 @@ def _parse_all_game_events(
 
     misc_events = []
     missing_row_ids = _find_missing_pbp_events(
-        inning_summaries_top, inning_summaries_bottom, play_by_play_events, in_game_substitutions,
+        inning_summaries_top,
+        inning_summaries_bottom,
+        play_by_play_events,
+        in_game_substitutions,
     )
     if missing_row_ids:
         misc_events = _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id)
@@ -1219,7 +1222,10 @@ def _create_innings_list(
             sub.inning_label = inning_label
             sub_team_id = sub.get_sub_team_id(away_team_id, home_team_id)
             result = _get_sub_player_ids(
-                sub.incoming_player_name, sub.outgoing_player_name, player_name_dict, sub_team_id,
+                sub.incoming_player_name,
+                sub.outgoing_player_name,
+                player_name_dict,
+                sub_team_id,
             )
             if result.failure:
                 return result

@@ -483,7 +483,9 @@ class CombineScrapedData:
                 at_bat_ids_dupe_guids.append(ab_id)
             pfx_data_copy = deepcopy(pfx_no_dupes) if not missing_pitch_numbers else None
             result = self.construct_pitch_sequence_description(
-                ab_id, final_event_this_at_bat, pfx_data_copy,
+                ab_id,
+                final_event_this_at_bat,
+                pfx_data_copy,
             )
             if result.failure:
                 return result
@@ -642,7 +644,10 @@ class CombineScrapedData:
         return sorted(removed_dupes, key=lambda x: (x["ab_id"], x["ab_count"]))
 
     def find_pfx_out_of_sequence(
-        self, at_bat_id, fix_pfx_data, pitch_count,
+        self,
+        at_bat_id,
+        fix_pfx_data,
+        pitch_count,
     ):
         ab_index = self.at_bat_ids.index(at_bat_id)
         if ab_index == 0:
@@ -726,7 +731,12 @@ class CombineScrapedData:
                 next_pitch_thrown = matches[0]["time_pitch_thrown"]
             else:
                 result = self.determine_best_pfx_from_next_pitch(
-                    fix_ab_id, next_ab_id, matches, pitch_count, pitch_num, next_pitch_thrown,
+                    fix_ab_id,
+                    next_ab_id,
+                    matches,
+                    pitch_count,
+                    pitch_num,
+                    next_pitch_thrown,
                 )
                 if result.failure:
                     return result
@@ -814,7 +824,13 @@ class CombineScrapedData:
         )
 
     def determine_best_pfx_from_next_pitch(
-        self, at_bat_id, next_ab_id, possible_pfx, pitch_count, this_pitch_num, next_pitch_thrown,
+        self,
+        at_bat_id,
+        next_ab_id,
+        possible_pfx,
+        pitch_count,
+        this_pitch_num,
+        next_pitch_thrown,
     ):
         pitch_times = self.get_pitch_metrics_next_at_bat(
             at_bat_id, next_ab_id, this_pitch_num, pitch_count

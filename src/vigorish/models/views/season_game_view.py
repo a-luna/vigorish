@@ -33,7 +33,12 @@ class Season_Game_View(Base):
             ]
         )
         .select_from(
-            join(Season, GameScrapeStatus, Season.id == GameScrapeStatus.season_id, isouter=True,)
+            join(
+                Season,
+                GameScrapeStatus,
+                Season.id == GameScrapeStatus.season_id,
+                isouter=True,
+            )
         )
         .group_by(Season.id),
         metadata=Base.metadata,

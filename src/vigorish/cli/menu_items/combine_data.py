@@ -355,7 +355,9 @@ class CombineGameDataMenuItem(MenuItem):
     def update_progress_bars(self, game_date, game_id):
         date_str = game_date.strftime(DATE_MONTH_NAME)
         self.status_bar.update(
-            total_combined=self.total_combined, total_games=self.total_games, date_str=date_str,
+            total_combined=self.total_combined,
+            total_games=self.total_games,
+            date_str=date_str,
         )
         self.date_progress_bar.desc = date_str
         self.game_progress_bar_success.desc = game_id

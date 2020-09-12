@@ -16,7 +16,15 @@ class RetryLimitExceededError(Exception):
         super().__init__(error)
 
 
-def retry(*, max_attempts=2, delay=1, exceptions={Exception,}, on_failure=None):
+def retry(
+    *,
+    max_attempts=2,
+    delay=1,
+    exceptions={
+        Exception,
+    },
+    on_failure=None,
+):
     """Retry the wrapped function when an exception is raised until max_attempts have failed."""
 
     def decorator(func):

@@ -226,7 +226,12 @@ class FileHelper:
     ):
         folderpath = self.get_local_folderpath(file_type, data_set, game_date)
         filename = self.get_file_name(
-            data_set, file_type, game_date, bbref_game_id, bb_game_id, pitch_app_id,
+            data_set,
+            file_type,
+            game_date,
+            bbref_game_id,
+            bb_game_id,
+            pitch_app_id,
         )
         return str(Path(folderpath).joinpath(filename))
 

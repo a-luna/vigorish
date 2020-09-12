@@ -14,7 +14,12 @@ from vigorish.util.result import Result
 
 def run_command(command, cwd=None, shell=True, text=True):
     process = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd, shell=shell, text=text,
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        cwd=cwd,
+        shell=shell,
+        text=text,
     )
     for line in iter(process.stdout.readline, ""):
         if line:
