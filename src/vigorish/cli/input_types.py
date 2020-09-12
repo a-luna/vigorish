@@ -108,4 +108,4 @@ class DataSetCheck(Check):
             shift,
         )
         if checked_data_sets:
-            self.checked = [choice in checked_data_sets.values() for choice in choices]
+            self.checked = [choice in checked_data_sets for choice in choices]

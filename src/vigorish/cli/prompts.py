@@ -137,23 +137,26 @@ def audit_report_season_prompt(audit_report, prompt=None):
     return user_options_prompt(choices, prompt)
 
 
-def data_sets_prompt(prompt, valid_data_sets=DataSet.ALL, checked_data_sets=None):
+def data_sets_prompt(prompt, valid_data_sets=0, checked_data_sets=None):
     data_set_name_map = {v: k for k, v in DATA_SET_NAMES_LONG.items()}
     if not prompt:
         prompt = "Select one or multiple data sets from the list below:"
+    if not valid_data_sets:
+        valid_data_sets = int(DataSet.ALL)
     instructions = "(use SPACE BAR to select each data set, ENTER to confirm your selections)"
     choices = {
         f"{data_set_name_map[ds]}": ds
         for ds in DataSet
-        if ds != DataSet.ALL and int(ds) & valid_data_sets == ds
+        if ds != DataSet.ALL and valid_data_sets & ds == ds
     }
     if checked_data_sets:
+        checked_int = sum(int(ds) for ds in checked_data_sets.keys())
         checked_data_sets = [
             f"{data_set_name_map[ds]}"
             for ds in DataSet
-            if ds != DataSet.ALL and int(ds) & checked_data_sets == ds
+            if ds != DataSet.ALL and checked_int & ds == ds
         ]
-    data_sets_prompt = DataSetCheck(
+    ds_prompt = DataSetCheck(
         prompt=instructions,
         choices=[data_set for data_set in choices.keys()],
         checked_data_sets=checked_data_sets,
@@ -172,7 +175,7 @@ def data_sets_prompt(prompt, valid_data_sets=DataSet.ALL, checked_data_sets=None
     while not data_sets:
         subprocess.run(["clear"])
         print_message(prompt, fg="bright_yellow", bold=True, underline=True)
-        result = data_sets_prompt.launch()
+        result = ds_prompt.launch()
         if not result:
             print_message("\nYou must select at least one file type!", fg="bright_red", bold=True)
             pause(message="Press any key to continue...")
