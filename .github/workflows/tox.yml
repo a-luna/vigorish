@@ -31,6 +31,11 @@ jobs:
           python -m site
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install --upgrade coverage[toml] virtualenv tox tox-gh-actions
-
       - name: "Run tox targets for ${{ matrix.python-version }}"
         run: "python -m tox"
+      - name: "Convert coverage"
+        run: "python -m coverage xml"
+      - name: "Upload coverage to Codecov"
+        uses: "codecov/codecov-action@v1"
+        with:
+          fail_ci_if_error: true
