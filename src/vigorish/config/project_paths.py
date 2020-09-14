@@ -11,6 +11,6 @@ NODEJS_SCRIPT = NIGHTMAREJS_FOLDER.joinpath("scrape_job.js")
 
 CSV_FOLDER = APP_FOLDER.joinpath("setup/csv")
 PEOPLE_CSV = CSV_FOLDER.joinpath("People.csv")
-TEAM_CSV = CSV_FOLDER.joinpath("Team.csv")
+TEAM_CSV = CSV_FOLDER.joinpath("Teams.csv")
 PLAYER_ID_MAP_CSV = CSV_FOLDER.joinpath("bbref_player_id_map.csv")
 PLAYER_TEAM_MAP_CSV = CSV_FOLDER.joinpath("bbref_player_team_map.csv")
