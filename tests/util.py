@@ -58,6 +58,7 @@ def seed_database_with_2018_test_data(db_session, scraped_data):
 
 
 def seed_database_with_2019_test_data(db_session, scraped_data):
+    # seed data for test_combine_scraped_data
     season = Season.find_by_year(db_session, 2019)
     assert season
     for game_date, game_id_dict in COMBINED_DATA_GAME_DICT.items():

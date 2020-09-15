@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from dataclass_csv import accept_whitespaces, DataclassReader
 from tqdm import tqdm
 
-from vigorish.config.project_paths import TEAM_CSV, TEST_TEAM_CSV
 from vigorish.models.team import Team
 from vigorish.util.result import Result
 
@@ -62,17 +61,20 @@ class TeamCsvRow:
     teamIDretro: str = None
 
 
-def populate_teams(db_session, is_test=False):
+TEAMS_CSV_FILENAME = "Teams.csv"
+
+
+def populate_teams(db_session, csv_folder):
     """Populate team table with initial data."""
-    result = import_teams_csv(db_session, is_test)
+    result = import_teams_csv(db_session, csv_folder)
     if result.failure:
         return result
     db_session.commit()
     return Result.Ok()
 
 
-def import_teams_csv(db_session, is_test):
-    team_csv_file = TEST_TEAM_CSV if is_test else TEAM_CSV
+def import_teams_csv(db_session, csv_folder):
+    team_csv_file = csv_folder.joinpath(TEAMS_CSV_FILENAME)
     csv_text = team_csv_file.read_text()
     total_rows = len([row for row in csv_text.split("\n") if row])
     try:

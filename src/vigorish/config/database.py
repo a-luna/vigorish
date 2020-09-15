@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-from vigorish.config.project_paths import VIG_FOLDER
+from vigorish.config.project_paths import VIG_FOLDER, CSV_FOLDER
 from vigorish.models.boxscore import Boxscore
 from vigorish.models.game_bat_stats import GameBatStats
 from vigorish.models.game_event import GameEvent
@@ -49,10 +49,12 @@ def get_db_url():
     return db_url if db_url else SQLITE_DEV_URL if env == "dev" else SQLITE_PROD_URL
 
 
-def initialize_database(app, is_test=False):
+def initialize_database(app, csv_folder=None):
+    if not csv_folder:
+        csv_folder = CSV_FOLDER
     Base.metadata.drop_all(app["db_engine"])
     Base.metadata.create_all(app["db_engine"])
-    return populate_tables(app, is_test)
+    return populate_tables(app, csv_folder)
 
 
 def db_setup_complete(db_engine, db_session):
