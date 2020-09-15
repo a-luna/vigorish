@@ -6,16 +6,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from vigorish.config.config_file import ConfigFile
+from vigorish.config.database import initialize_database
 from vigorish.config.dotenv_file import DotEnvFile, create_default_dotenv_file
 from vigorish.data.scraped_data import ScrapedData
 
-from tests.util import reset_database_before_session_start
+from tests.util import seed_database_with_test_data
 
 TESTS_FOLDER = Path(__file__).parent
 DOTENV_FILE = TESTS_FOLDER.joinpath(".env")
 CONFIG_FILE = TESTS_FOLDER.joinpath("vig.config.json")
-DB_FILE = TESTS_FOLDER.joinpath("vig_test.db")
-SQLITE_URL = f"sqlite:///{DB_FILE}"
+SQLITE_URL = "sqlite://"
 
 
 @pytest.fixture(scope="session")
@@ -54,5 +54,13 @@ def scraped_data(config, db_engine, db_session):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def do_something(request, db_session):
-    reset_database_before_session_start(db_session)
+def seed_db(request, dotenv, config, db_engine, db_session, scraped_data):
+    app = {
+        "dotenv": dotenv,
+        "config": config,
+        "db_engine": db_engine,
+        "db_session": db_session,
+        "scraped_data": scraped_data,
+    }
+    initialize_database(app, is_test=True)
+    seed_database_with_test_data(db_session, scraped_data)

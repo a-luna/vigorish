@@ -102,11 +102,11 @@ class ScrapedData:
         )
         pitch_logs = []
         for game_id in brooks_game_ids:
-            result = self.get_brooks_pitch_logs_for_game(game_id)
-            if result.failure:
+            pitch_log = self.get_brooks_pitch_logs_for_game(game_id)
+            if not pitch_log:
                 continue
-            pitch_logs.append(result.value)
-        return Result.Ok(pitch_logs)
+            pitch_logs.append(pitch_log)
+        return pitch_logs
 
     def get_all_pitchfx_logs_for_game(self, bbref_game_id):
         p_app_ids = PitchAppScrapeStatus.get_all_scraped_pitch_app_ids_for_game_with_pitchfx_data(

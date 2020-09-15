@@ -36,10 +36,11 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
     def parse_scraped_html(self):
         parsed = 0
         for game_date in self.date_range:
-            result = self.scraped_data.get_all_brooks_pitch_logs_for_date(game_date)
-            if result.failure:
-                return result
-            pitch_logs_for_date = result.value
+            pitch_logs_for_date = self.scraped_data.get_all_brooks_pitch_logs_for_date(game_date)
+            if not pitch_logs_for_date:
+                date_str = game_date.strftime(DATE_ONLY_2)
+                error = f"Failed to retrieve {DataSet.BROOKS_PITCH_LOGS} for date: {date_str}"
+                return Result.Fail(error)
             for pitch_logs_for_game in pitch_logs_for_date:
                 game_id = pitch_logs_for_game.bbref_game_id
                 self.spinner.text = self.url_tracker.parse_html_report(parsed, game_id)

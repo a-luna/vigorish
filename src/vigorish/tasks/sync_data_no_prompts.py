@@ -9,6 +9,7 @@ from vigorish.cli.util import (
     get_random_cli_color,
     get_random_dots_spinner,
 )
+from vigorish.tasks.base import Task
 from vigorish.tasks.sync_scraped_data import SyncScrapedData
 from vigorish.enums import DataSet, SyncDirection, VigFile
 from vigorish.util.result import Result
@@ -21,7 +22,7 @@ SYNC_STATUS_TEXT_COLOR = {
 }
 
 
-class SyncScrapedDataNoPrompts:
+class SyncScrapedDataNoPrompts(Task):
     def __init__(self, app):
         super().__init__(app)
         self.s3_sync = SyncScrapedData(self.app)

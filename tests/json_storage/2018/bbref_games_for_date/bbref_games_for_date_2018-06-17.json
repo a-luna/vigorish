@@ -1,0 +1,23 @@
+{
+  "__bbref_games_for_date__": true,
+  "boxscore_urls": [
+    "https://www.baseball-reference.com/boxes/ARI/ARI201806170.shtml",
+    "https://www.baseball-reference.com/boxes/ATL/ATL201806170.shtml",
+    "https://www.baseball-reference.com/boxes/BAL/BAL201806170.shtml",
+    "https://www.baseball-reference.com/boxes/CHA/CHA201806170.shtml",
+    "https://www.baseball-reference.com/boxes/CLE/CLE201806170.shtml",
+    "https://www.baseball-reference.com/boxes/KCA/KCA201806170.shtml",
+    "https://www.baseball-reference.com/boxes/LAN/LAN201806170.shtml",
+    "https://www.baseball-reference.com/boxes/MIL/MIL201806170.shtml",
+    "https://www.baseball-reference.com/boxes/NYA/NYA201806170.shtml",
+    "https://www.baseball-reference.com/boxes/OAK/OAK201806170.shtml",
+    "https://www.baseball-reference.com/boxes/PIT/PIT201806170.shtml",
+    "https://www.baseball-reference.com/boxes/SEA/SEA201806170.shtml",
+    "https://www.baseball-reference.com/boxes/SLN/SLN201806170.shtml",
+    "https://www.baseball-reference.com/boxes/TEX/TEX201806170.shtml",
+    "https://www.baseball-reference.com/boxes/TOR/TOR201806170.shtml"
+  ],
+  "dashboard_url": "https://www.baseball-reference.com/boxes/?month=6&day=17&year=2018",
+  "game_count": 15,
+  "game_date_str": "2018-06-17"
+}

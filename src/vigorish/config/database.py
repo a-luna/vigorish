@@ -49,10 +49,10 @@ def get_db_url():
     return db_url if db_url else SQLITE_DEV_URL if env == "dev" else SQLITE_PROD_URL
 
 
-def initialize_database(app):
+def initialize_database(app, is_test=False):
     Base.metadata.drop_all(app["db_engine"])
     Base.metadata.create_all(app["db_engine"])
-    return populate_tables(app)
+    return populate_tables(app, is_test)
 
 
 def db_setup_complete(db_engine, db_session):

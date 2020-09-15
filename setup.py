@@ -61,6 +61,8 @@ EXTRAS_REQUIRE = {
         "pytest-dotenv",
         "pytest-flake8",
         "tox",
+        "twine",
+        "wheel",
     ]
 }
 

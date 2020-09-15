@@ -4,7 +4,8 @@ from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 
 
-def update_brooks_games_for_date_single_date(db_session, season, games_for_date, game_date):
+def update_brooks_games_for_date_single_date(db_session, season, games_for_date):
+    game_date = games_for_date.game_date
     result = update_date_status_records(db_session, games_for_date, game_date)
     if result.failure:
         return result

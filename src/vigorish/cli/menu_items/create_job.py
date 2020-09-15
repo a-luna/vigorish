@@ -27,7 +27,9 @@ class CreateJobMenuItem(MenuItem):
         end_date = None
         job_name = None
         while not job_confirmed:
-            data_sets = data_sets_prompt("Select all data sets to scrape:", data_sets)
+            data_sets = data_sets_prompt(
+                "Select all data sets to scrape:", checked_data_sets=data_sets
+            )
             dates_validated = False
             while not dates_validated:
                 (start_date, end_date) = self.get_scrape_dates_from_user(start_date, end_date)

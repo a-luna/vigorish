@@ -92,7 +92,7 @@ class SyncScrapedData(MenuItem):
             valid_data_sets = DataSet.BBREF_BOXSCORES | DataSet.BROOKS_PITCHFX
         else:
             valid_data_sets = DataSet.ALL
-        return data_sets_prompt(prompt, valid_data_sets=valid_data_sets)
+        return data_sets_prompt(prompt, valid_data_sets=int(valid_data_sets))
 
     def sync_direction_prompt(self):
         prompt = (

@@ -10,7 +10,6 @@ from vigorish.status.update_status_bbref_games_for_date import (
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 
-DATA_SET = DataSet.BBREF_GAMES_FOR_DATE
 GAME_DATE = datetime(2018, 7, 26)
 
 
@@ -21,26 +20,26 @@ def get_bbref_url_for_date():
     return f"https://www.baseball-reference.com/boxes/?month={m}&day={d}&year={y}"
 
 
-def parse_bbref_games_for_date_from_html(scraped_data):
+def parse_bbref_games_for_date_from_html(scraped_data, game_date):
     bbref_url = get_bbref_url_for_date()
-    html_path = scraped_data.get_html(DATA_SET, GAME_DATE)
-    result = parse_bbref_dashboard_page(html_path.read_text(), GAME_DATE, bbref_url)
+    html_path = scraped_data.get_html(DataSet.BBREF_GAMES_FOR_DATE, game_date)
+    result = parse_bbref_dashboard_page(html_path.read_text(), game_date, bbref_url)
     assert result.success
     games_for_date = result.value
     return games_for_date
 
 
 def test_parse_bbref_games_for_date(scraped_data):
-    games_for_date = parse_bbref_games_for_date_from_html(scraped_data)
+    games_for_date = parse_bbref_games_for_date_from_html(scraped_data, GAME_DATE)
     assert isinstance(games_for_date, BBRefGamesForDate)
     result = verify_bbref_games_for_date_jul_26_2018(games_for_date)
     assert result.success
 
 
 def test_persist_bbref_games_for_date(scraped_data):
-    games_for_date_parsed = parse_bbref_games_for_date_from_html(scraped_data)
+    games_for_date_parsed = parse_bbref_games_for_date_from_html(scraped_data, GAME_DATE)
     assert isinstance(games_for_date_parsed, BBRefGamesForDate)
-    result = scraped_data.save_json(DATA_SET, games_for_date_parsed)
+    result = scraped_data.save_json(DataSet.BBREF_GAMES_FOR_DATE, games_for_date_parsed)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
@@ -54,7 +53,7 @@ def test_persist_bbref_games_for_date(scraped_data):
 
 
 def test_update_database_bbref_games_for_date(db_session, scraped_data):
-    games_for_date = parse_bbref_games_for_date_from_html(scraped_data)
+    games_for_date = parse_bbref_games_for_date_from_html(scraped_data, GAME_DATE)
     assert isinstance(games_for_date, BBRefGamesForDate)
     date_status = db_session.query(DateScrapeStatus).get(GAME_DATE.strftime(DATE_ONLY_TABLE_ID))
     assert date_status
@@ -67,7 +66,6 @@ def test_update_database_bbref_games_for_date(db_session, scraped_data):
     assert result.success
     assert date_status.scraped_daily_dash_bbref == 1
     assert date_status.game_count_bbref == 11
-    reset_date_scrape_status_after_parsed_bbref_games_for_date(db_session, GAME_DATE)
 
 
 def verify_bbref_games_for_date_jul_26_2018(games_for_date):
@@ -101,10 +99,3 @@ def verify_bbref_games_for_date_jul_26_2018(games_for_date):
     assert games_for_date.boxscore_urls[9] == url9
     assert games_for_date.boxscore_urls[10] == url10
     return Result.Ok()
-
-
-def reset_date_scrape_status_after_parsed_bbref_games_for_date(db_session, game_date):
-    date_status = db_session.query(DateScrapeStatus).get(game_date.strftime(DATE_ONLY_TABLE_ID))
-    setattr(date_status, "scraped_daily_dash_bbref", 0)
-    setattr(date_status, "game_count_bbref", 0)
-    db_session.commit()

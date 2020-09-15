@@ -89,7 +89,7 @@ def setup(app):
     "--data-set",
     type=click.Choice(DATA_SET_NAME_MAP.keys()),
     multiple=True,
-    default=["all"],
+    default=[str(DataSet.ALL)],
     show_default=True,
     help="Data set to scrape, multiple values can be provided.",
 )
@@ -118,8 +118,8 @@ def setup(app):
     type=JobName(),
     help="A name to help identify this job.",
     prompt=(
-        "Enter a name to help you identify this job (must consist of ONLY: "
-        "letters/numbers/underscore/hyphen)"
+        "Enter a name to help you identify this job (must consist of ONLY "
+        "letters, numbers, underscore, and/or hyphen characters)"
     ),
 )
 @click.pass_obj
@@ -286,11 +286,14 @@ def sync(app):
     "--file-type",
     type=click.Choice([str(ft) for ft in VigFile if ft != VigFile.ALL]),
     help="Type of file to sync, must provide only one value.",
+    prompt=True,
 )
 @click.option(
     "--data-sets",
     type=click.Choice([str(ds) for ds in DataSet]),
     multiple=True,
+    default=[str(DataSet.ALL)],
+    show_default=True,
     help="Data set(s) to sync, multiple values can be provided.",
 )
 @click.pass_obj
@@ -310,11 +313,14 @@ def sync_up_to_s3(app, year, file_type, data_sets):
     "--file-type",
     type=click.Choice([str(ft) for ft in VigFile if ft != VigFile.ALL]),
     help="Type of file to sync, must provide only one value.",
+    prompt=True,
 )
 @click.option(
     "--data-sets",
     type=click.Choice([str(ds) for ds in DataSet]),
     multiple=True,
+    default=[str(DataSet.ALL)],
+    show_default=True,
     help="Data set(s) to sync, multiple values can be provided.",
 )
 @click.pass_obj

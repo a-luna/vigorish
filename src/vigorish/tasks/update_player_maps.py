@@ -4,7 +4,11 @@ from dataclasses import dataclass, asdict, field
 import requests
 from dacite import from_dict
 
-from vigorish.config.project_paths import PLAYER_ID_MAP_CSV, PLAYER_TEAM_MAP_CSV
+from vigorish.config.project_paths import (
+    PLAYER_ID_MAP_CSV,
+    PLAYER_TEAM_MAP_CSV,
+    TEST_PLAYER_ID_MAP_CSV,
+)
 from vigorish.tasks.base import Task
 from vigorish.util.result import Result
 
@@ -182,11 +186,12 @@ class UpdatePlayerIdMap(Task):
         csv_text = serialize_data_class_objects(new_id_map)
         PLAYER_ID_MAP_CSV.write_text(csv_text)
 
-    def read_bbref_player_id_map_from_file(self):
-        if not PLAYER_ID_MAP_CSV.exists():
-            PLAYER_ID_MAP_CSV.touch()
+    def read_bbref_player_id_map_from_file(self, is_test=False):
+        player_id_map_csv = TEST_PLAYER_ID_MAP_CSV if is_test else PLAYER_ID_MAP_CSV
+        if not player_id_map_csv.exists():
+            player_id_map_csv.touch()
             return set()
-        id_map_text = PLAYER_ID_MAP_CSV.read_text()
+        id_map_text = player_id_map_csv.read_text()
         if not id_map_text:
             return set()
         id_map = deserialize_data_class_objects(id_map_text, BBRefPlayerIdMap)
@@ -293,12 +298,16 @@ def parse_bat_stats(url):
 
 
 def serialize_data_class_objects(data_class_objects):
-    data_class_dicts = [asdict(do) for do in data_class_objects]
-    if not data_class_dicts:
+    dataclass_dicts = [asdict(do) for do in data_class_objects]
+    if not dataclass_dicts:
         return None
-    col_names = [",".join(list(data_class_dicts[0].keys()))]
-    csv_rows = [",".join(d.values()) for d in data_class_dicts]
+    col_names = [",".join(list(dataclass_dicts[0].keys()))]
+    csv_rows = [",".join(sanitize_row(d)) for d in dataclass_dicts]
     return "\n".join((col_names + csv_rows))
+
+
+def sanitize_row(dataclass_dict):
+    return [val if isinstance(val, str) else str(val) for val in dataclass_dict.values()]
 
 
 def read_bbref_player_team_map_from_file():
@@ -314,7 +323,7 @@ def read_bbref_player_team_map_from_file():
 
 def deserialize_data_class_objects(csv_text, data_class):
     csv_rows = csv_text.split("\n")
-    col_names = csv_rows.pop(0).split(",")
+    col_names = [col.strip() for col in csv_rows.pop(0).split(",")]
     csv_rows = [row.split(",") for row in csv_rows]
     csv_dict_list = [dict(zip(col_names, row)) for row in csv_rows if row != [""]]
     return [from_dict(data_class=data_class, data=csv_dict) for csv_dict in csv_dict_list]

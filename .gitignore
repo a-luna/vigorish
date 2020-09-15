@@ -11,6 +11,7 @@ node_modules
 .mypy_cache
 json_storage
 html_storage
+one_offs
 release2pypi.sh
 !tests/html_storage
 !tests/json_storage
