@@ -15,6 +15,7 @@ from tests.util import seed_database_with_test_data
 TESTS_FOLDER = Path(__file__).parent
 DOTENV_FILE = TESTS_FOLDER.joinpath(".env")
 CONFIG_FILE = TESTS_FOLDER.joinpath("vig.config.json")
+CSV_FOLDER = TESTS_FOLDER.joinpath("csv")
 SQLITE_URL = "sqlite://"
 
 
@@ -62,5 +63,5 @@ def seed_db(request, dotenv, config, db_engine, db_session, scraped_data):
         "db_session": db_session,
         "scraped_data": scraped_data,
     }
-    initialize_database(app, is_test=True)
+    initialize_database(app, csv_folder=CSV_FOLDER)
     seed_database_with_test_data(db_session, scraped_data)

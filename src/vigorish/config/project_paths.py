@@ -14,9 +14,3 @@ PEOPLE_CSV = CSV_FOLDER.joinpath("People.csv")
 TEAM_CSV = CSV_FOLDER.joinpath("Teams.csv")
 PLAYER_ID_MAP_CSV = CSV_FOLDER.joinpath("bbref_player_id_map.csv")
 PLAYER_TEAM_MAP_CSV = CSV_FOLDER.joinpath("bbref_player_team_map.csv")
-
-ROOT_FOLDER = APP_FOLDER.parent.parent
-TEST_CSV_FOLDER = ROOT_FOLDER.joinpath("tests/csv")
-TEST_PEOPLE_CSV = TEST_CSV_FOLDER.joinpath("People.csv")
-TEST_TEAM_CSV = TEST_CSV_FOLDER.joinpath("Teams.csv")
-TEST_PLAYER_ID_MAP_CSV = TEST_CSV_FOLDER.joinpath("bbref_player_id_map.csv")

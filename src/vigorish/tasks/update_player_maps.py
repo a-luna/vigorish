@@ -7,7 +7,6 @@ from dacite import from_dict
 from vigorish.config.project_paths import (
     PLAYER_ID_MAP_CSV,
     PLAYER_TEAM_MAP_CSV,
-    TEST_PLAYER_ID_MAP_CSV,
 )
 from vigorish.tasks.base import Task
 from vigorish.util.result import Result
@@ -144,7 +143,7 @@ class UpdatePlayerIdMap(Task):
         if not PLAYER_ID_MAP_CSV.exists():
             self.initialize_bbref_player_id_map()
             return
-        id_map = self.read_bbref_player_id_map_from_file()
+        id_map = self.read_bbref_player_id_map_from_file(PLAYER_ID_MAP_CSV)
         current_id_map = self.get_current_player_id_map()
         new_id_map = current_id_map - id_map
         if new_id_map:
@@ -186,8 +185,7 @@ class UpdatePlayerIdMap(Task):
         csv_text = serialize_data_class_objects(new_id_map)
         PLAYER_ID_MAP_CSV.write_text(csv_text)
 
-    def read_bbref_player_id_map_from_file(self, is_test=False):
-        player_id_map_csv = TEST_PLAYER_ID_MAP_CSV if is_test else PLAYER_ID_MAP_CSV
+    def read_bbref_player_id_map_from_file(self, player_id_map_csv):
         if not player_id_map_csv.exists():
             player_id_map_csv.touch()
             return set()
