@@ -1,0 +1,19 @@
+{
+  "__bbref_games_for_date__": true,
+  "boxscore_urls": [
+    "https://www.baseball-reference.com/boxes/ATL/ATL201906170.shtml",
+    "https://www.baseball-reference.com/boxes/CIN/CIN201906170.shtml",
+    "https://www.baseball-reference.com/boxes/LAN/LAN201906170.shtml",
+    "https://www.baseball-reference.com/boxes/MIN/MIN201906170.shtml",
+    "https://www.baseball-reference.com/boxes/NYA/NYA201906170.shtml",
+    "https://www.baseball-reference.com/boxes/OAK/OAK201906170.shtml",
+    "https://www.baseball-reference.com/boxes/SDN/SDN201906170.shtml",
+    "https://www.baseball-reference.com/boxes/SEA/SEA201906170.shtml",
+    "https://www.baseball-reference.com/boxes/SLN/SLN201906170.shtml",
+    "https://www.baseball-reference.com/boxes/TEX/TEX201906170.shtml",
+    "https://www.baseball-reference.com/boxes/TOR/TOR201906170.shtml"
+  ],
+  "dashboard_url": "https://www.baseball-reference.com/boxes/?month=6&day=17&year=2019",
+  "game_count": 11,
+  "game_date_str": "2019-06-17"
+}

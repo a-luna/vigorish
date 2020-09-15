@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from vigorish.config.database import PitchAppScrapeStatus, GameScrapeStatus
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
 
@@ -5,6 +7,20 @@ GAME_ID_NO_ERRORS = "TOR201906170"
 NO_ERRORS_PITCH_APP = "TOR201906170_429719"
 GAME_ID_WITH_ERRORS = "NYA201906112"
 GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
+COMBINED_DATA_GAME_DICT = {
+    datetime(2019, 6, 17): {
+        "bbref_game_id": GAME_ID_NO_ERRORS,
+        "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
+    },
+    datetime(2019, 6, 11): {
+        "bbref_game_id": GAME_ID_WITH_ERRORS,
+        "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
+    },
+    datetime(2019, 9, 7): {
+        "bbref_game_id": GAME_ID_NO_PFX_FOR_PITCH_APP,
+        "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
+    },
+}
 
 
 def combine_scraped_data_for_game(db_session, scraped_data, bbref_game_id):

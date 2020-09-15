@@ -10,11 +10,12 @@ from vigorish.util.result import Result
 DATA_SET = DataSet.BROOKS_PITCHFX
 GAME_DATE = datetime(2018, 4, 1)
 BB_GAME_ID = "gid_2018_04_01_anamlb_oakmlb_1"
+BBREF_GAME_ID = "OAK201804010"
 PITCH_APP_ID = "OAK201804010_660271"
 
 
-def parse_brooks_pitchfx_from_html(scraped_data):
-    pitch_logs = scraped_data.get_brooks_pitch_logs_for_game(BB_GAME_ID)
+def parse_brooks_pitchfx_from_html(scraped_data, bb_game_id):
+    pitch_logs = scraped_data.get_brooks_pitch_logs_for_game(bb_game_id)
     pitch_log = [plog for plog in pitch_logs.pitch_logs if plog.pitch_app_id == PITCH_APP_ID][0]
     html_path = scraped_data.get_html(DATA_SET, PITCH_APP_ID)
     result = parse_pitchfx_log(html_path.read_text(), pitch_log)
@@ -24,14 +25,14 @@ def parse_brooks_pitchfx_from_html(scraped_data):
 
 
 def test_parse_brooks_pitchfx(scraped_data):
-    pitchfx_log = parse_brooks_pitchfx_from_html(scraped_data)
+    pitchfx_log = parse_brooks_pitchfx_from_html(scraped_data, BB_GAME_ID)
     assert isinstance(pitchfx_log, BrooksPitchFxLog)
     result = verify_brooks_pitchfx_OAK201804010_660271(pitchfx_log)
     assert result.success
 
 
 def test_persist_brooks_pitchfx(scraped_data):
-    pitchfx_log_parsed = parse_brooks_pitchfx_from_html(scraped_data)
+    pitchfx_log_parsed = parse_brooks_pitchfx_from_html(scraped_data, BB_GAME_ID)
     assert isinstance(pitchfx_log_parsed, BrooksPitchFxLog)
     result = scraped_data.save_json(DATA_SET, pitchfx_log_parsed)
     assert result.success
@@ -47,7 +48,7 @@ def test_persist_brooks_pitchfx(scraped_data):
 
 
 def test_update_database_pitchfx(db_session, scraped_data):
-    pitchfx_log = parse_brooks_pitchfx_from_html(scraped_data)
+    pitchfx_log = parse_brooks_pitchfx_from_html(scraped_data, BB_GAME_ID)
     assert isinstance(pitchfx_log, BrooksPitchFxLog)
     pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, PITCH_APP_ID)
     assert pitch_app_status
@@ -57,15 +58,15 @@ def test_update_database_pitchfx(db_session, scraped_data):
     assert result.success
     assert pitch_app_status.scraped_pitchfx == 1
     assert pitch_app_status.pitch_count_pitchfx == 92
-    reset_pitch_app_scrape_status_after_parsed_pitchfx(db_session, PITCH_APP_ID)
+    # reset_pitch_app_scrape_status_after_parsed_pitchfx(db_session, PITCH_APP_ID)
 
 
 def verify_brooks_pitchfx_OAK201804010_660271(pitchfx_log):
     return Result.Ok()
 
 
-def reset_pitch_app_scrape_status_after_parsed_pitchfx(db_session, pitch_app_id):
-    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
-    setattr(pitch_app_status, "scraped_pitchfx", 0)
-    setattr(pitch_app_status, "pitch_count_pitchfx", 0)
-    db_session.commit()
+# def reset_pitch_app_scrape_status_after_parsed_pitchfx(db_session, pitch_app_id):
+#     pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
+#     setattr(pitch_app_status, "scraped_pitchfx", 0)
+#     setattr(pitch_app_status, "pitch_count_pitchfx", 0)
+#     db_session.commit()

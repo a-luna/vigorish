@@ -1,0 +1,21 @@
+{
+  "__bbref_games_for_date__": true,
+  "boxscore_urls": [
+    "https://www.baseball-reference.com/boxes/ARI/ARI201803290.shtml",
+    "https://www.baseball-reference.com/boxes/ATL/ATL201803290.shtml",
+    "https://www.baseball-reference.com/boxes/BAL/BAL201803290.shtml",
+    "https://www.baseball-reference.com/boxes/KCA/KCA201803290.shtml",
+    "https://www.baseball-reference.com/boxes/LAN/LAN201803290.shtml",
+    "https://www.baseball-reference.com/boxes/MIA/MIA201803290.shtml",
+    "https://www.baseball-reference.com/boxes/NYN/NYN201803290.shtml",
+    "https://www.baseball-reference.com/boxes/OAK/OAK201803290.shtml",
+    "https://www.baseball-reference.com/boxes/SDN/SDN201803290.shtml",
+    "https://www.baseball-reference.com/boxes/SEA/SEA201803290.shtml",
+    "https://www.baseball-reference.com/boxes/TBA/TBA201803290.shtml",
+    "https://www.baseball-reference.com/boxes/TEX/TEX201803290.shtml",
+    "https://www.baseball-reference.com/boxes/TOR/TOR201803290.shtml"
+  ],
+  "dashboard_url": "https://www.baseball-reference.com/boxes/?month=3&day=29&year=2018",
+  "game_count": 13,
+  "game_date_str": "2018-03-29"
+}

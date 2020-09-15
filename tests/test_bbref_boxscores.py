@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from vigorish.config.database import GameScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
@@ -5,8 +7,8 @@ from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore
 from vigorish.util.result import Result
 
-DATA_SET = DataSet.BBREF_BOXSCORES
 BBREF_GAME_ID = "ATL201803290"
+GAME_DATE = datetime(2018, 3, 29)
 
 
 def get_bbref_boxscore_url(bbref_game_id):
@@ -14,9 +16,9 @@ def get_bbref_boxscore_url(bbref_game_id):
     return f"https://www.baseball-reference.com/boxes/{team_id}/{bbref_game_id}.shtml"
 
 
-def parse_bbref_boxscore_from_html(scraped_data):
-    url = get_bbref_boxscore_url(BBREF_GAME_ID)
-    html_path = scraped_data.get_html(DATA_SET, BBREF_GAME_ID)
+def parse_bbref_boxscore_from_html(scraped_data, bbref_game_id):
+    url = get_bbref_boxscore_url(bbref_game_id)
+    html_path = scraped_data.get_html(DataSet.BBREF_BOXSCORES, bbref_game_id)
     result = parse_bbref_boxscore(html_path.read_text(), url)
     assert result.success
     bbref_boxscore = result.value
@@ -24,16 +26,16 @@ def parse_bbref_boxscore_from_html(scraped_data):
 
 
 def test_parse_bbref_boxscore(scraped_data):
-    bbref_boxscore = parse_bbref_boxscore_from_html(scraped_data)
+    bbref_boxscore = parse_bbref_boxscore_from_html(scraped_data, BBREF_GAME_ID)
     assert isinstance(bbref_boxscore, BBRefBoxscore)
     result = verify_bbref_boxscore_ATL201803290(bbref_boxscore)
     assert result.success
 
 
 def test_persist_bbref_boxscore(scraped_data):
-    bbref_boxscore_parsed = parse_bbref_boxscore_from_html(scraped_data)
+    bbref_boxscore_parsed = parse_bbref_boxscore_from_html(scraped_data, BBREF_GAME_ID)
     assert isinstance(bbref_boxscore_parsed, BBRefBoxscore)
-    result = scraped_data.save_json(DATA_SET, bbref_boxscore_parsed)
+    result = scraped_data.save_json(DataSet.BBREF_BOXSCORES, bbref_boxscore_parsed)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
@@ -47,7 +49,7 @@ def test_persist_bbref_boxscore(scraped_data):
 
 
 def test_update_database_bbref_boxscore(db_session, scraped_data):
-    bbref_boxscore = parse_bbref_boxscore_from_html(scraped_data)
+    bbref_boxscore = parse_bbref_boxscore_from_html(scraped_data, BBREF_GAME_ID)
     assert isinstance(bbref_boxscore, BBRefBoxscore)
     game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, BBREF_GAME_ID)
     assert game_status
@@ -59,7 +61,7 @@ def test_update_database_bbref_boxscore(db_session, scraped_data):
     assert game_status.scraped_bbref_boxscore == 1
     assert game_status.pitch_app_count_bbref == 12
     assert game_status.total_pitch_count_bbref == 308
-    reset_game_scrape_status_after_parsed_boxscore(db_session, BBREF_GAME_ID)
+    # reset_game_scrape_status_after_parsed_boxscore(db_session, BBREF_GAME_ID)
 
 
 def verify_bbref_boxscore_ATL201803290(bbref_boxscore):
@@ -96,9 +98,9 @@ def verify_bbref_boxscore_ATL201803290(bbref_boxscore):
     return Result.Ok()
 
 
-def reset_game_scrape_status_after_parsed_boxscore(db_session, bbref_game_id):
-    game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
-    setattr(game_status, "scraped_bbref_boxscore", 0)
-    setattr(game_status, "pitch_app_count_bbref", 0)
-    setattr(game_status, "total_pitch_count_bbref", 0)
-    db_session.commit()
+# def reset_game_scrape_status_after_parsed_boxscore(db_session, bbref_game_id):
+#     game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
+#     setattr(game_status, "scraped_bbref_boxscore", 0)
+#     setattr(game_status, "pitch_app_count_bbref", 0)
+#     setattr(game_status, "total_pitch_count_bbref", 0)
+#     db_session.commit()
