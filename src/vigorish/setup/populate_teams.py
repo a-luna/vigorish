@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from dataclass_csv import accept_whitespaces, DataclassReader
 from tqdm import tqdm
 
-from vigorish.config.project_paths import TEAM_CSV
+from vigorish.config.project_paths import TEAM_CSV, TEST_TEAM_CSV
 from vigorish.models.team import Team
 from vigorish.util.result import Result
 
@@ -62,20 +62,21 @@ class TeamCsvRow:
     teamIDretro: str = None
 
 
-def populate_teams(db_session):
+def populate_teams(db_session, is_test=False):
     """Populate team table with initial data."""
-    result = import_teams_csv(db_session)
+    result = import_teams_csv(db_session, is_test)
     if result.failure:
         return result
     db_session.commit()
     return Result.Ok()
 
 
-def import_teams_csv(db_session):
-    csv_text = TEAM_CSV.read_text()
+def import_teams_csv(db_session, is_test):
+    team_csv_file = TEST_TEAM_CSV if is_test else TEAM_CSV
+    csv_text = team_csv_file.read_text()
     total_rows = len([row for row in csv_text.split("\n") if row])
     try:
-        with open(TEAM_CSV) as team_csv:
+        with open(team_csv_file) as team_csv:
             reader = DataclassReader(team_csv, TeamCsvRow)
             reader.map("2B").to("doubles")
             reader.map("3B").to("triples")

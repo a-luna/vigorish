@@ -6,12 +6,10 @@ from dataclass_csv import accept_whitespaces, DataclassReader, dateformat
 from tqdm import tqdm
 
 from vigorish.config.database import Player, PlayerId
-from vigorish.config.project_paths import APP_FOLDER
+from vigorish.config.project_paths import PEOPLE_CSV, TEST_PEOPLE_CSV
 from vigorish.tasks.update_player_maps import UpdatePlayerIdMap
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
-
-PLAYER_CSV = APP_FOLDER.joinpath("setup/csv/People.csv")
 
 
 @accept_whitespaces
@@ -44,24 +42,24 @@ class PlayerCsvRow:
     bbrefID: str = None
 
 
-def populate_players(app):
+def populate_players(app, is_test=False):
     db_session = app["db_session"]
     """Populate player_id and player tables with initial data."""
-    result = import_idmap_csv(db_session, app)
+    result = import_idmap_csv(db_session, app, is_test)
     if result.failure:
         return result
     db_session.commit()
-    result = import_people_csv(db_session)
+    result = import_people_csv(db_session, is_test)
     if result.failure:
         return result
     db_session.commit()
     return Result.Ok()
 
 
-def import_idmap_csv(db_session, app):
+def import_idmap_csv(db_session, app, is_test):
     try:
         update_player_id_map = UpdatePlayerIdMap(app)
-        player_id_map = update_player_id_map.read_bbref_player_id_map_from_file()
+        player_id_map = update_player_id_map.read_bbref_player_id_map_from_file(is_test)
         with tqdm(
             total=len(player_id_map),
             desc="Populating player_id table...",
@@ -88,11 +86,12 @@ def import_idmap_csv(db_session, app):
         return Result.Fail(error)
 
 
-def import_people_csv(db_session):
-    csv_text = PLAYER_CSV.read_text()
+def import_people_csv(db_session, is_test):
+    player_csv_file = TEST_PEOPLE_CSV if is_test else PEOPLE_CSV
+    csv_text = player_csv_file.read_text()
     total_rows = len([row for row in csv_text.split("\n") if row])
     try:
-        with open(PLAYER_CSV) as player_csv:
+        with open(player_csv_file) as player_csv:
             reader = DataclassReader(player_csv, PlayerCsvRow)
             with tqdm(
                 total=total_rows,
