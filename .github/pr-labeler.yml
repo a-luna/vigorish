@@ -1,4 +1,6 @@
-feature: ["feature/*", "feat/*"]
-bug: ["fix/*", "bug/*"]
-refactoring: ["chore/*", "refactor/*"]
-enhancement: enhance/*
+feature: feature/*
+enhancement: enhancement/*
+bug-fix: bug-fix/*"
+refactoring: refactoring/*
+chore: chore/*
+bump-dep: bump-dep/*
