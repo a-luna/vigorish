@@ -1,0 +1,6 @@
+feature: feature/*
+enhancement: enhancement/*
+bug-fix: bug-fix/*"
+refactoring: refactoring/*
+chore: chore/*
+bump-dep: bump-dep/*
