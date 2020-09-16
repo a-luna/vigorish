@@ -3,4 +3,7 @@ enhancement: enhancement/*
 bug-fix: ["bug-fix/*", "fix/*"]
 refactoring: refactoring/*
 chore: chore/*
-bump-dep: bump-dep/*
+bump-dep: ["bump-dep/*", "Bump *"]
+patch: patch-release/*
+minor: minor-release/*
+major: major-release/*
