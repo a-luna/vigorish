@@ -1,6 +1,6 @@
 name: Release Drafter
 on:
-  pull_request:
+  push:
     branches:
       - master
 
@@ -15,4 +15,4 @@ jobs:
           name: "v0.3.3"
           tag: "v0.3.3"
         env:
-            GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
