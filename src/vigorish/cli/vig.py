@@ -335,8 +335,8 @@ def sync_down_to_local(app, year, file_type, data_sets):
 
 
 def exit_app_success(app, message=None):
+    subprocess.run(["clear"])
     if message:
-        subprocess.run(["clear"])
         print_message(f"\n{message}\n", fg="bright_green", bold=True)
     app["db_session"].close()
     return 0
