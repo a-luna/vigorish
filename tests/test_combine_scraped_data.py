@@ -228,9 +228,14 @@ def test_combine_data_extra_pitchfx_removed(db_session, scraped_data):
     assert data_audit["duplicate_guid_removed_count"] == 1
 
 
-def test_combine_patched_pitchfx_data(app):
+def test_combine_patched_pitchfx_data(vig_app):
+    result = vig_app["scraped_data"].json_storage.get_brooks_pitchfx_patch_list_local_file(
+        GAME_ID_PATCH_PFX
+    )
+    if result.success and result.value.exists():
+        result.value.unlink()
     combined_data = combine_scraped_data_for_game(
-        app["db_session"], app["scraped_data"], GAME_ID_PATCH_PFX
+        vig_app["db_session"], vig_app["scraped_data"], GAME_ID_PATCH_PFX
     )
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
@@ -293,19 +298,17 @@ def test_combine_patched_pitchfx_data(app):
     assert "invalid_pitchfx" in data_audit
     assert data_audit["invalid_pitchfx"]
     assert "at_bat_ids_invalid_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_invalid_pitchfx"] == [
-        "OAK201904030_08_OAK_605525_BOS_519048_0",
-        "OAK201904030_08_OAK_605525_BOS_502110_0",
-        "OAK201904030_08_OAK_605525_BOS_646240_0",
-    ]
+    assert "OAK201904030_08_OAK_605525_BOS_519048_0" in data_audit["at_bat_ids_invalid_pitchfx"]
+    assert "OAK201904030_08_OAK_605525_BOS_646240_0" in data_audit["at_bat_ids_invalid_pitchfx"]
+    assert "OAK201904030_08_OAK_605525_BOS_502110_0" in data_audit["at_bat_ids_invalid_pitchfx"]
 
-    patch_invalid_pfx = PatchInvalidPitchFxTask(app)
+    patch_invalid_pfx = PatchInvalidPitchFxTask(vig_app)
     result = patch_invalid_pfx.execute(GAME_ID_PATCH_PFX, no_prompts=True)
     assert result.success
     patch_results = result.value
     assert patch_results["created_patch_list"]
     assert patch_results["fixed_all_errors"]
-    combined_data = app["scraped_data"].get_json_combined_data(GAME_ID_PATCH_PFX)
+    combined_data = vig_app["scraped_data"].get_json_combined_data(GAME_ID_PATCH_PFX)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit
@@ -337,11 +340,9 @@ def test_combine_patched_pitchfx_data(app):
     assert "duplicate_guid_removed_count" in data_audit
     assert data_audit["duplicate_guid_removed_count"] == 18
     assert "at_bat_ids_patched_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_patched_pitchfx"] == [
-        "OAK201904030_08_OAK_465657_BOS_646240_0",
-        "OAK201904030_08_OAK_465657_BOS_502110_0",
-        "OAK201904030_08_OAK_465657_BOS_519048_0",
-    ]
+    assert "OAK201904030_08_OAK_465657_BOS_519048_0" in data_audit["at_bat_ids_patched_pitchfx"]
+    assert "OAK201904030_08_OAK_465657_BOS_646240_0" in data_audit["at_bat_ids_patched_pitchfx"]
+    assert "OAK201904030_08_OAK_465657_BOS_502110_0" in data_audit["at_bat_ids_patched_pitchfx"]
     assert "at_bat_ids_missing_pitchfx" in data_audit
     assert data_audit["at_bat_ids_missing_pitchfx"] == []
     assert "pitchfx_error" in data_audit

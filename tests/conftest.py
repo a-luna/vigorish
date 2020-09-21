@@ -55,7 +55,7 @@ def scraped_data(config, db_engine, db_session):
 
 
 @pytest.fixture(scope="session")
-def app(dotenv, config, db_engine, db_session, scraped_data):
+def vig_app(dotenv, config, db_engine, db_session, scraped_data):
     return {
         "dotenv": dotenv,
         "config": config,
@@ -66,6 +66,6 @@ def app(dotenv, config, db_engine, db_session, scraped_data):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def seed_db(app):
-    initialize_database(app, csv_folder=CSV_FOLDER)
-    seed_database_with_test_data(app["db_session"], app["scraped_data"])
+def seed_db(vig_app):
+    initialize_database(vig_app, csv_folder=CSV_FOLDER)
+    seed_database_with_test_data(vig_app["db_session"], vig_app["scraped_data"])
