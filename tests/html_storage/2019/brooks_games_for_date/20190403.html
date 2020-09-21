@@ -1,0 +1,850 @@
+
+
+<div class="container">
+ <div class="navbar-float">
+ 	<a href="http://www.brooksbaseball.net"><img src="img/bbb.png"></a>
+ </div>
+</div>
+
+  <!-- Navbar
+
+    ================================================== -->
+
+ <div class="navbar navbar-fixed-top">
+   <div class="navbar-inner">
+     <div class="container">
+       <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+       </a>
+       <div class="nav-collapse collapse" id="main-menu">
+        <ul class="nav" id="main-menu-left">
+          <li class="first-nav active"><a href="dashboard.php">Dashboard</a></li>
+          <li><a href="http://www.brooksbaseball.net/pc_splash.php">Player Cards</a></li>
+          <li><a href="http://www.brooksbaseball.net/pfxVB/pfx.php">PITCHf/x Tool</a></li>
+          <li><a href="about.php">About</a></li>
+        </ul>
+		<form class="navbar-search pull-right" action="../search.php" method="get" id="search">
+			<input type="text" id="name" class="search-query span2 typeahead" placeholder="Player Search" name="name" autocomplete="off">
+   	    </form>
+        <ul class="nav pull-right" id="main-menu-right">
+          <li>
+          		<a style="font-size: 10px;" rel="tooltip" target="_blank" href="http://www.baseballprospectus.com/">Presented by Baseball Prospectus<i class="icon-share-alt"></i></a>
+          </li>
+          <li>
+          		<a style="font-size: 10px;" rel="tooltip" target="_blank" href="#">Powered by Pitch Info<i class="icon-share-alt"></i></a>
+          </li>
+        </ul>
+       </div>
+     </div>
+   </div>
+ </div>
+
+
+
+
+
+
+
+
+
+<script>
+$(document).ready(function() {
+	$( "#dts" ).datepicker({
+		showOn: "button",
+		maxDate: "+5D",
+		buttonImage: "http://www.brooksbaseball.net/widgets/calendar.gif",
+		buttonImageOnly: true,
+		onSelect: function(dateText) {
+					window.location='http://www.brooksbaseball.net/dashboard.php?dts=' + dateText;
+		}
+	});
+});
+</script>
+
+
+
+<div class="container">
+
+
+<!-- Masthead
+================================================== -->
+	<header class="jumbotron subhead" id="overview">
+	  <div class="subnav navbar-fixed-top subnav-fixed" style="height: 37px">
+		<div class="container">
+		</div>
+	  </div>
+	</header>
+
+	<div class="container" style="height:80px">
+
+	</div>
+	<div class="row main-features">
+		<table style="width: 1280px;  border-collapse: separate; border-spacing: 24px 30px;">
+			<tbody><tr>
+				<td style="width: 1000px" colspan="4">
+				<h3>Games on Wednesday, April 3, 2019<input type="hidden" id="dts" class="hasDatepicker"><img class="ui-datepicker-trigger" src="http://www.brooksbaseball.net/widgets/calendar.gif" alt="..." title="..."></h3>
+			</td></tr>
+
+<tr style="vertical-align: top;">
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Brewers at Reds</font> (12:35)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_milmlb_cinmlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04225c;">Peralta, F</b>
+				</td><td width="90"><a href="landing.php?player=642547">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=642547.xml&amp;game=gid_2019_04_03_milmlb_cinmlb_1/&amp;prevGame=gid_2019_04_03_milmlb_cinmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04225c;">Wilson, A</b>
+				</td><td width="90"><a href="landing.php?player=543935">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=543935.xml&amp;game=gid_2019_04_03_milmlb_cinmlb_1/&amp;prevGame=gid_2019_04_03_milmlb_cinmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #ec164c;">Castillo, L</b>
+				</td><td width="90"><a href="landing.php?player=622491">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=622491.xml&amp;game=gid_2019_04_03_milmlb_cinmlb_1/&amp;prevGame=gid_2019_04_03_milmlb_cinmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #ec164c;">Garrett</b>
+				</td><td width="90"><a href="landing.php?player=607237">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=607237.xml&amp;game=gid_2019_04_03_milmlb_cinmlb_1/&amp;prevGame=gid_2019_04_03_milmlb_cinmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #ec164c;">Hughes</b>
+				</td><td width="90"><a href="landing.php?player=453172">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=453172.xml&amp;game=gid_2019_04_03_milmlb_cinmlb_1/&amp;prevGame=gid_2019_04_03_milmlb_cinmlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Phillies at Nationals</font> (1:05)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d41244;">Nola</b>
+				</td><td width="90"><a href="landing.php?player=605400">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=605400.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d41244;">Ramos, E</b>
+				</td><td width="90"><a href="landing.php?player=591693">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=591693.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d41244;">Nicasio</b>
+				</td><td width="90"><a href="landing.php?player=504379">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=504379.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d41244;">Neris</b>
+				</td><td width="90"><a href="landing.php?player=593576">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=593576.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d41244;">Dominguez</b>
+				</td><td width="90"><a href="landing.php?player=622554">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=622554.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d41244;">Roberts...</b>
+				</td><td width="90"><a href="landing.php?player=502085">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=502085.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04265c;">Sanchez, An</b>
+				</td><td width="90"><a href="landing.php?player=434671">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=434671.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04265c;">Grace</b>
+				</td><td width="90"><a href="landing.php?player=594840">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=594840.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04265c;">Miller</b>
+				</td><td width="90"><a href="landing.php?player=502522">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=502522.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04265c;">Sipp</b>
+				</td><td width="90"><a href="landing.php?player=448609">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=448609.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04265c;">Rosenthal</b>
+				</td><td width="90"><a href="landing.php?player=572096">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=572096.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04265c;">Barraclough</b>
+				</td><td width="90"><a href="landing.php?player=607457">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=607457.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04265c;">Doolittle</b>
+				</td><td width="90"><a href="landing.php?player=448281">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=448281.xml&amp;game=gid_2019_04_03_phimlb_wasmlb_1/&amp;prevGame=gid_2019_04_03_phimlb_wasmlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Rockies at Rays</font> (1:10)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #241e1c;">Marquez</b>
+				</td><td width="90"><a href="landing.php?player=608566">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=608566.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #241e1c;">Dunn</b>
+				</td><td width="90"><a href="landing.php?player=445197">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=445197.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #241e1c;">Oberg</b>
+				</td><td width="90"><a href="landing.php?player=623184">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=623184.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #241e1c;">Musgrave</b>
+				</td><td width="90"><a href="landing.php?player=643466">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=643466.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #241e1c;">Davis, W</b>
+				</td><td width="90"><a href="landing.php?player=451584">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=451584.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6699cc;">Morton</b>
+				</td><td width="90"><a href="landing.php?player=450203">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=450203.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6699cc;">Stanek</b>
+				</td><td width="90"><a href="landing.php?player=592773">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=592773.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6699cc;">Alvarado</b>
+				</td><td width="90"><a href="landing.php?player=621237">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=621237.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6699cc;">Castillo, D</b>
+				</td><td width="90"><a href="landing.php?player=650895">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=650895.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6699cc;">Roe</b>
+				</td><td width="90"><a href="landing.php?player=475054">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=475054.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6699cc;">Kolarek</b>
+				</td><td width="90"><a href="landing.php?player=592473">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=592473.xml&amp;game=gid_2019_04_03_colmlb_tbamlb_1/&amp;prevGame=gid_2019_04_03_colmlb_tbamlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">White Sox at Indians</font> (1:10)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #231f20;">Rodon</b>
+				</td><td width="90"><a href="landing.php?player=607074">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=607074.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #231f20;">Burr</b>
+				</td><td width="90"><a href="landing.php?player=621114">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=621114.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #231f20;">Herrera, K</b>
+				</td><td width="90"><a href="landing.php?player=516969">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=516969.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #231f20;">Jones, N</b>
+				</td><td width="90"><a href="landing.php?player=518858">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=518858.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #ed174c;">Kluber</b>
+				</td><td width="90"><a href="landing.php?player=446372">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=446372.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #ed174c;">Olson</b>
+				</td><td width="90"><a href="landing.php?player=621397">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=621397.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #ed174c;">Otero</b>
+				</td><td width="90"><a href="landing.php?player=519096">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=519096.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #ed174c;">Ramirez, N</b>
+				</td><td width="90"><a href="landing.php?player=519166">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=519166.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #ed174c;">Cimber</b>
+				</td><td width="90"><a href="landing.php?player=643256">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=643256.xml&amp;game=gid_2019_04_03_chamlb_clemlb_1/&amp;prevGame=gid_2019_04_03_chamlb_clemlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+</tr><tr style="vertical-align: top;">
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Twins at Royals</font> (1:15)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #042462;">Gibson</b>
+				</td><td width="90"><a href="landing.php?player=502043">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=502043.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #042462;">Mejia</b>
+				</td><td width="90"><a href="landing.php?player=606167">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=606167.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #042462;">May</b>
+				</td><td width="90"><a href="landing.php?player=543507">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=543507.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #042462;">Parker</b>
+				</td><td width="90"><a href="landing.php?player=453284">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=453284.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #998040;">Bailey</b>
+				</td><td width="90"><a href="landing.php?player=456701">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=456701.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #998040;">Barlow</b>
+				</td><td width="90"><a href="landing.php?player=605130">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=605130.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #998040;">Hill, T</b>
+				</td><td width="90"><a href="landing.php?player=657612">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=657612.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #998040;">McCarthy</b>
+				</td><td width="90"><a href="landing.php?player=641838">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=641838.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #998040;">Diekman</b>
+				</td><td width="90"><a href="landing.php?player=518617">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=518617.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #998040;">Peralta, Wi</b>
+				</td><td width="90"><a href="landing.php?player=503449">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=503449.xml&amp;game=gid_2019_04_03_minmlb_kcamlb_1/&amp;prevGame=gid_2019_04_03_minmlb_kcamlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">D-backs at Padres</font> (3:40)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_arimlb_sdnmlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #c4122c;">Ray</b>
+				</td><td width="90"><a href="landing.php?player=592662">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=592662.xml&amp;game=gid_2019_04_03_arimlb_sdnmlb_1/&amp;prevGame=gid_2019_04_03_arimlb_sdnmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #c4122c;">Hirano</b>
+				</td><td width="90"><a href="landing.php?player=673633">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=673633.xml&amp;game=gid_2019_04_03_arimlb_sdnmlb_1/&amp;prevGame=gid_2019_04_03_arimlb_sdnmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #c4122c;">Andriese</b>
+				</td><td width="90"><a href="landing.php?player=542882">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=542882.xml&amp;game=gid_2019_04_03_arimlb_sdnmlb_1/&amp;prevGame=gid_2019_04_03_arimlb_sdnmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6496c4;">Lucchesi</b>
+				</td><td width="90"><a href="landing.php?player=664192">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=664192.xml&amp;game=gid_2019_04_03_arimlb_sdnmlb_1/&amp;prevGame=gid_2019_04_03_arimlb_sdnmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6496c4;">Stammen</b>
+				</td><td width="90"><a href="landing.php?player=489334">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=489334.xml&amp;game=gid_2019_04_03_arimlb_sdnmlb_1/&amp;prevGame=gid_2019_04_03_arimlb_sdnmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6496c4;">Wingenter</b>
+				</td><td width="90"><a href="landing.php?player=622259">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=622259.xml&amp;game=gid_2019_04_03_arimlb_sdnmlb_1/&amp;prevGame=gid_2019_04_03_arimlb_sdnmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #6496c4;">Yates</b>
+				</td><td width="90"><a href="landing.php?player=489446">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=489446.xml&amp;game=gid_2019_04_03_arimlb_sdnmlb_1/&amp;prevGame=gid_2019_04_03_arimlb_sdnmlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Tigers at Yankees</font> (4:05)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #023d69;">Boyd</b>
+				</td><td width="90"><a href="landing.php?player=571510">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=571510.xml&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevGame=gid_2019_04_03_detmlb_nyamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #023d69;">Farmer</b>
+				</td><td width="90"><a href="landing.php?player=571656">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=571656.xml&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevGame=gid_2019_04_03_detmlb_nyamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #023d69;">Jimenez, J</b>
+				</td><td width="90"><a href="landing.php?player=641729">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=641729.xml&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevGame=gid_2019_04_03_detmlb_nyamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #023d69;">Greene</b>
+				</td><td width="90"><a href="landing.php?player=572888">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=572888.xml&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevGame=gid_2019_04_03_detmlb_nyamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #000000;">Loaisiga</b>
+				</td><td width="90"><a href="landing.php?player=642528">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=642528.xml&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevGame=gid_2019_04_03_detmlb_nyamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #000000;">Holder</b>
+				</td><td width="90"><a href="landing.php?player=656547">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=656547.xml&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevGame=gid_2019_04_03_detmlb_nyamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #000000;">Green</b>
+				</td><td width="90"><a href="landing.php?player=643338">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=643338.xml&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevGame=gid_2019_04_03_detmlb_nyamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #000000;">Britton</b>
+				</td><td width="90"><a href="landing.php?player=502154">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=502154.xml&amp;game=gid_2019_04_03_detmlb_nyamlb_1/&amp;prevGame=gid_2019_04_03_detmlb_nyamlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Orioles at Blue Jays</font> (4:07)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f3782c;">Karns</b>
+				</td><td width="90"><a href="landing.php?player=501992">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=501992.xml&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevGame=gid_2019_04_03_balmlb_tormlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f3782c;">Yacabonis</b>
+				</td><td width="90"><a href="landing.php?player=642231">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=642231.xml&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevGame=gid_2019_04_03_balmlb_tormlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f3782c;">Bleier</b>
+				</td><td width="90"><a href="landing.php?player=542947">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=542947.xml&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevGame=gid_2019_04_03_balmlb_tormlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f3782c;">Wotherspoon</b>
+				</td><td width="90"><a href="landing.php?player=642226">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=642226.xml&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevGame=gid_2019_04_03_balmlb_tormlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #3300ff;">Shoemaker</b>
+				</td><td width="90"><a href="landing.php?player=533167">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=533167.xml&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevGame=gid_2019_04_03_balmlb_tormlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #3300ff;">Biagini</b>
+				</td><td width="90"><a href="landing.php?player=607352">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=607352.xml&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevGame=gid_2019_04_03_balmlb_tormlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #3300ff;">Hudson, D</b>
+				</td><td width="90"><a href="landing.php?player=543339">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=543339.xml&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevGame=gid_2019_04_03_balmlb_tormlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #3300ff;">Giles</b>
+				</td><td width="90"><a href="landing.php?player=571704">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=571704.xml&amp;game=gid_2019_04_03_balmlb_tormlb_1/&amp;prevGame=gid_2019_04_03_balmlb_tormlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+</tr><tr style="vertical-align: top;">
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Mets at Marlins</font> (6:10)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_nynmlb_miamlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47e34;">deGrom</b>
+				</td><td width="90"><a href="landing.php?player=594798">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=594798.xml&amp;game=gid_2019_04_03_nynmlb_miamlb_1/&amp;prevGame=gid_2019_04_03_nynmlb_miamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47e34;">Avilan</b>
+				</td><td width="90"><a href="landing.php?player=501593">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=501593.xml&amp;game=gid_2019_04_03_nynmlb_miamlb_1/&amp;prevGame=gid_2019_04_03_nynmlb_miamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47e34;">Gsellman</b>
+				</td><td width="90"><a href="landing.php?player=607229">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=607229.xml&amp;game=gid_2019_04_03_nynmlb_miamlb_1/&amp;prevGame=gid_2019_04_03_nynmlb_miamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47e34;">Diaz, E</b>
+				</td><td width="90"><a href="landing.php?player=621242">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=621242.xml&amp;game=gid_2019_04_03_nynmlb_miamlb_1/&amp;prevGame=gid_2019_04_03_nynmlb_miamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04a2b4;">Richards</b>
+				</td><td width="90"><a href="landing.php?player=670950">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=670950.xml&amp;game=gid_2019_04_03_nynmlb_miamlb_1/&amp;prevGame=gid_2019_04_03_nynmlb_miamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04a2b4;">Anderson, N</b>
+				</td><td width="90"><a href="landing.php?player=623433">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=623433.xml&amp;game=gid_2019_04_03_nynmlb_miamlb_1/&amp;prevGame=gid_2019_04_03_nynmlb_miamlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #04a2b4;">Brice</b>
+				</td><td width="90"><a href="landing.php?player=592169">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=592169.xml&amp;game=gid_2019_04_03_nynmlb_miamlb_1/&amp;prevGame=gid_2019_04_03_nynmlb_miamlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Cardinals at Pirates</font> (7:05)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d47b12;">Mikolas</b>
+				</td><td width="90"><a href="landing.php?player=571945">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=571945.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d47b12;">Leone</b>
+				</td><td width="90"><a href="landing.php?player=608678">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=608678.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d47b12;">Mayers</b>
+				</td><td width="90"><a href="landing.php?player=594577">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=594577.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d47b12;">Miller</b>
+				</td><td width="90"><a href="landing.php?player=453192">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=453192.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d47b12;">Gant</b>
+				</td><td width="90"><a href="landing.php?player=607231">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=607231.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d47b12;">Reyes, Al</b>
+				</td><td width="90"><a href="landing.php?player=621052">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=621052.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d47b12;">Hudson, D</b>
+				</td><td width="90"><a href="landing.php?player=641712">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=641712.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d79500;">Taillon</b>
+				</td><td width="90"><a href="landing.php?player=592791">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=592791.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d79500;">Kela</b>
+				</td><td width="90"><a href="landing.php?player=605309">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=605309.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d79500;">Crick</b>
+				</td><td width="90"><a href="landing.php?player=605195">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=605195.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d79500;">Burdi</b>
+				</td><td width="90"><a href="landing.php?player=595897">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=595897.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #d79500;">Liriano</b>
+				</td><td width="90"><a href="landing.php?player=434538">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=434538.xml&amp;game=gid_2019_04_03_slnmlb_pitmlb_1/&amp;prevGame=gid_2019_04_03_slnmlb_pitmlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Cubs at Braves</font> (7:20)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045694;">Lester</b>
+				</td><td width="90"><a href="landing.php?player=452657">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=452657.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045694;">Kintzler</b>
+				</td><td width="90"><a href="landing.php?player=445213">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=445213.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045694;">Cishek</b>
+				</td><td width="90"><a href="landing.php?player=518553">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=518553.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045694;">Rosario, R</b>
+				</td><td width="90"><a href="landing.php?player=600968">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=600968.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045694;">Brach</b>
+				</td><td width="90"><a href="landing.php?player=542960">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=542960.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045694;">Montgomery</b>
+				</td><td width="90"><a href="landing.php?player=543557">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=543557.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #0c5284;">Teheran</b>
+				</td><td width="90"><a href="landing.php?player=527054">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=527054.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #0c5284;">Venters</b>
+				</td><td width="90"><a href="landing.php?player=458924">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=458924.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #0c5284;">Parsons</b>
+				</td><td width="90"><a href="landing.php?player=641149">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=641149.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #0c5284;">Biddle</b>
+				</td><td width="90"><a href="landing.php?player=592145">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=592145.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #0c5284;">Jackson, L</b>
+				</td><td width="90"><a href="landing.php?player=592426">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=592426.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #0c5284;">Vizcaino</b>
+				</td><td width="90"><a href="landing.php?player=527055">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=527055.xml&amp;game=gid_2019_04_03_chnmlb_atlmlb_1/&amp;prevGame=gid_2019_04_03_chnmlb_atlmlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Astros at Rangers</font> (8:05)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_houmlb_texmlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #241e24;">Cole, G</b>
+				</td><td width="90"><a href="landing.php?player=543037">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=543037.xml&amp;game=gid_2019_04_03_houmlb_texmlb_1/&amp;prevGame=gid_2019_04_03_houmlb_texmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #241e24;">James</b>
+				</td><td width="90"><a href="landing.php?player=657624">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=657624.xml&amp;game=gid_2019_04_03_houmlb_texmlb_1/&amp;prevGame=gid_2019_04_03_houmlb_texmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #004482;">Minor</b>
+				</td><td width="90"><a href="landing.php?player=501985">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=501985.xml&amp;game=gid_2019_04_03_houmlb_texmlb_1/&amp;prevGame=gid_2019_04_03_houmlb_texmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #004482;">Kelley</b>
+				</td><td width="90"><a href="landing.php?player=518875">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=518875.xml&amp;game=gid_2019_04_03_houmlb_texmlb_1/&amp;prevGame=gid_2019_04_03_houmlb_texmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #004482;">Leclerc</b>
+				</td><td width="90"><a href="landing.php?player=600917">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=600917.xml&amp;game=gid_2019_04_03_houmlb_texmlb_1/&amp;prevGame=gid_2019_04_03_houmlb_texmlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+</tr><tr style="vertical-align: top;">
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Red Sox at Athletics</font> (10:07)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #e2333e;">Eovaldi</b>
+				</td><td width="90"><a href="landing.php?player=543135">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=543135.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #e2333e;">Brewer</b>
+				</td><td width="90"><a href="landing.php?player=605155">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=605155.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #e2333e;">Barnes, M</b>
+				</td><td width="90"><a href="landing.php?player=598264">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=598264.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #e2333e;">Brasier</b>
+				</td><td width="90"><a href="landing.php?player=518489">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=518489.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #339900;">Estrada</b>
+				</td><td width="90"><a href="landing.php?player=462136">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=462136.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #339900;">Buchter</b>
+				</td><td width="90"><a href="landing.php?player=488748">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=488748.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #339900;">Wendelken</b>
+				</td><td width="90"><a href="landing.php?player=605525">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=605525.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #339900;">Soria</b>
+				</td><td width="90"><a href="landing.php?player=465657">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=465657.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #339900;">Rodney</b>
+				</td><td width="90"><a href="landing.php?player=407845">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=407845.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #339900;">Petit</b>
+				</td><td width="90"><a href="landing.php?player=433589">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=433589.xml&amp;game=gid_2019_04_03_bosmlb_oakmlb_1/&amp;prevGame=gid_2019_04_03_bosmlb_oakmlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+
+<td class="dashcell">
+	<table style="margin-left: 10px; width:270px; font-size: 95%; border:0px; cellspacing:0;border-collapse: collapse; border-spacing: 10px 0px;">
+		<tbody><tr>
+			<td colspan="3"><font style="font-weight: bold;">Giants at Dodgers</font> (10:10)
+		</td></tr>
+
+				<tr>
+			<td colspan="3"><a href="http://www.brooksbaseball.net/pfxVB/zoneTrack.php?month=4&amp;day=03&amp;year=2019&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevDate=0403" target="_blank">Strikezone Map</a></td>
+		</tr>
+		
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47a3c;">Holland, D</b>
+				</td><td width="90"><a href="landing.php?player=502706">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=502706.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47a3c;">Dyson</b>
+				</td><td width="90"><a href="landing.php?player=473879">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=473879.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47a3c;">Moronta</b>
+				</td><td width="90"><a href="landing.php?player=606625">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=606625.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47a3c;">Watson</b>
+				</td><td width="90"><a href="landing.php?player=453265">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=453265.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #f47a3c;">Melancon</b>
+				</td><td width="90"><a href="landing.php?player=453343">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=453343.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045a9c;">Stripling</b>
+				</td><td width="90"><a href="landing.php?player=548389">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=548389.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045a9c;">Alexander</b>
+				</td><td width="90"><a href="landing.php?player=518397">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=518397.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045a9c;">Ferguson</b>
+				</td><td width="90"><a href="landing.php?player=657571">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=657571.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+					<tr>
+				<td width="90"><b style="font-weight: bold; color: #045a9c;">Jansen, K</b>
+				</td><td width="90"><a href="landing.php?player=445276">Player Card</a>
+				</td><td> <a href="http://brooksbaseball.net/pfx/index.php?s_type=3&amp;sp_type=1&amp;batterX=0&amp;year=2019&amp;month=4&amp;day=03&amp;pitchSel=445276.xml&amp;game=gid_2019_04_03_sfnmlb_lanmlb_1/&amp;prevGame=gid_2019_04_03_sfnmlb_lanmlb_1/">Game Log</a>			</td></tr>
+			</tbody></table>
+
+
+
+</td>
+
+<td class="dashcell"></td><td class="dashcell">
+
+
+
+
+</td></tr></tbody></table>
+
+
+
+
+	</div>
+
+</div>
+
+
+  
+
+
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div>
