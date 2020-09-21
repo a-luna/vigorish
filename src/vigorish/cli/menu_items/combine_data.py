@@ -16,7 +16,6 @@ from vigorish.cli.util import (
     print_message,
     get_random_cli_color,
     get_random_dots_spinner,
-    describe_at_bat,
 )
 from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
@@ -45,9 +44,9 @@ LOGGER = logging.getLogger("enlighten")
 class CombineGameDataMenuItem(MenuItem):
     def __init__(self, app, audit_report):
         super().__init__(app)
-        self._pbar_manager = None
         self._season = None
         self._date_game_id_map = {}
+        self.pbar_manager = enlighten.get_manager()
         self.audit_report = audit_report
         self.menu_item_text = "Combine Game Data"
         self.menu_item_emoji = EMOJI_DICT.get("BANG", "")
@@ -68,15 +67,8 @@ class CombineGameDataMenuItem(MenuItem):
         self.game_progress_bar_error = None
 
     @property
-    def pbar_manager(self):
-        if self._pbar_manager:
-            return self._pbar_manager
-        self._pbar_manager = enlighten.get_manager()
-        return self._pbar_manager
-
-    @property
     def terminal(self):
-        return self.pbar_manager.term
+        return self.pbar_manager.term if self.pbar_manager else None
 
     @property
     def game_bar_format(self):
@@ -152,7 +144,12 @@ class CombineGameDataMenuItem(MenuItem):
 
     @property
     def total_combined(self):
-        return self.total_combined_success + self.total_combined_fail
+        return (
+            self.total_combined_success
+            + self.total_combined_fail
+            + self.total_games_invalid_pitchfx
+            + self.total_games_pitchfx_error
+        )
 
     @property
     def pfx_errors(self):
@@ -169,6 +166,10 @@ class CombineGameDataMenuItem(MenuItem):
     @property
     def total_games_invalid_pitchfx(self):
         return len(self.invalid_pfx)
+
+    @property
+    def total_games_any_pfx_error(self):
+        return len(self.pfx_errors) + len(self.invalid_pfx)
 
     @property
     def game_ids_any_pitchfx_error(self):
@@ -250,7 +251,6 @@ class CombineGameDataMenuItem(MenuItem):
             if result.failure:
                 continue
             self.display_results()
-            pause(message="Press any key to continue...")
         return Result.Ok(self.exit_menu)
 
     def combine_games_for_season(self):
@@ -258,6 +258,7 @@ class CombineGameDataMenuItem(MenuItem):
         if result.failure:
             return result
         self.scrape_year = result.value
+        self.pbar_manager = enlighten.get_manager()
         self.init_progress_bars(game_date=self.all_dates_in_season[0])
         subprocess.run(["clear"])
         for game_date in self.all_dates_in_season:
@@ -308,7 +309,7 @@ class CombineGameDataMenuItem(MenuItem):
         for bbref_game_id in game_ids:
             fail_results = []
             self.update_progress_bars(game_date, bbref_game_id)
-            LOGGER.info(f"Begin combining scraped data for game: {bbref_game_id}")
+            # LOGGER.info(f"Begin combining scraped data for game: {bbref_game_id}")
             result = self.scraped_data.combine_boxscore_and_pfx_data(bbref_game_id)
             if not result["gather_scraped_data_success"]:
                 LOGGER.info(f"Unable to combine data for game: {bbref_game_id}")
@@ -333,19 +334,7 @@ class CombineGameDataMenuItem(MenuItem):
                 fail_results.append(pfx_errors["invalid_pitchfx"])
             if fail_results:
                 self.game_progress_bar_error.update()
-                total_pitch_apps = sum(len(f.keys()) for f in fail_results)
-                pitch_apps_plural = (
-                    "pitch appearances" if total_pitch_apps > 1 else "pitch appearance"
-                )
-                total_at_bats = sum(
-                    len(at_bat_ids) for f in fail_results for at_bat_ids in f.values()
-                )
-                at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
-                LOGGER.info(f"PitchFX data could not be reconciled for game: {bbref_game_id}")
-                LOGGER.info(
-                    f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} "
-                    f"total {at_bats_plural})\n"
-                )
+                self.log_pfx_data_error_details(bbref_game_id, fail_results)
             else:
                 self.combine_data_success_game_ids.append(bbref_game_id)
                 self.game_progress_bar_success.update()
@@ -361,6 +350,17 @@ class CombineGameDataMenuItem(MenuItem):
         )
         self.date_progress_bar.desc = date_str
         self.game_progress_bar_success.desc = game_id
+
+    def log_pfx_data_error_details(self, bbref_game_id, fail_results):
+        total_pitch_apps = sum(len(f.keys()) for f in fail_results)
+        pitch_apps_plural = "pitch appearances" if total_pitch_apps > 1 else "pitch appearance"
+        total_at_bats = sum(len(at_bat_ids) for f in fail_results for at_bat_ids in f.values())
+        at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
+        LOGGER.info(f"PitchFX data could not be reconciled for game: {bbref_game_id}")
+        LOGGER.info(
+            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} "
+            f"total {at_bats_plural})\n"
+        )
 
     def close_progress_bars(self):
         self.status_bar.close()
@@ -381,6 +381,7 @@ class CombineGameDataMenuItem(MenuItem):
             self.display_games_failed_to_combine()
         if self.all_pfx_errors:
             self.display_pitchfx_errors()
+        pause(message="Press any key to continue...")
 
     def display_games_failed_to_combine(self):
         error_message = (
@@ -395,32 +396,15 @@ class CombineGameDataMenuItem(MenuItem):
         print_message(tabulate(error_details, headers="Keys"), wrap=False, fg="bright_red")
 
     def display_pitchfx_errors(self):
-        error_data = [
-            self.get_at_bat_details(at_bat_id)
-            for error_type, pfx_error_dict in self.all_pfx_errors.items()
-            for game_id, pitch_app_dict in pfx_error_dict.items()
-            for pitch_app_id, at_bat_ids in pitch_app_dict.items()
-            for at_bat_id in at_bat_ids
-        ]
-        games_plural = "games contain" if self.total_games_pitchfx_error > 1 else "game contains"
-        ab_plural = "at bats" if len(error_data) > 1 else "at bat"
-        table_header = (
-            f"{self.total_games_pitchfx_error} {games_plural} invalid PitchFX data for a total of "
-            f"{len(error_data)} {ab_plural}, you can attempt to fix these errors using the "
-            "Investigate Failures menu:\n"
+        games_plural = "games contain" if self.total_games_any_pfx_error > 1 else "game contains"
+        ab_plural = "at bats" if self.total_at_bats_any_pitchfx_error > 1 else "at bat"
+        message = (
+            f"{self.total_games_any_pfx_error} {games_plural} invalid PitchFX data for a total "
+            f"of {len(self.total_at_bats_any_pitchfx_error)} {ab_plural}, you can view details "
+            "of each at bat and attempt to fix these errors using the Investigate Failures menu."
         )
-        print_message(table_header, fg="bright_cyan", bold=True)
-        print_message(tabulate(error_data, headers="keys"), wrap=False)
+        print_message(message, fg="bright_cyan")
         print()
-
-    def get_at_bat_details(self, at_bat_id):
-        ab_dict = describe_at_bat(self.db_session, at_bat_id)
-        return {
-            "game_id": ab_dict["game_id"],
-            "inning": ab_dict["inning_label"],
-            "pitcher": f'{ab_dict["pitcher_name"]} ({ab_dict["pitcher_team"]})',
-            "batter": f'{ab_dict["batter_name"]} ({ab_dict["batter_team"]})',
-        }
 
     def combine_games_for_date(self):
         result = audit_report_season_prompt(self.audit_report)
@@ -431,6 +415,7 @@ class CombineGameDataMenuItem(MenuItem):
         if result.failure:
             return result
         self.current_game_date = result.value
+        self.pbar_manager = enlighten.get_manager()
         self.init_progress_bars(game_date=self.current_game_date)
         subprocess.run(["clear"])
         game_ids = self.date_game_id_map.get(self.current_game_date, None)
@@ -462,15 +447,16 @@ class CombineGameDataMenuItem(MenuItem):
         spinner.text = f"Combining scraped data for {combine_game_id}..."
         spinner.start()
         result = self.scraped_data.combine_boxscore_and_pfx_data(combine_game_id)
-        if (
-            not result["gather_scraped_data_success"]
-            or not result["combined_data_success"]
-            or not result["update_pitch_apps_success"]
+        if not (
+            result["gather_scraped_data_success"]
+            and result["combined_data_success"]
+            and result["update_pitch_apps_success"]
         ):
             spinner.fail(f"Failed to combine data for {combine_game_id}!")
             print_message(result["error"], wrap=False, fg="bright_red", bold=True)
             return Result.Fail(result["error"])
-        pfx_errors = result["results"]["all_pfx_errors"]
+        spinner.stop()
+        pfx_errors = result["results"]["pfx_errors"]
         if pfx_errors.get("pitchfx_error", []):
             self.pfx_errors[combine_game_id] = pfx_errors["pitchfx_error"]
         if pfx_errors.get("invalid_pitchfx", []):
@@ -482,14 +468,16 @@ class CombineGameDataMenuItem(MenuItem):
                 else "pitch appearance"
             )
             at_bats_plural = "at bats" if self.total_at_bats_any_pitchfx_error > 1 else "at bat"
-            LOGGER.info(f"PitchFX data could not be reconciled for game: {combine_game_id}")
-            LOGGER.info(
+            message = (
+                f"PitchFX data could not be reconciled for game: {combine_game_id}\n"
                 f"{self.total_pitch_apps_any_pitchfx_error} {pitch_apps_plural} with data errors "
                 f"({self.total_at_bats_any_pitchfx_error} total {at_bats_plural})\n"
             )
+            print_message(message, fg="bright_yellow", bold=True)
         else:
             message = f"All scraped data for {combine_game_id} was successfully combined!"
             print_message(message, fg="bright_cyan", bold=True)
+        pause(message="Press any key to continue...")
         return Result.Ok()
 
     def audit_type_prompt(self):
