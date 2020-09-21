@@ -397,6 +397,8 @@ def decode_bbref_pbp_substitution(json_dict):
             substitution.inning_id = json_dict["inning_id"]
             substitution.inning_label = json_dict["inning_label"]
             substitution.pbp_table_row_number = json_dict["pbp_table_row_number"]
+            substitution.sub_type = json_dict["sub_type"]
+            substitution.team_id = json_dict["team_id"]
             substitution.sub_description = json_dict["sub_description"]
             substitution.incoming_player_id_br = json_dict["incoming_player_id_br"]
             substitution.incoming_player_pos = json_dict["incoming_player_pos"]

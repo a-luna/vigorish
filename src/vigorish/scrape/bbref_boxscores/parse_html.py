@@ -983,7 +983,8 @@ def _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict):
                 incoming_player_pos=sub_dict["incoming_player_pos"],
                 outgoing_player_pos=sub_dict["outgoing_player_pos"],
                 lineup_slot=sub_dict["lineup_slot"],
-                sub_team=sub_dict["sub_team"],
+                sub_type=sub_dict["sub_type"],
+                team_id="",
             )
             sub_list.append(substitution)
 
@@ -1005,13 +1006,13 @@ def _parse_substitution_description(sub_description):
         parsed_sub["outgoing_player_name"] = "N/A"
         parsed_sub["outgoing_player_pos"] = "N/A"
         parsed_sub["lineup_slot"] = 0
-        parsed_sub["sub_team"] = "bat"
+        parsed_sub["sub_type"] = "bat"
         remaining_description = split[1]
         if not remaining_description:
             return Result.Ok(parsed_sub)
     if "replaces" in sub_description:
         split = [s.strip() for s in sub_description.split("replaces")]
-        parsed_sub["sub_team"] = "pitch"
+        parsed_sub["sub_type"] = "pitch"
     elif "pinch hit for" and "and is now" in sub_description:
         split = [s.strip() for s in sub_description.split("pinch hit for")]
         parsed_sub["incoming_player_name"] = split[0]
@@ -1021,19 +1022,19 @@ def _parse_substitution_description(sub_description):
         parsed_sub["outgoing_player_pos"] = split[0]
         parsed_sub["outgoing_player_name"] = "N/A"
         parsed_sub["lineup_slot"] = 0
-        parsed_sub["sub_team"] = "bat"
+        parsed_sub["sub_type"] = "bat"
         return Result.Ok(parsed_sub)
     elif "pinch hits for" in sub_description:
         parsed_sub["incoming_player_pos"] = "PH"
-        parsed_sub["sub_team"] = "bat"
+        parsed_sub["sub_type"] = "bat"
         split = [s.strip() for s in sub_description.split("pinch hits for")]
     elif "pinch runs for" in sub_description:
         parsed_sub["incoming_player_pos"] = "PR"
-        parsed_sub["sub_team"] = "bat"
+        parsed_sub["sub_type"] = "bat"
         split = [s.strip() for s in sub_description.split("pinch runs for")]
     elif "moves" in sub_description:
         split = [s.strip() for s in sub_description.split("moves")]
-        parsed_sub["sub_team"] = "pitch"
+        parsed_sub["sub_type"] = "pitch"
     else:
         error = "Substitution description was in an unrecognized format. (Before first split)"
         return Result.Fail(error)
@@ -1094,7 +1095,7 @@ def _parse_substitution_description(sub_description):
     split4 = None
     if "pitching" in remaining_description:
         parsed_sub["incoming_player_pos"] = "P"
-        parsed_sub["sub_team"] = "pitch"
+        parsed_sub["sub_type"] = "pitch"
         split4 = [s.strip() for s in remaining_description.split("pitching")]
         if not split4 or len(split4) != 2:
             error = "Fourth split operation did not produce a list with length=2."
@@ -1127,11 +1128,11 @@ def _parse_substitution_description(sub_description):
     elif "pinch hit" in sub_description:
         parsed_sub["outgoing_player_name"] = remaining_description
         parsed_sub["outgoing_player_pos"] = "PH"
-        parsed_sub["sub_team"] = "bat"
+        parsed_sub["sub_type"] = "bat"
     elif "pinch run" in sub_description:
         parsed_sub["outgoing_player_name"] = remaining_description
         parsed_sub["outgoing_player_pos"] = "PR"
-        parsed_sub["sub_team"] = "bat"
+        parsed_sub["sub_type"] = "bat"
 
     if "outgoing_player_pos" not in parsed_sub:
         parsed_sub["outgoing_player_pos"] = parsed_sub["incoming_player_pos"]
@@ -1220,12 +1221,12 @@ def _create_innings_list(
         for sub in inning_substitutions:
             sub.inning_id = inning_id
             sub.inning_label = inning_label
-            sub_team_id = sub.get_sub_team_id(away_team_id, home_team_id)
+            sub.team_id = _get_sub_team_id(inning_label, sub.sub_type, away_team_id, home_team_id)
             result = _get_sub_player_ids(
                 sub.incoming_player_name,
                 sub.outgoing_player_name,
                 player_name_dict,
-                sub_team_id,
+                sub.team_id,
             )
             if result.failure:
                 return result
@@ -1266,6 +1267,18 @@ def _create_innings_list(
 
         innings_list.append(inning)
     return Result.Ok((innings_list, player_id_match_log))
+
+
+def _get_sub_team_id(inning_label, sub_type, away_team_id, home_team_id):
+    if inning_label.startswith("t") and "bat" in sub_type:
+        return away_team_id
+    elif inning_label.startswith("t") and "pitch" in sub_type:
+        return home_team_id
+    elif inning_label.startswith("b") and "bat" in sub_type:
+        return home_team_id
+    elif inning_label.startswith("b") and "pitch" in sub_type:
+        return away_team_id
+    return None
 
 
 def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_dict, sub_team_id):
