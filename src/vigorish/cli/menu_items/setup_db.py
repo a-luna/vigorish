@@ -60,7 +60,6 @@ class SetupDBMenuItem(MenuItem):
         result = self.update_player_id_map.launch()
         if result.failure:
             return result
-        pause(message="Press any key to continue...")
 
         subprocess.run(["clear"])
         result = initialize_database(self.app)

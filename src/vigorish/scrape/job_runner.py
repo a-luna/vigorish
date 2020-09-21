@@ -102,7 +102,7 @@ class JobRunner:
         return (skipped, JOB_STATUS_TEXT_COLOR["skipped"])
 
     def scrape_task_started_text(self, data_set, task_number):
-        return f"Scraping data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})..."
+        return f"Scraping data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})"
 
     def report_task_results(self):
         subprocess.run(["clear"])

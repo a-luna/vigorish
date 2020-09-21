@@ -56,12 +56,16 @@ class ScrapedDataErrorsMenu(Menu):
 
     def audit_report_season_prompt(self, audit_report):
         prompt = "Select an MLB season from the list below:"
-        choices = {
-            f"{MENU_NUMBERS.get(num)}  {year}": year
-            for num, year in enumerate(audit_report.keys(), start=1)
+        years_with_errors = [
+            year
+            for year in audit_report.keys()
             if audit_report[year].get("invalid_pfx", [])
             or audit_report[year].get("pfx_error", [])
             or audit_report[year].get("failed", [])
+        ]
+        choices = {
+            f"{MENU_NUMBERS.get(num)}  {year}": year
+            for num, year in enumerate(years_with_errors, start=1)
         }
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
         return user_options_prompt(choices, prompt)
