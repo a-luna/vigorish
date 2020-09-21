@@ -1,0 +1,18 @@
+{
+  "__bbref_games_for_date__": true,
+  "boxscore_urls": [
+    "https://www.baseball-reference.com/boxes/BOS/BOS201904150.shtml",
+    "https://www.baseball-reference.com/boxes/CHA/CHA201904150.shtml",
+    "https://www.baseball-reference.com/boxes/LAN/LAN201904150.shtml",
+    "https://www.baseball-reference.com/boxes/MIA/MIA201904150.shtml",
+    "https://www.baseball-reference.com/boxes/MIL/MIL201904150.shtml",
+    "https://www.baseball-reference.com/boxes/MIN/MIN201904150.shtml",
+    "https://www.baseball-reference.com/boxes/PHI/PHI201904150.shtml",
+    "https://www.baseball-reference.com/boxes/SDN/SDN201904150.shtml",
+    "https://www.baseball-reference.com/boxes/SEA/SEA201904150.shtml",
+    "https://www.baseball-reference.com/boxes/TEX/TEX201904150.shtml"
+  ],
+  "dashboard_url": "https://www.baseball-reference.com/boxes/?month=4&day=15&year=2019",
+  "game_count": 10,
+  "game_date_str": "2019-04-15"
+}

@@ -5,6 +5,7 @@ albieoz01,1997,1,7,Curacao,None,Willemstad,None,None,None,None,None,None,Ozzie,A
 alonspe01,1994,12,7,USA,FL,Tampa,None,None,None,None,None,None,Pete,Alonso,Peter Morgan,245,75,R,R,2019-03-28 00:00:00,2019-09-29 00:00:00,alonp001,alonspe01
 altheaa01,1991,1,14,Germany,Rhineland-Palatinate,Landstuhl,None,None,None,None,None,None,Aaron,Altherr,Aaron Samuel,215,77,R,R,2014-06-16 00:00:00,2019-08-23 00:00:00,altha001,altheaa01
 anderju01,1992,9,28,USA,TX,Houston,None,None,None,None,None,None,Justin,Anderson,Justin Charles,230,75,L,R,2018-04-23 00:00:00,2019-09-29 00:00:00,andej005,anderju01
+andruel01,1988,8,26,Venezuela,Aragua,Maracay,None,None,None,None,None,None,Elvis,Andrus,Elvis Augusto,200,72,R,R,2009-04-06 00:00:00,2019-09-29 00:00:00,andre001,andruel01
 arozara01,1995,2,28,Cuba,La Habana,La Habana,None,None,None,None,None,None,Randy,Arozarena,Randy,170,71,R,R,2019-08-14 00:00:00,2019-09-29 00:00:00,arozr001,arozara01
 axforjo01,1983,4,1,CAN,ON,Simcoe,None,None,None,None,None,None,John,Axford,John Berton,234,77,R,R,2009-09-15 00:00:00,2018-09-21 00:00:00,axfoj001,axforjo01
 baderha01,1994,6,3,USA,NY,Bronxville,None,None,None,None,None,None,Harrison,Bader,Harrison Joseph,195,72,R,R,2017-07-25 00:00:00,2019-09-29 00:00:00,badeh001,baderha01
@@ -13,15 +14,19 @@ bedroca01,1991,10,2,USA,GA,Senoia,None,None,None,None,None,None,Cam,Bedrosian,Ca
 belljo02,1992,8,14,USA,TX,Irving,None,None,None,None,None,None,Josh,Bell,Joshua Evan,240,76,B,R,2016-07-08 00:00:00,2019-09-13 00:00:00,bellj005,belljo02
 biagijo01,1990,5,29,USA,CA,Menlo Park,None,None,None,None,None,None,Joe,Biagini,Joseph Carlo,235,77,R,R,2016-04-08 00:00:00,2019-09-26 00:00:00,biagj001,biagijo01
 biggica01,1995,4,11,USA,TX,Houston,None,None,None,None,None,None,Cavan,Biggio,Cavan Thomas,200,74,L,R,2019-05-24 00:00:00,2019-09-29 00:00:00,biggc002,biggica01
+birdky01,1993,4,12,USA,FL,Orange Park,None,None,None,None,None,None,Kyle,Bird,Ronald Kyle,175,74,L,L,2019-03-28 00:00:00,2019-07-30 00:00:00,birdk001,birdky01
 bourjpe01,1987,3,31,USA,IL,Park Ridge,None,None,None,None,None,None,Peter,Bourjos,Peter Christopher,190,73,R,R,2010-08-03 00:00:00,2019-05-04 00:00:00,bourp001,bourjpe01
 bourju01,1988,5,28,USA,DC,Washington,None,None,None,None,None,None,Justin,Bour,Justin James,270,76,L,R,2014-06-05 00:00:00,2019-09-29 00:00:00,bourj002,bourju01
 braulst01,1992,4,29,USA,CA,La Mesa,None,None,None,None,None,None,Steven,Brault,Steven Joseph,195,72,L,L,2016-07-05 00:00:00,2019-09-28 00:00:00,braus002,braulst01
 brothre01,1987,12,18,USA,TN,Unionville,None,None,None,None,None,None,Rex,Brothers,Rex Colman,205,72,L,L,2011-06-06 00:00:00,2018-03-29 00:00:00,brotr001,brothre01
 buchtry01,1987,2,13,USA,PA,Reading,None,None,None,None,None,None,Ryan,Buchter,Ryan James,232,76,L,L,2014-06-20 00:00:00,2019-09-29 00:00:00,buchr001,buchtry01
 buttrty01,1993,3,31,USA,NC,Matthews,None,None,None,None,None,None,Ty,Buttrey,Ty Douglas,240,78,L,R,2018-08-16 00:00:00,2019-09-27 00:00:00,buttt001,buttrty01
+cabreas01,1985,11,13,Venezuela,Anzoategui,Puerto La Cruz,None,None,None,None,None,None,Asdrubal,Cabrera,Asdrubal Jose,205,72,B,R,2007-08-08 00:00:00,2019-09-28 00:00:00,cabra002,cabreas01
+cahiltr01,1988,3,1,USA,CA,Oceanside,None,None,None,None,None,None,Trevor,Cahill,Trevor John,230,76,R,R,2009-04-07 00:00:00,2019-09-27 00:00:00,cahit001,cahiltr01
 calhoko01,1987,10,14,USA,AZ,Buckeye,None,None,None,None,None,None,Kole,Calhoun,Kole Alan,215,70,L,L,2012-05-22 00:00:00,2019-09-29 00:00:00,calhk001,calhoko01
 cessalu01,1992,4,25,Mexico,Veracruz,Cordoba,None,None,None,None,None,None,Luis,Cessa,Luis Enrique,210,72,R,R,2016-04-08 00:00:00,2019-09-28 00:00:00,cessl001,cessalu01
 chapmma01,1993,4,28,USA,CA,Victorville,None,None,None,None,None,None,Matt,Chapman,Matt James,220,72,R,R,2017-06-15 00:00:00,2019-09-28 00:00:00,chapm001,chapmma01
+choosh01,1982,7,13,South Korea,Busan,Busan,None,None,None,None,None,None,Shin-Soo,Choo,Shin-Soo,210,71,L,L,2005-04-21 00:00:00,2019-09-29 00:00:00,choos001,choosh01
 clippty01,1985,2,14,USA,KY,Lexington,None,None,None,None,None,None,Tyler,Clippard,Tyler Lee,200,75,R,R,2007-05-20 00:00:00,2019-09-25 00:00:00,clipt001,clippty01
 colliti01,1989,8,21,USA,MA,Worcester,None,None,None,None,None,None,Tim,Collins,Timothy Michael,170,67,L,L,2011-03-31 00:00:00,2019-07-23 00:00:00,collt001,colliti01
 confomi01,1993,3,1,USA,WA,Seattle,None,None,None,None,None,None,Michael,Conforto,Michael Thomas,215,73,L,R,2015-07-24 00:00:00,2019-09-29 00:00:00,confm001,confomi01
@@ -29,12 +34,15 @@ couloda01,1989,10,26,USA,MO,St. Louis,None,None,None,None,None,None,Danny,Coulom
 cozarza01,1985,8,12,USA,TN,Memphis,None,None,None,None,None,None,Zack,Cozart,Zachary Warren,204,72,R,R,2011-07-07 00:00:00,2019-05-26 00:00:00,cozaz001,cozarza01
 crawfjp01,1995,1,11,USA,CA,Long Beach,None,None,None,None,None,None,J. P.,Crawford,John Paul,180,74,L,R,2017-09-05 00:00:00,2019-09-29 00:00:00,crawj002,crawfjp01
 culbech01,1989,4,10,USA,GA,Rome,None,None,None,None,None,None,Charlie,Culberson,Charles Edward,200,72,R,R,2012-05-13 00:00:00,2019-09-14 00:00:00,culbc001,culbech01
+curtijo02,1993,4,5,USA,TX,Dallas,None,None,None,None,None,None,John,Curtiss,John Pickens,220,77,R,R,2017-08-25 00:00:00,2019-04-15 00:00:00,curtj003,curtijo02
 davisjd01,1993,4,27,USA,CA,Elk Grove,None,None,None,None,None,None,J. D.,Davis,Jonathan Gregory,225,75,R,R,2017-08-05 00:00:00,2019-09-29 00:00:00,davij006,davisjd01
 daviskh01,1987,12,21,USA,CA,Lakewood,None,None,None,None,None,None,Khris,Davis,Khristopher Adrian,203,71,R,R,2013-04-01 00:00:00,2019-09-29 00:00:00,davik003,daviskh01
 dejonpa01,1993,8,2,USA,FL,Orlando,None,None,None,None,None,None,Paul,DeJong,Paul Sterling,200,72,R,R,2017-05-28 00:00:00,2019-09-29 00:00:00,dejop001,dejonpa01
+deshide02,1992,8,16,USA,MD,Easton,None,None,None,None,None,None,Delino,DeShields,Delino Diaab,200,69,R,R,2015-04-08 00:00:00,2019-09-29 00:00:00,deshd002,deshide02
 diazal02,1990,8,1,Cuba,None,Santa Clara,None,None,None,None,None,None,Aledmys,Diaz,Aledmys,195,73,R,R,2016-04-05 00:00:00,2019-09-29 00:00:00,diaza003,diazal02
 diazel01,1990,11,17,Venezuela,Zulia,Maracaibo,None,None,None,None,None,None,Elias,Diaz,Elias David,220,73,R,R,2015-09-12 00:00:00,2019-09-21 00:00:00,diaze005,diazel01
 difowi01,1992,4,2,D.R.,Santiago,Santiago de los Caballeros,None,None,None,None,None,None,Wilmer,Difo,Wilmer Francisco,200,71,B,R,2015-05-19 00:00:00,2019-09-29 00:00:00,difow001,difowi01
+dowdyky01,1993,2,3,USA,CA,Escondido,None,None,None,None,None,None,Kyle,Dowdy,Kyle Alexander,195,73,R,R,2019-03-28 00:00:00,2019-05-26 00:00:00,dowdk001,dowdyky01
 drurybr01,1992,8,21,USA,OR,Grants Pass,None,None,None,None,None,None,Brandon,Drury,Brandon S.,215,74,R,R,2015-09-01 00:00:00,2019-09-28 00:00:00,drurb001,drurybr01
 eatonad02,1988,12,6,USA,OH,Springfield,None,None,None,None,None,None,Adam,Eaton,Adam Cory,176,69,L,L,2012-09-04 00:00:00,2019-09-29 00:00:00,eatoa002,eatonad02
 edmanto01,1995,5,9,USA,CA,San Diego,None,None,None,None,None,None,Tommy,Edman,Thomas Hyunsu,180,70,B,R,2019-06-08 00:00:00,2019-09-29 00:00:00,edmat001,edmanto01
@@ -44,6 +52,7 @@ flahery01,1986,7,27,USA,ME,Portland,None,None,None,None,None,None,Ryan,Flaherty,
 fletcda02,1994,5,31,USA,CA,Orange,None,None,None,None,None,None,David,Fletcher,David Owen,185,69,R,R,2018-06-13 00:00:00,2019-09-29 00:00:00,fletd002,fletcda02
 floripe01,1986,12,10,D.R.,La Romana,La Romana,None,None,None,None,None,None,Pedro,Florimon,Pedro Alexander,185,74,B,R,2011-09-10 00:00:00,2018-09-27 00:00:00,florp001,floripe01
 flowety01,1986,1,24,USA,GA,Roswell,None,None,None,None,None,None,Tyler,Flowers,Cole Tyler,260,76,R,R,2009-09-03 00:00:00,2019-09-27 00:00:00,flowt001,flowety01
+forsylo01,1987,1,14,USA,TN,Memphis,None,None,None,None,None,None,Logan,Forsythe,John Logan,195,73,R,R,2011-05-04 00:00:00,2019-09-08 00:00:00,forsl001,forsylo01
 fowlede01,1986,3,22,USA,GA,Atlanta,None,None,None,None,None,None,Dexter,Fowler,William Dexter,195,77,B,R,2008-09-02 00:00:00,2019-09-29 00:00:00,fowld001,fowlede01
 francma02,1992,8,26,D.R.,Azua,Azua,None,None,None,None,None,None,Maikel,Franco,Maikel Antonio,215,73,R,R,2014-09-02 00:00:00,2019-09-29 00:00:00,franm004,francma02
 fraziad01,1991,12,14,USA,GA,Athens,None,None,None,None,None,None,Adam,Frazier,Adam Timothy,180,70,L,R,2016-06-24 00:00:00,2019-09-29 00:00:00,fraza001,fraziad01
@@ -52,6 +61,7 @@ frazito01,1986,2,12,USA,NJ,Point Pleasant,None,None,None,None,None,None,Todd,Fra
 freemfr01,1989,9,12,USA,CA,Fountain Valley,None,None,None,None,None,None,Freddie,Freeman,Frederick Charles,220,77,L,R,2010-09-01 00:00:00,2019-09-29 00:00:00,freef001,freemfr01
 freemsa01,1987,6,24,USA,TX,Houston,None,None,None,None,None,None,Sam,Freeman,Samuel Douglas,180,71,R,L,2012-06-01 00:00:00,2019-04-23 00:00:00,frees001,freemsa01
 gagnodr01,1990,6,26,USA,CA,Columbia,None,None,None,None,None,None,Drew,Gagnon,Andrew Miles,215,76,R,R,2018-07-10 00:00:00,2019-09-25 00:00:00,gagnd001,gagnodr01
+gallojo01,1993,11,19,USA,NV,Henderson,None,None,None,None,None,None,Joey,Gallo,Joseph Nicholas,235,77,L,R,2015-06-02 00:00:00,2019-07-23 00:00:00,gallj002,gallojo01
 galvifr01,1989,11,14,Venezuela,Falcon,Punto Fijo,None,None,None,None,None,None,Freddy,Galvis,Freddy Jose,185,70,B,R,2012-04-05 00:00:00,2019-09-14 00:00:00,galvf001,galvifr01
 garcija01,1980,7,25,D.R.,San Cristobal,San Cristobal,None,None,None,None,None,None,Santiago,Casilla,Santiago,210,72,R,R,2004-08-09 00:00:00,2018-07-13 00:00:00,garcj002,garcija01
 garcilu03,1987,1,30,D.R.,Distrito Nacional,Santo Domingo,None,None,None,None,None,None,Luis,Garcia,Luis Amado,240,74,R,R,2013-07-10 00:00:00,2019-09-29 00:00:00,garcl005,garcilu03
@@ -78,9 +88,11 @@ hoskirh01,1993,3,17,USA,CA,Sacramento,None,None,None,None,None,None,Rhys,Hoskins
 hudsoda01,1987,3,9,USA,VA,Lynchburg,None,None,None,None,None,None,Daniel,Hudson,Daniel Claiborne,225,75,R,R,2009-09-04 00:00:00,2019-09-28 00:00:00,hudsd001,hudsoda01
 inciaen01,1990,10,29,Venezuela,Zulia,Maracaibo,None,None,None,None,None,None,Ender,Inciarte,Ender David,190,71,L,L,2014-05-02 00:00:00,2019-08-16 00:00:00,incie001,inciaen01
 jacksed01,1983,9,9,Germany,Bavaria,Neu-Ulm,None,None,None,None,None,None,Edwin,Jackson,Edwin,215,74,R,R,2003-09-09 00:00:00,2019-09-28 00:00:00,jacke001,jacksed01
+jewelja01,1993,5,16,USA,OK,Norman,None,None,None,None,None,None,Jake,Jewell,Jake R.,200,75,R,R,2018-06-16 00:00:00,2019-09-29 00:00:00,jewej001,jewelja01
 joycema01,1984,8,3,USA,FL,Tampa,None,None,None,None,None,None,Matthew,Joyce,Matthew Ryan,200,74,L,R,2008-05-05 00:00:00,2019-09-29 00:00:00,joycm001,joycema01
 kellesh01,1984,4,26,USA,KY,Louisville,None,None,None,None,None,None,Shawn,Kelley,Shawn Andrew,237,74,R,R,2009-04-10 00:00:00,2019-09-27 00:00:00,kells001,kellesh01
 kiebosp01,1991,3,16,USA,SC,Mount Pleasant,None,None,None,None,None,None,Spencer,Kieboom,Spencer John,210,72,R,R,2016-10-02 00:00:00,2018-09-30 00:00:00,kiebs001,kiebosp01
+kineris01,1995,3,23,USA,HI,Honolulu,None,None,None,None,None,None,Isiah,Kiner-Falefa,Isiah,176,70,R,R,2018-04-10 00:00:00,2019-09-28 00:00:00,kinei001,kineris01
 kinghni01,1991,11,8,USA,TX,Houston,None,None,None,None,None,None,Nick,Kingham,Nicholas Gordon,235,77,R,R,2018-04-29 00:00:00,2019-08-02 00:00:00,kingn001,kinghni01
 knappan01,1991,11,9,USA,CA,Roseville,None,None,None,None,None,None,Andrew,Knapp,Andrew Michael,195,73,B,R,2017-04-06 00:00:00,2019-09-29 00:00:00,knapa001,knappan01
 kniznan01,1995,2,3,USA,VA,Glen Allen,None,None,None,None,None,None,Andrew,Knizner,Andrew Robert,200,73,R,R,2019-06-02 00:00:00,2019-09-25 00:00:00,kniza001,kniznan01
@@ -88,6 +100,7 @@ krameke01,1993,10,3,USA,CA,Turlock,None,None,None,None,None,None,Kevin,Kramer,Ke
 lagarju01,1989,3,17,D.R.,La Vega,Constanza,None,None,None,None,None,None,Juan,Lagares,Juan Osvaldo,215,73,R,R,2013-04-23 00:00:00,2019-09-29 00:00:00,lagaj001,lagarju01
 lasteto01,1989,1,31,USA,NJ,Westwood,None,None,None,None,None,None,Tommy,La Stella,Thomas F.,180,71,L,R,2014-05-28 00:00:00,2019-09-29 00:00:00,lastt001,lasteto01
 lawde01,1990,9,14,USA,PA,Pittsburgh,None,None,None,None,None,None,Derek,Law,Derek Robert,215,75,R,R,2016-04-15 00:00:00,2019-09-28 00:00:00,law-d001,lawde01
+leclejo01,1993,12,19,D.R.,Valverde,Esperanza,None,None,None,None,None,None,Jose,Leclerc,Jose Ramon,190,72,R,R,2016-07-06 00:00:00,2019-09-29 00:00:00,leclj001,leclejo01
 lemahdj01,1988,7,13,USA,CA,Visalia,None,None,None,None,None,None,DJ,LeMahieu,David John,215,76,R,R,2011-05-30 00:00:00,2019-09-29 00:00:00,lemad001,lemahdj01
 lowrije01,1984,4,17,USA,OR,Salem,None,None,None,None,None,None,Jed,Lowrie,Jed Carlson,180,72,B,R,2008-04-15 00:00:00,2019-09-29 00:00:00,lowrj001,lowrije01
 lucrojo01,1986,6,13,USA,FL,Eustis,None,None,None,None,None,None,Jonathan,Lucroy,Jonathan Charles,200,72,R,R,2010-05-21 00:00:00,2019-09-28 00:00:00,lucrj001,lucrojo01
@@ -102,9 +115,11 @@ martest01,1988,10,9,D.R.,Distrito Nacional,Santo Domingo,None,None,None,None,Non
 martiru01,1983,2,15,CAN,ON,East York,None,None,None,None,None,None,Russell,Martin,Russell Nathan Coltrane,215,70,R,R,2006-05-05 00:00:00,2019-09-28 00:00:00,martr004,martiru01
 maybica01,1987,4,4,USA,NC,Asheville,None,None,None,None,None,None,Cameron,Maybin,Cameron Keith,215,75,R,R,2007-08-17 00:00:00,2019-09-29 00:00:00,maybc001,maybica01
 mayzati01,1992,1,15,USA,PA,Allentown,None,None,None,None,None,None,Tim,Mayza,Timothy Gerard,220,75,L,L,2017-08-15 00:00:00,2019-09-13 00:00:00,mayzt001,mayzati01
+mazarno01,1995,4,26,D.R.,Distrito Nacional,Santo Domingo,None,None,None,None,None,None,Nomar,Mazara,Nomar Shamir,215,76,L,L,2016-04-10 00:00:00,2019-09-22 00:00:00,mazan001,mazarno01
 mcneije01,1992,4,8,USA,CA,Santa Barbara,None,None,None,None,None,None,Jeff,McNeil,Jeff,195,73,L,R,2018-07-24 00:00:00,2019-09-25 00:00:00,mcnej002,mcneije01
 middlke01,1993,9,12,USA,OR,Portland,None,None,None,None,None,None,Keynan,Middleton,Keynan Anthony,215,75,R,R,2017-05-05 00:00:00,2019-09-28 00:00:00,middk001,middlke01
 milleju02,1987,6,13,USA,CA,Bakersfield,None,None,None,None,None,None,Justin,Miller,Justin Ryan,215,75,R,R,2014-04-18 00:00:00,2019-05-17 00:00:00,millj006,milleju02
+millesh01,1990,10,10,USA,TX,Houston,None,None,None,None,None,None,Shelby,Miller,Shelby Charles,225,75,R,R,2012-09-05 00:00:00,2019-06-25 00:00:00,mills001,millesh01
 milneho01,1991,1,13,USA,TX,Dallas,None,None,None,None,None,None,Hoby,Milner,Hoby Trey,175,75,L,L,2017-06-24 00:00:00,2019-09-05 00:00:00,milnh001,milneho01
 molinya01,1982,7,13,P.R.,None,Bayamon,None,None,None,None,None,None,Yadier,Molina,Yadier Benjamin,205,71,R,R,2004-06-03 00:00:00,2019-09-29 00:00:00,moliy001,molinya01
 moralke01,1983,6,20,Cuba,Sancti Spiritus,Fomento,None,None,None,None,None,None,Kendrys,Morales,Kendrys,242,73,B,R,2006-05-23 00:00:00,2019-06-11 00:00:00,morak001,moralke01
@@ -144,9 +159,11 @@ rominau01,1988,11,22,USA,CA,Lake Forest,None,None,None,None,None,None,Austin,Rom
 rosaram01,1995,11,20,D.R.,Distrito Nacional,Santo Domingo Centro,None,None,None,None,None,None,Amed,Rosario,German Amed,189,74,R,R,2017-08-01 00:00:00,2019-09-29 00:00:00,rosaa003,rosaram01
 sanchga02,1992,12,2,D.R.,Distrito Nacional,Santo Domingo,None,None,None,None,None,None,Gary,Sanchez,Gary,230,74,R,R,2015-10-03 00:00:00,2019-09-29 00:00:00,sancg002,sanchga02
 santaca01,1986,4,8,D.R.,Distrito Nacional,Santo Domingo,None,None,None,None,None,None,Carlos,Santana,Carlos,210,71,B,R,2010-06-11 00:00:00,2019-09-29 00:00:00,santc002,santaca01
+santada01,1990,11,7,D.R.,Monte Plata,Monte Plata,None,None,None,None,None,None,Danny,Santana,Daniel Ernesto,185,71,B,R,2014-05-05 00:00:00,2019-09-29 00:00:00,santd001,santada01
 semiema01,1990,9,17,USA,CA,San Francisco,None,None,None,None,None,None,Marcus,Semien,Marcus Andrew,195,72,R,R,2013-09-04 00:00:00,2019-09-29 00:00:00,semim001,semiema01
 severpe01,1993,7,20,D.R.,Monsenor Nouel,Bonao,None,None,None,None,None,None,Pedro,Severino,Pedro,219,73,R,R,2015-09-20 00:00:00,2019-09-23 00:00:00,sevep001,severpe01
 simmoan01,1989,9,4,Curacao,None,Mundo Nobo,None,None,None,None,None,None,Andrelton,Simmons,Andrelton A.,195,74,R,R,2012-06-02 00:00:00,2019-09-29 00:00:00,simma001,simmoan01
+smithke04,1988,6,28,USA,PA,Pittsburgh,None,None,None,None,None,None,Kevan,Smith,Kevan Alan,240,76,R,R,2016-09-01 00:00:00,2019-09-29 00:00:00,smitk002,smithke04
 smoakju01,1986,12,5,USA,SC,Goose Creek,None,None,None,None,None,None,Justin,Smoak,Justin Kyle,220,76,B,L,2010-04-23 00:00:00,2019-09-29 00:00:00,smoaj001,smoakju01
 sogarer01,1986,5,22,USA,AZ,Phoenix,None,None,None,None,None,None,Eric,Sogard,Eric Sidney,185,70,L,R,2010-09-14 00:00:00,2019-09-15 00:00:00,sogae001,sogarer01
 solarya01,1987,7,3,Venezuela,Carabobo,Valencia,None,None,None,None,None,None,Yangervis,Solarte,Yangervis Alfredo,205,71,B,R,2014-04-02 00:00:00,2019-05-06 00:00:00,solay001,solarya01

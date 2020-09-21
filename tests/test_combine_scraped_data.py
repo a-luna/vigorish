@@ -7,6 +7,7 @@ GAME_ID_NO_ERRORS = "TOR201906170"
 NO_ERRORS_PITCH_APP = "TOR201906170_429719"
 GAME_ID_WITH_ERRORS = "NYA201906112"
 GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
+GAME_ID_EXTRA_PFX_REMOVED = "TEX201904150"
 COMBINED_DATA_GAME_DICT = {
     datetime(2019, 6, 17): {
         "bbref_game_id": GAME_ID_NO_ERRORS,
@@ -19,6 +20,10 @@ COMBINED_DATA_GAME_DICT = {
     datetime(2019, 9, 7): {
         "bbref_game_id": GAME_ID_NO_PFX_FOR_PITCH_APP,
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
+    },
+    datetime(2019, 4, 15): {
+        "bbref_game_id": GAME_ID_EXTRA_PFX_REMOVED,
+        "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
     },
 }
 
@@ -88,8 +93,6 @@ def test_combine_data_no_errors(db_session, scraped_data):
     assert pitch_app_status.batters_faced_bbref == 10
     assert pitch_app_status.total_at_bats_pitchfx_complete == 10
     assert pitch_app_status.total_at_bats_missing_pitchfx == 0
-
-    reset_pitch_app_scrape_status_after_combined_data(db_session, GAME_ID_NO_ERRORS)
 
 
 def test_combine_data_with_errors(db_session, scraped_data):
@@ -170,18 +173,41 @@ def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
     assert data_audit["duplicate_guid_removed_count"] == 1
 
 
-def reset_pitch_app_scrape_status_after_combined_data(db_session, bbref_game_id):
-    pitch_app_ids = PitchAppScrapeStatus.get_all_pitch_app_ids_for_game(db_session, bbref_game_id)
-    for pitch_app_id in pitch_app_ids:
-        pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
-        setattr(pitch_app_status, "combined_pitchfx_bbref_data", 0)
-        setattr(pitch_app_status, "pitchfx_data_complete", 0)
-        setattr(pitch_app_status, "pitch_count_bbref", 0)
-        setattr(pitch_app_status, "pitch_count_pitchfx_audited", 0)
-        setattr(pitch_app_status, "duplicate_pitchfx_removed_count", 0)
-        setattr(pitch_app_status, "pitch_count_missing_pitchfx", 0)
-        setattr(pitch_app_status, "missing_pitchfx_is_valid", 0)
-        setattr(pitch_app_status, "batters_faced_bbref", 0)
-        setattr(pitch_app_status, "total_at_bats_pitchfx_complete", 0)
-        setattr(pitch_app_status, "total_at_bats_missing_pitchfx", 0)
-        db_session.commit()
+def test_combine_data_extra_pitchfx_removed(db_session, scraped_data):
+    combined_data = combine_scraped_data_for_game(
+        db_session, scraped_data, GAME_ID_EXTRA_PFX_REMOVED
+    )
+    assert "pitchfx_vs_bbref_audit" in combined_data
+    data_audit = combined_data["pitchfx_vs_bbref_audit"]
+    assert "batters_faced_bbref" in data_audit
+    assert data_audit["batters_faced_bbref"] == 90
+    assert "total_at_bats_pitchfx_complete" in data_audit
+    assert data_audit["total_at_bats_pitchfx_complete"] == 90
+    assert "total_at_bats_missing_pitchfx" in data_audit
+    assert data_audit["total_at_bats_missing_pitchfx"] == 0
+    assert "total_at_bats_extra_pitchfx" in data_audit
+    assert data_audit["total_at_bats_extra_pitchfx"] == 0
+    assert "total_at_bats_extra_pitchfx_removed" in data_audit
+    assert data_audit["total_at_bats_extra_pitchfx_removed"] == 2
+    assert "pitch_count_bbref_stats_table" in data_audit
+    assert data_audit["pitch_count_bbref_stats_table"] == 358
+    assert "pitch_count_bbref" in data_audit
+    assert data_audit["pitch_count_bbref"] == 358
+    assert "pitch_count_pitchfx" in data_audit
+    assert data_audit["pitch_count_pitchfx"] == 358
+    assert "missing_pitchfx_count" in data_audit
+    assert data_audit["missing_pitchfx_count"] == 0
+    assert "at_bat_ids_missing_pitchfx" in data_audit
+    assert len(data_audit["at_bat_ids_missing_pitchfx"]) == 0
+    assert data_audit["at_bat_ids_missing_pitchfx"] == []
+    assert "pitchfx_error" in data_audit
+    assert not data_audit["pitchfx_error"]
+    assert "at_bat_ids_pitchfx_error" in data_audit
+    assert data_audit["at_bat_ids_pitchfx_error"] == []
+    assert "at_bat_ids_extra_pitchfx_removed" in data_audit
+    assert data_audit["at_bat_ids_extra_pitchfx_removed"] == [
+        "TEX201904150_05_TEX_571946_ANA_592743_0",
+        "TEX201904150_05_TEX_571946_ANA_405395_0",
+    ]
+    assert "duplicate_guid_removed_count" in data_audit
+    assert data_audit["duplicate_guid_removed_count"] == 1

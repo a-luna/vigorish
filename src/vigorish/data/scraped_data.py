@@ -402,8 +402,8 @@ class ScrapedData:
         pitch_samples = []
         at_bat_samples = []
         inning_samples = []
-        for bbref_game_id in game_ids:
-            combined_data = self.get_json_combined_data(bbref_game_id)
+        for game_id in game_ids:
+            combined_data = self.get_json_combined_data(game_id)
             if not combined_data:
                 continue
             result = calc_pitch_metrics(combined_data)
@@ -416,26 +416,12 @@ class ScrapedData:
             "inning_metrics": process_data_set(inning_samples, trim=True, st_dev=0.007),
         }
 
-    def combine_boxscore_and_pfx_data(self, bbref_game_id, apply_patches=True, write_json=True):
-        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, bbref_game_id)
-        boxscore = self.get_bbref_boxscore(bbref_game_id)
-        if apply_patches:
-            result = self.apply_patch_list(DataSet.BBREF_BOXSCORES, bbref_game_id, boxscore)
-            if result.failure:
-                return {"gather_scraped_data_success": False, "error": result.error}
-            boxscore = result.value
-        result = self.get_all_pitchfx_logs_for_game(bbref_game_id)
-        if result.failure:
-            return {"gather_scraped_data_success": False, "error": result.error}
-        pfx_logs = result.value
-        if apply_patches:
-            result = self.apply_patch_list(
-                DataSet.BROOKS_PITCHFX, bbref_game_id, pfx_logs, boxscore
-            )
-            if result.failure:
-                return {"gather_scraped_data_success": False, "error": result.error}
-            pfx_logs = result.value
-        avg_pitch_times = self.get_avg_pitch_times()
+    def combine_boxscore_and_pfx_data(self, game_id, apply_patch_list=True, write_json=True):
+        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, game_id)
+        result = self.gather_scraped_data_for_game(game_id, apply_patch_list)
+        if not result["gather_scraped_data_success"]:
+            return result
+        (boxscore, pfx_logs, avg_pitch_times) = result["scraped_data"]
         result = self.combine_data.execute(game_status, boxscore, pfx_logs, avg_pitch_times)
         if result.failure:
             setattr(game_status, "combined_data_success", 0)
@@ -469,66 +455,33 @@ class ScrapedData:
             "results": result.value,
         }
 
-    def investigate_errors(self, bbref_game_id):
-        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, bbref_game_id)
-        boxscore = self.get_bbref_boxscore(bbref_game_id)
-        if not boxscore:
-            error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {bbref_game_id})"
-            return {"gather_scraped_data_success": False, "error": error}
-        result = self.apply_patch_list(DataSet.BBREF_BOXSCORES, bbref_game_id, boxscore)
-        if result.failure:
-            return {"gather_scraped_data_success": False, "error": result.error}
-        boxscore = result.value
-        result = self.get_all_pitchfx_logs_for_game(bbref_game_id)
-        if result.failure:
-            return {"gather_scraped_data_success": False, "error": result.error}
-        pitchfx_logs = result.value
-        result = self.apply_patch_list(
-            DataSet.BROOKS_PITCHFX, bbref_game_id, pitchfx_logs, boxscore
-        )
-        if result.failure:
-            return {"gather_scraped_data_success": False, "error": result.error}
-        pitchfx_logs = result.value
-        avg_pitch_times = self.get_avg_pitch_times()
-        return self.combine_data.investigate(game_status, boxscore, pitchfx_logs, avg_pitch_times)
+    def investigate_errors(self, game_id, apply_patch_list=False):
+        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, game_id)
+        result = self.gather_scraped_data_for_game(game_id, apply_patch_list)
+        if not result["gather_scraped_data_success"]:
+            return result
+        (boxscore, pfx_logs, avg_pitch_times) = result["scraped_data"]
+        return self.combine_data.investigate(game_status, boxscore, pfx_logs, avg_pitch_times)
 
-    def prune_pitchfx_data_for_display(self, pfx):
-        return {
-            "pitcher_name": pfx["pitcher_name"],
-            "pitch_app_id": pfx["pitch_app_id"],
-            "pitcher_id": pfx["pitcher_id"],
-            "batter_id": pfx["batter_id"],
-            "pitcher_team_id_bb": pfx["pitcher_team_id_bb"],
-            "opponent_team_id_bb": pfx["opponent_team_id_bb"],
-            "bb_game_id": pfx["bb_game_id"],
-            "bbref_game_id": pfx["bbref_game_id"],
-            "ab_total": pfx["ab_total"],
-            "ab_count": pfx["ab_count"],
-            "ab_id": pfx["ab_id"],
-            "des": pfx["des"],
-            "type": pfx["type"],
-            "id": pfx["id"],
-            "sz_top": pfx["sz_top"],
-            "sz_bot": pfx["sz_bot"],
-            "mlbam_pitch_name": pfx["mlbam_pitch_name"],
-            "zone_location": pfx["zone_location"],
-            "stand": pfx["stand"],
-            "strikes": pfx["strikes"],
-            "balls": pfx["balls"],
-            "p_throws": pfx["p_throws"],
-            "pdes": pfx["pdes"],
-            "spin": pfx["spin"],
-            "inning": pfx["inning"],
-            "pfx_x": pfx["pfx_x"],
-            "pfx_z": pfx["pfx_z"],
-            "x0": pfx["x0"],
-            "y0": pfx["y0"],
-            "z0": pfx["z0"],
-            "start_speed": pfx["start_speed"],
-            "px": pfx["px"],
-            "pz": pfx["pz"],
-            "at_bat_id": pfx["at_bat_id"],
-            "has_zone_location": pfx["has_zone_location"],
-            "time_pitch_thrown_str": pfx["time_pitch_thrown_str"],
-            "seconds_since_game_start": pfx["seconds_since_game_start"],
-        }
+    def gather_scraped_data_for_game(self, game_id, apply_patch_list):
+        boxscore = self.get_bbref_boxscore(game_id)
+        if not boxscore:
+            error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {game_id})"
+            return {"gather_scraped_data_success": False, "error": error}
+        if apply_patch_list:
+            result = self.apply_patch_list(DataSet.BBREF_BOXSCORES, game_id, boxscore)
+            if result.failure:
+                return {"gather_scraped_data_success": False, "error": result.error}
+            boxscore = result.value
+        result = self.get_all_pitchfx_logs_for_game(game_id)
+        if result.failure:
+            return {"gather_scraped_data_success": False, "error": result.error}
+        pfx_logs = result.value
+        if apply_patch_list:
+            result = self.apply_patch_list(DataSet.BROOKS_PITCHFX, game_id, pfx_logs, boxscore)
+            if result.failure:
+                return {"gather_scraped_data_success": False, "error": result.error}
+            pfx_logs = result.value
+        avg_pitch_times = self.get_avg_pitch_times()
+        scraped_data = (boxscore, pfx_logs, avg_pitch_times)
+        return {"gather_scraped_data_success": True, "scraped_data": scraped_data}
