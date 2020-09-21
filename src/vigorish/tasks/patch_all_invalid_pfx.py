@@ -1,3 +1,4 @@
+from copy import deepcopy
 import subprocess
 
 from events import Events
@@ -31,43 +32,57 @@ class PatchAllInvalidPitchFxTask(Task):
 
     def execute(self, year):
         self.subscribe_to_events()
-        self.audit_report_before = self.scraped_data.get_audit_report()
+        all_patch_results = {}
+        audit_report = self.scraped_data.get_audit_report()
+        self.audit_report_before = deepcopy(audit_report)
         if year not in self.audit_report_before:
             return Result.Fail(f"No games for MLB {year} season have been scraped.")
         game_ids = self.audit_report_before[year].get("invalid_pfx", [])
         if not game_ids:
             return Result.Fail(f"No games for MLB {year} season have invalid pitchfx data.")
         self.events.patch_all_invalid_pitchfx_started()
-        subprocess.run(["clear"])
-        self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        self.spinner.text = self.get_spinner_text(game_ids[0], 1, len(game_ids))
-        self.spinner.start()
+        self.initialize_spinner(game_ids)
         for num, game_id in enumerate(game_ids, start=1):
             self.spinner.text = self.get_spinner_text(game_id, num, len(game_ids))
             result = self.patch_invalid_pfx.execute(game_id, no_prompts=True)
             if result.failure:
                 self.spinner.stop()
                 return result
+            patch_results = result.value
+            all_patch_results[game_id] = patch_results
             self.spinner.text = self.get_spinner_text(game_id, num + 1, len(game_ids))
         self.spinner.stop()
-        self.audit_report_after = self.scraped_data.get_audit_report()
-        (combined_change, invalid_pfx_change) = self.calculate_games_changed(year)
+        audit_report = self.scraped_data.get_audit_report()
+        self.audit_report_after = deepcopy(audit_report)
+        (successful_change, invalid_pfx_change) = self.calculate_games_changed(year)
         self.events.patch_all_invalid_pitchfx_complete()
         self.unsubscribe_from_events()
-        return Result.Ok((combined_change, invalid_pfx_change))
+        return Result.Ok(
+            {
+                "all_patch_results": all_patch_results,
+                "successful_change": successful_change,
+                "invalid_pfx_change": invalid_pfx_change,
+            }
+        )
+
+    def initialize_spinner(self, game_ids):
+        subprocess.run(["clear"])
+        self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
+        self.spinner.text = self.get_spinner_text(game_ids[0], 1, len(game_ids))
+        self.spinner.start()
 
     def get_spinner_text(self, game_id, game_count, total_games):
         percent = game_count / float(total_games)
-        return f"Applying patches for invalid PitchFX data (Game ID: {game_id}) {percent:.0%}..."
+        return f"Attempting to patch invalid PitchFX data (Game ID: {game_id}) {percent:.0%}..."
 
     def calculate_games_changed(self, year):
-        combined_before = self.audit_report_before[year]["successful"]
-        combined_after = self.audit_report_after[year]["successful"]
-        combined_change = len(combined_after) - len(combined_before)
+        successful_before = self.audit_report_before[year]["successful"]
+        successful_after = self.audit_report_after[year]["successful"]
+        successful_change = len(successful_after) - len(successful_before)
         invalid_pfx_before = self.audit_report_before[year]["invalid_pfx"]
         invalid_pfx_after = self.audit_report_after[year]["invalid_pfx"]
         invalid_pfx_change = len(invalid_pfx_after) - len(invalid_pfx_before)
-        return (combined_change, invalid_pfx_change)
+        return (successful_change, invalid_pfx_change)
 
     def handle_error_occurred(self, error_message):
         self.events.error_occurred(error_message)
