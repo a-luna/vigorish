@@ -1,0 +1,23 @@
+{
+  "__bbref_games_for_date__": true,
+  "boxscore_urls": [
+    "https://www.baseball-reference.com/boxes/ANA/ANA201908170.shtml",
+    "https://www.baseball-reference.com/boxes/ARI/ARI201908170.shtml",
+    "https://www.baseball-reference.com/boxes/ATL/ATL201908170.shtml",
+    "https://www.baseball-reference.com/boxes/BOS/BOS201908170.shtml",
+    "https://www.baseball-reference.com/boxes/CIN/CIN201908170.shtml",
+    "https://www.baseball-reference.com/boxes/COL/COL201908170.shtml",
+    "https://www.baseball-reference.com/boxes/KCA/KCA201908170.shtml",
+    "https://www.baseball-reference.com/boxes/NYA/NYA201908170.shtml",
+    "https://www.baseball-reference.com/boxes/OAK/OAK201908170.shtml",
+    "https://www.baseball-reference.com/boxes/PHI/PHI201908170.shtml",
+    "https://www.baseball-reference.com/boxes/PIT/PIT201908170.shtml",
+    "https://www.baseball-reference.com/boxes/TBA/TBA201908170.shtml",
+    "https://www.baseball-reference.com/boxes/TEX/TEX201908170.shtml",
+    "https://www.baseball-reference.com/boxes/TOR/TOR201908170.shtml",
+    "https://www.baseball-reference.com/boxes/WAS/WAS201908170.shtml"
+  ],
+  "dashboard_url": "https://www.baseball-reference.com/boxes/?month=8&day=17&year=2019",
+  "game_count": 15,
+  "game_date_str": "2019-08-17"
+}
