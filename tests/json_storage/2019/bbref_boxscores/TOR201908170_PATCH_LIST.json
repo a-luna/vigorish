@@ -1,0 +1,14 @@
+{
+  "__bbref_boxscore_patch_list__": true,
+  "url_id": "TOR201908170",
+  "patch_list": [
+    {
+      "__patch_bbref_boxscore_pitch_sequence__": true,
+      "bbref_game_id": "TOR201908170",
+      "inning_id": "TOR201908170_INN_BOT03",
+      "pbp_table_row_number": 40,
+      "old_pitch_sequence": "a.CBBFBX",
+      "new_pitch_sequence": "CBBFBX"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ from datetime import datetime
 from vigorish.config.database import PitchAppScrapeStatus, GameScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
+from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
 
 GAME_ID_NO_ERRORS = "TOR201906170"
@@ -11,6 +12,7 @@ GAME_ID_WITH_ERRORS = "NYA201906112"
 GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
 GAME_ID_EXTRA_PFX_REMOVED = "TEX201904150"
 GAME_ID_PATCH_PFX = "OAK201904030"
+GAME_ID_PATCH_BOXSCORE = "TOR201908170"
 COMBINED_DATA_GAME_DICT = {
     datetime(2019, 6, 17): {
         "bbref_game_id": GAME_ID_NO_ERRORS,
@@ -31,6 +33,10 @@ COMBINED_DATA_GAME_DICT = {
     datetime(2019, 4, 3): {
         "bbref_game_id": GAME_ID_PATCH_PFX,
         "bb_game_id": "gid_2019_04_03_bosmlb_oakmlb_1",
+    },
+    datetime(2019, 8, 17): {
+        "bbref_game_id": GAME_ID_PATCH_BOXSCORE,
+        "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
     },
 }
 
@@ -370,3 +376,113 @@ def test_combine_patched_pitchfx_data(vig_app):
     assert not data_audit["invalid_pitchfx"]
     assert "at_bat_ids_invalid_pitchfx" in data_audit
     assert data_audit["at_bat_ids_invalid_pitchfx"] == []
+
+
+def test_patch_all_invalid_pitchfx_data(vig_app):
+    result = vig_app["scraped_data"].json_storage.get_brooks_pitchfx_patch_list_local_file(
+        GAME_ID_PATCH_PFX
+    )
+    if result.success and result.value.exists():
+        result.value.unlink()
+    combined_data = combine_scraped_data_for_game(
+        vig_app["db_session"], vig_app["scraped_data"], GAME_ID_PATCH_PFX
+    )
+    assert "pitchfx_vs_bbref_audit" in combined_data
+    data_audit = combined_data["pitchfx_vs_bbref_audit"]
+    assert "batters_faced_bbref" in data_audit
+    assert data_audit["batters_faced_bbref"] == 78
+    assert "batters_faced_pitchfx" in data_audit
+    assert data_audit["batters_faced_pitchfx"] == 75
+    assert "total_at_bats_pitchfx_complete" in data_audit
+    assert data_audit["total_at_bats_pitchfx_complete"] == 75
+    assert "total_at_bats_patched_pitchfx" in data_audit
+    assert data_audit["total_at_bats_patched_pitchfx"] == 0
+    assert "total_at_bats_missing_pitchfx" in data_audit
+    assert data_audit["total_at_bats_missing_pitchfx"] == 3
+    assert "total_at_bats_extra_pitchfx" in data_audit
+    assert data_audit["total_at_bats_extra_pitchfx"] == 0
+    assert "total_at_bats_extra_pitchfx_removed" in data_audit
+    assert data_audit["total_at_bats_extra_pitchfx_removed"] == 0
+    assert "total_at_bats_duplicate_guid_removed" in data_audit
+    assert data_audit["total_at_bats_duplicate_guid_removed"] == 11
+    assert "pitch_count_bbref_stats_table" in data_audit
+    assert data_audit["pitch_count_bbref_stats_table"] == 329
+    assert "pitch_count_bbref" in data_audit
+    assert data_audit["pitch_count_bbref"] == 329
+    assert "pitch_count_pitchfx" in data_audit
+    assert data_audit["pitch_count_pitchfx"] == 313
+    assert "patched_pitchfx_count" in data_audit
+    assert data_audit["patched_pitchfx_count"] == 0
+    assert "missing_pitchfx_count" in data_audit
+    assert data_audit["missing_pitchfx_count"] == 16
+    assert "duplicate_guid_removed_count" in data_audit
+    assert data_audit["duplicate_guid_removed_count"] == 16
+    assert "at_bat_ids_patched_pitchfx" in data_audit
+    assert data_audit["at_bat_ids_patched_pitchfx"] == []
+    assert "at_bat_ids_missing_pitchfx" in data_audit
+    assert data_audit["at_bat_ids_missing_pitchfx"] == [
+        "OAK201904030_08_OAK_465657_BOS_646240_0",
+        "OAK201904030_08_OAK_465657_BOS_502110_0",
+        "OAK201904030_08_OAK_465657_BOS_519048_0",
+    ]
+    assert "pitchfx_error" in data_audit
+    assert not data_audit["pitchfx_error"]
+    assert "at_bat_ids_pitchfx_error" in data_audit
+    assert data_audit["at_bat_ids_pitchfx_error"] == []
+    assert "at_bat_ids_extra_pitchfx_removed" in data_audit
+    assert data_audit["at_bat_ids_extra_pitchfx_removed"] == []
+    assert "at_bat_ids_duplicate_guid_removed" in data_audit
+    assert data_audit["at_bat_ids_duplicate_guid_removed"] == [
+        "OAK201904030_01_OAK_462136_BOS_605141_0",
+        "OAK201904030_01_OAK_462136_BOS_643217_0",
+        "OAK201904030_01_OAK_462136_BOS_646240_0",
+        "OAK201904030_01_BOS_543135_OAK_543257_0",
+        "OAK201904030_01_BOS_543135_OAK_656305_0",
+        "OAK201904030_01_BOS_543135_OAK_572039_0",
+        "OAK201904030_01_BOS_543135_OAK_501981_0",
+        "OAK201904030_04_OAK_462136_BOS_646240_0",
+        "OAK201904030_06_BOS_605155_OAK_657656_0",
+        "OAK201904030_08_BOS_598264_OAK_434778_0",
+        "OAK201904030_08_BOS_598264_OAK_595777_0",
+    ]
+    assert "invalid_pitchfx" in data_audit
+    assert data_audit["invalid_pitchfx"]
+    assert "at_bat_ids_invalid_pitchfx" in data_audit
+    assert "OAK201904030_08_OAK_605525_BOS_519048_0" in data_audit["at_bat_ids_invalid_pitchfx"]
+    assert "OAK201904030_08_OAK_605525_BOS_646240_0" in data_audit["at_bat_ids_invalid_pitchfx"]
+    assert "OAK201904030_08_OAK_605525_BOS_502110_0" in data_audit["at_bat_ids_invalid_pitchfx"]
+
+    game_status = GameScrapeStatus.find_by_bbref_game_id(vig_app["db_session"], GAME_ID_PATCH_PFX)
+    setattr(game_status, "combined_data_success", 1)
+    setattr(game_status, "combined_data_fail", 0)
+    vig_app["db_session"].commit()
+    result = update_pitch_apps_for_game_combined_data(vig_app["db_session"], combined_data)
+    assert result.success
+
+    patch_all_invalid_pfx = PatchAllInvalidPitchFxTask(vig_app)
+    result = patch_all_invalid_pfx.execute(2019)
+    assert result.success
+    patch_results_dict = result.value
+    assert "all_patch_results" in patch_results_dict
+    assert GAME_ID_PATCH_PFX in patch_results_dict["all_patch_results"]
+
+
+def test_combine_patched_boxscore_data(vig_app):
+    game_status = GameScrapeStatus.find_by_bbref_game_id(
+        vig_app["db_session"], GAME_ID_PATCH_BOXSCORE
+    )
+    boxscore = vig_app["scraped_data"].get_bbref_boxscore(GAME_ID_PATCH_BOXSCORE)
+    pfx_logs = vig_app["scraped_data"].get_all_pitchfx_logs_for_game(GAME_ID_PATCH_BOXSCORE).value
+    avg_pitch_times = vig_app["scraped_data"].get_avg_pitch_times()
+    result = vig_app["scraped_data"].combine_data.execute(
+        game_status, boxscore, pfx_logs, avg_pitch_times
+    )
+    assert result.failure
+    assert "Invalid pitch abbreviation: a\nKeyError('a')" in result.error
+    combined_data = combine_scraped_data_for_game(
+        vig_app["db_session"],
+        vig_app["scraped_data"],
+        GAME_ID_PATCH_BOXSCORE,
+        apply_patch_list=True,
+    )
+    assert "pitchfx_vs_bbref_audit" in combined_data

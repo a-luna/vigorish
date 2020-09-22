@@ -10,9 +10,5 @@ jobs:
     steps:
       # Drafts your next Release notes as Pull Requests are merged into "master"
       - uses: release-drafter/release-drafter@v5.11.0
-        with:
-          version: "0.3.3"
-          name: "v0.3.3"
-          tag: "v0.3.3"
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
