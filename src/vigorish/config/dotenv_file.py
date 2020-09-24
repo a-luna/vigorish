@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -21,10 +22,13 @@ def create_default_dotenv_file(dotenv_file, config_file=None, db_url=None):
 
 class DotEnvFile:
     def __init__(self, dotenv_filepath=None):
-        if dotenv_filepath:
-            self.dotenv_filepath = dotenv_filepath
+        if os.environ.get("ENV") == "TEST":
+            self.dotenv_filepath = Path(os.environ.get("DOTENV_FILE"))
         else:
-            self.dotenv_filepath = DOTENV_FILE
+            if dotenv_filepath:
+                self.dotenv_filepath = dotenv_filepath
+            else:
+                self.dotenv_filepath = DOTENV_FILE
         self.env_var_dict = self.read_dotenv_file()
 
     def read_dotenv_file(self):

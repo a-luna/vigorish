@@ -42,6 +42,8 @@ SQLITE_PROD_URL = f"sqlite:///{VIG_FOLDER.joinpath('vig.db')}"
 
 
 def get_db_url():
+    if os.environ.get("ENV") == "TEST":
+        return os.environ.get("DATABASE_URL")
     db_url = os.getenv("DATABASE_URL", "")
     if db_url and db_url.startswith("/"):
         db_url = f"sqlite:///{db_url}"
