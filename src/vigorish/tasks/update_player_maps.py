@@ -1,5 +1,6 @@
 """Initialize and update the Player ID Map and Player Team Map CSV files."""
 from dataclasses import dataclass, asdict, field
+from datetime import datetime
 
 import requests
 from dacite import from_dict
@@ -9,6 +10,7 @@ from vigorish.config.project_paths import (
     PLAYER_TEAM_MAP_CSV,
 )
 from vigorish.tasks.base import Task
+from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
 ALL_PITCH_STATS_URL = "https://www.baseball-reference.com/data/war_daily_pitch.txt"
@@ -305,7 +307,19 @@ def serialize_data_class_objects(data_class_objects):
 
 
 def sanitize_row(dataclass_dict):
-    return [val if isinstance(val, str) else str(val) for val in dataclass_dict.values()]
+    return [val_to_string(val) for val in dataclass_dict.values()]
+
+
+def val_to_string(val):
+    return (
+        val
+        if isinstance(val, str)
+        else val.strftime(DATE_ONLY)
+        if isinstance(val, datetime)
+        else ""
+        if not val
+        else str(val)
+    )
 
 
 def read_bbref_player_team_map_from_file():
