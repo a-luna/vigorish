@@ -308,17 +308,6 @@ def sanitize_row(dataclass_dict):
     return [val if isinstance(val, str) else str(val) for val in dataclass_dict.values()]
 
 
-def read_bbref_player_team_map_from_file():
-    if not PLAYER_TEAM_MAP_CSV.exists():
-        PLAYER_TEAM_MAP_CSV.touch()
-        return set()
-    team_map_text = PLAYER_TEAM_MAP_CSV.read_text()
-    if not team_map_text:
-        return set()
-    team_map = deserialize_data_class_objects(team_map_text, BBRefPlayerTeamMap)
-    return set(team_map)
-
-
 def deserialize_data_class_objects(csv_text, data_class):
     csv_rows = csv_text.split("\n")
     col_names = [col.strip() for col in csv_rows.pop(0).split(",")]

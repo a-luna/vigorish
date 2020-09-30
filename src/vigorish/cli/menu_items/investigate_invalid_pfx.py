@@ -411,7 +411,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         total_tables = len(pitch_stat_changes_dict) + 1
         boxscore_message = f"Table 1/{total_tables}: All Pitch Data for {self.game_id}\n"
         subprocess.run(["clear"])
-        print_message(boxscore_message, wrap=False, fg="bright_cyan", bold=True, underline=True)
+        print_heading(boxscore_message, fg="bright_cyan")
         print_message(boxscore_changes, wrap=False, fg="bright_cyan")
         pause(message="\nPress any key to continue...")
         for num, (pitch_app_id, pitch_stat_changes) in enumerate(
