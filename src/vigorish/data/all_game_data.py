@@ -1,9 +1,11 @@
 from tabulate import tabulate
 
+from vigorish.constants import VigFile, DataSet
 from vigorish.config.database import PlayerId, RunnersOnBase
 from vigorish.data.viewers.table_viewer import DisplayTable, TableViewer
-from vigorish.util.result import Result
+from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.list_helpers import group_and_sort_dict_list
+from vigorish.util.result import Result
 from vigorish.util.string_helpers import inning_number_to_string
 
 
@@ -19,6 +21,10 @@ class AllGameData:
         self.db_session = db_session
         self.scraped_data = scraped_data
         combined_data = scraped_data.get_json_combined_data(bbref_game_id)
+        if not combined_data:
+            raise ScrapedDataException(
+                file_type=VigFile.COMBINED_GAME_DATA, data_set=DataSet.ALL, url_id=bbref_game_id
+            )
         self.bbref_game_id = combined_data["bbref_game_id"]
         self.pitchfx_vs_bbref_audit = combined_data["pitchfx_vs_bbref_audit"]
         self.game_meta_info = combined_data["game_meta_info"]
