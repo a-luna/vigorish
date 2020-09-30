@@ -7,7 +7,7 @@ from getch import pause
 from vigorish.cli.input_types import DataSetCheck, DateInput
 from vigorish.cli.util import print_message
 from vigorish.config.database import Season
-from vigorish.constants import MENU_NUMBERS, EMOJI_DICT, DATA_SET_NAMES_LONG, BULLET_COLORS
+from vigorish.constants import MENU_NUMBERS, EMOJI_DICT, DATA_SET_NAMES_LONG
 from vigorish.enums import DataSet, VigFile
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
