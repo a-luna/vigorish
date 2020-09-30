@@ -992,7 +992,6 @@ class CombineScrapedData:
             outcome = self.get_next_event_description(non_batter_events)
             if outcome:
                 sequence_description.append(("", outcome, ""))
-        extra_dots = 0 if total_pitches < 10 else 2
         outcome = replace_char_with_newlines(final_event_in_at_bat["play_description"], ";")
         sequence_description.append(("Result", outcome, ""))
         return Result.Ok(sequence_description)

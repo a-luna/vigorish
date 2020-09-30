@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "NightmareJS and other node modules used to scrape html from websites",
   "engines": {
-    "node": "13.11.x"
+    "node": "14.x.x"
   },
   "scripts": {
     "heroku-postbuild": "cd src/vigorish/nightmarejs && npm install"

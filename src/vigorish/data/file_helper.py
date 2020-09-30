@@ -22,7 +22,6 @@ from vigorish.enums import (
     S3FileTask,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
-from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.numeric_helpers import ONE_KB
 from vigorish.util.result import Result
 
@@ -208,15 +207,7 @@ class FileHelper:
             pitch_app_id=pitch_app_id,
         )
         if task == LocalFileTask.READ_FILE:
-            return self.read_local_file(
-                Path(filepath),
-                file_type,
-                data_set,
-                game_date,
-                bbref_game_id,
-                bb_game_id,
-                pitch_app_id,
-            )
+            return self.read_local_file(Path(filepath))
         if task == LocalFileTask.WRITE_FILE:
             return self.write_to_file(file_type, scraped_data, Path(filepath))
         if task == LocalFileTask.DELETE_FILE:
@@ -235,12 +226,12 @@ class FileHelper:
     ):
         folderpath = self.get_local_folderpath(file_type, data_set, game_date)
         filename = self.get_file_name(
-            data_set=data_set,
-            file_type=file_type,
-            game_date=game_date,
-            bbref_game_id=bbref_game_id,
-            bb_game_id=bb_game_id,
-            pitch_app_id=pitch_app_id,
+            data_set,
+            file_type,
+            game_date,
+            bbref_game_id,
+            bb_game_id,
+            pitch_app_id,
         )
         return str(Path(folderpath).joinpath(filename))
 
@@ -262,19 +253,17 @@ class FileHelper:
         bb_game_id=None,
         pitch_app_id=None,
     ):
-        identifier = self.get_identifier(game_date, bbref_game_id, bb_game_id, pitch_app_id)
-        return self.filename_dict[file_type][data_set](identifier)
-
-    def get_identifier(self, game_date, bbref_game_id, bb_game_id, pitch_app_id):
         if pitch_app_id:
-            return pitch_app_id
-        if bb_game_id:
-            return bb_game_id
-        if bbref_game_id:
-            return bbref_game_id
-        if game_date:
-            return game_date
-        raise ValueError("Data identifier must be provided.")
+            identifier = pitch_app_id
+        elif bb_game_id:
+            identifier = bb_game_id
+        elif bbref_game_id:
+            identifier = bbref_game_id
+        elif game_date:
+            identifier = game_date
+        else:
+            raise ValueError("Unable to construct file name.")
+        return self.filename_dict[file_type][data_set](identifier)
 
     def perform_s3_task(
         self,
@@ -390,15 +379,11 @@ class FileHelper:
     def get_file_name_json_combined_data(self, bbref_game_id):
         return f"{bbref_game_id}_COMBINED_DATA.json"
 
-    def read_local_file(
-        self, filepath, file_type, data_set, game_date, bbref_game_id, bb_game_id, pitch_app_id
-    ):
-        if filepath.exists():
-            return Result.Ok(filepath)
-        raise ScrapedDataException(
-            file_type=file_type,
-            data_set=data_set,
-            url_id=self.get_identifier(game_date, bbref_game_id, bb_game_id, pitch_app_id),
+    def read_local_file(self, filepath):
+        return (
+            Result.Ok(filepath)
+            if filepath.exists()
+            else Result.Fail(f"File not found: {filepath.resolve()}.")
         )
 
     def write_to_file(self, file_type, data, filepath):

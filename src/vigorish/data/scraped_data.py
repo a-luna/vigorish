@@ -16,7 +16,6 @@ from vigorish.data.util import calc_pitch_metrics, process_data_set
 from vigorish.tasks.combine_scraped_data import CombineScrapedData
 from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
-from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.regex import URL_ID_REGEX, URL_ID_CONVERT_REGEX
 from vigorish.util.result import Result
 
@@ -68,11 +67,7 @@ class ScrapedData:
         return self.json_storage.save_patch_list(data_set, patch_list)
 
     def get_patch_list(self, data_set, url_id):
-        try:
-            patch_list = self.json_storage.get_patch_list(data_set, url_id)
-            return patch_list
-        except ScrapedDataException:
-            return None
+        return self.json_storage.get_patch_list(data_set, url_id)
 
     def apply_patch_list(self, data_set, url_id, scraped_data, boxscore=None):
         patch_list = self.get_patch_list(data_set, url_id)
