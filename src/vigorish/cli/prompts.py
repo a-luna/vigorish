@@ -13,12 +13,9 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
 
-def prompt_user_yes_no(prompt, wrap=True, max_line_len=70, fg=None):
+def prompt_user_yes_no(prompt, wrap=True, max_line_len=70):
     if wrap:
         prompt = wrap_text(prompt, max_len=max_line_len)
-    word_color = colors.foreground["default"]
-    if fg:
-        word_color = BULLET_COLORS.get(fg, colors.foreground["default"])
     choices = {
         f"{MENU_NUMBERS.get(1)}  YES": True,
         f"{MENU_NUMBERS.get(2)}  NO": False,
