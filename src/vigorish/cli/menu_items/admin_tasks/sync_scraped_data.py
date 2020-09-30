@@ -33,7 +33,6 @@ SYNC_STATUS_TEXT_COLOR = {"out_of_sync": "bright_green", "in_sync": "blue"}
 class SyncScrapedData(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.s3_sync = SyncScrapedDataTask(self.app)
         self.year = None
         self.sync_direction = ""
         self.file_types = []
@@ -62,6 +61,7 @@ class SyncScrapedData(MenuItem):
         result = self.get_sync_parameters()
         if result.failure:
             return Result.Ok(False)
+        self.initialize_s3_sync_task()
         for file_type, data_sets in self.sync_tasks.items():
             for data_set in data_sets:
                 result = self.get_files_to_sync(file_type, data_set)
@@ -111,6 +111,16 @@ class SyncScrapedData(MenuItem):
             f"{EMOJI_DICT.get('BACK')} Return to Main Menu": None,
         }
         return user_options_prompt(choices, prompt)
+
+    def initialize_s3_sync_task(self):
+        subprocess.run(["clear"])
+        spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
+        spinner.text = "Retrieving data for all objects stored in S3..."
+        spinner.start()
+        s3_obj_collection = self.scraped_data.file_helper.get_all_object_keys_in_s3_bucket()
+        s3_objects = [obj for obj in s3_obj_collection]
+        self.s3_sync = SyncScrapedDataTask(self.app, cached_s3_objects=s3_objects)
+        spinner.stop()
 
     def get_files_to_sync(self, file_type, data_set):
         self.task_number += 1

@@ -19,8 +19,9 @@ from vigorish.util.result import Result
 
 
 class SyncScrapedData(Task):
-    def __init__(self, app):
+    def __init__(self, app, cached_s3_objects=None):
         super().__init__(app)
+        self._cached_s3_objects = cached_s3_objects
         self.sync_direction = None
         self.file_type = None
         self.data_set = None
@@ -44,6 +45,14 @@ class SyncScrapedData(Task):
     @property
     def s3_folderpath_dict(self):
         return self.scraped_data.file_helper.s3_folderpath_dict
+
+    @property
+    def cached_s3_objects(self):
+        if self._cached_s3_objects:
+            return self._cached_s3_objects
+        s3_objects = self.file_helper.get_all_object_keys_in_s3_bucket()
+        self._cached_s3_objects = [obj for obj in s3_objects]
+        return self._cached_s3_objects
 
     def execute(self, sync_direction, file_type, data_set, year):
         if sync_direction == SyncDirection.UP_TO_S3:
@@ -137,7 +146,7 @@ class SyncScrapedData(Task):
         html_folder = self.s3_folderpath_dict[VigFile.SCRAPED_HTML][data_set].resolve(year=year)
         s3_objects = [
             self.get_s3_object_data(obj)
-            for obj in self.file_helper.get_all_object_keys_in_s3_bucket()
+            for obj in self.cached_s3_objects
             if json_folder in obj.key
             and html_folder not in obj.key
             and URL_ID_REGEX[VigFile.PARSED_JSON][data_set].search(Path(obj.key).stem)
@@ -148,7 +157,7 @@ class SyncScrapedData(Task):
         html_folder = self.s3_folderpath_dict[VigFile.SCRAPED_HTML][data_set].resolve(year=year)
         s3_objects = [
             self.get_s3_object_data(obj)
-            for obj in self.file_helper.get_all_object_keys_in_s3_bucket()
+            for obj in self.cached_s3_objects
             if html_folder in obj.key
             and URL_ID_REGEX[VigFile.SCRAPED_HTML][data_set].search(Path(obj.key).stem)
         ]
@@ -160,7 +169,7 @@ class SyncScrapedData(Task):
         )
         s3_objects = [
             self.get_s3_object_data(obj)
-            for obj in self.file_helper.get_all_object_keys_in_s3_bucket()
+            for obj in self.cached_s3_objects
             if comb_folder in obj.key
             and URL_ID_REGEX[VigFile.COMBINED_GAME_DATA][DataSet.ALL].search(Path(obj.key).stem)
         ]
@@ -170,7 +179,7 @@ class SyncScrapedData(Task):
         json_folder = self.s3_folderpath_dict[VigFile.PARSED_JSON][data_set].resolve(year=year)
         s3_objects = [
             self.get_s3_object_data(obj)
-            for obj in self.file_helper.get_all_object_keys_in_s3_bucket()
+            for obj in self.cached_s3_objects
             if json_folder in obj.key
             and URL_ID_REGEX[VigFile.PATCH_LIST][data_set].search(Path(obj.key).stem)
         ]

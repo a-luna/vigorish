@@ -5,6 +5,7 @@ from getch import pause
 from halo import Halo
 
 from vigorish.cli.util import (
+    print_heading,
     print_message,
     get_random_cli_color,
     get_random_dots_spinner,
@@ -25,13 +26,6 @@ SYNC_STATUS_TEXT_COLOR = {
 class SyncScrapedDataNoPrompts(Task):
     def __init__(self, app):
         super().__init__(app)
-        self.s3_sync = SyncScrapedData(self.app)
-        self.s3_sync.events.error_occurred += self.error_occurred
-        self.s3_sync.events.get_sync_files_start += self.get_sync_files_start
-        self.s3_sync.events.get_sync_files_complete += self.get_sync_files_complete
-        self.s3_sync.events.sync_files_start += self.sync_files_start
-        self.s3_sync.events.sync_files_progress += self.sync_files_progress
-        self.s3_sync.events.sync_files_complete += self.sync_files_complete
         self.sync_direction = None
         self.year = None
         self.file_type = None
@@ -94,6 +88,7 @@ class SyncScrapedDataNoPrompts(Task):
         self.year = year
         self.file_type = file_type
         self.data_sets_int = data_sets_int
+        self.initialize_s3_sync_task()
         for data_set in self.data_sets:
             self.task_number += 1
             self.current_data_set = data_set
@@ -107,6 +102,26 @@ class SyncScrapedDataNoPrompts(Task):
         self.teardown()
         pause(message="\nPress any key to continue...")
         return self.results
+
+    def initialize_s3_sync_task(self):
+        s3_objects = self.get_all_objects_in_s3()
+        self.s3_sync = SyncScrapedData(self.app, cached_s3_objects=s3_objects)
+        self.s3_sync.events.error_occurred += self.error_occurred
+        self.s3_sync.events.get_sync_files_start += self.get_sync_files_start
+        self.s3_sync.events.get_sync_files_complete += self.get_sync_files_complete
+        self.s3_sync.events.sync_files_start += self.sync_files_start
+        self.s3_sync.events.sync_files_progress += self.sync_files_progress
+        self.s3_sync.events.sync_files_complete += self.sync_files_complete
+
+    def get_all_objects_in_s3(self):
+        subprocess.run(["clear"])
+        spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
+        spinner.text = "Retrieving data for all objects stored in S3..."
+        spinner.start()
+        s3_obj_collection = self.scraped_data.file_helper.get_all_object_keys_in_s3_bucket()
+        s3_objects = [obj for obj in s3_obj_collection]
+        spinner.stop()
+        return s3_objects
 
     def valid_data_sets(self):
         data_set_file_type_map = {
@@ -139,10 +154,10 @@ class SyncScrapedDataNoPrompts(Task):
 
     def print_header_message(self):
         if self.sync_direction == SyncDirection.UP_TO_S3:
-            heading = "Syncing data from local folder to S3 bucket\n"
+            heading = "Syncing data from local folder to S3 bucket"
         if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            heading = "Syncing data from S3 bucket to local folder\n"
-        print_message(heading, fg="bright_yellow", wrap=False, bold=True, underline=True)
+            heading = "Syncing data from S3 bucket to local folder"
+        print_heading(heading, fg="bright_yellow")
 
     def teardown(self):
         self.s3_sync.events.error_occurred -= self.error_occurred
