@@ -296,7 +296,7 @@ def inning_number_to_string(inning_str):
     return f"{inn_half_str} of the {inn_num_str} inning"
 
 
-def replace_char_with_newlines(input_str, char):
-    if char not in input_str:
+def replace_char_with_newlines(input_str, replace):
+    if replace not in input_str:
         return input_str
     return "\n".join([s.strip() for s in input_str.split(char)])
