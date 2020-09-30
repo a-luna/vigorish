@@ -6,8 +6,12 @@ from tabulate import tabulate
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.util import get_random_cli_color, get_random_dots_spinner, print_message
+from vigorish.data.viewers.dict_viewer import DictListTableViewer
 from vigorish.constants import EMOJI_DICT
-from vigorish.tasks.update_player_maps import UpdatePlayerIdMap as UpdatePlayerIdMapTask
+from vigorish.tasks.update_player_maps import (
+    UpdatePlayerIdMap as UpdatePlayerIdMapTask,
+    serialize_data_class_objects,
+)
 from vigorish.util.result import Result
 
 
@@ -29,11 +33,20 @@ class UpdatePlayerIdMap(MenuItem):
             return result
         spinner.succeed("Player ID map was successfully updated!")
         new_player_ids = result.value if result.value else []
-        if new_player_ids:
-            summary = f"\n{len(new_player_ids)} new players were added to the ID map:\n"
-            print_message(summary, fg="bright_yellow", bold=True)
-            new_player_ids_table = tabulate(new_player_ids, headers="keys")
-            print_message(new_player_ids_table, wrap=False, fg="bright_yellow")
-            print()
-        pause(message="Press any key to continue...")
+        if not new_player_ids:
+            pause(message="Press any key to continue...")
+            return Result.Ok(new_player_ids)
+        heading = "Update BBRef Player ID Map Results"
+        message = f"{len(new_player_ids)} new players were added to the ID map\n"
+        table_viewer = DictListTableViewer(
+            dict_list=new_player_ids,
+            prompt="Press Enter to return to previous menu",
+            confirm_only=True,
+            table_color="bright_yellow",
+            heading=heading,
+            heading_color="bright_yellow",
+            message=message,
+            message_color="blue",
+        )
+        table_viewer.launch()
         return Result.Ok(new_player_ids)
