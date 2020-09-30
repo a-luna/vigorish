@@ -74,12 +74,14 @@ PITCHFX_LOG_PATCH_LIST_FILENAME_REGEX = BBREF_BOXSCORE_PATCH_LIST_FILENAME_REGEX
 
 COMBINED_DATA_FILENAME_REGEX = re.compile(
     r"""
+    ^
     (?P<home_team>[A-Z]{3,3})
     (?P<year>\d{4,4})
     (?P<month>\d{2,2})
     (?P<day>\d{2,2})
     (?P<game_num>\d)
     _COMBINED_DATA
+    $
 """,
     re.VERBOSE,
 )
