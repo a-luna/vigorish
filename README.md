@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/vigorish.svg)](https://badge.fury.io/py/vigorish) ![PyPI - Downloads](https://img.shields.io/pypi/dm/vigorish?color=%234DC71F) ![PyPI - License](https://img.shields.io/pypi/l/vigorish?color=%25234DC71F) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vigorish) [![Maintainability](https://api.codeclimate.com/v1/badges/4a1753c77add039c3850/maintainability)](https://codeclimate.com/github/a-luna/vigorish/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/4a1753c77add039c3850/test_coverage)](https://codeclimate.com/github/a-luna/vigorish/test_coverage)
+
 ## vigorish
 
 `vigorish` is a hybrid Python/Node.js application that scrapes MLB data from mlb.com, brooksbaseball.net and baseball-reference.com.
