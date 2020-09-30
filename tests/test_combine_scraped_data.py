@@ -5,6 +5,7 @@ from vigorish.enums import DataSet
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
 from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
+from vigorish.util.exceptions import ScrapedDataException
 
 GAME_ID_NO_ERRORS = "TOR201906170"
 NO_ERRORS_PITCH_APP = "TOR201906170_429719"
@@ -235,11 +236,15 @@ def test_combine_data_extra_pitchfx_removed(db_session, scraped_data):
 
 
 def test_combine_patched_pitchfx_data(vig_app):
-    result = vig_app["scraped_data"].json_storage.get_brooks_pitchfx_patch_list_local_file(
-        GAME_ID_PATCH_PFX
-    )
-    if result.success and result.value.exists():
-        result.value.unlink()
+    try:
+        result = vig_app["scraped_data"].json_storage.get_brooks_pitchfx_patch_list_local_file(
+            GAME_ID_PATCH_PFX
+        )
+        if result.success and result.value.exists():
+            result.value.unlink()
+    except ScrapedDataException:
+        pass
+
     combined_data = combine_scraped_data_for_game(
         vig_app["db_session"], vig_app["scraped_data"], GAME_ID_PATCH_PFX
     )
@@ -272,7 +277,7 @@ def test_combine_patched_pitchfx_data(vig_app):
     assert "missing_pitchfx_count" in data_audit
     assert data_audit["missing_pitchfx_count"] == 16
     assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 16
+    assert data_audit["duplicate_guid_removed_count"] == 18
     assert "at_bat_ids_patched_pitchfx" in data_audit
     assert data_audit["at_bat_ids_patched_pitchfx"] == []
     assert "at_bat_ids_missing_pitchfx" in data_audit
@@ -416,7 +421,7 @@ def test_patch_all_invalid_pitchfx_data(vig_app):
     assert "missing_pitchfx_count" in data_audit
     assert data_audit["missing_pitchfx_count"] == 16
     assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 16
+    assert data_audit["duplicate_guid_removed_count"] == 18
     assert "at_bat_ids_patched_pitchfx" in data_audit
     assert data_audit["at_bat_ids_patched_pitchfx"] == []
     assert "at_bat_ids_missing_pitchfx" in data_audit
