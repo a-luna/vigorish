@@ -7,18 +7,15 @@ from getch import pause
 from vigorish.cli.input_types import DataSetCheck, DateInput
 from vigorish.cli.util import print_message
 from vigorish.config.database import Season
-from vigorish.constants import MENU_NUMBERS, EMOJI_DICT, DATA_SET_NAMES_LONG, BULLET_COLORS
+from vigorish.constants import MENU_NUMBERS, EMOJI_DICT, DATA_SET_NAMES_LONG
 from vigorish.enums import DataSet, VigFile
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
 
-def prompt_user_yes_no(prompt, wrap=True, max_line_len=70, fg=None):
+def prompt_user_yes_no(prompt, wrap=True, max_line_len=70):
     if wrap:
         prompt = wrap_text(prompt, max_len=max_line_len)
-    word_color = colors.foreground["default"]
-    if fg:
-        word_color = BULLET_COLORS.get(fg, colors.foreground["default"])
     choices = {
         f"{MENU_NUMBERS.get(1)}  YES": True,
         f"{MENU_NUMBERS.get(2)}  NO": False,
@@ -31,10 +28,10 @@ def prompt_user_yes_no(prompt, wrap=True, max_line_len=70, fg=None):
         indent=0,
         margin=2,
         bullet_color=colors.foreground["default"],
-        background_color=colors.foreground["default"],
-        background_on_switch=colors.foreground["default"],
-        word_color=word_color,
+        word_color=colors.foreground["default"],
         word_on_switch=colors.bright(colors.foreground["cyan"]),
+        background_color=colors.background["default"],
+        background_on_switch=colors.background["default"],
     )
     choice_text = prompt.launch()
     return choices.get(choice_text)
@@ -56,10 +53,10 @@ def prompt_user_yes_no_cancel(prompt, wrap=True, max_line_len=70):
         indent=0,
         margin=2,
         bullet_color=colors.foreground["default"],
-        background_color=colors.foreground["default"],
-        background_on_switch=colors.foreground["default"],
         word_color=colors.foreground["default"],
         word_on_switch=colors.bright(colors.foreground["cyan"]),
+        background_color=colors.background["default"],
+        background_on_switch=colors.background["default"],
     )
     choice_text = prompt.launch()
     choice_value = choices.get(choice_text)
@@ -90,10 +87,10 @@ def user_options_prompt(choices, prompt):
             indent=0,
             margin=2,
             pointer_color=colors.foreground["default"],
-            background_color=colors.foreground["default"],
-            background_on_switch=colors.foreground["default"],
             word_color=colors.foreground["default"],
             word_on_switch=colors.bright(colors.foreground["cyan"]),
+            background_color=colors.background["default"],
+            background_on_switch=colors.background["default"],
         )
     else:
         options_menu = Bullet(
@@ -202,10 +199,10 @@ def file_types_prompt(prompt, valid_file_types=VigFile.ALL):
         margin=2,
         check_color=colors.foreground["default"],
         check_on_switch=colors.foreground["default"],
-        background_color=colors.foreground["default"],
-        background_on_switch=colors.foreground["default"],
         word_color=colors.foreground["default"],
         word_on_switch=colors.bright(colors.foreground["cyan"]),
+        background_color=colors.background["default"],
+        background_on_switch=colors.background["default"],
     )
     file_types = []
     while not file_types:
