@@ -3,12 +3,10 @@ from dataclasses import dataclass
 
 from bullet import Bullet, colors, keyhandler
 from bullet.cursor import hide as cursor_hidden
-from bullet.utils import forceWrite, moveCursorUp
+from bullet.utils import moveCursorUp
 
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.cli.util import print_heading, print_message
-from vigorish.util.result import Result
-from vigorish.util.list_helpers import make_chunked_list
 
 ARROW_KEY_FLAG = 1 << 8
 ARROW_RIGHT_KEY = 67 + ARROW_KEY_FLAG
