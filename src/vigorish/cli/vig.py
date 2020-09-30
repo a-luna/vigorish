@@ -59,7 +59,7 @@ def cli(ctx):
 @cli.command()
 @click.pass_obj
 def ui(app):
-    """Menu-driven TUI powered by Bullet."""
+    """Menu-driven UI powered by Bullet."""
     try:
         main_menu = MainMenu(app)
         result = main_menu.launch()
@@ -152,9 +152,9 @@ def scrape(app, data_set, start, end, name):
 
 @cli.group()
 @click.pass_obj
-def status(app, update):
+def status(app):
     """Report progress of scraped data, by date or MLB season."""
-    app["run_update"] = update
+    pass
 
 
 @status.command("date")
@@ -172,11 +172,11 @@ def status(app, update):
     help="Report includes scrape statistics for all games on the specified date.",
 )
 @click.pass_obj
-def status_date(app, game_date, missing_pitchfx, with_games):
+def status_date(app, game_date, missing_ids, with_games):
     """Report status for a single date."""
-    if missing_pitchfx and with_games:
+    if missing_ids and with_games:
         report_type = StatusReport.SINGLE_DATE_WITH_GAME_STATUS
-    elif missing_pitchfx:
+    elif missing_ids:
         report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
         report_type = StatusReport.DATE_DETAIL_ALL_DATES
