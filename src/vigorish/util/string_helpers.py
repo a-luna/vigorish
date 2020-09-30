@@ -299,4 +299,4 @@ def inning_number_to_string(inning_str):
 def replace_char_with_newlines(input_str, replace):
     if replace not in input_str:
         return input_str
-    return "\n".join([s.strip() for s in input_str.split(char)])
+    return "\n".join([s.strip() for s in input_str.split(replace)])

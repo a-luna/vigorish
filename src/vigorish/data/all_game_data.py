@@ -1,9 +1,7 @@
 from tabulate import tabulate
 
 from vigorish.config.database import PlayerId, RunnersOnBase
-from vigorish.constants import DataSet, VigFile
 from vigorish.data.viewers.table_viewer import DisplayTable, TableViewer
-from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.result import Result
 from vigorish.util.list_helpers import group_and_sort_dict_list
 from vigorish.util.string_helpers import inning_number_to_string

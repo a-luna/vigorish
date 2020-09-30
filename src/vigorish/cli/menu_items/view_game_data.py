@@ -1,20 +1,8 @@
 """View all scraped data for a single game."""
 import subprocess
 
-from halo import Halo
-from getch import pause
-from tabulate import tabulate
-
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.prompts import prompt_user_yes_no, select_game_prompt, user_options_prompt
-from vigorish.cli.util import (
-    get_random_cli_color,
-    get_random_dots_spinner,
-    print_message,
-    print_heading,
-    print_error,
-    print_success,
-)
+from vigorish.cli.prompts import user_options_prompt
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.data.all_game_data import AllGameData
 from vigorish.util.result import Result
