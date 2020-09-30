@@ -84,6 +84,19 @@ def group_and_sort_list(
     return grouped_sorted
 
 
+def group_and_sort_dict_list(
+    unsorted, group_key, sort_key, sort_groups_desc=False, sort_all_desc=False
+):
+    list_sorted = sorted(unsorted, key=lambda x: x[sort_key], reverse=sort_all_desc)
+    list_grouped = defaultdict(list)
+    for item in list_sorted:
+        list_grouped[item[group_key]].append(item)
+    grouped_sorted = OrderedDict()
+    for group in sorted(list_grouped.keys(), reverse=sort_groups_desc):
+        grouped_sorted[group] = list_grouped[group]
+    return grouped_sorted
+
+
 def compare_lists(list1, list2):
     check1 = not list(set(sorted(list1)) - set(sorted(list2)))
     check2 = not list(set(sorted(list2)) - set(sorted(list1)))
