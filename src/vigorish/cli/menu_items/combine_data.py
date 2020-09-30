@@ -22,7 +22,7 @@ from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import DataSet, ScrapeCondition, AuditError
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.list_helpers import flatten_list2d
-from vigorish.util.string_helpers import validate_bbref_game_id
+from vigorish.util.string_helpers import validate_bbref_game_id, validate_pitch_app_id
 from vigorish.util.result import Result
 
 STATUS_BAR_FORMAT = (
@@ -191,6 +191,10 @@ class CombineGameDataMenuItem(MenuItem):
         )
 
     @property
+    def pitch_apps_any_pfx_error(self):
+        return sorted(list(set(self.pitch_apps_pitchfx_error + self.pitch_apps_invalid_pitchfx)))
+
+    @property
     def total_pitch_apps_pitchfx_error(self):
         return len(self.pitch_apps_pitchfx_error)
 
@@ -201,6 +205,17 @@ class CombineGameDataMenuItem(MenuItem):
     @property
     def total_pitch_apps_any_pitchfx_error(self):
         return len(self.pitch_apps_pitchfx_error) + len(self.pitch_apps_invalid_pitchfx)
+
+    @property
+    def game_id_pitch_app_id_map(self):
+        id_map = defaultdict(list)
+        for pitch_app_id in self.pitch_apps_any_pfx_error:
+            result = validate_pitch_app_id(pitch_app_id)
+            if result.failure:
+                return {}
+            pitch_app_dict = result.value
+            id_map[pitch_app_dict["game_id"]].append(pitch_app_id)
+        return id_map
 
     @property
     def at_bats_pitchfx_error(self):
@@ -224,11 +239,15 @@ class CombineGameDataMenuItem(MenuItem):
 
     @property
     def total_at_bats_any_pitchfx_error(self):
-        return +len(self.at_bats_pitchfx_error) + len(self.at_bats_invalid_pitchfx)
+        return len(self.at_bats_pitchfx_error) + len(self.at_bats_invalid_pitchfx)
 
     @property
     def failed_game_ids(self):
         return list(game_id for game_id in self.combine_data_fail_results.keys())
+
+    @property
+    def combined_success_and_no_pfx_errors(self):
+        return not (self.combine_data_fail_results or self.all_pfx_errors)
 
     def launch(self):
         subprocess.run(["clear"])
@@ -370,7 +389,7 @@ class CombineGameDataMenuItem(MenuItem):
 
     def display_results(self):
         subprocess.run(["clear"])
-        if not self.failed_game_ids and not self.total_games_pitchfx_error:
+        if self.combined_success_and_no_pfx_errors:
             success_message = (
                 f"\nAll game data ({self.total_games} game{'s' if self.total_games > 1 else ''} "
                 "total) was successfully combined"
@@ -393,7 +412,7 @@ class CombineGameDataMenuItem(MenuItem):
             for game_id, error in self.combine_data_fail_results
         ]
         print_message(error_message, wrap=False, fg="bright_red", bold=True)
-        print_message(tabulate(error_details, headers="Keys"), wrap=False, fg="bright_red")
+        print_message(tabulate(error_details, headers="keys"), wrap=False, fg="bright_red")
 
     def display_pitchfx_errors(self):
         games_plural = "games contain" if self.total_games_any_pfx_error > 1 else "game contains"
@@ -405,6 +424,9 @@ class CombineGameDataMenuItem(MenuItem):
         )
         print_message(message, fg="bright_cyan")
         print()
+
+    # def view_tables_pitchfx_errors(self):
+    #     for game_id, pitch_app_ids in self.all_pfx_errors.items():
 
     def combine_games_for_date(self):
         result = audit_report_season_prompt(self.audit_report)
