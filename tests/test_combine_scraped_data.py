@@ -319,7 +319,7 @@ def test_combine_patched_pitchfx_data(vig_app):
     patch_results = result.value
     assert patch_results["created_patch_list"]
     assert patch_results["fixed_all_errors"]
-    combined_data = vig_app["scraped_data"].get_json_combined_data(GAME_ID_PATCH_PFX)
+    combined_data = vig_app["scraped_data"].get_combined_game_data(GAME_ID_PATCH_PFX)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit
@@ -458,8 +458,8 @@ def test_patch_all_invalid_pitchfx_data(vig_app):
     assert "OAK201904030_08_OAK_605525_BOS_502110_0" in data_audit["at_bat_ids_invalid_pitchfx"]
 
     game_status = GameScrapeStatus.find_by_bbref_game_id(vig_app["db_session"], GAME_ID_PATCH_PFX)
-    setattr(game_status, "combined_data_success", 1)
-    setattr(game_status, "combined_data_fail", 0)
+    game_status.combined_data_success = 1
+    game_status.combined_data_fail = 0
     vig_app["db_session"].commit()
     result = update_pitch_apps_for_game_combined_data(vig_app["db_session"], combined_data)
     assert result.success
