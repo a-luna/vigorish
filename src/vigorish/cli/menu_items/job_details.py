@@ -5,7 +5,7 @@ from bullet import Bullet, colors
 from getch import pause
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import print_message
+from vigorish.cli.components import print_message
 from vigorish.constants import MENU_NUMBERS, EMOJI_DICT
 from vigorish.enums import JobStatus
 from vigorish.scrape.job_runner import JobRunner

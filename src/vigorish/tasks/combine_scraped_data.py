@@ -142,9 +142,9 @@ class CombineScrapedData:
         all_pfx.sort(key=lambda x: x.park_sv_id)
         first_pitch_thrown = all_pfx[0].time_pitch_thrown
         game_start_time = first_pitch_thrown.replace(second=0)
-        setattr(self.game_status, "game_time_hour", game_start_time.hour)
-        setattr(self.game_status, "game_time_minute", game_start_time.minute)
-        setattr(self.game_status, "game_time_zone", "America/New_York")
+        self.game_status.game_time_hour = game_start_time.hour
+        self.game_status.game_time_minute = game_start_time.minute
+        self.game_status.game_time_zone = "America/New_York"
         self.db_session.commit()
 
     def get_all_pbp_events_for_game(self):
@@ -472,7 +472,7 @@ class CombineScrapedData:
                     f"Total Identified Missing: {len(missing_pitch_numbers)}, "
                     f"Total Unidentified Missing: {total_unidentified}"
                 )
-            (ab_duration, first_pitch, last_pitch) = self.get_at_bat_duration(pfx_no_dupes)
+            (since_start, dur, first_pitch, last_pitch) = self.get_at_bat_duration(pfx_no_dupes)
             self.prepare_pfx_data_for_json_serialization(pfx_no_dupes)
             if removed_pfx["removed_count"] > 0:
                 self.prepare_pfx_data_for_json_serialization(removed_pfx["removed_dupes"])
@@ -518,7 +518,8 @@ class CombineScrapedData:
                 "at_bat_pitchfx_audit": at_bat_pitchfx_audit,
                 "first_pitch_thrown": first_pitch,
                 "last_pitch_thrown": last_pitch,
-                "at_bat_duration": ab_duration,
+                "since_game_start": since_start,
+                "at_bat_duration": dur,
                 "is_complete_at_bat": final_event_this_at_bat["is_complete_at_bat"],
                 "score": final_event_this_at_bat["score"],
                 "outs_before_play": final_event_this_at_bat["outs_before_play"],
@@ -928,13 +929,16 @@ class CombineScrapedData:
 
     def get_at_bat_duration(self, pfx_data):
         if not pfx_data:
-            return (0, None, None)
+            return (0, 0, None, None)
+        since_game_start = pfx_data[0]["seconds_since_game_start"]
         first_pitch_thrown = pfx_data[0]["time_pitch_thrown"]
         last_pitch_thrown = pfx_data[-1]["time_pitch_thrown"]
+        if not first_pitch_thrown or not last_pitch_thrown:
+            return (since_game_start, 0, None, None)
         at_bat_duration = int((last_pitch_thrown - first_pitch_thrown).total_seconds())
         first_pitch_thrown_str = first_pitch_thrown.strftime(DT_AWARE)
         last_pitch_thrown_str = last_pitch_thrown.strftime(DT_AWARE)
-        return (at_bat_duration, first_pitch_thrown_str, last_pitch_thrown_str)
+        return (since_game_start, at_bat_duration, first_pitch_thrown_str, last_pitch_thrown_str)
 
     def get_pitch_app_id_from_at_bat_id(self, at_bat_id):
         return validate_at_bat_id(at_bat_id).value["pitch_app_id"]
@@ -944,9 +948,7 @@ class CombineScrapedData:
             pfx_dict.pop("game_start_time", None)
             pfx_dict.pop("time_pitch_thrown", None)
 
-    def construct_pitch_sequence_description(
-        self, at_bat_id, final_event_in_at_bat, pfx_data=None
-    ):
+    def construct_pitch_sequence_description(self, at_bat_id, final_event_in_at_bat, pfx_data=None):
         pitch_sequence = final_event_in_at_bat["pitch_sequence"]
         result = self.get_total_pitches_in_sequence(pitch_sequence)
         if result.failure:
@@ -1205,9 +1207,7 @@ class CombineScrapedData:
         duplicate_guid_removed_count = sum(
             event["at_bat_pitchfx_audit"]["duplicate_guid_removed_count"] for event in game_events
         )
-        pitchfx_error = any(
-            event["at_bat_pitchfx_audit"]["pitchfx_error"] for event in game_events
-        )
+        pitchfx_error = any(event["at_bat_pitchfx_audit"]["pitchfx_error"] for event in game_events)
 
         at_bat_ids_pitchfx_complete = list(
             set(

@@ -8,7 +8,7 @@ from sys import exit
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.util import print_message
+from vigorish.cli.components import print_message
 from vigorish.config.project_paths import NODEJS_SCRIPT
 from vigorish.constants import JOB_SPINNER_COLORS
 from vigorish.enums import DataSet, ScrapeCondition

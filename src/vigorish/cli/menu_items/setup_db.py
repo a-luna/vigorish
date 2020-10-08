@@ -5,10 +5,9 @@ import time
 from getch import pause
 from sqlalchemy.orm import sessionmaker
 
+from vigorish.cli.components import yes_no_prompt, print_message
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
-from vigorish.cli.prompts import prompt_user_yes_no
-from vigorish.cli.util import print_message
 from vigorish.config.database import initialize_database, db_setup_complete
 from vigorish.constants import EMOJI_DICT
 from vigorish.tasks.import_scraped_data import ImportScrapedDataInLocalFolder
@@ -18,9 +17,7 @@ SETUP_HEADER = (
     "Before you can begin scraping data, you must initialize the database with initial player, "
     "team and season data.\n"
 )
-SETUP_MESSAGE = (
-    "Select YES to initialize the database\n" "Select NO to return to the previous menu"
-)
+SETUP_MESSAGE = "Select YES to initialize the database\n" "Select NO to return to the previous menu"
 RESET_MESSAGE = "Would you like to reset the database with initial player, team and season data?"
 WARNING = (
     "WARNING! All existing data will be deleted if you choose to reset the database. This "
@@ -49,10 +46,10 @@ class SetupDBMenuItem(MenuItem):
         restart_required = self.db_initialized
         if self.db_initialized:
             print_message(WARNING, fg="bright_red", bold=True)
-            yes = prompt_user_yes_no("Would you like to continue?")
+            yes = yes_no_prompt(RESET_MESSAGE)
         else:
             print_message(SETUP_HEADER, fg="bright_yellow", bold=True)
-            yes = prompt_user_yes_no(SETUP_MESSAGE, wrap=False)
+            yes = yes_no_prompt(SETUP_MESSAGE, wrap=False)
         if not yes:
             return Result.Ok(self.exit_menu)
 
@@ -69,7 +66,7 @@ class SetupDBMenuItem(MenuItem):
         pause(message="Press any key to continue...")
 
         subprocess.run(["clear"])
-        if not prompt_user_yes_no(UPDATE_PROMPT):
+        if not yes_no_prompt(UPDATE_PROMPT):
             return self.setup_complete(restart_required)
 
         if restart_required:

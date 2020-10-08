@@ -1,6 +1,7 @@
 from tabulate import tabulate
 
-from vigorish.data.viewers.table_viewer import DisplayTable, TableViewer
+from vigorish.cli.components.models import DisplayTable
+from vigorish.cli.components.table_viewer import TableViewer
 from vigorish.util.list_helpers import make_chunked_list
 
 

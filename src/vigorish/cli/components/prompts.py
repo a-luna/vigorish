@@ -4,8 +4,9 @@ import subprocess
 from bullet import Bullet, Check, ScrollBar, colors
 from getch import pause
 
-from vigorish.cli.input_types import DataSetCheck, DateInput
-from vigorish.cli.util import print_message
+from vigorish.cli.components.data_set_check import DataSetCheck
+from vigorish.cli.components.date_input import DateInput
+from vigorish.cli.components.util import print_message
 from vigorish.config.database import Season
 from vigorish.constants import MENU_NUMBERS, EMOJI_DICT, DATA_SET_NAMES_LONG
 from vigorish.enums import DataSet, VigFile
@@ -13,7 +14,7 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
 
-def prompt_user_yes_no(prompt, wrap=True, max_line_len=70):
+def yes_no_prompt(prompt, wrap=True, max_line_len=70):
     if wrap:
         prompt = wrap_text(prompt, max_len=max_line_len)
     choices = {
@@ -33,11 +34,12 @@ def prompt_user_yes_no(prompt, wrap=True, max_line_len=70):
         background_color=colors.background["default"],
         background_on_switch=colors.background["default"],
     )
+    print()
     choice_text = prompt.launch()
     return choices.get(choice_text)
 
 
-def prompt_user_yes_no_cancel(prompt, wrap=True, max_line_len=70):
+def yes_no_cancel_prompt(prompt, wrap=True, max_line_len=70):
     if wrap:
         prompt = wrap_text(prompt, max_len=max_line_len)
     choices = {
@@ -74,12 +76,14 @@ def single_date_prompt(prompt):
     return user_date
 
 
-def user_options_prompt(choices, prompt):
+def user_options_prompt(choices, prompt, wrap=True, clear_screen=True):
+    if wrap:
+        prompt = wrap_text(prompt, 70)
     if len(choices) > 8:
         scroll_choices = [choice for choice in choices.keys()]
         scroll_choices.insert(0, f"{EMOJI_DICT.get('BACK')} Return to Previous Menu")
         options_menu = ScrollBar(
-            wrap_text(prompt, 70),
+            prompt,
             choices=scroll_choices,
             height=8,
             pointer="",
@@ -94,7 +98,7 @@ def user_options_prompt(choices, prompt):
         )
     else:
         options_menu = Bullet(
-            wrap_text(prompt, 70),
+            prompt,
             choices=[choice for choice in choices.keys()],
             bullet="",
             shift=1,
@@ -106,7 +110,9 @@ def user_options_prompt(choices, prompt):
             word_color=colors.foreground["default"],
             word_on_switch=colors.bright(colors.foreground["cyan"]),
         )
-    subprocess.run(["clear"])
+    if clear_screen:
+        subprocess.run(["clear"])
+    print()
     choice_text = options_menu.launch()
     choice_value = choices.get(choice_text)
     return Result.Ok(choice_value) if choice_value else Result.Fail("")
@@ -220,7 +226,7 @@ def file_types_prompt(prompt, valid_file_types=VigFile.ALL):
 def select_game_prompt(game_ids, prompt=None, prompt_sort_order=False):
     sort_order = "DATE"
     if prompt_sort_order:
-        result = prompt_sort_options()
+        result = sort_options_prompt()
         if result.failure:
             return result
         sort_order = result.value
@@ -236,7 +242,7 @@ def select_game_prompt(game_ids, prompt=None, prompt_sort_order=False):
     return user_options_prompt(choices, prompt)
 
 
-def prompt_sort_options():
+def sort_options_prompt():
     prompt = "How would you prefer to view the list of game IDs?"
     choices = {
         f"{MENU_NUMBERS.get(1)}  Sort By Date": "DATE",

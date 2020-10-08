@@ -6,7 +6,7 @@ from datetime import datetime
 from halo import Halo
 from getch import pause
 
-from vigorish.cli.util import print_message
+from vigorish.cli.components import print_message
 from vigorish.config.database import ScrapeError
 from vigorish.constants import JOB_SPINNER_COLORS, FAKE_SPINNER
 from vigorish.enums import DataSet, StatusReport, JobStatus

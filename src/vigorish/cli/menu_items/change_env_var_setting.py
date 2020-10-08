@@ -5,9 +5,8 @@ from sys import exit
 from bullet import Input, colors
 from getch import pause
 
+from vigorish.cli.components import yes_no_prompt, yes_no_cancel_prompt, print_message
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.prompts import prompt_user_yes_no, prompt_user_yes_no_cancel
-from vigorish.cli.util import print_message
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 
@@ -30,7 +29,7 @@ class EnvVarSettingMenuItem(MenuItem):
         env_var_value = f"Current Value: {self.current_setting}\n"
         print_message(env_var_name, fg="bright_magenta", bold=True)
         print_message(env_var_value, fg="bright_yellow", bold=True)
-        if not prompt_user_yes_no(prompt="Change current setting?"):
+        if not yes_no_prompt(prompt="Change current setting?"):
             return Result.Ok(self.exit_menu)
         user_confirmed = False
         while not user_confirmed:
@@ -54,4 +53,4 @@ class EnvVarSettingMenuItem(MenuItem):
             f"\nCurrent Value..: {self.current_setting}"
             f"\nNew Value......: {new_value}"
         )
-        return prompt_user_yes_no_cancel(prompt, wrap=False)
+        return yes_no_cancel_prompt(prompt, wrap=False)
