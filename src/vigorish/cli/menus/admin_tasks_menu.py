@@ -1,5 +1,8 @@
 """Menu that allows the user to view and modify all settings in vig.config.json."""
 from vigorish.cli.menu import Menu
+from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import (
+    CalculateAverageTimeBetweenPitches,
+)
 from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
@@ -13,6 +16,8 @@ from vigorish.util.sys_helpers import node_is_installed
 
 class AdminTasksMenu(Menu):
     def __init__(self, app):
+        # TODO: Add Refresh Game Data menu option
+        # TODO: Add Admin Task menu item to edit season dates and add new seasons
         super().__init__(app)
         self.menu_text = "Select a task from the list:"
         self.menu_item_text = "Tasks/Admin"
@@ -26,6 +31,7 @@ class AdminTasksMenu(Menu):
         if node_is_installed():
             self.menu_items.append(NpmInstallUpdate(self.app))
         if db_setup_complete(self.db_engine, self.db_session):
+            self.menu_items.append(CalculateAverageTimeBetweenPitches(self.app))
             self.menu_items.append(SetupDBMenuItem(self.app))
-        self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to Settings/Admin"))
+        self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to Main Menu"))
         # self.menu_items.insert(0, ReturnToParentMenuItem(self.app, "Return to Settings/Admin"))
