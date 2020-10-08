@@ -8,26 +8,39 @@ const args = parseArgs(process.argv.slice(2))
 main(args).catch(console.error)
 
 async function main(args) {
-    const urlSetFilepath = args.urlSetFilepath
-    const timeoutParams = getTimeoutParams(args)
-    const batchJobParams = getBatchJobParams(args)
+    const xvfb = new Xvfb()
     const nightmare = Nightmare({
         show: false,
         pollInterval: 50,
         waitTimeout: 150000,
         gotoTimeout: 150000,
     })
-    const xvfb = new Xvfb()
-    xvfb.startSync()
-
-    const [success, err] = await poss(
-        run(nightmare, urlSetFilepath, timeoutParams, batchJobParams)
-    )
-    xvfb.stopSync()
+    jobParams = {
+        urlSetFilepath: args.urlSetFilepath,
+        batchParams: getBatchParams(args),
+        timeoutParams: getTimeoutParams(args),
+    }
+    const [success, err] = await run(xvfb, nightmare, jobParams)
     if (!success) {
         throw err
     }
     process.exit(0)
+}
+
+function getBatchParams(args) {
+    let batchParams = { batchScrapingEnabled: false }
+    if ("batchScrapingEnabled" in args) {
+        batchParams.batchScrapingEnabled = true
+        if ("minBatchSize" in args && "maxBatchSize" in args) {
+            batchParams.batchSizeIsRandom = true
+            batchParams.minBatchSize = args.minBatchSize
+            batchParams.maxBatchSize = args.maxBatchSize
+        } else if ("uniformBatchSize" in args) {
+            batchParams.batchSizeIsRandom = false
+            batchParams.uniformBatchSize = args.uniformBatchSize
+        }
+    }
+    return batchParams
 }
 
 function getTimeoutParams(args) {
@@ -55,36 +68,23 @@ function getTimeoutParams(args) {
     return timeoutParams
 }
 
-function getBatchJobParams(args) {
-    let batchJobParams = { batchScrapingEnabled: false }
-    if ("batchScrapingEnabled" in args) {
-        batchJobParams.batchScrapingEnabled = true
-        if ("minBatchSize" in args && "maxBatchSize" in args) {
-            batchJobParams.batchSizeIsRandom = true
-            batchJobParams.minBatchSize = args.minBatchSize
-            batchJobParams.maxBatchSize = args.maxBatchSize
-        } else if ("uniformBatchSize" in args) {
-            batchJobParams.batchSizeIsRandom = false
-            batchJobParams.uniformBatchSize = args.uniformBatchSize
-        }
-    }
-    return batchJobParams
-}
-
-async function run(nightmare, urlSetFilepath, timeoutParams, batchJobParams) {
-    if (batchJobParams.batchScrapingEnabled) {
-        await executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeoutParams)
-    } else {
-        await scrapeUrls(nightmare, urlSetFilepath, timeoutParams)
-    }
-    await nightmare.end()
-}
-
-async function poss(promise) {
+async function run(xvfb, nightmare, jobParams) {
     try {
-        await promise
+        xvfb.startSync()
+        await execute_job(nightmare, jobParams)
         return [true, null]
     } catch (err) {
         return [false, err]
+    } finally {
+        xvfb.stopSync()
+        await nightmare.end()
+    }
+}
+
+async function execute_job(nightmare, { urlSetFilepath, timeoutParams, batchParams }) {
+    if (batchParams.batchScrapingEnabled) {
+        await executeBatchJob(nightmare, urlSetFilepath, batchParams, timeoutParams)
+    } else {
+        await scrapeUrls(nightmare, urlSetFilepath, timeoutParams)
     }
 }

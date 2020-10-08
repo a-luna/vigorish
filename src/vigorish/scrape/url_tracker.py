@@ -35,9 +35,9 @@ class UrlTracker:
     @property
     def parse_url_ids(self):
         return (
-            [url.identifier for url in self.parse_urls]
+            [url.url_id for url in self.parse_urls]
             if self.data_set != DataSet.BROOKS_PITCH_LOGS
-            else list(set([url.identifier[:12] for url in self.parse_urls]))
+            else list(set([url.url_id[:12] for url in self.parse_urls]))
         )
 
     @property
@@ -117,7 +117,7 @@ class UrlTracker:
         return self.missing_urls_filepath
 
     def get_html(self, url_id):
-        match = [url for url in self.parse_urls if url.identifier == url_id]
+        match = [url for url in self.parse_urls if url.url_id == url_id]
         return match[0].html if match else None
 
     def remove_scraped_html(self):

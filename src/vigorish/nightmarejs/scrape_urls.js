@@ -58,11 +58,11 @@ const sleep = (timeoutMs) => new Promise((resolve) => setTimeout(resolve, timeou
 const getRandomInt = (min, max) =>
     Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min)
 
-async function executeBatchJob(nightmare, urlSetFilepath, batchJobParams, timeoutParams) {
+async function executeBatchJob(nightmare, urlSetFilepath, batchParams, timeoutParams) {
     let batchCounter = 0
     let urlCounter = 0
     const allUrls = readUrlSetFromFile(urlSetFilepath)
-    const batchList = createBatchJob(allUrls, batchJobParams)
+    const batchList = createBatchJob(allUrls, batchParams)
     const [batchBar, urlBar, comboBar] = initializeProgressBars(batchList, allUrls.length)
     for await (const urlBatch of batchList) {
         batchBar.update(batchCounter, { message: urlBatchMessage(batchList[batchCounter].length) })
@@ -107,13 +107,13 @@ function initializeProgressBars(batchList, totalUrls) {
 async function scrapeUrlBatch(nightmare, urlSet, timeoutParams, urlCounter, urlBar, comboBar) {
     comboBar.setTotal(urlSet.length)
     const urlCounterStart = urlCounter
-    for await (const { url, fileName, identifier, scrapedHtmlFolderpath } of urlSet) {
+    for await (const { url, url_id, htmlFileName, htmlFolderpath } of urlSet) {
         comboBar.update(urlCounter - urlCounterStart, {
             message: urlRangeMessage(urlCounterStart, urlSet.length),
             unit: "URLs",
         })
-        urlBar.update(urlCounter, { message: pBarMessage(identifier) })
-        await scrapeUrl(nightmare, url, fileName, scrapedHtmlFolderpath, timeoutParams)
+        urlBar.update(urlCounter, { message: pBarMessage(url_id) })
+        await scrapeUrl(nightmare, url, htmlFileName, htmlFolderpath, timeoutParams)
         urlCounter += 1
     }
     urlBar.update(urlCounter)
@@ -163,9 +163,9 @@ async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams) {
     const urlSet = readUrlSetFromFile(urlSetFilepath)
     const urlBar = multibar.create(urlSet.length, 0, { message: "N/A", unit: "URLs" })
     let counter = 0
-    for await (const { url, fileName, identifier, scrapedHtmlFolderpath } of urlSet) {
-        urlBar.update(counter, { message: identifier })
-        await scrapeUrl(nightmare, url, fileName, scrapedHtmlFolderpath, timeoutParams)
+    for await (const { url, url_id, htmlFileName, htmlFolderpath } of urlSet) {
+        urlBar.update(counter, { message: url_id })
+        await scrapeUrl(nightmare, url, htmlFileName, htmlFolderpath, timeoutParams)
         counter += 1
     }
     urlBar.stop()

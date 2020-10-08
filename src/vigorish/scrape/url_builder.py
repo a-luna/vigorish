@@ -31,11 +31,11 @@ def create_url_set_for_date(db_job, data_set, scraped_data, game_date):
 def create_url_for_brooks_games_for_date(db_job, scraped_data, game_date):
     data_set = DataSet.BROOKS_GAMES_FOR_DATE
     url_data = {
-        "identifier": game_date,
+        "url": get_url_for_brooks_games_for_date(game_date),
+        "url_id": game_date,
         "fileName": get_filename(scraped_data, data_set, game_date),
         "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
         "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-        "url": get_url_for_brooks_games_for_date(game_date),
     }
     return Result.Ok([from_dict(data_class=UrlDetails, data=url_data)])
 
@@ -52,13 +52,13 @@ def create_urls_for_brooks_pitch_logs_for_date(db_job, scraped_data, game_date):
         for pitcher_id, pitch_log_url in game.pitcher_appearance_dict.items():
             pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
             url_data = {
-                "identifier": pitch_app_id,
+                "url": pitch_log_url,
+                "url_id": pitch_app_id,
                 "fileName": get_filename(scraped_data, data_set, pitch_app_id),
                 "cachedHtmlFolderPath": get_cached_html_folderpath(
                     scraped_data, data_set, game_date
                 ),
                 "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-                "url": pitch_log_url,
             }
             urls.append(from_dict(data_class=UrlDetails, data=url_data))
     return Result.Ok(urls)
@@ -76,13 +76,13 @@ def create_urls_for_brooks_pitchfx_logs_for_date(db_job, scraped_data, game_date
                 continue
             pitch_app_id = f"{pitch_log.bbref_game_id}_{pitch_log.pitcher_id_mlb}"
             url_data = {
-                "identifier": pitch_app_id,
+                "url": pitch_log.pitchfx_url,
+                "url_id": pitch_app_id,
                 "fileName": get_filename(scraped_data, data_set, pitch_app_id),
                 "cachedHtmlFolderPath": get_cached_html_folderpath(
                     scraped_data, data_set, game_date
                 ),
                 "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-                "url": pitch_log.pitchfx_url,
             }
             urls.append(from_dict(data_class=UrlDetails, data=url_data))
     return Result.Ok(urls)
@@ -91,11 +91,11 @@ def create_urls_for_brooks_pitchfx_logs_for_date(db_job, scraped_data, game_date
 def create_url_for_bbref_games_for_date(db_job, scraped_data, game_date):
     data_set = DataSet.BBREF_GAMES_FOR_DATE
     url_data = {
-        "identifier": game_date,
+        "url": get_url_for_bbref_games_for_date(game_date),
+        "url_id": game_date,
         "fileName": get_filename(scraped_data, data_set, game_date),
         "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
         "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-        "url": get_url_for_bbref_games_for_date(game_date),
     }
     return Result.Ok([from_dict(data_class=UrlDetails, data=url_data)])
 
@@ -109,11 +109,11 @@ def create_urls_for_bbref_boxscores_for_date(db_job, scraped_data, game_date):
     for boxscore_url in games_for_date.boxscore_urls:
         bbref_game_id = get_bbref_game_id_from_url(boxscore_url)
         url_data = {
-            "identifier": bbref_game_id,
+            "url": boxscore_url,
+            "url_id": bbref_game_id,
             "fileName": get_filename(scraped_data, data_set, bbref_game_id),
             "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
             "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
-            "url": boxscore_url,
         }
         urls.append(from_dict(data_class=UrlDetails, data=url_data))
     return Result.Ok(urls)

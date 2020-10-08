@@ -10,7 +10,7 @@ from vigorish.util.numeric_helpers import ONE_KB
 @dataclass
 class UrlDetails:
     url: str
-    identifier: Union[str, datetime]
+    url_id: Union[str, datetime]
     fileName: str
     cachedHtmlFolderPath: str
     scrapedHtmlFolderpath: str
@@ -59,14 +59,12 @@ class UrlDetails:
 
     def as_dict(self):
         valid_json_id = (
-            self.identifier.strftime(DATE_ONLY_2)
-            if isinstance(self.identifier, datetime)
-            else self.identifier
+            self.url_id.strftime(DATE_ONLY_2) if isinstance(self.url_id, datetime) else self.url_id
         )
         return {
             "url": self.url,
-            "identifier": valid_json_id,
-            "fileName": self.fileName,
+            "url_id": valid_json_id,
+            "htmlFileName": self.fileName,
             "cachedHtmlFolderPath": self.cachedHtmlFolderPath,
-            "scrapedHtmlFolderpath": self.scrapedHtmlFolderpath,
+            "htmlFolderpath": self.scrapedHtmlFolderpath,
         }

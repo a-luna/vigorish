@@ -68,9 +68,7 @@ class ScrapeTaskABC(ABC):
         self.spinner.start()
         self.url_tracker = UrlTracker(self.db_job, self.data_set, self.scraped_data)
         result = self.url_tracker.create_url_set()
-        return (
-            result if self.url_tracker.total_urls else Result.Fail("Unable to generate URL set.")
-        )
+        return result if self.url_tracker.total_urls else Result.Fail("Unable to generate URL set.")
 
     def identify_needed_urls(self):
         self.spinner.text = self.url_tracker.identify_html_report
@@ -93,7 +91,7 @@ class ScrapeTaskABC(ABC):
         if not self.url_tracker.need_urls:
             return Result.Fail("skip")
         for url in self.url_tracker.need_urls[:]:
-            self.scraped_data.get_html(self.data_set, url.identifier)
+            self.scraped_data.get_html(self.data_set, url.url_id)
             if not url.file_exists_with_content:
                 self.url_tracker.missing_urls.append(url)
             else:
@@ -112,7 +110,7 @@ class ScrapeTaskABC(ABC):
             for url in self.url_tracker.missing_urls[:]:
                 if not url.scraped_file_exists_with_content:
                     continue
-                result = self.scraped_data.save_html(self.data_set, url.identifier, url.html)
+                result = self.scraped_data.save_html(self.data_set, url.url_id, url.html)
                 if result.failure:
                     return result
                 self.url_tracker.completed_urls.append(url)
@@ -132,9 +130,9 @@ class ScrapeTaskABC(ABC):
         self.spinner.text = self.url_tracker.parse_html_report(parsed)
         for game_date, urls in self.url_tracker.all_urls.items():
             for url in urls:
-                if url.identifier not in self.url_tracker.parse_url_ids:
+                if url.url_id not in self.url_tracker.parse_url_ids:
                     continue
-                result = self.parse_html(url.html, url.identifier, url.url)
+                result = self.parse_html(url.html, url.url_id, url.url)
                 if result.failure:
                     if "Unable to parse any game data" in result.error:
                         continue
