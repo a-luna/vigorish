@@ -1,5 +1,6 @@
 """Functions for reading and writing files."""
 import json
+import os
 from pathlib import Path
 
 import boto3
@@ -27,12 +28,13 @@ from vigorish.util.result import Result
 
 
 class FileHelper:
+    # TODO: Add pragma: no cover to S3 branches/methods
     def __init__(self, config):
         self.config = config
-        try:
+        try:  # pragma: no cover
             self.client = boto3.client("s3")
             self.resource = boto3.resource("s3")
-        except ValueError:
+        except ValueError:  # pragma: no cover
             self.client = None
             self.resource = None
 
@@ -61,7 +63,7 @@ class FileHelper:
         }
 
     @property
-    def s3_folderpath_dict(self):
+    def s3_folderpath_dict(self):  # pragma: no cover
         html_s3_folder = self.config.all_settings.get("HTML_S3_FOLDER_PATH")
         json_s3_folder = self.config.all_settings.get("JSON_S3_FOLDER_PATH")
         combined_s3_folder = self.config.all_settings.get("COMBINED_DATA_S3_FOLDER_PATH")
@@ -109,7 +111,7 @@ class FileHelper:
             VigFile.SCRAPED_HTML: html_filename_dict,
             VigFile.PARSED_JSON: json_filename_dict,
             VigFile.PATCH_LIST: patch_list_filename_dict,
-            VigFile.COMBINED_GAME_DATA: {DataSet.ALL: self.get_file_name_json_combined_data},
+            VigFile.COMBINED_GAME_DATA: {DataSet.ALL: self.get_file_name_combined_game_data},
         }
 
     @property
@@ -164,7 +166,7 @@ class FileHelper:
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
-    def check_s3_bucket(self):
+    def check_s3_bucket(self):  # pragma: no cover
         try:
             self.get_all_object_keys_in_s3_bucket()
             return Result.Ok()
@@ -175,15 +177,15 @@ class FileHelper:
         storage_setting = self.file_storage_dict[file_type][data_set]
         return "LOCAL_FOLDER" in storage_setting.name or "BOTH" in storage_setting.name
 
-    def check_file_stored_s3(self, file_type, data_set):
+    def check_file_stored_s3(self, file_type, data_set):  # pragma: no cover
         storage_setting = self.file_storage_dict[file_type][data_set]
         return "S3_BUCKET" in storage_setting.name or "BOTH" in storage_setting.name
 
-    def get_s3_bucket(self):
+    def get_s3_bucket(self):  # pragma: no cover
         bucket_name = self.config.get_current_setting("S3_BUCKET", DataSet.ALL)
         return self.resource.Bucket(bucket_name)
 
-    def get_all_object_keys_in_s3_bucket(self):
+    def get_all_object_keys_in_s3_bucket(self):  # pragma: no cover
         return self.get_s3_bucket().objects.all()
 
     def perform_local_file_task(
@@ -275,7 +277,7 @@ class FileHelper:
         bbref_game_id=None,
         bb_game_id=None,
         pitch_app_id=None,
-    ):
+    ):  # pragma: no cover
         s3_key = self.get_object_key(
             data_set=data_set,
             file_type=file_type,
@@ -310,7 +312,7 @@ class FileHelper:
         bbref_game_id=None,
         bb_game_id=None,
         pitch_app_id=None,
-    ):
+    ):  # pragma: no cover
         folderpath = self.get_s3_folderpath(file_type, data_set, game_date)
         filename = self.get_file_name(
             data_set=data_set,
@@ -322,7 +324,7 @@ class FileHelper:
         )
         return f"{folderpath}{filename}"
 
-    def get_s3_folderpath(self, file_type, data_set, game_date=None, year=None):
+    def get_s3_folderpath(self, file_type, data_set, game_date=None, year=None):  # pragma: no cover
         if not game_date and not year:
             error = (
                 "You must provide either the game_date or year argument to construct a folderpath"
@@ -376,7 +378,7 @@ class FileHelper:
     def get_file_name_bbref_boxscore_patch_list(self, bbref_game_id):
         return f"{bbref_game_id}_PATCH_LIST.json"
 
-    def get_file_name_json_combined_data(self, bbref_game_id):
+    def get_file_name_combined_game_data(self, bbref_game_id):
         return f"{bbref_game_id}_COMBINED_DATA.json"
 
     def read_local_file(self, filepath):
@@ -408,14 +410,16 @@ class FileHelper:
         delete_file = not self.check_file_stored_local(VigFile.PARSED_JSON, data_set)
         try:
             contents = filepath.read_text()
-            if delete_file:
+            if delete_file and not os.environ.get("ENV") == "TEST":
                 filepath.unlink()
             return self.json_decoder_dict[file_type][data_set](json.loads(contents))
         except Exception as e:
             error = f"Error: {repr(e)}"
             return Result.Fail(error)
 
-    def upload_to_s3(self, file_type, data_set, scraped_data, bucket_name, s3_key, filepath):
+    def upload_to_s3(
+        self, file_type, data_set, scraped_data, bucket_name, s3_key, filepath
+    ):  # pragma: no cover
         delete_file = not self.check_file_stored_local(file_type, data_set)
         if file_type == VigFile.PARSED_JSON:
             result = self.write_to_file(file_type, scraped_data, filepath)
@@ -429,7 +433,7 @@ class FileHelper:
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
 
-    def download_from_s3(self, file_type, bucket_name, s3_key, filepath):
+    def download_from_s3(self, file_type, bucket_name, s3_key, filepath):  # pragma: no cover
         try:
             self.resource.Bucket(bucket_name).download_file(s3_key, str(filepath))
             if file_type == VigFile.SCRAPED_HTML and filepath.stat().st_size < ONE_KB:
@@ -445,14 +449,14 @@ class FileHelper:
                 error = repr(e)
             return Result.Fail(error)
 
-    def delete_from_s3(self, bucket_name, s3_key):
+    def delete_from_s3(self, bucket_name, s3_key):  # pragma: no cover
         try:
             self.resource.Object(bucket_name, s3_key).delete()
             return Result.Ok()
         except ClientError as e:
             return Result.Fail(repr(e))
 
-    def rename_s3_object(self, bucket_name, old_key, new_key):
+    def rename_s3_object(self, bucket_name, old_key, new_key):  # pragma: no cover
         try:
             self.resource.Object(bucket_name, new_key).copy_from(
                 CopySource=f"{bucket_name}/{old_key}"

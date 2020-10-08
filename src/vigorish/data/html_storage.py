@@ -5,6 +5,7 @@ from vigorish.util.string_helpers import validate_bbref_game_id, validate_pitch_
 
 
 class HtmlStorage:
+    # TODO: Add pragma: no cover to S3 branches/methods
     """Perform CRUD operations on HTML files stored locally and/or in S3."""
 
     def __init__(self, config, file_helper):
@@ -20,7 +21,7 @@ class HtmlStorage:
             result_local = self.save_html_local(data_set, url_id, html)
             if result_local.success:
                 local_filepath = result_local.value
-        if self.html_stored_s3(data_set):
+        if self.html_stored_s3(data_set):  # pragma: no cover
             result_s3 = self.save_html_s3(data_set, url_id, html)
             if result_s3.success:
                 s3_object_key = result_s3.value
@@ -32,7 +33,7 @@ class HtmlStorage:
     def html_stored_local(self, data_set):
         return self.file_helper.check_file_stored_local(VigFile.SCRAPED_HTML, data_set)
 
-    def html_stored_s3(self, data_set):
+    def html_stored_s3(self, data_set):  # pragma: no cover
         return self.file_helper.check_file_stored_s3(VigFile.SCRAPED_HTML, data_set)
 
     def save_html_local(self, data_set, url_id, html):
@@ -45,7 +46,7 @@ class HtmlStorage:
         }
         return save_html_local_dict[data_set](url_id, html)
 
-    def save_html_s3(self, data_set, url_id, html):
+    def save_html_s3(self, data_set, url_id, html):  # pragma: no cover
         save_html_s3_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.upload_html_brooks_games_for_date,
             DataSet.BROOKS_PITCH_LOGS: self.upload_html_brooks_pitch_log,
@@ -57,7 +58,7 @@ class HtmlStorage:
 
     def get_html(self, data_set, url_id):
         result = self.get_html_local(data_set, url_id)
-        if result.failure:
+        if result.failure:  # pragma: no cover
             result = self.get_html_s3(data_set, url_id)
             if result.failure:
                 return None
@@ -73,7 +74,7 @@ class HtmlStorage:
         }
         return get_html_local_dict[data_set](url_id)
 
-    def get_html_s3(self, data_set, url_id):
+    def get_html_s3(self, data_set, url_id):  # pragma: no cover
         get_html_s3_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.download_html_brooks_games_for_date,
             DataSet.BROOKS_PITCH_LOGS: self.download_html_brooks_pitch_log_page,
@@ -88,7 +89,7 @@ class HtmlStorage:
         result_s3 = Result.Ok()
         if self.html_stored_local(data_set):
             result_local = self.delete_html_local(data_set, url_id)
-        if self.html_stored_s3(data_set):
+        if self.html_stored_s3(data_set):  # pragma: no cover
             result_s3 = self.delete_html_s3(data_set, url_id)
         return Result.Combine([result_local, result_s3])
 
@@ -102,7 +103,7 @@ class HtmlStorage:
         }
         return delete_html_local_dict[data_set](url_id)
 
-    def delete_html_s3(self, data_set, url_id):
+    def delete_html_s3(self, data_set, url_id):  # pragma: no cover
         delete_html_s3_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.delete_html_brooks_games_for_date_s3,
             DataSet.BROOKS_PITCH_LOGS: self.delete_html_brooks_pitch_logs_s3,
@@ -227,7 +228,7 @@ class HtmlStorage:
             bbref_game_id=bbref_game_id,
         )
 
-    def upload_html_brooks_games_for_date(self, game_date, html):
+    def upload_html_brooks_games_for_date(self, game_date, html):  # pragma: no cover
         result = self.save_html_local(DataSet.BROOKS_GAMES_FOR_DATE, game_date, html)
         if result.failure:
             return result
@@ -238,7 +239,7 @@ class HtmlStorage:
             game_date=game_date,
         )
 
-    def upload_html_brooks_pitch_log(self, pitch_app_id, html):
+    def upload_html_brooks_pitch_log(self, pitch_app_id, html):  # pragma: no cover
         result = self.save_html_local(DataSet.BROOKS_PITCH_LOGS, pitch_app_id, html)
         if result.failure:
             return result
@@ -254,7 +255,7 @@ class HtmlStorage:
             pitch_app_id=pitch_app_id,
         )
 
-    def upload_html_brooks_pitchfx(self, pitch_app_id, html):
+    def upload_html_brooks_pitchfx(self, pitch_app_id, html):  # pragma: no cover
         result = self.save_html_local(DataSet.BROOKS_PITCHFX, pitch_app_id, html)
         if result.failure:
             return result
@@ -270,7 +271,7 @@ class HtmlStorage:
             pitch_app_id=pitch_app_id,
         )
 
-    def upload_html_bbref_games_for_date(self, game_date, html):
+    def upload_html_bbref_games_for_date(self, game_date, html):  # pragma: no cover
         result = self.save_html_local(DataSet.BBREF_GAMES_FOR_DATE, game_date, html)
         if result.failure:
             return result
@@ -281,7 +282,7 @@ class HtmlStorage:
             game_date=game_date,
         )
 
-    def upload_html_bbref_boxscore(self, bbref_game_id, html):
+    def upload_html_bbref_boxscore(self, bbref_game_id, html):  # pragma: no cover
         result = self.save_html_local(DataSet.BBREF_BOXSCORES, bbref_game_id, html)
         if result.failure:
             return result
@@ -297,7 +298,7 @@ class HtmlStorage:
             bbref_game_id=bbref_game_id,
         )
 
-    def download_html_brooks_games_for_date(self, game_date):
+    def download_html_brooks_games_for_date(self, game_date):  # pragma: no cover
         """Download raw HTML for brooks daily scoreboard page."""
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
@@ -306,7 +307,7 @@ class HtmlStorage:
             game_date=game_date,
         )
 
-    def download_html_brooks_pitch_log_page(self, pitch_app_id):
+    def download_html_brooks_pitch_log_page(self, pitch_app_id):  # pragma: no cover
         """Download raw HTML for brooks pitch log page for a single pitching appearance."""
         result = validate_pitch_app_id(pitch_app_id)
         if result.failure:
@@ -320,7 +321,7 @@ class HtmlStorage:
             pitch_app_id=pitch_app_id,
         )
 
-    def download_html_brooks_pitchfx_log(self, pitch_app_id):
+    def download_html_brooks_pitchfx_log(self, pitch_app_id):  # pragma: no cover
         """Download raw HTML for brooks pitchfx data for a single pitching appearance."""
         result = validate_pitch_app_id(pitch_app_id)
         if result.failure:
@@ -334,7 +335,7 @@ class HtmlStorage:
             pitch_app_id=pitch_app_id,
         )
 
-    def download_html_bbref_games_for_date(self, game_date):
+    def download_html_bbref_games_for_date(self, game_date):  # pragma: no cover
         """Download raw HTML for bbref daily scoreboard page."""
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DOWNLOAD,
@@ -343,7 +344,7 @@ class HtmlStorage:
             game_date=game_date,
         )
 
-    def download_html_bbref_boxscore(self, bbref_game_id):
+    def download_html_bbref_boxscore(self, bbref_game_id):  # pragma: no cover
         """Download raw HTML for bbref daily scoreboard page."""
         result = validate_bbref_game_id(bbref_game_id)
         if result.failure:
@@ -366,7 +367,7 @@ class HtmlStorage:
             game_date=game_date,
         )
 
-    def delete_html_brooks_games_for_date_s3(self, game_date):
+    def delete_html_brooks_games_for_date_s3(self, game_date):  # pragma: no cover
         """Delete scraped HTML for brooks daily scoreboard page from S3."""
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DELETE,
@@ -384,7 +385,7 @@ class HtmlStorage:
             game_date=game_date,
         )
 
-    def delete_html_bbref_games_for_date_s3(self, game_date):
+    def delete_html_bbref_games_for_date_s3(self, game_date):  # pragma: no cover
         """Delete scraped HTML for bbref daily scoreboard page from S3."""
         return self.file_helper.perform_s3_task(
             task=S3FileTask.DELETE,
@@ -407,7 +408,7 @@ class HtmlStorage:
             bbref_game_id=bbref_game_id,
         )
 
-    def delete_html_bbref_boxscore_s3(self, bbref_game_id):
+    def delete_html_bbref_boxscore_s3(self, bbref_game_id):  # pragma: no cover
         """Delete scraped HTML for bbref boxscore page from S3."""
         result = validate_bbref_game_id(bbref_game_id)
         if result.failure:
@@ -435,7 +436,7 @@ class HtmlStorage:
             pitch_app_id=pitch_app_id,
         )
 
-    def delete_html_brooks_pitch_logs_s3(self, pitch_app_id):
+    def delete_html_brooks_pitch_logs_s3(self, pitch_app_id):  # pragma: no cover
         """Delete scraped HTML for brooks pitch log page from S3."""
         result = validate_pitch_app_id(pitch_app_id)
         if result.failure:
@@ -462,7 +463,7 @@ class HtmlStorage:
             pitch_app_id=pitch_app_id,
         )
 
-    def delete_html_brooks_pitchfx_log_s3(self, pitch_app_id):
+    def delete_html_brooks_pitchfx_log_s3(self, pitch_app_id):  # pragma: no cover
         """Delete scraped HTML for brooks pitchfx data from s3."""
         result = validate_pitch_app_id(pitch_app_id)
         if result.failure:
