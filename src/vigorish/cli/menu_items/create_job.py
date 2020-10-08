@@ -1,12 +1,16 @@
 """Menu item that allows the user to create a record of a new scrape job."""
 import subprocess
 
-from bullet import VerticalPrompt
-
+from vigorish.cli.components import (
+    DateInput,
+    JobNameInput,
+    yes_no_prompt,
+    data_sets_prompt,
+    print_heading,
+    print_message,
+    validate_scrape_dates,
+)
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.input_types import DEFAULT_JOB_NAME, DateInput, JobNameInput
-from vigorish.cli.prompts import prompt_user_yes_no, data_sets_prompt
-from vigorish.cli.util import print_message, validate_scrape_dates
 from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
 from vigorish.scrape.job_runner import JobRunner
@@ -16,6 +20,13 @@ from vigorish.util.result import Result
 
 class CreateJobMenuItem(MenuItem):
     def __init__(self, app):
+        # TODO: Improve Create Job UX:
+        #  - Create new input type that is initialized with a list of valid values
+        #  - Order the list of values and the selected value can be changed with <- and -> arrow keys
+        #  - This input type does not replace the options prompt with numbered items
+        #  - This should be used for numbers and dates, like a slider element
+        #  - In this menu, it will be used to select start/end dates
+        #    - Separate inputs for month and day (user will select year first before data sets)
         super().__init__(app)
         self.menu_item_text = "Create New Job"
         self.menu_item_emoji = EMOJI_DICT.get("KNIFE", "")
@@ -26,28 +37,27 @@ class CreateJobMenuItem(MenuItem):
         start_date = None
         end_date = None
         job_name = None
+        season = None
         while not job_confirmed:
-            data_sets = data_sets_prompt(
-                "Select all data sets to scrape:", checked_data_sets=data_sets
-            )
+            prompt = "Select all data sets to scrape:"
+            data_sets = data_sets_prompt(prompt, checked_data_sets=data_sets)
             dates_validated = False
             while not dates_validated:
-                (start_date, end_date) = self.get_scrape_dates_from_user(start_date, end_date)
+                start_date = self.prompt_user_scrape_start_date(start_date)
+                end_date = self.prompt_user_scrape_stop_date(end_date)
                 result = validate_scrape_dates(self.db_session, start_date, end_date)
                 if result.failure:
                     continue
                 season = result.value
                 dates_validated = True
-            job_name = self.get_job_name_from_user(job_name)
+            job_name = self.prompt_user_job_name(job_name)
             job_confirmed = self.confirm_job_details(data_sets, start_date, end_date, job_name)
 
-        new_scrape_job = self.create_new_scrape_job(
-            data_sets, start_date, end_date, season, job_name
-        )
+        new_job = self.create_new_scrape_job(data_sets, start_date, end_date, season, job_name)
         subprocess.run(["clear"])
-        if prompt_user_yes_no(prompt="Would you like to begin executing this job?"):
+        if yes_no_prompt(prompt="Would you like to begin executing this job?"):
             job_runner = JobRunner(
-                db_job=new_scrape_job,
+                db_job=new_job,
                 db_session=self.db_session,
                 config=self.config,
                 scraped_data=self.scraped_data,
@@ -57,26 +67,37 @@ class CreateJobMenuItem(MenuItem):
                 return result
         return Result.Ok(self.exit_menu)
 
-    def get_scrape_dates_from_user(self, start_date, end_date):
-        subprocess.run(["clear"])
-        scrape_dates_prompt = VerticalPrompt(
-            [
-                DateInput(prompt="Enter date to START scraping: ", default=start_date),
-                DateInput(prompt="Enter date to STOP scraping: ", default=end_date),
-            ],
-            spacing=1,
+    def prompt_user_scrape_start_date(self, start_date):
+        date_prompt = DateInput(
+            prompt="start date: ",
+            heading="Enter date to START scraping",
+            heading_color="bright_yellow",
+            default=start_date,
         )
-        scrape_dates = scrape_dates_prompt.launch()
-        start_date = scrape_dates[0][1]
-        end_date = scrape_dates[1][1]
-        return (start_date, end_date)
+        return date_prompt.launch()
 
-    def get_job_name_from_user(self, job_name):
-        job_name = JobNameInput(prompt="Enter a name for this job: ", default=job_name).launch()
-        return job_name if job_name != DEFAULT_JOB_NAME else None
+    def prompt_user_scrape_stop_date(self, stop_date):
+        date_prompt = DateInput(
+            prompt="stop date: ",
+            heading="Enter date to STOP scraping",
+            heading_color="bright_yellow",
+            default=stop_date,
+        )
+        return date_prompt.launch()
+
+    def prompt_user_job_name(self, job_name):
+        name_prompt = JobNameInput(
+            prompt="job name: ",
+            heading="Enter a name for this job (Optional)",
+            heading_color="bright_yellow",
+            message="This value is optional, press ENTER to use the default value",
+            default=job_name,
+        )
+        return name_prompt.launch()
 
     def confirm_job_details(self, data_sets, start_date, end_date, job_name):
         subprocess.run(["clear"])
+        heading = "Confirm job details"
         data_set_space = "\n\t      "
         confirm_job_name = ""
         if job_name:
@@ -85,10 +106,11 @@ class CreateJobMenuItem(MenuItem):
             f"{confirm_job_name}"
             f"Start date..: {start_date.strftime(DATE_ONLY_2)}\n"
             f"End Date....: {end_date.strftime(DATE_ONLY_2)}\n"
-            f"Data Sets...: {data_set_space.join(data_sets.values())}\n"
+            f"Data Sets...: {data_set_space.join(data_sets.values())}"
         )
-        print_message(f"{job_details}\n", wrap=False, fg="bright_yellow")
-        return prompt_user_yes_no(prompt="Are the details above correct?")
+        print_heading(heading, fg="bright_yellow")
+        print_message(job_details, wrap=False, fg="bright_yellow")
+        return yes_no_prompt(prompt="Are the details above correct?")
 
     def create_new_scrape_job(self, data_sets, start_date, end_date, season, job_name):
         new_job_dict = {
