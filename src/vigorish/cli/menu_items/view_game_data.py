@@ -2,7 +2,7 @@
 import subprocess
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.prompts import user_options_prompt
+from vigorish.cli.components.prompts import user_options_prompt
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.data.all_game_data import AllGameData
 from vigorish.util.result import Result
@@ -49,6 +49,9 @@ class ViewGameData(MenuItem):
                         break
                     mlb_id = result.value
                     self.view_at_bats_for_batter(mlb_id)
+            if selected_data == "META_INFO":
+                table_viewer = self.game_data.view_game_meta_info()
+                table_viewer.launch()
         return Result.Ok()
 
     def select_data_prompt(self):
@@ -56,6 +59,7 @@ class ViewGameData(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  All at bats in pitching appearance": "AT_BATS_FOR_PITCHER",
             f"{MENU_NUMBERS.get(2)}  All at bats for batter": "AT_BATS_FOR_BATTER",
+            f"{MENU_NUMBERS.get(3)}  Game Meta Information": "META_INFO",
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, prompt)
@@ -70,9 +74,15 @@ class ViewGameData(MenuItem):
         return user_options_prompt(choices, prompt)
 
     def select_pitcher_text(self, mlb_id):
-        pitcher_name = self.player_id_map.get(mlb_id).mlb_name
-        pitch_app_stats = self.game_data.parse_pitch_app_stats(mlb_id).value
+        pitcher_name = self.get_player_name(mlb_id)
+        pitch_app_stats = self.get_pitch_app_stat_line(mlb_id)
         return f"{pitcher_name} ({pitch_app_stats})"
+
+    def get_player_name(self, mlb_id):
+        return self.player_id_map.get(mlb_id).mlb_name
+
+    def get_pitch_app_stat_line(self, mlb_id):
+        return self.game_data.parse_pitch_app_stats(mlb_id).value
 
     def view_at_bats_for_pitcher(self, mlb_id):
         subprocess.run(["clear"])
@@ -105,9 +115,12 @@ class ViewGameData(MenuItem):
         return user_options_prompt(choices, prompt)
 
     def select_batter_text(self, mlb_id):
-        batter_name = self.player_id_map.get(mlb_id).mlb_name
-        batter_game_stats = self.game_data.parse_bat_stats_for_game(mlb_id).value
+        batter_name = self.get_player_name(mlb_id)
+        batter_game_stats = self.get_bat_stat_line(mlb_id)
         return f"{batter_name} ({batter_game_stats})"
+
+    def get_bat_stat_line(self, mlb_id):
+        return self.game_data.parse_bat_stats_for_game(mlb_id).value
 
     def view_at_bats_for_batter(self, mlb_id):
         subprocess.run(["clear"])

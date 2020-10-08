@@ -1,15 +1,20 @@
+from copy import deepcopy
+
 from tabulate import tabulate
 
 from vigorish.constants import VigFile, DataSet
 from vigorish.config.database import PlayerId, RunnersOnBase
-from vigorish.data.viewers.table_viewer import DisplayTable, TableViewer
+from vigorish.cli.components.models import DisplayTable
+from vigorish.cli.components.table_viewer import TableViewer
 from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.list_helpers import group_and_sort_dict_list
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import inning_number_to_string
+from vigorish.util.string_helpers import inning_number_to_string, validate_at_bat_id
 
 
 class AllGameData:
+    _away_lineup = {}
+    _home_lineup = {}
     _all_at_bats = []
     _at_bat_map = {}
     _all_pitch_stats = []
@@ -20,7 +25,7 @@ class AllGameData:
     def __init__(self, db_session, scraped_data, bbref_game_id):
         self.db_session = db_session
         self.scraped_data = scraped_data
-        combined_data = scraped_data.get_json_combined_data(bbref_game_id)
+        combined_data = scraped_data.get_combined_game_data(bbref_game_id)
         if not combined_data:
             raise ScrapedDataException(
                 file_type=VigFile.COMBINED_GAME_DATA, data_set=DataSet.ALL, url_id=bbref_game_id
@@ -60,6 +65,41 @@ class AllGameData:
         return {id_map["mlb_id"]: bbref_id for bbref_id, id_map in self.player_id_dict.items()}
 
     @property
+    def away_team_id(self):
+        return self.away_team_data["team_id_br"]
+
+    @property
+    def home_team_id(self):
+        return self.home_team_data["team_id_br"]
+
+    @property
+    def away_team_starting_lineup(self):
+        if self._away_lineup:
+            return self._away_lineup
+        self._away_lineup = self.create_starting_lineup(self.away_team_data)
+        return self._away_lineup
+
+    @property
+    def home_team_starting_lineup(self):
+        if self._home_lineup:
+            return self._home_lineup
+        self._home_lineup = self.create_starting_lineup(self.home_team_data)
+        return self._home_lineup
+
+    def create_starting_lineup(self, team_data):
+        lineup = {}
+        for slot in team_data["starting_lineup"]:
+            mlb_id = self.bbref_id_to_mlb_id_map[slot["player_id_br"]]
+            player_id = self.player_id_map.get(mlb_id)
+            lineup[slot["bat_order"]] = {
+                "name": player_id.mlb_name,
+                "mlb_id": mlb_id,
+                "bbref_id": slot["player_id_br"],
+                "def_position": slot["def_position"],
+            }
+        return lineup
+
+    @property
     def all_at_bats(self):
         if self._all_at_bats:
             return self._all_at_bats
@@ -82,6 +122,14 @@ class AllGameData:
             return self._at_bat_map
         self._at_bat_map = {at_bat["at_bat_id"]: at_bat for at_bat in self.all_at_bats}
         return self._at_bat_map
+
+    @property
+    def all_player_ids_with_bat_stats(self):
+        batter_mlb_ids = [
+            int(validate_at_bat_id(at_bat_id).value["batter_mlb_id"])
+            for at_bat_id in self.at_bat_map.keys()
+        ]
+        return list(set(batter_mlb_ids))
 
     @property
     def all_pitch_stats(self):
@@ -109,7 +157,9 @@ class AllGameData:
         if self._all_bat_stats:
             return self._all_bat_stats
         bat_stats = self.away_team_data["batting_stats"] + self.home_team_data["batting_stats"]
-        self._all_bat_stats = [bat_stat for bat_stat in bat_stats]
+        self._all_bat_stats = [
+            bat_stat for bat_stat in bat_stats if bat_stat["total_plate_appearances"]
+        ]
         return self._all_bat_stats
 
     @property
@@ -120,10 +170,6 @@ class AllGameData:
             bat_stats["batter_id_mlb"]: bat_stats for bat_stats in self.all_bat_stats
         }
         return self._bat_stat_map
-
-    @property
-    def all_player_ids_with_bat_stats(self):
-        return [mlb_id for mlb_id in self.bat_stat_map.keys()]
 
     def get_all_at_bats_involving_batter(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
@@ -176,6 +222,21 @@ class AllGameData:
             innings_viewer[inning] = table_viewer
         return Result.Ok(innings_viewer)
 
+    def view_all_at_bats(self):
+        pass
+
+    def view_game_meta_info(self):
+        meta_info = deepcopy(self.game_meta_info)
+        meta_info.pop("umpires")
+        meta_info.pop("game_time_hour")
+        meta_info.pop("game_time_minute")
+        game_start_time = meta_info.pop("game_date_time_str")
+        table_rows = [[name, value] for name, value in meta_info.items()]
+        table_rows.insert(0, ["game_start_time", game_start_time])
+        table = tabulate(table_rows)
+        heading = f"Meta Information for game {self.bbref_game_id}"
+        return self.create_table_viewer([DisplayTable(table, heading)])
+
     def validate_mlb_id(self, mlb_id):
         if not isinstance(mlb_id, int):
             try:
@@ -201,8 +262,8 @@ class AllGameData:
         outs = f"{at_bat['outs_before_play']} {outs_plural}"
         at_bat_result = self.parse_at_bat_result(at_bat)
         return (
-            f"Pitcher..: {at_bat['pitcher_name']} [{pitch_app_stats}]\n"
-            f"Batter...: {at_bat['batter_name']} [{batter_game_stats}]\n"
+            f"Pitcher..: {at_bat['pitcher_name']} ({pitch_app_stats})\n"
+            f"Batter...: {at_bat['batter_name']} ({batter_game_stats})\n"
             f"Score....: {at_bat['score']}, {runners_on}\n"
             f"Inning...: {inning}, {outs}\n"
             f"Result...: {at_bat_result}\n"
@@ -240,13 +301,17 @@ class AllGameData:
         stat_list = []
         at_bats = f"{bat_stats['hits']}/{bat_stats['at_bats']}"
         if bat_stats["runs_scored"]:
-            stat_list.append(f"{bat_stats['runs_scored']} R")
+            runs_scored = f"{bat_stats['runs_scored']} " if bat_stats["runs_scored"] > 1 else ""
+            stat_list.append(f"{runs_scored}R")
         if bat_stats["rbis"]:
-            stat_list.append(f"{bat_stats['rbis']} RBI")
+            rbis = f"{bat_stats['rbis']} " if bat_stats["rbis"] > 1 else ""
+            stat_list.append(f"{rbis}RBI")
         if bat_stats["strikeouts"]:
-            stat_list.append(f"{bat_stats['strikeouts']} K")
+            strikeouts = f"{bat_stats['strikeouts']} " if bat_stats["strikeouts"] > 1 else ""
+            stat_list.append(f"{strikeouts}K")
         if bat_stats["bases_on_balls"]:
-            stat_list.append(f"{bat_stats['bases_on_balls']} BB")
+            bbs = f"{bat_stats['bases_on_balls']} " if bat_stats["bases_on_balls"] > 1 else ""
+            stat_list.append(f"{bbs}BB")
         if bat_stats["details"]:
             stat_list.append(self.parse_bat_stat_details(bat_stats["details"]))
         stat_line = f'{at_bats} {", ".join(stat_list)}'
@@ -269,13 +334,13 @@ class AllGameData:
             f", Game Score: {pitch_app['game_score']}" if pitch_app["game_score"] > 0 else ""
         )
         earned_runs = (
-            f"{pitch_app['earned_runs']} ER"
+            f"{pitch_app['earned_runs']}ER"
             if pitch_app["earned_runs"] == pitch_app["runs"]
-            else f"{pitch_app['runs']} R ({pitch_app['earned_runs']} ER)"
+            else f"{pitch_app['runs']}R ({pitch_app['earned_runs']}ER)"
         )
         stat_line = (
-            f"{pitch_app['innings_pitched']} IP, {earned_runs}, {pitch_app['hits']} H, "
-            f"{pitch_app['strikeouts']} K, {pitch_app['bases_on_balls']} BB{game_score}"
+            f"{pitch_app['innings_pitched']}IP, {earned_runs}, {pitch_app['hits']}H, "
+            f"{pitch_app['strikeouts']}K, {pitch_app['bases_on_balls']}BB{game_score}"
         )
         return Result.Ok(stat_line)
 
