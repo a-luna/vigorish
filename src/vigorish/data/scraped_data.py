@@ -57,9 +57,6 @@ class ScrapedData:
     def save_json(self, data_set, parsed_data):
         return self.json_storage.save_json(data_set, parsed_data)
 
-    def get_json(self, data_set, url_id):
-        return self.json_storage.get_json(data_set, url_id)
-
     def get_scraped_data(self, data_set, url_id):
         return self.json_storage.get_scraped_data(data_set, url_id)
 
@@ -90,11 +87,11 @@ class ScrapedData:
     def get_bbref_boxscore(self, bbref_game_id):
         return self.json_storage.get_scraped_data(DataSet.BBREF_BOXSCORES, bbref_game_id)
 
-    def save_json_combined_data(self, combined_data):
-        return self.json_storage.save_json_combined_data(combined_data)
+    def save_combined_game_data(self, combined_data):
+        return self.json_storage.save_combined_game_data(combined_data)
 
-    def get_json_combined_data(self, bbref_game_id):
-        return self.json_storage.get_json_combined_data(bbref_game_id)
+    def get_combined_game_data(self, bbref_game_id):
+        return self.json_storage.get_combined_game_data(bbref_game_id)
 
     def get_all_brooks_pitch_logs_for_date(self, game_date):
         brooks_game_ids = DateScrapeStatus.get_all_brooks_game_ids_for_date(
@@ -424,20 +421,20 @@ class ScrapedData:
         (boxscore, pfx_logs, avg_pitch_times) = result["scraped_data"]
         result = self.combine_data.execute(game_status, boxscore, pfx_logs, avg_pitch_times)
         if result.failure:
-            setattr(game_status, "combined_data_success", 0)
-            setattr(game_status, "combined_data_fail", 1)
+            game_status.combined_data_success = 0
+            game_status.combined_data_fail = 1
             self.db_session.commit()
             return {
                 "gather_scraped_data_success": True,
                 "combined_data_success": False,
                 "error": result.error,
             }
-        setattr(game_status, "combined_data_success", 1)
-        setattr(game_status, "combined_data_fail", 0)
+        game_status.combined_data_success = 1
+        game_status.combined_data_fail = 0
         self.db_session.commit()
         combined_data = result.value
         if write_json:
-            result = self.save_json_combined_data(combined_data)
+            result = self.save_combined_game_data(combined_data)
         if result.failure:
             return result
         result = update_pitch_apps_for_game_combined_data(self.db_session, combined_data)
