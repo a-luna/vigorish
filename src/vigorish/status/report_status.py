@@ -1,6 +1,6 @@
 from pprint import pformat
 
-from vigorish.cli.util import print_message
+from vigorish.cli.components import print_message
 from vigorish.config.database import Season, DateScrapeStatus
 from vigorish.enums import StatusReport
 from vigorish.util.datetime_util import get_date_range
@@ -27,6 +27,7 @@ def report_status_single_date(db_session, game_date, report_type):
         report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX
         or report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS
     )
+    missing_ids_str = ""
     if missing_pitchfx:
         if date_status.scraped_all_pitchfx_logs:
             missing_ids_str = "All PitchFX logs have been scraped"

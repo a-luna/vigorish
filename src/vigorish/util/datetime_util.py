@@ -7,9 +7,10 @@ from dateutil import tz
 from vigorish.util.dt_format_strings import DATE_ONLY_2, DT_AWARE, DT_NAIVE
 
 TIME_ZONE_NEW_YORK = tz.gettz("America/New_York")
+TIME_SPAN_ONE_DAY = timedelta(days=1)
 
 
-def get_date_range(start, end, inc=timedelta(days=1)):
+def get_date_range(start, end, inc=TIME_SPAN_ONE_DAY):
     if start > end:
         start_str = start.strftime(DATE_ONLY_2)
         end_str = end.strftime(DATE_ONLY_2)

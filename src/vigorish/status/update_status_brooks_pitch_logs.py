@@ -57,7 +57,7 @@ def update_game_status_records(db_session, pitch_logs_for_game):
         if not game_status:
             error = f"scrape_status_game does not contain an entry for bb_game_id: {bb_game_id}"
             return Result.Fail(error)
-        setattr(game_status, "scraped_brooks_pitch_logs", 1)
+        game_status.scraped_brooks_pitch_logs = 1
         return Result.Ok()
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
@@ -80,17 +80,17 @@ def create_pitch_appearance_status_records(db_session, pitch_logs_for_game):
             date_status = DateScrapeStatus.find_by_date(db_session, pitch_log.game_date)
             game_status = GameScrapeStatus.find_by_bb_game_id(db_session, pitch_log.bb_game_id)
             pitch_app_status = PitchAppScrapeStatus()
-            setattr(pitch_app_status, "pitcher_id_mlb", pitch_log.pitcher_id_mlb)
-            setattr(pitch_app_status, "pitch_app_id", pitch_log.pitch_app_id)
-            setattr(pitch_app_status, "bbref_game_id", pitch_log.bbref_game_id)
-            setattr(pitch_app_status, "bb_game_id", pitch_log.bb_game_id)
-            setattr(pitch_app_status, "pitch_count_pitch_log", pitch_log.total_pitch_count)
-            setattr(pitch_app_status, "scrape_status_game_id", game_status.id)
-            setattr(pitch_app_status, "scrape_status_date_id", date_status.id)
-            setattr(pitch_app_status, "season_id", season.id)
+            pitch_app_status.pitcher_id_mlb = pitch_log.pitcher_id_mlb
+            pitch_app_status.pitch_app_id = pitch_log.pitch_app_id
+            pitch_app_status.bbref_game_id = pitch_log.bbref_game_id
+            pitch_app_status.bb_game_id = pitch_log.bb_game_id
+            pitch_app_status.pitch_count_pitch_log = pitch_log.total_pitch_count
+            pitch_app_status.scrape_status_game_id = game_status.id
+            pitch_app_status.scrape_status_date_id = date_status.id
+            pitch_app_status.season_id = season.id
             if not pitch_log.parsed_all_info:
-                setattr(pitch_app_status, "scraped_pitchfx", 1)
-                setattr(pitch_app_status, "no_pitchfx_data", 1)
+                pitch_app_status.scraped_pitchfx = 1
+                pitch_app_status.no_pitchfx_data = 1
             db_session.add(pitch_app_status)
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
