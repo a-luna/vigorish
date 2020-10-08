@@ -1,3 +1,4 @@
+# flake8: noqa
 """decorators.log_call"""
 import inspect
 import logging
@@ -20,9 +21,7 @@ def retry(
     *,
     max_attempts=2,
     delay=1,
-    exceptions={
-        Exception,
-    },
+    exceptions=(Exception,),
     on_failure=None,
 ):
     """Retry the wrapped function when an exception is raised until max_attempts have failed."""

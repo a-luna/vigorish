@@ -41,8 +41,8 @@ def update_pitch_appearance_status_records(db_session, pitchfx_log):
                 f"entry for pitch_app_id: {pitchfx_log.pitch_app_id}"
             )
             return Result.Fail(error)
-        setattr(pitch_app_status, "scraped_pitchfx", 1)
-        setattr(pitch_app_status, "pitch_count_pitchfx", pitchfx_log.total_pitch_count)
+        pitch_app_status.scraped_pitchfx = 1
+        pitch_app_status.pitch_count_pitchfx = pitchfx_log.total_pitch_count
         return Result.Ok()
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")

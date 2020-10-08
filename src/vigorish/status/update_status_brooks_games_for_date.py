@@ -61,8 +61,8 @@ def update_date_status_records(db_session, games_for_date, game_date):
             date_str = games_for_date.game_date.strftime(DATE_ONLY)
             error = f"scrape_status_date does not contain an entry for date: {date_str}"
             return Result.Fail(error)
-        setattr(date_status, "scraped_daily_dash_brooks", 1)
-        setattr(date_status, "game_count_brooks", games_for_date.game_count)
+        date_status.scraped_daily_dash_brooks = 1
+        date_status.game_count_brooks = games_for_date.game_count
         return Result.Ok()
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
@@ -80,19 +80,15 @@ def update_game_status_records(db_session, season, new_brooks_games):
             if not game_status:
                 error = f"scrape_status_game does not contain a record for game: {bbref_game_id}"
                 return Result.Fail(error)
-            setattr(game_status, "game_date", game_date)
-            setattr(game_status, "bbref_game_id", bbref_game_id)
-            setattr(game_status, "bb_game_id", brooks_game_info.bb_game_id)
-            setattr(game_status, "game_time_hour", brooks_game_info.game_time_hour)
-            setattr(game_status, "game_time_minute", brooks_game_info.game_time_minute)
-            setattr(game_status, "game_time_zone", brooks_game_info.time_zone_name)
-            setattr(
-                game_status,
-                "pitch_app_count_brooks",
-                brooks_game_info.pitcher_appearance_count,
-            )
-            setattr(game_status, "scrape_status_date_id", date_status.id)
-            setattr(game_status, "season_id", season.id)
+            game_status.game_date = game_date
+            game_status.bbref_game_id = bbref_game_id
+            game_status.bb_game_id = brooks_game_info.bb_game_id
+            game_status.game_time_hour = brooks_game_info.game_time_hour
+            game_status.game_time_minute = brooks_game_info.game_time_minute
+            game_status.game_time_zone = brooks_game_info.time_zone_name
+            game_status.pitch_app_count_brooks = brooks_game_info.pitcher_appearance_count
+            game_status.scrape_status_date_id = date_status.id
+            game_status.season_id = season.id
             db_session.add(game_status)
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")

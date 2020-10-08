@@ -134,7 +134,7 @@ def import_people_csv(db_session, csv_folder):
                         missing_mlb_id=False,
                     )
                     db_session.add(p)
-                    setattr(player_id, "db_player_id", p.id)
+                    player_id.db_player_id = p.id
                     pbar.update()
         return Result.Ok()
     except Exception as e:

@@ -72,8 +72,8 @@ def update_status_bbref_games_for_date(db_session, games_for_date):
             date_str = games_for_date.game_date.strftime(DATE_ONLY)
             error = f"scrape_status_date does not contain an entry for date: {date_str}"
             return Result.Fail(error)
-        setattr(date_status, "scraped_daily_dash_bbref", 1)
-        setattr(date_status, "game_count_bbref", games_for_date.game_count)
+        date_status.scraped_daily_dash_bbref = 1
+        date_status.game_count_bbref = games_for_date.game_count
         return Result.Ok()
     except Exception as e:
         return Result.Fail(f"Error: {repr(e)}")
@@ -89,10 +89,10 @@ def create_game_status_records(db_session, season, new_bbref_game_ids):
             game_date = game_dict["game_date"]
             date_status = DateScrapeStatus.find_by_date(db_session, game_date)
             game_status = GameScrapeStatus()
-            setattr(game_status, "game_date", game_date)
-            setattr(game_status, "bbref_game_id", game_dict["game_id"])
-            setattr(game_status, "scrape_status_date_id", date_status.id)
-            setattr(game_status, "season_id", season.id)
+            game_status.game_date = game_date
+            game_status.bbref_game_id = game_dict["game_id"]
+            game_status.scrape_status_date_id = date_status.id
+            game_status.season_id = season.id
             db_session.add(game_status)
         except Exception as e:
             return Result.Fail(f"Error: {repr(e)}")
