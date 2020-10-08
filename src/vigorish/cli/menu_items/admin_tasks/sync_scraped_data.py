@@ -5,19 +5,15 @@ from copy import deepcopy
 
 from getch import pause
 from halo import Halo
-from tabulate import tabulate
 
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.prompts import (
+from vigorish.cli.components.dict_viewer import DictListTableViewer
+from vigorish.cli.components import (
     season_prompt,
     data_sets_prompt,
     user_options_prompt,
-    prompt_user_yes_no,
     file_types_prompt,
-)
-from vigorish.cli.util import (
     print_message,
-    get_random_bright_cli_color,
     get_random_cli_color,
     get_random_dots_spinner,
 )
@@ -194,36 +190,28 @@ class SyncScrapedData(MenuItem):
             pause(message="Press any key to continue...")
             return Result.Ok()
         for file_type, file_type_dict in self.sync_files.items():
-            for data_set, (out_of_sync, new_files, update_files) in file_type_dict.items():
+            for data_set, (out_of_sync, new_files, old_files) in file_type_dict.items():
                 if not out_of_sync:
                     continue
-                subprocess.run(["clear"])
-                header = f"Sync changes for {data_set} ({file_type} Files)\n"
-                print_message(header, bold=True, underline=True)
+                all_sync_files = []
+                new_count = 0
+                old_count = 0
                 if new_files:
-                    self.show_files_to_add(new_files)
-                if update_files:
-                    self.show_files_to_update(update_files)
-                if self.prompt_user_sync_files():
-                    self.apply_pending_changes(file_type, data_set, new_files, update_files)
+                    all_sync_files.extend(new_files)
+                    new_count = len(new_files)
+                if old_files:
+                    all_sync_files.extend(old_files)
+                    old_count = len(old_files)
+                table_viewer = self.create_table_viewer(
+                    all_sync_files, data_set, file_type, new_count, old_count
+                )
+                apply_changes = table_viewer.launch()
+                if apply_changes:
+                    self.apply_pending_changes(file_type, data_set, new_files, old_files)
         return Result.Ok()
 
-    def show_files_to_add(self, sync_files):
-        files_plural = "files below are" if len(sync_files) > 1 else "file below is"
-        message = f"{len(sync_files)} {files_plural} not present in the source folder/bucket:\n"
-        self.show_out_of_sync_files(sync_files, message, color="bright_yellow")
-
-    def show_files_to_update(self, sync_files):
-        files_plural = "files" if len(sync_files) > 1 else "file"
-        message = (
-            f"\n{len(sync_files)} {files_plural} below will be updated to the most recent "
-            "version:\n"
-        )
-        self.show_out_of_sync_files(sync_files, message, color="bright_cyan")
-
-    def show_out_of_sync_files(self, sync_files, message, color=None):
-        color = color or get_random_bright_cli_color()
-        display_files = [
+    def create_table_viewer(self, sync_files, data_set, file_type, new_count, old_count):
+        dict_list = [
             {
                 "filename": f["name"],
                 "size": f["size"],
@@ -232,29 +220,38 @@ class SyncScrapedData(MenuItem):
             }
             for f in sync_files
         ]
-        print_message(message, fg=color, bold=True)
-        print_message(tabulate(display_files, headers="keys"), wrap=False, fg=color)
+        new_plural = "files below are" if new_count > 1 else "file below is"
+        old_plural = "files" if old_count > 1 else "file"
+        file_dest = "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
+        file_src = "local folder" if self.sync_direction == SyncDirection.UP_TO_S3 else "S3 bucket"
+        m = []
+        if new_count:
+            m.append(f"{new_count} {new_plural} does not exist in the {file_dest}")
+        if old_count:
+            m.append(f"{old_count} {old_plural} have a more recent version in the {file_src}")
+        return DictListTableViewer(
+            dict_list,
+            prompt="Would you like to apply the changes to the files listed above?",
+            heading=f"File sync changes for {file_type} Files (Data Set: {data_set})",
+            heading_color="bright_yellow",
+            message="\n".join(m),
+            table_color="bright_cyan",
+        )
 
-    def prompt_user_sync_files(self):
-        prompt = "\nWould you like to apply the changes to the files listed above?"
-        return prompt_user_yes_no(prompt)
-
-    def apply_pending_changes(self, file_type, data_set, new_files, update_files):
+    def apply_pending_changes(self, file_type, data_set, new_files, old_files):
         subprocess.run(["clear"])
         self.s3_sync.events.sync_files_progress += self.update_sync_progress
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinner.start()
         if self.sync_direction == SyncDirection.UP_TO_S3:
-            self.s3_sync.upload_files_to_s3(
-                new_files, update_files, file_type, data_set, self.year
-            )
+            self.s3_sync.upload_files_to_s3(new_files, old_files, file_type, data_set, self.year)
             message = (
                 f"All changes have been applied, MLB {self.year} {data_set} {file_type} files "
                 "in local folder have been synced to s3 bucket!"
             )
         if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
             self.s3_sync.download_files_to_local_folder(
-                new_files, update_files, file_type, data_set, self.year
+                new_files, old_files, file_type, data_set, self.year
             )
             message = (
                 f"All changes have been applied, MLB {self.year} {data_set} {file_type} files "

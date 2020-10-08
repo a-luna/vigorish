@@ -572,29 +572,29 @@ class Season(Base):
     @classmethod
     def validate_date_range(cls, db_session, start, end):
         if start.year != end.year:
-            error = (
+            error = [
                 "Start and end dates must both be in the same year and within "
                 "the scope of that year's MLB Regular Season."
-            )
+            ]
             return Result.Fail(error)
         if start > end:
             start_str = start.strftime(DATE_ONLY)
             end_str = end.strftime(DATE_ONLY)
-            error = (
-                '"start" must be a date before (or the same date as) "end":\n'
-                f"start..: {start_str}\n"
-                f"end....: {end_str}"
-            )
+            error = [
+                '"start" must be a date before (or the same date as) "end":',
+                f"start..: {start_str}",
+                f"end....: {end_str}",
+            ]
             return Result.Fail(error)
         season = cls.find_by_year(db_session, start.year)
         start_date_valid = cls.is_date_in_season(db_session, start).success
         end_date_valid = cls.is_date_in_season(db_session, end).success
         if not start_date_valid or not end_date_valid:
-            error = (
-                f"Start and end date must both be within the {season.name}:\n"
-                f"{season.name} Start Date..: {season.start_date_str}\n"
-                f"{season.name} End Date....: {season.end_date_str}"
-            )
+            error = [
+                f"Start and end date must both be within the {season.name}:",
+                f"{season.name} Start Date..: {season.start_date_str}",
+                f"{season.name} End Date....: {season.end_date_str}",
+            ]
             return Result.Fail(error)
         return Result.Ok(season)
 

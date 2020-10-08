@@ -17,6 +17,7 @@ from vigorish.util.result import Result
 
 
 ELLIPSIS = b"\xe2\x80\xa6".decode("utf-8")
+NEWLINE_REGEX = re.compile(r"\n")
 WORD_REGEX = re.compile(r"\s?(?P<word>\b\w+\b)\s?")
 
 
@@ -51,19 +52,33 @@ def ellipsize(input_str, max_len):
 
 def wrap_text(input_str, max_len):
     trunc_lines = []
+    input_lines = [s for s in input_str.split("\n") if s]
+    newline_matches = [m for m in NEWLINE_REGEX.finditer(input_str)]
     last_word_boundary = max_len
-    processing_text = True
-    while processing_text:
-        if len(input_str) <= max_len:
-            trunc_lines.append(input_str)
-            processing_text = False
-            continue
-        for match in WORD_REGEX.finditer(input_str):
-            if match.end("word") > max_len:
+    for long_str in input_lines:
+        while True:
+            if len(long_str) <= max_len:
+                trunc_lines.append(long_str)
                 break
-            last_word_boundary = match.end("word") + 1
-        trunc_lines.append(f"{input_str[:last_word_boundary]}".strip())
-        input_str = input_str[last_word_boundary:]
+            for match in WORD_REGEX.finditer(long_str):
+                if match.end("word") > max_len:
+                    break
+                last_word_boundary = match.end("word") + 1
+            trunc_lines.append(f"{long_str[:last_word_boundary]}".strip())
+            long_str = long_str[last_word_boundary:]
+    current_index = 0
+    for m in newline_matches:
+        newline_index = m.start()
+        for num, s in enumerate(trunc_lines, start=1):
+            current_index = len(s)
+            if current_index < newline_index:
+                if num == len(trunc_lines):
+                    trunc_lines[num - 1] = f"{s}{m.group()}"
+                    break
+                newline_index -= len(s)
+                continue
+            trunc_lines[num - 1] = f"{s[:newline_index]}{m.group()}{s[newline_index:]}"
+            break
     return "\n".join(trunc_lines)
 
 
@@ -147,9 +162,7 @@ def validate_bbref_game_id(input_str):
 
 def validate_bbref_game_id_list(game_ids):
     return [
-        validate_bbref_game_id(gid).value
-        for gid in game_ids
-        if validate_bbref_game_id(gid).success
+        validate_bbref_game_id(gid).value for gid in game_ids if validate_bbref_game_id(gid).success
     ]
 
 
@@ -258,9 +271,7 @@ def parse_pitch_app_details_from_string(input):
         pitch_app_ids.append(at_bat_data["pitch_app_id"])
     for pitch_app_id in list(set(pitch_app_ids)):
         failed_pitch_app_dict[pitch_app_id] = [
-            at_bat["at_bat_id"]
-            for at_bat in at_bat_dicts
-            if at_bat["pitch_app_id"] == pitch_app_id
+            at_bat["at_bat_id"] for at_bat in at_bat_dicts if at_bat["pitch_app_id"] == pitch_app_id
         ]
     return failed_pitch_app_dict
 
