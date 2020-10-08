@@ -7,7 +7,7 @@ from pathlib import Path
 from events import Events
 from halo import Halo
 
-from vigorish.cli.util import (
+from vigorish.cli.components import (
     get_random_cli_color,
     get_random_dots_spinner,
 )

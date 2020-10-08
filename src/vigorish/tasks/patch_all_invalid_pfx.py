@@ -4,7 +4,7 @@ import subprocess
 from events import Events
 from halo import Halo
 
-from vigorish.cli.util import get_random_cli_color, get_random_dots_spinner
+from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner
 from vigorish.tasks.base import Task
 from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
 from vigorish.util.result import Result

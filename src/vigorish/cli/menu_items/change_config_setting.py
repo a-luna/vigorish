@@ -4,9 +4,8 @@ import subprocess
 from bullet import Bullet, Input, Numbers, SlidePrompt, colors
 from getch import pause
 
+from vigorish.cli.components import yes_no_cancel_prompt, yes_no_prompt, print_message
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.prompts import prompt_user_yes_no_cancel, prompt_user_yes_no
-from vigorish.cli.util import print_message
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import ConfigType, DataSet
 from vigorish.util.result import Result
@@ -67,7 +66,7 @@ class ChangeSetttingMenuItem(MenuItem):
     def get_data_sets_setting_will_apply_to(self):
         if self.setting.same_value_for_all_data_sets_is_required:
             return [DataSet.ALL]
-        result = prompt_user_yes_no_cancel("Use same setting for all data sets?")
+        result = yes_no_cancel_prompt("Use same setting for all data sets?")
         if result.failure:
             return None
         use_same_setting = result.value
@@ -108,9 +107,9 @@ class ChangeSetttingMenuItem(MenuItem):
     def get_numeric_menu(self, data_set):
         if not self.setting.cannot_be_disabled:
             prompt = f"Enable {self.setting_name_title} (Data Set = {data_set.name})? "
-            if not prompt_user_yes_no(prompt):
+            if not yes_no_prompt(prompt):
                 return (prompt, (True, None, None, None, None))
-        if prompt_user_yes_no(f"Use random values (Data Set = {data_set.name})? "):
+        if yes_no_prompt(f"Use random values (Data Set = {data_set.name})? "):
             min_max_are_valid = False
             while not min_max_are_valid:
                 subprocess.run(["clear"])

@@ -1,10 +1,9 @@
 """Menu that allows the user to view and modify all settings in vig.config.json."""
 import subprocess
 
+from vigorish.cli.components import yes_no_prompt, print_message, print_heading
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.change_config_setting import ChangeSetttingMenuItem
-from vigorish.cli.prompts import prompt_user_yes_no
-from vigorish.cli.util import print_message
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 
@@ -22,11 +21,12 @@ class ConfigSettingMenuItem(MenuItem):
 
     def launch(self):
         subprocess.run(["clear"])
-        setting_name = f"Setting: {self.setting_name_title} (Type: {self.data_type.name})"
-        print_message(f"{setting_name}\n", fg="bright_magenta", bold=True)
-        print_message(f"{self.setting.description}\n")
-        print_message(f"{self.current_settings}", wrap=False, fg="bright_yellow", bold=True)
-        if prompt_user_yes_no("\nChange current setting?"):
+        setting_heading = f"Setting: {self.setting_name_title} (Type: {self.data_type.name})"
+        print_heading(setting_heading, fg="bright_magenta")
+        print_message(self.setting.description)
+        print()
+        print_message(self.current_settings, wrap=False, fg="bright_yellow", bold=True)
+        if yes_no_prompt("Change current setting?"):
             change_setting_menu = ChangeSetttingMenuItem(self.app, self.setting_name)
             return change_setting_menu.launch()
         return Result.Ok(self.exit_menu)

@@ -6,9 +6,13 @@ from halo import Halo
 from getch import pause
 from tabulate import tabulate
 
-from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.prompts import prompt_user_yes_no, select_game_prompt, user_options_prompt
-from vigorish.cli.util import (
+from vigorish.cli.components.dict_viewer import DictListTableViewer
+from vigorish.cli.components.models import DisplayTable
+from vigorish.cli.components.table_viewer import TableViewer
+from vigorish.cli.components.util import (
+    yes_no_prompt,
+    select_game_prompt,
+    user_options_prompt,
     get_random_cli_color,
     get_random_dots_spinner,
     print_message,
@@ -16,6 +20,7 @@ from vigorish.cli.util import (
     print_error,
     print_success,
 )
+from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType
 from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
@@ -174,7 +179,7 @@ class InvestigateInvalidPitchFx(MenuItem):
 
     def display_invalid_pfx_details(self):
         invalid_pfx_error_data = []
-        for pa_id, pitch_app_dict in self.patch_invalid_pfx.invalid_pfx_map.items():
+        for pitch_app_dict in self.patch_invalid_pfx.invalid_pfx_map.values():
             for inning_id, inning_dict in pitch_app_dict.items():
                 for at_bat_id, ab_dict in inning_dict.items():
                     ab_val = validate_at_bat_id(at_bat_id).value
@@ -183,7 +188,7 @@ class InvestigateInvalidPitchFx(MenuItem):
                     pitch_numbers = sorted([pfx["ab_count"] for pfx in ab_data["pitchfx"]])
                     pitch_count = max(pfx["ab_total"] for pfx in ab_data["pitchfx"])
                     error_data = {
-                        "inning_id": ab_data["inning_id"][-5:],
+                        "inning_id": inning_id[-5:],
                         "pitcher": f'{ab_data["pitcher_name"]} ({ab_val["pitcher_team"]})',
                         "batter": f'{ab_data["batter_name"]} ({ab_val["batter_team"]})',
                         "pitch_count": pitch_count,
@@ -224,7 +229,7 @@ class InvestigateInvalidPitchFx(MenuItem):
             "is incorrect, while the inning, pitch count, and pitch numbers are correct. Would "
             "you like to check for at bats that match these criteria?"
         )
-        return prompt_user_yes_no(prompt)
+        return yes_no_prompt(prompt)
 
     def display_potential_data_match(self, num, total_matches, match_dict):
         self.describe_potential_data_match(num, total_matches, match_dict)
@@ -293,7 +298,7 @@ class InvestigateInvalidPitchFx(MenuItem):
             )
         prompt_heading = "\nWould you like to create a patch file to apply these changes?"
         print_heading(prompt_heading, fg="bright_yellow")
-        return prompt_user_yes_no(prompt)
+        return yes_no_prompt(prompt)
 
     def get_pitcher_name_and_id(self, at_bat_data):
         player_name = at_bat_data["pitcher"].split("(")[0].strip()
@@ -345,7 +350,7 @@ class InvestigateInvalidPitchFx(MenuItem):
             f"A patch list for {self.game_id} was successfully created! Would you like to apply "
             "these changes and attempt to combine the scraped data after doing so?"
         )
-        return prompt_user_yes_no(prompt)
+        return yes_no_prompt(prompt)
 
     def combine_scraped_data_for_game(self):
         subprocess.run(["clear"])
@@ -374,9 +379,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         subprocess.run(["clear"])
         total_pitch_apps = sum(len(f.keys()) for f in fail_results if f)
         pitch_apps_plural = "pitch appearances" if total_pitch_apps > 1 else "pitch appearance"
-        total_at_bats = sum(
-            len(at_bat_ids) for f in fail_results for at_bat_ids in f.values() if f
-        )
+        total_at_bats = sum(len(at_bat_ids) for f in fail_results for at_bat_ids in f.values() if f)
         at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
         error_header = f"PitchFX data could not be reconciled for game: {self.game_id}\n"
         error_message = (
@@ -396,70 +399,74 @@ class InvestigateInvalidPitchFx(MenuItem):
             "Would you like to analyze these results? In many cases, the batter/pitcher ID is "
             "incorrect and can be easily fixed by applying a patch file."
         )
-        return prompt_user_yes_no(prompt)
+        return yes_no_prompt(prompt)
 
     def prompt_user_view_patched_data(self):
         prompt = (
             "Would you like to see a report detailing the changes that were made by applying the "
             "patch list?"
         )
-        return prompt_user_yes_no(prompt)
+        return yes_no_prompt(prompt)
 
     def display_patched_data_tables(
         self, boxscore_changes, pitch_stat_changes_dict, pitch_stats_after
     ):
+        table_list = []
         total_tables = len(pitch_stat_changes_dict) + 1
-        boxscore_message = f"Table 1/{total_tables}: All Pitch Data for {self.game_id}\n"
-        subprocess.run(["clear"])
-        print_heading(boxscore_message, fg="bright_cyan")
-        print_message(boxscore_changes, wrap=False, fg="bright_cyan")
-        pause(message="\nPress any key to continue...")
+        boxscore_heading = f"Table 1/{total_tables}: All Pitch Data for {self.game_id}\n"
+        boxscore_table = DisplayTable(boxscore_changes, boxscore_heading)
+        table_list.append(boxscore_table)
         for num, (pitch_app_id, pitch_stat_changes) in enumerate(
             pitch_stat_changes_dict.items(), start=2
         ):
-            pitch_stats_header = (
-                f"Table {num}/{total_tables}: Stats for Pitch Appearance {pitch_app_id}\n"
-            )
-            name = pitch_stats_after[pitch_app_id]["pitcher_name"]
-            line = pitch_stats_after[pitch_app_id]["bbref_data"]
-            game_score = f" (GS: {line['game_score']})\n" if line["game_score"] > 0 else "\n"
-            earned_runs = (
-                f"{line['earned_runs']} ER"
-                if line["earned_runs"] == line["runs"]
-                else f"{line['runs']} R ({line['earned_runs']} ER)"
-            )
-            pitch_stats_message = (
-                f"{name}: {line['innings_pitched']} IP, {earned_runs}, {line['hits']} H, "
-                f"{line['strikeouts']} K, {line['bases_on_balls']} BB{game_score}"
-            )
-            subprocess.run(["clear"])
-            print_heading(pitch_stats_header, fg="bright_cyan")
-            print_message(pitch_stats_message, wrap=False, fg="bright_cyan")
-            print_message(pitch_stat_changes, wrap=False, fg="bright_cyan")
-            pause(message="\nPress any key to continue...")
+            pitch_app_header = f"Table {num}/{total_tables}: Pitch Appearance {pitch_app_id}\n"
+            pitch_app_message = self.get_pitch_app_stat_line(pitch_stats_after[pitch_app_id])
+            pitch_app_table = DisplayTable(pitch_stat_changes, pitch_app_header, pitch_app_message)
+            table_list.append(pitch_app_table)
+        table_viewer = TableViewer(
+            table_list=table_list,
+            prompt="Press Enter to return to previous menu",
+            confirm_only=True,
+            table_color="bright_cyan",
+            heading_color="bright_yellow",
+            message_color=None,
+        )
+        table_viewer.launch()
+
+    def get_pitch_app_stat_line(self, pitch_stats):
+        name = pitch_stats["pitcher_name"]
+        line = pitch_stats["bbref_data"]
+        game_score = f" (GS: {line['game_score']})\n" if line["game_score"] > 0 else "\n"
+        earned_runs = (
+            f"{line['earned_runs']} ER"
+            if line["earned_runs"] == line["runs"]
+            else f"{line['runs']} R ({line['earned_runs']} ER)"
+        )
+        return (
+            f"{name}: {line['innings_pitched']} IP, {earned_runs}, {line['hits']} H, "
+            f"{line['strikeouts']} K, {line['bases_on_balls']} BB{game_score}"
+        )
 
     def display_all_patch_results(self, all_patch_results, successful_change, invalid_pfx_change):
-        col_headers = ["#", "BBRef Game ID", "Status"]
+        col_headers = ["BBRef Game ID", "Status"]
         game_results = [
             [game_id, self.get_scrape_status(patch_results)]
             for game_id, patch_results in all_patch_results.items()
         ]
         game_results.sort(key=lambda x: (x[1], x[0]))
-        row_data = [[num, x[0], x[1]] for num, x in enumerate(game_results, start=1)]
-        patch_list_count = len([r for r in all_patch_results.values() if r["created_patch_list"]])
+        row_data = [dict(zip(col_headers, row)) for row in game_results]
         heading = f"Operation: Patch all Invalid PitchFX Data for MLB {self.year}"
-        messages = [f"- Processed {len(game_results)} total games\n"]
-        if patch_list_count:
-            messages.append(f"- Created a patch list for {patch_list_count} games")
-        if successful_change:
-            messages.append(f"- Eliminated all PitchFX errors from {successful_change} games")
-        if invalid_pfx_change:
-            messages.append(f"- PitchFX data errors still exist in {invalid_pfx_change} games")
-        print_heading(heading)
-        for message in messages:
-            print_message(message)
-        print_message(tabulate(row_data, headers=col_headers), fg="bright_cyan", wrap=False)
-        pause(message="\nPress any key to continue...")
+        message = self.get_patch_results_message(all_patch_results, game_results)
+        table_viewer = DictListTableViewer(
+            row_data,
+            prompt="Press Enter to return to previous menu",
+            confirm_only=True,
+            heading=heading,
+            heading_color="bright_yellow",
+            message=message,
+            table_color="bright_cyan",
+        )
+        table_viewer.launch()
 
     def get_scrape_status(self, patch_results):
         if not patch_results["created_patch_list"]:
@@ -472,6 +479,66 @@ class InvestigateInvalidPitchFx(MenuItem):
             return "invalid pfx errors remain"
         if patch_results["pfx_errors"]:
             return "valid pfx errors remain"
+
+    def get_patch_results_message(self, all_patch_results, game_results):
+        patch_list_created_count = self.get_patch_list_created_count(all_patch_results)
+        patch_list_failed_count = self.get_patch_list_failed_count(all_patch_results)
+        fixed_all_count = self.get_fixed_all_count(all_patch_results)
+        remaining_errors = self.get_remaining_error_count(all_patch_results)
+        messages = [f"Processed {len(game_results)} total games"]
+        if patch_list_failed_count:
+            messages.append(
+                f"  - Failed to create a patch list for {patch_list_failed_count} games"
+            )
+        if patch_list_created_count:
+            messages.append(f"  - Created a patch list for {patch_list_created_count} games")
+        if fixed_all_count:
+            messages.append(f"  - Eliminated all PitchFX errors from {fixed_all_count} games")
+        if remaining_errors:
+            messages.append(f"  - PitchFX data errors still exist in {remaining_errors} games")
+        return "\n".join(messages)
+
+    def get_patch_list_created_count(self, all_patch_results):
+        return len(
+            [
+                r
+                for r in all_patch_results.values()
+                if "created_patch_list" in r and r["created_patch_list"]
+            ]
+        )
+
+    def get_patch_list_failed_count(self, all_patch_results):
+        return len(
+            [
+                r
+                for r in all_patch_results.values()
+                if "created_patch_list" in r and not r["created_patch_list"]
+            ]
+        )
+
+    def get_fixed_all_count(self, all_patch_results):
+        return len(
+            [
+                r
+                for r in all_patch_results.values()
+                if "fixed_all_errors" in r and r["fixed_all_errors"]
+            ]
+        )
+
+    def get_invalid_pfx_count(self, all_patch_results):
+        return len(
+            [r for r in all_patch_results.values() if "invalid_pfx" in r and r["invalid_pfx"]]
+        )
+
+    def get_pfx_error_count(self, all_patch_results):
+        return len([r for r in all_patch_results.values() if "pfx_errors" in r and r["pfx_errors"]])
+
+    def get_remaining_error_count(self, all_patch_results):
+        return (
+            self.get_patch_list_failed_count(all_patch_results)
+            + self.get_invalid_pfx_count(all_patch_results)
+            + self.get_pfx_error_count(all_patch_results)
+        )
 
     def error_occurred(self, error_message):
         print_error(error_message)

@@ -1,6 +1,6 @@
 from halo import Halo
 
-from vigorish.cli.util import get_random_cli_color, get_random_dots_spinner
+from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner
 from vigorish.config.database import (
     GameScrapeStatus,
     Season,
@@ -88,7 +88,7 @@ class RemovePitchFxLogsWithoutData:
         if not game_status:
             return Result.Fail(f"Error! Failed to retrieve GameScrapeStatus for {game_id}")
         self.results["scrape_dates"].add(game_status.game_date)
-        setattr(game_status, "scraped_brooks_pitch_logs", 0)
+        game_status.scraped_brooks_pitch_logs = 0
         return Result.Ok()
 
     def get_pitch_app_ids_for_game(self, game_id):

@@ -4,6 +4,12 @@ import subprocess
 from halo import Halo
 from tabulate import tabulate
 
+from vigorish import __version__
+from vigorish.cli.components import (
+    print_message,
+    get_random_cli_color,
+    get_random_dots_spinner,
+)
 from vigorish.cli.menu import Menu
 from vigorish.cli.menus.all_jobs_menu import AllJobsMenu
 from vigorish.cli.menus.admin_tasks_menu import AdminTasksMenu
@@ -14,7 +20,6 @@ from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
 from vigorish.cli.menu_items.status_report import StatusReportMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
-from vigorish.cli.util import print_message, get_random_cli_color, get_random_dots_spinner
 from vigorish.config.database import db_setup_complete
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
@@ -31,9 +36,7 @@ class MainMenu(Menu):
 
     @property
     def initial_setup_complete(self):
-        return (
-            self.node_is_installed and self.node_modules_folder_exists and self.db_setup_complete
-        )
+        return self.node_is_installed and self.node_modules_folder_exists and self.db_setup_complete
 
     @property
     def is_refresh_needed(self):
@@ -77,7 +80,7 @@ class MainMenu(Menu):
         self.db_setup_complete = db_setup_complete(self.db_engine, self.db_session)
 
     def display_menu_text(self):
-        print_message("Welcome to vigorish!\n", fg="bright_cyan", bold=True)
+        print_message(f"vigorish v{__version__}\n", fg="bright_cyan", bold=True)
         self.perform_simple_tasks()
         if self.initial_setup_complete:
             self.display_audit_report()
@@ -87,16 +90,17 @@ class MainMenu(Menu):
 
     def display_audit_report(self):
         if self.audit_report:
-            table_rows = []
-            for year, report in self.audit_report.items():
-                row = {}
-                row["season"] = f"MLB {year} ({report['total_games']} games)"
-                row["scraped"] = len(report["scraped"])
-                row["combined"] = len(report["successful"])
-                row["failed"] = (
-                    len(report["failed"]) + len(report["pfx_error"]) + len(report["invalid_pfx"])
-                )
-                table_rows.append(row)
+            table_rows = [
+                {
+                    "season": f"MLB {year} ({report['total_games']} games)",
+                    "scraped": len(report["scraped"]),
+                    "combined": len(report["successful"]),
+                    "failed": len(report["failed"])
+                    + len(report["pfx_error"])
+                    + len(report["invalid_pfx"]),
+                }
+                for year, report in self.audit_report.items()
+            ]
             print_message(tabulate(table_rows, headers="keys"), wrap=False)
         else:
             message = "All prerequisites are installed and database is initialized."
@@ -155,9 +159,7 @@ class MainMenu(Menu):
             else False
         )
         invalid_pfx_errors_exist = (
-            any(
-                len(audit_report["invalid_pfx"]) > 0 for audit_report in self.audit_report.values()
-            )
+            any(len(audit_report["invalid_pfx"]) > 0 for audit_report in self.audit_report.values())
             if self.audit_report
             else False
         )

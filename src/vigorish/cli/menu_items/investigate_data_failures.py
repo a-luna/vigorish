@@ -3,8 +3,8 @@ import subprocess
 
 from getch import pause
 
+from vigorish.cli.components import print_heading, print_message
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.util import print_heading, print_message
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import AuditError
 from vigorish.util.result import Result

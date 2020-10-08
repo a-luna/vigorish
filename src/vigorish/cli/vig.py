@@ -6,8 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from vigorish.cli.click_params import DateString, MlbSeason, JobName
+from vigorish.cli.components import print_message, validate_scrape_dates
 from vigorish.cli.menus.main_menu import MainMenu
-from vigorish.cli.util import print_message, validate_scrape_dates
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.config.database import get_db_url, initialize_database, ScrapeJob
 from vigorish.config.config_file import ConfigFile
@@ -24,11 +24,6 @@ from vigorish.status.report_status import (
 from vigorish.tasks.sync_data_no_prompts import SyncScrapedDataNoPrompts
 from vigorish.util.datetime_util import today_str, current_year
 from vigorish.util.result import Result
-
-# TODO: Add Refresh Game Data menu option
-# TODO: New Status Report menu option - Single Game. User can provide either BB or BR ID
-# TODO: Another Status Report option - Pitch Appearance. Simply call .display() method
-# TODO: Eventually, will need menu option to edit season dates and add new seasons
 
 
 @click.group()

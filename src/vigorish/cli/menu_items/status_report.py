@@ -3,12 +3,8 @@ import subprocess
 
 from getch import pause
 
+from vigorish.cli.components import user_options_prompt, single_date_prompt, season_prompt
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.prompts import (
-    user_options_prompt,
-    single_date_prompt,
-    season_prompt,
-)
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import StatusReport
 from vigorish.status.report_status import (
@@ -23,6 +19,10 @@ PROMPT_TEXT = "Choose the type of report you wish to generate from the options b
 
 class StatusReportMenuItem(MenuItem):
     def __init__(self, app):
+        # TODO: Implement TableViewer with Date Range Summary reports, currently displays a huge
+        #       wall of text when reporting a full season, for example
+        # TODO: New Status Report menu option - Single Game. User can provide either BB or BR ID
+        # TODO: Another Status Report option - Pitch Appearance. Simply call .display() method
         super().__init__(app)
         self.menu_item_text = "Status Reports"
         self.menu_item_emoji = EMOJI_DICT.get("CHART")

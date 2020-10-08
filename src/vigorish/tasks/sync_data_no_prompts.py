@@ -4,7 +4,7 @@ import subprocess
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.util import (
+from vigorish.cli.components import (
     print_heading,
     print_message,
     get_random_cli_color,
