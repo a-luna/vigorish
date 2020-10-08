@@ -12,7 +12,6 @@ from vigorish.config.database import (
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
-from vigorish.data.util import calc_pitch_metrics, process_data_set
 from vigorish.tasks.combine_scraped_data import CombineScrapedData
 from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
@@ -360,62 +359,6 @@ class ScrapedData:
             converted_url_ids.append(game_date)
         return converted_url_ids
 
-    def get_avg_pitch_times(self, use_cached=True):
-        return self.cached_avg_pitch_times() if use_cached else self.calculate_avg_pitch_times()
-
-    def cached_avg_pitch_times(self):
-        return {
-            "pitch_metrics": {
-                "total": 15891882.0,
-                "count": 665238,
-                "avg": 23.9,
-                "max": 49.0,
-                "min": 3.0,
-                "range": 46.0,
-                "trim": True,
-                "trim_stdev": 0.2,
-            },
-            "at_bat_metrics": {
-                "total": 6794841.0,
-                "count": 158161,
-                "avg": 43.0,
-                "max": 79.0,
-                "min": 28.0,
-                "range": 51.0,
-                "trim": True,
-                "trim_stdev": 0.25,
-            },
-            "inning_metrics": {
-                "total": 8063474.0,
-                "count": 50328,
-                "avg": 160.2,
-                "max": 310.0,
-                "min": 131.0,
-                "range": 179.0,
-                "trim": True,
-                "trim_stdev": 0.007,
-            },
-        }
-
-    def calculate_avg_pitch_times(self):
-        game_ids = Season_View.get_all_bbref_game_ids_combined_no_missing_pfx(self.db_engine)
-        pitch_samples = []
-        at_bat_samples = []
-        inning_samples = []
-        for game_id in game_ids:
-            combined_data = self.get_json_combined_data(game_id)
-            if not combined_data:
-                continue
-            result = calc_pitch_metrics(combined_data)
-            pitch_samples.extend(result[0])
-            at_bat_samples.extend(result[2])
-            inning_samples.extend(result[4])
-        return {
-            "pitch_metrics": process_data_set(pitch_samples, trim=True, st_dev=0.2),
-            "at_bat_metrics": process_data_set(at_bat_samples, trim=True, st_dev=0.25),
-            "inning_metrics": process_data_set(inning_samples, trim=True, st_dev=0.007),
-        }
-
     def combine_boxscore_and_pfx_data(self, game_id, apply_patch_list=True, write_json=True):
         game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, game_id)
         result = self.gather_scraped_data_for_game(game_id, apply_patch_list)
@@ -485,3 +428,37 @@ class ScrapedData:
         avg_pitch_times = self.get_avg_pitch_times()
         scraped_data = (boxscore, pfx_logs, avg_pitch_times)
         return {"gather_scraped_data_success": True, "scraped_data": scraped_data}
+
+    def get_avg_pitch_times(self):
+        return {
+            "pitch_metrics": {
+                "total": 15965027.0,
+                "count": 668326,
+                "avg": 23.888083061260524,
+                "max": 49.0,
+                "min": 3.0,
+                "range": 46.0,
+                "trim": True,
+                "trim_stdev": 0.2,
+            },
+            "at_bat_metrics": {
+                "total": 6826377.0,
+                "count": 158894,
+                "avg": 42.96182989917807,
+                "max": 79.0,
+                "min": 28.0,
+                "range": 51.0,
+                "trim": True,
+                "trim_stdev": 0.25,
+            },
+            "inning_metrics": {
+                "total": 8100071.0,
+                "count": 50559,
+                "avg": 160.21026919045076,
+                "max": 309.0,
+                "min": 131.0,
+                "range": 178.0,
+                "trim": True,
+                "trim_stdev": 0.007,
+            },
+        }
