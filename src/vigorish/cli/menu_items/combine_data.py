@@ -4,19 +4,19 @@ import subprocess
 import time
 from collections import defaultdict
 
-from tabulate import tabulate
-
 import enlighten
 from getch import pause
 from halo import Halo
+from tabulate import tabulate
 
-from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.prompts import user_options_prompt, audit_report_season_prompt
-from vigorish.cli.util import (
+from vigorish.cli.components import (
+    user_options_prompt,
+    audit_report_season_prompt,
     print_message,
     get_random_cli_color,
     get_random_dots_spinner,
 )
+from vigorish.cli.menu_item import MenuItem
 from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import DataSet, ScrapeCondition, AuditError
@@ -33,9 +33,7 @@ STATUS_BAR_FORMAT = (
     "Elapsed: {elapsed}"
 )
 STATUS_BAR_COLOR = "bold_gray100_on_darkviolet"
-DATE_BAR_FORMAT = (
-    "{desc}{desc_pad}{percentage:3.0f}% |{bar}| {count:{len_total}d}/{total:d} {unit}"
-)
+DATE_BAR_FORMAT = "{desc}{desc_pad}{percentage:3.0f}% |{bar}| {count:{len_total}d}/{total:d} {unit}"
 
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger("enlighten")
@@ -57,6 +55,7 @@ class CombineGameDataMenuItem(MenuItem):
         self.audit_type = None
         self.scrape_year = None
         self.current_game_date = None
+        self.current_game_id = None
         self.combine_data_success_game_ids = []
         self.combine_data_fail_results = {}
         self.all_pfx_errors = defaultdict(dict)
@@ -247,7 +246,7 @@ class CombineGameDataMenuItem(MenuItem):
 
     @property
     def combined_success_and_no_pfx_errors(self):
-        return not (self.combine_data_fail_results or self.all_pfx_errors)
+        return not self.total_combined_fail and not self.total_games_any_pfx_error
 
     def launch(self):
         subprocess.run(["clear"])
@@ -281,10 +280,16 @@ class CombineGameDataMenuItem(MenuItem):
         self.init_progress_bars(game_date=self.all_dates_in_season[0])
         subprocess.run(["clear"])
         for game_date in self.all_dates_in_season:
+            if self.every_eligible_game_is_combined():
+                num_days_remaining = self.get_number_of_days_remaining()
+                self.update_progress_bars(game_date)
+                self.date_progress_bar.update(num_days_remaining)
+                LOGGER.info(f"Processed all eligible games for MLB {self.scrape_year}.")
+                time.sleep(1.5)
+                break
             game_ids = self.date_game_id_map.get(game_date, None)
             if not game_ids:
-                desc = f"Nothing to combine for {game_date.strftime(DATE_MONTH_NAME)}"
-                self.update_progress_bars(game_date, desc)
+                self.update_progress_bars(game_date)
                 self.date_progress_bar.update()
                 time.sleep(0.75)
                 continue
@@ -324,10 +329,17 @@ class CombineGameDataMenuItem(MenuItem):
         self.game_progress_bar_fail = self.game_progress_bar_success.add_subcounter("red2")
         self.game_progress_bar_error = self.game_progress_bar_success.add_subcounter("yellow2")
 
+    def every_eligible_game_is_combined(self):
+        return self.total_combined == self.total_games
+
+    def get_number_of_days_remaining(self):
+        return self.total_dates - self.date_progress_bar.count
+
     def combine_selected_games(self, game_date, game_ids):
         for bbref_game_id in game_ids:
             fail_results = []
-            self.update_progress_bars(game_date, bbref_game_id)
+            self.current_game_id = bbref_game_id
+            self.update_progress_bars(game_date)
             # LOGGER.info(f"Begin combining scraped data for game: {bbref_game_id}")
             result = self.scraped_data.combine_boxscore_and_pfx_data(bbref_game_id)
             if not result["gather_scraped_data_success"]:
@@ -360,7 +372,7 @@ class CombineGameDataMenuItem(MenuItem):
                 # LOGGER.info(f"Successfully combined scraped data for game: {bbref_game_id}")
         return Result.Ok()
 
-    def update_progress_bars(self, game_date, game_id):
+    def update_progress_bars(self, game_date):
         date_str = game_date.strftime(DATE_MONTH_NAME)
         self.status_bar.update(
             total_combined=self.total_combined,
@@ -368,7 +380,7 @@ class CombineGameDataMenuItem(MenuItem):
             date_str=date_str,
         )
         self.date_progress_bar.desc = date_str
-        self.game_progress_bar_success.desc = game_id
+        self.game_progress_bar_success.desc = self.current_game_id
 
     def log_pfx_data_error_details(self, bbref_game_id, fail_results):
         total_pitch_apps = sum(len(f.keys()) for f in fail_results)
@@ -390,12 +402,9 @@ class CombineGameDataMenuItem(MenuItem):
     def display_results(self):
         subprocess.run(["clear"])
         if self.combined_success_and_no_pfx_errors:
-            success_message = (
-                f"\nAll game data ({self.total_games} game{'s' if self.total_games > 1 else ''} "
-                "total) was successfully combined"
-            )
+            plural = "games total" if self.total_games > 1 else "game"
+            success_message = f"\nAll game data ({self.total_games} {plural}) combined, no errors"
             print_message(success_message, wrap=False, fg="bright_cyan", bold=True)
-            return
         if self.failed_game_ids:
             self.display_games_failed_to_combine()
         if self.all_pfx_errors:
@@ -404,8 +413,7 @@ class CombineGameDataMenuItem(MenuItem):
 
     def display_games_failed_to_combine(self):
         error_message = (
-            f"Error prevented scraped data being combined for {len(self.failed_game_ids)} "
-            "games:"
+            f"Error prevented scraped data being combined for {len(self.failed_game_ids)} " "games:"
         )
         error_details = [
             {"bbref_game_id": game_id, "error": error}
