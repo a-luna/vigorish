@@ -31,7 +31,7 @@ DEFAULT_CONFIG = VIG_FOLDER / "vig.config.json"
 class ConfigFile:
     def __init__(self, config_file_path=None):
         if os.environ.get("ENV") == "TEST":
-            self.config_filepath = os.environ.get("DATABASE_URL")
+            self.config_filepath = os.environ.get("CONFIG_FILE")
         else:
             if config_file_path:
                 self.config_filepath = config_file_path
