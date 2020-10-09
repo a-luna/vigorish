@@ -5,8 +5,8 @@ from bullet.charDef import ARROW_LEFT_KEY, ARROW_RIGHT_KEY
 from bullet.cursor import hide as cursor_hidden
 from bullet.utils import moveCursorUp
 
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.cli.components.util import print_message
+from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 
 NAV_PREV = f"{EMOJI_DICT.get('LEFT')}  Previous"
 NAV_NEXT = f"Next {EMOJI_DICT.get('RIGHT')}"

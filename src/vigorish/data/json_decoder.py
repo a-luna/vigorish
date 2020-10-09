@@ -2,10 +2,7 @@
 from dacite import from_dict
 from dateutil import parser
 
-from vigorish.patch.bbref_boxscores import (
-    BBRefBoxscorePatchList,
-    PatchBBRefBoxscorePitchSequence,
-)
+from vigorish.patch.bbref_boxscores import BBRefBoxscorePatchList, PatchBBRefBoxscorePitchSequence
 from vigorish.patch.bbref_games_for_date import (
     BBRefGamesForDatePatchList,
     PatchBBRefGamesForDateGameID,
@@ -16,7 +13,6 @@ from vigorish.patch.brooks_pitchfx import (
     PatchBrooksPitchFxDeletePitchFx,
     PatchBrooksPitchFxPitcherId,
 )
-from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.scrape.bbref_boxscores.models.bat_stats import BBRefBatStats
 from vigorish.scrape.bbref_boxscores.models.bat_stats_detail import BBRefBatStatsDetail
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
@@ -29,6 +25,7 @@ from vigorish.scrape.bbref_boxscores.models.pbp_substitution import BBRefInGameS
 from vigorish.scrape.bbref_boxscores.models.pitch_stats import BBRefPitchStats
 from vigorish.scrape.bbref_boxscores.models.starting_lineup_slot import BBRefStartingLineupSlot
 from vigorish.scrape.bbref_boxscores.models.umpire import BBRefUmpire
+from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.scrape.brooks_pitch_logs.models.pitch_log import BrooksPitchLog

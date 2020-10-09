@@ -1,6 +1,6 @@
 """Db model that describes a boxscore for an MLB game and tracks data scraping progress."""
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import backref, relationship
 
 from vigorish.config.database import Base
 from vigorish.util.list_helpers import display_dict

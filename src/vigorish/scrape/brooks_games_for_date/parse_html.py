@@ -2,18 +2,18 @@
 from datetime import datetime
 from pathlib import Path
 
-from lxml import html
 import w3lib.url
+from lxml import html
 
-from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
-from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.config.database import Season
+from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
+from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
     parse_timestamp,
-    validate_brooks_game_id,
     validate_bbref_game_id_list,
+    validate_brooks_game_id,
 )
 
 GAME_TABLE_XPATH = '//td[@class="dashcell"]/table'

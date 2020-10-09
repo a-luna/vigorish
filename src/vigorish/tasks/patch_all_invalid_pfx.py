@@ -1,5 +1,5 @@
-from copy import deepcopy
 import subprocess
+from copy import deepcopy
 
 from events import Events
 from halo import Halo

@@ -1,5 +1,5 @@
 """Total runs, hits and errors by a team and by the opponent team in a single game."""
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base

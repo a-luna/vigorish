@@ -6,8 +6,8 @@ import subprocess
 from pathlib import Path
 from typing import Tuple, Union
 
-from Naked.toolshed.shell import execute_js
 from Naked.toolshed.shell import execute as execute_shell_command
+from Naked.toolshed.shell import execute_js
 
 from vigorish.util.result import Result
 

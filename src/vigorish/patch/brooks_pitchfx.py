@@ -1,5 +1,5 @@
-from copy import deepcopy
 from collections import defaultdict, OrderedDict
+from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import List
 
@@ -10,8 +10,8 @@ from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.util.list_helpers import group_and_sort_list
-from vigorish.util.string_helpers import get_brooks_team_id
 from vigorish.util.result import Result
+from vigorish.util.string_helpers import get_brooks_team_id
 
 
 @dataclass

@@ -1,14 +1,12 @@
 """Update bbref_player_id_map.json file."""
 import subprocess
+
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.menu_item import MenuItem
+from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner
 from vigorish.cli.components.dict_viewer import DictListTableViewer
-from vigorish.cli.components import (
-    get_random_cli_color,
-    get_random_dots_spinner,
-)
+from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT
 from vigorish.tasks.update_player_maps import UpdatePlayerIdMap as UpdatePlayerIdMapTask
 from vigorish.util.result import Result

@@ -1,7 +1,7 @@
 """CLI elements that extend Bullet classes for"""
 import subprocess
 
-from bullet import Input, colors
+from bullet import colors, Input
 from getch import pause
 
 from vigorish.cli.components.util import print_error, print_heading, print_message

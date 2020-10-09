@@ -1,5 +1,5 @@
 """Db model that describes a half-inning of a MLB game."""
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base

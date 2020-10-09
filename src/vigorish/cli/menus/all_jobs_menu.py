@@ -1,7 +1,7 @@
 """Menu that allows the user to view all jobs grouped by status."""
 from vigorish.cli.menu import Menu
-from vigorish.cli.menus.jobs_menu import JobsMenu
 from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
+from vigorish.cli.menus.jobs_menu import JobsMenu
 from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
 

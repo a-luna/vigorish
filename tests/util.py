@@ -1,3 +1,14 @@
+from tests.test_bbref_boxscores import GAME_DATE as GAME_DATE_BBREF_BOX
+from tests.test_bbref_boxscores import parse_bbref_boxscore_from_html
+from tests.test_bbref_games_for_date import parse_bbref_games_for_date_from_html
+from tests.test_brooks_games_for_date import GAME_DATE as GAME_DATE_BB_DAILY
+from tests.test_brooks_games_for_date import parse_brooks_games_for_date_from_html
+from tests.test_brooks_pitch_logs import BBREF_GAME_ID as GAME_ID_PLOG
+from tests.test_brooks_pitch_logs import GAME_DATE as GAME_DATE_PLOG
+from tests.test_brooks_pitch_logs import parse_brooks_pitch_logs_for_game_from_html
+from tests.test_brooks_pitchfx import BBREF_GAME_ID as GAME_ID_PFX
+from tests.test_brooks_pitchfx import GAME_DATE as GAME_DATE_PFX
+from tests.test_combine_scraped_data import COMBINED_DATA_GAME_DICT
 from vigorish.config.database import Season
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_pitchfx.parse_html import parse_pitchfx_log
@@ -8,29 +19,8 @@ from vigorish.status.update_status_bbref_games_for_date import (
 from vigorish.status.update_status_brooks_games_for_date import (
     update_brooks_games_for_date_single_date as update_status_brooks_games_for_date,
 )
-from vigorish.status.update_status_brooks_pitch_logs import (
-    update_status_brooks_pitch_logs_for_game,
-)
+from vigorish.status.update_status_brooks_pitch_logs import update_status_brooks_pitch_logs_for_game
 from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
-from tests.test_bbref_games_for_date import parse_bbref_games_for_date_from_html
-from tests.test_brooks_games_for_date import (
-    parse_brooks_games_for_date_from_html,
-    GAME_DATE as GAME_DATE_BB_DAILY,
-)
-from tests.test_bbref_boxscores import (
-    parse_bbref_boxscore_from_html,
-    GAME_DATE as GAME_DATE_BBREF_BOX,
-)
-from tests.test_brooks_pitch_logs import (
-    parse_brooks_pitch_logs_for_game_from_html,
-    BBREF_GAME_ID as GAME_ID_PLOG,
-    GAME_DATE as GAME_DATE_PLOG,
-)
-from tests.test_brooks_pitchfx import (
-    BBREF_GAME_ID as GAME_ID_PFX,
-    GAME_DATE as GAME_DATE_PFX,
-)
-from tests.test_combine_scraped_data import COMBINED_DATA_GAME_DICT
 
 
 def seed_database_with_test_data(db_session, scraped_data):

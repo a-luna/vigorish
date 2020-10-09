@@ -1,7 +1,7 @@
-from sqlalchemy import select, func, join
+from sqlalchemy import func, join, select
 from sqlalchemy_utils import create_view
 
-from vigorish.config.database import Base, Season, PitchAppScrapeStatus
+from vigorish.config.database import Base, PitchAppScrapeStatus, Season
 
 
 class Season_PitchApp_View(Base):

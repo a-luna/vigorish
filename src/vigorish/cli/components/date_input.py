@@ -1,6 +1,6 @@
 import subprocess
 
-from bullet import Input, colors
+from bullet import colors, Input
 from dateutil import parser
 from getch import pause
 

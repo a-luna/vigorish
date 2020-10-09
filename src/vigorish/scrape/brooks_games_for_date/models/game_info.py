@@ -1,5 +1,6 @@
 """Individual game info scraped from brooksbaseball.com."""
 from datetime import datetime
+
 from dateutil import tz
 
 

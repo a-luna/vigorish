@@ -1,8 +1,8 @@
 """Menu that contains other menus related to configuring/administrating vigorish."""
 from vigorish.cli.menu import Menu
+from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
 from vigorish.cli.menus.config_settings_menu import ConfigSettingsMenu
 from vigorish.cli.menus.env_var_settings_menu import EnvVarSettingsMenu
-from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
 from vigorish.constants import EMOJI_DICT
 
 

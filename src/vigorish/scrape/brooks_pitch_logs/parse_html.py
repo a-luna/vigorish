@@ -6,7 +6,6 @@ from lxml import html
 from vigorish.scrape.brooks_pitch_logs.models.pitch_log import BrooksPitchLog
 from vigorish.util.result import Result
 
-
 PITCHFX_URL_XPATH = '//a[text()="Get Expanded Tabled Data"]/@href'
 PITCH_COUNTS_XPATH = '//div[@class="span9"]//table[2]//tr'
 

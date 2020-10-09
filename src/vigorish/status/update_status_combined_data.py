@@ -16,9 +16,7 @@ def update_pitch_apps_for_game_combined_data(db_session, combined_data):
         if result.failure:
             return result
         pitch_app_status = result.value
-        pitch_app_status = update_pitch_app_combined_data(
-            db_session, pitch_app_status, pitch_stats
-        )
+        pitch_app_status = update_pitch_app_combined_data(db_session, pitch_app_status, pitch_stats)
         pitchfx_audit = pitch_stats["pitch_app_pitchfx_audit"]
         if pitch_app_status.pitchfx_error:
             at_bat_ids = pitchfx_audit["at_bat_ids_pitchfx_error"]

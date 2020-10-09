@@ -6,15 +6,14 @@ from rapidfuzz import process
 
 from vigorish.constants import TEAM_ID_DICT
 from vigorish.util.regex import (
+    AT_BAT_ID_REGEX,
+    BB_GAME_ID_REGEX,
+    BBREF_GAME_ID_REGEX,
+    INNING_LABEL_REGEX,
     PITCH_APP_REGEX,
     TIMESTAMP_REGEX,
-    BBREF_GAME_ID_REGEX,
-    BB_GAME_ID_REGEX,
-    AT_BAT_ID_REGEX,
-    INNING_LABEL_REGEX,
 )
 from vigorish.util.result import Result
-
 
 ELLIPSIS = b"\xe2\x80\xa6".decode("utf-8")
 NEWLINE_REGEX = re.compile(r"\n")
@@ -64,7 +63,7 @@ def wrap_text(input_str, max_len):
                 if match.end("word") > max_len:
                     break
                 last_word_boundary = match.end("word") + 1
-            trunc_lines.append(f"{long_str[:last_word_boundary]}".strip())
+            trunc_lines.append(long_str[:last_word_boundary].strip())
             long_str = long_str[last_word_boundary:]
     current_index = 0
     for m in newline_matches:
@@ -162,9 +161,7 @@ def validate_bbref_game_id(input_str):
 
 def validate_bbref_game_id_list(game_ids):
     return [
-        validate_bbref_game_id(gid).value
-        for gid in game_ids
-        if validate_bbref_game_id(gid).success
+        validate_bbref_game_id(gid).value for gid in game_ids if validate_bbref_game_id(gid).success
     ]
 
 
@@ -273,9 +270,7 @@ def parse_pitch_app_details_from_string(input):
         pitch_app_ids.append(at_bat_data["pitch_app_id"])
     for pitch_app_id in list(set(pitch_app_ids)):
         failed_pitch_app_dict[pitch_app_id] = [
-            at_bat["at_bat_id"]
-            for at_bat in at_bat_dicts
-            if at_bat["pitch_app_id"] == pitch_app_id
+            at_bat["at_bat_id"] for at_bat in at_bat_dicts if at_bat["pitch_app_id"] == pitch_app_id
         ]
     return failed_pitch_app_dict
 

@@ -1,14 +1,13 @@
 """Scrape MLB player data"""
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
 from json.decoder import JSONDecodeError
 
-from sqlalchemy.exc import SQLAlchemyError, DBAPIError
+from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 
 from vigorish.config.database import Player
-from vigorish.util.result import Result
 from vigorish.util.request_url import request_url_with_retries
+from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
-
 
 MLB_PLAYER_SEARCH_URL = "http://lookup-service-prod.mlb.com/json/named.search_player_all.bam"
 MLB_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"

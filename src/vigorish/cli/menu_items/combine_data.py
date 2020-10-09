@@ -10,20 +10,20 @@ from halo import Halo
 from tabulate import tabulate
 
 from vigorish.cli.components import (
-    user_options_prompt,
     audit_report_season_prompt,
-    print_message,
     get_random_cli_color,
     get_random_dots_spinner,
+    print_message,
+    user_options_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.enums import DataSet, ScrapeCondition, AuditError
+from vigorish.enums import AuditError, DataSet, ScrapeCondition
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.list_helpers import flatten_list2d
-from vigorish.util.string_helpers import validate_bbref_game_id, validate_pitch_app_id
 from vigorish.util.result import Result
+from vigorish.util.string_helpers import validate_bbref_game_id, validate_pitch_app_id
 
 STATUS_BAR_FORMAT = (
     "{total_combined}/{total_games} Games Combined"
@@ -33,9 +33,7 @@ STATUS_BAR_FORMAT = (
     "Elapsed: {elapsed}"
 )
 STATUS_BAR_COLOR = "bold_gray100_on_darkviolet"
-DATE_BAR_FORMAT = (
-    "{desc}{desc_pad}{percentage:3.0f}% |{bar}| {count:{len_total}d}/{total:d} {unit}"
-)
+DATE_BAR_FORMAT = "{desc}{desc_pad}{percentage:3.0f}% |{bar}| {count:{len_total}d}/{total:d} {unit}"
 
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger("enlighten")
@@ -415,8 +413,7 @@ class CombineGameDataMenuItem(MenuItem):
 
     def display_games_failed_to_combine(self):
         error_message = (
-            f"Error prevented scraped data being combined for {len(self.failed_game_ids)} "
-            "games:"
+            f"Error prevented scraped data being combined for {len(self.failed_game_ids)} " "games:"
         )
         error_details = [
             {"bbref_game_id": game_id, "error": error}

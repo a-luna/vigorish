@@ -4,7 +4,6 @@ from getch import pause
 from halo import Halo
 from tabulate import tabulate
 
-from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.components.models import DisplayPage
 from vigorish.cli.components.page_viewer import PageViewer
 from vigorish.cli.components.util import (
@@ -13,6 +12,7 @@ from vigorish.cli.components.util import (
     print_heading,
     print_message,
 )
+from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT
 from vigorish.tasks.calculate_avg_pitch_times import (
     CalculateAverageTimeBetweenPitches as CalculatePitchTimesTask,

@@ -1,7 +1,7 @@
 from pprint import pformat
 
 from vigorish.cli.components import print_message
-from vigorish.config.database import Season, DateScrapeStatus
+from vigorish.config.database import DateScrapeStatus, Season
 from vigorish.enums import StatusReport
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY

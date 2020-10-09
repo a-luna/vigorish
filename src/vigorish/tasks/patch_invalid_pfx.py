@@ -5,7 +5,7 @@ from dacite import from_dict
 from events import Events
 from tabulate import tabulate
 
-from vigorish.enums import PatchType, DataSet
+from vigorish.enums import DataSet, PatchType
 from vigorish.patch.brooks_pitchfx import (
     BrooksPitchFxPatchList,
     PatchBrooksPitchFxBatterId,
@@ -14,7 +14,6 @@ from vigorish.patch.brooks_pitchfx import (
 from vigorish.tasks.base import Task
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_at_bat_id
-
 
 DATA_SET = DataSet.BROOKS_PITCHFX
 PATCH_STAT_NAMES = [

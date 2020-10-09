@@ -7,16 +7,16 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
-from vigorish.enums import JobStatus, DataSet
-from vigorish.constants import DATA_SET_NAME_MAP
 from vigorish.config.database import Base
 from vigorish.config.project_paths import NODEJS_INBOX, NODEJS_OUTBOX
+from vigorish.constants import DATA_SET_NAME_MAP
+from vigorish.enums import DataSet, JobStatus
 from vigorish.util.datetime_util import (
     get_date_range,
-    utc_now,
-    make_tzaware,
-    localized_dt_string,
     get_local_utcoffset,
+    localized_dt_string,
+    make_tzaware,
+    utc_now,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.list_helpers import group_and_sort_list

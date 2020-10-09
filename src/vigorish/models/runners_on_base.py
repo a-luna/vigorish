@@ -1,5 +1,5 @@
 """Configuration of runners on base before a plate appearance begins."""
-from sqlalchemy import Column, Boolean, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String
 
 from vigorish.config.database import Base
 

@@ -1,12 +1,12 @@
 from datetime import datetime
-from dateutil import tz
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from dateutil import tz
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-from vigorish.util.dt_format_strings import DT_STR_FORMAT, DATE_ONLY_TABLE_ID, DATE_ONLY_2
+from vigorish.util.dt_format_strings import DATE_ONLY_2, DATE_ONLY_TABLE_ID, DT_STR_FORMAT
 from vigorish.util.list_helpers import display_dict
 from vigorish.util.string_helpers import validate_brooks_game_id
 
@@ -237,9 +237,7 @@ class GameScrapeStatus(Base):
             return False
         if not self.scrape_status_pitchfx:
             return False
-        return any(
-            (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
-        )
+        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def pitchfx_is_valid_for_all_pitchfx_logs(self):

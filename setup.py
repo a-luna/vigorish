@@ -1,6 +1,8 @@
+# flake8: noqa
 """Installation script for vigorish CLI application."""
 from pathlib import Path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 DESCRIPTION = "Hybrid Python/Node.js web scraper for Major League Baseball (MLB) data."
 APP_ROOT = Path(__file__).parent
@@ -56,6 +58,7 @@ EXTRAS_REQUIRE = {
         "black",
         "coverage",
         "flake8",
+        "isort",
         "pydocstyle",
         "pytest",
         "pytest-black",
@@ -70,12 +73,13 @@ EXTRAS_REQUIRE = {
     ]
 }
 
+exec(open(str((APP_ROOT / "src/vigorish/version.py"))).read())
 setup(
     name="vigorish",
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
-    version="0.3.4",
+    version=__version__,
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     maintainer=AUTHOR,

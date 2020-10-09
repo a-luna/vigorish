@@ -4,20 +4,20 @@ import os
 from copy import deepcopy
 from pathlib import Path
 
-from vigorish.config.types.batch_job_settings import BatchJobSettings
-from vigorish.config.types.batch_scrape_delay import BatchScrapeDelay
-from vigorish.config.types.url_scrape_delay import UrlScrapeDelay
 from vigorish.config.config_setting import (
     EnumConfigSetting,
     NumericConfigSetting,
     PathConfigSetting,
     StringConfigSetting,
 )
+from vigorish.config.types.batch_job_settings import BatchJobSettings
+from vigorish.config.types.batch_scrape_delay import BatchScrapeDelay
+from vigorish.config.types.url_scrape_delay import UrlScrapeDelay
 from vigorish.enums import (
+    CombinedDataStorageOption,
     DataSet,
     HtmlStorageOption,
     JsonStorageOption,
-    CombinedDataStorageOption,
     ScrapeCondition,
     StatusReport,
 )

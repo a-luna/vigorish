@@ -1,8 +1,8 @@
 from vigorish.config.database import (
-    Season,
     DateScrapeStatus,
     GameScrapeStatus,
     PitchAppScrapeStatus,
+    Season,
 )
 from vigorish.enums import DataSet
 from vigorish.util.result import Result

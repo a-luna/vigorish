@@ -6,20 +6,20 @@ from copy import deepcopy
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.components.dict_viewer import DictListTableViewer
 from vigorish.cli.components import (
-    season_prompt,
     data_sets_prompt,
-    user_options_prompt,
     file_types_prompt,
-    print_message,
     get_random_cli_color,
     get_random_dots_spinner,
+    print_message,
+    season_prompt,
+    user_options_prompt,
 )
+from vigorish.cli.components.dict_viewer import DictListTableViewer
+from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.enums import DataSet, SyncDirection, VigFile
 from vigorish.tasks.sync_scraped_data import SyncScrapedData as SyncScrapedDataTask
-from vigorish.enums import VigFile, DataSet, SyncDirection
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.result import Result
 
@@ -222,9 +222,7 @@ class SyncScrapedData(MenuItem):
         ]
         new_plural = "files below are" if new_count > 1 else "file below is"
         old_plural = "files" if old_count > 1 else "file"
-        file_dest = (
-            "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
-        )
+        file_dest = "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
         file_src = "local folder" if self.sync_direction == SyncDirection.UP_TO_S3 else "S3 bucket"
         m = []
         if new_count:

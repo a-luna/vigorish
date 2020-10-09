@@ -1,5 +1,5 @@
-from datetime import datetime
 from dataclasses import dataclass, field
+from datetime import datetime
 
 from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList

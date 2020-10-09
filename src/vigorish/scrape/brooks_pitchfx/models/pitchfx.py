@@ -2,8 +2,8 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
+from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.regex import PFX_TIMESTAMP_REGEX
 from vigorish.util.string_helpers import validate_bbref_game_id
 

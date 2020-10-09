@@ -8,27 +8,21 @@ from botocore.exceptions import ClientError
 
 from vigorish.data.json_decoder import (
     decode_bbref_boxscore,
+    decode_bbref_boxscore_patch_list,
     decode_bbref_games_for_date,
+    decode_bbref_games_for_date_patch_list,
     decode_brooks_games_for_date,
     decode_brooks_pitch_logs_for_game,
     decode_brooks_pitchfx_log,
-    decode_bbref_boxscore_patch_list,
-    decode_bbref_games_for_date_patch_list,
     decode_brooks_pitchfx_patch_list,
 )
-from vigorish.enums import (
-    DataSet,
-    VigFile,
-    LocalFileTask,
-    S3FileTask,
-)
+from vigorish.enums import DataSet, LocalFileTask, S3FileTask, VigFile
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.numeric_helpers import ONE_KB
 from vigorish.util.result import Result
 
 
 class FileHelper:
-    # TODO: Add pragma: no cover to S3 branches/methods
     def __init__(self, config):
         self.config = config
         try:  # pragma: no cover

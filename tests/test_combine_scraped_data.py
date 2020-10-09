@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from vigorish.config.database import PitchAppScrapeStatus, GameScrapeStatus
+from vigorish.config.database import GameScrapeStatus, PitchAppScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
 from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask

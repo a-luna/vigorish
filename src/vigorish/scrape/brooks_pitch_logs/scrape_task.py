@@ -3,10 +3,8 @@ from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from vigorish.scrape.brooks_pitch_logs.parse_html import parse_pitch_log
 from vigorish.scrape.scrape_task import ScrapeTaskABC
-from vigorish.status.update_status_brooks_pitch_logs import (
-    update_status_brooks_pitch_logs_for_game,
-)
-from vigorish.util.dt_format_strings import DATE_ONLY_2, DATE_MONTH_NAME
+from vigorish.status.update_status_brooks_pitch_logs import update_status_brooks_pitch_logs_for_game
+from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY_2
 from vigorish.util.result import Result
 
 
@@ -32,10 +30,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
             self.db_session, game_date
         )
-        if (
-            scraped_brooks_pitch_logs
-            and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA
-        ):
+        if scraped_brooks_pitch_logs and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
             return Result.Fail("skip")
         return Result.Ok()
 

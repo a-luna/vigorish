@@ -5,10 +5,10 @@ import time
 from getch import pause
 from sqlalchemy.orm import sessionmaker
 
-from vigorish.cli.components import yes_no_prompt, print_message
+from vigorish.cli.components import print_message, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
-from vigorish.config.database import initialize_database, db_setup_complete
+from vigorish.config.database import db_setup_complete, initialize_database
 from vigorish.constants import EMOJI_DICT
 from vigorish.tasks.import_scraped_data import ImportScrapedDataInLocalFolder
 from vigorish.util.result import Result
@@ -17,9 +17,7 @@ SETUP_HEADER = (
     "Before you can begin scraping data, you must initialize the database with initial player, "
     "team and season data.\n"
 )
-SETUP_MESSAGE = (
-    "Select YES to initialize the database\n" "Select NO to return to the previous menu"
-)
+SETUP_MESSAGE = "Select YES to initialize the database\n" "Select NO to return to the previous menu"
 RESET_MESSAGE = "Would you like to reset the database with initial player, team and season data?"
 WARNING = (
     "WARNING! All existing data will be deleted if you choose to reset the database. This "

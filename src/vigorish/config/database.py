@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-from vigorish.config.project_paths import VIG_FOLDER, CSV_FOLDER
+from vigorish.config.project_paths import CSV_FOLDER, VIG_FOLDER
 from vigorish.models.boxscore import Boxscore
 from vigorish.models.game_bat_stats import GameBatStats
 from vigorish.models.game_event import GameEvent
@@ -17,12 +17,12 @@ from vigorish.models.game_pitch_stats import GamePitchStats
 from vigorish.models.game_starting_lineup import GameStartingLineupSlot
 from vigorish.models.game_substitution import GameSubstitution
 from vigorish.models.game_team_totals import GameTeamTotals
+from vigorish.models.pitchfx import PitchFx
 from vigorish.models.player import Player
 from vigorish.models.player_id import PlayerId
-from vigorish.models.pitchfx import PitchFx
 from vigorish.models.runners_on_base import RunnersOnBase
-from vigorish.models.scrape_job import ScrapeJob
 from vigorish.models.scrape_error import ScrapeError
+from vigorish.models.scrape_job import ScrapeJob
 from vigorish.models.season import Season
 from vigorish.models.status_date import DateScrapeStatus
 from vigorish.models.status_game import GameScrapeStatus
@@ -31,11 +31,10 @@ from vigorish.models.team import Team
 from vigorish.models.views.date_pitch_app_view import Date_PitchApp_View
 from vigorish.models.views.game_pitch_app_view import Game_PitchApp_View
 from vigorish.models.views.season_date_view import Season_Date_View
+from vigorish.models.views.season_game_pitch_app_view import Season_Game_PitchApp_View
 from vigorish.models.views.season_game_view import Season_Game_View
 from vigorish.models.views.season_pitch_app_view import Season_PitchApp_View
-from vigorish.models.views.season_game_pitch_app_view import Season_Game_PitchApp_View
 from vigorish.setup.populate_tables import populate_tables
-
 
 SQLITE_DEV_URL = f"sqlite:///{VIG_FOLDER.joinpath('vig_dev.db')}"
 SQLITE_PROD_URL = f"sqlite:///{VIG_FOLDER.joinpath('vig.db')}"

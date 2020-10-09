@@ -2,10 +2,10 @@
 import subprocess
 from sys import exit
 
-from bullet import Input, colors
+from bullet import colors, Input
 from getch import pause
 
-from vigorish.cli.components import yes_no_prompt, yes_no_cancel_prompt, print_message
+from vigorish.cli.components import print_message, yes_no_cancel_prompt, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result

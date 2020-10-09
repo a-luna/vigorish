@@ -1,7 +1,7 @@
 import subprocess
 from abc import ABC, abstractmethod
 
-from bullet import Bullet, ScrollBar, colors
+from bullet import Bullet, colors, ScrollBar
 
 from vigorish.cli.menu_item import MenuItem
 from vigorish.util.result import Result

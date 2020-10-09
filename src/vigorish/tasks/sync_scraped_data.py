@@ -7,11 +7,8 @@ from pathlib import Path
 from events import Events
 from halo import Halo
 
-from vigorish.cli.components import (
-    get_random_cli_color,
-    get_random_dots_spinner,
-)
-from vigorish.enums import DataSet, VigFile, SyncDirection
+from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner
+from vigorish.enums import DataSet, SyncDirection, VigFile
 from vigorish.tasks.base import Task
 from vigorish.util.datetime_util import dtaware_fromtimestamp
 from vigorish.util.regex import URL_ID_REGEX

@@ -3,19 +3,19 @@ import subprocess
 from collections import defaultdict
 from datetime import datetime
 
-from halo import Halo
 from getch import pause
+from halo import Halo
 
 from vigorish.cli.components import print_message
 from vigorish.config.database import ScrapeError
-from vigorish.constants import JOB_SPINNER_COLORS, FAKE_SPINNER
-from vigorish.enums import DataSet, StatusReport, JobStatus
+from vigorish.constants import FAKE_SPINNER, JOB_SPINNER_COLORS
+from vigorish.enums import DataSet, JobStatus, StatusReport
 from vigorish.scrape.bbref_boxscores.scrape_task import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_task import ScrapeBBRefGamesForDate
 from vigorish.scrape.brooks_games_for_date.scrape_task import ScrapeBrooksGamesForDate
 from vigorish.scrape.brooks_pitch_logs.scrape_task import ScrapeBrooksPitchLogs
 from vigorish.scrape.brooks_pitchfx.scrape_task import ScrapeBrooksPitchFx
-from vigorish.status.report_status import report_season_status, report_date_range_status
+from vigorish.status.report_status import report_date_range_status, report_season_status
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists

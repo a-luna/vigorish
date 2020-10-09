@@ -5,21 +5,17 @@ from halo import Halo
 from tabulate import tabulate
 
 from vigorish import __version__
-from vigorish.cli.components import (
-    print_message,
-    get_random_cli_color,
-    get_random_dots_spinner,
-)
+from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner, print_message
 from vigorish.cli.menu import Menu
-from vigorish.cli.menus.all_jobs_menu import AllJobsMenu
-from vigorish.cli.menus.admin_tasks_menu import AdminTasksMenu
-from vigorish.cli.menus.scraped_data_errors_menu import ScrapedDataErrorsMenu
-from vigorish.cli.menus.settings_menu import SettingsMenu
 from vigorish.cli.menu_items.combine_data import CombineGameDataMenuItem
 from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
-from vigorish.cli.menu_items.status_report import StatusReportMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
+from vigorish.cli.menu_items.status_report import StatusReportMenuItem
+from vigorish.cli.menus.admin_tasks_menu import AdminTasksMenu
+from vigorish.cli.menus.all_jobs_menu import AllJobsMenu
+from vigorish.cli.menus.scraped_data_errors_menu import ScrapedDataErrorsMenu
+from vigorish.cli.menus.settings_menu import SettingsMenu
 from vigorish.config.database import db_setup_complete
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
@@ -36,9 +32,7 @@ class MainMenu(Menu):
 
     @property
     def initial_setup_complete(self):
-        return (
-            self.node_is_installed and self.node_modules_folder_exists and self.db_setup_complete
-        )
+        return self.node_is_installed and self.node_modules_folder_exists and self.db_setup_complete
 
     @property
     def is_refresh_needed(self):
@@ -161,9 +155,7 @@ class MainMenu(Menu):
             else False
         )
         invalid_pfx_errors_exist = (
-            any(
-                len(audit_report["invalid_pfx"]) > 0 for audit_report in self.audit_report.values()
-            )
+            any(len(audit_report["invalid_pfx"]) > 0 for audit_report in self.audit_report.values())
             if self.audit_report
             else False
         )

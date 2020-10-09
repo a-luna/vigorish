@@ -2,13 +2,13 @@
 import subprocess
 
 from vigorish.cli.components import (
+    data_sets_prompt,
     DateInput,
     JobNameInput,
-    yes_no_prompt,
-    data_sets_prompt,
     print_heading,
     print_message,
     validate_scrape_dates,
+    yes_no_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.config.database import ScrapeJob

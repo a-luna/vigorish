@@ -1,11 +1,10 @@
 """Functions for reading and writing files."""
-from vigorish.enums import DataSet, VigFile, LocalFileTask, S3FileTask
+from vigorish.enums import DataSet, LocalFileTask, S3FileTask, VigFile
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id, validate_pitch_app_id
 
 
 class HtmlStorage:
-    # TODO: Add pragma: no cover to S3 branches/methods
     """Perform CRUD operations on HTML files stored locally and/or in S3."""
 
     def __init__(self, config, file_helper):
@@ -33,9 +32,6 @@ class HtmlStorage:
     def html_stored_local(self, data_set):
         return self.file_helper.check_file_stored_local(VigFile.SCRAPED_HTML, data_set)
 
-    def html_stored_s3(self, data_set):  # pragma: no cover
-        return self.file_helper.check_file_stored_s3(VigFile.SCRAPED_HTML, data_set)
-
     def save_html_local(self, data_set, url_id, html):
         save_html_local_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: self.save_html_brooks_games_for_date_local_file,
@@ -45,6 +41,9 @@ class HtmlStorage:
             DataSet.BBREF_BOXSCORES: self.save_html_bbref_boxscore_local_file,
         }
         return save_html_local_dict[data_set](url_id, html)
+
+    def html_stored_s3(self, data_set):  # pragma: no cover
+        return self.file_helper.check_file_stored_s3(VigFile.SCRAPED_HTML, data_set)
 
     def save_html_s3(self, data_set, url_id, html):  # pragma: no cover
         save_html_s3_dict = {

@@ -1,14 +1,14 @@
 """Functions that enable reading/writing the config file."""
 from vigorish.config.types.batch_job_settings import BatchJobSettings
 from vigorish.config.types.batch_scrape_delay import BatchScrapeDelay
-from vigorish.config.types.folder_path_setting import S3FolderPathSetting, LocalFolderPathSetting
+from vigorish.config.types.folder_path_setting import LocalFolderPathSetting, S3FolderPathSetting
 from vigorish.config.types.url_scrape_delay import UrlScrapeDelay
 from vigorish.enums import (
+    CombinedDataStorageOption,
     ConfigType,
     DataSet,
     HtmlStorageOption,
     JsonStorageOption,
-    CombinedDataStorageOption,
     ScrapeCondition,
     StatusReport,
 )
