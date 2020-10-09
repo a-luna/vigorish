@@ -1,13 +1,13 @@
 """Db model that describes a MLB season and tracks data scraping progress."""
 from datetime import date
 
-from sqlalchemy import Column, Integer, DateTime
+from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
-from vigorish.enums import SeasonType
 from vigorish.config.database import Base
+from vigorish.enums import SeasonType
 from vigorish.util.datetime_util import get_date_range as get_date_range_util
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.list_helpers import display_dict
@@ -364,9 +364,7 @@ class Season(Base):
             return False
         if not self.scrape_status_pitchfx:
             return False
-        return any(
-            (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
-        )
+        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def pitchfx_is_valid_for_all_pitchfx_logs(self):
@@ -556,9 +554,7 @@ class Season(Base):
 
     @classmethod
     def find_by_year(cls, db_session, year, season_type=SeasonType.REGULAR_SEASON):
-        return (
-            db_session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
-        )
+        return db_session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
 
     @classmethod
     def is_date_in_season(cls, db_session, check_date, season_type=SeasonType.REGULAR_SEASON):

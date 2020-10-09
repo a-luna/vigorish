@@ -1,7 +1,7 @@
 """Menu that allows the user to view and modify all settings in vig.config.json."""
 import subprocess
 
-from vigorish.cli.components import yes_no_prompt, print_message, print_heading
+from vigorish.cli.components import print_heading, print_message, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.change_config_setting import ChangeSetttingMenuItem
 from vigorish.constants import EMOJI_DICT

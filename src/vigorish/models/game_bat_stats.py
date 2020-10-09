@@ -1,5 +1,5 @@
 """Total batting statistics for a single player in a single game."""
-from sqlalchemy import Column, Integer, Float, String, ForeignKey
+from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base

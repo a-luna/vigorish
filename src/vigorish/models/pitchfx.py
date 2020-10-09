@@ -1,9 +1,9 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Float
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String
+
+from vigorish.config.database import Base
 
 # ForeignKey
 # from sqlalchemy.ext.hybrid import hybrid_property
-
-from vigorish.config.database import Base
 
 
 class PitchFx(Base):

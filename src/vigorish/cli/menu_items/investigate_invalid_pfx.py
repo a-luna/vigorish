@@ -2,31 +2,31 @@
 import subprocess
 from copy import deepcopy
 
-from halo import Halo
 from getch import pause
+from halo import Halo
 from tabulate import tabulate
 
+from vigorish.cli.components import (
+    get_random_cli_color,
+    get_random_dots_spinner,
+    print_error,
+    print_heading,
+    print_message,
+    print_success,
+    select_game_prompt,
+    user_options_prompt,
+    yes_no_prompt,
+)
 from vigorish.cli.components.dict_viewer import DictListTableViewer
 from vigorish.cli.components.models import DisplayTable
 from vigorish.cli.components.table_viewer import TableViewer
-from vigorish.cli.components import (
-    yes_no_prompt,
-    select_game_prompt,
-    user_options_prompt,
-    get_random_cli_color,
-    get_random_dots_spinner,
-    print_message,
-    print_heading,
-    print_error,
-    print_success,
-)
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType
 from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import validate_at_bat_id, inning_number_to_string
+from vigorish.util.string_helpers import inning_number_to_string, validate_at_bat_id
 
 
 class InvestigateInvalidPitchFx(MenuItem):
@@ -379,9 +379,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         subprocess.run(["clear"])
         total_pitch_apps = sum(len(f.keys()) for f in fail_results if f)
         pitch_apps_plural = "pitch appearances" if total_pitch_apps > 1 else "pitch appearance"
-        total_at_bats = sum(
-            len(at_bat_ids) for f in fail_results for at_bat_ids in f.values() if f
-        )
+        total_at_bats = sum(len(at_bat_ids) for f in fail_results for at_bat_ids in f.values() if f)
         at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
         error_header = f"PitchFX data could not be reconciled for game: {self.game_id}\n"
         error_message = (
@@ -533,9 +531,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         )
 
     def get_pfx_error_count(self, all_patch_results):
-        return len(
-            [r for r in all_patch_results.values() if "pfx_errors" in r and r["pfx_errors"]]
-        )
+        return len([r for r in all_patch_results.values() if "pfx_errors" in r and r["pfx_errors"]])
 
     def get_remaining_error_count(self, all_patch_results):
         return (

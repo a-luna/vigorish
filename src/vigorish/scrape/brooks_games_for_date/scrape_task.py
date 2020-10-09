@@ -39,9 +39,7 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
         bbref_games_for_date = self.scraped_data.get_bbref_games_for_date(url_id)
         if not bbref_games_for_date:
             return Result.Fail(f"Failed to retrieve {self.data_set} (URL ID: {url_id})")
-        return parse_brooks_dashboard_page(
-            self.db_session, html, url_id, url, bbref_games_for_date
-        )
+        return parse_brooks_dashboard_page(self.db_session, html, url_id, url, bbref_games_for_date)
 
     def update_status(self, game_date, parsed_data):
         return update_brooks_games_for_date_single_date(self.db_session, self.season, parsed_data)

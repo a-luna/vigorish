@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from vigorish.config.database import Season, DateScrapeStatus
+from vigorish.config.database import DateScrapeStatus, Season
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page

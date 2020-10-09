@@ -4,9 +4,9 @@ import subprocess
 from bullet import Bullet, colors
 from getch import pause
 
-from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.components import print_message
-from vigorish.constants import MENU_NUMBERS, EMOJI_DICT
+from vigorish.cli.menu_item import MenuItem
+from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import JobStatus
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.list_helpers import report_dict

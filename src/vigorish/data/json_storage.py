@@ -1,7 +1,7 @@
 """Functions for reading and writing files."""
 import json
 
-from vigorish.enums import DataSet, VigFile, LocalFileTask, S3FileTask
+from vigorish.enums import DataSet, LocalFileTask, S3FileTask, VigFile
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
     validate_bbref_game_id,

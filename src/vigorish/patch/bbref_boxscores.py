@@ -2,8 +2,8 @@ from dataclasses import dataclass, field
 
 from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList
-from vigorish.util.string_helpers import validate_bbref_game_id
 from vigorish.util.result import Result
+from vigorish.util.string_helpers import validate_bbref_game_id
 
 
 @dataclass

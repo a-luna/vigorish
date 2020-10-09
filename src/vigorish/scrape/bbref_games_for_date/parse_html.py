@@ -1,7 +1,7 @@
 from pathlib import Path
+from urllib.parse import urljoin
 
 from lxml import html
-from urllib.parse import urljoin
 
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2

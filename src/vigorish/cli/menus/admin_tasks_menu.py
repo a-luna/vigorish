@@ -4,13 +4,13 @@ from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import (
     CalculateAverageTimeBetweenPitches,
 )
 from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedDataTask
-from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
 from vigorish.cli.menu_items.admin_tasks.sync_scraped_data import SyncScrapedData
+from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
-from vigorish.constants import EMOJI_DICT
 from vigorish.config.database import db_setup_complete
+from vigorish.constants import EMOJI_DICT
 from vigorish.util.sys_helpers import node_is_installed
 
 

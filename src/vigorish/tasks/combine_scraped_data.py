@@ -4,20 +4,20 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Dict, List
 
-from vigorish.constants import PPB_PITCH_LOG_DICT, PITCH_TYPE_DICT
-from vigorish.config.database import PlayerId, GameScrapeStatus
+from vigorish.config.database import GameScrapeStatus, PlayerId
+from vigorish.constants import PITCH_TYPE_DICT, PPB_PITCH_LOG_DICT
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.tasks.scrape_mlb_player_info import scrape_mlb_player_info
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.list_helpers import flatten_list2d
-from vigorish.util.string_helpers import (
-    validate_at_bat_id,
-    get_inning_id_from_at_bat_id,
-    get_brooks_team_id,
-    replace_char_with_newlines,
-)
 from vigorish.util.result import Result
+from vigorish.util.string_helpers import (
+    get_brooks_team_id,
+    get_inning_id_from_at_bat_id,
+    replace_char_with_newlines,
+    validate_at_bat_id,
+)
 
 
 class CombineScrapedData:
@@ -948,9 +948,7 @@ class CombineScrapedData:
             pfx_dict.pop("game_start_time", None)
             pfx_dict.pop("time_pitch_thrown", None)
 
-    def construct_pitch_sequence_description(
-        self, at_bat_id, final_event_in_at_bat, pfx_data=None
-    ):
+    def construct_pitch_sequence_description(self, at_bat_id, final_event_in_at_bat, pfx_data=None):
         pitch_sequence = final_event_in_at_bat["pitch_sequence"]
         result = self.get_total_pitches_in_sequence(pitch_sequence)
         if result.failure:
@@ -1209,9 +1207,7 @@ class CombineScrapedData:
         duplicate_guid_removed_count = sum(
             event["at_bat_pitchfx_audit"]["duplicate_guid_removed_count"] for event in game_events
         )
-        pitchfx_error = any(
-            event["at_bat_pitchfx_audit"]["pitchfx_error"] for event in game_events
-        )
+        pitchfx_error = any(event["at_bat_pitchfx_audit"]["pitchfx_error"] for event in game_events)
 
         at_bat_ids_pitchfx_complete = list(
             set(

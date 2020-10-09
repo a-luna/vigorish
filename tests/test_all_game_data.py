@@ -1,6 +1,5 @@
-from vigorish.data.all_game_data import AllGameData
-
 from tests.test_combine_scraped_data import GAME_ID_NO_ERRORS
+from vigorish.data.all_game_data import AllGameData
 
 
 def test_all_game_data(db_session, scraped_data):

@@ -5,8 +5,8 @@ from string import Template
 
 from lxml import html
 
-from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
+from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.result import Result
 

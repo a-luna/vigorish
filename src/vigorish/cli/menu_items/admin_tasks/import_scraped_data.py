@@ -3,14 +3,14 @@ import subprocess
 
 from halo import Halo
 
-from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.components import (
-    yes_no_prompt,
-    user_options_prompt,
     get_random_cli_color,
     get_random_dots_spinner,
     print_message,
+    user_options_prompt,
+    yes_no_prompt,
 )
+from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.tasks.import_scraped_data import ImportScrapedDataInLocalFolder
 from vigorish.util.result import Result

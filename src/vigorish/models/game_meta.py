@@ -1,8 +1,8 @@
 """Db model that describes game info such as date/time, weather, location, etc."""
 from datetime import datetime
-from dateutil import tz
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from dateutil import tz
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from vigorish.config.database import Base

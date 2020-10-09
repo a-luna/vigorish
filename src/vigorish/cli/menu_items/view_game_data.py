@@ -1,8 +1,8 @@
 """View all scraped data for a single game."""
 import subprocess
 
-from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.components.prompts import user_options_prompt
+from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.data.all_game_data import AllGameData
 from vigorish.util.result import Result

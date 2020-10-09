@@ -1,8 +1,8 @@
 """Enum definitions."""
-from enum import Enum, IntEnum, auto
+from enum import auto, Enum, IntEnum
 
-from aenum import IntFlag
 from aenum import auto as auto_flag
+from aenum import IntFlag
 
 
 class VigFile(IntFlag):

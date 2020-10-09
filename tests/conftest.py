@@ -5,12 +5,11 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from tests.util import seed_database_with_test_data
 from vigorish.config.config_file import ConfigFile
 from vigorish.config.database import initialize_database
-from vigorish.config.dotenv_file import DotEnvFile, create_default_dotenv_file
+from vigorish.config.dotenv_file import create_default_dotenv_file, DotEnvFile
 from vigorish.data.scraped_data import ScrapedData
-
-from tests.util import seed_database_with_test_data
 
 TESTS_FOLDER = Path(__file__).parent
 DOTENV_FILE = TESTS_FOLDER.joinpath(".env")

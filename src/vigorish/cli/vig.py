@@ -5,24 +5,24 @@ import click
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from vigorish.cli.click_params import DateString, MlbSeason, JobName
+from vigorish.cli.click_params import DateString, JobName, MlbSeason
 from vigorish.cli.components import print_message, validate_scrape_dates
 from vigorish.cli.menus.main_menu import MainMenu
-from vigorish.config.dotenv_file import DotEnvFile
-from vigorish.config.database import get_db_url, initialize_database, ScrapeJob
 from vigorish.config.config_file import ConfigFile
+from vigorish.config.database import get_db_url, initialize_database, ScrapeJob
+from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.config.project_paths import VIG_FOLDER
 from vigorish.constants import DATA_SET_NAME_MAP, FILE_TYPE_NAME_MAP
 from vigorish.data.scraped_data import ScrapedData
-from vigorish.enums import StatusReport, DataSet, VigFile, SyncDirection
+from vigorish.enums import DataSet, StatusReport, SyncDirection, VigFile
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.status.report_status import (
-    report_status_single_date,
     report_date_range_status,
     report_season_status,
+    report_status_single_date,
 )
 from vigorish.tasks.sync_data_no_prompts import SyncScrapedDataNoPrompts
-from vigorish.util.datetime_util import today_str, current_year
+from vigorish.util.datetime_util import current_year, today_str
 from vigorish.util.result import Result
 
 

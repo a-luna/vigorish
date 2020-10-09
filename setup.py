@@ -1,6 +1,7 @@
 """Installation script for vigorish CLI application."""
 from pathlib import Path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 DESCRIPTION = "Hybrid Python/Node.js web scraper for Major League Baseball (MLB) data."
 APP_ROOT = Path(__file__).parent

@@ -1,6 +1,6 @@
 import json
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from typing import List
 
 from vigorish.enums import DataSet

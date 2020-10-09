@@ -1,21 +1,22 @@
 from datetime import datetime
-from dateutil import parser
 from pathlib import Path
+
+from dateutil import parser
 
 from vigorish.config.database import (
     DateScrapeStatus,
     GameScrapeStatus,
     PitchAppScrapeStatus,
     Season,
-    Season_Game_PitchApp_View as Season_View,
 )
+from vigorish.config.database import Season_Game_PitchApp_View as Season_View
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
-from vigorish.tasks.combine_scraped_data import CombineScrapedData
 from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
-from vigorish.util.regex import URL_ID_REGEX, URL_ID_CONVERT_REGEX
+from vigorish.tasks.combine_scraped_data import CombineScrapedData
+from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
 from vigorish.util.result import Result
 
 

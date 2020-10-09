@@ -1,15 +1,14 @@
 """Menu item that is used to change the current setting for an enum value."""
 import subprocess
 
-from bullet import Bullet, Input, Numbers, SlidePrompt, colors
+from bullet import Bullet, colors, Input, Numbers, SlidePrompt
 from getch import pause
 
-from vigorish.cli.components import yes_no_cancel_prompt, yes_no_prompt, print_message
+from vigorish.cli.components import print_message, yes_no_cancel_prompt, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import ConfigType, DataSet
 from vigorish.util.result import Result
-
 
 NUMERIC_SETTING_UNITS = {
     "URL_SCRAPE_DELAY": "seconds",

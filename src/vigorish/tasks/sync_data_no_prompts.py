@@ -5,14 +5,14 @@ from getch import pause
 from halo import Halo
 
 from vigorish.cli.components import (
-    print_heading,
-    print_message,
     get_random_cli_color,
     get_random_dots_spinner,
+    print_heading,
+    print_message,
 )
+from vigorish.enums import DataSet, SyncDirection, VigFile
 from vigorish.tasks.base import Task
 from vigorish.tasks.sync_scraped_data import SyncScrapedData
-from vigorish.enums import DataSet, SyncDirection, VigFile
 from vigorish.util.result import Result
 
 SYNC_STATUS_TEXT_COLOR = {

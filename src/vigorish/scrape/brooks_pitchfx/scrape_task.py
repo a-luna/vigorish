@@ -1,7 +1,7 @@
 from vigorish.config.database import DateScrapeStatus
 from vigorish.enums import DataSet, ScrapeCondition
-from vigorish.scrape.scrape_task import ScrapeTaskABC
 from vigorish.scrape.brooks_pitchfx.parse_html import parse_pitchfx_log
+from vigorish.scrape.scrape_task import ScrapeTaskABC
 from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result

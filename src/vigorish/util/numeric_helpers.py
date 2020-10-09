@@ -1,6 +1,7 @@
 """Helper functions that handle and produce numeric values."""
 import math
 from datetime import date
+
 from vigorish.util.string_helpers import try_parse_int
 
 ONE_KB = 1024

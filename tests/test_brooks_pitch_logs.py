@@ -2,12 +2,10 @@ from datetime import datetime
 
 from vigorish.config.database import GameScrapeStatus, PitchAppScrapeStatus
 from vigorish.enums import DataSet
-from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from vigorish.scrape.brooks_pitch_logs.models.pitch_log import BrooksPitchLog
+from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from vigorish.scrape.brooks_pitch_logs.parse_html import parse_pitch_log
-from vigorish.status.update_status_brooks_pitch_logs import (
-    update_status_brooks_pitch_logs_for_game,
-)
+from vigorish.status.update_status_brooks_pitch_logs import update_status_brooks_pitch_logs_for_game
 from vigorish.util.result import Result
 
 DATA_SET = DataSet.BROOKS_PITCH_LOGS

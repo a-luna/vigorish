@@ -1,14 +1,14 @@
 """Reusable menu prompts to get various values/data types from the user."""
 import subprocess
 
-from bullet import Bullet, Check, ScrollBar, colors
+from bullet import Bullet, Check, colors, ScrollBar
 from getch import pause
 
 from vigorish.cli.components.data_set_check import DataSetCheck
 from vigorish.cli.components.date_input import DateInput
 from vigorish.cli.components.util import print_message
 from vigorish.config.database import Season
-from vigorish.constants import MENU_NUMBERS, EMOJI_DICT, DATA_SET_NAMES_LONG
+from vigorish.constants import DATA_SET_NAMES_LONG, EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import DataSet, VigFile
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text

@@ -1,16 +1,15 @@
 from datetime import datetime
 
-from vigorish.config.database import Season, DateScrapeStatus, GameScrapeStatus
+from vigorish.config.database import DateScrapeStatus, GameScrapeStatus, Season
 from vigorish.enums import DataSet
-from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
+from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.scrape.brooks_games_for_date.parse_html import parse_brooks_dashboard_page
 from vigorish.status.update_status_brooks_games_for_date import (
     update_brooks_games_for_date_single_date,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
-
 
 GAME_DATE = datetime(2018, 4, 17)
 GAME_ID = "gid_2018_04_17_lanmlb_sdnmlb_1"

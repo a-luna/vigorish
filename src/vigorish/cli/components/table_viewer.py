@@ -2,6 +2,7 @@ import subprocess
 
 from bullet.cursor import hide as cursor_hidden
 from bullet.utils import moveCursorUp
+
 from vigorish.cli.components.page_viewer import PageViewer
 
 

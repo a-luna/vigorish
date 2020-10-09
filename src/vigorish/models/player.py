@@ -1,6 +1,6 @@
 """Biographical information for a single player."""
-from sqlalchemy import Column, Boolean, Integer, String, DateTime
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy.orm import backref, relationship
 
 from vigorish.config.database import Base
 from vigorish.util.list_helpers import display_dict

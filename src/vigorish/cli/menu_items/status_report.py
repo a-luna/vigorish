@@ -3,14 +3,14 @@ import subprocess
 
 from getch import pause
 
-from vigorish.cli.components import user_options_prompt, single_date_prompt, season_prompt
+from vigorish.cli.components import season_prompt, single_date_prompt, user_options_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import StatusReport
 from vigorish.status.report_status import (
-    report_status_single_date,
-    report_season_status,
     report_date_range_status,
+    report_season_status,
+    report_status_single_date,
 )
 from vigorish.util.result import Result
 

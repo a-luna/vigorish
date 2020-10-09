@@ -1,14 +1,11 @@
 """Initialize and update the Player ID Map and Player Team Map CSV files."""
-from dataclasses import dataclass, asdict, field
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 
 import requests
 from dacite import from_dict
 
-from vigorish.config.project_paths import (
-    PLAYER_ID_MAP_CSV,
-    PLAYER_TEAM_MAP_CSV,
-)
+from vigorish.config.project_paths import PLAYER_ID_MAP_CSV, PLAYER_TEAM_MAP_CSV
 from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result

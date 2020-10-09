@@ -1,4 +1,4 @@
-from sqlalchemy import select, func, join
+from sqlalchemy import func, join, select
 from sqlalchemy_utils import create_view
 
 from vigorish.config.database import Base, DateScrapeStatus, PitchAppScrapeStatus

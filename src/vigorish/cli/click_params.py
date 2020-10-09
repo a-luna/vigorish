@@ -1,6 +1,5 @@
-from dateutil import parser
-
 import click
+from dateutil import parser
 
 from vigorish.config.database import Season
 from vigorish.util.regex import JOB_NAME_REGEX

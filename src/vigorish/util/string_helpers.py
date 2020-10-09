@@ -6,15 +6,14 @@ from rapidfuzz import process
 
 from vigorish.constants import TEAM_ID_DICT
 from vigorish.util.regex import (
+    AT_BAT_ID_REGEX,
+    BB_GAME_ID_REGEX,
+    BBREF_GAME_ID_REGEX,
+    INNING_LABEL_REGEX,
     PITCH_APP_REGEX,
     TIMESTAMP_REGEX,
-    BBREF_GAME_ID_REGEX,
-    BB_GAME_ID_REGEX,
-    AT_BAT_ID_REGEX,
-    INNING_LABEL_REGEX,
 )
 from vigorish.util.result import Result
-
 
 ELLIPSIS = b"\xe2\x80\xa6".decode("utf-8")
 NEWLINE_REGEX = re.compile(r"\n")

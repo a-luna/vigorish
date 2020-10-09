@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, ForeignKey
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
@@ -304,9 +304,7 @@ class DateScrapeStatus(Base):
             return False
         if not self.scrape_status_pitchfx:
             return False
-        return any(
-            (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
-        )
+        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx)
 
     @hybrid_property
     def pitchfx_is_valid_for_all_pitchfx_logs(self):

@@ -1,7 +1,7 @@
-from sqlalchemy import select, func, join
+from sqlalchemy import func, join, select
 from sqlalchemy_utils import create_view
 
-from vigorish.config.database import Base, Season, GameScrapeStatus
+from vigorish.config.database import Base, GameScrapeStatus, Season
 
 
 class Season_Game_View(Base):
@@ -27,9 +27,7 @@ class Season_Game_View(Base):
                 func.sum(GameScrapeStatus.pitch_app_count_brooks).label(
                     "total_pitch_app_count_brooks"
                 ),
-                func.sum(GameScrapeStatus.total_pitch_count_bbref).label(
-                    "total_pitch_count_bbref"
-                ),
+                func.sum(GameScrapeStatus.total_pitch_count_bbref).label("total_pitch_count_bbref"),
             ]
         )
         .select_from(

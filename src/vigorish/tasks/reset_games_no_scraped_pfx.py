@@ -1,12 +1,8 @@
 from halo import Halo
 
 from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner
-from vigorish.config.database import (
-    GameScrapeStatus,
-    Season,
-    PitchAppScrapeStatus,
-    Season_Game_PitchApp_View as SeasonView,
-)
+from vigorish.config.database import GameScrapeStatus, PitchAppScrapeStatus, Season
+from vigorish.config.database import Season_Game_PitchApp_View as SeasonView
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 

@@ -2,10 +2,10 @@ from copy import deepcopy
 
 from tabulate import tabulate
 
-from vigorish.constants import VigFile, DataSet
-from vigorish.config.database import PlayerId, RunnersOnBase
 from vigorish.cli.components.models import DisplayTable
 from vigorish.cli.components.table_viewer import TableViewer
+from vigorish.config.database import PlayerId, RunnersOnBase
+from vigorish.constants import DataSet, VigFile
 from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.list_helpers import group_and_sort_dict_list
 from vigorish.util.result import Result
@@ -222,8 +222,8 @@ class AllGameData:
             innings_viewer[inning] = table_viewer
         return Result.Ok(innings_viewer)
 
-    def view_all_at_bats(self):
-        pass
+    # def view_all_at_bats(self):
+    #     pass
 
     def view_game_meta_info(self):
         meta_info = deepcopy(self.game_meta_info)
