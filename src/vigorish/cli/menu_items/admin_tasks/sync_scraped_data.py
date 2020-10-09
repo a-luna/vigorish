@@ -222,7 +222,9 @@ class SyncScrapedData(MenuItem):
         ]
         new_plural = "files below are" if new_count > 1 else "file below is"
         old_plural = "files" if old_count > 1 else "file"
-        file_dest = "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
+        file_dest = (
+            "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
+        )
         file_src = "local folder" if self.sync_direction == SyncDirection.UP_TO_S3 else "S3 bucket"
         m = []
         if new_count:

@@ -32,7 +32,9 @@ def get_random_dots_spinner():
     return f"dots{randint(2, 9)}"
 
 
-def print_message(message, wrap=True, max_line_len=70, fg=None, bg=None, bold=None, underline=None):
+def print_message(
+    message, wrap=True, max_line_len=70, fg=None, bg=None, bold=None, underline=None
+):
     if (fg and fg not in CLI_COLORS) or (bg and bg not in CLI_COLORS):
         fg = None
         bg = None

@@ -68,7 +68,9 @@ class ScrapeTaskABC(ABC):
         self.spinner.start()
         self.url_tracker = UrlTracker(self.db_job, self.data_set, self.scraped_data)
         result = self.url_tracker.create_url_set()
-        return result if self.url_tracker.total_urls else Result.Fail("Unable to generate URL set.")
+        return (
+            result if self.url_tracker.total_urls else Result.Fail("Unable to generate URL set.")
+        )
 
     def identify_needed_urls(self):
         self.spinner.text = self.url_tracker.identify_html_report

@@ -948,7 +948,9 @@ class CombineScrapedData:
             pfx_dict.pop("game_start_time", None)
             pfx_dict.pop("time_pitch_thrown", None)
 
-    def construct_pitch_sequence_description(self, at_bat_id, final_event_in_at_bat, pfx_data=None):
+    def construct_pitch_sequence_description(
+        self, at_bat_id, final_event_in_at_bat, pfx_data=None
+    ):
         pitch_sequence = final_event_in_at_bat["pitch_sequence"]
         result = self.get_total_pitches_in_sequence(pitch_sequence)
         if result.failure:
@@ -1207,7 +1209,9 @@ class CombineScrapedData:
         duplicate_guid_removed_count = sum(
             event["at_bat_pitchfx_audit"]["duplicate_guid_removed_count"] for event in game_events
         )
-        pitchfx_error = any(event["at_bat_pitchfx_audit"]["pitchfx_error"] for event in game_events)
+        pitchfx_error = any(
+            event["at_bat_pitchfx_audit"]["pitchfx_error"] for event in game_events
+        )
 
         at_bat_ids_pitchfx_complete = list(
             set(
