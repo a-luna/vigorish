@@ -1,3 +1,4 @@
+# flake8: noqa
 """Installation script for vigorish CLI application."""
 from pathlib import Path
 
@@ -57,6 +58,7 @@ EXTRAS_REQUIRE = {
         "black",
         "coverage",
         "flake8",
+        "isort",
         "pydocstyle",
         "pytest",
         "pytest-black",
@@ -71,12 +73,13 @@ EXTRAS_REQUIRE = {
     ]
 }
 
+exec(open(str((APP_ROOT / "src/vigorish/version.py"))).read())
 setup(
     name="vigorish",
     description=DESCRIPTION,
     long_description=README,
     long_description_content_type="text/markdown",
-    version="0.3.4",
+    version=__version__,
     author=AUTHOR,
     author_email=AUTHOR_EMAIL,
     maintainer=AUTHOR,
