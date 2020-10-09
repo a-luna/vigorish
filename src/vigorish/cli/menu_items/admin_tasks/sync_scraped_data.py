@@ -220,15 +220,15 @@ class SyncScrapedData(MenuItem):
             }
             for f in sync_files
         ]
-        new_plural = "files below are" if new_count > 1 else "file below is"
-        old_plural = "files" if old_count > 1 else "file"
+        new_plural = "files below do" if new_count > 1 else "file below does"
+        old_plural = "files have" if old_count > 1 else "file has"
         file_dest = "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
         file_src = "local folder" if self.sync_direction == SyncDirection.UP_TO_S3 else "S3 bucket"
         m = []
         if new_count:
-            m.append(f"{new_count} {new_plural} does not exist in the {file_dest}")
+            m.append(f"{new_count} {new_plural} not exist in the {file_dest}")
         if old_count:
-            m.append(f"{old_count} {old_plural} have a more recent version in the {file_src}")
+            m.append(f"{old_count} {old_plural} a more recent version in the {file_src}")
         return DictListTableViewer(
             dict_list,
             prompt="Would you like to apply the changes to the files listed above?",
