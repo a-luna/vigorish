@@ -87,12 +87,26 @@ class ConfigSetting:
 
 
 class StringConfigSetting(ConfigSetting):
+    def __repr__(self):
+        return (
+            "<StringConfigSetting "
+            f"setting={self.setting_name},"
+            f"value={self.current_settings_report}>"
+        )
+
     @property
     def data_type(self):
         return ConfigType.STRING
 
 
 class PathConfigSetting(ConfigSetting):
+    def __repr__(self):
+        return (
+            "<PathConfigSetting "
+            f"setting={self.setting_name},"
+            f"value={self.current_settings_report}>"
+        )
+
     @property
     def data_type(self):
         return ConfigType.PATH
@@ -111,6 +125,13 @@ class PathConfigSetting(ConfigSetting):
 
 
 class EnumConfigSetting(ConfigSetting):
+    def __repr__(self):
+        return (
+            "<EnumConfigSetting "
+            f"setting={self.setting_name},"
+            f"value={self.current_settings_report}>"
+        )
+
     @property
     def data_type(self):
         return ConfigType.ENUM
@@ -150,6 +171,13 @@ class EnumConfigSetting(ConfigSetting):
 
 
 class NumericConfigSetting(ConfigSetting):
+    def __repr__(self):
+        return (
+            "<NumericConfigSetting "
+            f"setting={self.setting_name},"
+            f"value={self.current_settings_report}>"
+        )
+
     @property
     def data_type(self):
         return ConfigType.NUMERIC
