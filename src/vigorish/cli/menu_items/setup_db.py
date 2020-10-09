@@ -17,7 +17,9 @@ SETUP_HEADER = (
     "Before you can begin scraping data, you must initialize the database with initial player, "
     "team and season data.\n"
 )
-SETUP_MESSAGE = "Select YES to initialize the database\n" "Select NO to return to the previous menu"
+SETUP_MESSAGE = (
+    "Select YES to initialize the database\n" "Select NO to return to the previous menu"
+)
 RESET_MESSAGE = "Would you like to reset the database with initial player, team and season data?"
 WARNING = (
     "WARNING! All existing data will be deleted if you choose to reset the database. This "

@@ -36,7 +36,9 @@ class MainMenu(Menu):
 
     @property
     def initial_setup_complete(self):
-        return self.node_is_installed and self.node_modules_folder_exists and self.db_setup_complete
+        return (
+            self.node_is_installed and self.node_modules_folder_exists and self.db_setup_complete
+        )
 
     @property
     def is_refresh_needed(self):
@@ -159,7 +161,9 @@ class MainMenu(Menu):
             else False
         )
         invalid_pfx_errors_exist = (
-            any(len(audit_report["invalid_pfx"]) > 0 for audit_report in self.audit_report.values())
+            any(
+                len(audit_report["invalid_pfx"]) > 0 for audit_report in self.audit_report.values()
+            )
             if self.audit_report
             else False
         )

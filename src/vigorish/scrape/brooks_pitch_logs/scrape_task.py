@@ -32,7 +32,10 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
             self.db_session, game_date
         )
-        if scraped_brooks_pitch_logs and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
+        if (
+            scraped_brooks_pitch_logs
+            and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA
+        ):
             return Result.Fail("skip")
         return Result.Ok()
 

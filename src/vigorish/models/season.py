@@ -364,7 +364,9 @@ class Season(Base):
             return False
         if not self.scrape_status_pitchfx:
             return False
-        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx)
+        return any(
+            (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
+        )
 
     @hybrid_property
     def pitchfx_is_valid_for_all_pitchfx_logs(self):
@@ -554,7 +556,9 @@ class Season(Base):
 
     @classmethod
     def find_by_year(cls, db_session, year, season_type=SeasonType.REGULAR_SEASON):
-        return db_session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
+        return (
+            db_session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
+        )
 
     @classmethod
     def is_date_in_season(cls, db_session, check_date, season_type=SeasonType.REGULAR_SEASON):

@@ -41,13 +41,17 @@ class ScrapedDataErrorsMenu(Menu):
         self.menu_items.clear()
         failed_gids = self.season_report.get("failed", [])
         if failed_gids:
-            self.menu_items.append(InvestigateScrapedDataFailures(self.app, self.year, failed_gids))
+            self.menu_items.append(
+                InvestigateScrapedDataFailures(self.app, self.year, failed_gids)
+            )
         pfx_error_gids = self.season_report.get("pfx_error", [])
         if pfx_error_gids:
             self.menu_items.append(InvestigatePitchFxErrors(self.app, self.year, pfx_error_gids))
         invalid_pfx_gids = self.season_report.get("invalid_pfx", [])
         if invalid_pfx_gids:
-            self.menu_items.append(InvestigateInvalidPitchFx(self.app, self.year, invalid_pfx_gids))
+            self.menu_items.append(
+                InvestigateInvalidPitchFx(self.app, self.year, invalid_pfx_gids)
+            )
         self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to Main Menu"))
 
     def audit_report_season_prompt(self, audit_report):

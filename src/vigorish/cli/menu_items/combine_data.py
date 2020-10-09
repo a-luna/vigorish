@@ -33,7 +33,9 @@ STATUS_BAR_FORMAT = (
     "Elapsed: {elapsed}"
 )
 STATUS_BAR_COLOR = "bold_gray100_on_darkviolet"
-DATE_BAR_FORMAT = "{desc}{desc_pad}{percentage:3.0f}% |{bar}| {count:{len_total}d}/{total:d} {unit}"
+DATE_BAR_FORMAT = (
+    "{desc}{desc_pad}{percentage:3.0f}% |{bar}| {count:{len_total}d}/{total:d} {unit}"
+)
 
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger("enlighten")
@@ -413,7 +415,8 @@ class CombineGameDataMenuItem(MenuItem):
 
     def display_games_failed_to_combine(self):
         error_message = (
-            f"Error prevented scraped data being combined for {len(self.failed_game_ids)} " "games:"
+            f"Error prevented scraped data being combined for {len(self.failed_game_ids)} "
+            "games:"
         )
         error_details = [
             {"bbref_game_id": game_id, "error": error}
