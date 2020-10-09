@@ -56,12 +56,15 @@ class HtmlStorage:
         return save_html_s3_dict[data_set](url_id, html)
 
     def get_html(self, data_set, url_id):
-        result = self.get_html_local(data_set, url_id)
-        if result.failure:  # pragma: no cover
-            result = self.get_html_s3(data_set, url_id)
-            if result.failure:
-                return None
-        return result.value
+        if self.html_stored_local(data_set):
+            result_local = self.get_html_local(data_set, url_id)
+            if result_local.success:
+                return result_local.value
+        if self.html_stored_s3(data_set):  # pragma: no cover
+            result_s3 = self.get_html_s3(data_set, url_id)
+            if result_s3.success:
+                return result_s3.value
+        return None
 
     def get_html_local(self, data_set, url_id):
         get_html_local_dict = {
