@@ -295,14 +295,6 @@ class Season(Base):
         )
 
     @hybrid_property
-    def total_at_bats_pitchfx_complete(self):
-        return (
-            self.pitch_app_status.total_at_bats_pitchfx_complete
-            if self.pitch_app_status.total_at_bats_pitchfx_complete
-            else 0
-        )
-
-    @hybrid_property
     def total_at_bats_missing_pitchfx(self):
         return (
             self.pitch_app_status.total_at_bats_missing_pitchfx
@@ -438,7 +430,6 @@ class Season(Base):
         d["total_extra_pitchfx_removed_count"] = self.total_extra_pitchfx_removed_count
         d["total_batters_faced_bbref"] = self.total_batters_faced_bbref
         d["total_batters_faced_pitchfx"] = self.total_batters_faced_pitchfx
-        d["total_at_bats_pitchfx_complete"] = self.total_at_bats_pitchfx_complete
         d["total_at_bats_missing_pitchfx"] = self.total_at_bats_missing_pitchfx
         d["total_at_bats_extra_pitchfx"] = self.total_at_bats_extra_pitchfx
         d["total_at_bats_extra_pitchfx_removed"] = self.total_at_bats_extra_pitchfx_removed
