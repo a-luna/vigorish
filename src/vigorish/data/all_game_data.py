@@ -92,10 +92,13 @@ class AllGameData:
             mlb_id = self.bbref_id_to_mlb_id_map[slot["player_id_br"]]
             player_id = self.player_id_map.get(mlb_id)
             lineup[slot["bat_order"]] = {
+                "team_id": team_data["team_id_br"],
                 "name": player_id.mlb_name,
                 "mlb_id": mlb_id,
                 "bbref_id": slot["player_id_br"],
                 "def_position": slot["def_position"],
+                "game_results": self.parse_bat_stats_for_game(mlb_id).value,
+                "stats_to_date": self.parse_bat_stats_to_date(mlb_id).value,
             }
         return lineup
 
@@ -285,10 +288,10 @@ class AllGameData:
             return result
         bat_stats = result.value
         return Result.Ok(
-            f"{bat_stats['avg_to_date']}/"
-            f"{bat_stats['obp_to_date']}/"
-            f"{bat_stats['slg_to_date']}/"
-            f"{bat_stats['ops_to_date']}"
+            f"{str(bat_stats['avg_to_date'])[1:]}/"
+            f"{str(bat_stats['obp_to_date'])[1:]}/"
+            f"{str(bat_stats['slg_to_date'])[1:]}/"
+            f"{str(bat_stats['ops_to_date'])[1:]}"
         )
 
     def parse_bat_stats_for_game(self, mlb_id):
