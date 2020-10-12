@@ -11,6 +11,7 @@ from tests.test_brooks_pitchfx import GAME_DATE as GAME_DATE_PFX
 from tests.test_combine_scraped_data import COMBINED_DATA_GAME_DICT
 from vigorish.config.database import Season
 from vigorish.enums import DataSet
+from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus
 from vigorish.scrape.brooks_pitchfx.parse_html import parse_pitchfx_log
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore
 from vigorish.status.update_status_bbref_games_for_date import (
@@ -21,6 +22,7 @@ from vigorish.status.update_status_brooks_games_for_date import (
 )
 from vigorish.status.update_status_brooks_pitch_logs import update_status_brooks_pitch_logs_for_game
 from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
+from vigorish.util.result import Result
 
 
 def seed_database_with_test_data(db_session, scraped_data):
@@ -98,3 +100,24 @@ def update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id):
         pitchfx_log = result.value
         result = update_pitch_appearance_status_records(db_session, pitchfx_log)
         assert result.success
+
+
+def revert_pitch_logs_to_state_before_combined_data(db_session, scraped_data, bbref_game_id):
+    result = scraped_data.get_all_pitchfx_logs_for_game(bbref_game_id)
+    assert result.success
+    pfx_logs = result.value
+    for pfx_log in pfx_logs:
+        pitch_app_id = pfx_log.pitch_app_id
+        pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
+        assert pitch_app_status
+        if not pitch_app_status.combined_pitchfx_bbref_data:
+            continue
+        pitch_app_status.combined_pitchfx_bbref_data = 0
+        pitch_app_status.pitch_count_bbref = 0
+        pitch_app_status.pitch_count_pitchfx_audited = 0
+        pitch_app_status.duplicate_guid_removed_count = 0
+        pitch_app_status.missing_pitchfx_count = 0
+        pitch_app_status.batters_faced_bbref = 0
+        pitch_app_status.total_at_bats_pitchfx_complete = 0
+        pitch_app_status.total_at_bats_missing_pitchfx = 0
+    return Result.Ok()
