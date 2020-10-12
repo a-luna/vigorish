@@ -67,6 +67,7 @@ EXTRAS_REQUIRE = {
         "pytest-dotenv",
         "pytest-flake8",
         "pytest-mock",
+        "pytest-randomly",
         "tox",
         "twine",
         "wheel",

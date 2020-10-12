@@ -1,36 +1,29 @@
-from datetime import datetime
+import pytest
 
+from tests.util import GAME_DATE_BB_DAILY as GAME_DATE
+from tests.util import (
+    get_brooks_url_for_date,
+    parse_brooks_games_for_date_from_html,
+    update_scraped_bbref_games_for_date,
+)
 from vigorish.config.database import DateScrapeStatus, GameScrapeStatus, Season
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
-from vigorish.scrape.brooks_games_for_date.parse_html import parse_brooks_dashboard_page
 from vigorish.status.update_status_brooks_games_for_date import (
     update_brooks_games_for_date_single_date,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 
-GAME_DATE = datetime(2018, 4, 17)
 GAME_ID = "gid_2018_04_17_lanmlb_sdnmlb_1"
 
 
-def get_brooks_url_for_date(game_date):
-    y = game_date.year
-    m = game_date.month
-    d = game_date.day
-    return f"http://www.brooksbaseball.net/dashboard.php?dts={m}/{d}/{y}"
-
-
-def parse_brooks_games_for_date_from_html(db_session, scraped_data, game_date):
-    html_path = scraped_data.get_html(DataSet.BROOKS_GAMES_FOR_DATE, game_date)
-    page_content = html_path.read_text()
-    url = get_brooks_url_for_date(game_date)
-    games_for_date = scraped_data.get_bbref_games_for_date(game_date)
-    result = parse_brooks_dashboard_page(db_session, page_content, game_date, url, games_for_date)
-    assert result.success
-    brooks_games_for_date = result.value
-    return brooks_games_for_date
+@pytest.fixture(scope="module", autouse=True)
+def create_test_data(db_session, scraped_data):
+    """Initialize DB with data to verify test functions in test_brooks_games_for_date module."""
+    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
+    return True
 
 
 def test_parse_brooks_games_for_date(db_session, scraped_data):
@@ -80,6 +73,7 @@ def test_update_database_brooks_games_for_date(db_session, scraped_data):
     assert game_status.game_time_minute == 10
     assert game_status.game_time_zone == "America/New_York"
     assert game_status.pitch_app_count_brooks == 15
+    db_session.commit()
 
 
 def verify_brooks_games_for_date_apr_17_2018(games_for_date):

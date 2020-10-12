@@ -1,9 +1,37 @@
-from tests.test_combine_scraped_data import GAME_ID_NO_ERRORS
+from datetime import datetime
+
+import pytest
+
+from tests.util import (
+    combine_scraped_data_for_game,
+    COMBINED_DATA_GAME_DICT,
+    update_scraped_bbref_games_for_date,
+    update_scraped_boxscore,
+    update_scraped_brooks_games_for_date,
+    update_scraped_pitch_logs,
+    update_scraped_pitchfx_logs,
+)
 from vigorish.data.all_game_data import AllGameData
+
+GAME_DATE = datetime(2019, 6, 17)
+GAME_DICT = COMBINED_DATA_GAME_DICT[GAME_DATE]
+
+
+@pytest.fixture(scope="module", autouse=True)
+def create_test_data(db_session, scraped_data):
+    """Initialize DB with data to verify test functions in test_all_game_data module."""
+    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
+    update_scraped_brooks_games_for_date(db_session, scraped_data, GAME_DATE)
+    update_scraped_boxscore(db_session, scraped_data, GAME_DICT["bbref_game_id"])
+    update_scraped_pitch_logs(db_session, scraped_data, GAME_DATE, GAME_DICT["bbref_game_id"])
+    update_scraped_pitchfx_logs(db_session, scraped_data, GAME_DICT["bb_game_id"])
+    combine_scraped_data_for_game(db_session, scraped_data, GAME_DICT["bbref_game_id"])
+    db_session.commit()
+    return True
 
 
 def test_all_game_data(db_session, scraped_data):
-    all_game_data = AllGameData(db_session, scraped_data, GAME_ID_NO_ERRORS)
+    all_game_data = AllGameData(db_session, scraped_data, GAME_DICT["bbref_game_id"])
     away_team_id = all_game_data.away_team_id
     assert away_team_id == "LAA"
     home_team_id = all_game_data.home_team_id

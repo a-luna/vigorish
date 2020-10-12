@@ -9,8 +9,8 @@ backcall==0.2.0
 black==20.8b1
 bleach==3.2.1
 blessed==1.17.10
-boto3==1.15.15
-botocore==1.18.15
+boto3==1.15.16
+botocore==1.18.16
 bullet==2.2.0
 certifi==2020.6.20
 chardet==3.0.4
@@ -45,12 +45,12 @@ flake8-use-fstring==1.1
 flake8-variables-names==0.0.3
 getversion==1.0.1
 halo==0.0.30
-identify==1.5.5
+identify==1.5.6
 idna==2.10
 iniconfig==1.0.1
 ipython==7.18.1
 ipython-genutils==0.2.0
-isort==5.6.1
+isort==5.6.3
 jedi==0.17.2
 jmespath==0.10.0
 keyring==21.4.0
@@ -85,14 +85,15 @@ pytest-cov==2.10.1
 pytest-dotenv==0.5.2
 pytest-flake8==1.0.6
 pytest-mock==3.3.1
+pytest-randomly==3.4.1
 pytest-sugar==0.9.4
 pytest-verbose-parametrize==1.7.0
 python-dateutil==2.8.1
 python-dotenv==0.14.0
 PyYAML==5.3.1
 rapidfuzz==0.12.3
-readme-renderer==26.0
-regex==2020.9.27
+readme-renderer==27.0
+regex==2020.10.11
 requests==2.24.0
 requests-toolbelt==0.9.1
 rfc3986==1.4.0
@@ -116,7 +117,7 @@ twine==3.2.0
 typed-ast==1.4.1
 typing-extensions==3.7.4.3
 urllib3==1.25.10
--e git+https://github.com/a-luna/vigorish.git@d249c73e167414b716abb855a21182bd62c73568#egg=vigorish
+-e git+https://github.com/a-luna/vigorish.git@4f49404e1483d4d180997bed564a79bb0b02c5e3#egg=vigorish
 virtualenv==20.0.33
 w3lib==1.22.0
 wcwidth==0.2.5
