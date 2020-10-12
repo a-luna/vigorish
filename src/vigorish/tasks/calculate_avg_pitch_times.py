@@ -25,7 +25,7 @@ class CalculateAverageTimeBetweenPitches(Task):
             )
         )
 
-    def execute(self):
+    def execute(self, trim_data_sets=True):
         self.events.find_eligible_games_start()
         game_ids = Season_View.get_all_bbref_game_ids_combined_no_missing_pfx(self.db_engine)
         if not game_ids:
@@ -46,9 +46,15 @@ class CalculateAverageTimeBetweenPitches(Task):
             self.events.calculate_pitch_metrics_progress(num)
         self.events.calculate_pitch_metrics_complete()
         metrics = {
-            "time_between_pitches": self.process_data_set(pitch_samples, trim=True, st_dev=0.2),
-            "time_between_at_bats": self.process_data_set(at_bat_samples, trim=True, st_dev=0.25),
-            "time_between_innings": self.process_data_set(inning_samples, trim=True, st_dev=0.007),
+            "time_between_pitches": self.process_data_set(
+                pitch_samples, trim=trim_data_sets, st_dev=0.2
+            ),
+            "time_between_at_bats": self.process_data_set(
+                at_bat_samples, trim=trim_data_sets, st_dev=0.25
+            ),
+            "time_between_innings": self.process_data_set(
+                inning_samples, trim=trim_data_sets, st_dev=0.007
+            ),
         }
         return Result.Ok(metrics)
 
@@ -123,17 +129,19 @@ class CalculateAverageTimeBetweenPitches(Task):
         return timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
 
     def process_data_set(self, data_set, trim=False, st_dev=1):
-        if not data_set or not isinstance(data_set, list):
+        if not isinstance(data_set, list):
+            return {}
+        if len(data_set) == 0:
             return {}
         if trim:
             data_set = trim_data_set(data_set, st_dev_limit=st_dev)
         results = {
-            "total": sum(data_set),
-            "count": len(data_set),
-            "avg": sum(data_set) / len(data_set),
-            "max": max(data_set),
-            "min": min(data_set),
-            "range": max(data_set) - min(data_set),
+            "total": int(sum(data_set)),
+            "count": int(len(data_set)),
+            "avg": round(sum(data_set) / len(data_set), 1),
+            "max": int(max(data_set)),
+            "min": int(min(data_set)),
+            "range": int(max(data_set) - min(data_set)),
             "trim": trim,
         }
         if trim:

@@ -2,6 +2,7 @@ from datetime import datetime
 
 from vigorish.config.database import GameScrapeStatus, Season
 from vigorish.enums import DataSet
+from vigorish.config.database import PitchAppScrapeStatus
 from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
 from vigorish.scrape.brooks_games_for_date.parse_html import parse_brooks_dashboard_page
@@ -184,6 +185,27 @@ def parse_brooks_pitch_logs_for_game_from_html(scraped_data, game_date, bbref_ga
         scraped_pitch_logs.append(pitch_log)
     pitch_logs_for_game.pitch_logs = scraped_pitch_logs
     return pitch_logs_for_game
+
+
+def revert_pitch_logs_to_state_before_combined_data(db_session, scraped_data, bbref_game_id):
+    result = scraped_data.get_all_pitchfx_logs_for_game(bbref_game_id)
+    assert result.success
+    pfx_logs = result.value
+    for pfx_log in pfx_logs:
+        pitch_app_id = pfx_log.pitch_app_id
+        pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
+        assert pitch_app_status
+        if not pitch_app_status.combined_pitchfx_bbref_data:
+            continue
+        pitch_app_status.combined_pitchfx_bbref_data = 0
+        pitch_app_status.pitch_count_bbref = 0
+        pitch_app_status.pitch_count_pitchfx_audited = 0
+        pitch_app_status.duplicate_guid_removed_count = 0
+        pitch_app_status.missing_pitchfx_count = 0
+        pitch_app_status.batters_faced_bbref = 0
+        pitch_app_status.total_at_bats_pitchfx_complete = 0
+        pitch_app_status.total_at_bats_missing_pitchfx = 0
+    return Result.Ok()
 
 
 def update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id):
