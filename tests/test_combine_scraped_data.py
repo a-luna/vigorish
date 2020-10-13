@@ -1,63 +1,41 @@
-from datetime import datetime
+import pytest
 
+from tests.util import (
+    combine_scraped_data_for_game,
+    COMBINED_DATA_GAME_DICT,
+    GAME_ID_EXTRA_PFX_REMOVED,
+    GAME_ID_NO_ERRORS,
+    GAME_ID_NO_PFX_FOR_PITCH_APP,
+    GAME_ID_PATCH_BOXSCORE,
+    GAME_ID_PATCH_PFX,
+    GAME_ID_WITH_ERRORS,
+    NO_ERRORS_PITCH_APP,
+    update_scraped_bbref_games_for_date,
+    update_scraped_boxscore,
+    update_scraped_brooks_games_for_date,
+    update_scraped_pitch_logs,
+    update_scraped_pitchfx_logs,
+)
 from vigorish.config.database import GameScrapeStatus, PitchAppScrapeStatus
-from vigorish.enums import DataSet
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
 from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
 from vigorish.util.exceptions import ScrapedDataException
 
-GAME_ID_NO_ERRORS = "TOR201906170"
-NO_ERRORS_PITCH_APP = "TOR201906170_429719"
-GAME_ID_WITH_ERRORS = "NYA201906112"
-GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
-GAME_ID_EXTRA_PFX_REMOVED = "TEX201904150"
-GAME_ID_PATCH_PFX = "OAK201904030"
-GAME_ID_PATCH_BOXSCORE = "TOR201908170"
-COMBINED_DATA_GAME_DICT = {
-    datetime(2019, 6, 17): {
-        "bbref_game_id": GAME_ID_NO_ERRORS,
-        "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
-    },
-    datetime(2019, 6, 11): {
-        "bbref_game_id": GAME_ID_WITH_ERRORS,
-        "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
-    },
-    datetime(2019, 9, 7): {
-        "bbref_game_id": GAME_ID_NO_PFX_FOR_PITCH_APP,
-        "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
-    },
-    datetime(2019, 4, 15): {
-        "bbref_game_id": GAME_ID_EXTRA_PFX_REMOVED,
-        "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
-    },
-    datetime(2019, 4, 3): {
-        "bbref_game_id": GAME_ID_PATCH_PFX,
-        "bb_game_id": "gid_2019_04_03_bosmlb_oakmlb_1",
-    },
-    datetime(2019, 8, 17): {
-        "bbref_game_id": GAME_ID_PATCH_BOXSCORE,
-        "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
-    },
-}
 
-
-def combine_scraped_data_for_game(db_session, scraped_data, game_id, apply_patch_list=False):
-    game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, game_id)
-    boxscore = scraped_data.get_bbref_boxscore(game_id)
-    if apply_patch_list:
-        result = scraped_data.apply_patch_list(DataSet.BBREF_BOXSCORES, game_id, boxscore)
-        assert result.success
-        boxscore = result.value
-    pfx_logs = scraped_data.get_all_pitchfx_logs_for_game(game_id).value
-    if apply_patch_list:
-        result = scraped_data.apply_patch_list(DataSet.BROOKS_PITCHFX, game_id, pfx_logs, boxscore)
-        assert result.success
-        pfx_logs = result.value
-    avg_pitch_times = scraped_data.get_avg_pitch_times()
-    result = scraped_data.combine_data.execute(game_status, boxscore, pfx_logs, avg_pitch_times)
-    assert result.success
-    return result.value
+@pytest.fixture(scope="module", autouse=True)
+def create_test_data(db_session, scraped_data):
+    """Initialize DB with data to verify test functions in test_combine_scraped_data module."""
+    for game_date, game_id_dict in COMBINED_DATA_GAME_DICT.items():
+        bbref_game_id = game_id_dict["bbref_game_id"]
+        bb_game_id = game_id_dict["bb_game_id"]
+        update_scraped_bbref_games_for_date(db_session, scraped_data, game_date)
+        update_scraped_brooks_games_for_date(db_session, scraped_data, game_date)
+        update_scraped_boxscore(db_session, scraped_data, bbref_game_id)
+        update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id)
+        update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
+        db_session.commit()
+    return True
 
 
 def test_combine_data_no_errors(db_session, scraped_data):
@@ -115,6 +93,7 @@ def test_combine_data_no_errors(db_session, scraped_data):
     assert pitch_app_status.batters_faced_bbref == 10
     assert pitch_app_status.total_at_bats_pitchfx_complete == 10
     assert pitch_app_status.total_at_bats_missing_pitchfx == 0
+    db_session.commit()
 
 
 def test_combine_data_with_errors(db_session, scraped_data):
@@ -152,6 +131,7 @@ def test_combine_data_with_errors(db_session, scraped_data):
     assert data_audit["at_bat_ids_pitchfx_error"] == []
     assert "duplicate_guid_removed_count" in data_audit
     assert data_audit["duplicate_guid_removed_count"] == 1
+    db_session.commit()
 
 
 def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
@@ -193,6 +173,7 @@ def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
     assert data_audit["at_bat_ids_pitchfx_error"] == []
     assert "duplicate_guid_removed_count" in data_audit
     assert data_audit["duplicate_guid_removed_count"] == 1
+    db_session.commit()
 
 
 def test_combine_data_extra_pitchfx_removed(db_session, scraped_data):
@@ -233,6 +214,7 @@ def test_combine_data_extra_pitchfx_removed(db_session, scraped_data):
     ]
     assert "duplicate_guid_removed_count" in data_audit
     assert data_audit["duplicate_guid_removed_count"] == 1
+    db_session.commit()
 
 
 def test_combine_patched_pitchfx_data(vig_app):
@@ -381,6 +363,7 @@ def test_combine_patched_pitchfx_data(vig_app):
     assert not data_audit["invalid_pitchfx"]
     assert "at_bat_ids_invalid_pitchfx" in data_audit
     assert data_audit["at_bat_ids_invalid_pitchfx"] == []
+    vig_app["db_session"].commit()
 
 
 def test_patch_all_invalid_pitchfx_data(vig_app):
@@ -470,6 +453,7 @@ def test_patch_all_invalid_pitchfx_data(vig_app):
     patch_results_dict = result.value
     assert "all_patch_results" in patch_results_dict
     assert GAME_ID_PATCH_PFX in patch_results_dict["all_patch_results"]
+    vig_app["db_session"].commit()
 
 
 def test_combine_patched_boxscore_data(vig_app):

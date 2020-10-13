@@ -1,32 +1,13 @@
-from datetime import datetime
-
+from tests.util import GAME_DATE_BR_DAILY as GAME_DATE
+from tests.util import get_bbref_url_for_date, parse_bbref_games_for_date_from_html
 from vigorish.config.database import DateScrapeStatus, Season
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
-from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
 from vigorish.status.update_status_bbref_games_for_date import (
     update_bbref_games_for_date_single_date,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
-
-GAME_DATE = datetime(2018, 7, 26)
-
-
-def get_bbref_url_for_date():
-    y = GAME_DATE.year
-    m = GAME_DATE.month
-    d = GAME_DATE.day
-    return f"https://www.baseball-reference.com/boxes/?month={m}&day={d}&year={y}"
-
-
-def parse_bbref_games_for_date_from_html(scraped_data, game_date):
-    bbref_url = get_bbref_url_for_date()
-    html_path = scraped_data.get_html(DataSet.BBREF_GAMES_FOR_DATE, game_date)
-    result = parse_bbref_dashboard_page(html_path.read_text(), game_date, bbref_url)
-    assert result.success
-    games_for_date = result.value
-    return games_for_date
 
 
 def test_parse_bbref_games_for_date(scraped_data):
@@ -66,10 +47,11 @@ def test_update_database_bbref_games_for_date(db_session, scraped_data):
     assert result.success
     assert date_status.scraped_daily_dash_bbref == 1
     assert date_status.game_count_bbref == 11
+    db_session.commit()
 
 
 def verify_bbref_games_for_date_jul_26_2018(games_for_date):
-    bbref_url = get_bbref_url_for_date()
+    bbref_url = get_bbref_url_for_date(GAME_DATE)
     expected_game_count = 11
     assert isinstance(games_for_date, BBRefGamesForDate)
     assert games_for_date.dashboard_url == bbref_url
