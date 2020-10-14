@@ -1,5 +1,7 @@
 from pprint import pformat
 
+from getch import pause
+
 from vigorish.cli.components import print_message
 from vigorish.config.database import DateScrapeStatus, Season
 from vigorish.enums import StatusReport
@@ -36,7 +38,7 @@ def report_status_single_date(db_session, game_date, report_type):
                 db_session, game_date
             )
             missing_ids_str = (
-                f"MISSING: {missing_pitch_app_ids}"
+                f"MISSING: {pformat(missing_pitch_app_ids)}"
                 if missing_pitch_app_ids
                 else "All PitchFX logs have been scraped"
             )
@@ -56,7 +58,8 @@ def report_status_single_date(db_session, game_date, report_type):
         print_message(
             f"\n### MISSING PITCHFX LOGS FOR {date_str} ###", fg="bright_magenta", bold=True
         )
-        print_message(pformat(missing_ids_str), wrap=False, fg="bright_magenta")
+        print_message(missing_ids_str, wrap=False, fg="bright_magenta")
+    pause(message="Press any key to continue...")
     return Result.Ok()
 
 
@@ -67,6 +70,7 @@ def report_season_status(db_session, year, report_type):
     if report_type == StatusReport.SEASON_SUMMARY:
         print_message(f"\n### STATUS REPORT FOR {season.name} ###", fg="bright_yellow", bold=True)
         print_message(season.status_report(), wrap=False, fg="bright_yellow")
+        pause(message="Press any key to continue...")
         return Result.Ok()
     start_date = season.start_date
     end_date = season.end_date
@@ -144,6 +148,7 @@ def display_detailed_report_for_date_range(db_session, status_date_range, missin
         print_message(date_status.status_report(), wrap=False, fg="bright_cyan")
         if missing_pitchfx:
             print_message(pformat(missing_ids_str), wrap=False, fg="bright_cyan")
+    pause(message="Press any key to continue...")
     return Result.Ok()
 
 
@@ -160,4 +165,5 @@ def display_summary_report_for_date_range(db_session, start_date, end_date, stat
         date_str = status.game_date_str
         status_description = status.scrape_status_description
         print_message(f"{date_str}: {status_description}", wrap=False, fg="bright_magenta")
+    pause(message="Press any key to continue...")
     return Result.Ok()
