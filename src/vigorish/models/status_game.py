@@ -83,15 +83,23 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def pitch_app_count_pitchfx(self):
-        return self.pitch_app_status.total_pitchfx
+        return self.pitch_app_status.total_pitchfx if self.pitch_app_status.total_pitchfx else 0
 
     @hybrid_property
     def total_pitch_apps_scraped_pitchfx(self):
-        return self.pitch_app_status.total_pitchfx_scraped
+        return (
+            self.pitch_app_status.total_pitchfx_scraped
+            if self.pitch_app_status.total_pitchfx_scraped
+            else 0
+        )
 
     @hybrid_property
     def total_pitch_apps_no_pitchfx_data(self):
-        return self.pitch_app_status.total_no_pitchfx_data
+        return (
+            self.pitch_app_status.total_no_pitchfx_data
+            if self.pitch_app_status.total_no_pitchfx_data
+            else 0
+        )
 
     @hybrid_property
     def total_pitch_apps_with_pitchfx_data(self):
@@ -99,7 +107,11 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_apps_combined_data(self):
-        return self.pitch_app_status.total_combined_pitchfx_bbref_data
+        return (
+            self.pitch_app_status.total_combined_pitchfx_bbref_data
+            if self.pitch_app_status.total_combined_pitchfx_bbref_data
+            else 0
+        )
 
     @hybrid_property
     def total_pitch_apps_contains_patched_data(self):
@@ -133,75 +145,147 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_count_pitch_logs(self):
-        return self.pitch_app_status.total_pitch_count_pitch_log
+        return (
+            self.pitch_app_status.total_pitch_count_pitch_log
+            if self.pitch_app_status.total_pitch_count_pitch_log
+            else 0
+        )
 
     @hybrid_property
     def total_pitch_count_bbref_audited(self):
-        return self.pitch_app_status.total_pitch_count_bbref
+        return (
+            self.pitch_app_status.total_pitch_count_bbref
+            if self.pitch_app_status.total_pitch_count_bbref
+            else 0
+        )
 
     @hybrid_property
     def total_pitch_count_pitchfx(self):
-        return self.pitch_app_status.total_pitch_count_pitchfx
+        return (
+            self.pitch_app_status.total_pitch_count_pitchfx
+            if self.pitch_app_status.total_pitch_count_pitchfx
+            else 0
+        )
 
     @hybrid_property
     def total_pitch_count_pitchfx_audited(self):
-        return self.pitch_app_status.total_pitch_count_pitchfx_audited
+        return (
+            self.pitch_app_status.total_pitch_count_pitchfx_audited
+            if self.pitch_app_status.total_pitch_count_pitchfx_audited
+            else 0
+        )
 
     @hybrid_property
     def total_duplicate_pitchfx_removed_count(self):
-        return self.pitch_app_status.total_duplicate_pitchfx_removed_count
+        return (
+            self.pitch_app_status.total_duplicate_pitchfx_removed_count
+            if self.pitch_app_status.total_duplicate_pitchfx_removed_count
+            else 0
+        )
 
     @hybrid_property
     def total_patched_pitchfx_count(self):
-        return self.pitch_app_status.total_patched_pitchfx_count
+        return (
+            self.pitch_app_status.total_patched_pitchfx_count
+            if self.pitch_app_status.total_patched_pitchfx_count
+            else 0
+        )
 
     @hybrid_property
     def total_missing_pitchfx_count(self):
-        return self.pitch_app_status.total_missing_pitchfx_count
+        return (
+            self.pitch_app_status.total_missing_pitchfx_count
+            if self.pitch_app_status.total_missing_pitchfx_count
+            else 0
+        )
 
     @hybrid_property
     def total_extra_pitchfx_count(self):
-        return self.pitch_app_status.total_extra_pitchfx_count
+        return (
+            self.pitch_app_status.total_extra_pitchfx_count
+            if self.pitch_app_status.total_extra_pitchfx_count
+            else 0
+        )
 
     @hybrid_property
     def total_extra_pitchfx_removed_count(self):
-        return self.pitch_app_status.total_extra_pitchfx_removed_count
+        return (
+            self.pitch_app_status.total_extra_pitchfx_removed_count
+            if self.pitch_app_status.total_extra_pitchfx_removed_count
+            else 0
+        )
 
     @hybrid_property
     def total_batters_faced_bbref(self):
-        return self.pitch_app_status.total_batters_faced_bbref
+        return (
+            self.pitch_app_status.total_batters_faced_bbref
+            if self.pitch_app_status.total_batters_faced_bbref
+            else 0
+        )
 
     @hybrid_property
     def total_batters_faced_pitchfx(self):
-        return self.pitch_app_status.total_batters_faced_pitchfx
+        return (
+            self.pitch_app_status.total_batters_faced_pitchfx
+            if self.pitch_app_status.total_batters_faced_pitchfx
+            else 0
+        )
 
     @hybrid_property
     def total_at_bats_pitchfx_complete(self):
-        return self.pitch_app_status.total_at_bats_pitchfx_complete
+        return (
+            self.pitch_app_status.total_at_bats_pitchfx_complete
+            if self.pitch_app_status.total_at_bats_pitchfx_complete
+            else 0
+        )
 
     @hybrid_property
     def total_at_bats_patched_pitchfx(self):
-        return self.pitch_app_status.total_at_bats_patched_pitchfx
+        return (
+            self.pitch_app_status.total_at_bats_patched_pitchfx
+            if self.pitch_app_status.total_at_bats_patched_pitchfx
+            else 0
+        )
 
     @hybrid_property
     def total_at_bats_missing_pitchfx(self):
-        return self.pitch_app_status.total_at_bats_missing_pitchfx
+        return (
+            self.pitch_app_status.total_at_bats_missing_pitchfx
+            if self.pitch_app_status.total_at_bats_missing_pitchfx
+            else 0
+        )
 
     @hybrid_property
     def total_at_bats_extra_pitchfx(self):
-        return self.pitch_app_status.total_at_bats_extra_pitchfx
+        return (
+            self.pitch_app_status.total_at_bats_extra_pitchfx
+            if self.pitch_app_status.total_at_bats_extra_pitchfx
+            else 0
+        )
 
     @hybrid_property
     def total_at_bats_extra_pitchfx_removed(self):
-        return self.pitch_app_status.total_at_bats_extra_pitchfx_removed
+        return (
+            self.pitch_app_status.total_at_bats_extra_pitchfx_removed
+            if self.pitch_app_status.total_at_bats_extra_pitchfx_removed
+            else 0
+        )
 
     @hybrid_property
     def total_at_bats_pitchfx_error(self):
-        return self.pitch_app_status.total_at_bats_pitchfx_error
+        return (
+            self.pitch_app_status.total_at_bats_pitchfx_error
+            if self.pitch_app_status.total_at_bats_pitchfx_error
+            else 0
+        )
 
     @hybrid_property
     def total_at_bats_invalid_pitchfx(self):
-        return self.pitch_app_status.total_at_bats_invalid_pitchfx
+        return (
+            self.pitch_app_status.total_at_bats_invalid_pitchfx
+            if self.pitch_app_status.total_at_bats_invalid_pitchfx
+            else 0
+        )
 
     @hybrid_property
     def no_pitchfx_data_for_all_pitch_apps(self):

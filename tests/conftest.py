@@ -35,7 +35,7 @@ def config(dotenv, request):
 
 @pytest.fixture(scope="module")
 def db_engine(request):
-    """Returns a new SQLAlchemy Engine instance configured with a in-memory SQLite database."""
+    """Returns a SQLAlchemy Engine configured with the SQLite database in the tets folder."""
     return create_engine(SQLITE_URL)
 
 

@@ -1,5 +1,4 @@
 from datetime import datetime
-from pathlib import Path
 
 import pytest
 from click.testing import CliRunner
@@ -16,21 +15,10 @@ def create_test_data(db_session, scraped_data):
     return True
 
 
-@pytest.fixture(autouse=True)
-def mock_env_vars(mocker):
-    tests_folder = Path(__file__).parent
-    test_vars = {
-        "ENV": "TEST",
-        "DOTENV_FILE": str(tests_folder.joinpath(".env")),
-    }
-    mocker.patch.dict("os.environ", test_vars)
-    return True
-
-
 def test_status_single_date_without_games_without_missing_pfx():
     game_date = datetime(2019, 6, 17).strftime(DATE_ONLY_2)
     runner = CliRunner()
-    result = runner.invoke(cli, ["status", "date", game_date])
+    result = runner.invoke(cli, f"status date {game_date}")
     assert result.exit_code == 0
     assert "### OVERALL STATUS FOR Jun 17 2019 ###" in result.output
     assert "### MISSING PITCHFX LOGS FOR Jun 17 2019 ###" not in result.output
@@ -40,7 +28,7 @@ def test_status_single_date_without_games_without_missing_pfx():
 def test_status_single_date_without_games_with_missing_pfx():
     game_date = datetime(2019, 6, 17).strftime(DATE_ONLY_2)
     runner = CliRunner()
-    result = runner.invoke(cli, ["status", "date", "--missing-ids", game_date])
+    result = runner.invoke(cli, f"status date {game_date} --missing-ids")
     assert result.exit_code == 0
     assert "### OVERALL STATUS FOR Jun 17 2019 ###" in result.output
     assert "### MISSING PITCHFX LOGS FOR Jun 17 2019 ###" in result.output
@@ -50,7 +38,7 @@ def test_status_single_date_without_games_with_missing_pfx():
 def test_status_single_date_with_games_with_missing_pfx():
     game_date = datetime(2019, 6, 17).strftime(DATE_ONLY_2)
     runner = CliRunner()
-    result = runner.invoke(cli, ["status", "date", "--missing-ids", "--with-games", game_date])
+    result = runner.invoke(cli, f"status date {game_date} --missing-ids --with-games")
     assert result.exit_code == 0
     assert "### OVERALL STATUS FOR Jun 17 2019 ###" in result.output
     assert "### MISSING PITCHFX LOGS FOR Jun 17 2019 ###" in result.output
@@ -60,7 +48,7 @@ def test_status_single_date_with_games_with_missing_pfx():
 def test_status_season_overall_summary():
     year = 2019
     runner = CliRunner()
-    result = runner.invoke(cli, ["status", "season", "-v", year])
+    result = runner.invoke(cli, f"status season {year} -v")
     assert result.exit_code == 0
     assert "### STATUS REPORT FOR MLB 2019 Regular Season ###" in result.output
     assert "BBref Daily Dash Scraped.....................: 6/186 days (3%)" in result.output
@@ -68,9 +56,44 @@ def test_status_season_overall_summary():
     assert "BBref Boxscores Scraped......................: NO 6/81" in result.output
     assert "Brooks Games Scraped.........................: NO 6/81" in result.output
     assert "PitchFx Logs Scraped.........................: NO 56/56 (100%)" in result.output
-    assert "Combined BBRef/PitchFX Data (Success/Total)..: NO 0/0" in result.output
+    assert "Combined BBRef/PitchFX Data (Success/Total)..: NO 6/6" in result.output
     assert "Pitch App Count (BBRef/Brooks)...............: 56/715" in result.output
-    assert "Pitch App Count (PFx/data/no data)...........: 56/54/2" in result.output
+    assert "Pitch App Count (PFx/data/no data)...........: 56/55/1" in result.output
     assert "PitchFX Data Errors (Valid AB/Invalid AB)....: NO 0/0" in result.output
     assert "Pitch Count (BBRef/Brooks/PFx)...............: 1899/1875/1875" in result.output
-    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 0/0/0" in result.output
+    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 1899/1851/24" in result.output
+
+
+def test_status_season_date_range_summary_only_missing():
+    year = 2019
+    runner = CliRunner()
+    result = runner.invoke(cli, f"status season {year} -vv")
+    assert result.exit_code == 0
+
+
+def test_status_season_date_range_summary_all():
+    year = 2019
+    runner = CliRunner()
+    result = runner.invoke(cli, f"status season {year} -vvv")
+    assert result.exit_code == 0
+
+
+def test_status_season_date_range_detail_only_missing():
+    year = 2019
+    runner = CliRunner()
+    result = runner.invoke(cli, f"status season {year} -vvvv")
+    assert result.exit_code == 0
+
+
+def test_status_season_date_range_detail_all():
+    year = 2019
+    runner = CliRunner()
+    result = runner.invoke(cli, f"status season {year} -vvvvv")
+    assert result.exit_code == 0
+
+
+def test_status_season_date_range_detail_all_with_missing_ids():
+    year = 2019
+    runner = CliRunner()
+    result = runner.invoke(cli, f"status season {year} -vvvvvv")
+    assert result.exit_code == 0

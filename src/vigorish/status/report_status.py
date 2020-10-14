@@ -36,7 +36,7 @@ def report_status_single_date(db_session, game_date, report_type):
                 db_session, game_date
             )
             missing_ids_str = (
-                f"MISSING: {missing_pitch_app_ids}"
+                f"MISSING: {pformat(missing_pitch_app_ids)}"
                 if missing_pitch_app_ids
                 else "All PitchFX logs have been scraped"
             )
@@ -56,7 +56,7 @@ def report_status_single_date(db_session, game_date, report_type):
         print_message(
             f"\n### MISSING PITCHFX LOGS FOR {date_str} ###", fg="bright_magenta", bold=True
         )
-        print_message(pformat(missing_ids_str), wrap=False, fg="bright_magenta")
+        print_message(missing_ids_str, wrap=False, fg="bright_magenta")
     return Result.Ok()
 
 
@@ -124,6 +124,7 @@ def display_date_range_status(db_session, start_date, end_date, status_date_rang
 def display_detailed_report_for_date_range(db_session, status_date_range, missing_pitchfx):
     for date_status in status_date_range:
         game_date_str = date_status.game_date.strftime(DATE_MONTH_NAME)
+        missing_ids_str = ""
         if missing_pitchfx:
             if date_status.scraped_all_pitchfx_logs:
                 missing_ids_str = "All PitchFX logs have been scraped"
@@ -132,7 +133,7 @@ def display_detailed_report_for_date_range(db_session, status_date_range, missin
                     db_session, date_status.game_date
                 )
                 missing_ids_str = (
-                    f"MISSING: {missing_pitch_app_ids}"
+                    f"MISSING: {pformat(missing_pitch_app_ids)}"
                     if missing_pitch_app_ids
                     else "All PitchFX logs have been scraped"
                 )
@@ -143,7 +144,7 @@ def display_detailed_report_for_date_range(db_session, status_date_range, missin
         print_message(f"\n### STATUS REPORT FOR {game_date_str} ###", fg="bright_cyan", bold=True)
         print_message(date_status.status_report(), wrap=False, fg="bright_cyan")
         if missing_pitchfx:
-            print_message(pformat(missing_ids_str), wrap=False, fg="bright_cyan")
+            print_message(missing_ids_str, wrap=False, fg="bright_cyan")
     return Result.Ok()
 
 
