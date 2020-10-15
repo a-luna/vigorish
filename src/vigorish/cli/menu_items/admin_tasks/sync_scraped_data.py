@@ -111,7 +111,7 @@ class SyncScrapedData(MenuItem):
     def initialize_s3_sync_task(self):
         subprocess.run(["clear"])
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        spinner.text = "Retrieving data for all objects stored in S3..."
+        spinner.text = "Retrieving details of all objects stored in S3..."
         spinner.start()
         s3_obj_collection = self.scraped_data.file_helper.get_all_object_keys_in_s3_bucket()
         s3_objects = [obj for obj in s3_obj_collection]
@@ -122,6 +122,7 @@ class SyncScrapedData(MenuItem):
         self.task_number += 1
         self.report_sync_results()
         self.update_spinner(file_type, data_set)
+        result = Result.Fail("Failed to sync files")
         if self.sync_direction == SyncDirection.UP_TO_S3:
             result = self.s3_sync.get_files_to_sync_to_s3(file_type, data_set, self.year)
         if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
