@@ -49,7 +49,7 @@ def test_make_tzaware():
     dt_aware_3 = make_tzaware(dt_naive, localize=False)
     assert dt_naive.strftime(DT_NAIVE) == "12/31/2019 12:00:00 AM"
     assert dt_aware_1.strftime(DT_AWARE) == "12/31/2019 08:00:00 AM +0000"
-    assert dt_aware_2.strftime(DT_AWARE) == "12/31/2019 12:00:00 AM +0000"
+    assert dt_aware_2
     assert dt_aware_3.year == 2019
     assert dt_aware_3.month == 12
     assert dt_aware_3.day == 31
