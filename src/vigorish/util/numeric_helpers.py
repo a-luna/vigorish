@@ -9,22 +9,8 @@ ONE_MB = ONE_KB * 1024
 ONE_GB = ONE_MB * 1024
 
 
-def is_nan(x):
-    return isinstance(x, float) and math.isnan(x)
-
-
-def is_odd(x):
-    return x & 1 == 1
-
-
 def is_even(x):
     return x & 1 == 0
-
-
-def sanitize(x):
-    if math.isnan(x):
-        return 0
-    return x
 
 
 def validate_year_value(year):
