@@ -77,7 +77,10 @@ def test_make_chunked_list():
 
 
 def test_make_irregular_chunked_list():
+    min = 6
+    max = 7
     input_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    chunked = make_irregular_chunked_list(input_list, min_chunk_size=6, max_chunk_size=7)
-    for chunk in chunked:
-        assert len(chunk) <= 6 and len(chunk) >= 7
+    chunked = make_irregular_chunked_list(input_list, min_chunk_size=min, max_chunk_size=max)
+    for num, chunk in enumerate(chunked, start=1):
+        if num < len(chunked):
+            assert len(chunk) <= max and len(chunk) >= min
