@@ -1,10 +1,10 @@
-import time
 import logging
+import time
 from random import randint
 
 import pytest
 
-from vigorish.util.decorators import retry, LogCall, RetryLimitExceededError
+from vigorish.util.decorators import LogCall, retry, RetryLimitExceededError
 
 logging.basicConfig()
 log = logging.getLogger("custom_log")

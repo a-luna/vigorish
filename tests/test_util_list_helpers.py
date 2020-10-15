@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from vigorish.util.list_helpers import (
-    display_dict,
-    dict_to_param_list,
     compare_lists,
+    dict_to_param_list,
+    display_dict,
     make_chunked_list,
     make_irregular_chunked_list,
 )

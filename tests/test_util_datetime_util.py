@@ -4,15 +4,15 @@ import pytest
 from dateutil import tz
 
 from vigorish.util.datetime_util import (
+    current_year,
+    dtaware_fromtimestamp,
     get_date_range,
-    utc_now,
     localized_dt_string,
     make_tzaware,
-    dtaware_fromtimestamp,
     today_str,
-    current_year,
+    utc_now,
 )
-from vigorish.util.dt_format_strings import DT_AWARE, DT_NAIVE, DATE_ONLY_2
+from vigorish.util.dt_format_strings import DATE_ONLY_2, DT_AWARE, DT_NAIVE
 
 
 def test_date_range_raises_valueerror():
