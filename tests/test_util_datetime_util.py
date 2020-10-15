@@ -46,16 +46,27 @@ def test_make_tzaware():
     dt_naive = datetime(2019, 12, 31)
     dt_aware_1 = make_tzaware(dt_naive, use_tz=timezone.utc, localize=True)
     dt_aware_2 = make_tzaware(dt_naive, use_tz=timezone.utc, localize=False)
+    dt_aware_3 = make_tzaware(dt_naive, localize=False)
     assert dt_naive.strftime(DT_NAIVE) == "12/31/2019 12:00:00 AM"
     assert dt_aware_1.strftime(DT_AWARE) == "12/31/2019 08:00:00 AM +0000"
     assert dt_aware_2.strftime(DT_AWARE) == "12/31/2019 12:00:00 AM +0000"
+    assert dt_aware_3.year == 2019
+    assert dt_aware_3.month == 12
+    assert dt_aware_3.day == 31
+    assert dt_aware_3.hour == 0
+    assert dt_aware_3.minute == 0
+    assert dt_aware_3.second == 0
 
 
 def test_dtaware_fromtimestamp():
     dt_naive = datetime(2019, 12, 31)
-    dt_timestamp = dt_naive.timestamp()
-    dt_aware = dtaware_fromtimestamp(dt_timestamp, use_tz=timezone.utc)
-    assert dt_aware.strftime(DT_AWARE) == "12/31/2019 07:00:00 AM +0000"
+    dt_aware = dtaware_fromtimestamp(dt_naive.timestamp())
+    assert dt_aware.year == 2019
+    assert dt_aware.month == 12
+    assert dt_aware.day == 31
+    assert dt_aware.hour == 0
+    assert dt_aware.minute == 0
+    assert dt_aware.second == 0
 
 
 def test_current_day_and_year():

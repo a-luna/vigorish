@@ -45,7 +45,7 @@ def make_tzaware(dt, use_tz=None, localize=True):
     return dt.astimezone(use_tz) if localize else dt.replace(tzinfo=use_tz)
 
 
-def get_local_utcoffset():  # pragma: no cover
+def get_local_utcoffset():
     """Get UTC offset from local system and return as timezone object."""
     utc_offset = timedelta(seconds=time.localtime().tm_gmtoff)
     return timezone(offset=utc_offset)
