@@ -27,10 +27,8 @@ class S3FolderPathSetting(FolderPathSetting):
     def resolve(self, year=None):
         path_str = self._path_str
         if YEAR_TOKEN in self._path_str:
-            validate_year_value(year)
-            if isinstance(year, int):
-                year = str(year)
-            path_str = path_str.replace(YEAR_TOKEN, year)
+            year = validate_year_value(year)
+            path_str = path_str.replace(YEAR_TOKEN, str(year))
         if DATA_SET_TOKEN in self._path_str:
             path_str = path_str.replace(DATA_SET_TOKEN, self.data_set.name.lower())
         return path_str
@@ -44,10 +42,8 @@ class LocalFolderPathSetting(FolderPathSetting):
     def resolve(self, year: None):
         path_str = self._path_str
         if YEAR_TOKEN in self._path_str:
-            validate_year_value(year)
-            if isinstance(year, int):
-                year = str(year)
-            path_str = path_str.replace(YEAR_TOKEN, year)
+            year = validate_year_value(year)
+            path_str = path_str.replace(YEAR_TOKEN, str(year))
         if DATA_SET_TOKEN in self._path_str:
             path_str = path_str.replace(DATA_SET_TOKEN, self.data_set.name.lower())
         return str(Path(path_str).resolve())

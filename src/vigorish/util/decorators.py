@@ -1,4 +1,3 @@
-# flake8: noqa
 """decorators.log_call"""
 import inspect
 import logging
@@ -92,6 +91,6 @@ class LogCall:
                 return f"{td.seconds}s {milliseconds:.0f}ms"
             if milliseconds > 0:
                 return f"{milliseconds}ms"
-            return f"{td.microseconds}us"
+            return f"{microseconds}us"
 
         return wrapper

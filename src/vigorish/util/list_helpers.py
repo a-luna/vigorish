@@ -5,7 +5,7 @@ from datetime import datetime
 from random import randint
 from typing import Dict
 
-from vigorish.util.dt_format_strings import DT_STR_FORMAT_ALL
+from vigorish.util.dt_format_strings import DT_AWARE
 
 
 def display_dict(dict, title="", title_prefix="[", title_suffix="]", extra_dots=2):
@@ -39,7 +39,7 @@ def report_dict(dict, title="", title_prefix="### ", title_suffix=" ###", extra_
             if type(v) is not int and type(v) is not bool:
                 continue
         if type(v) is datetime:
-            v = v.strftime(DT_STR_FORMAT_ALL)
+            v = v.strftime(DT_AWARE)
         c = max_length - len(k)
         report += f"\n{k}{'.' * c}: {v}"
     return report.strip()

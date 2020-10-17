@@ -20,5 +20,3 @@ def request_url_with_retries(url):
         return Result.Ok(response)
     except RetryLimitExceededError as e:
         return Result.Fail(repr(e))
-    except Exception as e:
-        return Result.Fail(f"Error: {repr(e)}")

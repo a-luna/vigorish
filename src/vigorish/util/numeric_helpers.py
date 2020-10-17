@@ -9,22 +9,8 @@ ONE_MB = ONE_KB * 1024
 ONE_GB = ONE_MB * 1024
 
 
-def is_nan(x):
-    return isinstance(x, float) and math.isnan(x)
-
-
-def is_odd(x):
-    return x & 1 == 1
-
-
 def is_even(x):
     return x & 1 == 0
-
-
-def sanitize(x):
-    if math.isnan(x):
-        return 0
-    return x
 
 
 def validate_year_value(year):
@@ -36,15 +22,18 @@ def validate_year_value(year):
         year = try_parse_int(year_str)
         if not year:
             raise ValueError(f'Failed to parse int value from string "{year_str}"')
-    if not isinstance(year, int):
+    if isinstance(year, bool) or not isinstance(year, int):
         raise TypeError(f'"year" parameter must be int value (not "{type(year)}").')
     if year < 1900:
         raise ValueError(f"Data is not collected for year={year}")
     if year > date.today().year:
         raise ValueError(f'"{year}" is not valid since it is a future year')
+    return year
 
 
 def trim_data_set(samples, st_dev_limit=2):
+    if not samples or not isinstance(samples, list):
+        raise ValueError("Input list is either empty or invalid")
     mean = sum(samples) / len(samples)
     st_dev = get_standard_deviation(samples)
     return [
@@ -55,6 +44,8 @@ def trim_data_set(samples, st_dev_limit=2):
 
 
 def get_standard_deviation(samples):
+    if not samples or not isinstance(samples, list):
+        raise ValueError("Input list is either empty or invalid")
     mean = sum(samples) / len(samples)
     summed_squares = sum(math.pow((sample - mean), 2) for sample in samples)
     return math.sqrt(summed_squares / (len(samples) - 1))

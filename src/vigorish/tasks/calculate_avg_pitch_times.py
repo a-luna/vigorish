@@ -129,12 +129,12 @@ class CalculateAverageTimeBetweenPitches(Task):
         return timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
 
     def process_data_set(self, data_set, trim=False, st_dev=1):
-        if not isinstance(data_set, list):
-            return {}
-        if len(data_set) == 0:
-            return {}
+        if not data_set or not isinstance(data_set, list):
+            return {"error": "Data set is empty or is not a valid list"}
         if trim:
             data_set = trim_data_set(data_set, st_dev_limit=st_dev)
+        if not data_set:
+            return {"error": f"Trim process with st_dev_limit={st_dev} eliminated all data"}
         results = {
             "total": int(sum(data_set)),
             "count": int(len(data_set)),

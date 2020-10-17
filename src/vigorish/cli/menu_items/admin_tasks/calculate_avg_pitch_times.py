@@ -140,7 +140,7 @@ class CalculateAverageTimeBetweenPitches(MenuItem):
                 ),
             ],
             [
-                "3. (between innings)\n",
+                "3. (between innings)",
                 (
                     "time between the last pitch of the last at bat in an inning and the first "
                     "pitch of the next at bat in the subsequent inning\n"

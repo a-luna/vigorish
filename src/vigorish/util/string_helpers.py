@@ -104,8 +104,7 @@ def parse_date(input_str):
         parsed_date = datetime(year, month, day)
         return parsed_date
     except Exception as e:
-        error = f"Failed to parse date from input_str ({input_str}):\n{repr(e)}"
-        return Result.Fail(error)
+        raise ValueError(f"Failed to parse date from input_str ({input_str}):\n{repr(e)}")
 
 
 def get_brooks_team_id(bbref_team_id):
@@ -132,18 +131,14 @@ def validate_bbref_game_id(input_str):
     if not match:
         raise ValueError(f"String is not a valid bbref game id: {input_str}")
     captured = match.groupdict()
-    try:
-        year = int(captured["year"])
-        month = int(captured["month"])
-        day = int(captured["day"])
-        parsed = int(captured["game_num"])
-        if parsed < 2:
-            game_number = 1
-        else:
-            game_number = parsed
-    except ValueError as e:
-        error = f"Failed to parse int value from bbref_game_id:\n{repr(e)}"
-        return Result.Fail(error)
+    year = int(captured["year"])
+    month = int(captured["month"])
+    day = int(captured["day"])
+    parsed = int(captured["game_num"])
+    if parsed < 2:
+        game_number = 1
+    else:
+        game_number = parsed
 
     try:
         game_date = datetime(year, month, day).date()
@@ -170,15 +165,10 @@ def validate_brooks_game_id(input_str):
     if not match:
         raise ValueError(f"String is not a valid bb game id: {input_str}")
     captured = match.groupdict()
-
-    try:
-        year = int(captured["year"])
-        month = int(captured["month"])
-        day = int(captured["day"])
-        game_number = int(captured["game_num"])
-    except ValueError as e:
-        error = f"Failed to parse int value from game_id:\n{repr(e)}"
-        return Result.Fail(error)
+    year = int(captured["year"])
+    month = int(captured["month"])
+    day = int(captured["day"])
+    game_number = int(captured["game_num"])
 
     try:
         game_date = datetime(year, month, day)
@@ -258,21 +248,6 @@ def validate_at_bat_id(at_bat_id):
         "at_bat_num": captured["at_bat_num"],
     }
     return Result.Ok(at_bat_dict)
-
-
-def parse_pitch_app_details_from_string(input):
-    at_bat_dicts = []
-    pitch_app_ids = []
-    failed_pitch_app_dict = {}
-    for match in AT_BAT_ID_REGEX.finditer(input):
-        at_bat_data = validate_at_bat_id(match[0]).value
-        at_bat_dicts.append(at_bat_data)
-        pitch_app_ids.append(at_bat_data["pitch_app_id"])
-    for pitch_app_id in list(set(pitch_app_ids)):
-        failed_pitch_app_dict[pitch_app_id] = [
-            at_bat["at_bat_id"] for at_bat in at_bat_dicts if at_bat["pitch_app_id"] == pitch_app_id
-        ]
-    return failed_pitch_app_dict
 
 
 def get_inning_id_from_at_bat_id(at_bat_id):
