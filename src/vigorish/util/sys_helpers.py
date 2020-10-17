@@ -12,7 +12,7 @@ from Naked.toolshed.shell import execute_js
 from vigorish.util.result import Result
 
 
-def run_command(command, cwd=None, shell=True, text=True):
+def run_command(command, cwd=None, shell=True, text=True):  # pragma: no cover
     process = subprocess.Popen(
         command,
         stdout=subprocess.PIPE,
@@ -28,7 +28,7 @@ def run_command(command, cwd=None, shell=True, text=True):
     print()
 
 
-def execute_nodejs_script(script_file_path, script_args):
+def execute_nodejs_script(script_file_path, script_args):  # pragma: no cover
     result = validate_file_path(script_file_path)
     if result.failure:
         return result
@@ -42,11 +42,11 @@ def execute_nodejs_script(script_file_path, script_args):
     return Result.Ok() if success else Result.Fail("nodejs script failed")
 
 
-def node_is_installed():
+def node_is_installed():  # pragma: no cover
     return any(program_is_installed(node_alias) for node_alias in ["node", "nodejs"])
 
 
-def program_is_installed(exe_name, version_option="--version"):
+def program_is_installed(exe_name, version_option="--version"):  # pragma: no cover
     try:
         check_version = subprocess.run(
             [exe_name, version_option],
@@ -60,17 +60,17 @@ def program_is_installed(exe_name, version_option="--version"):
         return False
 
 
-def node_modules_folder_exists():
+def node_modules_folder_exists():  # pragma: no cover
     app_folder = Path(__file__).parent.parent
     node_modules_folder = app_folder.joinpath("nightmarejs/node_modules")
     return node_modules_folder.exists()
 
 
-def is_windows():
+def is_windows():  # pragma: no cover
     return any(platform.win32_ver())
 
 
-def get_file_size_bytes(filepath):
+def get_file_size_bytes(filepath):  # pragma: no cover
     result = validate_file_path(filepath)
     if result.failure:
         return result
@@ -114,7 +114,7 @@ def validate_file_path(input_path: Union[Path, str]):
     return Result.Ok(filepath)
 
 
-def get_terminal_size(fallback: Tuple[int, int] = (80, 24)):
+def get_terminal_size(fallback: Tuple[int, int] = (80, 24)):  # pragma: no cover
     for i in range(0, 3):
         try:
             columns, rows = os.get_terminal_size(i)
@@ -126,6 +126,6 @@ def get_terminal_size(fallback: Tuple[int, int] = (80, 24)):
     return columns, rows
 
 
-def get_terminal_width():
+def get_terminal_width():  # pragma: no cover
     columns, _ = get_terminal_size()
     return columns
