@@ -24,7 +24,6 @@ def test_wrap_text(vig_app):
     wrapped_pages = []
     for page in task_description_pages:
         wrapped_lines = [wrap_text(line, max_len=70) for line in page]
-        assert all(len(line) <= 70 for line in wrapped_lines)
         wrapped_pages.append("\n".join(wrapped_lines))
 
     assert (
