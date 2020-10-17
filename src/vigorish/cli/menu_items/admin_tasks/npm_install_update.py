@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 
 from getch import pause
 
-from vigorish.cli.components import print_heading, print_message, yes_no_prompt
+from vigorish.cli.components import print_message, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.config.project_paths import NIGHTMAREJS_FOLDER, NODEJS_INBOX
 from vigorish.constants import EMOJI_DICT
