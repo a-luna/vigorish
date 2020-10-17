@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from vigorish.util.numeric_helpers import validate_year_value, trim_data_set
+from vigorish.util.numeric_helpers import trim_data_set, validate_year_value
 
 
 def test_validate_year_value():
