@@ -285,6 +285,7 @@ class PatchInvalidPitchFxTask(Task):
             if result.failure:
                 return result
             patch_pfx = result.value
+            patches = []
             if match_dict["patch_type"] == PatchType.CHANGE_BATTER_ID:
                 patches = self.create_change_batter_id_patch(patch_event, patch_pfx)
             elif match_dict["patch_type"] == PatchType.CHANGE_PITCHER_ID:
@@ -293,6 +294,7 @@ class PatchInvalidPitchFxTask(Task):
         existing_patch_list = self.scraped_data.get_patch_list(DATA_SET, self.bbref_game_id)
         if existing_patch_list:
             patch_list = self.combine_patch_lists(patch_list, existing_patch_list.patch_list)
+        patch_list.sort(key=lambda x: x.park_sv_id)
         self.patch_list = BrooksPitchFxPatchList(patch_list=patch_list, url_id=self.bbref_game_id)
         result = self.scraped_data.save_patch_list(DATA_SET, self.patch_list)
         if result.failure:

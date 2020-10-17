@@ -1132,10 +1132,10 @@
           "at_bat_ids_pitchfx_complete": [],
           "at_bat_ids_patched_pitchfx": [],
           "at_bat_ids_missing_pitchfx": [
+            "PIT201909070_09_SLN_594965_PIT_591741_0",
             "PIT201909070_09_SLN_594965_PIT_622569_0",
-            "PIT201909070_09_SLN_594965_PIT_571467_0",
             "PIT201909070_09_SLN_594965_PIT_592567_0",
-            "PIT201909070_09_SLN_594965_PIT_591741_0"
+            "PIT201909070_09_SLN_594965_PIT_571467_0"
           ],
           "at_bat_ids_extra_pitchfx": [],
           "at_bat_ids_extra_pitchfx_removed": [],
