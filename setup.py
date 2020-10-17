@@ -74,7 +74,7 @@ EXTRAS_REQUIRE = {
     ]
 }
 
-exec(open(str((APP_ROOT / "src/vigorish/version.py"))).read())
+exec(open(str(APP_ROOT / "src/vigorish/version.py")).read())
 setup(
     name="vigorish",
     description=DESCRIPTION,
@@ -86,7 +86,7 @@ setup(
     maintainer=AUTHOR,
     maintainer_email=AUTHOR_EMAIL,
     license="MIT",
-    url="https://github.com/a-luna/vigorish",
+    url=PROJECT_URLS["Source Code"],
     project_urls=PROJECT_URLS,
     packages=find_packages(where="src"),
     package_dir={"": "src"},

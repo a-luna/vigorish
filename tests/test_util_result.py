@@ -1,18 +1,6 @@
 from vigorish.util.result import Result
 
 
-def result_success_no_return_value():
-    return Result.Ok()
-
-
-def result_success_return_value():
-    return Result.Ok(22)
-
-
-def result_failure():
-    return Result.Fail("error!")
-
-
 def show_value(value):
     print(f"Success! Result: {value}")
     return Result.Ok(value)
@@ -29,7 +17,7 @@ def show_result(result):
 
 
 def test_result_on_success(capfd):
-    result = result_success_return_value().on_success(show_value)
+    result = Result.Ok(22).on_success(show_value)
     out, err = capfd.readouterr()
     assert "Success! Result: 22" in out
     assert not err
@@ -38,7 +26,7 @@ def test_result_on_success(capfd):
 
 
 def test_result_on_failure(capfd):
-    result = result_failure().on_failure(show_error)
+    result = Result.Fail("error!").on_failure(show_error)
     out, err = capfd.readouterr()
     assert "Error: error!" in out
     assert not err
@@ -52,31 +40,31 @@ def test_result_on_failure(capfd):
     assert result.failure
     assert not result.error
 
-    result = result_success_return_value().on_failure(show_error)
+    result = Result.Ok(22).on_failure(show_error)
     assert result.success
     assert result.value == 22
 
-    result = result_success_no_return_value().on_failure(show_error)
+    result = Result.Ok().on_failure(show_error)
     assert result.success
     assert not result.value
 
 
 def test_result_on_both(capfd):
-    result = result_success_no_return_value().on_both(show_result)
+    result = Result.Ok().on_both(show_result)
     out, err = capfd.readouterr()
     assert "[Success]" in out
     assert not err
     assert result.success
     assert not result.value
 
-    result = result_success_return_value().on_both(show_result)
+    result = Result.Ok(22).on_both(show_result)
     out, err = capfd.readouterr()
     assert "[Success]" in out
     assert not err
     assert result.success
     assert result.value == 22
 
-    result = result_failure().on_both(show_result)
+    result = Result.Fail("error!").on_both(show_result)
     out, err = capfd.readouterr()
     assert "[Failure] error!" in out
     assert not err
@@ -85,8 +73,8 @@ def test_result_on_both(capfd):
 
 
 def test_result_combine():
-    result1 = result_failure()
-    result2 = result_failure()
+    result1 = Result.Fail("error!")
+    result2 = Result.Fail("another error!")
     combined_result = Result.Combine([result1, result2])
     assert combined_result.failure
-    assert combined_result.error == "error!\nerror!"
+    assert combined_result.error == "error!\nanother error!"
