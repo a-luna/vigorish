@@ -13,15 +13,15 @@ from vigorish.constants import EMOJI_DICT
 from vigorish.tasks.import_scraped_data import ImportScrapedDataInLocalFolder
 from vigorish.util.result import Result
 
-SETUP_HEADER = (
+SETUP_HEADING = (
     "Before you can begin scraping data, you must initialize the database with initial player, "
-    "team and season data.\n"
+    "team and season data."
 )
-SETUP_MESSAGE = "Select YES to initialize the database\n" "Select NO to return to the previous menu"
+SETUP_MESSAGE = "Select YES to initialize the database\nSelect NO to return to the previous menu"
 RESET_MESSAGE = "Would you like to reset the database with initial player, team and season data?"
 WARNING = (
     "WARNING! All existing data will be deleted if you choose to reset the database. This "
-    "action cannot be undone.\n"
+    "action cannot be undone."
 )
 DB_INITIALIZED = "\nDatabase has been successfully initialized."
 RESTART_WARNING = "\nApplication must be restarted for these changes to take effect!"
@@ -45,10 +45,10 @@ class SetupDBMenuItem(MenuItem):
         subprocess.run(["clear"])
         restart_required = self.db_initialized
         if self.db_initialized:
-            print_message(WARNING, fg="bright_red", bold=True)
+            print_message(WARNING, fg="bright_red")
             yes = yes_no_prompt(RESET_MESSAGE)
         else:
-            print_message(SETUP_HEADER, fg="bright_yellow", bold=True)
+            print_message(SETUP_HEADING, fg="bright_yellow")
             yes = yes_no_prompt(SETUP_MESSAGE, wrap=False)
         if not yes:
             return Result.Ok(self.exit_menu)

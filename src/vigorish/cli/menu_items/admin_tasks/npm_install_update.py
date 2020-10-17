@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 
 from getch import pause
 
-from vigorish.cli.components import print_heading, print_message, yes_no_prompt
+from vigorish.cli.components import print_message, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.config.project_paths import NIGHTMAREJS_FOLDER, NODEJS_INBOX
 from vigorish.constants import EMOJI_DICT
@@ -12,13 +12,13 @@ from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists, run_command
 
 INSTALL_ERROR = "Error! Node.js is not installed, see README for install instructions."
-INSTALL_HEADER = "You must install all required node packages in order to scrape any data."
-INSTALL_MESSAGE = (
+INSTALL_MESSAGE = "You must install all required node packages in order to scrape any data."
+INSTALL_PROMPT = (
     "Select YES install Nightmare, Xfvb, and other node packages\n"
     "Select NO to return to the previous menu"
 )
-UPDATE_HEADER = "Nightmare and all node dependencies are installed."
-UPDATE_MESSAGE = (
+UPDATE_MESSAGE = "Nightmare and all node dependencies are installed."
+UPDATE_PROMPT = (
     "Select YES to update all installed packages to the newest version.\n"
     "Select NO to return to the previous menu."
 )
@@ -41,16 +41,16 @@ class NpmInstallUpdate(MenuItem):
         if not NODEJS_INBOX.exists():
             NODEJS_INBOX.mkdir(parents=True, exist_ok=True)
         if node_modules_folder_exists():
-            heading = UPDATE_HEADER
-            prompt = UPDATE_MESSAGE
+            message = UPDATE_MESSAGE
+            prompt = UPDATE_PROMPT
             temp_folder = None
             command = "npm update --timeout=9999999"
         else:
-            heading = INSTALL_HEADER
-            prompt = INSTALL_MESSAGE
+            message = INSTALL_MESSAGE
+            prompt = INSTALL_PROMPT
             temp_folder = TemporaryDirectory(dir=NIGHTMAREJS_FOLDER)
             command = f"npm install --timeout=9999999 --cache={temp_folder.name}"
-        print_heading(heading, fg="bright_yellow")
+        print_message(message, fg="bright_yellow")
         if not yes_no_prompt(prompt, wrap=False):
             return Result.Ok(self.exit_menu)
         subprocess.run(["clear"])
