@@ -76,10 +76,10 @@ def single_date_prompt(prompt):
     return user_date
 
 
-def user_options_prompt(choices, prompt, wrap=True, clear_screen=True):
+def user_options_prompt(choices, prompt, wrap=True, clear_screen=True, auto_scroll=True):
     if wrap:
         prompt = wrap_text(prompt, 70)
-    if len(choices) > 8:
+    if auto_scroll and len(choices) > 8:
         scroll_choices = [choice for choice in choices.keys()]
         scroll_choices.insert(0, f"{EMOJI_DICT.get('BACK')} Return to Previous Menu")
         options_menu = ScrollBar(
@@ -97,9 +97,12 @@ def user_options_prompt(choices, prompt, wrap=True, clear_screen=True):
             background_on_switch=colors.background["default"],
         )
     else:
+        bullet_choices = [choice for choice in choices.keys()]
+        if not auto_scroll:
+            bullet_choices.insert(0, f"{EMOJI_DICT.get('BACK')} Return to Previous Menu")
         options_menu = Bullet(
             prompt,
-            choices=[choice for choice in choices.keys()],
+            choices=bullet_choices,
             bullet="",
             shift=1,
             indent=0,

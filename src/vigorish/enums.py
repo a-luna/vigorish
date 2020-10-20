@@ -175,7 +175,7 @@ class DefensePosition(IntEnum):
 
     def __str__(self):
         abbrev_dict = {
-            "NONE": "N/A",
+            "NONE": "BN",
             "PITCHER": "P",
             "CATCHER": "C",
             "FIRST_BASE": "1B",
@@ -187,6 +187,22 @@ class DefensePosition(IntEnum):
             "RIGHT_FIELD": "RF",
         }
         return abbrev_dict.get(self.name, self.name)
+
+    @classmethod
+    def from_abbrev(cls, abbrev):
+        abbrev_dict = {
+            "P": cls.PITCHER,
+            "C": cls.CATCHER,
+            "1B": cls.FIRST_BASE,
+            "2B": cls.SECOND_BASE,
+            "3B": cls.THIRD_BASE,
+            "SS": cls.SHORT_STOP,
+            "LF": cls.LEFT_FIELD,
+            "CF": cls.CENTER_FIELD,
+            "RF": cls.RIGHT_FIELD,
+            "DH": cls.DH,
+        }
+        return abbrev_dict.get(abbrev, cls.NONE)
 
 
 class SeasonType(Enum):

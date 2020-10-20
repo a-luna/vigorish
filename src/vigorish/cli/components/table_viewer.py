@@ -1,11 +1,13 @@
 import subprocess
 
+from bullet import keyhandler
 from bullet.cursor import hide as cursor_hidden
 from bullet.utils import moveCursorUp
 
 from vigorish.cli.components.page_viewer import PageViewer
 
 
+@keyhandler.init
 class TableViewer(PageViewer):
     def __init__(
         self,
@@ -18,7 +20,7 @@ class TableViewer(PageViewer):
         message_color=None,
         table_color=None,
     ):
-        super().__init__(
+        super(TableViewer, self).__init__(
             pages=table_list,
             prompt=prompt,
             confirm_only=confirm_only,

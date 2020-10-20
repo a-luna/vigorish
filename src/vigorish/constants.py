@@ -11,7 +11,7 @@ ENV_VAR_NAMES = [
     "DATABASE_URL",
 ]
 
-TEAM_ID_DICT = {
+BR_BB_TEAM_ID_MAP = {
     "CHW": "CHA",
     "CHC": "CHN",
     "KCR": "KCA",
@@ -25,6 +25,8 @@ TEAM_ID_DICT = {
     "TBR": "TBA",
     "WSN": "WAS",
 }
+
+BB_BR_TEAM_ID_MAP = {v: k for k, v in BR_BB_TEAM_ID_MAP.items()}
 
 DEFENSE_POSITIONS = [
     "P",

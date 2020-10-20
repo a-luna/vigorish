@@ -4,7 +4,7 @@ from datetime import datetime
 
 from rapidfuzz import process
 
-from vigorish.constants import TEAM_ID_DICT
+from vigorish.constants import BR_BB_TEAM_ID_MAP, BB_BR_TEAM_ID_MAP
 from vigorish.util.regex import (
     AT_BAT_ID_REGEX,
     BB_GAME_ID_REGEX,
@@ -108,7 +108,11 @@ def parse_date(input_str):
 
 
 def get_brooks_team_id(bbref_team_id):
-    return TEAM_ID_DICT.get(bbref_team_id, bbref_team_id)
+    return BR_BB_TEAM_ID_MAP.get(bbref_team_id, bbref_team_id)
+
+
+def get_bbref_team_id(brooks_team_id):
+    return BB_BR_TEAM_ID_MAP.get(brooks_team_id, brooks_team_id)
 
 
 def parse_timestamp(input):
