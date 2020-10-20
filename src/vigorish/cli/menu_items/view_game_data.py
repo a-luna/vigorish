@@ -7,8 +7,7 @@ from vigorish.cli.components.prompts import user_options_prompt
 from vigorish.cli.components.util import get_random_cli_color, get_random_dots_spinner
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.data.all_game_data import AllGameData
-from vigorish.enums import DefensePosition
+from vigorish.data.all_game_data import AllGameData0
 from vigorish.util.result import Result
 
 
