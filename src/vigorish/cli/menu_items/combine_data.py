@@ -36,7 +36,7 @@ STATUS_BAR_COLOR = "bold_gray100_on_darkviolet"
 DATE_BAR_FORMAT = "{desc}{desc_pad}{percentage:3.0f}% |{bar}| {count:{len_total}d}/{total:d} {unit}"
 
 logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger("enlighten")
+LOGGER = logging.getLogger(__name__)
 
 
 class CombineGameDataMenuItem(MenuItem):
