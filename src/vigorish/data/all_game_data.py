@@ -512,7 +512,7 @@ def parse_single_bat_stat(stat):
 
 
 def parse_bat_stats_to_date(bat_stats):
-    return Result.Ok(
+    return (
         f"{format_stat_decimal(bat_stats['avg_to_date'])}/"
         f"{format_stat_decimal(bat_stats['obp_to_date'])}/"
         f"{format_stat_decimal(bat_stats['slg_to_date'])}/"
