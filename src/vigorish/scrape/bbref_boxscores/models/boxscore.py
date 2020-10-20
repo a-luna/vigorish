@@ -2,7 +2,6 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from vigorish.constants import TEAM_ID_DICT
 from vigorish.util.list_helpers import as_dict_list
 from vigorish.util.string_helpers import get_brooks_team_id, validate_bbref_game_id
 
@@ -108,9 +107,3 @@ class BBRefBoxscore:
     def as_json(self):
         """Convert boxscore to JSON."""
         return json.dumps(self.as_dict(), indent=2, sort_keys=False)
-
-    @staticmethod
-    def _get_brooks_team_id(br_team_id):
-        if br_team_id in TEAM_ID_DICT:
-            return TEAM_ID_DICT[br_team_id]
-        return br_team_id

@@ -11,6 +11,7 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
+from vigorish.enums import DefensePosition
 from vigorish.data.all_game_data import AllGameData
 
 GAME_DATE = datetime(2019, 6, 17)
@@ -56,53 +57,66 @@ def test_all_game_data(db_session, scraped_data):
     mlb_id_bbref_id_map = all_game_data.mlb_id_to_bbref_id_map
     assert len(mlb_id_bbref_id_map) == 31
 
-    away_team_starting_lineup = all_game_data.away_team_starting_lineup
-    away_team_lineup_1 = away_team_starting_lineup[1]
+    away_team_bat_boxscore = all_game_data.bat_boxscore[away_team_id]
+    away_team_lineup_1 = away_team_bat_boxscore[1]
     assert away_team_lineup_1["team_id"] == "LAA"
     assert away_team_lineup_1["name"] == "Tommy La Stella"
     assert away_team_lineup_1["bbref_id"] == "lasteto01"
     assert away_team_lineup_1["mlb_id"] == 600303
-    assert away_team_lineup_1["def_position"] == "2B"
-    assert away_team_lineup_1["game_results"] == "0/4 R, 2 K, BB"
+    assert away_team_lineup_1["def_position"] == DefensePosition.SECOND_BASE
+    assert away_team_lineup_1["at_bats"] == "0/4"
+    assert away_team_lineup_1["bat_stats"] == "R, 2K, BB"
     assert away_team_lineup_1["stats_to_date"] == ".296/.354/.515/.869"
 
-    away_team_starting_lineup_again = all_game_data.away_team_starting_lineup
-    assert away_team_starting_lineup_again is away_team_starting_lineup
+    away_team_bat_boxscore_again = all_game_data.bat_boxscore[away_team_id]
+    assert away_team_bat_boxscore_again is away_team_bat_boxscore
 
-    home_team_starting_lineup = all_game_data.home_team_starting_lineup
-    home_team_lineup_1 = home_team_starting_lineup[1]
-    check_game_results = home_team_lineup_1["game_results"]
-    assert check_game_results
-    check_stats_to_date = home_team_lineup_1["stats_to_date"]
-    assert check_stats_to_date
+    home_team_bat_boxscore = all_game_data.bat_boxscore[home_team_id]
+    home_team_lineup_1 = home_team_bat_boxscore[1]
     assert home_team_lineup_1["team_id"] == "TOR"
     assert home_team_lineup_1["name"] == "Eric Sogard"
     assert home_team_lineup_1["bbref_id"] == "sogarer01"
     assert home_team_lineup_1["mlb_id"] == 519299
-    assert home_team_lineup_1["def_position"] == "DH"
-    assert home_team_lineup_1["game_results"] == "2/5 R"
+    assert home_team_lineup_1["def_position"] == DefensePosition.DH
+    assert home_team_lineup_1["at_bats"] == "2/5"
+    assert home_team_lineup_1["bat_stats"] == "R"
     assert home_team_lineup_1["stats_to_date"] == ".294/.361/.485/.845"
 
-    home_team_starting_lineup_again = all_game_data.home_team_starting_lineup
-    assert home_team_starting_lineup_again is home_team_starting_lineup
+    home_team_bat_boxscore_again = all_game_data.bat_boxscore[home_team_id]
+    assert home_team_bat_boxscore_again is home_team_bat_boxscore
+
+    away_team_pitch_boxscore = all_game_data.pitch_boxscore[away_team_id]
+    away_team_sp = away_team_pitch_boxscore["SP"]
+    assert away_team_sp["team_id"] == "LAA"
+    assert away_team_sp["name"] == "Luis Garcia"
+    assert away_team_sp["mlb_id"] == 472610
+    assert away_team_sp["bbref_id"] == "garcilu03"
+    assert away_team_sp["pitch_app_type"] == "SP"
+    assert away_team_sp["game_results"] == "1.0 IP, 1ER, H, K, GS: 48"
+
+    away_team_pitch_boxscore_again = all_game_data.pitch_boxscore[away_team_id]
+    assert away_team_pitch_boxscore_again is away_team_pitch_boxscore
+
+    home_team_pitch_boxscore = all_game_data.pitch_boxscore[home_team_id]
+    home_team_sp = home_team_pitch_boxscore["SP"]
+    assert home_team_sp["team_id"] == "TOR"
+    assert home_team_sp["name"] == "Derek Law"
+    assert home_team_sp["mlb_id"] == 571882
+    assert home_team_sp["bbref_id"] == "lawde01"
+    assert home_team_sp["pitch_app_type"] == "SP"
+    assert home_team_sp["game_results"] == "1.0 IP, 0ER, 2K, GS: 55"
+
+    home_team_pitch_boxscore_again = all_game_data.pitch_boxscore[home_team_id]
+    assert home_team_pitch_boxscore_again is home_team_pitch_boxscore
 
     game_meta_data_viewer = all_game_data.view_game_meta_info()
     assert game_meta_data_viewer
+
+    result = all_game_data.view_at_bats_by_inning()
+    assert result.success
 
     mlb_id_str = str(bat_stats_player_id)
     result = all_game_data.validate_mlb_id(mlb_id_str)
     assert result.success
     mlb_id = result.value
     assert mlb_id == bat_stats_player_id
-
-    at_bat_map = all_game_data.at_bat_map
-    at_bat_map_again = all_game_data.at_bat_map
-    assert at_bat_map_again is at_bat_map
-
-    all_pitch_stats = all_game_data.all_pitch_stats
-    all_pitch_stats_again = all_game_data.all_pitch_stats
-    assert all_pitch_stats_again is all_pitch_stats
-
-    all_bat_stats = all_game_data.all_bat_stats
-    all_bat_stats_again = all_game_data.all_bat_stats
-    assert all_bat_stats_again is all_bat_stats

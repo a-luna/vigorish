@@ -15,6 +15,7 @@ NAV_PREV_LEN = len(NAV_PREV)
 NAV_NEXT_LEN = len(NAV_NEXT)
 
 
+@keyhandler.init
 class PageViewer(Bullet):
     def __init__(
         self,
@@ -27,7 +28,7 @@ class PageViewer(Bullet):
         text_color=None,
     ):
         self.choices_dict = self.get_prompt_choices(confirm_only, yes_choice, no_choice)
-        super().__init__(
+        super(PageViewer, self).__init__(
             prompt=prompt,
             choices=[choice for choice in self.choices_dict.keys()],
             bullet="",
@@ -52,28 +53,26 @@ class PageViewer(Bullet):
         self.needs_update = False
 
     @property
-    def first_page_displayed(self):
-        return self.page_index == 0
-
-    @property
-    def last_page_displayed(self):
-        return self.page_index == self.page_count - 1
-
-    @property
     def current_page(self):
         return self.pages[self.page_index]
 
     @keyhandler.register(ARROW_LEFT_KEY)
     def prev_page(self):
-        if not self.first_page_displayed:
+        if not self.first_page_displayed():
             self.page_index -= 1
             self.needs_update = True
 
     @keyhandler.register(ARROW_RIGHT_KEY)
     def next_page(self):
-        if not self.last_page_displayed:
+        if not self.last_page_displayed():
             self.page_index += 1
             self.needs_update = True
+
+    def first_page_displayed(self):
+        return self.page_index == 0
+
+    def last_page_displayed(self):
+        return self.page_index == self.page_count - 1
 
     def get_prompt_choices(self, confirm_only, yes_choice, no_choice):
         yes_no_choices = {
@@ -110,8 +109,8 @@ class PageViewer(Bullet):
             return
         page_number = f"({self.page_index + 1}/{self.page_count})"
         (pad_left, pad_right) = self.get_pad_lengths(len(page_number))
-        nav_prev = NAV_PREV if not self.first_page_displayed else f'{" " * NAV_PREV_LEN}'
-        nav_next = NAV_NEXT if not self.last_page_displayed else f'{" " * NAV_NEXT_LEN}'
+        nav_prev = NAV_PREV if not self.first_page_displayed() else f'{" " * NAV_PREV_LEN}'
+        nav_next = NAV_NEXT if not self.last_page_displayed() else f'{" " * NAV_NEXT_LEN}'
         page_nav = f'\n{nav_prev}{" " * pad_left}{page_number}{" " * pad_right}{nav_next}'
         print_message(page_nav, fg=self.text_color)
 
