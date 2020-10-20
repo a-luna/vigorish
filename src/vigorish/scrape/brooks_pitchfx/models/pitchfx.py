@@ -73,6 +73,7 @@ class BrooksPitchFxData:
     is_patched: bool = False
     is_duplicate_guid: bool = False
     is_duplicate_pitch_number: bool = False
+    is_invalid_ibb: bool = False
     is_out_of_sequence: bool = False
 
     @property
@@ -173,6 +174,7 @@ class BrooksPitchFxData:
             is_patched=self.is_patched,
             is_duplicate_guid=self.is_duplicate_guid,
             is_duplicate_pitch_number=self.is_duplicate_pitch_number,
+            is_invalid_ibb=self.is_invalid_ibb,
             is_out_of_sequence=self.is_out_of_sequence,
         )
 
@@ -211,5 +213,6 @@ class BrooksPitchFxData:
         pfx_dict.pop("time_pitch_thrown_str", None)
         pfx_dict.pop("is_duplicate_guid", None)
         pfx_dict.pop("is_duplicate_pitch_number", None)
+        pfx_dict.pop("is_invalid_ibb", None)
         pfx_dict.pop("is_out_of_sequence", None)
         return pfx_dict
