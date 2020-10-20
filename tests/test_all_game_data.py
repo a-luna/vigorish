@@ -11,8 +11,8 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-from vigorish.enums import DefensePosition
 from vigorish.data.all_game_data import AllGameData
+from vigorish.enums import DefensePosition
 
 GAME_DATE = datetime(2019, 6, 17)
 GAME_DICT = COMBINED_DATA_GAME_DICT[GAME_DATE]
@@ -34,28 +34,18 @@ def create_test_data(db_session, scraped_data):
 def test_all_game_data(db_session, scraped_data):
     all_game_data = AllGameData(db_session, scraped_data, GAME_DICT["bbref_game_id"])
     away_team_id = all_game_data.away_team_id
-    assert away_team_id == "LAA"
     home_team_id = all_game_data.home_team_id
+    assert away_team_id == "LAA"
     assert home_team_id == "TOR"
-    pitch_app_player_ids = all_game_data.all_player_ids_with_pitch_stats
+
+    pitch_app_player_ids = all_game_data.pitch_stats_player_ids
+    bat_stats_player_ids = all_game_data.bat_stats_player_ids
     pitch_app_player_id = pitch_app_player_ids[0]
     result = all_game_data.view_at_bats_for_pitcher(pitch_app_player_id)
     assert result.success
-    pitch_app_at_bat_viewer = result.value
-    assert pitch_app_at_bat_viewer
-
-    bat_stats_player_ids = all_game_data.all_player_ids_with_bat_stats
     bat_stats_player_id = bat_stats_player_ids[0]
     result = all_game_data.view_at_bats_for_batter(bat_stats_player_id)
     assert result.success
-    bat_stats_at_bat_viewer = result.value
-    assert bat_stats_at_bat_viewer
-
-    all_player_bbref_ids = all_game_data.all_player_bbref_ids
-    assert len(all_player_bbref_ids) == 31
-
-    mlb_id_bbref_id_map = all_game_data.mlb_id_to_bbref_id_map
-    assert len(mlb_id_bbref_id_map) == 31
 
     away_team_bat_boxscore = all_game_data.bat_boxscore[away_team_id]
     away_team_lineup_1 = away_team_bat_boxscore[1]

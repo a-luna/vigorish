@@ -7,7 +7,7 @@ from vigorish.cli.components.prompts import user_options_prompt
 from vigorish.cli.components.util import get_random_cli_color, get_random_dots_spinner
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.data.all_game_data import AllGameData0
+from vigorish.data.all_game_data import AllGameData
 from vigorish.util.result import Result
 
 
@@ -17,25 +17,6 @@ class ViewGameData(MenuItem):
         self.bbref_game_id = bbref_game_id
         self.menu_item_text = bbref_game_id
         self.menu_item_emoji = EMOJI_DICT.get("NEWSPAPER")
-
-    @property
-    def all_player_ids_with_bat_stats(self):
-        return self.game_data.all_player_ids_with_bat_stats
-
-    @property
-    def all_player_ids_with_pitch_stats(self):
-        return self.game_data.all_player_ids_with_pitch_stats
-
-    @property
-    def player_id_map(self):
-        return self.game_data.player_id_map
-
-    @property
-    def team_id_dict(self):
-        return {
-            "AWAY": self.game_data.away_team_id,
-            "HOME": self.game_data.home_team_id,
-        }
 
     def launch(self):
         subprocess.run(["clear"])
@@ -62,10 +43,10 @@ class ViewGameData(MenuItem):
         spinner.text = f"Loading data for {self.bbref_game_id}..."
         spinner.start()
         self.game_data = AllGameData(self.db_session, self.scraped_data, self.bbref_game_id)
-        self.get_bat_boxscore(self.game_data.away_team_id)
-        self.get_pitch_boxscore(self.game_data.away_team_id)
-        self.get_bat_boxscore(self.game_data.home_team_id)
-        self.get_pitch_boxscore(self.game_data.home_team_id)
+        self.game_data.bat_boxscore[self.game_data.away_team_id]
+        self.game_data.pitch_boxscore[self.game_data.away_team_id]
+        self.game_data.bat_boxscore[self.game_data.home_team_id]
+        self.game_data.pitch_boxscore[self.game_data.home_team_id]
         spinner.stop()
 
     def select_data_prompt(self):
@@ -115,18 +96,21 @@ class ViewGameData(MenuItem):
                 mlb_id = result.value
                 self.view_at_bats_for_player(player_type, mlb_id)
 
+    def select_player_type_prompt(self):
+        prompt = "You can view at bat data grouped by batter or pitcher:"
+        choices = {
+            f"{MENU_NUMBERS.get(1)}  All at bats in pitching appearance": "PITCHER",
+            f"{MENU_NUMBERS.get(2)}  All at bats for batter": "BATTER",
+            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+        }
+        return user_options_prompt(choices, prompt)
+
     def get_boxscore(self, player_type, team_id):
         boxscore_dict = {
             "PITCHER": self.game_data.pitch_boxscore,
             "BATTER": self.game_data.bat_boxscore,
         }
         return boxscore_dict[player_type][team_id]
-
-    def get_pitch_boxscore(self, team_id):
-        return self.game_data.pitch_boxscore[team_id]
-
-    def get_bat_boxscore(self, team_id):
-        return self.game_data.bat_boxscore[team_id]
 
     def select_player_prompt(self, player_type, boxscore):
         player_prompt_dict = {
@@ -141,15 +125,6 @@ class ViewGameData(MenuItem):
             "BATTER": self.view_at_bats_for_batter,
         }
         return view_at_bats_dict[player_type](mlb_id)
-
-    def select_player_type_prompt(self):
-        prompt = "You can view at bat data grouped by batter or pitcher:"
-        choices = {
-            f"{MENU_NUMBERS.get(1)}  All at bats in pitching appearance": "PITCHER",
-            f"{MENU_NUMBERS.get(2)}  All at bats for batter": "BATTER",
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
-        }
-        return user_options_prompt(choices, prompt)
 
     def select_pitcher_prompt(self, pitch_boxscore):
         max_name_length = self.get_name_max_length(pitch_boxscore)

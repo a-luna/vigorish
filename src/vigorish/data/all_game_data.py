@@ -6,7 +6,7 @@ from tabulate import tabulate
 from vigorish.cli.components.models import DisplayTable
 from vigorish.cli.components.table_viewer import TableViewer
 from vigorish.config.database import PlayerId
-from vigorish.enums import DataSet, VigFile, DefensePosition
+from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.list_helpers import group_and_sort_dict_list, make_chunked_list
 from vigorish.util.regex import INNING_LABEL_REGEX
@@ -50,22 +50,7 @@ class AllGameData:
         self.removed_pitchfx = combined_data["removed_pitchfx"]
         self.invalid_pitchfx = combined_data["invalid_pitchfx"]
         self.player_id_dict = combined_data["player_id_dict"]
-
-        self.all_player_bbref_ids = [bbref_id for bbref_id in self.player_id_dict.keys()]
         self.all_player_mlb_ids = [id_map["mlb_id"] for id_map in self.player_id_dict.values()]
-        self.bbref_id_to_mlb_id_map = {
-            bbref_id: id_map["mlb_id"] for bbref_id, id_map in self.player_id_dict.items()
-        }
-        self.mlb_id_to_bbref_id_map = {
-            id_map["mlb_id"]: bbref_id for bbref_id, id_map in self.player_id_dict.items()
-        }
-
-    @property
-    def player_id_map(self):
-        return {
-            mlb_id: PlayerId.find_by_mlb_id(self.db_session, mlb_id)
-            for mlb_id in self.all_player_mlb_ids
-        }
 
     @property
     def away_team_id(self):
@@ -76,7 +61,7 @@ class AllGameData:
         return self.home_team_data["team_id_br"]
 
     @property
-    def all_player_ids_with_bat_stats(self):
+    def bat_stats_player_ids(self):
         batter_mlb_ids = [
             int(validate_at_bat_id(at_bat_id).value["batter_mlb_id"])
             for at_bat_id in self.get_at_bat_map().keys()
@@ -84,7 +69,7 @@ class AllGameData:
         return list(set(batter_mlb_ids))
 
     @property
-    def all_player_ids_with_pitch_stats(self):
+    def pitch_stats_player_ids(self):
         return [mlb_id for mlb_id in self.get_pitch_stat_map().keys()]
 
     @property
@@ -101,6 +86,15 @@ class AllGameData:
             self.home_team_id: self.get_home_team_pitch_boxscore(),
         }
 
+    def get_player_id_map(self, mlb_id=None, bbref_id=None):
+        if not mlb_id and not bbref_id:
+            return None
+        return (
+            PlayerId.find_by_mlb_id(self.db_session, mlb_id)
+            if mlb_id
+            else PlayerId.find_by_bbref_id(self.db_session, bbref_id)
+        )
+
     def get_away_team_bat_boxscore(self):
         if self._away_bat_boxscore:
             return self._away_bat_boxscore
@@ -116,7 +110,7 @@ class AllGameData:
     def create_bat_boxscore(self, team_data):
         batter_box = OrderedDict()
         for slot in team_data["starting_lineup"]:
-            mlb_id = self.bbref_id_to_mlb_id_map[slot["player_id_br"]]
+            mlb_id = self.get_player_id_map(bbref_id=slot["player_id_br"]).mlb_id
             batter_box[slot["bat_order"]] = self.get_bat_boxscore_for_player(
                 mlb_id, slot["def_position"], team_data
             )
@@ -124,7 +118,7 @@ class AllGameData:
         sub_player_ids = [
             mlb_id
             for mlb_id in self.get_all_player_ids_by_team(team_data["team_id_br"])
-            if mlb_id in self.all_player_ids_with_bat_stats and mlb_id not in lineup_player_ids
+            if mlb_id in self.bat_stats_player_ids and mlb_id not in lineup_player_ids
         ]
         for num, sub_id in enumerate(sub_player_ids, start=1):
             batter_box[f"BN{num}"] = self.get_bat_boxscore_for_player(sub_id, "BN", team_data)
@@ -147,7 +141,7 @@ class AllGameData:
         pitcher_ids = [
             mlb_id
             for mlb_id in self.get_all_player_ids_by_team(team_data["team_id_br"])
-            if mlb_id in self.all_player_ids_with_pitch_stats
+            if mlb_id in self.pitch_stats_player_ids
         ]
         rp_count = 0
         for mlb_id in self.get_pitcher_app_order(pitcher_ids):
@@ -176,13 +170,13 @@ class AllGameData:
         ]
 
     def get_bat_boxscore_for_player(self, mlb_id, def_position, team_data):
-        player_id = self.player_id_map.get(mlb_id)
+        player_id = self.get_player_id_map(mlb_id=mlb_id)
         bat_stats = self.get_bat_stats(mlb_id).value
         (at_bats, details) = parse_bat_stats_for_game(bat_stats)
         return {
             "team_id": team_data["team_id_br"],
             "name": player_id.mlb_name,
-            "mlb_id": mlb_id,
+            "mlb_id": player_id.mlb_id,
             "bbref_id": player_id.bbref_id,
             "def_position": DefensePosition.from_abbrev(def_position),
             "at_bats": at_bats,
@@ -192,7 +186,7 @@ class AllGameData:
         }
 
     def get_pitch_boxscore_for_player(self, mlb_id, team_data):
-        player_id = self.player_id_map.get(mlb_id)
+        player_id = self.get_player_id_map(mlb_id=mlb_id)
         pitch_stats = self.get_pitch_app_stats(mlb_id).value
         game_stats = parse_pitch_app_stats(pitch_stats)
         is_starter = "GS" in game_stats
@@ -290,7 +284,7 @@ class AllGameData:
         at_bats = self.get_all_at_bats_involving_batter(mlb_id).value
         batter_tables = []
         for num, at_bat in enumerate(at_bats, start=1):
-            player_name = self.player_id_map.get(mlb_id).mlb_name
+            player_name = self.get_player_id_map(mlb_id=mlb_id).mlb_name
             heading = f"At Bat #{num}/{len(at_bats)} for {player_name} in Game {self.bbref_game_id}"
             table_list = self.create_at_bat_table_list(at_bat, heading)
             batter_tables.extend(table_list)
@@ -309,7 +303,7 @@ class AllGameData:
             inning = inning_id[-5:]
             pitcher_tables = []
             for num, at_bat in enumerate(at_bats, start=1):
-                player_name = self.player_id_map.get(mlb_id).mlb_name
+                player_name = self.get_player_id_map(mlb_id=mlb_id).mlb_name
                 heading = f"At Bat #{num}/{len(at_bats)}, Inning: {inning}, P: {player_name}"
                 table_list = self.create_at_bat_table_list(at_bat, heading)
                 pitcher_tables.extend(table_list)
