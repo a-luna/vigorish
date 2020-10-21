@@ -21,14 +21,12 @@ from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance
 
 GAME_DATE_BR_DAILY = datetime(2018, 7, 26)
 GAME_DATE_BB_DAILY = datetime(2018, 4, 17)
-
 GAME_DATE_BBREF_BOX = datetime(2018, 3, 29)
-GAME_ID_BBREF_BOX = "ATL201803290"
-
 GAME_DATE_PLOG = datetime(2018, 6, 17)
-GAME_ID_PLOG = "TOR201806170"
-
 GAME_DATE_PFX = datetime(2018, 4, 1)
+
+GAME_ID_BBREF_BOX = "ATL201803290"
+GAME_ID_PLOG = "TOR201806170"
 GAME_ID_PFX = "OAK201804010"
 
 GAME_ID_NO_ERRORS = "TOR201906170"
@@ -36,45 +34,59 @@ NO_ERRORS_PITCH_APP = "TOR201906170_429719"
 GAME_ID_WITH_ERRORS = "NYA201906112"
 GAME_ID_NO_PFX_FOR_PITCH_APP = "PIT201909070"
 GAME_ID_EXTRA_PFX_REMOVED = "TEX201904150"
+GAME_ID_PFX_OUT_OF_SEQUENCE = "WAS201904030"
 GAME_ID_PATCH_PFX = "OAK201904030"
 GAME_ID_PATCH_BOXSCORE = "TOR201908170"
 
 COMBINED_DATA_GAME_DICT = {
-    datetime(2019, 6, 17): {
+    "NO_ERRORS": {
         "bbref_game_id": GAME_ID_NO_ERRORS,
         "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
+        "game_date": datetime(2019, 6, 17),
         "apply_patch_list": False,
     },
-    datetime(2019, 6, 11): {
+    "WITH_ERRORS": {
         "bbref_game_id": GAME_ID_WITH_ERRORS,
         "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
+        "game_date": datetime(2019, 6, 11),
         "apply_patch_list": False,
     },
-    datetime(2019, 9, 7): {
+    "NO_PFX_FOR_PITCH_APP": {
         "bbref_game_id": GAME_ID_NO_PFX_FOR_PITCH_APP,
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
+        "game_date": datetime(2019, 9, 7),
         "apply_patch_list": False,
     },
-    datetime(2019, 4, 15): {
+    "EXTRA_PFX_REMOVED": {
         "bbref_game_id": GAME_ID_EXTRA_PFX_REMOVED,
         "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
+        "game_date": datetime(2019, 4, 15),
         "apply_patch_list": False,
     },
-    datetime(2019, 4, 3): {
+    "PATCH_PFX": {
         "bbref_game_id": GAME_ID_PATCH_PFX,
         "bb_game_id": "gid_2019_04_03_bosmlb_oakmlb_1",
+        "game_date": datetime(2019, 4, 3),
         "apply_patch_list": True,
     },
-    datetime(2019, 8, 17): {
+    "PATCH_BOXSCORE": {
         "bbref_game_id": GAME_ID_PATCH_BOXSCORE,
         "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
+        "game_date": datetime(2019, 8, 17),
         "apply_patch_list": True,
+    },
+    "PFX_OUT_OF_SEQUENCE": {
+        "bbref_game_id": GAME_ID_PFX_OUT_OF_SEQUENCE,
+        "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
+        "game_date": datetime(2019, 4, 3),
+        "apply_patch_list": False,
     },
 }
 
 
 def seed_database_with_2019_test_data(db_session, scraped_data):
-    for game_date, game_id_dict in COMBINED_DATA_GAME_DICT.items():
+    for game_id_dict in COMBINED_DATA_GAME_DICT.values():
+        game_date = game_id_dict["game_date"]
         bbref_game_id = game_id_dict["bbref_game_id"]
         bb_game_id = game_id_dict["bb_game_id"]
         apply_patch_list = game_id_dict["apply_patch_list"]

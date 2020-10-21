@@ -11,6 +11,7 @@ axforjo01,1983,4,1,CAN,ON,Simcoe,,,,,,,John,Axford,John Berton,234,77,R,R,2009-0
 baderha01,1994,6,3,USA,NY,Bronxville,,,,,,,Harrison,Bader,Harrison Joseph,195,72,R,R,2017-07-25,2019-09-29,badeh001,baderha01
 barnema01,1990,6,17,USA,CT,Danbury,,,,,,,Matt,Barnes,Matthew D.,210,76,R,R,2014-09-09,2019-09-29,barnm001,barnema01
 baronst01,1990,12,7,USA,FL,Miami,,,,,,,Steven,Baron,Steven Phillip,205,72,R,R,2015-09-09,2019-09-28,baros002,baronst01
+barraky01,1990,5,23,USA,CA,Santa Clara,,,,,,,Kyle,Barraclough,Kyle David,225,75,R,R,2015-08-07,2019-09-27,barrk002,barraky01
 bassan01,1987,11,1,USA,MI,Dearborn,,,,,,,Anthony,Bass,Anthony Edward,200,74,R,R,2011-06-13,2019-09-29,bassa001,bassan01
 bedroca01,1991,10,2,USA,GA,Senoia,,,,,,,Cam,Bedrosian,Cameron Rock,225,73,R,R,2014-06-03,2019-08-28,bedrc001,bedroca01
 belljo02,1992,8,14,USA,TX,Irving,,,,,,,Josh,Bell,Joshua Evan,240,76,B,R,2016-07-08,2019-09-13,bellj005,belljo02
@@ -52,7 +53,10 @@ deverra01,1996,10,24,D.R.,Samana,Sanchez,,,,,,,Rafael,Devers,Rafael Calcano,237,
 diazal02,1990,8,1,Cuba,,Santa Clara,,,,,,,Aledmys,Diaz,Aledmys,195,73,R,R,2016-04-05,2019-09-29,diaza003,diazal02
 diazel01,1990,11,17,Venezuela,Zulia,Maracaibo,,,,,,,Elias,Diaz,Elias David,220,73,R,R,2015-09-12,2019-09-21,diaze005,diazel01
 difowi01,1992,4,2,D.R.,Santiago,Santiago de los Caballeros,,,,,,,Wilmer,Difo,Wilmer Francisco,200,71,B,R,2015-05-19,2019-09-29,difow001,difowi01
+dominse01,1994,11,25,D.R.,Valverde,Esperanza,,,,,,,Seranthony,Dominguez,Seranthony Ambioris,185,73,R,R,2018-05-07,2019-06-05,domis001,dominse01
+doolise01,1986,9,26,USA,SD,Rapid City,,,,,,,Sean,Doolittle,Sean Robert,204,74,L,L,2012-06-05,2019-09-28,dools001,doolise01
 dowdyky01,1993,2,3,USA,CA,Escondido,,,,,,,Kyle,Dowdy,Kyle Alexander,195,73,R,R,2019-03-28,2019-05-26,dowdk001,dowdyky01
+doziebr01,1987,5,15,USA,MS,Fulton,,,,,,,Brian,Dozier,James Brian,200,71,R,R,2012-05-07,2019-09-29,dozib001,doziebr01
 drurybr01,1992,8,21,USA,OR,Grants Pass,,,,,,,Brandon,Drury,Brandon S.,215,74,R,R,2015-09-01,2019-09-28,drurb001,drurybr01
 eatonad02,1988,12,6,USA,OH,Springfield,,,,,,,Adam,Eaton,Adam Cory,176,69,L,L,2012-09-04,2019-09-29,eatoa002,eatonad02
 edmanto01,1995,5,9,USA,CA,San Diego,,,,,,,Tommy,Edman,Thomas Hyunsu,180,70,B,R,2019-06-08,2019-09-29,edmat001,edmanto01
@@ -82,10 +86,12 @@ gardnbr01,1983,8,24,USA,SC,Holly Hill,,,,,,,Brett,Gardner,Brett M.,195,71,L,L,20
 gavigsa01,1990,5,22,USA,OR,Ashland,,,,,,,Sam,Gaviglio,Samuel Joseph,205,74,R,R,2017-05-11,2019-09-28,gavis001,gavigsa01
 gearrco01,1986,4,14,USA,TN,Chattanooga,,,,,,,Cory,Gearrin,Cory Nathanial,205,73,R,R,2011-04-25,2019-09-28,gearc001,gearrco01
 goldspa01,1987,9,10,USA,DE,Wilmington,,,,,,,Paul,Goldschmidt,Paul Edward,225,75,R,R,2011-08-01,2019-09-29,goldp001,goldspa01
+gomesya01,1987,7,19,Brazil,Sao Paulo,Sao Paulo,,,,,,,Yan,Gomes,Yan,215,74,R,R,2012-05-17,2019-09-28,gomey001,gomesya01
 gomezca01,1985,12,4,D.R.,Santiago,Santiago,,,,,,,Carlos,Gomez,Carlos Argelis,220,75,R,R,2007-05-13,2019-06-29,gomec002,gomezca01
 goodwbr01,1990,11,2,USA,NC,Rocky Mount,,,,,,,Brian,Goodwin,Brian Christopher,200,72,L,R,2016-08-06,2019-09-29,goodb001,goodwbr01
 gordode01,1988,4,22,USA,FL,Windermere,,,,,,,Dee,Gordon,Devaris,170,71,L,R,2011-06-06,2019-09-29,gordd002,gordode01
 gosseda01,1992,11,13,USA,SC,Lyman,,,,,,,Daniel,Gossett,Daniel James,192,72,R,R,2017-06-14,2018-06-03,gossd001,gosseda01
+gracema02,1988,12,14,USA,CA,Palos Verdes Estates,,,,,,,Matt,Grace,Matthew Aaron,215,76,L,L,2015-04-22,2019-08-23,gracm003,gracema02
 grandcu01,1981,3,16,USA,IL,Blue Island,,,,,,,Curtis,Granderson,Curtis,200,73,L,R,2004-09-13,2019-09-29,granc001,grandcu01
 grichra01,1991,8,13,USA,TX,Rosenberg,,,,,,,Randal,Grichuk,Randal Alexander,213,74,R,R,2014-04-28,2019-09-29,gricr001,grichra01
 grossro01,1989,9,16,USA,CA,San Diego,,,,,,,Robbie,Grossman,Robert Edward,215,72,B,L,2013-04-24,2019-09-29,grosr001,grossro01
@@ -113,6 +119,7 @@ joycema01,1984,8,3,USA,FL,Tampa,,,,,,,Matthew,Joyce,Matthew Ryan,200,74,L,R,2008
 kellesh01,1984,4,26,USA,KY,Louisville,,,,,,,Shawn,Kelley,Shawn Andrew,237,74,R,R,2009-04-10,2019-09-27,kells001,kellesh01
 kiebosp01,1991,3,16,USA,SC,Mount Pleasant,,,,,,,Spencer,Kieboom,Spencer John,210,72,R,R,2016-10-02,2018-09-30,kiebs001,kiebosp01
 kineris01,1995,3,23,USA,HI,Honolulu,,,,,,,Isiah,Kiner-Falefa,Isiah,176,70,R,R,2018-04-10,2019-09-28,kinei001,kineris01
+kingesc01,1994,4,29,USA,AZ,Phoenix,,,,,,,Scott,Kingery,Scott M.,180,70,R,R,2018-03-30,2019-09-27,kings001,kingesc01
 kinghni01,1991,11,8,USA,TX,Houston,,,,,,,Nick,Kingham,Nicholas Gordon,235,77,R,R,2018-04-29,2019-08-02,kingn001,kinghni01
 knappan01,1991,11,9,USA,CA,Roseville,,,,,,,Andrew,Knapp,Andrew Michael,195,73,B,R,2017-04-06,2019-09-29,knapa001,knappan01
 kniznan01,1995,2,3,USA,VA,Glen Allen,,,,,,,Andrew,Knizner,Andrew Robert,200,73,R,R,2019-06-02,2019-09-25,kniza001,kniznan01
@@ -141,6 +148,7 @@ maybica01,1987,4,4,USA,NC,Asheville,,,,,,,Cameron,Maybin,Cameron Keith,215,75,R,
 mayzati01,1992,1,15,USA,PA,Allentown,,,,,,,Tim,Mayza,Timothy Gerard,220,75,L,L,2017-08-15,2019-09-13,mayzt001,mayzati01
 mazarno01,1995,4,26,D.R.,Distrito Nacional,Santo Domingo,,,,,,,Nomar,Mazara,Nomar Shamir,215,76,L,L,2016-04-10,2019-09-22,mazan001,mazarno01
 mcclare01,1992,11,16,USA,GA,Duluth,,,,,,,Reggie,McClain,Reginald Kristen,180,74,R,R,2019-08-02,2019-09-29,mcclr001,mcclare01
+mccutan01,1986,10,10,USA,FL,Fort Meade,,,,,,,Andrew,McCutchen,Andrew Stefan,195,71,R,R,2009-06-04,2019-06-03,mccua001,mccutan01
 mcguire01,1995,3,2,USA,WA,Seattle,,,,,,,Reese,McGuire,Reese Jackson,215,72,L,R,2018-09-06,2019-09-27,mcgur002,mcguire01
 mckinbi01,1994,8,23,USA,TX,Dallas,,,,,,,Billy,McKinney,William Landis,205,73,L,L,2018-03-30,2019-09-29,mckib001,mckinbi01
 mcneije01,1992,4,8,USA,CA,Santa Barbara,,,,,,,Jeff,McNeil,Jeff,195,73,L,R,2018-07-24,2019-09-25,mcnej002,mcneije01
@@ -160,8 +168,10 @@ murphda08,1985,4,1,USA,FL,Jacksonville,,,,,,,Daniel,Murphy,Daniel Thomas,221,73,
 narvaom01,1992,2,10,Venezuela,Aragua,Maracay,,,,,,,Omar,Narvaez,Omar David,220,71,L,R,2016-07-17,2019-09-29,narvo001,narvaom01
 nerishe01,1989,6,14,D.R.,San Cristobal,Villa Altagracia,,,,,,,Hector,Neris,Hector,215,74,R,R,2014-08-05,2019-09-27,nerih001,nerishe01
 newmake01,1993,8,4,USA,CA,Poway,,,,,,,Kevin,Newman,Kevin Bradley,195,72,R,R,2018-08-16,2019-09-29,newmk001,newmake01
+nicasju01,1986,8,31,D.R.,Duarte,San Francisco de Macoris,,,,,,,Juan,Nicasio,Juan Ramon,252,76,R,R,2011-05-28,2019-09-27,nicaj001,nicasju01
 nolaaa01,1993,6,4,USA,LA,Baton Rouge,,,,,,,Aaron,Nola,Aaron Michael,195,74,R,R,2015-07-21,2019-09-24,nolaa001,nolaaa01
 nolaau01,1989,12,28,USA,LA,Baton Rouge,,,,,,,Austin,Nola,Austin Kyle,195,72,R,R,2019-06-16,2019-09-29,nolaa002,nolaau01
+nollja01,1994,3,8,USA,FL,Punta Gorda,,,,,,,Jake,Noll,Jacob,195,74,R,R,2019-03-30,2019-05-08,nollj001,nollja01
 nunezed02,1987,6,15,D.R.,Distrito Nacional,Santo Domingo,,,,,,,Eduardo,Nunez,Eduardo Michelle,195,72,R,R,2010-08-19,2019-07-14,nunee002,nunezed02
 ohse01,1982,7,15,South Korea,North Jeolla,Jeongeup,,,,,,,Seunghwan,Oh,Seunghwan,205,70,R,R,2016-04-03,2019-05-30,oh--s001,ohse01
 ohtansh01,1994,7,5,Japan,Iwate,Oshu,,,,,,,Shohei,Ohtani,Shohei,210,76,L,R,2018-03-29,2019-09-11,ohtas001,ohtansh01
@@ -185,20 +195,27 @@ ramirno01,1989,12,22,USA,CA,Los Angeles,,,,,,,Noe,Ramirez,Noe,205,75,R,R,2015-07
 ramosed02,1992,12,19,Venezuela,Distrito Federal,Caracas,,,,,,,Edubray,Ramos,Edubray Eduar,160,72,R,R,2016-06-24,2019-09-23,ramoe002,ramosed02
 ramoswi01,1987,8,10,Venezuela,Carabobo,Valencia,,,,,,,Wilson,Ramos,Wilson Abraham,245,73,R,R,2010-05-02,2019-09-29,ramow001,ramoswi01
 ravelra01,1992,4,24,Cuba,La Habana,La Habana,,,,,,,Rangel,Ravelo,Rangel,225,73,R,R,2019-06-17,2019-09-28,raver001,ravelra01
+realmjt01,1991,3,18,USA,OK,Del City,,,,,,,J. T.,Realmuto,Jacob Tyler,210,73,R,R,2014-06-05,2019-09-22,realj001,realmjt01
 rendoan01,1990,6,6,USA,TX,Houston,,,,,,,Anthony,Rendon,Anthony Michael,200,73,R,R,2013-04-21,2019-09-28,renda001,rendoan01
 reyespa01,1993,9,5,D.R.,Distrito Nacional,Santo Domingo,,,,,,,Pablo,Reyes,Pablo,175,68,R,R,2018-09-02,2019-09-29,reyep001,reyespa01
 reynobr01,1995,1,27,USA,MD,Baltimore,,,,,,,Bryan,Reynolds,Bryan Patrick,205,75,B,R,2019-04-20,2019-09-25,reynb001,reynobr01
 roarkta01,1986,10,5,USA,IL,Wilmington,,,,,,,Tanner,Roark,Tanner B.,240,74,R,R,2013-08-07,2019-09-29,roart001,roarkta01
+roberda08,1985,4,9,USA,AL,Birmingham,,,,,,,David,Robertson,David Alan,195,71,R,R,2008-06-29,2019-04-14,robed002,roberda08
+roblevi01,1997,5,19,D.R.,Santo Domingo,Santo Domingo Este,,,,,,,Victor,Robles,Victor Enrique,190,72,R,R,2017-09-07,2019-09-29,roblv001,roblevi01
 rodnefe01,1977,3,18,D.R.,Distrito Nacional,Santo Domingo,,,,,,,Fernando,Rodney,Fernando,240,71,R,R,2002-05-04,2019-09-28,rodnf001,rodnefe01
 rominau01,1988,11,22,USA,CA,Lake Forest,,,,,,,Austin,Romine,Austin Allen,220,73,R,R,2011-09-11,2019-09-28,romia002,rominau01
 rosaram01,1995,11,20,D.R.,Distrito Nacional,Santo Domingo Centro,,,,,,,Amed,Rosario,German Amed,189,74,R,R,2017-08-01,2019-09-29,rosaa003,rosaram01
+rosentr01,1990,5,29,USA,MO,Lee's Summit,,,,,,,Trevor,Rosenthal,Trevor Jordan,230,74,R,R,2012-07-18,2019-08-07,roset001,rosentr01
+sanchan01,1984,2,27,Venezuela,Aragua,Maracay,,,,,,,Anibal,Sanchez,Anibal Alejandro,205,72,R,R,2006-06-25,2019-09-25,sanca004,sanchan01
 sanchga02,1992,12,2,D.R.,Distrito Nacional,Santo Domingo,,,,,,,Gary,Sanchez,Gary,230,74,R,R,2015-10-03,2019-09-29,sancg002,sanchga02
 santaca01,1986,4,8,D.R.,Distrito Nacional,Santo Domingo,,,,,,,Carlos,Santana,Carlos,210,71,B,R,2010-06-11,2019-09-29,santc002,santaca01
 santada01,1990,11,7,D.R.,Monte Plata,Monte Plata,,,,,,,Danny,Santana,Daniel Ernesto,185,71,B,R,2014-05-05,2019-09-29,santd001,santada01
 seageky01,1987,11,3,USA,NC,Charlotte,,,,,,,Kyle,Seager,Kyle Duerr,210,72,L,R,2011-07-07,2019-09-29,seagk001,seageky01
+segurje01,1990,3,17,D.R.,San Juan,San Juan,,,,,,,Jean,Segura,Jean Carlos Enrique,205,70,R,R,2012-07-24,2019-09-26,seguj002,segurje01
 semiema01,1990,9,17,USA,CA,San Francisco,,,,,,,Marcus,Semien,Marcus Andrew,195,72,R,R,2013-09-04,2019-09-29,semim001,semiema01
 severpe01,1993,7,20,D.R.,Monsenor Nouel,Bonao,,,,,,,Pedro,Severino,Pedro,219,73,R,R,2015-09-20,2019-09-23,sevep001,severpe01
 simmoan01,1989,9,4,Curacao,,Mundo Nobo,,,,,,,Andrelton,Simmons,Andrelton A.,195,74,R,R,2012-06-02,2019-09-29,simma001,simmoan01
+sippto01,1983,7,12,USA,MS,Pascagoula,,,,,,,Tony,Sipp,Tony Marcel,190,72,L,L,2009-04-22,2019-07-30,sippt001,sippto01
 smithke04,1988,6,28,USA,PA,Pittsburgh,,,,,,,Kevan,Smith,Kevan Alan,240,76,R,R,2016-09-01,2019-09-29,smitk002,smithke04
 smoakju01,1986,12,5,USA,SC,Goose Creek,,,,,,,Justin,Smoak,Justin Kyle,220,76,B,L,2010-04-23,2019-09-29,smoaj001,smoakju01
 sogarer01,1986,5,22,USA,AZ,Phoenix,,,,,,,Eric,Sogard,Eric Sidney,185,70,L,R,2010-09-14,2019-09-15,sogae001,sogarer01
@@ -206,6 +223,7 @@ solarya01,1987,7,3,Venezuela,Carabobo,Valencia,,,,,,,Yangervis,Solarte,Yangervis
 soriajo01,1984,5,18,Mexico,Coahuila,Monclova,,,,,,,Joakim,Soria,Joakim Agustin,200,75,R,R,2007-04-04,2019-09-27,sorij001,soriajo01
 sosaed01,1996,3,6,Panama,Panama,Panama,,,,,,,Edmundo,Sosa,Edmundo,170,71,R,R,2018-09-23,2019-09-25,sosae001,sosaed01
 sotoju01,1998,10,25,D.R.,Distrito Nacional,Santo Domingo,,,,,,,Juan,Soto,Juan Jose,185,73,L,L,2018-05-20,2019-09-29,sotoj001,sotoju01
+stevean01,1994,6,1,USA,LA,Lafayette,,,,,,,Andrew,Stevenson,Andrew Patrick,192,72,L,L,2017-07-23,2019-09-29,steva001,stevean01
 stewach01,1982,2,19,USA,CA,Fontana,,,,,,,Chris,Stewart,Christopher David,215,76,R,R,2006-09-06,2018-09-25,stewc001,stewach01
 suzukku01,1983,10,4,USA,HI,Wailuku,,,,,,,Kurt,Suzuki,Kurt Kiyoshi,210,71,R,R,2007-06-12,2019-09-29,suzuk001,suzukku01
 swansda01,1994,2,11,USA,GA,Kennesaw,,,,,,,Dansby,Swanson,James Dansby,190,73,R,R,2016-08-17,2019-09-29,swand001,swansda01
@@ -236,3 +254,4 @@ willini01,1993,9,8,USA,TX,Galveston,,,,,,,Nick,Williams,Billy Nicholas,195,75,L,
 winklda01,1990,2,2,USA,IL,Effingham,,,,,,,Dan,Winkler,Daniel Allen,205,75,R,R,2015-09-21,2019-06-14,winkd001,winklda01
 wongko01,1990,10,10,USA,HI,Hilo,,,,,,,Kolten,Wong,Kolten Kaha,185,69,L,R,2013-08-16,2019-09-19,wongk001,wongko01
 woodbl01,1985,8,8,USA,GA,Atlanta,,,,,,,Blake,Wood,Blake Daniel,233,77,R,R,2010-05-12,2018-04-21,woodb004,woodbl01
+zimmery01,1984,9,28,USA,NC,Washington,,,,,,,Ryan,Zimmerman,Ryan Wallace,215,75,R,R,2005-09-01,2019-09-29,zimmr001,zimmery01
