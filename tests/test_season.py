@@ -22,15 +22,15 @@ def test_season_status_report(db_session):
     report = season.status_report()
     assert "BBref Daily Dash Scraped.....................: 6/186 days (3%)" in report
     assert "Brooks Daily Dash Scraped....................: 6/186 days (3%)" in report
-    assert "BBref Boxscores Scraped......................: NO 6/81" in report
-    assert "Brooks Games Scraped.........................: NO 6/81" in report
-    assert "PitchFx Logs Scraped.........................: NO 56/56 (100%)" in report
-    assert "Combined BBRef/PitchFX Data (Success/Total)..: NO 6/6" in report
-    assert "Pitch App Count (BBRef/Brooks)...............: 56/715" in report
-    assert "Pitch App Count (PFx/data/no data)...........: 56/55/1" in report
-    assert "PitchFX Data Errors (Valid AB/Invalid AB)....: NO 0/0" in report
-    assert "Pitch Count (BBRef/Brooks/PFx)...............: 1899/1875/1875" in report
-    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 1899/1851/24" in report
+    assert "BBref Boxscores Scraped......................: NO 7/81" in report
+    assert "Brooks Games Scraped.........................: NO 7/81" in report
+    assert "PitchFx Logs Scraped.........................: NO 69/69 (100%)" in report
+    assert "Combined BBRef/PitchFX Data (Success/Total)..: NO 7/7" in report
+    assert "Pitch App Count (BBRef/Brooks)...............: 69/715" in report
+    assert "Pitch App Count (PFx/data/no data)...........: 69/68/1" in report
+    assert "PitchFX Data Errors (Valid AB/Invalid AB)....: NO 0/3" in report
+    assert "Pitch Count (BBRef/Brooks/PFx)...............: 2243/2254/2254" in report
+    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 2243/2173/62" in report
 
 
 def test_season_as_dict(db_session):
@@ -54,41 +54,41 @@ def test_season_as_dict(db_session):
         "percent_complete_brooks_games_for_date": 0.03225806451612903,
         "scraped_all_brooks_games_for_date": False,
         "total_games": 81,
-        "total_games_combined_success": 6,
+        "total_games_combined_success": 7,
         "total_games_combined_fail": 0,
-        "total_games_combined": 6,
-        "total_bbref_boxscores_scraped": 6,
+        "total_games_combined": 7,
+        "total_bbref_boxscores_scraped": 7,
         "percent_complete_bbref_boxscores_scraped": "0%",
         "scraped_all_bbref_boxscores": False,
-        "total_brooks_pitch_logs_scraped": 6,
+        "total_brooks_pitch_logs_scraped": 7,
         "percent_complete_brooks_pitch_logs": "0%",
         "scraped_all_brooks_pitch_logs": False,
-        "pitch_app_count_bbref": 56,
+        "pitch_app_count_bbref": 69,
         "pitch_app_count_brooks": 715,
-        "total_pitch_count_bbref": 1899,
-        "pitch_app_count_pitchfx": 56,
-        "total_pitch_apps_scraped_pitchfx": 56,
+        "total_pitch_count_bbref": 2243,
+        "pitch_app_count_pitchfx": 69,
+        "total_pitch_apps_scraped_pitchfx": 69,
         "total_pitch_apps_no_pitchfx_data": 1,
-        "total_pitch_apps_with_pitchfx_data": 55,
-        "total_pitch_apps_combined_data": 56,
+        "total_pitch_apps_with_pitchfx_data": 68,
+        "total_pitch_apps_combined_data": 69,
         "total_pitch_apps_pitchfx_error": 0,
-        "total_pitch_apps_invalid_pitchfx": 0,
-        "total_pitch_apps_pitchfx_is_valid": 56,
-        "total_pitch_count_pitch_logs": 1875,
-        "total_pitch_count_bbref_audited": 1899,
-        "total_pitch_count_pitchfx": 1875,
-        "total_pitch_count_pitchfx_audited": 1851,
-        "total_duplicate_pitchfx_removed_count": 22,
-        "total_missing_pitchfx_count": 48,
+        "total_pitch_apps_invalid_pitchfx": 3,
+        "total_pitch_apps_pitchfx_is_valid": 66,
+        "total_pitch_count_pitch_logs": 2254,
+        "total_pitch_count_bbref_audited": 2243,
+        "total_pitch_count_pitchfx": 2254,
+        "total_pitch_count_pitchfx_audited": 2173,
+        "total_duplicate_pitchfx_removed_count": 57,
+        "total_missing_pitchfx_count": 70,
         "total_extra_pitchfx_count": 0,
-        "total_extra_pitchfx_removed_count": 2,
-        "total_batters_faced_bbref": 484,
-        "total_batters_faced_pitchfx": 480,
-        "total_at_bats_missing_pitchfx": 12,
+        "total_extra_pitchfx_removed_count": 5,
+        "total_batters_faced_bbref": 570,
+        "total_batters_faced_pitchfx": 566,
+        "total_at_bats_missing_pitchfx": 18,
         "total_at_bats_extra_pitchfx": 0,
-        "total_at_bats_extra_pitchfx_removed": 2,
+        "total_at_bats_extra_pitchfx_removed": 4,
         "total_at_bats_pitchfx_error": 0,
-        "total_at_bats_invalid_pitchfx": 0,
+        "total_at_bats_invalid_pitchfx": 6,
         "scraped_all_pitchfx_logs": False,
         "combined_data_for_all_pitchfx_logs": False,
         "pitchfx_error_for_any_pitchfx_logs": False,

@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 
 from tests.util import (
@@ -14,8 +12,9 @@ from tests.util import (
 from vigorish.data.all_game_data import AllGameData
 from vigorish.enums import DefensePosition
 
-GAME_DATE = datetime(2019, 6, 17)
-GAME_DICT = COMBINED_DATA_GAME_DICT[GAME_DATE]
+TEST_ID = "NO_ERRORS"
+GAME_DICT = COMBINED_DATA_GAME_DICT[TEST_ID]
+GAME_DATE = COMBINED_DATA_GAME_DICT[TEST_ID]["game_date"]
 
 
 @pytest.fixture(scope="module", autouse=True)
