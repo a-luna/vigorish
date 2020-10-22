@@ -5,6 +5,7 @@ from datetime import datetime
 from rapidfuzz import process
 
 from vigorish.constants import BR_BB_TEAM_ID_MAP, BB_BR_TEAM_ID_MAP
+from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.regex import (
     AT_BAT_ID_REGEX,
     BB_GAME_ID_REGEX,
@@ -41,7 +42,7 @@ def ellipsize(input_str, max_len):
     if len(input_str) <= max_len:
         return input_str
     trunc = f"{input_str[:max_len - 1]} {ELLIPSIS}"
-    for match in reversed([match for match in WORD_REGEX.finditer(input_str)]):
+    for match in reversed(list(WORD_REGEX.finditer(input_str))):
         if match.end("word") > max_len:
             continue
         trunc = f"{input_str[:match.end('word')]} {ELLIPSIS}"
@@ -50,35 +51,53 @@ def ellipsize(input_str, max_len):
 
 
 def wrap_text(input_str, max_len):
-    trunc_lines = []
-    input_lines = [s for s in input_str.split("\n") if s]
-    newline_matches = [m for m in NEWLINE_REGEX.finditer(input_str)]
-    last_word_boundary = max_len
-    for long_str in input_lines:
-        while True:
-            if len(long_str) <= max_len:
-                trunc_lines.append(long_str)
-                break
-            for match in WORD_REGEX.finditer(long_str):
-                if match.end("word") > max_len:
-                    break
-                last_word_boundary = match.end("word") + 1
-            trunc_lines.append(long_str[:last_word_boundary].strip())
-            long_str = long_str[last_word_boundary:]
-    current_index = 0
-    for m in newline_matches:
-        newline_index = m.start()
-        for num, s in enumerate(trunc_lines, start=1):
-            current_index = len(s)
-            if current_index < newline_index:
-                if num == len(trunc_lines):
-                    trunc_lines[num - 1] = f"{s}{m.group()}"
-                    break
-                newline_index -= len(s)
-                continue
-            trunc_lines[num - 1] = f"{s[:newline_index]}{m.group()}{s[newline_index:]}"
+    input_strings = [s for s in input_str.split("\n") if s]
+    wrapped = flatten_list2d([_wrap_string(s, max_len) for s in input_strings])
+    wrapped = _replace_newlines(input_str, wrapped)
+    return "\n".join(wrapped)
+
+
+def _wrap_string(s, max_len):
+    wrapped = []
+    while True:
+        if len(s) <= max_len:
+            wrapped.append(s)
             break
-    return "\n".join(trunc_lines)
+        (next_wrapped, s) = _word_wrap(s, max_len)
+        wrapped.append(next_wrapped)
+    return wrapped
+
+
+def _word_wrap(s, max_len):
+    last_word_boundary = max_len
+    for match in WORD_REGEX.finditer(s):
+        if match.end("word") > max_len:
+            break
+        last_word_boundary = match.end("word") + 1
+    wrapped = s[:last_word_boundary].strip()
+    s = s[last_word_boundary:].strip()
+    return (wrapped, s)
+
+
+def _replace_newlines(input_str, wrapped):
+    current_index = 0
+    for newline_match in list(NEWLINE_REGEX.finditer(input_str)):
+        (wrapped, current_index) = _replace_newline(wrapped, current_index, newline_match)
+    return wrapped
+
+
+def _replace_newline(wrapped, current_index, newline_match):
+    newline_index = newline_match.start()
+    for num, s in enumerate(wrapped, start=1):
+        current_index += len(s)
+        if current_index < newline_index:
+            if num != len(wrapped):
+                continue
+            wrapped[num - 1] = f"{s}{newline_match.group()}"
+            break
+        wrapped[num - 1] = f"{s[:newline_index]}{newline_match.group()}{s[newline_index:]}"
+        break
+    return (wrapped, current_index)
 
 
 def try_parse_int(input_str):
@@ -134,16 +153,8 @@ def validate_bbref_game_id(input_str):
     match = BBREF_GAME_ID_REGEX.search(input_str)
     if not match:
         raise ValueError(f"String is not a valid bbref game id: {input_str}")
-    captured = match.groupdict()
-    year = int(captured["year"])
-    month = int(captured["month"])
-    day = int(captured["day"])
-    parsed = int(captured["game_num"])
-    if parsed < 2:
-        game_number = 1
-    else:
-        game_number = parsed
-
+    groups = match.groupdict()
+    (year, month, day, game_number) = _parse_ints_from_regex_groups(groups)
     try:
         game_date = datetime(year, month, day).date()
     except Exception as e:
@@ -152,10 +163,22 @@ def validate_bbref_game_id(input_str):
     game_dict = {
         "game_id": match[0],
         "game_date": game_date,
-        "home_team_id": captured["home_team"],
+        "home_team_id": groups["home_team"],
         "game_number": game_number,
     }
     return Result.Ok(game_dict)
+
+
+def _parse_ints_from_regex_groups(match):
+    year = int(match["year"])
+    month = int(match["month"])
+    day = int(match["day"])
+    parsed = int(match["game_num"])
+    if parsed < 2:
+        game_number = 1
+    else:
+        game_number = parsed
+    return (year, month, day, game_number)
 
 
 def validate_bbref_game_id_list(game_ids):

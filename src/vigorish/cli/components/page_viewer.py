@@ -15,7 +15,6 @@ NAV_PREV_LEN = len(NAV_PREV)
 NAV_NEXT_LEN = len(NAV_NEXT)
 
 
-@keyhandler.init
 class PageViewer(Bullet):
     def __init__(
         self,
@@ -58,12 +57,16 @@ class PageViewer(Bullet):
 
     @keyhandler.register(ARROW_LEFT_KEY)
     def prev_page(self):
+        if not hasattr(self, "first_page_displayed"):
+            return
         if not self.first_page_displayed():
             self.page_index -= 1
             self.needs_update = True
 
     @keyhandler.register(ARROW_RIGHT_KEY)
     def next_page(self):
+        if not hasattr(self, "last_page_displayed"):
+            return
         if not self.last_page_displayed():
             self.page_index += 1
             self.needs_update = True
