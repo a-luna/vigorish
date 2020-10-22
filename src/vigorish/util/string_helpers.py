@@ -74,7 +74,7 @@ def _word_wrap(s, max_len):
         if match.end("word") > max_len:
             break
         last_word_boundary = match.end("word") + 1
-    wrapped = s[:last_word_boundary]
+    wrapped = s[:last_word_boundary].strip()
     s = s[last_word_boundary:].strip()
     return (wrapped, s)
 
