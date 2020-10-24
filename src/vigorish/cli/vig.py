@@ -32,10 +32,10 @@ def cli(ctx):
     """
     Vigorish scrapes various websites for MLB data.
 
-    Please visit aaronluna.dev/projects/vigorish for user guides and project documentation.
+    Please visit https://aaronluna.dev/projects/vigorish for user guides and project documentation.
     """
     if not VIG_FOLDER.exists():
-        VIG_FOLDER.mkdir(parents=True, exist_ok=True)
+        VIG_FOLDER.mkdir()
     dotenv = DotEnvFile()
     config = ConfigFile()
     db_engine = create_engine(get_db_url())
@@ -198,7 +198,7 @@ def status_date(app, game_date, missing_ids, with_games):
 )
 @click.pass_obj
 def status_date_range(app, start, end, verbosity):
-    """Report overall status for each date in the specified range (includes both START and END dates).
+    """Report status for each date in a specified range.
 
     Dates can be provided in any format that is recognized by dateutil.parser.
     For example, all of the following strings are valid ways to represent the same date:

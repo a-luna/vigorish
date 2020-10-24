@@ -1,5 +1,5 @@
 import click
-from dateutil import parser
+from dateutil import parser as date_parser
 
 from vigorish.config.database import Season
 from vigorish.util.regex import JOB_NAME_REGEX
@@ -10,7 +10,7 @@ class DateString(click.ParamType):
 
     def convert(self, value, param, ctx):
         try:
-            date = parser.parse(value)
+            date = date_parser.parse(value)
             return date
         except Exception:
             error = (

@@ -18,16 +18,7 @@ class RunnersOnBase(Base):
     notation = Column(String)
 
     def __str__(self):
-        runners_on = []
-        if self.runner_on_1b:
-            runners_on.append("1B")
-        if self.runner_on_2b:
-            runners_on.append("2B")
-        if self.runner_on_3b:
-            runners_on.append("3B")
-        if not runners_on:
-            return "bases are empty"
-        return f'Runners on: {", ".join(runners_on)}'
+        return self.notation
 
     def __repr__(self):
         return f"<RunnersOnBase {self.notation}>"
