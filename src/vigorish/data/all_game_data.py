@@ -410,9 +410,7 @@ def get_inning_weight(inning_id):
         return 0
     inn_half = match[1]
     inn_number = int(match[2])
-    top_or_bottom = -1 if inn_half == "TOP" else 0 if inn_half == "BOT" else 1
-    if top_or_bottom > 0:
-        return 0
+    top_or_bottom = -1 if inn_half == "TOP" else 0
     return inn_number * 2 + top_or_bottom
 
 
