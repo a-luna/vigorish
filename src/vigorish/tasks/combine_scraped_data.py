@@ -1097,7 +1097,7 @@ class CombineScrapedData:
 
     def save_invalid_pitchfx(self, at_bat_ids_invalid_pfx):
         self.invalid_pitchfx = defaultdict(dict)
-        for ab_id in at_bat_ids_invalid_pfx:
+        for ab_id in self.order_at_bat_ids_by_park_sv_id(at_bat_ids_invalid_pfx):
             inning_id = get_inning_id_from_at_bat_id(ab_id)
             id_dict = PlayerId.get_player_ids_from_at_bat_id(self.db_session, ab_id)
             pfx_data = self.get_all_pfx_data_for_at_bat(ab_id)
