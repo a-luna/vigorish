@@ -42,9 +42,10 @@ def create_url_for_brooks_games_for_date(db_job, scraped_data, game_date):
 
 def create_urls_for_brooks_pitch_logs_for_date(db_job, scraped_data, game_date):
     data_set = DataSet.BROOKS_PITCH_LOGS
+    req_data_set = DataSet.BROOKS_GAMES_FOR_DATE
     games_for_date = scraped_data.get_brooks_games_for_date(game_date)
     if not games_for_date:
-        return Result.Fail(get_unscraped_data_error(data_set, game_date))
+        return Result.Fail(get_unscraped_data_error(data_set, req_data_set, game_date))
     urls = []
     for game in games_for_date.games:
         if game.might_be_postponed:
@@ -66,9 +67,10 @@ def create_urls_for_brooks_pitch_logs_for_date(db_job, scraped_data, game_date):
 
 def create_urls_for_brooks_pitchfx_logs_for_date(db_job, scraped_data, game_date):
     data_set = DataSet.BROOKS_PITCHFX
+    req_data_set = DataSet.BROOKS_PITCH_LOGS
     pitch_logs_for_date = scraped_data.get_all_brooks_pitch_logs_for_date(game_date)
     if not pitch_logs_for_date:
-        return Result.Fail(get_unscraped_data_error(data_set, game_date))
+        return Result.Fail(get_unscraped_data_error(data_set, req_data_set, game_date))
     urls = []
     for pitch_logs_for_game in pitch_logs_for_date:
         for pitch_log in pitch_logs_for_game.pitch_logs:
@@ -102,9 +104,10 @@ def create_url_for_bbref_games_for_date(db_job, scraped_data, game_date):
 
 def create_urls_for_bbref_boxscores_for_date(db_job, scraped_data, game_date):
     data_set = DataSet.BBREF_BOXSCORES
+    req_data_set = DataSet.BBREF_BOXSCORES
     games_for_date = scraped_data.get_bbref_games_for_date(game_date)
     if not games_for_date:
-        return Result.Fail(get_unscraped_data_error(data_set, game_date))
+        return Result.Fail(get_unscraped_data_error(data_set, req_data_set, game_date))
     urls = []
     for boxscore_url in games_for_date.boxscore_urls:
         bbref_game_id = get_bbref_game_id_from_url(boxscore_url)
@@ -119,10 +122,10 @@ def create_urls_for_bbref_boxscores_for_date(db_job, scraped_data, game_date):
     return Result.Ok(urls)
 
 
-def get_unscraped_data_error(data_set, game_date):
+def get_unscraped_data_error(data_set, req_data_set, game_date):
     return (
         f"Unable to create {data_set} URLs for {game_date.strftime(DATE_MONTH_NAME)} since "
-        f"{data_set} for this date has not been scraped."
+        f"{req_data_set} for this date has not been scraped."
     )
 
 
