@@ -6,7 +6,6 @@ from dateutil import parser as date_parser
 from getch import pause
 
 from vigorish.cli.components.util import print_heading, print_message
-from vigorish.util.dt_format_strings import DATE_ONLY_2
 
 ERROR_HELP_MESSAGE = (
     "You can use any format recognized by dateutil.parser. For example, all of the strings below "
