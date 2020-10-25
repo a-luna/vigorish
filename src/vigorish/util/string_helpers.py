@@ -18,7 +18,7 @@ from vigorish.util.result import Result
 
 ELLIPSIS = b"\xe2\x80\xa6".decode("utf-8")
 NEWLINE_REGEX = re.compile(r"\n")
-WORD_REGEX = re.compile(r"\s?(?P<word>\b\w+\b)\s?")
+WORD_REGEX = re.compile(r"(?:\s|\b)?(?P<word>[\w\S]+)(?:\s|\B)?")
 
 
 def fuzzy_match(query, mapped_choices, score_cutoff=88):
@@ -58,14 +58,14 @@ def wrap_text(input_str, max_len):
 
 
 def _wrap_string(s, max_len):
-    wrapped = []
+    substrings = []
     while True:
         if len(s) <= max_len:
-            wrapped.append(s)
+            substrings.append(s)
             break
-        (next_wrapped, s) = _word_wrap(s, max_len)
-        wrapped.append(next_wrapped)
-    return wrapped
+        (wrapped, s) = _word_wrap(s, max_len)
+        substrings.append(wrapped)
+    return substrings
 
 
 def _word_wrap(s, max_len):
@@ -74,9 +74,9 @@ def _word_wrap(s, max_len):
         if match.end("word") > max_len:
             break
         last_word_boundary = match.end("word") + 1
-    wrapped = s[:last_word_boundary].strip()
-    s = s[last_word_boundary:].strip()
-    return (wrapped, s)
+    wrapped = s[:last_word_boundary]
+    s = s[last_word_boundary:]
+    return (wrapped.strip(), s.strip())
 
 
 def _replace_newlines(input_str, wrapped):

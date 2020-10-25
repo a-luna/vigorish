@@ -19,7 +19,7 @@ from vigorish.tasks.calculate_avg_pitch_times import (
 )
 from vigorish.util.result import Result
 
-STAT_NAMES = ["count", "avg", "min", "max", "range"]
+STAT_NAMES = ["avg", "min", "max"]
 
 
 class CalculateAverageTimeBetweenPitches(MenuItem):
