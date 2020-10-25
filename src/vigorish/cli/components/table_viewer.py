@@ -1,6 +1,5 @@
 import subprocess
 
-from bullet import keyhandler
 from bullet.cursor import hide as cursor_hidden
 from bullet.utils import moveCursorUp
 
