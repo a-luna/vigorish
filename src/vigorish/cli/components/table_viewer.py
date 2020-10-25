@@ -7,7 +7,6 @@ from bullet.utils import moveCursorUp
 from vigorish.cli.components.page_viewer import PageViewer
 
 
-@keyhandler.init
 class TableViewer(PageViewer):
     def __init__(
         self,
