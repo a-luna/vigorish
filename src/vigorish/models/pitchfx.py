@@ -1,9 +1,18 @@
-from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String
+from datetime import datetime, timezone
+
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-
-# ForeignKey
-# from sqlalchemy.ext.hybrid import hybrid_property
+from vigorish.models.player import Player
+from vigorish.models.season import Season
+from vigorish.models.status_date import DateScrapeStatus
+from vigorish.models.status_game import GameScrapeStatus
+from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus
+from vigorish.models.team import Team
+from vigorish.util.datetime_util import make_tzaware, TIME_ZONE_NEW_YORK
+from vigorish.util.dt_format_strings import DT_AWARE
 
 
 class PitchFx(Base):
@@ -50,9 +59,104 @@ class PitchFx(Base):
     pxold = Column(Float)
     pzold = Column(Float)
     park_sv_id = Column(String)
-    game_start_time = Column(DateTime)
-    time_pitch_thrown_str = Column(DateTime)
+    game_start_time_utc = Column(DateTime)
+    time_pitch_thrown_utc = Column(DateTime)
     seconds_since_game_start = Column(Integer)
-    has_zone_location = Column(Boolean)
+    has_zone_location = Column(Integer)
     table_row_number = Column(Integer)
-    is_patched = Column(Boolean)
+    is_patched = Column(Integer)
+    is_duplicate_guid = Column(Integer)
+    is_duplicate_pitch_number = Column(Integer)
+    is_invalid_ibb = Column(Integer)
+    is_out_of_sequence = Column(Integer)
+
+    pitcher_id = Column(Integer, ForeignKey("player.id"))
+    batter_id = Column(Integer, ForeignKey("player.id"))
+    team_pitching_id = Column(Integer, ForeignKey("team.id"))
+    team_batting_id = Column(Integer, ForeignKey("team.id"))
+    game_status_id = Column(Integer, ForeignKey("scrape_status_game.id"))
+    pitch_app_db_id = Column(Integer, ForeignKey("scrape_status_pitch_app.id"))
+    date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
+    season_id = Column(Integer, ForeignKey("season.id"))
+
+    pitcher = relationship("Player", foreign_keys=[pitcher_id])
+    batter = relationship("Player", foreign_keys=[batter_id])
+    team_pitching = relationship("Team", foreign_keys=[team_pitching_id])
+    team_batting = relationship("Team", foreign_keys=[team_batting_id])
+    game = relationship("GameScrapeStatus", foreign_keys=[game_status_id])
+    pitch_app = relationship("PitchAppScrapeStatus", foreign_keys=[pitch_app_db_id])
+    date = relationship("DateScrapeStatus", foreign_keys=[date_id])
+    season = relationship("Season", foreign_keys=[season_id])
+
+    @hybrid_property
+    def game_date(self):
+        return self.game_start_time.date()
+
+    @hybrid_property
+    def game_start_time(self):
+        game_start_utc = make_tzaware(self.game_start_time_utc, use_tz=timezone.utc, localize=False)
+        return make_tzaware(game_start_utc, use_tz=TIME_ZONE_NEW_YORK, localize=True)
+
+    @hybrid_property
+    def time_pitch_thrown(self):
+        thrown_utc = make_tzaware(self.time_pitch_thrown_utc, use_tz=timezone.utc, localize=False)
+        return make_tzaware(thrown_utc, use_tz=TIME_ZONE_NEW_YORK, localize=True)
+    def update_relationships(self, db_session):
+        year = self.game_date.year
+        pitcher = Player.find_by_mlb_id(db_session, self.pitcher_id_mlb)
+        batter = Player.find_by_mlb_id(db_session, self.batter_id_mlb)
+        team_pitching = Team.find_by_team_id_and_year(db_session, self.pitcher_team_id_bb, year)
+        team_batting = Team.find_by_team_id_and_year(db_session, self.opponent_team_id_bb, year)
+        pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, self.pitch_app_id)
+        game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, self.bbref_game_id)
+        date_status = DateScrapeStatus.find_by_date(db_session, self.game_date)
+        season = Season.find_by_year(db_session, year)
+        self.pitcher_id = pitcher.id if pitcher else None
+        self.batter_id = batter.id if batter else None
+        self.team_pitching_id = team_pitching.id if team_pitching else None
+        self.team_batting_id = team_batting.id if team_batting else None
+        self.pitch_app_db_id = pitch_app.id if pitch_app else None
+        self.game_status_id = game_status.id if game_status else None
+        self.date_id = date_status.id if date_status else None
+        self.season_id = season.id if season else None
+
+    @classmethod
+    def from_dict(cls, pfx_dict):
+        game_start_str = pfx_dict.pop("game_start_time_str")
+        pitch_thrown_str = pfx_dict.pop("time_pitch_thrown_str")
+        game_start_time = datetime.strptime(game_start_str, DT_AWARE).astimezone(timezone.utc)
+        time_pitch_thrown = datetime.strptime(pitch_thrown_str, DT_AWARE).astimezone(timezone.utc)
+        seconds_since_game_start = int((time_pitch_thrown - game_start_time).total_seconds())
+        pfx_dict["game_start_time_utc"] = game_start_time
+        pfx_dict["time_pitch_thrown_utc"] = time_pitch_thrown
+        pfx_dict["seconds_since_game_start"] = seconds_since_game_start
+        pfx_dict["basic_type"] = pfx_dict.pop("type")
+        pfx_dict["pitch_id"] = pfx_dict.pop("id")
+        pfx_dict["pitcher_id_mlb"] = pfx_dict.pop("pitcher_id")
+        pfx_dict["batter_id_mlb"] = pfx_dict.pop("batter_id")
+        pfx_dict["zone_location"] = int(pfx_dict["zone_location"])
+        pfx_dict["spin"] = round(pfx_dict["spin"], 1)
+        pfx_dict["pfx_x"] = round(pfx_dict["pfx_x"], 2)
+        pfx_dict["pfx_z"] = round(pfx_dict["pfx_z"], 2)
+        pfx_dict["px"] = round(pfx_dict["px"], 2)
+        pfx_dict["pz"] = round(pfx_dict["pz"], 2)
+        pfx_dict.pop("play_guid", None)
+        pfx_dict.pop("pitcher_name", None)
+        pfx_dict.pop("pitch_con", None)
+        pfx_dict.pop("norm_ht", None)
+        pfx_dict.pop("tstart", None)
+        pfx_dict.pop("vystart", None)
+        pfx_dict.pop("ftime", None)
+        pfx_dict.pop("x0", None)
+        pfx_dict.pop("y0", None)
+        pfx_dict.pop("z0", None)
+        pfx_dict.pop("vx0", None)
+        pfx_dict.pop("vy0", None)
+        pfx_dict.pop("vz0", None)
+        pfx_dict.pop("ax", None)
+        pfx_dict.pop("ay", None)
+        pfx_dict.pop("az", None)
+        pfx_dict.pop("tm_spin", None)
+        pfx_dict.pop("sb", None)
+        return cls(**pfx_dict)
+

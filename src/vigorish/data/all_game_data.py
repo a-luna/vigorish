@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from copy import deepcopy
+from functools import lru_cache
 
 from tabulate import tabulate
 
@@ -8,7 +9,7 @@ from vigorish.cli.components.table_viewer import TableViewer
 from vigorish.config.database import PlayerId
 from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.exceptions import ScrapedDataException
-from vigorish.util.list_helpers import group_and_sort_dict_list, make_chunked_list
+from vigorish.util.list_helpers import flatten_list2d, group_and_sort_dict_list, make_chunked_list
 from vigorish.util.regex import INNING_LABEL_REGEX
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
@@ -237,6 +238,9 @@ class AllGameData:
         }
         return self._pitch_stat_map
 
+    @lru_cache(maxsize=None)
+    def get_all_pitch_app_ids(self):
+        return list(set(pitch_stats["pitch_app_id"] for pitch_stats in self.get_all_pitch_stats()))
     def get_all_bat_stats(self):
         if self._all_bat_stats:
             return self._all_bat_stats
@@ -346,56 +350,26 @@ class AllGameData:
         heading = f"Meta Information for game {self.bbref_game_id}"
         return self.create_table_viewer([DisplayTable(table, heading)])
 
-    def validate_mlb_id(self, mlb_id):
-        if not isinstance(mlb_id, int):
-            try:
-                mlb_id = int(mlb_id)
-            except ValueError:
-                return Result.Fail(f'"{mlb_id}" could not be parsed as a valid int')
-        if mlb_id not in self.all_player_mlb_ids:
-            error = f"Error: Player MLB ID: {mlb_id} did not appear in game {self.bbref_game_id}"
-            return Result.Fail(error)
-        return Result.Ok(mlb_id)
+    @lru_cache(maxsize=None)
+    def get_all_pitchfx(self):
+        all_pitchfx = [at_bat["pitchfx"] for at_bat in self.get_all_at_bats()]
+        all_pitchfx.extend(self.get_duplicate_guid_pfx())
+        all_pitchfx.extend(self.get_removed_pfx())
+        return flatten_list2d(all_pitchfx)
 
-    def create_at_bat_table_list(self, at_bat, heading=None):
-        message = self.get_at_bat_details(at_bat)
-        pitch_seq_desc = format_pitch_sequence_description(at_bat["pitch_sequence_description"])
-        chunked_list = make_chunked_list(pitch_seq_desc, chunk_size=8)
+    def get_duplicate_guid_pfx(self):
         return [
-            DisplayTable(tabulate(chunk, tablefmt="fancy_grid"), heading, message)
-            for chunk in chunked_list
+            at_bat["pitchfx"]
+            for inning_dict in self.duplicate_guids.values()
+            for at_bat in inning_dict.values()
         ]
 
-    def create_table_viewer(self, table_list, table_color="bright_cyan"):
-        return TableViewer(
-            table_list=table_list,
-            prompt="Press Enter to return to previous menu",
-            confirm_only=True,
-            table_color=table_color,
-            heading_color="bright_yellow",
-            message_color=None,
-        )
-
-    def get_at_bat_details(self, at_bat):
-        pitch_app_stats = self.get_pitch_app_stats(at_bat["pitcher_id_mlb"]).value
-        bat_stats = self.get_bat_stats(at_bat["batter_id_mlb"]).value
-        return get_at_bat_details(at_bat, pitch_app_stats, bat_stats)
-
-    def get_bat_stats(self, mlb_id):
-        result = self.validate_mlb_id(mlb_id)
-        if result.failure:
-            return result
-        mlb_id = result.value
-        bat_stats = self.get_bat_stat_map().get(mlb_id)
-        return Result.Ok(bat_stats["bbref_data"])
-
-    def get_pitch_app_stats(self, mlb_id):
-        result = self.validate_mlb_id(mlb_id)
-        if result.failure:
-            return result
-        mlb_id = result.value
-        pitch_stats = self.get_pitch_stat_map().get(mlb_id)
-        return Result.Ok(pitch_stats["bbref_data"])
+    def get_removed_pfx(self):
+        return [
+            at_bat["pitchfx"]
+            for inning_dict in self.removed_pitchfx.values()
+            for at_bat in inning_dict.values()
+        ]
 
 
 def get_innings_sorted(innings_unsorted):

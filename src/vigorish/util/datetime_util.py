@@ -39,7 +39,7 @@ def localized_dt_string(dt, use_tz=None):
 
 
 def make_tzaware(dt, use_tz=None, localize=True):
-    """Make a naive datetime object timezone-aware."""
+    """Translate an aware datetime to a different timezone OR add timezone to naive datetime."""
     if not use_tz:
         use_tz = get_local_utcoffset()
     return dt.astimezone(use_tz) if localize else dt.replace(tzinfo=use_tz)
