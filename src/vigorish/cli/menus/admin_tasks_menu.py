@@ -12,6 +12,7 @@ from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
 from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
 from vigorish.config.database import db_setup_complete
 from vigorish.constants import EMOJI_DICT
+from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed
 
 
@@ -30,6 +31,9 @@ class AdminTasksMenu(Menu):
         self.menu_items.append(UpdatePlayerIdMap(self.app))
         self.menu_items.append(SyncScrapedData(self.app))
         self.menu_items.append(ImportScrapedDataTask(self.app))
+        if node_is_installed():
+            self.menu_items.append(NpmInstallUpdate(self.app))
+        if db_setup_complete():
             self.menu_items.append(AddPitchFxToDatabase(self.app, self.audit_report))
             self.menu_items.append(CalculateAverageTimeBetweenPitches(self.app))
             self.menu_items.append(SetupDBMenuItem(self.app))
