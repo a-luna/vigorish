@@ -17,6 +17,7 @@ class PitchAppScrapeStatus(Base):
     scraped_pitchfx = Column(Integer, default=0)
     no_pitchfx_data = Column(Integer, default=0)
     combined_pitchfx_bbref_data = Column(Integer, default=0)
+    imported_pitchfx = Column(Integer, default=0)
     invalid_pitchfx = Column(Integer, default=0)
     pitchfx_error = Column(Integer, default=0)
     pitch_count_pitch_log = Column(Integer, default=0)

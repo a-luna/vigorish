@@ -81,7 +81,7 @@ def test_all_game_data(db_session, scraped_data):
     assert away_team_sp["mlb_id"] == 472610
     assert away_team_sp["bbref_id"] == "garcilu03"
     assert away_team_sp["pitch_app_type"] == "SP"
-    assert away_team_sp["game_results"] == "1.0 IP, 1ER, H, K, GS: 48"
+    assert away_team_sp["game_results"] == "1.0 IP, 1ER, H, K (GS: 48)"
 
     away_team_pitch_boxscore_again = all_game_data.pitch_boxscore[away_team_id]
     assert away_team_pitch_boxscore_again is away_team_pitch_boxscore
@@ -93,7 +93,7 @@ def test_all_game_data(db_session, scraped_data):
     assert home_team_sp["mlb_id"] == 571882
     assert home_team_sp["bbref_id"] == "lawde01"
     assert home_team_sp["pitch_app_type"] == "SP"
-    assert home_team_sp["game_results"] == "1.0 IP, 0ER, 2K, GS: 55"
+    assert home_team_sp["game_results"] == "1.0 IP, 0ER, 2K (GS: 55)"
 
     home_team_pitch_boxscore_again = all_game_data.pitch_boxscore[home_team_id]
     assert home_team_pitch_boxscore_again is home_team_pitch_boxscore
