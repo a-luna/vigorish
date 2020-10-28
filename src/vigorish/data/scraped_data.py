@@ -8,6 +8,7 @@ from vigorish.config.database import (
     GameScrapeStatus,
     PitchAppScrapeStatus,
     Season,
+    TimeBetweenPitches,
 )
 from vigorish.config.database import Season_Game_PitchApp_View as Season_View
 from vigorish.data.file_helper import FileHelper
@@ -423,40 +424,6 @@ class ScrapedData:
             if result.failure:
                 return {"gather_scraped_data_success": False, "error": result.error}
             pfx_logs = result.value
-        avg_pitch_times = self.get_avg_pitch_times()
+        avg_pitch_times = TimeBetweenPitches.get_latest_results(self.db_session)
         scraped_data = (boxscore, pfx_logs, avg_pitch_times)
         return {"gather_scraped_data_success": True, "scraped_data": scraped_data}
-
-    def get_avg_pitch_times(self):
-        return {
-            "pitch_metrics": {
-                "total": 15965027.0,
-                "count": 668326,
-                "avg": 23.888083061260524,
-                "max": 49.0,
-                "min": 3.0,
-                "range": 46.0,
-                "trim": True,
-                "trim_stdev": 0.2,
-            },
-            "at_bat_metrics": {
-                "total": 6826377.0,
-                "count": 158894,
-                "avg": 42.96182989917807,
-                "max": 79.0,
-                "min": 28.0,
-                "range": 51.0,
-                "trim": True,
-                "trim_stdev": 0.25,
-            },
-            "inning_metrics": {
-                "total": 8100071.0,
-                "count": 50559,
-                "avg": 160.21026919045076,
-                "max": 309.0,
-                "min": 131.0,
-                "range": 178.0,
-                "trim": True,
-                "trim_stdev": 0.007,
-            },
-        }

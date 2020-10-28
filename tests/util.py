@@ -1,6 +1,11 @@
 from datetime import datetime
 
-from vigorish.config.database import GameScrapeStatus, PitchAppScrapeStatus, Season
+from vigorish.config.database import (
+    GameScrapeStatus,
+    PitchAppScrapeStatus,
+    Season,
+    TimeBetweenPitches,
+)
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
@@ -85,6 +90,8 @@ COMBINED_DATA_GAME_DICT = {
 
 
 def seed_database_with_2019_test_data(db_session, scraped_data):
+    result = TimeBetweenPitches.from_calc_results(db_session, get_avg_pitch_times())
+    assert result
     for game_id_dict in COMBINED_DATA_GAME_DICT.values():
         game_date = game_id_dict["game_date"]
         bbref_game_id = game_id_dict["bbref_game_id"]
@@ -257,11 +264,37 @@ def combine_scraped_data_for_game(db_session, scraped_data, game_id, apply_patch
         result = scraped_data.apply_patch_list(DataSet.BROOKS_PITCHFX, game_id, pfx_logs, boxscore)
         assert result.success
         pfx_logs = result.value
-    avg_pitch_times = scraped_data.get_avg_pitch_times()
+    avg_pitch_times = get_avg_pitch_times()
     assert avg_pitch_times
     result = scraped_data.combine_data.execute(game_status, boxscore, pfx_logs, avg_pitch_times)
     assert result.success
     return result.value
+
+
+def get_avg_pitch_times():
+    return {
+        "time_between_pitches": {
+            "total": 16478993,
+            "count": 692284,
+            "avg": 23.8,
+            "max": 48.0,
+            "min": 3.0,
+        },
+        "time_between_at_bats": {
+            "total": 7118617,
+            "count": 165166,
+            "avg": 43.1,
+            "max": 79.0,
+            "min": 28.0,
+        },
+        "time_between_innings": {
+            "total": 8432869,
+            "count": 52589,
+            "avg": 160.4,
+            "max": 306.0,
+            "min": 131.0,
+        },
+    }
 
 
 def get_season(db_session, year):
