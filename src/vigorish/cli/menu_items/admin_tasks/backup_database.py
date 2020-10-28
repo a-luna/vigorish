@@ -3,7 +3,7 @@ import subprocess
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components.prompts import user_options_prompt, yes_no_prompt
+from vigorish.cli.components.prompts import yes_no_prompt
 from vigorish.cli.components.util import (
     get_random_cli_color,
     get_random_dots_spinner,
@@ -55,7 +55,7 @@ class BackupDatabase(MenuItem):
         if result.failure:
             return result
         subprocess.run(["clear"])
-        print_success(f"Successfully backed up all necessary database tables!")
+        print_success("Successfully backed up all necessary database tables!")
         pause(message="\nPress any key to continue...")
         return Result.Ok()
 
