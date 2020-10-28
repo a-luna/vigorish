@@ -1,9 +1,15 @@
+from dataclasses import dataclass
+from datetime import datetime
+
+from dataclass_csv import accept_whitespaces, dateformat
 from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-from vigorish.util.dt_format_strings import DATE_ONLY_2, DATE_ONLY_TABLE_ID
+from vigorish.models.season import Season
+from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
+from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2, DATE_ONLY_TABLE_ID
 
 
 class DateScrapeStatus(Base):
@@ -536,6 +542,27 @@ class DateScrapeStatus(Base):
     def games_status_report(self):
         return "\n".join([game_status.status_report() for game_status in self.scrape_status_games])
 
+    def as_csv_dict(self):
+        return dict_from_dataclass(self, DateScrapeStatusCsvRow, date_format=DATE_ONLY)
+
+    def update_relationships(self, db_session):
+        year = self.game_date.year
+        season = Season.find_by_year(db_session, year)
+        self.season_id = season.id
+
+    @classmethod
+    def get_csv_col_names(cls):
+        return [name for name in DateScrapeStatusCsvRow.__dataclass_fields__.keys()]
+
+    @classmethod
+    def export_table_as_csv(cls, db_session):
+        col_names = ",".join(cls.get_csv_col_names())
+        csv_dicts = (obj.as_csv_dict() for obj in db_session.query(cls).all())
+        csv_rows = (",".join(sanitize_row_dict(d, date_format=DATE_ONLY)) for d in csv_dicts)
+        yield col_names
+        for row in csv_rows:
+            yield row
+
     @classmethod
     def find_by_date(cls, db_session, game_date):
         date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
@@ -625,3 +652,15 @@ class DateScrapeStatus(Base):
         if not date_status:
             return None
         return [game_status.bb_game_id for game_status in date_status.scrape_status_games]
+
+
+@accept_whitespaces
+@dateformat(DATE_ONLY)
+@dataclass
+class DateScrapeStatusCsvRow:
+    id: int
+    game_date: datetime = None
+    scraped_daily_dash_bbref: int = 0
+    scraped_daily_dash_brooks: int = 0
+    game_count_bbref: int = 0
+    game_count_brooks: int = 0

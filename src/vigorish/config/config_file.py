@@ -267,6 +267,7 @@ class ConfigFile:
             "COMBINED_DATA_STORAGE": CombinedDataStorageOption.LOCAL_FOLDER.name,
             "COMBINED_DATA_LOCAL_FOLDER_PATH": "json_storage/{year}/combined_data",
             "COMBINED_DATA_S3_FOLDER_PATH": "{year}/combined_data",
+            "DB_BACKUP_FOLDER_PATH": "backup",
         }
         batch_delay_setting_dict = {
             "BBREF_GAMES_FOR_DATE": BatchScrapeDelay(True, True, None, 5, 10).to_dict(),
@@ -438,4 +439,13 @@ class ConfigFile:
                 ),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
+            "DB_BACKUP_FOLDER_PATH": {
+                "CONFIG_TYPE": "Path",
+                "CLASS_NAME": "LocalFolderPathSetting",
+                "DESCRIPTION": (
+                    "Local folder path where csv files containing exported table data should be "
+                    "stored."
+                ),
+            },
+            "SAME_SETTING_FOR_ALL_DATA_SETS": True,
         }
