@@ -15,6 +15,7 @@ from vigorish.cli.menu_items.status_report import StatusReportMenuItem
 from vigorish.cli.menus.admin_tasks_menu import AdminTasksMenu
 from vigorish.cli.menus.all_jobs_menu import AllJobsMenu
 from vigorish.cli.menus.scraped_data_errors_menu import ScrapedDataErrorsMenu
+from vigorish.cli.menus.scraped_game_data import ScrapedGameDataMenu
 from vigorish.cli.menus.settings_menu import SettingsMenu
 from vigorish.config.database import db_setup_complete
 from vigorish.util.result import Result
@@ -129,6 +130,16 @@ class MainMenu(Menu):
             self.menu_items.remove(main_menu_items["combine_data"])
         if not self.data_failures_exist():
             self.menu_items.remove(main_menu_items["scraped_data_errors"])
+        if not self.games_combined_exist():
+            self.menu_items.remove(main_menu_items["scraped_game_data"])
+
+    def prompt_user_for_menu_selection(self):
+        menu = self._get_bullet_menu()
+        menu.pos = self.selected_menu_item_pos
+        self.selected_menu_item_text = menu.launch()
+        result = self.selected_menu_item.launch()
+        exit_menu = self.selected_menu_item.exit_menu
+        return Result.Ok(exit_menu) if result.success else result
 
     def get_menu_items(self):
         return {
@@ -137,9 +148,10 @@ class MainMenu(Menu):
             "all_jobs": AllJobsMenu(self.app),
             "combine_data": CombineGameDataMenuItem(self.app, self.audit_report),
             "scraped_data_errors": ScrapedDataErrorsMenu(self.app, self.audit_report),
+            "scraped_game_data": ScrapedGameDataMenu(self.app, self.audit_report),
             "status_reports": StatusReportMenuItem(self.app),
             "settings": SettingsMenu(self.app),
-            "admin_tasks": AdminTasksMenu(self.app),
+            "admin_tasks": AdminTasksMenu(self.app, self.audit_report),
             "exit_program": ExitProgramMenuItem(self.app),
         }
 
@@ -160,3 +172,10 @@ class MainMenu(Menu):
             else False
         )
         return audit_failures_exist or pfx_errors_exist or invalid_pfx_errors_exist
+
+    def games_combined_exist(self):
+        return (
+            any(len(audit_report["successful"]) > 0 for audit_report in self.audit_report.values())
+            if self.audit_report
+            else False
+        )
