@@ -2,7 +2,6 @@
 import subprocess
 from vigorish.cli.components.prompts import user_options_prompt, select_game_prompt
 from vigorish.cli.menu_item import MenuItem
-from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
 from vigorish.cli.menu_items.view_game_data import ViewGameData
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.util.result import Result
