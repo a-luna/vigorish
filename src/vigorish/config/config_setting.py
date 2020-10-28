@@ -64,6 +64,7 @@ class ConfigSetting:
             "COMBINED_DATA_STORAGE",
             "COMBINED_DATA_LOCAL_FOLDER_PATH",
             "COMBINED_DATA_S3_FOLDER_PATH",
+            "DB_BACKUP_FOLDER_PATH",
         ]
 
     @property

@@ -1,12 +1,21 @@
+from dataclasses import dataclass
 from datetime import datetime
 
+from dataclass_csv import accept_whitespaces, dateformat
 from dateutil import tz
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-from vigorish.util.dt_format_strings import DATE_ONLY_2, DATE_ONLY_TABLE_ID, DT_STR_FORMAT
+from vigorish.models.status_date import DateScrapeStatus
+from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
+from vigorish.util.dt_format_strings import (
+    DATE_ONLY,
+    DATE_ONLY_2,
+    DATE_ONLY_TABLE_ID,
+    DT_STR_FORMAT,
+)
 from vigorish.util.list_helpers import display_dict
 from vigorish.util.string_helpers import validate_brooks_game_id
 
@@ -422,6 +431,27 @@ class GameScrapeStatus(Base):
             f"{total_pitchfx_removed_count}\n"
         )
 
+    def as_csv_dict(self):
+        return dict_from_dataclass(self, GameScrapeStatusCsvRow, date_format=DATE_ONLY)
+
+    def update_relationships(self, db_session):
+        date = DateScrapeStatus.find_by_date(db_session, self.game_date)
+        self.scrape_status_date_id = date.id
+        self.season_id = date.season_id
+
+    @classmethod
+    def get_csv_col_names(cls):
+        return [name for name in GameScrapeStatusCsvRow.__dataclass_fields__.keys()]
+
+    @classmethod
+    def export_table_as_csv(cls, db_session):
+        col_names = ",".join(cls.get_csv_col_names())
+        csv_dicts = (obj.as_csv_dict() for obj in db_session.query(cls).all())
+        csv_rows = (",".join(sanitize_row_dict(d, date_format=DATE_ONLY)) for d in csv_dicts)
+        yield col_names
+        for row in csv_rows:
+            yield row
+
     @classmethod
     def find_by_bbref_game_id(cls, db_session, bbref_game_id):
         return db_session.query(cls).filter_by(bbref_game_id=bbref_game_id).first()
@@ -491,3 +521,23 @@ class GameScrapeStatus(Base):
             game.bb_game_id
             for game in db_session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
         ]
+
+
+@accept_whitespaces
+@dateformat(DATE_ONLY)
+@dataclass
+class GameScrapeStatusCsvRow:
+    id: int
+    game_date: datetime = None
+    game_time_hour: int = 0
+    game_time_minute: int = 0
+    game_time_zone: str = None
+    bbref_game_id: str = None
+    bb_game_id: str = None
+    scraped_bbref_boxscore: int = 0
+    scraped_brooks_pitch_logs: int = 0
+    combined_data_success: int = 0
+    combined_data_fail: int = 0
+    pitch_app_count_bbref: int = 0
+    pitch_app_count_brooks: int = 0
+    total_pitch_count_bbref: int = 0

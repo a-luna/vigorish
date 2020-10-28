@@ -1,5 +1,7 @@
+from dataclasses import dataclass
 from datetime import datetime, timezone
 
+from dataclass_csv import accept_whitespaces, dateformat
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -11,8 +13,10 @@ from vigorish.models.status_date import DateScrapeStatus
 from vigorish.models.status_game import GameScrapeStatus
 from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus
 from vigorish.models.team import Team
+from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.datetime_util import make_tzaware, TIME_ZONE_NEW_YORK
 from vigorish.util.dt_format_strings import DT_AWARE
+from vigorish.util.dt_format_strings import CSV_UTC
 
 
 class PitchFx(Base):
@@ -101,6 +105,10 @@ class PitchFx(Base):
     def time_pitch_thrown(self):
         thrown_utc = make_tzaware(self.time_pitch_thrown_utc, use_tz=timezone.utc, localize=False)
         return make_tzaware(thrown_utc, use_tz=TIME_ZONE_NEW_YORK, localize=True)
+
+    def as_csv_dict(self):
+        return dict_from_dataclass(self, PitchFxCsvRow, date_format=CSV_UTC)
+
     def update_relationships(self, db_session):
         year = self.game_date.year
         pitcher = Player.find_by_mlb_id(db_session, self.pitcher_id_mlb)
@@ -119,6 +127,19 @@ class PitchFx(Base):
         self.game_status_id = game_status.id if game_status else None
         self.date_id = date_status.id if date_status else None
         self.season_id = season.id if season else None
+
+    @classmethod
+    def get_csv_col_names(cls):
+        return [name for name in PitchFxCsvRow.__dataclass_fields__.keys()]
+
+    @classmethod
+    def export_table_as_csv(cls, db_session):
+        col_names = ",".join(cls.get_csv_col_names())
+        csv_dicts = (obj.as_csv_dict() for obj in db_session.query(cls).all())
+        csv_rows = (",".join(sanitize_row_dict(d, date_format=CSV_UTC)) for d in csv_dicts)
+        yield col_names
+        for row in csv_rows:
+            yield row
 
     @classmethod
     def from_dict(cls, pfx_dict):
@@ -160,3 +181,59 @@ class PitchFx(Base):
         pfx_dict.pop("sb", None)
         return cls(**pfx_dict)
 
+
+@accept_whitespaces
+@dateformat(CSV_UTC)
+@dataclass
+class PitchFxCsvRow:
+    id: int = None
+    bb_game_id: str = None
+    bbref_game_id: str = None
+    pitch_app_id: str = None
+    inning_id: str = None
+    at_bat_id: str = None
+    pitcher_id_mlb: int = None
+    batter_id_mlb: int = None
+    pitcher_id_bbref: str = None
+    batter_id_bbref: str = None
+    pitcher_team_id_bb: str = None
+    opponent_team_id_bb: str = None
+    p_throws: str = None
+    stand: str = None
+    pitch_id: int = None
+    inning: int = None
+    ab_total: int = None
+    ab_count: int = None
+    ab_id: int = None
+    des: str = None
+    strikes: int = None
+    balls: int = None
+    basic_type: str = None
+    pdes: str = None
+    mlbam_pitch_name: str = None
+    start_speed: float = None
+    spin: float = None
+    zone_location: int = None
+    sz_top: float = None
+    sz_bot: float = None
+    pfx_xdatafile: float = None
+    pfx_zdatafile: float = None
+    pfx_x: float = None
+    pfx_z: float = None
+    uncorrected_pfx_x: float = None
+    uncorrected_pfx_z: float = None
+    px: float = None
+    pz: float = None
+    pxold: float = None
+    pzold: float = None
+    park_sv_id: str = None
+    game_start_time_utc: datetime = None
+    time_pitch_thrown_utc: datetime = None
+    seconds_since_game_start: int = 0
+    has_zone_location: int = 0
+    table_row_number: int = 0
+    is_patched: int = 0
+    is_duplicate_guid: int = 0
+    is_duplicate_pitch_number: int = 0
+    is_invalid_ibb: int = 0
+    is_out_of_sequence: int = 0

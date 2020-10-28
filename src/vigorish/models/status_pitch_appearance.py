@@ -1,7 +1,12 @@
+from dataclasses import dataclass
+
+from dataclass_csv import accept_whitespaces
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from vigorish.config.database import Base
+from vigorish.models.status_game import GameScrapeStatus
+from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.list_helpers import display_dict
 
@@ -62,6 +67,28 @@ class PitchAppScrapeStatus(Base):
     def display(self):
         title = f"SCRAPE STATUS FOR PITCH APPEARANCE: {self.pitch_app_id}"
         display_dict(self.as_dict(), title=title)
+
+    def as_csv_dict(self):
+        return dict_from_dataclass(self, PitchAppScrapeStatusCsvRow)
+
+    def update_relationships(self, db_session):
+        game = GameScrapeStatus.find_by_bbref_game_id(db_session, self.bbref_game_id)
+        self.scrape_status_game_id = game.id
+        self.scrape_status_date_id = game.scrape_status_date_id
+        self.season_id = game.season_id
+
+    @classmethod
+    def get_csv_col_names(cls):
+        return [name for name in PitchAppScrapeStatusCsvRow.__dataclass_fields__.keys()]
+
+    @classmethod
+    def export_table_as_csv(cls, db_session):
+        col_names = ",".join(cls.get_csv_col_names())
+        csv_dicts = (obj.as_csv_dict() for obj in db_session.query(cls).all())
+        csv_rows = (",".join(sanitize_row_dict(d)) for d in csv_dicts)
+        yield col_names
+        for row in csv_rows:
+            yield row
 
     @classmethod
     def find_by_pitch_app_id(cls, db_session, pitch_app_id):
@@ -152,3 +179,38 @@ class PitchAppScrapeStatus(Base):
             .filter_by(scraped_pitchfx=1)
             .all()
         ]
+
+
+@accept_whitespaces
+@dataclass
+class PitchAppScrapeStatusCsvRow:
+    id: int
+    pitcher_id_mlb: int = 0
+    pitch_app_id: str = None
+    bbref_game_id: str = None
+    bb_game_id: str = None
+    scraped_pitchfx: int = 0
+    no_pitchfx_data: int = 0
+    combined_pitchfx_bbref_data: int = 0
+    imported_pitchfx: int = 0
+    invalid_pitchfx: int = 0
+    pitchfx_error: int = 0
+    pitch_count_pitch_log: int = 0
+    pitch_count_bbref: int = 0
+    pitch_count_pitchfx: int = 0
+    pitch_count_pitchfx_audited: int = 0
+    patched_pitchfx_count: int = 0
+    missing_pitchfx_count: int = 0
+    extra_pitchfx_count: int = 0
+    invalid_pitchfx_count: int = 0
+    extra_pitchfx_removed_count: int = 0
+    duplicate_guid_removed_count: int = 0
+    batters_faced_bbref: int = 0
+    batters_faced_pitchfx: int = 0
+    total_at_bats_pitchfx_complete: int = 0
+    total_at_bats_patched_pitchfx: int = 0
+    total_at_bats_missing_pitchfx: int = 0
+    total_at_bats_extra_pitchfx: int = 0
+    total_at_bats_extra_pitchfx_removed: int = 0
+    total_at_bats_pitchfx_error: int = 0
+    total_at_bats_invalid_pitchfx: int = 0
