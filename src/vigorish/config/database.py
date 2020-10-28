@@ -28,6 +28,7 @@ from vigorish.models.status_date import DateScrapeStatus
 from vigorish.models.status_game import GameScrapeStatus
 from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus
 from vigorish.models.team import Team
+from vigorish.models.time_between_pitches import TimeBetweenPitches
 from vigorish.models.views.date_pitch_app_view import Date_PitchApp_View
 from vigorish.models.views.game_pitch_app_view import Game_PitchApp_View
 from vigorish.models.views.season_date_view import Season_Date_View

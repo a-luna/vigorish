@@ -13,6 +13,7 @@ from vigorish.cli.components.util import (
     print_message,
 )
 from vigorish.cli.menu_item import MenuItem
+from vigorish.config.database import TimeBetweenPitches
 from vigorish.constants import EMOJI_DICT
 from vigorish.tasks.calculate_avg_pitch_times import (
     CalculateAverageTimeBetweenPitches as CalculatePitchTimesTask,
@@ -46,8 +47,9 @@ class CalculateAverageTimeBetweenPitches(MenuItem):
         if result.failure:
             return result
         subprocess.run(["clear"])
-        metrics = result.value
-        self.display_pitch_metrics(metrics)
+        results = result.value
+        time_between_pitches = TimeBetweenPitches.from_calc_results(self.db_session, results)
+        self.display_pitch_metrics(time_between_pitches.as_dict())
         pause(message="\nPress any key to continue...")
         return Result.Ok()
 

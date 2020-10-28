@@ -810,20 +810,20 @@ class CombineScrapedData:
         same_inning = self.at_bat_ids_are_in_same_inning([at_bat_id, prev_ab_id])
         if pitch_num == 1 and same_inning:
             return {
-                "avg": self.avg_pitch_times["at_bat_metrics"]["avg"],
-                "min": self.avg_pitch_times["at_bat_metrics"]["min"],
-                "max": self.avg_pitch_times["at_bat_metrics"]["max"],
+                "avg": self.avg_pitch_times["time_between_at_bats"]["avg"],
+                "min": self.avg_pitch_times["time_between_at_bats"]["min"],
+                "max": self.avg_pitch_times["time_between_at_bats"]["max"],
             }
         if pitch_num == 1 and not same_inning:
             return {
-                "avg": self.avg_pitch_times["inning_metrics"]["avg"],
-                "min": self.avg_pitch_times["inning_metrics"]["min"],
-                "max": self.avg_pitch_times["inning_metrics"]["max"],
+                "avg": self.avg_pitch_times["time_between_innings"]["avg"],
+                "min": self.avg_pitch_times["time_between_innings"]["min"],
+                "max": self.avg_pitch_times["time_between_innings"]["max"],
             }
         return {
-            "avg": self.avg_pitch_times["pitch_metrics"]["avg"],
-            "min": self.avg_pitch_times["pitch_metrics"]["min"],
-            "max": self.avg_pitch_times["pitch_metrics"]["max"],
+            "avg": self.avg_pitch_times["time_between_pitches"]["avg"],
+            "min": self.avg_pitch_times["time_between_pitches"]["min"],
+            "max": self.avg_pitch_times["time_between_pitches"]["max"],
         }
 
     def delta_avg_time_between_pitches(self, avg, pitch1_thrown, pitch2_thrown):
@@ -942,20 +942,20 @@ class CombineScrapedData:
     #     same_inning = self.at_bat_ids_are_in_same_inning([at_bat_id, next_ab_id])
     #     if pitch_num == pitch_count and same_inning:
     #         return {
-    #             "avg": self.avg_pitch_times["at_bat_metrics"]["avg"],
-    #             "min": self.avg_pitch_times["at_bat_metrics"]["min"],
-    #             "max": self.avg_pitch_times["at_bat_metrics"]["max"],
+    #             "avg": self.avg_pitch_times["time_between_at_bats"]["avg"],
+    #             "min": self.avg_pitch_times["time_between_at_bats"]["min"],
+    #             "max": self.avg_pitch_times["time_between_at_bats"]["max"],
     #         }
     #     if pitch_num == pitch_count and not same_inning:
     #         return {
-    #             "avg": self.avg_pitch_times["inning_metrics"]["avg"],
-    #             "min": self.avg_pitch_times["inning_metrics"]["min"],
-    #             "max": self.avg_pitch_times["inning_metrics"]["max"],
+    #             "avg": self.avg_pitch_times["time_between_innings"]["avg"],
+    #             "min": self.avg_pitch_times["time_between_innings"]["min"],
+    #             "max": self.avg_pitch_times["time_between_innings"]["max"],
     #         }
     #     return {
-    #         "avg": self.avg_pitch_times["pitch_metrics"]["avg"],
-    #         "min": self.avg_pitch_times["pitch_metrics"]["min"],
-    #         "max": self.avg_pitch_times["pitch_metrics"]["max"],
+    #         "avg": self.avg_pitch_times["time_between_pitches"]["avg"],
+    #         "min": self.avg_pitch_times["time_between_pitches"]["min"],
+    #         "max": self.avg_pitch_times["time_between_pitches"]["max"],
     #     }
 
     def get_game_event(self, at_bat_id):
@@ -1210,7 +1210,7 @@ class CombineScrapedData:
         game_meta_info["umpires"] = self.boxscore.as_dict()["umpires"]
 
         pitchfx_vs_bbref_audit = self.audit_pitchfx_vs_bbref_data(
-            updated_innings_list, pitch_stats_away, pitch_stats_home
+            pitch_stats_away, pitch_stats_home
         )
 
         updated_boxscore_dict = {
@@ -1698,9 +1698,7 @@ class CombineScrapedData:
         }
         return (batter_team_id_bbref, updated_stats)
 
-    def audit_pitchfx_vs_bbref_data(
-        self, updated_innings_list, away_team_pitching_stats, home_team_pitching_stats
-    ):
+    def audit_pitchfx_vs_bbref_data(self, away_team_pitching_stats, home_team_pitching_stats):
         batters_faced_bbref_home = sum(
             pitch_stats["pitch_app_pitchfx_audit"]["batters_faced_bbref"]
             for pitch_stats in home_team_pitching_stats

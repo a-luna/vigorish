@@ -8,6 +8,7 @@ from tests.util import (
     GAME_ID_PATCH_PFX,
     GAME_ID_PFX_OUT_OF_SEQUENCE,
     GAME_ID_WITH_ERRORS,
+    get_avg_pitch_times,
     NO_ERRORS_PITCH_APP,
     update_scraped_bbref_games_for_date,
     update_scraped_boxscore,
@@ -472,7 +473,7 @@ def test_combine_patched_boxscore_data(vig_app):
     )
     boxscore = vig_app["scraped_data"].get_bbref_boxscore(GAME_ID_PATCH_BOXSCORE)
     pfx_logs = vig_app["scraped_data"].get_all_pitchfx_logs_for_game(GAME_ID_PATCH_BOXSCORE).value
-    avg_pitch_times = vig_app["scraped_data"].get_avg_pitch_times()
+    avg_pitch_times = get_avg_pitch_times()
     result = vig_app["scraped_data"].combine_data.execute(
         game_status, boxscore, pfx_logs, avg_pitch_times
     )
@@ -560,10 +561,11 @@ def test_find_pfx_out_of_sequence(db_session, scraped_data):
     assert "at_bat_ids_pitchfx_error" in data_audit
     assert data_audit["at_bat_ids_pitchfx_error"] == []
     assert "at_bat_ids_invalid_pitchfx" in data_audit
-    assert len(data_audit["at_bat_ids_invalid_pitchfx"]) == 6
-    assert "WAS201904030_05_PHI_504379_WAS_594694_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "WAS201904030_06_PHI_591693_WAS_572821_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "WAS201904030_06_PHI_591693_WAS_594809_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "WAS201904030_06_PHI_591693_WAS_645302_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "WAS201904030_06_WAS_502522_PHI_516416_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "WAS201904030_06_WAS_502522_PHI_547180_0" in data_audit["at_bat_ids_invalid_pitchfx"]
+    assert data_audit["at_bat_ids_invalid_pitchfx"] == [
+        "WAS201904030_05_PHI_504379_WAS_594694_0",
+        "WAS201904030_06_WAS_502522_PHI_516416_0",
+        "WAS201904030_06_WAS_502522_PHI_547180_0",
+        "WAS201904030_06_PHI_591693_WAS_645302_0",
+        "WAS201904030_06_PHI_591693_WAS_594809_0",
+        "WAS201904030_06_PHI_591693_WAS_572821_0",
+    ]
