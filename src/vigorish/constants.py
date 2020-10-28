@@ -209,6 +209,7 @@ EMOJI_DICT = dict(
     BOLT="⚡",
     BOMB="💣",
     FLASHLIGHT="🔦",
+    MICROSCOPE="🔬",
     NEWSPAPER="📰",
     CAP="🧢",
     BASEBALL="⚾",

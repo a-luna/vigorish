@@ -310,23 +310,22 @@ class AllGameData:
         mlb_id = result.value
         at_bats = self.get_all_at_bats_involving_pitcher(mlb_id).value
         at_bats_by_inning = group_and_sort_dict_list(at_bats, "inning_id", "pbp_table_row_number")
-        pitcher_tables_by_inning = {}
-        all_pitcher_tables = []
+        at_bat_tables_by_inning = {}
+        all_at_bat_tables = []
         for inning_id, at_bats in at_bats_by_inning.items():
             inning = inning_id[-5:]
-            pitcher_tables = []
+            at_bat_tables = []
             for num, at_bat in enumerate(at_bats, start=1):
                 player_name = self.get_player_id_map(mlb_id=mlb_id).mlb_name
                 heading = f"Inning: {inning}, At Bat #{num}/{len(at_bats)}, P: {player_name}"
                 table_list = self.create_at_bat_table_list(at_bat["at_bat_id"], heading)
-                pitcher_tables.extend(table_list)
-            pitcher_tables_by_inning[inning] = pitcher_tables
-            all_pitcher_tables.extend(pitcher_tables)
+                at_bat_tables.extend(table_list)
+            at_bat_tables_by_inning[inning] = at_bat_tables
+            all_at_bat_tables.extend(at_bat_tables)
 
-        innings_viewer = {}
-        innings_viewer["ALL"] = self.create_table_viewer(all_pitcher_tables)
-        for inning, pitcher_tables in pitcher_tables_by_inning.items():
-            innings_viewer[inning] = self.create_table_viewer(pitcher_tables)
+        innings_viewer = {"ALL": self.create_table_viewer(all_at_bat_tables)}
+        for inning, at_bat_tables in at_bat_tables_by_inning.items():
+            innings_viewer[inning] = self.create_table_viewer(at_bat_tables)
         return Result.Ok(innings_viewer)
 
     def get_all_at_bats_involving_pitcher(self, mlb_id):
@@ -352,10 +351,9 @@ class AllGameData:
             at_bat_tables_by_inning[inning] = inning_tables
             all_at_bat_tables.extend(inning_tables)
 
-        innings_viewer = {}
-        innings_viewer["ALL"] = self.create_table_viewer(all_at_bat_tables)
-        for inning, pitcher_tables in at_bat_tables_by_inning.items():
-            innings_viewer[inning] = self.create_table_viewer(pitcher_tables)
+        innings_viewer = {"ALL": self.create_table_viewer(all_at_bat_tables)}
+        for inning, at_bat_tables in at_bat_tables_by_inning.items():
+            innings_viewer[inning] = self.create_table_viewer(at_bat_tables)
         return Result.Ok(innings_viewer)
 
     def get_innings_sorted(self):

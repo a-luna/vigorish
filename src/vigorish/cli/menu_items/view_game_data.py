@@ -154,10 +154,11 @@ class ViewGameData(MenuItem):
         return self.view_at_bats_by_inning(innings_viewer)
 
     def innings_viewer_prompt(self, innings_viewer):
-        choices = {
-            f"{MENU_NUMBERS.get(int(inning[-2:]), inning[-2:])}  {inning}": table_viewer
-            for inning, table_viewer in innings_viewer.items()
-        }
+        choices = {f"{EMOJI_DICT.get('ASTERISK')}  All Innings": innings_viewer["ALL"]}
+        for inning, table_viewer in innings_viewer.items():
+            if inning == "ALL":
+                continue
+            choices[f"{MENU_NUMBERS.get(int(inning[-2:]), inning[-2:])}  {inning}"] = table_viewer
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
         prompt = "Select an inning to view:"
         return user_options_prompt(choices, prompt)
