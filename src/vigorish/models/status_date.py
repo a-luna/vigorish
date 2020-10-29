@@ -23,7 +23,6 @@ class DateScrapeStatus(Base):
     game_count_brooks = Column(Integer, default=0)
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    boxscores = relationship("Boxscore", backref="scrape_status_date")
     scrape_status_games = relationship("GameScrapeStatus", backref="scrape_status_date")
     scrape_status_pitchfx = relationship("PitchAppScrapeStatus", backref="scrape_status_date")
     pitch_app_status = relationship(
