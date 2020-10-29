@@ -63,7 +63,6 @@ def test_backup_database_to_csv(vig_app):
     pitchfx_csv = csv_map[PitchFx]
     assert "pitchfx.csv" in str(pitchfx_csv)
     assert pitchfx_csv.exists()
-    raise AssertionError()
 
 
 def remove_existing_csv_files():
