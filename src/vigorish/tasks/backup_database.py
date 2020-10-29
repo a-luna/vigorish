@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from events import Events
-from sqlalchemy import func
 
 from vigorish.config.database import (
     DateScrapeStatus,
