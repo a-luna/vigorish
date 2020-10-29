@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -6,14 +7,13 @@ from vigorish.config.database import SQLITE_PROD_URL
 from vigorish.constants import ENV_VAR_NAMES
 from vigorish.util.result import Result
 
-DEFAULT_VIG_FOLDER = Path.home() / ".vig"
-DEFAULT_DOTENV = DEFAULT_VIG_FOLDER / ".env"
-DEFAULT_CONFIG = DEFAULT_VIG_FOLDER / "vig.config.json"
+VIG_FOLDER = Path.home() / ".vig"
+DOTENV_FILE = VIG_FOLDER / ".env"
+DEFAULT_CONFIG = VIG_FOLDER / "vig.config.json"
 
 
 def create_default_dotenv_file(dotenv_file, config_file=None, db_url=None):
     env_var_dict = {var_name: "" for var_name in ENV_VAR_NAMES}
-    env_var_dict["VIG_FOLDER"]
     env_var_dict["CONFIG_FILE"] = config_file if config_file else DEFAULT_CONFIG
     env_var_dict["DATABASE_URL"] = db_url if db_url else SQLITE_PROD_URL
     env_var_strings = [f"{name}={value}" for name, value in env_var_dict.items()]
@@ -22,10 +22,13 @@ def create_default_dotenv_file(dotenv_file, config_file=None, db_url=None):
 
 class DotEnvFile:
     def __init__(self, dotenv_filepath=None):
-        if dotenv_filepath:
-            self.dotenv_filepath = dotenv_filepath
+        if os.environ.get("ENV") == "TEST":
+            self.dotenv_filepath = Path(os.environ.get("DOTENV_FILE"))
         else:
-            self.dotenv_filepath = DEFAULT_DOTENV
+            if dotenv_filepath:
+                self.dotenv_filepath = dotenv_filepath
+            else:
+                self.dotenv_filepath = DOTENV_FILE
         self.env_var_dict = self.read_dotenv_file()
 
     def read_dotenv_file(self):
