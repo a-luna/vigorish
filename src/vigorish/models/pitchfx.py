@@ -17,6 +17,7 @@ from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_di
 from vigorish.util.datetime_util import make_tzaware, TIME_ZONE_NEW_YORK
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.dt_format_strings import CSV_UTC
+from vigorish.util.string_helpers import get_bbref_team_id
 
 
 class PitchFx(Base):
@@ -113,8 +114,10 @@ class PitchFx(Base):
         year = self.game_date.year
         pitcher = Player.find_by_mlb_id(db_session, self.pitcher_id_mlb)
         batter = Player.find_by_mlb_id(db_session, self.batter_id_mlb)
-        team_pitching = Team.find_by_team_id_and_year(db_session, self.pitcher_team_id_bb, year)
-        team_batting = Team.find_by_team_id_and_year(db_session, self.opponent_team_id_bb, year)
+        pitcher_team_id_br = get_bbref_team_id(self.pitcher_team_id_bb)
+        batter_team_id_br = get_bbref_team_id(self.opponent_team_id_bb)
+        team_pitching = Team.find_by_team_id_and_year(db_session, pitcher_team_id_br, year)
+        team_batting = Team.find_by_team_id_and_year(db_session, batter_team_id_br, year)
         pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, self.pitch_app_id)
         game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, self.bbref_game_id)
         date_status = DateScrapeStatus.find_by_date(db_session, self.game_date)

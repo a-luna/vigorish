@@ -39,7 +39,7 @@ class LocalFolderPathSetting(FolderPathSetting):
         absolute_path = self.resolve(year)
         return validate_folder_path(absolute_path)
 
-    def resolve(self, year: None):
+    def resolve(self, year=None):
         path_str = self._path_str
         if YEAR_TOKEN in self._path_str:
             year = validate_year_value(year)

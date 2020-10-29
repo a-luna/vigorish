@@ -17,19 +17,29 @@ class AddPitchFxToDatabase(Task):
             )
         )
 
-    def execute(self, audit_report, year):
-        report_for_season = audit_report.get(year)
+    def execute(self, audit_report, year=None):
+        self.audit_report = audit_report
+        return self.add_pfx_for_year(year) if year else self.add_all_pfx()
+
+    def add_all_pfx(self):
+        valid_years = [year for year, results in self.audit_report.items() if results["successful"]]
+        for year in valid_years:
+            self.add_pfx_for_year(year)
+        return Result.Ok()
+
+    def add_pfx_for_year(self, year):
+        report_for_season = self.audit_report.get(year)
         if not report_for_season:
             return Result.Fail(f"Audit report could not be generated for MLB Season {year}")
         game_ids = report_for_season.get("successful")
         if not game_ids:
             error = f"No games for MLB Season {year} qualify to have PitchFx data imported."
             return Result.Fail(error)
-        self.events.add_pitchfx_to_db_start(game_ids)
+        self.events.add_pitchfx_to_db_start(year, game_ids)
         for num, game_id in enumerate(game_ids, start=1):
             self.add_pitchfx_to_database(game_id)
-            self.events.add_pitchfx_to_db_progress(num, game_id)
-        self.events.add_pitchfx_to_db_complete()
+            self.events.add_pitchfx_to_db_progress(num, year, game_id)
+        self.events.add_pitchfx_to_db_complete(year)
         return Result.Ok()
 
     def add_pitchfx_to_database(self, game_id):

@@ -39,6 +39,7 @@ class AddPitchFxToDatabase(MenuItem):
         if result.failure:
             return Result.Ok()
         year = result.value
+        self.initialize_spinner()
         self.subscribe_to_events()
         result = self.add_pfx_to_db.execute(self.audit_report, year)
         self.spinner.stop()
@@ -64,23 +65,32 @@ class AddPitchFxToDatabase(MenuItem):
 
     def select_season_prompt(self):
         prompt = "Select an MLB season from the list below:"
-        choices = {
-            f"{MENU_NUMBERS.get(num, str(num))}  {year}": year
-            for num, (year, results) in enumerate(self.audit_report.items(), start=1)
-            if results["successful"]
-        }
+        choices = {f"{MENU_NUMBERS.get(1)}  ALL": "ALL"}
+        for num, (year, results) in enumerate(self.audit_report.items(), start=2):
+            if results["successful"]:
+                choices[f"{MENU_NUMBERS.get(num, str(num))}  {year}"] = year
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
-        return user_options_prompt(choices, prompt)
+        result = user_options_prompt(choices, prompt)
+        if result.failure:
+            return result
+        year = result.value if isinstance(result.value, int) else None
+        return Result.Ok(year)
 
-    def add_pitchfx_to_db_start(self, game_ids):
+    def initialize_spinner(self):
         subprocess.run(["clear"])
-        self.game_ids = game_ids
-        self.spinner.text = f"Adding PitchFx to Database... (Game ID: {game_ids[0]}) 0%..."
+        self.spinner.text = "Preparing to import PitchFx data..."
         self.spinner.start()
 
-    def add_pitchfx_to_db_progress(self, num_complete, game_id):
+    def add_pitchfx_to_db_start(self, year, game_ids):
+        self.game_ids = game_ids
+        self.spinner.text = self.get_progress_text(0, year, game_ids[0])
+
+    def add_pitchfx_to_db_progress(self, num_complete, year, game_id):
+        self.spinner.text = self.get_progress_text(num_complete, year, game_id)
+
+    def get_progress_text(self, num_complete, year, game_id):
         percent = num_complete / float(self.total_games)
-        self.spinner.text = f"Adding PitchFx to Database... (Game ID: {game_id}) {percent:.0%}..."
+        return f"Adding PitchFx for MLB {year} to Database... (Game ID: {game_id}) {percent:.0%}..."
 
     def subscribe_to_events(self):
         self.add_pfx_to_db.events.add_pitchfx_to_db_start += self.add_pitchfx_to_db_start

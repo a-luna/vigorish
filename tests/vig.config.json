@@ -261,5 +261,17 @@
         "BBREF_BOXSCORES": null,
         "BROOKS_PITCH_LOGS": null,
         "BROOKS_PITCHFX": null
+    },
+    "DB_BACKUP_FOLDER_PATH": {
+        "CONFIG_TYPE": "Path",
+        "CLASS_NAME": "LocalFolderPathSetting",
+        "DESCRIPTION": "Local folder path where csv files containing exported table data should be stored.",
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "tests/backup",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
     }
 }
