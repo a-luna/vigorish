@@ -11,7 +11,6 @@ from vigorish.config.database import (
     PitchAppScrapeStatus,
     PitchFx,
 )
-from vigorish.config.project_paths import ROOT_FOLDER
 from vigorish.enums import DataSet
 from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import FILE_TIMESTAMP
