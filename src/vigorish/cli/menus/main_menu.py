@@ -5,7 +5,12 @@ from halo import Halo
 from tabulate import tabulate
 
 from vigorish import __version__
-from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner, print_message
+from vigorish.cli.components import (
+    get_random_cli_color,
+    get_random_dots_spinner,
+    print_message,
+    print_heading,
+)
 from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.combine_data import CombineGameDataMenuItem
 from vigorish.cli.menu_items.create_job import CreateJobMenuItem
@@ -25,15 +30,16 @@ from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exi
 class MainMenu(Menu):
     def __init__(self, app):
         super().__init__(app)
-        self.node_is_installed = False
-        self.node_modules_folder_exists = False
-        self.db_setup_complete = False
-        self.initial_status_check = True
+        self.initialized = False
         self.audit_report = {}
 
     @property
     def initial_setup_complete(self):
-        return self.node_is_installed and self.node_modules_folder_exists and self.db_setup_complete
+        return (
+            node_is_installed()
+            and node_modules_folder_exists()
+            and db_setup_complete(self.db_engine, self.db_session)
+        )
 
     @property
     def is_refresh_needed(self):
@@ -49,6 +55,7 @@ class MainMenu(Menu):
         exit_menu = False
         subprocess.run(["clear"])
         self.check_app_status()
+        self.initialized = True
         while not exit_menu:
             subprocess.run(["clear"])
             if self.is_refresh_needed:
@@ -62,57 +69,48 @@ class MainMenu(Menu):
         return Result.Ok(exit_menu)
 
     def check_app_status(self):
+        if not db_setup_complete(self.db_engine, self.db_session):
+            return
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        spinner.text = "Initializing..." if self.initial_status_check else "Updating metrics..."
+        spinner.text = "Updating metrics..." if self.initialized else "Initializing..."
         spinner.start()
-        self.perform_simple_tasks()
-        if self.db_setup_complete:
-            self.audit_report = self.scraped_data.get_audit_report()
+        self.audit_report = self.scraped_data.get_audit_report()
         spinner.stop()
-        self.initial_status_check = False
-
-    def perform_simple_tasks(self):
-        self.node_is_installed = node_is_installed()
-        self.node_modules_folder_exists = node_modules_folder_exists()
-        self.db_setup_complete = db_setup_complete(self.db_engine, self.db_session)
 
     def display_menu_text(self):
-        print_message(f"vigorish v{__version__}\n", fg="bright_cyan", bold=True)
-        self.perform_simple_tasks()
-        if self.initial_setup_complete:
+        print_heading(f"vigorish v{__version__}", fg="bright_cyan")
+        if self.audit_report:
             self.display_audit_report()
+        elif self.initial_setup_complete:
+            print_message("All prerequisites are installed and database is initialized.")
         else:
             self.display_initial_task_status()
         print_message("\nMain Menu:\n", fg="bright_yellow", bold=True, underline=True)
 
     def display_audit_report(self):
-        if self.audit_report:
-            table_rows = [
-                {
-                    "season": f"MLB {year} ({report['total_games']} games)",
-                    "scraped": len(report["scraped"]),
-                    "combined": len(report["successful"]),
-                    "failed": len(report["failed"])
-                    + len(report["pfx_error"])
-                    + len(report["invalid_pfx"]),
-                }
-                for year, report in self.audit_report.items()
-            ]
-            print_message(tabulate(table_rows, headers="keys"), wrap=False)
-        else:
-            message = "All prerequisites are installed and database is initialized."
-            print_message(message)
+        table_rows = [
+            {
+                "season": f"MLB {year} ({report['total_games']} games)",
+                "scraped": len(report["scraped"]),
+                "combined": len(report["successful"]),
+                "failed": len(report["failed"])
+                + len(report["pfx_error"])
+                + len(report["invalid_pfx"]),
+            }
+            for year, report in self.audit_report.items()
+        ]
+        print_message(tabulate(table_rows, headers="keys"), wrap=False)
 
     def display_initial_task_status(self):
-        if self.node_is_installed:
+        if node_is_installed():
             print_message("Node.js Installed.............: YES", fg="bright_green", bold=True)
         else:
             print_message("Node.js Installed.............: NO", fg="bright_red", bold=True)
-        if self.node_modules_folder_exists:
+        if node_modules_folder_exists():
             print_message("Electron/Nightmare Installed..: YES", fg="bright_green", bold=True)
         else:
             print_message("Electron/Nightmare Installed..: NO", fg="bright_red", bold=True)
-        if self.db_setup_complete:
+        if db_setup_complete(self.db_engine, self.db_session):
             print_message("SQLite DB Initialized.........: YES", fg="bright_green", bold=True)
         else:
             print_message("SQLite DB Initialized.........: NO", fg="bright_red", bold=True)
@@ -120,7 +118,7 @@ class MainMenu(Menu):
     def populate_menu_items(self):
         main_menu_items = self.get_menu_items()
         self.menu_items = [menu_item for menu_item in main_menu_items.values()]
-        if not self.db_setup_complete:
+        if not db_setup_complete(self.db_engine, self.db_session):
             self.menu_items.remove(main_menu_items["create_job"])
             self.menu_items.remove(main_menu_items["all_jobs"])
             self.menu_items.remove(main_menu_items["status_reports"])

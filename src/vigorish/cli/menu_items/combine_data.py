@@ -433,9 +433,6 @@ class CombineGameDataMenuItem(MenuItem):
         print_message(message, fg="bright_cyan")
         print()
 
-    # def view_tables_pitchfx_errors(self):
-    #     for game_id, pitch_app_ids in self.all_pfx_errors.items():
-
     def combine_games_for_date(self):
         result = audit_report_season_prompt(self.audit_report)
         if result.failure:
