@@ -44,11 +44,16 @@ class AddPitchFxToDatabase(Task):
 
     def add_pitchfx_to_database(self, game_id):
         all_game_data = AllGameData(self.db_session, self.scraped_data, game_id)
-        for pfx_dict in all_game_data.get_all_pitchfx():
-            pfx = PitchFx.from_dict(pfx_dict)
-            pfx.update_relationships(self.db_session)
-            self.db_session.add(pfx)
-        for pitch_app_id in all_game_data.get_all_pitch_app_ids():
+        for pitch_app_id, pfx_dict_list in all_game_data.get_all_pitchfx().items():
             pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
+            if not pitch_app:
+                error = f"PitchFx import aborted! Pitch app '{pitch_app_id}' not found in database"
+                return Result.Fail(error)
+            if pitch_app.imported_pitchfx:
+                continue
+            for pfx_dict in pfx_dict_list:
+                pfx = PitchFx.from_dict(pfx_dict)
+                pfx.update_relationships(self.db_session)
+                self.db_session.add(pfx)
             pitch_app.imported_pitchfx = 1
         self.db_session.commit()

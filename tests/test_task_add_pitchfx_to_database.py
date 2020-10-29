@@ -31,10 +31,16 @@ def create_test_data(db_session, scraped_data):
 
 
 def test_add_pitchfx_to_database(vig_app):
-    total_rows = get_total_number_of_rows(vig_app["db_session"], PitchFx)
+    db_session = vig_app["db_session"]
+    total_rows = get_total_number_of_rows(db_session, PitchFx)
     assert total_rows == 0
+    audit_report = vig_app["scraped_data"].get_audit_report()
     add_pfx_to_db = AddPitchFxToDatabase(vig_app)
-    result = add_pfx_to_db.execute(vig_app["scraped_data"].get_audit_report(), 2019)
+    result = add_pfx_to_db.execute(audit_report, 2019)
     assert result.success
-    total_rows = get_total_number_of_rows(vig_app["db_session"], PitchFx)
+    total_rows = get_total_number_of_rows(db_session, PitchFx)
+    assert total_rows == 299
+    result = add_pfx_to_db.execute(audit_report)
+    assert result.success
+    total_rows = get_total_number_of_rows(db_session, PitchFx)
     assert total_rows == 299

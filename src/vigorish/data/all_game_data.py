@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from copy import deepcopy
 from functools import lru_cache
 
@@ -380,10 +380,13 @@ class AllGameData:
 
     @lru_cache(maxsize=None)
     def get_all_pitchfx(self):
+        pfx_dict = defaultdict(list)
         all_pitchfx = [at_bat["pitchfx"] for at_bat in self.get_all_at_bats()]
         all_pitchfx.extend(self.get_duplicate_guid_pfx())
         all_pitchfx.extend(self.get_removed_pfx())
-        return flatten_list2d(all_pitchfx)
+        for pfx in flatten_list2d(all_pitchfx):
+            pfx_dict[pfx["pitch_app_id"]].append(pfx)
+        return pfx_dict
 
     def get_duplicate_guid_pfx(self):
         return [
