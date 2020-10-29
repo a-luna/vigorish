@@ -1,10 +1,10 @@
 """Menu that allows the user to view and modify all settings in vig.config.json."""
 from vigorish.cli.menu import Menu
+from vigorish.cli.menu_items.admin_tasks.add_pitchfx_to_database import AddPitchFxToDatabase
+from vigorish.cli.menu_items.admin_tasks.backup_database import BackupDatabase
 from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import (
     CalculateAverageTimeBetweenPitches,
 )
-from vigorish.cli.menu_items.admin_tasks.add_pitchfx_to_database import AddPitchFxToDatabase
-from vigorish.cli.menu_items.admin_tasks.backup_database import BackupDatabase
 from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
 from vigorish.cli.menu_items.admin_tasks.sync_scraped_data import SyncScrapedData

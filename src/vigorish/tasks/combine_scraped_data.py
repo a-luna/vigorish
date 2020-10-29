@@ -20,7 +20,6 @@ from vigorish.util.string_helpers import (
     validate_at_bat_id,
 )
 
-
 logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 

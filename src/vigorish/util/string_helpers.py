@@ -4,7 +4,7 @@ from datetime import datetime
 
 from rapidfuzz import process
 
-from vigorish.constants import BR_BB_TEAM_ID_MAP, BB_BR_TEAM_ID_MAP
+from vigorish.constants import BB_BR_TEAM_ID_MAP, BR_BB_TEAM_ID_MAP
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.regex import (
     AT_BAT_ID_REGEX,

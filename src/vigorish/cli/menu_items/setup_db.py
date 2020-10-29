@@ -1,8 +1,8 @@
 """Menu item that allows the user to initialize/reset the database."""
-from datetime import datetime
-from pathlib import Path
 import subprocess
 import time
+from datetime import datetime
+from pathlib import Path
 
 from getch import pause
 from sqlalchemy.orm import sessionmaker

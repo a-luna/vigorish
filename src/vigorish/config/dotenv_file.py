@@ -25,10 +25,7 @@ class DotEnvFile:
         if os.environ.get("ENV") == "TEST":
             self.dotenv_filepath = Path(os.environ.get("DOTENV_FILE"))
         else:
-            if dotenv_filepath:
-                self.dotenv_filepath = dotenv_filepath
-            else:
-                self.dotenv_filepath = DOTENV_FILE
+            self.dotenv_filepath = dotenv_filepath if dotenv_filepath else DOTENV_FILE
         self.env_var_dict = self.read_dotenv_file()
 
     def read_dotenv_file(self):

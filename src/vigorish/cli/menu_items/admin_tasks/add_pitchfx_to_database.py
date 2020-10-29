@@ -11,9 +11,7 @@ from vigorish.cli.components.util import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.tasks.add_pitchfx_to_database import (
-    AddPitchFxToDatabase as AddPitchFxToDatabaseTask,
-)
+from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase as AddPitchFxToDatabaseTask
 from vigorish.util.result import Result
 
 
