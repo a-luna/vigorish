@@ -28,9 +28,6 @@ class Season(Base):
     scrape_status_dates = relationship("DateScrapeStatus", backref="season")
     scrape_status_games = relationship("GameScrapeStatus", backref="season")
     scrape_status_pitchfx = relationship("PitchAppScrapeStatus", backref="season")
-    boxscores = relationship("Boxscore", backref="season")
-    pitching_stats = relationship("GamePitchStats", backref="season")
-    batting_stats = relationship("GameBatStats", backref="season")
     scrape_jobs = relationship("ScrapeJob", backref="season")
     pitch_app_status = relationship(
         "Season_PitchApp_View",

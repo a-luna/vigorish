@@ -34,25 +34,6 @@ class Player(Base):
 
     id_map = relationship("PlayerId", backref=backref("player", uselist=False))
 
-    game_events_as_pitcher = relationship(
-        "GameEvent",
-        primaryjoin="Player.id==GameEvent.pitcher_id",
-        back_populates="pitcher",
-    )
-    game_events_as_batter = relationship(
-        "GameEvent",
-        primaryjoin="Player.id==GameEvent.batter_id",
-        back_populates="batter",
-    )
-    pitching_stats = relationship("GamePitchStats", backref="player")
-    batting_stats = relationship("GameBatStats", backref="player")
-    lineup_appearances = relationship("GameStartingLineupSlot", backref="player")
-    # transactions = relationship(
-    #    'PlayerTransaction',
-    #    secondary='player_transaction_link',
-    #    back_populates='players'
-    # )
-
     def __repr__(self):
         return f"<Player name={self.name_first} {self.name_last}, bbref_id={self.bbref_id}>"
 

@@ -47,44 +47,6 @@ class Team(Base):
     regular_season = relationship("Season", foreign_keys=[regular_season_id])
     post_season = relationship("Season", foreign_keys=[post_season_id])
 
-    boxscores = relationship(
-        "Boxscore",
-        primaryjoin="or_(" "Team.id==Boxscore.away_team_id, " "Team.id==Boxscore.home_team_id)",
-    )
-
-    team_pitching_stats = relationship(
-        "GamePitchStats",
-        primaryjoin="Team.id==GamePitchStats.player_team_id",
-        back_populates="player_team",
-    )
-    opponent_pitching_stats = relationship(
-        "GamePitchStats",
-        primaryjoin="Team.id==GamePitchStats.opponent_team_id",
-        back_populates="opponent_team",
-    )
-
-    team_batting_stats = relationship(
-        "GameBatStats",
-        primaryjoin="Team.id==GameBatStats.player_team_id",
-        back_populates="player_team",
-    )
-    opponent_batting_stats = relationship(
-        "GameBatStats",
-        primaryjoin="Team.id==GameBatStats.opponent_team_id",
-        back_populates="opponent_team",
-    )
-
-    # player_transactions_out = (
-    #   relationship('PlayerTransactionLink',
-    #   primaryjoin='Team.id==PlayerTransactionLink.old_team_id',
-    #   back_populates='old_team')
-    # )
-    # player_transactions_in = (
-    #   relationship('PlayerTransactionLink',
-    #   primaryjoin='Team.id==PlayerTransactionLink.new_team_id',
-    #   back_populates='new_team')
-    # )
-
     def __repr__(self):
         return f"<Team team_id={self.team_id}, year={self.year}>"
 
