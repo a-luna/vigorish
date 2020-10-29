@@ -1,8 +1,8 @@
 """Database file and connection details."""
 # flake8: noqa
 import os
-from pathlib import Path
 
+from sqlalchemy import func
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -72,3 +72,10 @@ def db_setup_complete(db_engine, db_session):
         and len(db_session.query(Player).all()) > 0
         and len(db_session.query(Team).all()) > 0
     )
+
+
+def get_total_number_of_rows(db_session, db_table):
+    q = db_session.query(db_table)
+    count_q = q.statement.with_only_columns([func.count()]).order_by(None)
+    count = q.session.execute(count_q).scalar()
+    return count

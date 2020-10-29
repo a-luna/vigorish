@@ -57,13 +57,13 @@ class BackupDatabase(MenuItem):
         subprocess.run(["clear"])
         print_success("Successfully backed up all necessary database tables!")
         pause(message="\nPress any key to continue...")
-        return Result.Ok()
+        return Result.Ok(True)
 
     def prompt_user_run_task(self):
         subprocess.run(["clear"])
         for line in TASK_DESCRIPTION:
             print_message(line, fg="bright_yellow")
-        return yes_no_prompt("Would you like to run this task?", wrap=False)
+        return yes_no_prompt("Would you like to run this task?")
 
     def backup_database_start(self, total_tables):
         subprocess.run(["clear"])
