@@ -59,7 +59,7 @@ class BackupDatabaseTask(Task):
         backup_folder = self.config.all_settings.get("DB_BACKUP_FOLDER_PATH")
         backup_folder_path = backup_folder.current_setting(DataSet.ALL).resolve()
         if os.environ.get("ENV") == "TEST":
-            return Path(backup_folder_path).joinpath("_timestamp_")
+            return Path(backup_folder_path).joinpath("__timestamp__")
         folder_name = f"{datetime.now(timezone.utc).strftime(FILE_TIMESTAMP)}"
         csv_folder = Path(backup_folder_path).joinpath(folder_name)
         csv_folder.mkdir(parents=True)
