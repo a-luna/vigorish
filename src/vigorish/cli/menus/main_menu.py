@@ -8,8 +8,8 @@ from vigorish import __version__
 from vigorish.cli.components import (
     get_random_cli_color,
     get_random_dots_spinner,
-    print_message,
     print_heading,
+    print_message,
 )
 from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.combine_data import CombineGameDataMenuItem

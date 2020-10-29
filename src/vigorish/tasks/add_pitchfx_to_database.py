@@ -1,6 +1,6 @@
 from events import Events
 
-from vigorish.config.database import PitchFx, PitchAppScrapeStatus
+from vigorish.config.database import PitchAppScrapeStatus, PitchFx
 from vigorish.data.all_game_data import AllGameData
 from vigorish.tasks.base import Task
 from vigorish.util.result import Result

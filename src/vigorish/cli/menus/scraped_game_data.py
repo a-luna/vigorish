@@ -1,6 +1,7 @@
 """Menu that allows the user to view all jobs grouped by status."""
 import subprocess
-from vigorish.cli.components.prompts import user_options_prompt, select_game_prompt
+
+from vigorish.cli.components.prompts import select_game_prompt, user_options_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.view_game_data import ViewGameData
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS

@@ -1,4 +1,5 @@
 """CLI application entry point."""
+import os
 import subprocess
 
 import click
@@ -34,8 +35,9 @@ def cli(ctx):
 
     Please visit https://aaronluna.dev/projects/vigorish for user guides and project documentation.
     """
-    if not VIG_FOLDER.exists():
-        VIG_FOLDER.mkdir()
+    if os.environ.get("ENV") != "TEST":
+        if not VIG_FOLDER.exists():
+            VIG_FOLDER.mkdir()
     dotenv = DotEnvFile()
     config = ConfigFile()
     db_engine = create_engine(get_db_url())
@@ -56,9 +58,8 @@ def cli(ctx):
 def ui(app):
     """Menu-driven UI powered by Bullet."""
     try:
-        main_menu = MainMenu(app)
-        result = main_menu.launch()
-        return exit_app_success(app) if result.success else exit_app_error(app, result.error)
+        result = MainMenu(app).launch()
+        return exit_app(app, result)
     except Exception as e:
         return exit_app_error(app, f"Error: {repr(e)}")
 
@@ -74,9 +75,7 @@ def setup(app):
     """
     print()  # place an empty line between the command and the progress bars
     result = initialize_database(app)
-    if result.failure:
-        return exit_app_error(app, result.error)
-    return exit_app_success(app, "Successfully populated database with initial data.")
+    return exit_app(app, result, "Successfully populated database with initial data.")
 
 
 @cli.command()
@@ -142,7 +141,7 @@ def scrape(app, data_set, start, end, name):
         scraped_data=app["scraped_data"],
     )
     result = job_runner.execute()
-    return exit_app_success(app) if result.success else exit_app_error(app, result.error)
+    return exit_app(app, result)
 
 
 @cli.group()
@@ -176,7 +175,7 @@ def status_date(app, game_date, missing_ids, with_games):
     else:
         report_type = StatusReport.DATE_DETAIL_ALL_DATES
     result = report_status_single_date(app["db_session"], game_date, report_type)
-    return exit_app_success(app) if result.success else exit_app_error(app, result.error)
+    return exit_app(app, result)
 
 
 @status.command("range")
@@ -222,7 +221,7 @@ def status_date_range(app, start, end, verbosity):
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(app, error)
     result = report_date_range_status(app["db_session"], start, end, report_type)
-    return exit_app_success(app) if result.success else exit_app_error(app, result.error)
+    return exit_app(app, result)
 
 
 @status.command("season")
@@ -265,7 +264,7 @@ def status_season(app, year, verbosity):
         error = "Unknown error occurred, unable to display status report."
         return exit_app_error(app, error)
     result = report_season_status(app["db_session"], year, report_type)
-    return exit_app_success(app) if result.success else exit_app_error(app, result.error)
+    return exit_app(app, result)
 
 
 @cli.group()
@@ -299,7 +298,7 @@ def sync_up_to_s3(app, year, file_type, data_sets):
     sync_task = SyncScrapedDataNoPrompts(app)
     result_dict = sync_task.execute(SyncDirection.UP_TO_S3, year, file_type, data_sets_int)
     result = Result.Combine([result for result in result_dict.values()])
-    return exit_app_success(app) if result.success else exit_app_error(app, result.error)
+    return exit_app(app, result)
 
 
 @sync.command("down")
@@ -326,19 +325,21 @@ def sync_down_to_local(app, year, file_type, data_sets):
     sync_task = SyncScrapedDataNoPrompts(app)
     result_dict = sync_task.execute(SyncDirection.DOWN_TO_LOCAL, year, file_type, data_sets_int)
     result = Result.Combine([result for result in result_dict.values()])
-    return exit_app_success(app) if result.success else exit_app_error(app, result.error)
+    return exit_app(app, result)
 
 
-def exit_app_success(app, message=None):
+def exit_app(app, result, message=None):
+    app["db_session"].close()
     subprocess.run(["clear"])
+    return exit_app_success(message) if result.success else exit_app_error(result.error)
+
+
+def exit_app_success(message=None):
     if message:
         print_message(f"\n{message}\n", fg="bright_green", bold=True)
-    app["db_session"].close()
     return 0
 
 
-def exit_app_error(app, message):
-    subprocess.run(["clear"])
+def exit_app_error(message):
     print_message(f"\n{message}\n", fg="bright_red", bold=True)
-    app["db_session"].close()
     return 1

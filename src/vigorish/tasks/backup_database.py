@@ -56,7 +56,7 @@ class BackupDatabaseTask(Task):
         }
 
     def create_csv_folder(self):
-        backup_folder = self.config.all_settings.get("DB_BACKUP_FOLDER_PATH", "backup")
+        backup_folder = self.config.all_settings.get("DB_BACKUP_FOLDER_PATH")
         backup_folder_path = backup_folder.current_setting(DataSet.ALL).resolve()
         if os.environ.get("ENV") == "TEST":
             return Path(backup_folder_path).joinpath("_timestamp_")

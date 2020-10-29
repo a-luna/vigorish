@@ -15,8 +15,7 @@ from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus
 from vigorish.models.team import Team
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.datetime_util import make_tzaware, TIME_ZONE_NEW_YORK
-from vigorish.util.dt_format_strings import DT_AWARE
-from vigorish.util.dt_format_strings import CSV_UTC
+from vigorish.util.dt_format_strings import CSV_UTC, DT_AWARE
 from vigorish.util.string_helpers import get_bbref_team_id
 
 

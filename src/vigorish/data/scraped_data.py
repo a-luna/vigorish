@@ -8,9 +8,9 @@ from vigorish.config.database import (
     GameScrapeStatus,
     PitchAppScrapeStatus,
     Season,
-    TimeBetweenPitches,
 )
 from vigorish.config.database import Season_Game_PitchApp_View as Season_View
+from vigorish.config.database import TimeBetweenPitches
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage

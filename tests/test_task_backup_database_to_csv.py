@@ -1,7 +1,6 @@
-from pathlib import Path
-
 import pytest
 
+from tests.conftest import BACKUP_FOLDER
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,
@@ -64,19 +63,19 @@ def test_backup_database_to_csv(vig_app):
     pitchfx_csv = csv_map[PitchFx]
     assert "pitchfx.csv" in str(pitchfx_csv)
     assert pitchfx_csv.exists()
+    raise AssertionError()
 
 
 def remove_existing_csv_files():
-    folderpath = Path("backup/__timestamp__")
-    date_csv = folderpath.joinpath("scrape_status_date.csv")
+    date_csv = BACKUP_FOLDER.joinpath("scrape_status_date.csv")
     if date_csv.exists():
         date_csv.unlink()
-    game_csv = folderpath.joinpath("scrape_status_game.csv")
+    game_csv = BACKUP_FOLDER.joinpath("scrape_status_game.csv")
     if game_csv.exists():
         game_csv.unlink()
-    pitch_app_csv = folderpath.joinpath("scrape_status_pitch_app.csv")
+    pitch_app_csv = BACKUP_FOLDER.joinpath("scrape_status_pitch_app.csv")
     if pitch_app_csv.exists():
         pitch_app_csv.unlink()
-    pitchfx_csv = folderpath.joinpath("pitchfx.csv")
+    pitchfx_csv = BACKUP_FOLDER.joinpath("pitchfx.csv")
     if pitchfx_csv.exists():
         pitchfx_csv.unlink()

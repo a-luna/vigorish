@@ -1,9 +1,9 @@
 {
   "name": "vig-node-deps",
-  "version": "0.0.1",
+  "version": "0.3.7",
   "description": "NightmareJS and other node modules used to scrape html from websites",
   "engines": {
-    "node": "14.x.x"
+    "node": "15.x.x"
   },
   "scripts": {
     "heroku-postbuild": "cd src/vigorish/nightmarejs && npm install"

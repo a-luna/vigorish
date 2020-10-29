@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, DateTime, Float
+from sqlalchemy import Column, DateTime, Float, Integer
 
 from vigorish.config.database import Base
 from vigorish.util.datetime_util import utc_now

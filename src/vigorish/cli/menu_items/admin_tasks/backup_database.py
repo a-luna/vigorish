@@ -15,7 +15,6 @@ from vigorish.constants import EMOJI_DICT
 from vigorish.tasks.backup_database import BackupDatabaseTask
 from vigorish.util.result import Result
 
-
 TASK_DESCRIPTION = [
     "This task exports each table listed below to a CSV file:\n",
     "* scrape_status_date",
