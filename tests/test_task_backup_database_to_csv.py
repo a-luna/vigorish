@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from tests.util import (
@@ -41,6 +43,7 @@ def create_test_data(vig_app):
 
 
 def test_backup_database_to_csv(vig_app):
+    remove_existing_csv_files()
     backup_db = BackupDatabaseTask(vig_app)
     result = backup_db.execute()
     assert result.success
@@ -61,3 +64,19 @@ def test_backup_database_to_csv(vig_app):
     pitchfx_csv = csv_map[PitchFx]
     assert "pitchfx.csv" in str(pitchfx_csv)
     assert pitchfx_csv.exists()
+
+
+def remove_existing_csv_files():
+    folderpath = Path("backup/__timestamp__")
+    date_csv = folderpath.joinpath("scrape_status_date.csv")
+    if date_csv.exists():
+        date_csv.unlink()
+    game_csv = folderpath.joinpath("scrape_status_game.csv")
+    if game_csv.exists():
+        game_csv.unlink()
+    pitch_app_csv = folderpath.joinpath("scrape_status_pitch_app.csv")
+    if pitch_app_csv.exists():
+        pitch_app_csv.unlink()
+    pitchfx_csv = folderpath.joinpath("pitchfx.csv")
+    if pitchfx_csv.exists():
+        pitchfx_csv.unlink()
