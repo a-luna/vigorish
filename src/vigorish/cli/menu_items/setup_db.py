@@ -61,12 +61,13 @@ class SetupDBMenuItem(MenuItem):
         if not yes:
             return Result.Ok(self.exit_menu)
 
-        result = Season.is_date_in_season(self.db_session, datetime.now())
-        if result.success:
-            subprocess.run(["clear"])
-            result = self.update_player_id_map.launch()
-            if result.failure:
-                return result
+        if self.db_initialized:
+            result = Season.is_date_in_season(self.db_session, datetime.now())
+            if result.success:
+                subprocess.run(["clear"])
+                result = self.update_player_id_map.launch()
+                if result.failure:
+                    return result
 
         subprocess.run(["clear"])
         result = initialize_database(self.app)
