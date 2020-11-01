@@ -115,7 +115,7 @@ def user_options_prompt(choices, prompt, wrap=True, clear_screen=True, auto_scro
         )
     if clear_screen:
         subprocess.run(["clear"])
-    print()
+        print()
     choice_text = options_menu.launch()
     choice_value = choices.get(choice_text)
     return Result.Ok(choice_value) if choice_value else Result.Fail("")

@@ -1,13 +1,17 @@
+import re
 from collections import OrderedDict, defaultdict
 from copy import deepcopy
+from datetime import datetime
 from functools import lru_cache
 
 from tabulate import tabulate
 
 from vigorish.cli.components.models import DisplayTable
 from vigorish.cli.components.table_viewer import TableViewer
-from vigorish.config.database import PlayerId
+from vigorish.config.database import PlayerId, Team
+from vigorish.constants import PITCH_TYPE_DICT
 from vigorish.enums import DataSet, DefensePosition, VigFile
+from vigorish.util.dt_format_strings import DT_AWARE, DT_AWARE_VERBOSE
 from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.list_helpers import flatten_list2d, group_and_sort_dict_list, make_chunked_list
 from vigorish.util.regex import INNING_LABEL_REGEX
@@ -16,8 +20,12 @@ from vigorish.util.string_helpers import (
     get_bbref_team_id,
     inning_number_to_string,
     validate_at_bat_id,
+    validate_bbref_game_id,
     wrap_text,
 )
+
+AT_BAT_TABLE_MAX_ROWS = 8
+AT_BAT_DESC_MAX_WIDTH = 35
 
 
 class AllGameData:
@@ -41,6 +49,7 @@ class AllGameData:
         self.invalid_pitchfx = combined_data["invalid_pitchfx"]
         self.player_id_dict = combined_data["player_id_dict"]
         self.all_player_mlb_ids = [id_map["mlb_id"] for id_map in self.player_id_dict.values()]
+        self.game_date = validate_bbref_game_id(self.bbref_game_id).value["game_date"]
 
     @property
     def away_team_id(self):
@@ -49,6 +58,22 @@ class AllGameData:
     @property
     def home_team_id(self):
         return self.home_team_data["team_id_br"]
+
+    @property
+    def away_team(self):
+        return Team.find_by_team_id_and_year(
+            self.db_session, self.away_team_id, self.game_date.year
+        )
+
+    @property
+    def home_team(self):
+        return Team.find_by_team_id_and_year(
+            self.db_session, self.home_team_id, self.game_date.year
+        )
+
+    @property
+    def game_datetime(self):
+        return datetime.strptime(self.game_meta_info["game_date_time_str"], DT_AWARE)
 
     @property
     def bat_stats_player_ids(self):
@@ -124,7 +149,7 @@ class AllGameData:
             "at_bats": at_bats,
             "bat_stats": details,
             "stats_to_date": parse_bat_stats_to_date(bat_stats),
-            "at_bat_viewer": self.view_at_bats_for_batter(mlb_id).value,
+            "at_bat_viewer": self.view_valid_at_bats_for_batter(mlb_id).value,
         }
 
     @property
@@ -157,8 +182,8 @@ class AllGameData:
     def get_pitcher_app_order(self, pitcher_ids):
         pitcher_app_dict = {}
         for mlb_id in pitcher_ids:
-            at_bats = self.get_all_at_bats_involving_pitcher(mlb_id).value
-            first_pitch = min(pfx["park_sv_id"] for ab in at_bats for pfx in ab["pitchfx"])
+            at_bats = self.get_valid_at_bats_for_pitcher(mlb_id).value
+            first_pitch = min(at_bat["pbp_table_row_number"] for at_bat in at_bats)
             pitcher_app_dict[mlb_id] = first_pitch
         return sorted(pitcher_ids, key=lambda x: pitcher_app_dict[x])
 
@@ -174,34 +199,27 @@ class AllGameData:
             "bbref_id": player_id.bbref_id,
             "pitch_app_type": "SP" if is_starter else "RP",
             "game_results": game_stats,
-            "at_bat_viewer": self.view_at_bats_for_pitcher(mlb_id).value,
+            "at_bat_viewer": self.view_valid_at_bats_for_pitcher(mlb_id).value,
         }
 
     @lru_cache(maxsize=None)
-    def get_all_valid_at_bats(self):
+    def get_valid_at_bats(self):
         return [
             at_bat_data
             for inning_data in self.innings_list
             for at_bat_data in inning_data["inning_events"]
         ]
 
-    def get_valid_at_bat_map(self):
-        return {at_bat["at_bat_id"]: at_bat for at_bat in self.get_all_valid_at_bats()}
-
     @lru_cache(maxsize=None)
-    def get_all_invalid_at_bats(self):
+    def get_invalid_at_bats(self):
         return [
             at_bat_data
             for inning_dict in self.invalid_pitchfx.values()
             for at_bat_data in inning_dict.values()
         ]
 
-    def get_invalid_at_bat_map(self):
-        return {at_bat["at_bat_id"]: at_bat for at_bat in self.get_all_invalid_at_bats()}
-
-    @lru_cache(maxsize=None)
     def get_all_at_bats(self):
-        return self.get_all_valid_at_bats() + self.get_all_invalid_at_bats()
+        return self.get_valid_at_bats() + self.get_invalid_at_bats()
 
     def get_at_bat_map(self):
         return {at_bat["at_bat_id"]: at_bat for at_bat in self.get_all_at_bats()}
@@ -216,10 +234,6 @@ class AllGameData:
         }
 
     @lru_cache(maxsize=None)
-    def get_all_pitch_app_ids(self):
-        return list(set(pitch_stats["pitch_app_id"] for pitch_stats in self.get_all_pitch_stats()))
-
-    @lru_cache(maxsize=None)
     def get_all_bat_stats(self):
         bat_stats = self.away_team_data["batting_stats"] + self.home_team_data["batting_stats"]
         return [bat_stat for bat_stat in bat_stats if bat_stat["total_plate_appearances"]]
@@ -227,12 +241,12 @@ class AllGameData:
     def get_bat_stat_map(self):
         return {bat_stats["batter_id_mlb"]: bat_stats for bat_stats in self.get_all_bat_stats()}
 
-    def view_at_bats_for_batter(self, mlb_id):
+    def view_valid_at_bats_for_batter(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
             return result
         mlb_id = result.value
-        at_bats = self.get_all_at_bats_involving_batter(mlb_id).value
+        at_bats = self.get_valid_at_bats_for_batter(mlb_id).value
         batter_tables = []
         for num, at_bat in enumerate(at_bats, start=1):
             player_name = self.get_player_id_map(mlb_id=mlb_id).mlb_name
@@ -253,12 +267,12 @@ class AllGameData:
             return Result.Fail(error)
         return Result.Ok(mlb_id)
 
-    def get_all_at_bats_involving_batter(self, mlb_id):
+    def get_valid_at_bats_for_batter(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
             return result
         mlb_id = result.value
-        at_bats = [ab for ab in self.get_all_valid_at_bats() if ab["batter_id_mlb"] == mlb_id]
+        at_bats = [ab for ab in self.get_valid_at_bats() if ab["batter_id_mlb"] == mlb_id]
         return Result.Ok(at_bats)
 
     @lru_cache(maxsize=None)
@@ -266,7 +280,7 @@ class AllGameData:
         at_bat = self.get_at_bat_map().get(at_bat_id)
         message = self.get_at_bat_details(at_bat)
         pitch_seq_desc = format_pitch_sequence_description(at_bat["pitch_sequence_description"])
-        chunked_list = make_chunked_list(pitch_seq_desc, chunk_size=8)
+        chunked_list = make_chunked_list(pitch_seq_desc, chunk_size=AT_BAT_TABLE_MAX_ROWS)
         return [
             DisplayTable(tabulate(chunk, tablefmt="fancy_grid"), heading, message)
             for chunk in chunked_list
@@ -283,7 +297,7 @@ class AllGameData:
             return result
         mlb_id = result.value
         pitch_stats = self.get_pitch_stat_map().get(mlb_id)
-        return Result.Ok(pitch_stats["bbref_data"])
+        return Result.Ok(pitch_stats)
 
     def get_bat_stats(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
@@ -303,12 +317,12 @@ class AllGameData:
             message_color=None,
         )
 
-    def view_at_bats_for_pitcher(self, mlb_id):
+    def view_valid_at_bats_for_pitcher(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
             return result
         mlb_id = result.value
-        at_bats = self.get_all_at_bats_involving_pitcher(mlb_id).value
+        at_bats = self.get_valid_at_bats_for_pitcher(mlb_id).value
         at_bats_by_inning = group_and_sort_dict_list(at_bats, "inning_id", "pbp_table_row_number")
         at_bat_tables_by_inning = {}
         all_at_bat_tables = []
@@ -328,13 +342,13 @@ class AllGameData:
             innings_viewer[inning] = self.create_table_viewer(at_bat_tables)
         return Result.Ok(innings_viewer)
 
-    def get_all_at_bats_involving_pitcher(self, mlb_id):
+    def get_valid_at_bats_for_pitcher(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
             return result
         mlb_id = result.value
         at_bats = [
-            at_bat for at_bat in self.get_all_at_bats() if at_bat["pitcher_id_mlb"] == mlb_id
+            at_bat for at_bat in self.get_valid_at_bats() if at_bat["pitcher_id_mlb"] == mlb_id
         ]
         return Result.Ok(at_bats)
 
@@ -358,7 +372,7 @@ class AllGameData:
 
     def get_innings_sorted(self):
         at_bats_by_inning = group_and_sort_dict_list(
-            self.get_all_at_bats(), "inning_id", "pbp_table_row_number"
+            self.get_valid_at_bats(), "inning_id", "pbp_table_row_number"
         )
         innings_unsorted = [
             {"inning_id": inning_id, "at_bats": at_bats}
@@ -377,6 +391,12 @@ class AllGameData:
         table = tabulate(table_rows)
         heading = f"Meta Information for game {self.bbref_game_id}"
         return self.create_table_viewer([DisplayTable(table, heading)])
+
+    def view_invalid_at_bats(self):
+        pass
+
+    def compare_removed_pitchfx(self):
+        pass
 
     @lru_cache(maxsize=None)
     def get_all_pitchfx(self):
@@ -401,6 +421,128 @@ class AllGameData:
             for inning_dict in self.removed_pitchfx.values()
             for at_bat in inning_dict.values()
         ]
+
+    def get_pitch_mix(self, mlb_id):
+        result = self.validate_mlb_id(mlb_id)
+        if result.failure:
+            return result
+        mlb_id = result.value
+        pitch_stats = self.get_pitch_app_stats(mlb_id).value
+        return {
+            PITCH_TYPE_DICT.get(abbrev, abbrev): count
+            for abbrev, count in pitch_stats["pitch_count_by_pitch_type"].items()
+        }
+
+    def get_matchup_details(self):
+        away_record = get_team_record_for_linescore(self.away_team_data)
+        home_record = get_team_record_for_linescore(self.home_team_data)
+        matchup = f"{self.away_team.name} ({away_record}) vs {self.home_team.name} ({home_record})"
+        game_time = self.game_datetime.strftime(DT_AWARE_VERBOSE)
+        return f"{game_time}\n{matchup}\n"
+
+    def get_linescore(self):
+        return get_linescore_tables(self.away_team_data, self.home_team_data, self.innings_list)
+
+
+def get_linescore_tables(away_team_data, home_team_data, innings_list):
+    table_list = []
+    (away_team_runs_chunked, home_team_runs_chunked) = get_runs_by_inning(innings_list)
+    for i in range(len(away_team_runs_chunked)):
+        start_inning = i * 9 + 1
+        last_chunk = 1 == len(away_team_runs_chunked) - 1
+        table = create_linescore_table(
+            away_team_data["team_id_br"],
+            away_team_runs_chunked[i],
+            get_team_totals_for_linescore(away_team_data),
+            home_team_data["team_id_br"],
+            home_team_runs_chunked[i],
+            get_team_totals_for_linescore(home_team_data),
+            start_inning,
+            last_chunk,
+        )
+        table_list.append(table)
+    return "\n\n".join(table_list)
+
+
+def get_team_record_for_linescore(team_data):
+    team_wins = team_data["total_wins_before_game"]
+    team_losses = team_data["total_losses_before_game"]
+    return f"{team_wins}-{team_losses}"
+
+
+def get_team_totals_for_linescore(team_data):
+    team_total_runs = team_data["total_runs_scored_by_team"]
+    team_hits = team_data["total_hits_by_team"]
+    team_errors = team_data["total_errors_by_team"]
+    team_totals = [team_total_runs, team_hits, team_errors]
+    return team_totals
+
+
+def get_runs_by_inning(innings_list):
+    is_top_half = True
+    away_team_runs = []
+    home_team_runs = []
+    for inning in innings_list:
+        total_runs_this_inning = get_total_runs_in_inning(inning["inning_events"])
+        if is_top_half:
+            away_team_runs.append(total_runs_this_inning)
+        else:
+            home_team_runs.append(total_runs_this_inning)
+        is_top_half = not is_top_half
+    if len(away_team_runs) > len(home_team_runs):
+        home_team_runs.append("X")
+    away_team_runs_chunked = make_chunked_list(away_team_runs, chunk_size=9)
+    home_team_runs_chunked = make_chunked_list(home_team_runs, chunk_size=9)
+    return (away_team_runs_chunked, home_team_runs_chunked)
+
+
+def get_total_runs_in_inning(inning_at_bats):
+    return sum(ab["runs_outs_result"].count("R") for ab in inning_at_bats)
+
+
+def create_linescore_table(
+    away_team_id,
+    away_team_runs_by_inning,
+    away_team_totals,
+    home_team_id,
+    home_team_runs_by_inning,
+    home_team_totals,
+    start_inning,
+    last_chunk,
+):
+    end_inning = start_inning + len(away_team_runs_by_inning)
+    inning_numbers = get_linescore_inning_numbers(start_inning, end_inning)
+    if start_inning != 1 and last_chunk:
+        away_team_runs_by_inning = add_filler_columns(away_team_runs_by_inning)
+        home_team_runs_by_inning = add_filler_columns(home_team_runs_by_inning)
+        inning_numbers = add_filler_columns(inning_numbers)
+    total_headers = [f"{' '*(4-len(letter))}{letter}" for letter in ["R", "H", "E"]]
+    column_headers = [f"{' '*(4-len(str(num)))}{num}" for num in inning_numbers]
+    away_numbers = [f"{' '*(4-len(str(num)))}{num}" for num in away_team_runs_by_inning]
+    away_totals = [f"{' '*(4-len(str(num)))}{num}" for num in away_team_totals]
+    home_numbers = [f"{' '*(4-len(str(num)))}{num}" for num in home_team_runs_by_inning]
+    home_totals = [f"{' '*(4-len(str(num)))}{num}" for num in home_team_totals]
+    return (
+        f"   {''.join(column_headers)}{''.join(total_headers)}\n"
+        f"----{'----'*9}{'----'*3}\n"
+        f"{away_team_id}{''.join(away_numbers)}{''.join(away_totals)}\n"
+        f"{home_team_id}{''.join(home_numbers)}{''.join(home_totals)}"
+    )
+
+
+def add_filler_columns(list_to_pad):
+    pad_length = 9 - len(list_to_pad)
+    for i in range(pad_length):
+        list_to_pad.append("  ")
+    return list_to_pad
+
+
+def get_linescore_inning_numbers(start, end):
+    inning_numbers = []
+    for i in range(start, end):
+        pad_len = 1 if i < 10 else 0
+        inning_numbers.append(f"{' '*pad_len}{i}")
+    return inning_numbers
 
 
 def get_innings_sorted(innings_unsorted):
@@ -540,24 +682,25 @@ def format_stat_decimal(stat_value):
 
 
 def parse_pitch_app_stats(pitch_stats):
-    if not pitch_stats:
+    if not pitch_stats or not pitch_stats["bbref_data"]:
         return ""
-    ip = pitch_stats["innings_pitched"]
-    r = pitch_stats["runs"]
-    er = pitch_stats["earned_runs"]
+    bbref_stats = pitch_stats["bbref_data"]
+    ip = bbref_stats["innings_pitched"]
+    r = bbref_stats["runs"]
+    er = bbref_stats["earned_runs"]
     runs = f"{er}ER" if er == r else f"{r}R, {er}ER"
     stat_list = []
-    if pitch_stats["hits"]:
-        h = pitch_stats["hits"] if pitch_stats["hits"] > 1 else ""
+    if bbref_stats["hits"]:
+        h = bbref_stats["hits"] if bbref_stats["hits"] > 1 else ""
         stat_list.append(f"{h}H")
-    if pitch_stats["strikeouts"]:
-        k = pitch_stats["strikeouts"] if pitch_stats["strikeouts"] > 1 else ""
+    if bbref_stats["strikeouts"]:
+        k = bbref_stats["strikeouts"] if bbref_stats["strikeouts"] > 1 else ""
         stat_list.append(f"{k}K")
-    if pitch_stats["bases_on_balls"]:
-        bb = pitch_stats["bases_on_balls"] if pitch_stats["bases_on_balls"] > 1 else ""
+    if bbref_stats["bases_on_balls"]:
+        bb = bbref_stats["bases_on_balls"] if bbref_stats["bases_on_balls"] > 1 else ""
         stat_list.append(f"{bb}BB")
     details = f", {', '.join(stat_list)}" if stat_list else ""
-    game_score = f" (GS: {pitch_stats['game_score']})" if pitch_stats["game_score"] > 0 else ""
+    game_score = f" (GS: {bbref_stats['game_score']})" if bbref_stats["game_score"] > 0 else ""
     return f"{ip} IP, {runs}{details}{game_score}"
 
 
@@ -574,7 +717,7 @@ def format_event_description(event_desc):
     ):
         event_desc[1] = event_desc[1][1:]
         event_desc[1] = event_desc[1][:-1]
-    desc_lines = [wrap_text(s, max_len=35) for s in event_desc[1].split("\n")]
+    desc_lines = [wrap_text(s, max_len=AT_BAT_DESC_MAX_WIDTH) for s in event_desc[1].split("\n")]
     event_desc[1] = "\n".join(desc_lines)
     event_desc[1] = event_desc[1].replace("\n\n", "\n")
     return event_desc

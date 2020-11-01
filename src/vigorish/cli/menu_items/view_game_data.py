@@ -4,7 +4,12 @@ import subprocess
 from halo import Halo
 
 from vigorish.cli.components.prompts import user_options_prompt
-from vigorish.cli.components.util import get_random_cli_color, get_random_dots_spinner
+from vigorish.cli.components.util import (
+    get_random_cli_color,
+    get_random_dots_spinner,
+    print_heading,
+    print_message,
+)
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.data.all_game_data import AllGameData
@@ -22,6 +27,7 @@ class ViewGameData(MenuItem):
         subprocess.run(["clear"])
         self.load_boxscore_data()
         while True:
+            self.print_matchup_and_linescore()
             result = self.select_data_prompt()
             if result.failure:
                 break
@@ -49,9 +55,17 @@ class ViewGameData(MenuItem):
         self.game_data.pitch_boxscore[self.game_data.home_team_id]
         spinner.stop()
 
+    def print_matchup_and_linescore(self):
+        subprocess.run(["clear"])
+        matchup = self.game_data.get_matchup_details()
+        linescore = self.game_data.get_linescore()
+        print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
+        print_message(matchup, fg="bright_cyan", bold=True, wrap=False)
+        print_message(linescore, fg="bright_cyan", wrap=False)
+
     def select_data_prompt(self):
         prompt = (
-            f"Data for {self.bbref_game_id} can be viewed in several different ways, please choose an "
+            f"\nData for {self.bbref_game_id} can be viewed in several different ways, please choose an "
             "option from the list below:"
         )
         choices = {
@@ -61,7 +75,7 @@ class ViewGameData(MenuItem):
             f"{MENU_NUMBERS.get(4)}  Game Meta Information": "META_INFO",
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
-        return user_options_prompt(choices, prompt)
+        return user_options_prompt(choices, prompt, clear_screen=False)
 
     def select_team_text(self, is_home_team):
         team_id = self.game_data.home_team_id if is_home_team else self.game_data.away_team_id
@@ -150,7 +164,7 @@ class ViewGameData(MenuItem):
 
     def view_at_bats_for_pitcher(self, mlb_id):
         subprocess.run(["clear"])
-        innings_viewer = self.game_data.view_at_bats_for_pitcher(mlb_id).value
+        innings_viewer = self.game_data.view_valid_at_bats_for_pitcher(mlb_id).value
         return self.view_at_bats_by_inning(innings_viewer)
 
     def innings_viewer_prompt(self, innings_viewer):
@@ -191,6 +205,6 @@ class ViewGameData(MenuItem):
 
     def view_at_bats_for_batter(self, mlb_id):
         subprocess.run(["clear"])
-        table_viewer = self.game_data.view_at_bats_for_batter(mlb_id).value
+        table_viewer = self.game_data.view_valid_at_bats_for_batter(mlb_id).value
         table_viewer.launch()
         return Result.Ok()

@@ -40,10 +40,10 @@ def test_all_game_data(db_session, scraped_data):
     pitch_app_player_ids = all_game_data.pitch_stats_player_ids
     bat_stats_player_ids = all_game_data.bat_stats_player_ids
     pitch_app_player_id = pitch_app_player_ids[0]
-    result = all_game_data.view_at_bats_for_pitcher(pitch_app_player_id)
+    result = all_game_data.view_valid_at_bats_for_pitcher(pitch_app_player_id)
     assert result.success
     bat_stats_player_id = bat_stats_player_ids[0]
-    result = all_game_data.view_at_bats_for_batter(bat_stats_player_id)
+    result = all_game_data.view_valid_at_bats_for_batter(bat_stats_player_id)
     assert result.success
 
     away_team_bat_boxscore = all_game_data.bat_boxscore[away_team_id]
