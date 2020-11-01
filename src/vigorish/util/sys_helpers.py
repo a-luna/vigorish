@@ -1,15 +1,22 @@
 """Utility functions that interact with the terminal."""
+from datetime import datetime
 import os
 import platform
 import re
 import subprocess
 from pathlib import Path
 from typing import Tuple, Union
+from zipfile import ZipFile
 
 from Naked.toolshed.shell import execute as execute_shell_command
 from Naked.toolshed.shell import execute_js
 
+from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.result import Result
+
+ONE_KB = 1000
+ONE_MB = ONE_KB * 1000
+ONE_GB = ONE_MB * 1000
 
 
 def run_command(command, cwd=None, shell=True, text=True):  # pragma: no cover
@@ -129,3 +136,45 @@ def get_terminal_size(fallback: Tuple[int, int] = (80, 24)):  # pragma: no cover
 def get_terminal_width():  # pragma: no cover
     columns, _ = get_terminal_size()
     return columns
+
+
+def zip_file_report(zip_file_path):
+    report = []
+    with ZipFile(zip_file_path, "r") as zip:
+        for info in zip.infolist():
+            compression_ratio = 1 - info.compress_size / float(info.file_size)
+            (compressed_str, original_str) = align_file_sizes(info.compress_size, info.file_size)
+            file_info = (
+                f"Filename.......: {Path(info.filename).name}\n"
+                f"Modified.......: {datetime(*info.date_time).strftime(DT_AWARE)}\n"
+                f"Zipped Size....: {compressed_str} ({compression_ratio:.0%} Reduction)\n"
+                f"Original Size..: {original_str}\n"
+            )
+            report.append(file_info)
+    return "\n".join(report)
+
+
+def align_file_sizes(compressed_size, original_size):
+    compressed_str = file_size_str(compressed_size)
+    original_str = file_size_str(original_size)
+    if len(original_str) == len(compressed_str):
+        return (compressed_str, original_str)
+    if len(original_str) > len(compressed_str):
+        pad_length = len(original_str) - len(compressed_str)
+        compressed_str = f"{' '*pad_length}{compressed_str}"
+    else:
+        pad_length = len(compressed_str) - len(original_str)
+        original_str = f"{' '*pad_length}{original_str}"
+    return (compressed_str, original_str)
+
+
+def file_size_str(size_bytes):
+    return (
+        f"{size_bytes/float(ONE_GB):.1f} GB"
+        if size_bytes > ONE_GB
+        else f"{size_bytes/float(ONE_MB):.1f} MB"
+        if size_bytes > ONE_MB
+        else f"{size_bytes/float(ONE_KB):.1f} KB"
+        if size_bytes > ONE_KB
+        else f"{size_bytes} bytes"
+    )

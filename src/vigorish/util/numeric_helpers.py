@@ -7,6 +7,7 @@ from vigorish.util.string_helpers import try_parse_int
 ONE_KB = 1024
 ONE_MB = ONE_KB * 1024
 ONE_GB = ONE_MB * 1024
+ONE_PERCENT = 0.01
 
 
 def is_even(x):

@@ -9,12 +9,6 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-from vigorish.config.database import (
-    DateScrapeStatus,
-    GameScrapeStatus,
-    PitchAppScrapeStatus,
-    PitchFx,
-)
 from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 from vigorish.tasks.backup_database import BackupDatabaseTask
 
@@ -42,39 +36,16 @@ def create_test_data(vig_app):
 
 
 def test_backup_database_to_csv(vig_app):
-    remove_existing_csv_files()
+    remove_existing_zip_file()
     backup_db = BackupDatabaseTask(vig_app)
     result = backup_db.execute()
     assert result.success
-    csv_map = result.value
-
-    date_csv = csv_map[DateScrapeStatus]
-    assert "scrape_status_date.csv" in str(date_csv)
-    assert date_csv.exists()
-
-    game_csv = csv_map[GameScrapeStatus]
-    assert "scrape_status_game.csv" in str(game_csv)
-    assert game_csv.exists()
-
-    pitch_app_csv = csv_map[PitchAppScrapeStatus]
-    assert "scrape_status_pitch_app.csv" in str(pitch_app_csv)
-    assert pitch_app_csv.exists()
-
-    pitchfx_csv = csv_map[PitchFx]
-    assert "pitchfx.csv" in str(pitchfx_csv)
-    assert pitchfx_csv.exists()
+    zip_file = result.value
+    assert zip_file.exists()
 
 
-def remove_existing_csv_files():
-    date_csv = BACKUP_FOLDER.joinpath("scrape_status_date.csv")
-    if date_csv.exists():
-        date_csv.unlink()
-    game_csv = BACKUP_FOLDER.joinpath("scrape_status_game.csv")
-    if game_csv.exists():
-        game_csv.unlink()
-    pitch_app_csv = BACKUP_FOLDER.joinpath("scrape_status_pitch_app.csv")
-    if pitch_app_csv.exists():
-        pitch_app_csv.unlink()
-    pitchfx_csv = BACKUP_FOLDER.joinpath("pitchfx.csv")
-    if pitchfx_csv.exists():
-        pitchfx_csv.unlink()
+def remove_existing_zip_file():
+    search_results = [f for f in BACKUP_FOLDER.glob("*.zip")]
+    if search_results:
+        zip_file = search_results[0]
+        zip_file.unlink()
