@@ -10,7 +10,6 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.view_game_data import ViewGameData
 from vigorish.config.database import Team, GameScrapeStatus
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.util import regex
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id
 
@@ -40,7 +39,7 @@ class ScrapedGameDataMenu(MenuItem):
 
     def prompt_user_choose_method_to_select_game(self):
         subprocess.run(["clear"])
-        print_heading(f"Scraped Data Viewer - Please choose an option below", fg="bright_yellow")
+        print_heading("Scraped Data Viewer - Please choose an option below", fg="bright_yellow")
         prompt = "How would you like to locate the game you wish to view?"
         choices = {
             f"{MENU_NUMBERS.get(1)}  Enter Game ID Manually": "MANUAL",
