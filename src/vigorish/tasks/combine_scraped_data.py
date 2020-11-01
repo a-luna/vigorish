@@ -431,6 +431,10 @@ class CombineScrapedData:
             pbp_events_for_at_bat = self.get_all_pbp_events_for_at_bat(ab_id)
             first_event_this_at_bat = pbp_events_for_at_bat[0]
             final_event_this_at_bat = pbp_events_for_at_bat[-1]
+            runs_outs_result = final_event_this_at_bat["runs_outs_result"]
+            if len(pbp_events_for_at_bat) > 1:
+                all_results = [event["runs_outs_result"] for event in pbp_events_for_at_bat]
+                runs_outs_result = "".join(all_results)
             pitch_seq = final_event_this_at_bat["pitch_sequence"]
             result = self.get_total_pitches_in_sequence(pitch_seq)
             if result.failure:
@@ -529,7 +533,7 @@ class CombineScrapedData:
                 "score": final_event_this_at_bat["score"],
                 "outs_before_play": final_event_this_at_bat["outs_before_play"],
                 "runners_on_base": final_event_this_at_bat["runners_on_base"],
-                "runs_outs_result": final_event_this_at_bat["runs_outs_result"],
+                "runs_outs_result": runs_outs_result,
                 "play_description": final_event_this_at_bat["play_description"],
                 "pitch_sequence_description": pitch_sequence_description,
                 "pbp_events": self.at_bat_event_groups[ab_id],
