@@ -45,17 +45,9 @@ def test_backup_database_to_csv(vig_app):
     assert zip_file.exists()
     report = zip_file_report(zip_file)
     assert "Filename.......: scrape_status_date.csv" in report
-    assert "Zipped Size....:  3.8 KB (80% Reduction)" in report
-    assert "Original Size..: 19.4 KB" in report
     assert "Filename.......: scrape_status_game.csv" in report
-    assert "Zipped Size....: 389 bytes (68% Reduction)" in report
-    assert "Original Size..:    1.2 KB" in report
     assert "Filename.......: scrape_status_pitch_app.csv" in report
-    assert "Zipped Size....: 473 bytes (76% Reduction)" in report
-    assert "Original Size..:    2.0 KB" in report
     assert "Filename.......: pitchfx.csv" in report
-    assert "Zipped Size....:  19.2 KB (82% Reduction)" in report
-    assert "Original Size..: 109.3 KB" in report
 
 
 def remove_existing_zip_file():
