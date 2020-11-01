@@ -61,7 +61,7 @@ def ui(app):
         result = MainMenu(app).launch()
         return exit_app(app, result)
     except Exception as e:
-        return exit_app_error(app, f"Error: {repr(e)}")
+        return exit_app(app, Result.Fail(f"Error: {repr(e)}"))
 
 
 @cli.command()
@@ -122,7 +122,7 @@ def scrape(app, data_set, start, end, name):
     data_sets_int = sum(int(DATA_SET_NAME_MAP[ds]) for ds in data_set)
     result = validate_scrape_dates(app["db_session"], start, end)
     if result.failure:
-        return exit_app_error(app, result.error)
+        return exit_app(app, result)
     season = result.value
     scrape_job_dict = {
         "data_sets_int": data_sets_int,
@@ -206,7 +206,7 @@ def status_date_range(app, start, end, verbosity):
     report_type = StatusReport.NONE
     if verbosity <= 0:
         error = f"Invalid value for verbosity: {verbosity}. Value must be greater than zero."
-        return exit_app_error(app, error)
+        return exit_app(app, Result.Fail(error))
     elif verbosity == 1:
         report_type = StatusReport.DATE_SUMMARY_MISSING_DATA
     elif verbosity == 2:
@@ -219,7 +219,7 @@ def status_date_range(app, start, end, verbosity):
         report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
         error = "Unknown error occurred, unable to display status report."
-        return exit_app_error(app, error)
+        return exit_app(app, Result.Fail(error))
     result = report_date_range_status(app["db_session"], start, end, report_type)
     return exit_app(app, result)
 
@@ -247,7 +247,7 @@ def status_season(app, year, verbosity):
     report_type = StatusReport.NONE
     if verbosity <= 0:
         error = f"Invalid value for verbosity: {verbosity}. Value must be greater than zero."
-        return exit_app_error(app, error)
+        return exit_app(app, Result.Fail(error))
     elif verbosity == 1:
         report_type = StatusReport.SEASON_SUMMARY
     elif verbosity == 2:
@@ -262,7 +262,7 @@ def status_season(app, year, verbosity):
         report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
         error = "Unknown error occurred, unable to display status report."
-        return exit_app_error(app, error)
+        return exit_app(app, Result.Fail(error))
     result = report_season_status(app["db_session"], year, report_type)
     return exit_app(app, result)
 
