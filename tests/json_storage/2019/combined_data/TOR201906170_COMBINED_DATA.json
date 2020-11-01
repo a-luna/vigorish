@@ -14891,7 +14891,7 @@
           "is_complete_at_bat": true,
           "score": "1-8",
           "outs_before_play": 0,
-          "runners_on_base": "-2-",
+          "runners_on_base": "1--",
           "runs_outs_result": "O",
           "play_description": "Foul Popfly: 1B (1B into Foul Terr.)",
           "pitch_sequence_description": [

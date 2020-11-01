@@ -4090,8 +4090,8 @@
           "at_bat_duration": 137,
           "is_complete_at_bat": true,
           "score": "0-0",
-          "outs_before_play": 2,
-          "runners_on_base": "---",
+          "outs_before_play": 1,
+          "runners_on_base": "1--",
           "runs_outs_result": "OO",
           "play_description": "Groundout: SS-1B",
           "pitch_sequence_description": [
@@ -4995,7 +4995,7 @@
           "is_complete_at_bat": true,
           "score": "0-0",
           "outs_before_play": 1,
-          "runners_on_base": "-2-",
+          "runners_on_base": "1--",
           "runs_outs_result": "",
           "play_description": "Walk",
           "pitch_sequence_description": [
