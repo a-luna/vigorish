@@ -36,6 +36,8 @@ def test_all_game_data(db_session, scraped_data):
     home_team_id = all_game_data.home_team_id
     assert away_team_id == "LAA"
     assert home_team_id == "TOR"
+    assert all_game_data.away_team.team_id_br == away_team_id
+    assert all_game_data.home_team.team_id_br == home_team_id
 
     pitch_app_player_ids = all_game_data.pitch_stats_player_ids
     bat_stats_player_ids = all_game_data.bat_stats_player_ids
@@ -109,3 +111,16 @@ def test_all_game_data(db_session, scraped_data):
     assert result.success
     mlb_id = result.value
     assert mlb_id == bat_stats_player_id
+
+    pitch_mix = all_game_data.get_pitch_mix(571882)
+    assert pitch_mix == {"Four-seam Fastball": 6, "Curveball": 6, "Changeup": 3, "Slider": 2}
+
+    matchup = all_game_data.get_matchup_details()
+    assert matchup == (
+        "Monday, June 17 2019 07:07 PM (UTC-04:00)\n"
+        "Los Angeles Angels of Anaheim (36-37) vs Toronto Blue Jays (26-46)\n"
+    )
+
+    linescore = all_game_data.get_linescore()
+    assert "TOR   1   0   0   0   0   0   2   2   0   5   8   0" in linescore
+    assert "TOR   1   0   0   0   0   0   2   2   0   5   8   0" in linescore
