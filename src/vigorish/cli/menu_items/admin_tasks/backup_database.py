@@ -79,7 +79,7 @@ class BackupDatabase(MenuItem):
 
     def display_zip_file_details(self, zip_file):
         print_heading("Backup Database to CSV", fg="bright_yellow", bg=None)
-        print_message(f"Successfully backed up database to .zip file:", bg=None)
+        print_message("Successfully backed up database to .zip file:", bg=None)
         print_message(f"{zip_file}\n", wrap=False)
         print_message("Zipped File Info:\n", fg="bright_cyan", bold=True)
         print_message(zip_file_report(zip_file), fg="bright_cyan", wrap=False)
