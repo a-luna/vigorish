@@ -3353,7 +3353,7 @@
           "is_complete_at_bat": true,
           "score": "0-0",
           "outs_before_play": 2,
-          "runners_on_base": "-2-",
+          "runners_on_base": "1--",
           "runs_outs_result": "O",
           "play_description": "Lineout: LF (Deep LF)",
           "pitch_sequence_description": [
@@ -6785,7 +6785,7 @@
           "is_complete_at_bat": true,
           "score": "0-0",
           "outs_before_play": 2,
-          "runners_on_base": "-2-",
+          "runners_on_base": "1--",
           "runs_outs_result": "O",
           "play_description": "Strikeout Looking",
           "pitch_sequence_description": [
@@ -9843,7 +9843,7 @@
           "is_complete_at_bat": true,
           "score": "1-0",
           "outs_before_play": 1,
-          "runners_on_base": "-23",
+          "runners_on_base": "12-",
           "runs_outs_result": "RRR",
           "play_description": "Home Run (Fly Ball to Deep CF-RF); Fowler Scores; Wong Scores",
           "pitch_sequence_description": [
@@ -17258,7 +17258,7 @@
           "is_complete_at_bat": true,
           "score": "4-1",
           "outs_before_play": 0,
-          "runners_on_base": "-2-",
+          "runners_on_base": "1--",
           "runs_outs_result": "",
           "play_description": "Reached on E9 (Fly Ball to Deep RF Line); Ozuna to 3B",
           "pitch_sequence_description": [
@@ -17575,7 +17575,7 @@
           "is_complete_at_bat": true,
           "score": "4-1",
           "outs_before_play": 0,
-          "runners_on_base": "-23",
+          "runners_on_base": "1-3",
           "runs_outs_result": "O",
           "play_description": "Groundout: 3B-1B (Weak 3B)",
           "pitch_sequence_description": [
@@ -18631,7 +18631,7 @@
           "is_complete_at_bat": true,
           "score": "6-1",
           "outs_before_play": 1,
-          "runners_on_base": "-23",
+          "runners_on_base": "1-3",
           "runs_outs_result": "O",
           "play_description": "Strikeout Looking",
           "pitch_sequence_description": [
@@ -25640,7 +25640,7 @@
           "is_complete_at_bat": true,
           "score": "8-1",
           "outs_before_play": 2,
-          "runners_on_base": "-23",
+          "runners_on_base": "1-3",
           "runs_outs_result": "",
           "play_description": "Walk",
           "pitch_sequence_description": [

@@ -29246,7 +29246,7 @@
           "is_complete_at_bat": true,
           "score": "3-3",
           "outs_before_play": 2,
-          "runners_on_base": "--3",
+          "runners_on_base": "1--",
           "runs_outs_result": "O",
           "play_description": "Groundout: SS-1B",
           "pitch_sequence_description": [
@@ -30250,8 +30250,8 @@
           "at_bat_duration": 245,
           "is_complete_at_bat": true,
           "score": "3-3",
-          "outs_before_play": 1,
-          "runners_on_base": "---",
+          "outs_before_play": 0,
+          "runners_on_base": "1--",
           "runs_outs_result": "OO",
           "play_description": "Strikeout Swinging",
           "pitch_sequence_description": [
@@ -31777,7 +31777,7 @@
           "is_complete_at_bat": true,
           "score": "3-3",
           "outs_before_play": 2,
-          "runners_on_base": "-23",
+          "runners_on_base": "12-",
           "runs_outs_result": "RR",
           "play_description": "Double to LF (Ground Ball); Swihart Scores; Bradley Scores",
           "pitch_sequence_description": [
