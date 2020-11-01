@@ -51,10 +51,11 @@ class AddPitchFxToDatabase(MenuItem):
 
     def prompt_user_run_task(self):
         task_description = [
-            "This task identifies all games in a season that fulfill the two requirements below:\n",
-            "1. All data has been scrape",
+            "This task identifies all games that fulfill the two requirements below:\n",
+            "1. All data sets have been scraped",
             "2. Data was successfully combined (does not need to be error free)\n",
-            "Then, all PitchFX data for the games identified is added to the database.",
+            "PitchFX data for all games that meet these requirements will be added to the "
+            "database.",
         ]
         subprocess.run(["clear"])
         for line in task_description:

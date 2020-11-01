@@ -18,3 +18,20 @@ My goal is to capture as much data as possible &mdash; ranging from PitchFX meas
 For a step-by-step install guide and instructions for configuring/using `vigorish`, please visit the link below:
 
 [Vigorish: Hybrid Python/Node.Js Web Scraper](https://aaronluna.dev/projects/vigorish/)
+
+### Credits
+
+`vigorish` either relies on the following projects listed below directly or as a dev dependency. It would not have been possible for me to create `vigorish` without these projects, thanks to all of the creators/maintainers for making these available (projects are listed alphabetically):
+
+-   [aenum](https://github.com/ethanfurman/aenum)
+-   [bullet](https://github.com/bchao1/bullet)
+-   [click](https://github.com/pallets/click)
+-   [dacite](https://github.com/konradhalas/dacite)
+-   [dataclass-csv](https://github.com/dfurtado/dataclass-csv)
+-   [enlighten](https://github.com/Rockhopper-Technologies/enlighten)
+-   [events](https://github.com/pyeve/events)
+-   [halo](https://github.com/manrajgrover/halo)
+-   [lxml](https://github.com/lxml/lxml)
+-   [naked](https://github.com/chrissimpkins/naked)
+-   [rapidfuzz](https://github.com/maxbachmann/rapidfuzz)
+-   [tabulate](https://github.com/astanin/python-tabulate)

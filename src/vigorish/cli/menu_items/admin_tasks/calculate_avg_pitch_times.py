@@ -55,13 +55,10 @@ class CalculateAverageTimeBetweenPitches(MenuItem):
 
     def prompt_user_run_task(self):
         subprocess.run(["clear"])
-        page_viewer = self.get_page_viewer_for_task_description()
-        return page_viewer.launch()
-
-    def get_page_viewer_for_task_description(self):
         prompt = "Would you like to run this task and calculate these metrics?"
         pages = [DisplayPage(page, None) for page in self.get_task_description_pages()]
-        return PageViewer(pages, prompt=prompt, text_color="bright_yellow")
+        page_viewer = PageViewer(pages, prompt=prompt, text_color="bright_yellow")
+        return page_viewer.launch()
 
     def find_eligible_games_start(self):
         subprocess.run(["clear"])
