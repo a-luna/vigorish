@@ -1,4 +1,3 @@
-import re
 from collections import OrderedDict, defaultdict
 from copy import deepcopy
 from datetime import datetime
