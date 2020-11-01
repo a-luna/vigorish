@@ -8,6 +8,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
+from vigorish.models.season import Season
 from vigorish.models.status_date import DateScrapeStatus
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import (
@@ -17,7 +18,7 @@ from vigorish.util.dt_format_strings import (
     DT_STR_FORMAT,
 )
 from vigorish.util.list_helpers import display_dict
-from vigorish.util.string_helpers import validate_brooks_game_id
+from vigorish.util.string_helpers import validate_brooks_game_id, get_brooks_team_id
 
 
 class GameScrapeStatus(Base):
@@ -519,7 +520,26 @@ class GameScrapeStatus(Base):
         date_id = date.strftime(DATE_ONLY_TABLE_ID)
         return [
             game.bb_game_id
-            for game in db_session.query(cls).filter_by(scrape_status_date_id=int(date_id)).all()
+            for game in db_session.query(cls)
+            .filter_by(scrape_status_date_id=int(date_id))
+            .order_by(GameScrapeStatus.scrape_status_date_id)
+            .all()
+        ]
+
+    @classmethod
+    def get_all_bbref_game_ids_for_team(cls, db_session, team_id_br, year):
+        season = Season.find_by_year(db_session, year)
+        if not season:
+            return None
+        games_for_season = [
+            game for game in db_session.query(cls).filter_by(season_id=season.id).all()
+        ]
+        games_for_season.sort(key=lambda x: x.scrape_status_date_id)
+        bb_team_id = get_brooks_team_id(team_id_br)
+        return [
+            game.bbref_game_id
+            for game in games_for_season
+            if game.away_team_id_bb == bb_team_id or game.home_team_id_bb == bb_team_id
         ]
 
 
