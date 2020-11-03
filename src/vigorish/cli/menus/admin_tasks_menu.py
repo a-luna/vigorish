@@ -7,6 +7,7 @@ from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import (
 )
 from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
+from vigorish.cli.menu_items.admin_tasks.restore_database import RestoreDatabase
 from vigorish.cli.menu_items.admin_tasks.sync_scraped_data import SyncScrapedData
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
@@ -37,6 +38,7 @@ class AdminTasksMenu(Menu):
             self.menu_items.append(ImportScrapedDataTask(self.app))
             self.menu_items.append(AddPitchFxToDatabase(self.app, self.audit_report))
             self.menu_items.append(BackupDatabase(self.app))
+            self.menu_items.append(RestoreDatabase(self.app))
             self.menu_items.append(CalculateAverageTimeBetweenPitches(self.app))
             self.menu_items.append(SetupDBMenuItem(self.app))
         self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to Main Menu"))

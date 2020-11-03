@@ -426,11 +426,9 @@ class DateScrapeStatus(Base):
         else:
             return "N/A"
 
-    def __init__(self, game_date, season_id):
-        date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
-        self.id = int(date_str)
-        self.game_date = game_date
-        self.season_id = season_id
+    def __init__(self, **kwargs):
+        super(DateScrapeStatus, self).__init__(**kwargs)
+        self.id = self.game_date.strftime(DATE_ONLY_TABLE_ID)
 
     def __repr__(self):
         return f"<DateScrapeStatus date={self.game_date_str}, season_id={self.season_id}>"
@@ -548,6 +546,11 @@ class DateScrapeStatus(Base):
         year = self.game_date.year
         season = Season.find_by_year(db_session, year)
         self.season_id = season.id
+
+    @classmethod
+    def create_new(cls, game_date, season_id):
+        game_date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
+        return cls(id=int(game_date_str), game_date=game_date, season_id=season_id)
 
     @classmethod
     def get_csv_col_names(cls):
