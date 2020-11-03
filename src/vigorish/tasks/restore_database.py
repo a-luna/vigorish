@@ -68,6 +68,7 @@ class RestoreDatabaseTask(Task):
             self.events.restore_table_start(db_table)
             result = self.restore_table_from_csv(csv_file, dataclass, db_table)
             self.events.restore_table_complete(db_table)
+        self.remove_csv_files()
         self.events.restore_database_complete()
         return Result.Ok()
 
