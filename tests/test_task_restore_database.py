@@ -1,5 +1,3 @@
-from tests.test_brooks_pitch_logs import BB_GAME_ID
-
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
