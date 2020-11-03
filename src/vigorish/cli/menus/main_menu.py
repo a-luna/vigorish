@@ -42,7 +42,7 @@ class MainMenu(Menu):
         )
 
     @property
-    def is_refresh_needed(self):
+    def needs_refresh(self):
         check_refresh_dict = {
             SetupDBMenuItem: True,
             CombineGameDataMenuItem: True,
@@ -58,10 +58,10 @@ class MainMenu(Menu):
         self.initialized = True
         while not exit_menu:
             subprocess.run(["clear"])
-            if self.is_refresh_needed:
+            if self.needs_refresh:
                 self.check_app_status()
-            self.display_menu_text()
             self.populate_menu_items()
+            self.display_menu_text()
             result = self.prompt_user_for_menu_selection()
             if result.failure:
                 return result
