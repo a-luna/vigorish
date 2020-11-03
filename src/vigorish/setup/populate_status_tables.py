@@ -19,7 +19,7 @@ def populate_status_tables(db_session):
             for season in mlb_seasons:
                 pbar.set_description("Populating status_date table.")
                 for game_date in season.get_date_range():
-                    scrape_status = DateScrapeStatus(game_date, season.id)
+                    scrape_status = DateScrapeStatus(game_date=game_date, season_id=season.id)
                     db_session.add(scrape_status)
                 pbar.update()
         db_session.commit()

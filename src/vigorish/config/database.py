@@ -1,9 +1,12 @@
 """Database file and connection details."""
 # flake8: noqa
 import os
+from pathlib import Path
 
-from sqlalchemy import func
+from sqlalchemy import func, create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
 
 Base = declarative_base()
 
@@ -25,7 +28,8 @@ from vigorish.models.views.season_date_view import Season_Date_View
 from vigorish.models.views.season_game_pitch_app_view import Season_Game_PitchApp_View
 from vigorish.models.views.season_game_view import Season_Game_View
 from vigorish.models.views.season_pitch_app_view import Season_PitchApp_View
-from vigorish.setup.populate_tables import populate_tables
+from vigorish.setup.populate_tables import populate_tables, populate_tables_for_restore
+from vigorish.util.result import Result
 
 SQLITE_DEV_URL = f"sqlite:///{VIG_FOLDER.joinpath('vig_dev.db')}"
 SQLITE_PROD_URL = f"sqlite:///{VIG_FOLDER.joinpath('vig.db')}"
@@ -47,6 +51,29 @@ def initialize_database(app, csv_folder=None):
     Base.metadata.drop_all(app["db_engine"])
     Base.metadata.create_all(app["db_engine"])
     return populate_tables(app, csv_folder)
+
+
+def prepare_database_for_restore(app, csv_folder=None):
+    dotenv = app["dotenv"]
+    config = app["config"]
+    app["db_session"].close()
+    app["db_session"] = None
+    db_url = get_db_url()
+    db_file = db_url.replace("sqlite:///", "")
+    Path(db_file).unlink()
+    app["db_engine"] = create_engine(db_url)
+    session_maker = sessionmaker(bind=app["db_engine"])
+    app["db_session"] = session_maker()
+    app["dotenv"] = dotenv
+    app["config"] = config
+    app["scraped_data"].db_engine = app["db_engine"]
+    app["scraped_data"].db_session = app["db_session"]
+    Base.metadata.drop_all(app["db_engine"])
+    Base.metadata.create_all(app["db_engine"])
+    result = populate_tables_for_restore(app, csv_folder)
+    if result.failure:
+        return result
+    return Result.Ok(app)
 
 
 def db_setup_complete(db_engine, db_session):

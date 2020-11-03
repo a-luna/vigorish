@@ -37,7 +37,7 @@ def create_test_data(vig_app):
 
 
 def test_backup_database_to_csv(vig_app):
-    remove_existing_zip_file()
+    remove_everything_in_backup_folder()
     backup_db = BackupDatabaseTask(vig_app)
     result = backup_db.execute()
     assert result.success
@@ -50,8 +50,15 @@ def test_backup_database_to_csv(vig_app):
     assert "Filename.......: pitchfx.csv" in report
 
 
-def remove_existing_zip_file():
+def remove_everything_in_backup_folder():
     search_results = [f for f in BACKUP_FOLDER.glob("*.zip")]
     if search_results:
         zip_file = search_results[0]
         zip_file.unlink()
+    csv_folder = BACKUP_FOLDER.joinpath("__timestamp__")
+    if not csv_folder.exists():
+        return
+    search_results = [f for f in csv_folder.glob("*.csv")]
+    for csv_file in search_results:
+        csv_file.unlink()
+    csv_folder.rmdir()

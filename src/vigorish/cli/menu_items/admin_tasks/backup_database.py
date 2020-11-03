@@ -36,8 +36,8 @@ class BackupDatabase(MenuItem):
             return Result.Ok(True)
         self.subscribe_to_events()
         result = self.backup_db.execute()
-        self.spinner.stop()
         self.unsubscribe_from_events()
+        self.spinner.stop()
         if result.failure:
             return result
         zip_file = result.value
@@ -99,23 +99,27 @@ class BackupDatabase(MenuItem):
     def get_task_description_pages(self):
         return [
             [
-                "This task exports each table listed below to a CSV file:\n",
+                "This task creates a backup of the database tables listed below:\n",
                 "* scrape_status_date",
                 "* scrape_status_game",
                 "* scrape_status_pitch_app",
                 "* pitchfx\n",
+                (
+                    "After exporting each table as a CSV file, the files are added to a zip "
+                    "archive. Then, the zip file is compressed and the CSV files are removed."
+                ),
             ],
             [
                 (
-                    "When resetting/setting up the database, you will be prompted to restore these tables "
-                    "if the CSV backup files are located based on the value of the DB_BACKUP_FOLDER_PATH config "
-                    "setting.\n"
+                    "When resetting/setting up the database, you will be prompted to restore "
+                    "these tables if backup files are located based on the value of the "
+                    "DB_BACKUP_FOLDER_PATH config setting.\n"
                 ),
                 (
-                    "PLEASE NOTE: The time needed to backup your database depends on the amount of data that has "
-                    "been scraped, as well as the compute and memory specs of the machine that is running the "
-                    "export. For a large database, the time required to complete the backup process could take "
-                    "anywhere from 2-10 minutes."
+                    "PLEASE NOTE: The time needed to backup your database depends on the amount "
+                    "of data that has been scraped, as well as the compute and memory specs of "
+                    "the machine performing the export. For a large database, the time required "
+                    "to complete the backup process could take anywhere from 2-10 minutes."
                 ),
             ],
         ]
