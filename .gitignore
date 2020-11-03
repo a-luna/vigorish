@@ -9,6 +9,7 @@ venv
 *.DS_Store
 node_modules
 .mypy_cache
+backup
 json_storage
 html_storage
 coverage_html
