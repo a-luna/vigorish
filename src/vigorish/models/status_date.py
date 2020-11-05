@@ -7,7 +7,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-from vigorish.models.season import Season
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2, DATE_ONLY_TABLE_ID
 
@@ -542,11 +541,6 @@ class DateScrapeStatus(Base):
     def as_csv_dict(self):
         return dict_from_dataclass(self, DateScrapeStatusCsvRow, date_format=DATE_ONLY)
 
-    def update_relationships(self, db_session):
-        year = self.game_date.year
-        season = Season.find_by_year(db_session, year)
-        self.season_id = season.id
-
     @classmethod
     def create_new(cls, game_date, season_id):
         game_date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
@@ -654,6 +648,11 @@ class DateScrapeStatus(Base):
         if not date_status:
             return None
         return [game_status.bb_game_id for game_status in date_status.scrape_status_games]
+
+    @classmethod
+    def get_date_id_map(cls, db_session):
+        all_dates = db_session.query(cls).all()
+        return {d.game_date: d.id for d in all_dates}
 
 
 @accept_whitespaces

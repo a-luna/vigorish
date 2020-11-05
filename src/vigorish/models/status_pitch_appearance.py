@@ -5,7 +5,6 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from vigorish.config.database import Base
-from vigorish.models.status_game import GameScrapeStatus
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.list_helpers import display_dict
@@ -44,7 +43,9 @@ class PitchAppScrapeStatus(Base):
     total_at_bats_extra_pitchfx_removed = Column(Integer, default=0)
     total_at_bats_pitchfx_error = Column(Integer, default=0)
     total_at_bats_invalid_pitchfx = Column(Integer, default=0)
-    scrape_status_game_id = Column(Integer, ForeignKey("scrape_status_game.id"))
+
+    pitcher_id = Column(Integer, ForeignKey("player.id"), index=True)
+    scrape_status_game_id = Column(Integer, ForeignKey("scrape_status_game.id"), index=True)
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
@@ -70,12 +71,6 @@ class PitchAppScrapeStatus(Base):
 
     def as_csv_dict(self):
         return dict_from_dataclass(self, PitchAppScrapeStatusCsvRow)
-
-    def update_relationships(self, db_session):
-        game = GameScrapeStatus.find_by_bbref_game_id(db_session, self.bbref_game_id)
-        self.scrape_status_game_id = game.id
-        self.scrape_status_date_id = game.scrape_status_date_id
-        self.season_id = game.season_id
 
     @classmethod
     def get_csv_col_names(cls):
@@ -179,6 +174,11 @@ class PitchAppScrapeStatus(Base):
             .filter_by(scraped_pitchfx=1)
             .all()
         ]
+
+    @classmethod
+    def get_pitch_app_id_map(cls, db_session):
+        all_pitch_apps = db_session.query(cls).all()
+        return {pa.pitch_app_id: pa.id for pa in all_pitch_apps}
 
 
 @accept_whitespaces

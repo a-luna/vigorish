@@ -1,6 +1,6 @@
-from datetime import datetime
-from pathlib import Path
 import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
 
 from getch import pause
 from halo import Halo
@@ -13,13 +13,15 @@ from vigorish.cli.components.util import (
     get_random_dots_spinner,
     print_error,
     print_heading,
+    shutdown_cli_immediately,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.config.database import prepare_database_for_restore
+from vigorish.config.database import prepare_database_for_restore, reset_database_connection
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import DataSet
 from vigorish.tasks.restore_database import RestoreDatabaseTask
-from vigorish.util.dt_format_strings import FILE_TIMESTAMP
+from vigorish.util.datetime_util import format_timedelta_str, get_local_utcoffset, get_time_since
+from vigorish.util.dt_format_strings import DT_NAIVE, FILE_TIMESTAMP
 from vigorish.util.result import Result
 
 
@@ -29,6 +31,7 @@ class RestoreDatabase(MenuItem):
         self.menu_item_text = "Restore Database from Backup"
         self.menu_item_emoji = EMOJI_DICT.get("SPIRAL")
         self.exit_menu = False
+        self.backup_start_time = None
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         backup_folder_setting = self.config.all_settings.get("DB_BACKUP_FOLDER_PATH")
         self.backup_folder = backup_folder_setting.current_setting(DataSet.ALL).resolve()
@@ -46,22 +49,27 @@ class RestoreDatabase(MenuItem):
             return Result.Ok(True)
         if not self.prompt_user_run_task():
             return Result.Ok(True)
-        if not self.prompt_user_select_backup_to_restore():
+        result = self.prompt_user_select_backup_to_restore()
+        if result.failure:
             return Result.Ok(True)
         zip_file = result.value
-        self.subscribe_to_events()
-        result = prepare_database_for_restore(self.app)
+        result = self.prepare_database()
         if result.failure:
             return result
-        self.app = result.value
         self.restore_db = RestoreDatabaseTask(self.app)
+        self.subscribe_to_events()
         result = self.restore_db.execute(zip_file)
         self.unsubscribe_from_events()
-        self.spinner.stop()
         if result.failure:
             return result
-        pause(message="\nPress any key to continue...")
-        return Result.Ok(True)
+        shutdown_cli_immediately()
+
+    def find_db_backups(self):
+        self.backup_zip_files = [zip_file for zip_file in Path(self.backup_folder).glob("*.zip")]
+        if not self.backup_zip_files:
+            return Result.Fail(f"Error! No backups found in folder:\n{self.backup_folder}")
+        self.backup_zip_files.sort(key=lambda x: x.name, reverse=True)
+        return Result.Ok()
 
     def prompt_user_run_task(self):
         subprocess.run(["clear"])
@@ -73,30 +81,36 @@ class RestoreDatabase(MenuItem):
         )
         return page_viewer.launch()
 
-    def find_db_backups(self):
-        backup_zip_files = [zip_file for zip_file in Path(self.backup_folder).glob("*.zip")]
-        if not backup_zip_files:
-            return Result.Fail(f"Error! No backups found in folder:\n{self.backup_folder}")
-        self.backup_zip_files.sort(key=lambda x: x.name, reverse=True)
-        return Result.Ok()
-
     def prompt_user_select_backup_to_restore(self):
         subprocess.run(["clear"])
         print_heading("Restore Database from Backup", fg="bright_yellow")
         choices = {
-            f"{MENU_NUMBERS.get(num,num)}  {self.get_backup_time(zip_file.name)}": zip_file
-            for num, zip_file in enumerate(self.backup_zip_files)
+            f"{MENU_NUMBERS.get(num,num)}  {self.get_backup_time(zip_file.stem)}": zip_file
+            for num, zip_file in enumerate(self.backup_zip_files, start=1)
         }
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
-        prompt = "Select a backup to restore (most recent is first):"
+        prompt = "Select a backup to restore (time shown is when the backup process was started):"
         return user_options_prompt(choices, prompt, clear_screen=False)
 
     def get_backup_time(self, timestamp):
-        return datetime.strptime(timestamp, FILE_TIMESTAMP)
+        backup_created = datetime.strptime(timestamp, FILE_TIMESTAMP).replace(tzinfo=timezone.utc)
+        time_span = get_time_since(datetime.now(timezone.utc) - backup_created)
+        backup_created_aware = backup_created.astimezone(get_local_utcoffset())
+        return f"{backup_created_aware.strftime(DT_NAIVE)} ({time_span} ago)"
+
+    def prepare_database(self):
+        subprocess.run(["clear"])
+        print_heading("Restore Database from Backup", fg="bright_yellow")
+        result = reset_database_connection(self.app)
+        if result.failure:
+            return result
+        self.app = result.value
+        return prepare_database_for_restore(self.app)
 
     def unzip_backup_file_start(self):
         subprocess.run(["clear"])
         print_heading("Restore Database from Backup", fg="bright_yellow")
+        self.backup_start_time = datetime.now()
         self.spinner.start()
         self.spinner.text = "Unzipping backup CSV files..."
 
@@ -104,21 +118,27 @@ class RestoreDatabase(MenuItem):
         self.current_table = table
         self.spinner.text = self.get_spinner_text(0)
 
-    def restore_table_progress(self, percent):
-        self.spinner.text = self.get_spinner_text(percent)
+    def batch_insert_performed(self, batch_count):
+        self.spinner.text = self.get_spinner_text(batch_count)
 
-    def get_spinner_text(self, percent):
-        return f"Restoring {self.current_table.__name__} table... {percent:.0%}..."
+    def get_spinner_text(self, batch_count):
+        return f"Restoring {self.current_table.__name__} table ({batch_count} Batches Added)..."
+
+    def restore_database_complete(self):
+        elapsed = format_timedelta_str(datetime.now() - self.backup_start_time)
+        self.spinner.succeed(f"Successfully restored database from backup! (elapsed: {elapsed})")
 
     def subscribe_to_events(self):
         self.restore_db.events.unzip_backup_file_start += self.unzip_backup_file_start
         self.restore_db.events.restore_table_start += self.restore_table_start
-        self.restore_db.events.restore_table_progress += self.restore_table_progress
+        self.restore_db.events.batch_insert_performed += self.batch_insert_performed
+        self.restore_db.events.restore_database_complete += self.restore_database_complete
 
     def unsubscribe_from_events(self):
         self.restore_db.events.unzip_backup_file_start -= self.unzip_backup_file_start
         self.restore_db.events.restore_table_start -= self.restore_table_start
-        self.restore_db.events.restore_table_progress -= self.restore_table_progress
+        self.restore_db.events.batch_insert_performed -= self.batch_insert_performed
+        self.restore_db.events.restore_database_complete -= self.restore_database_complete
 
     def get_task_description_pages(self):
         return [

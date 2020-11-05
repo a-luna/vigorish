@@ -1,4 +1,5 @@
 """Shared functions and menus for CLI."""
+import subprocess
 from functools import partial
 from random import randint
 
@@ -62,3 +63,14 @@ def validate_scrape_dates(db_session, start_date, end_date):
     print()
     pause(message="Press any key to continue...")
     return Result.Fail("")
+
+
+def shutdown_cli_immediately():
+    subprocess.run(["clear"])
+    print_heading("Restart Required!", fg="bright_magenta")
+    warning = "Application must be restarted for these changes to take effect."
+    print_message(warning, fg="bright_magenta", bold=True)
+    print_message("Shutting down vigorish!\n", fg="bright_magenta", bold=True)
+    pause(message="Press any key to continue...")
+    subprocess.run(["clear"])
+    exit(0)

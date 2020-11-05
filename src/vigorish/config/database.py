@@ -3,10 +3,9 @@
 import os
 from pathlib import Path
 
-from sqlalchemy import func, create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
 
 Base = declarative_base()
 
@@ -54,26 +53,49 @@ def initialize_database(app, csv_folder=None):
 
 
 def prepare_database_for_restore(app, csv_folder=None):
-    dotenv = app["dotenv"]
-    config = app["config"]
-    app["db_session"].close()
-    app["db_session"] = None
-    db_url = get_db_url()
-    db_file = db_url.replace("sqlite:///", "")
-    Path(db_file).unlink()
-    app["db_engine"] = create_engine(db_url)
-    session_maker = sessionmaker(bind=app["db_engine"])
-    app["db_session"] = session_maker()
-    app["dotenv"] = dotenv
-    app["config"] = config
-    app["scraped_data"].db_engine = app["db_engine"]
-    app["scraped_data"].db_session = app["db_session"]
+    if not csv_folder:
+        csv_folder = CSV_FOLDER
     Base.metadata.drop_all(app["db_engine"])
     Base.metadata.create_all(app["db_engine"])
-    result = populate_tables_for_restore(app, csv_folder)
+    return populate_tables_for_restore(app, csv_folder)
+
+
+def reset_database_connection(app, db_url=None):
+    if not db_url:
+        db_url = get_db_url()
+    result = delete_sqlite_database(db_url)
     if result.failure:
         return result
+    app = update_app_instance(app, db_url)
     return Result.Ok(app)
+
+
+def delete_sqlite_database(db_url):
+    db_file = Path(db_url.replace("sqlite:///", ""))
+    if not db_file.exists():
+        return Result.Fail("Error occurred attempting to delete existing database file!")
+    db_file.unlink()
+    return Result.Ok()
+
+
+def update_app_instance(app, db_url):
+    app["db_session"].close()
+    app["db_session"] = None
+    db_engine = create_engine(db_url)
+    session_maker = sessionmaker(bind=db_engine)
+    db_session = session_maker()
+    dotenv = app["dotenv"]
+    config = app["config"]
+    scraped_data = app["scraped_data"]
+    scraped_data.db_engine = db_engine
+    scraped_data.db_session = db_session
+    return {
+        "dotenv": dotenv,
+        "config": config,
+        "db_engine": db_engine,
+        "db_session": db_session,
+        "scraped_data": scraped_data,
+    }
 
 
 def db_setup_complete(db_engine, db_session):

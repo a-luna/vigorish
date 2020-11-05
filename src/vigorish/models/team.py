@@ -65,3 +65,8 @@ class Team(Base):
     @classmethod
     def get_all_teams_for_season(cls, db_session, year):
         return [team for team in db_session.query(cls).filter_by(year=year).all()]
+
+    @classmethod
+    def get_team_id_map_for_year(cls, db_session, year):
+        teams = cls.get_all_teams_for_season(db_session, year)
+        return {t.team_id_br: t.id for t in teams}

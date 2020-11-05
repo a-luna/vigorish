@@ -1,9 +1,6 @@
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from vigorish.data.scraped_data import ScrapedData
-from tests.conftest import SQLITE_URL, DB_FILE, SQLITE_URL, CSV_FOLDER
+from tests.conftest import CSV_FOLDER, SQLITE_URL
 from tests.test_task_backup_database_to_csv import remove_everything_in_backup_folder
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
@@ -15,15 +12,14 @@ from tests.util import (
     update_scraped_pitchfx_logs,
 )
 from vigorish.config.database import (
-    Base,
     DateScrapeStatus,
     GameScrapeStatus,
     get_total_number_of_rows,
     PitchAppScrapeStatus,
     PitchFx,
     prepare_database_for_restore,
+    reset_database_connection,
 )
-from vigorish.data.scraped_data import ScrapedData
 from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 from vigorish.tasks.backup_database import BackupDatabaseTask
 from vigorish.tasks.restore_database import RestoreDatabaseTask
@@ -54,31 +50,17 @@ def create_test_data(vig_app):
     assert result.success
     zip_file = result.value
     assert zip_file.exists()
-    db_session.commit()
-    db_session.close()
-    db_session = None
-    DB_FILE.unlink()
-    assert not DB_FILE.exists()
     return True
 
 
-def test_restore_database(dotenv, config):
-    db_engine = create_engine(SQLITE_URL)
-    session_maker = sessionmaker(bind=db_engine)
-    db_session = session_maker()
-    scraped_data = ScrapedData(db_engine=db_engine, db_session=db_session, config=config)
-    vig_app = {
-        "dotenv": dotenv,
-        "config": config,
-        "db_engine": db_engine,
-        "db_session": db_session,
-        "scraped_data": scraped_data,
-    }
-    Base.metadata.drop_all(db_engine)
-    Base.metadata.create_all(db_engine)
-    result = prepare_database_for_restore(vig_app, CSV_FOLDER)
-    assert result.success
+def test_restore_database(vig_app):
+    result = reset_database_connection(vig_app, SQLITE_URL)
+    if result.failure:
+        return result
     vig_app = result.value
+    result = prepare_database_for_restore(vig_app, CSV_FOLDER)
+    if result.failure:
+        return result
     restore_db = RestoreDatabaseTask(vig_app)
     result = restore_db.execute()
     assert result.success
@@ -104,10 +86,3 @@ def test_restore_database(dotenv, config):
     row_count = get_total_number_of_rows(db_session, PitchFx)
     assert row_count == 299
     db_session.close()
-
-
-def delete_all_rows(db_session, db_table):
-    all_rows = db_session.query(db_table).all()
-    for row in all_rows:
-        db_session.delete(row)
-    db_session.commit()

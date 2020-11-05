@@ -9,7 +9,6 @@ from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
 from vigorish.models.season import Season
-from vigorish.models.status_date import DateScrapeStatus
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import (
     DATE_ONLY,
@@ -18,7 +17,7 @@ from vigorish.util.dt_format_strings import (
     DT_STR_FORMAT,
 )
 from vigorish.util.list_helpers import display_dict
-from vigorish.util.string_helpers import validate_brooks_game_id, get_brooks_team_id
+from vigorish.util.string_helpers import get_brooks_team_id, validate_brooks_game_id
 
 
 class GameScrapeStatus(Base):
@@ -435,11 +434,6 @@ class GameScrapeStatus(Base):
     def as_csv_dict(self):
         return dict_from_dataclass(self, GameScrapeStatusCsvRow, date_format=DATE_ONLY)
 
-    def update_relationships(self, db_session):
-        date = DateScrapeStatus.find_by_date(db_session, self.game_date)
-        self.scrape_status_date_id = date.id
-        self.season_id = date.season_id
-
     @classmethod
     def get_csv_col_names(cls):
         return [name for name in GameScrapeStatusCsvRow.__dataclass_fields__.keys()]
@@ -541,6 +535,11 @@ class GameScrapeStatus(Base):
             for game in games_for_season
             if game.away_team_id_bb == bb_team_id or game.home_team_id_bb == bb_team_id
         ]
+
+    @classmethod
+    def get_game_id_map(cls, db_session):
+        all_games = db_session.query(cls).all()
+        return {g.bbref_game_id: g.id for g in all_games}
 
 
 @accept_whitespaces
