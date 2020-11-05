@@ -5,6 +5,7 @@ from datetime import datetime
 from functools import wraps
 from time import sleep
 
+from vigorish.util.datetime_util import format_timedelta_str
 from vigorish.util.dt_format_strings import DT_NAIVE
 
 
@@ -75,22 +76,5 @@ class LogCall:
             func_args.apply_defaults()
             func_args_str = ", ".join(f"{arg}={val}" for arg, val in func_args.arguments.items())
             return f"{func.__name__}({func_args_str})"
-
-        def format_timedelta_str(td):
-            """Convert timedelta to an easy-to-read string value."""
-            (milliseconds, microseconds) = divmod(td.microseconds, 1000)
-            (minutes, seconds) = divmod(td.seconds, 60)
-            (hours, minutes) = divmod(minutes, 60)
-            if td.days > 0:
-                return f"{td.days}d {hours:.0f}h {minutes:.0f}m {seconds}s"
-            if hours > 0:
-                return f"{hours:.0f}h {minutes:.0f}m {seconds}s"
-            if minutes > 0:
-                return f"{minutes:.0f}m {seconds}s"
-            if td.seconds > 0:
-                return f"{td.seconds}s {milliseconds:.0f}ms"
-            if milliseconds > 0:
-                return f"{milliseconds}ms"
-            return f"{microseconds}us"
 
         return wrapper

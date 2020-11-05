@@ -651,3 +651,8 @@ class Season(Base):
     def is_this_the_asg_date(cls, db_session, game_date):
         season = cls.find_by_year(db_session, game_date.year)
         return game_date == season.asg_date if season else None
+
+    @classmethod
+    def regular_season_map(cls, db_session):
+        regular_seasons = cls.all_regular_seasons(db_session)
+        return {s.year: s.id for s in regular_seasons}

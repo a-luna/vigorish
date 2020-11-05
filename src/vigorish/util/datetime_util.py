@@ -6,6 +6,7 @@ from dateutil import tz
 
 from vigorish.util.dt_format_strings import DATE_ONLY_2, DT_AWARE, DT_NAIVE
 
+TIME_ZONE_LA = tz.gettz("America/Los_Angeles")
 TIME_ZONE_NEW_YORK = tz.gettz("America/New_York")
 TIME_SPAN_ONE_DAY = timedelta(days=1)
 
@@ -64,3 +65,38 @@ def today_str():
 
 def current_year():
     return datetime.now().year
+
+
+def format_timedelta_str(td):
+    """Convert timedelta to an easy-to-read string value."""
+    (milliseconds, microseconds) = divmod(td.microseconds, 1000)
+    (minutes, seconds) = divmod(td.seconds, 60)
+    (hours, minutes) = divmod(minutes, 60)
+    if td.days > 0:
+        return f"{td.days}d {hours:.0f}h {minutes:.0f}m {seconds}s"
+    if hours > 0:
+        return f"{hours:.0f}h {minutes:.0f}m {seconds}s"
+    if minutes > 0:
+        return f"{minutes:.0f}m {seconds}s"
+    if td.seconds > 0:
+        return f"{td.seconds}s {milliseconds:.0f}ms"
+    if milliseconds > 0:
+        return f"{milliseconds}ms"
+    return f"{microseconds}us"
+
+
+def get_time_since(td):
+    (milliseconds, microseconds) = divmod(td.microseconds, 1000)
+    (minutes, seconds) = divmod(td.seconds, 60)
+    (hours, minutes) = divmod(minutes, 60)
+    if td.days > 0:
+        return f"{td.days} days"
+    if hours > 0:
+        return f"{hours:.0f} hours {minutes:.0f} minutes"
+    if minutes > 0:
+        return f"{minutes:.0f} minutes"
+    if td.seconds > 0:
+        return f"{td.seconds} seconds"
+    if milliseconds > 0:
+        return f"{milliseconds}ms"
+    return f"{microseconds}us"

@@ -7,16 +7,10 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
-from vigorish.models.player import Player
-from vigorish.models.season import Season
-from vigorish.models.status_date import DateScrapeStatus
-from vigorish.models.status_game import GameScrapeStatus
-from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus
-from vigorish.models.team import Team
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.datetime_util import make_tzaware, TIME_ZONE_NEW_YORK
 from vigorish.util.dt_format_strings import CSV_UTC, DT_AWARE
-from vigorish.util.string_helpers import get_bbref_team_id, csv_sanitize
+from vigorish.util.string_helpers import csv_sanitize
 
 
 class PitchFx(Base):
@@ -74,12 +68,12 @@ class PitchFx(Base):
     is_invalid_ibb = Column(Integer)
     is_out_of_sequence = Column(Integer)
 
-    pitcher_id = Column(Integer, ForeignKey("player.id"))
-    batter_id = Column(Integer, ForeignKey("player.id"))
+    pitcher_id = Column(Integer, ForeignKey("player.id"), index=True)
+    batter_id = Column(Integer, ForeignKey("player.id"), index=True)
     team_pitching_id = Column(Integer, ForeignKey("team.id"))
     team_batting_id = Column(Integer, ForeignKey("team.id"))
     game_status_id = Column(Integer, ForeignKey("scrape_status_game.id"))
-    pitch_app_db_id = Column(Integer, ForeignKey("scrape_status_pitch_app.id"))
+    pitch_app_db_id = Column(Integer, ForeignKey("scrape_status_pitch_app.id"), index=True)
     date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
@@ -110,27 +104,6 @@ class PitchFx(Base):
         self.pdes = csv_sanitize(self.pdes)
         return dict_from_dataclass(self, PitchFxCsvRow, date_format=CSV_UTC)
 
-    def update_relationships(self, db_session):
-        year = self.game_date.year
-        pitcher = Player.find_by_mlb_id(db_session, self.pitcher_id_mlb)
-        batter = Player.find_by_mlb_id(db_session, self.batter_id_mlb)
-        pitcher_team_id_br = get_bbref_team_id(self.pitcher_team_id_bb)
-        batter_team_id_br = get_bbref_team_id(self.opponent_team_id_bb)
-        team_pitching = Team.find_by_team_id_and_year(db_session, pitcher_team_id_br, year)
-        team_batting = Team.find_by_team_id_and_year(db_session, batter_team_id_br, year)
-        pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, self.pitch_app_id)
-        game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, self.bbref_game_id)
-        date_status = DateScrapeStatus.find_by_date(db_session, self.game_date)
-        season = Season.find_by_year(db_session, year)
-        self.pitcher_id = pitcher.id if pitcher else None
-        self.batter_id = batter.id if batter else None
-        self.team_pitching_id = team_pitching.id if team_pitching else None
-        self.team_batting_id = team_batting.id if team_batting else None
-        self.pitch_app_db_id = pitch_app.id if pitch_app else None
-        self.game_status_id = game_status.id if game_status else None
-        self.date_id = date_status.id if date_status else None
-        self.season_id = season.id if season else None
-
     @classmethod
     def get_csv_col_names(cls):
         return [name for name in PitchFxCsvRow.__dataclass_fields__.keys()]
@@ -156,8 +129,8 @@ class PitchFx(Base):
         pfx_dict["seconds_since_game_start"] = seconds_since_game_start
         pfx_dict["basic_type"] = pfx_dict.pop("type")
         pfx_dict["pitch_id"] = pfx_dict.pop("id")
-        pfx_dict["pitcher_id_mlb"] = pfx_dict.pop("pitcher_id")
-        pfx_dict["batter_id_mlb"] = pfx_dict.pop("batter_id")
+        pfx_dict["pitcher_id_mlb"] = int(pfx_dict.pop("pitcher_id"))
+        pfx_dict["batter_id_mlb"] = int(pfx_dict.pop("batter_id"))
         pfx_dict["zone_location"] = int(pfx_dict["zone_location"])
         pfx_dict["spin"] = round(pfx_dict["spin"], 1)
         pfx_dict["pfx_x"] = round(pfx_dict["pfx_x"], 2)
@@ -209,8 +182,8 @@ class PitchFxCsvRow:
     ab_count: int = None
     ab_id: int = None
     des: str = None
-    strikes: int = None
-    balls: int = None
+    strikes: int = 0
+    balls: int = 0
     basic_type: str = None
     pdes: str = None
     mlbam_pitch_name: str = None

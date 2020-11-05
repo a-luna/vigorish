@@ -51,3 +51,8 @@ class PlayerId(Base):
             "batter_name": batter_id.mlb_name,
             "batter_team": at_bat_dict["batter_team"],
         }
+
+    @classmethod
+    def get_player_id_map(cls, db_session):
+        all_players = db_session.query(cls).all()
+        return {p.mlb_id: p.db_player_id for p in all_players}
