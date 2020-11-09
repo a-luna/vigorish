@@ -3,18 +3,14 @@ import os
 import subprocess
 
 import click
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
+from vigorish.app import create_app
 from vigorish.cli.click_params import DateString, JobName, MlbSeason
 from vigorish.cli.components import print_message, validate_scrape_dates
 from vigorish.cli.menus.main_menu import MainMenu
-from vigorish.config.config_file import ConfigFile
-from vigorish.config.database import get_db_url, initialize_database, ScrapeJob
-from vigorish.config.dotenv_file import DotEnvFile
+from vigorish.config.database import initialize_database, ScrapeJob
 from vigorish.config.project_paths import VIG_FOLDER
 from vigorish.constants import DATA_SET_NAME_MAP, FILE_TYPE_NAME_MAP
-from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import DataSet, StatusReport, SyncDirection, VigFile
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.status.report_status import (
@@ -38,19 +34,7 @@ def cli(ctx):
     if os.environ.get("ENV") != "TEST":
         if not VIG_FOLDER.exists():
             VIG_FOLDER.mkdir()
-    dotenv = DotEnvFile()
-    config = ConfigFile()
-    db_engine = create_engine(get_db_url())
-    session_maker = sessionmaker(bind=db_engine)
-    db_session = session_maker()
-    scraped_data = ScrapedData(db_engine, db_session, config)
-    ctx.obj = {
-        "dotenv": dotenv,
-        "config": config,
-        "db_engine": db_engine,
-        "db_session": db_session,
-        "scraped_data": scraped_data,
-    }
+    ctx.obj = create_app()
 
 
 @cli.command()
