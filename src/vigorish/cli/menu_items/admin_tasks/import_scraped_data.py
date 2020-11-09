@@ -48,7 +48,7 @@ class ImportScrapedDataTask(MenuItem):
         result = self.prompt_user_overwrite_data()
         if result.failure:
             return Result.Ok(True)
-        overwrite_existing_data = result.value
+        overwrite_existing_data = True if result.value == "OVERWRITE" else False
         result = self.import_scraped_data.execute(overwrite_existing_data)
         self.unsubscribe_from_events()
         if result.failure:
@@ -64,8 +64,8 @@ class ImportScrapedDataTask(MenuItem):
         subprocess.run(["clear"])
         print_message(OVERWRITE_DATA_MESSAGE, fg="bright_yellow", bold=True)
         choices = {
-            f"{MENU_NUMBERS.get(1)}  KEEP EXISTING DATA": False,
-            f"{MENU_NUMBERS.get(2)}  OVERWRITE EXISTING DATA": True,
+            f"{MENU_NUMBERS.get(1)}  KEEP EXISTING DATA": "KEEP",
+            f"{MENU_NUMBERS.get(2)}  OVERWRITE EXISTING DATA": "OVERWRITE",
             f"{EMOJI_DICT.get('BACK')} Return to Admin/Tasks Menu": None,
         }
         return user_options_prompt(choices, OVERWRITE_DATA_PROMPT, clear_screen=False)
