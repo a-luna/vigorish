@@ -12,6 +12,8 @@ from vigorish.cli.components import (
     print_message,
 )
 from vigorish.cli.menu import Menu
+from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
+from vigorish.cli.menu_items.admin_tasks.restore_database import RestoreDatabase
 from vigorish.cli.menu_items.combine_data import CombineGameDataMenuItem
 from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
@@ -118,12 +120,15 @@ class MainMenu(Menu):
     def populate_menu_items(self):
         main_menu_items = self.get_menu_items()
         self.menu_items = [menu_item for menu_item in main_menu_items.values()]
+        if node_modules_folder_exists():
+            self.menu_items.remove(main_menu_items["npm_install"])
         if not db_setup_complete(self.db_engine, self.db_session):
             self.menu_items.remove(main_menu_items["create_job"])
             self.menu_items.remove(main_menu_items["all_jobs"])
             self.menu_items.remove(main_menu_items["status_reports"])
         else:
             self.menu_items.remove(main_menu_items["setup_db"])
+            self.menu_items.remove(main_menu_items["restore_db"])
         if not self.audit_report:
             self.menu_items.remove(main_menu_items["combine_data"])
         if not self.data_failures_exist():
@@ -141,7 +146,9 @@ class MainMenu(Menu):
 
     def get_menu_items(self):
         return {
+            "npm_install": NpmInstallUpdate(self.app),
             "setup_db": SetupDBMenuItem(self.app),
+            "restore_db": RestoreDatabase(self.app),
             "create_job": CreateJobMenuItem(self.app),
             "all_jobs": AllJobsMenu(self.app),
             "combine_data": CombineGameDataMenuItem(self.app, self.audit_report),
