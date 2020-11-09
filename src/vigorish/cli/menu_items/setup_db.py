@@ -5,12 +5,17 @@ from datetime import datetime
 from pathlib import Path
 
 from getch import pause
-from sqlalchemy.orm import sessionmaker
 
-from vigorish.cli.components import print_message, yes_no_prompt
+from vigorish.cli.components.prompts import yes_no_prompt
+from vigorish.cli.components.util import print_heading, print_message, shutdown_cli_immediately
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
-from vigorish.config.database import db_setup_complete, initialize_database, Season
+from vigorish.config.database import (
+    db_setup_complete,
+    initialize_database,
+    reset_database_connection,
+    Season,
+)
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
 from vigorish.tasks.import_scraped_data import ImportScrapedDataInLocalFolder
@@ -35,58 +40,83 @@ IMPORT_SCRAPED_DATA_PROMPT = (
     "Select YES to import all data in the location above\n"
     "Select NO to return to the previous menu"
 )
-DB_INITIALIZED = "\nDatabase has been successfully initialized."
-RESTART_WARNING = "\nApplication must be restarted for these changes to take effect!"
-SHUTDOWN_MESSAGE = "Shutting down vigorish!"
+DB_INITIALIZED = "Database has been successfully initialized.\n"
 
 
 class SetupDBMenuItem(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.update_player_id_map = UpdatePlayerIdMap(self.app)
-        self.import_scraped_data = ImportScrapedDataInLocalFolder(self.app)
+        self.update_id_map_task = UpdatePlayerIdMap(self.app)
+        self.import_data_task = ImportScrapedDataInLocalFolder(self.app)
         self.db_initialized = db_setup_complete(self.db_engine, self.db_session)
         self.menu_item_text = "Reset Database" if self.db_initialized else "Setup Database"
         self.menu_item_emoji = EMOJI_DICT["BOMB"] if self.db_initialized else EMOJI_DICT["DIZZY"]
 
     def launch(self):
-        subprocess.run(["clear"])
         restart_required = self.db_initialized
-        if self.db_initialized:
-            print_message(WARNING, fg="bright_red")
-            yes = yes_no_prompt(RESET_MESSAGE)
-        else:
-            print_message(SETUP_HEADING, fg="bright_yellow")
-            yes = yes_no_prompt(SETUP_MESSAGE, wrap=False)
-        if not yes:
+        if not self.prompt_user_run_task():
             return Result.Ok(self.exit_menu)
+        return (
+            self.update_player_id_map()
+            .on_success(self.update_database_connection)
+            .on_success(self.create_and_populate_database_tables)
+            .on_success(self.import_scraped_data, restart_required)
+        )
 
+    def prompt_user_run_task(self):
         if self.db_initialized:
-            result = Season.is_date_in_season(self.db_session, datetime.now())
-            if result.success:
-                subprocess.run(["clear"])
-                result = self.update_player_id_map.launch()
-                if result.failure:
-                    return result
-
+            message = WARNING
+            message_color = "bright_red"
+            prompt = RESET_MESSAGE
+        else:
+            message = SETUP_HEADING
+            message_color = None
+            prompt = SETUP_MESSAGE
         subprocess.run(["clear"])
-        result = initialize_database(self.app)
+        print_heading(self.get_heading("Run Task?"), fg="bright_yellow")
+        print_message(message, fg=message_color)
+        return yes_no_prompt(prompt, wrap=False)
+
+    def get_heading(self, current_action):
+        return (
+            f"Reset Database: {current_action}"
+            if self.db_initialized
+            else f"Setup Database: {current_action}"
+        )
+
+    def update_player_id_map(self):
+        if not self.db_initialized:
+            return Result.Ok()
+        result = Season.is_date_in_season(self.db_session, datetime.now())
+        if result.failure:
+            return Result.Ok()
+        subprocess.run(["clear"])
+        return self.update_id_map_task.launch()
+
+    def update_database_connection(self):
+        if not self.db_initialized:
+            return Result.Ok()
+        result = reset_database_connection(self.app)
         if result.failure:
             return result
-        print_message(DB_INITIALIZED, fg="bright_green", bold=True)
-        pause(message="Press any key to continue...")
+        self.app = result.value
+        return Result.Ok()
 
+    def create_and_populate_database_tables(self):
         subprocess.run(["clear"])
+        print_heading(self.get_heading("In Progress"), fg="bright_yellow")
+        result = initialize_database(self.app)
+        if result.success:
+            subprocess.run(["clear"])
+            print_heading(self.get_heading("Complete"), fg="bright_yellow")
+            print_message(DB_INITIALIZED, fg="bright_green", bold=True)
+            pause(message="Press any key to continue...")
+        return result
+
+    def import_scraped_data(self, restart_required):
         if not self.import_scraped_data_prompt():
             return self.setup_complete(restart_required)
-
-        if restart_required:
-            self.db_session.close()
-            session_maker = sessionmaker(bind=self.db_engine)
-            self.db_session = session_maker()
-
-        subprocess.run(["clear"])
-        result = self.import_scraped_data.execute(overwrite_existing=True)
+        result = self.import_data_task.execute(overwrite_existing=True)
         if result.error:
             print_message(result.error, fg="bright_red")
             pause(message="Press any key to continue...")
@@ -99,14 +129,13 @@ class SetupDBMenuItem(MenuItem):
         example_folder = local_folder_path.current_setting(data_set=DataSet.BBREF_BOXSCORES)
         root_folder = Path(example_folder.resolve(year=2019)).parent.parent
         current_setting = f"JSON_LOCAL_FOLDER_PATH: {root_folder}"
-        print_message(IMPORT_SCRAPED_DATA_MESSAGE, fg="bright_yellow")
-        print_message(current_setting, fg="bright_yellow", wrap=False)
+        subprocess.run(["clear"])
+        print_heading(self.get_heading("Import Local JSON Folder?"), fg="bright_yellow")
+        print_message(IMPORT_SCRAPED_DATA_MESSAGE)
+        print_message(current_setting, wrap=False)
         return yes_no_prompt(IMPORT_SCRAPED_DATA_PROMPT, wrap=False)
 
     def setup_complete(self, restart_required):
-        if not restart_required:
-            return Result.Ok(self.exit_menu)
-        print_message(RESTART_WARNING, fg="bright_magenta", bold=True)
-        print_message(SHUTDOWN_MESSAGE, fg="bright_magenta", bold=True)
-        pause(message="Press any key to continue...")
-        exit(0)
+        if restart_required:
+            shutdown_cli_immediately()
+        return Result.Ok(self.exit_menu)
