@@ -3,11 +3,13 @@ from dataclasses import dataclass
 from dataclass_csv import accept_whitespaces
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship
 
 from vigorish.config.database import Base
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.list_helpers import display_dict
+from vigorish.util.pitch_calcs import calc_pitch_mix
 
 
 class PitchAppScrapeStatus(Base):
@@ -48,6 +50,17 @@ class PitchAppScrapeStatus(Base):
     scrape_status_game_id = Column(Integer, ForeignKey("scrape_status_game.id"), index=True)
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
+    pitch_mix_view = relationship(
+        "PitchApp_PitchFx_View",
+        backref="original",
+        uselist=False,
+        primaryjoin="PitchAppScrapeStatus.id==PitchApp_PitchFx_View.id",
+        foreign_keys="PitchApp_PitchFx_View.id",
+    )
+
+    @hybrid_property
+    def pitch_mix(self):
+        return calc_pitch_mix(self.pitch_mix_view.__dict__, self.pitch_mix_view.total_pitches)
 
     @hybrid_property
     def contains_patched_data(self):

@@ -1,7 +1,6 @@
 import pytest
 
 from tests.util import (
-    combine_scraped_data_for_game,
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,
     update_scraped_boxscore,
@@ -11,6 +10,7 @@ from tests.util import (
 )
 from vigorish.data.all_game_data import AllGameData
 from vigorish.enums import DefensePosition
+from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 
 TEST_ID = "NO_ERRORS"
 GAME_DICT = COMBINED_DATA_GAME_DICT[TEST_ID]
@@ -18,20 +18,28 @@ GAME_DATE = COMBINED_DATA_GAME_DICT[TEST_ID]["game_date"]
 
 
 @pytest.fixture(scope="module", autouse=True)
-def create_test_data(db_session, scraped_data):
+def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_all_game_data module."""
-    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_brooks_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_boxscore(db_session, scraped_data, GAME_DICT["bbref_game_id"])
-    update_scraped_pitch_logs(db_session, scraped_data, GAME_DATE, GAME_DICT["bbref_game_id"])
-    update_scraped_pitchfx_logs(db_session, scraped_data, GAME_DICT["bb_game_id"])
-    combine_scraped_data_for_game(db_session, scraped_data, GAME_DICT["bbref_game_id"])
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
+    game_date = GAME_DICT["game_date"]
+    bbref_game_id = GAME_DICT["bbref_game_id"]
+    bb_game_id = GAME_DICT["bb_game_id"]
+    apply_patch_list = GAME_DICT["apply_patch_list"]
+    update_scraped_bbref_games_for_date(db_session, scraped_data, game_date)
+    update_scraped_brooks_games_for_date(db_session, scraped_data, game_date)
+    update_scraped_boxscore(db_session, scraped_data, bbref_game_id)
+    update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id)
+    update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
+    scraped_data.combine_boxscore_and_pfx_data(bbref_game_id, apply_patch_list)
+    add_pfx_to_db = AddPitchFxToDatabase(vig_app)
+    add_pfx_to_db.execute(vig_app["scraped_data"].get_audit_report(), 2019)
     db_session.commit()
     return True
 
 
-def test_all_game_data(db_session, scraped_data):
-    all_game_data = AllGameData(db_session, scraped_data, GAME_DICT["bbref_game_id"])
+def test_all_game_data(vig_app):
+    all_game_data = AllGameData(vig_app, GAME_DICT["bbref_game_id"])
     away_team_id = all_game_data.away_team_id
     home_team_id = all_game_data.home_team_id
     assert away_team_id == "LAA"
@@ -113,7 +121,40 @@ def test_all_game_data(db_session, scraped_data):
     assert mlb_id == bat_stats_player_id
 
     pitch_mix = all_game_data.get_pitch_mix(571882)
-    assert pitch_mix == {"Four-seam Fastball": 6, "Curveball": 6, "Changeup": 3, "Slider": 2}
+    assert "all" in pitch_mix and pitch_mix["all"] == {
+        "ALL": {"count": 17, "percent": 1},
+        "CH": {"count": 3, "percent": 0.17647058823529413},
+        "CU": {"count": 6, "percent": 0.35294117647058826},
+        "FF": {"count": 6, "percent": 0.35294117647058826},
+        "SL": {"count": 2, "percent": 0.11764705882352941},
+    }
+    assert "bat_l" in pitch_mix and pitch_mix["bat_l"] == {
+        "ALL": {"count": 12, "percent": 1},
+        "CH": {"count": 3, "percent": 0.25},
+        "CU": {"count": 4, "percent": 0.3333333333333333},
+        "FF": {"count": 3, "percent": 0.25},
+        "SL": {"count": 2, "percent": 0.16666666666666666},
+    }
+    assert "bat_r" in pitch_mix and pitch_mix["bat_r"] == {
+        "ALL": {"count": 5, "percent": 1},
+        "CU": {"count": 2, "percent": 0.4},
+        "FF": {"count": 3, "percent": 0.6},
+    }
+    assert "by_year" in pitch_mix and 2019 in pitch_mix["by_year"]
+    assert pitch_mix["by_year"][2019] == {
+        "ALL": {"count": 17, "percent": 1},
+        "CH": {"count": 3, "percent": 0.17647058823529413},
+        "CU": {"count": 6, "percent": 0.35294117647058826},
+        "FF": {"count": 6, "percent": 0.35294117647058826},
+        "SL": {"count": 2, "percent": 0.11764705882352941},
+    }
+    assert "pitch_app" in pitch_mix and pitch_mix["pitch_app"] == {
+        "ALL": {"count": 17, "percent": 1},
+        "CH": {"count": 3, "percent": 0.17647058823529413},
+        "CU": {"count": 6, "percent": 0.35294117647058826},
+        "FF": {"count": 6, "percent": 0.35294117647058826},
+        "SL": {"count": 2, "percent": 0.11764705882352941},
+    }
 
     matchup = all_game_data.get_matchup_details()
     assert matchup == (
