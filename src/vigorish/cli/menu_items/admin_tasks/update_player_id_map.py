@@ -4,8 +4,12 @@ import subprocess
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner
 from vigorish.cli.components.dict_viewer import DictListTableViewer
+from vigorish.cli.components.util import (
+    get_random_cli_color,
+    get_random_dots_spinner,
+    print_heading,
+)
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT
 from vigorish.tasks.update_player_maps import UpdatePlayerIdMap as UpdatePlayerIdMapTask
@@ -21,8 +25,9 @@ class UpdatePlayerIdMap(MenuItem):
 
     def launch(self):
         subprocess.run(["clear"])
+        print_heading("Update Player ID Map", fg="bright_yellow")
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        spinner.text = "Updating Player ID map..."
+        spinner.text = "Checking BBRef player data..."
         spinner.start()
         result = self.update_player_id_map.execute()
         if result.failure:
@@ -33,7 +38,7 @@ class UpdatePlayerIdMap(MenuItem):
         if not new_player_ids:
             pause(message="Press any key to continue...")
             return Result.Ok(new_player_ids)
-        heading = "Update BBRef Player ID Map Results"
+        heading = "Update Player ID Map: Results"
         message = f"{len(new_player_ids)} new players were added to the ID map\n"
         table_viewer = DictListTableViewer(
             dict_list=new_player_ids,

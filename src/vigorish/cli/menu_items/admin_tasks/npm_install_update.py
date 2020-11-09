@@ -28,7 +28,7 @@ class NpmInstallUpdate(MenuItem):
     def __init__(self, app):
         super().__init__(app)
         self.menu_item_text = (
-            "Install Node Packages" if not node_is_installed() else "Update Node Packages"
+            "Update Node Packages" if node_modules_folder_exists() else "Install Node Packages"
         )
         self.menu_item_emoji = EMOJI_DICT.get("PACKAGE")
 
