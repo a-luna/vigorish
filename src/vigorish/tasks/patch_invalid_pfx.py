@@ -175,7 +175,7 @@ class PatchInvalidPitchFxTask(Task):
                     [pfx["ab_count"] for pfx in ab_dict["at_bat_data"]["pitchfx"]]
                 ),
             }
-            for pitch_app_id, pitch_app_dict in self.invalid_pfx_map.items()
+            for pitch_app_dict in self.invalid_pfx_map.values()
             for inning_id, inning_dict in pitch_app_dict.items()
             for at_bat_id, ab_dict in inning_dict.items()
         ]
@@ -418,7 +418,6 @@ class PatchInvalidPitchFxTask(Task):
             pitch_stat_changes = self.compare_pfx_vs_bbref_audit_results(
                 audit_before=pitch_stats_before[pitch_app_id]["pitch_app_pitchfx_audit"],
                 audit_after=pitch_stats_after[pitch_app_id]["pitch_app_pitchfx_audit"],
-                pitch_app_audit=True,
             )
             pitch_stat_changes_dict[pitch_app_id] = pitch_stat_changes
         return {
@@ -443,7 +442,7 @@ class PatchInvalidPitchFxTask(Task):
                 patched_pitch_app_ids.append(patch.pitch_app_id)
         return list(set(patched_pitch_app_ids))
 
-    def compare_pfx_vs_bbref_audit_results(self, audit_before, audit_after, pitch_app_audit=False):
+    def compare_pfx_vs_bbref_audit_results(self, audit_before, audit_after):
         table_rows = [
             {
                 "stat": stat_name,
