@@ -247,3 +247,32 @@ MENU_NUMBERS = {
 }
 
 FAKE_SPINNER = {"interval": 140, "frames": ["⚡", "⚡"]}
+
+FIGLET_FONTS = [
+    "3-d",
+    "arrows",
+    "banner3-D",
+    "basic",
+    "big",
+    "brite",
+    "catwalk",
+    "cyberlarge",
+    "doh",
+    "doom",
+    "double",
+    "kban",
+    "larry3d",
+    "lockergnome",
+    "nancyj-fancy",
+    "ogre",
+    "os2",
+    "poison",
+    "r2-d2___",
+    "rowancap",
+    "sblood",
+    "slant",
+    "small",
+    "speed",
+    "tinker-toy",
+    "usaflag",
+]

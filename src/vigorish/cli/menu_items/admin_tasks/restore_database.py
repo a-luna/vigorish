@@ -62,6 +62,7 @@ class RestoreDatabase(MenuItem):
         self.unsubscribe_from_events()
         if result.failure:
             return result
+        pause(message="\nPress any key to continue...")
         shutdown_cli_immediately()
 
     def find_db_backups(self):

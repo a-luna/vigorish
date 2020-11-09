@@ -2,16 +2,20 @@
 import subprocess
 
 from halo import Halo
+from pyfiglet import Figlet
 from tabulate import tabulate
 
 from vigorish import __version__
 from vigorish.cli.components import (
     get_random_cli_color,
     get_random_dots_spinner,
+    get_random_figlet_font,
     print_heading,
     print_message,
 )
 from vigorish.cli.menu import Menu
+from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
+from vigorish.cli.menu_items.admin_tasks.restore_database import RestoreDatabase
 from vigorish.cli.menu_items.combine_data import CombineGameDataMenuItem
 from vigorish.cli.menu_items.create_job import CreateJobMenuItem
 from vigorish.cli.menu_items.exit_program import ExitProgramMenuItem
@@ -71,8 +75,12 @@ class MainMenu(Menu):
     def check_app_status(self):
         if not db_setup_complete(self.db_engine, self.db_session):
             return
-        spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        spinner.text = "Updating metrics..." if self.initialized else "Initializing..."
+        color = get_random_cli_color()
+        if not self.initialized:
+            f = Figlet(font=get_random_figlet_font())
+            print_message(f.renderText("vigorish"), wrap=False, fg=f"bright_{color}")
+        spinner = Halo(spinner=get_random_dots_spinner(), color=color)
+        spinner.text = "Updating metrics..." if self.initialized else "Loading..."
         spinner.start()
         self.audit_report = self.scraped_data.get_audit_report()
         spinner.stop()
@@ -118,12 +126,15 @@ class MainMenu(Menu):
     def populate_menu_items(self):
         main_menu_items = self.get_menu_items()
         self.menu_items = [menu_item for menu_item in main_menu_items.values()]
+        if node_modules_folder_exists():
+            self.menu_items.remove(main_menu_items["npm_install"])
         if not db_setup_complete(self.db_engine, self.db_session):
             self.menu_items.remove(main_menu_items["create_job"])
             self.menu_items.remove(main_menu_items["all_jobs"])
             self.menu_items.remove(main_menu_items["status_reports"])
         else:
             self.menu_items.remove(main_menu_items["setup_db"])
+            self.menu_items.remove(main_menu_items["restore_db"])
         if not self.audit_report:
             self.menu_items.remove(main_menu_items["combine_data"])
         if not self.data_failures_exist():
@@ -141,7 +152,9 @@ class MainMenu(Menu):
 
     def get_menu_items(self):
         return {
+            "npm_install": NpmInstallUpdate(self.app),
             "setup_db": SetupDBMenuItem(self.app),
+            "restore_db": RestoreDatabase(self.app),
             "create_job": CreateJobMenuItem(self.app),
             "all_jobs": AllJobsMenu(self.app),
             "combine_data": CombineGameDataMenuItem(self.app, self.audit_report),

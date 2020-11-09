@@ -1,9 +1,9 @@
 """Utility functions that interact with the terminal."""
-from datetime import datetime
 import os
 import platform
 import re
 import subprocess
+from datetime import datetime
 from pathlib import Path
 from typing import Tuple, Union
 from zipfile import ZipFile

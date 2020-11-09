@@ -1,4 +1,4 @@
-from collections import OrderedDict, defaultdict
+from collections import defaultdict, OrderedDict
 from copy import deepcopy
 from datetime import datetime
 from functools import lru_cache
@@ -7,8 +7,8 @@ from tabulate import tabulate
 
 from vigorish.cli.components.models import DisplayTable
 from vigorish.cli.components.table_viewer import TableViewer
-from vigorish.config.database import PlayerId, Team
-from vigorish.constants import PITCH_TYPE_DICT
+from vigorish.config.database import PitchAppScrapeStatus, PlayerId, Team
+from vigorish.data.all_player_data import AllPlayerData
 from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.dt_format_strings import DT_AWARE, DT_AWARE_VERBOSE
 from vigorish.util.exceptions import ScrapedDataException
@@ -28,11 +28,13 @@ AT_BAT_DESC_MAX_WIDTH = 35
 
 
 class AllGameData:
-    def __init__(self, db_session, scraped_data, bbref_game_id):
+    def __init__(self, app, bbref_game_id):
         # TODO: Create method to get pitch type counts for pitch app
-        self.db_session = db_session
-        self.scraped_data = scraped_data
-        combined_data = scraped_data.get_combined_game_data(bbref_game_id)
+        self.app = app
+        self.db_engine = app["db_engine"]
+        self.db_session = app["db_session"]
+        self.scraped_data = app["scraped_data"]
+        combined_data = self.scraped_data.get_combined_game_data(bbref_game_id)
         if not combined_data:
             raise ScrapedDataException(
                 file_type=VigFile.COMBINED_GAME_DATA, data_set=DataSet.ALL, url_id=bbref_game_id
@@ -426,10 +428,15 @@ class AllGameData:
         if result.failure:
             return result
         mlb_id = result.value
-        pitch_stats = self.get_pitch_app_stats(mlb_id).value
+        pitch_app_id = f"{self.bbref_game_id}_{mlb_id}"
+        pitcher_data = AllPlayerData(self.app, mlb_id)
+        pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
         return {
-            PITCH_TYPE_DICT.get(abbrev, abbrev): count
-            for abbrev, count in pitch_stats["pitch_count_by_pitch_type"].items()
+            "pitch_app": pitch_app.pitch_mix,
+            "by_year": pitcher_data.pitch_mix_by_year(),
+            "all": pitcher_data.pitch_mix(),
+            "bat_r": pitcher_data.pitch_mix_right(),
+            "bat_l": pitcher_data.pitch_mix_left(),
         }
 
     def get_matchup_details(self):

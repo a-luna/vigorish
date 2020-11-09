@@ -5,10 +5,10 @@ from bullet import Input
 from getch import pause
 
 from vigorish.cli.components.prompts import select_game_prompt, user_options_prompt
-from vigorish.cli.components.util import print_heading, print_error
+from vigorish.cli.components.util import print_error, print_heading
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.view_game_data import ViewGameData
-from vigorish.config.database import Team, GameScrapeStatus
+from vigorish.config.database import GameScrapeStatus, Team
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id
@@ -21,20 +21,26 @@ class ScrapedGameDataMenu(MenuItem):
         self.menu_item_text = "View Scraped Game Data"
         self.menu_item_emoji = EMOJI_DICT.get("MICROSCOPE", "")
         self.exit_menu = False
+        self.menu_option = None
+        self.mlb_season = None
+        self.team_id = None
+        self.game_id = None
 
     def launch(self):
         while True:
             result = self.prompt_user_choose_method_to_select_game()
             if result.failure:
                 break
-            user_selection = result.value
+            self.menu_option = result.value
             while True:
-                result = self.prompt_user_for_game_id(user_selection)
+                if self.menu_option == "MANUAL":
+                    result = self.enter_game_id()
+                if self.menu_option == "SEASON":
+                    result = self.select_season_game_id()
+                if self.menu_option == "TEAM":
+                    result = self.select_team_game_id()
                 if result.failure:
                     break
-                selected_game_id = result.value
-                view_game_data = ViewGameData(self.app, selected_game_id)
-                view_game_data.launch()
         return Result.Ok()
 
     def prompt_user_choose_method_to_select_game(self):
@@ -49,40 +55,63 @@ class ScrapedGameDataMenu(MenuItem):
         }
         return user_options_prompt(choices, prompt, clear_screen=False)
 
-    def prompt_user_for_game_id(self, user_selection):
-        if user_selection == "MANUAL":
-            return self.enter_game_id_prompt()
+    def enter_game_id(self):
+        subprocess.run(["clear"])
+        print_heading("Scraped Data Viewer - Enter a BBRef Game ID", fg="bright_yellow")
+        check_game_id = Input("Enter a BBRef Game ID: ").launch()
+        try:
+            result = validate_bbref_game_id(check_game_id)
+        except ValueError:
+            error = f"\n'{check_game_id}' is NOT a valid BBRef Game ID, please try again."
+            print_error(error)
+            pause(message="Press any key to continue...")
+            return Result.Fail("")
+        self.game_id = result.value["game_id"]
+        game_date = result.value["game_date"]
+        all_valid_game_ids = self.audit_report[game_date.year]["successful"]
+        if self.game_id not in all_valid_game_ids:
+            error = f"\nRequirements to show data for {check_game_id} have not been met"
+            print_error(error)
+            pause(message="Press any key to continue...")
+            return Result.Fail("")
+        view_game_data = ViewGameData(self.app, self.game_id)
+        view_game_data.launch()
+        return Result.Fail("")
+
+    def select_season_game_id(self):
         while True:
             result = self.select_season_prompt()
             if result.failure:
                 return result
-            year = result.value
-            game_ids = self.audit_report[year]["successful"]
-            if user_selection == "SEASON":
-                return select_game_prompt(game_ids)
-            if user_selection == "TEAM":
+            self.mlb_season = result.value
+            game_ids = self.audit_report[self.mlb_season]["successful"]
+            while True:
+                result = select_game_prompt(game_ids)
+                if result.failure:
+                    break
+                self.game_id = result.value
+                view_game_data = ViewGameData(self.app, self.game_id)
+                view_game_data.launch()
+
+    def select_team_game_id(self):
+        while True:
+            result = self.select_season_prompt()
+            if result.failure:
+                return result
+            self.mlb_season = result.value
+            while True:
+                result = self.select_team_prompt()
+                if result.failure:
+                    self.team_id = None
+                    break
+                team_game_ids = result.value
                 while True:
-                    result = self.select_team_prompt(year, game_ids)
+                    result = select_game_prompt(team_game_ids)
                     if result.failure:
                         break
-                    team_game_ids = result.value
-                    while True:
-                        result = select_game_prompt(team_game_ids)
-                        if result.failure:
-                            break
-                        return result
-
-    def enter_game_id_prompt(self):
-        while True:
-            subprocess.run(["clear"])
-            print_heading("Scraped Data Viewer - Enter a BBRef Game ID", fg="bright_yellow")
-            check_game_id = Input("Enter a BBRef Game ID: ")
-            result = validate_bbref_game_id(check_game_id)
-            if result.success:
-                return result.value["game_id"]
-            error = f"\n'{check_game_id}' is NOT a valid BBRef Game ID, please try again."
-            print_error(error)
-            pause(message="\nPress any key to continue...")
+                    self.game_id = result.value
+                    view_game_data = ViewGameData(self.app, self.game_id)
+                    view_game_data.launch()
 
     def select_season_prompt(self):
         subprocess.run(["clear"])
@@ -96,12 +125,14 @@ class ScrapedGameDataMenu(MenuItem):
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
         return user_options_prompt(choices, prompt, clear_screen=False)
 
-    def select_team_prompt(self, year, game_ids):
+    def select_team_prompt(self):
         team_choices_dict = {
-            t.team_id_br: t.name for t in Team.get_all_teams_for_season(self.db_session, year=year)
+            t.team_id_br: t.name
+            for t in Team.get_all_teams_for_season(self.db_session, year=self.mlb_season)
         }
         subprocess.run(["clear"])
-        print_heading(f"Scraped Data Viewer - Select Team (MLB Season: {year})", fg="bright_yellow")
+        heading = f"Scraped Data Viewer - Select Team (MLB Season: {self.mlb_season})"
+        print_heading(heading, fg="bright_yellow")
         prompt = "Select a team from the list below::"
         choices = {
             f"{EMOJI_DICT.get('BLUE_DIAMOND')}  {name} ({team_id})": team_id
@@ -111,14 +142,18 @@ class ScrapedGameDataMenu(MenuItem):
         result = user_options_prompt(choices, prompt, clear_screen=False)
         if result.failure:
             return result
-        selected_team_id = result.value
-        return self.get_game_ids_where_team_played(selected_team_id, year, game_ids)
+        self.team_id = result.value
+        return self.get_team_game_ids()
 
-    def get_game_ids_where_team_played(self, team_id, year, all_game_ids):
-        all_game_ids_for_team = GameScrapeStatus.get_all_bbref_game_ids_for_team(
-            self.db_session, team_id, year
+    def get_team_game_ids(self):
+        all_valid_game_ids = self.audit_report[self.mlb_season]["successful"]
+        team_game_ids = GameScrapeStatus.get_all_bbref_game_ids_for_team(
+            self.db_session, self.team_id, self.mlb_season
         )
-        scraped_game_ids_where_team_played = [
-            game_id for game_id in all_game_ids_for_team if game_id in all_game_ids
-        ]
-        return Result.Ok(scraped_game_ids_where_team_played)
+        valid_team_game_ids = list(set(team_game_ids).intersection(set(all_valid_game_ids)))
+        game_id_weights = self.get_game_id_weights(valid_team_game_ids)
+        valid_team_game_ids.sort(key=lambda x: game_id_weights[x])
+        return Result.Ok(valid_team_game_ids)
+
+    def get_game_id_weights(self, game_ids):
+        return {g: validate_bbref_game_id(g).value["game_date"] for g in game_ids}

@@ -276,4 +276,4 @@ class SyncScrapedData(MenuItem):
     def update_sync_progress(self, name, complete, total):
         direction = "Down" if self.sync_direction == SyncDirection.DOWN_TO_LOCAL else "Up"
         percent = complete / float(total)
-        self.spinner.text = f"{direction}loading {name} {percent:.0%} ({complete}/{total}) Files"
+        self.spinner.text = f"{direction}loading {name} {percent:.0%} ({complete}/{total} Files)"

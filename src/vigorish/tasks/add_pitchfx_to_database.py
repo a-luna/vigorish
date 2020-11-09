@@ -93,7 +93,7 @@ class AddPitchFxToDatabase(Task):
         return Result.Ok()
 
     def add_pitchfx_to_database(self, game_id):
-        all_game_data = AllGameData(self.db_session, self.scraped_data, game_id)
+        all_game_data = AllGameData(self.app, game_id)
         for pitch_app_id, pfx_dict_list in all_game_data.get_all_pitchfx().items():
             pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
             if not pitch_app:

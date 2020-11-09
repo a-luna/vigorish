@@ -1,9 +1,11 @@
 """Biographical information for a single player."""
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref, relationship
 
 from vigorish.config.database import Base
 from vigorish.util.list_helpers import display_dict
+from vigorish.util.pitch_calcs import calc_pitch_mix
 
 
 class Player(Base):
@@ -33,6 +35,25 @@ class Player(Base):
     missing_mlb_id = Column(Boolean, default=True)
 
     id_map = relationship("PlayerId", backref=backref("player", uselist=False))
+    pitch_apps = relationship("PitchAppScrapeStatus", backref="player")
+    pmix_all_view = relationship(
+        "Pitch_Mix_All_View",
+        uselist=False,
+        primaryjoin="Player.id==Pitch_Mix_All_View.id",
+        foreign_keys="Pitch_Mix_All_View.id",
+    )
+    pmix_right_view = relationship(
+        "Pitch_Mix_Right_View",
+        uselist=False,
+        primaryjoin="Player.id==Pitch_Mix_Right_View.id",
+        foreign_keys="Pitch_Mix_Right_View.id",
+    )
+    pmix_left_view = relationship(
+        "Pitch_Mix_Left_View",
+        uselist=False,
+        primaryjoin="Player.id==Pitch_Mix_Left_View.id",
+        foreign_keys="Pitch_Mix_Left_View.id",
+    )
 
     def __repr__(self):
         return f"<Player name={self.name_first} {self.name_last}, bbref_id={self.bbref_id}>"
@@ -42,6 +63,18 @@ class Player(Base):
 
     def display(self):
         display_dict(self.as_dict())
+
+    @hybrid_property
+    def pitch_mix(self):
+        return calc_pitch_mix(self.pmix_all_view.__dict__, self.pmix_all_view.total_pitches)
+
+    @hybrid_property
+    def pitch_mix_right(self):
+        return calc_pitch_mix(self.pmix_right_view.__dict__, self.pmix_right_view.total_pitches)
+
+    @hybrid_property
+    def pitch_mix_left(self):
+        return calc_pitch_mix(self.pmix_left_view.__dict__, self.pmix_left_view.total_pitches)
 
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):

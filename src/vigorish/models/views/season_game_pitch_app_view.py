@@ -14,6 +14,7 @@ class Season_Game_PitchApp_View(Base):
                 Season.id.label("id"),
                 Season.year.label("year"),
                 Season.season_type.label("season_type"),
+                PitchAppScrapeStatus.scrape_status_date_id.label("date_id"),
                 PitchAppScrapeStatus.scrape_status_game_id.label("game_id"),
                 PitchAppScrapeStatus.bbref_game_id.label("bbref_game_id"),
                 func.count(PitchAppScrapeStatus.id).label("total_pitchfx"),
@@ -104,8 +105,7 @@ class Season_Game_PitchApp_View(Base):
             )
         )
         results = db_engine.execute(s).fetchall()
-        dict_list = [dict(row) for row in results]
-        return flatten_list2d([d.values() for d in dict_list])
+        return flatten_list2d([d.values() for d in [dict(row) for row in results]])
 
     @classmethod
     def get_all_bbref_game_ids_eligible_for_audit(
@@ -121,8 +121,7 @@ class Season_Game_PitchApp_View(Base):
             )
         )
         results = db_engine.execute(s).fetchall()
-        dict_list = [dict(row) for row in results]
-        return flatten_list2d([d.values() for d in dict_list])
+        return flatten_list2d([d.values() for d in [dict(row) for row in results]])
 
     @classmethod
     def get_all_bbref_game_ids_all_pitchfx_logs_are_valid(
@@ -138,8 +137,7 @@ class Season_Game_PitchApp_View(Base):
             )
         )
         results = db_engine.execute(s).fetchall()
-        dict_list = [dict(row) for row in results]
-        return flatten_list2d([d.values() for d in dict_list])
+        return flatten_list2d([d.values() for d in [dict(row) for row in results]])
 
     @classmethod
     def get_all_bbref_game_ids_pitchfx_error(
@@ -152,8 +150,7 @@ class Season_Game_PitchApp_View(Base):
             )
         )
         results = db_engine.execute(s).fetchall()
-        dict_list = [dict(row) for row in results]
-        return flatten_list2d([d.values() for d in dict_list])
+        return flatten_list2d([d.values() for d in [dict(row) for row in results]])
 
     @classmethod
     def get_all_bbref_game_ids_invalid_pitchfx(
@@ -166,8 +163,7 @@ class Season_Game_PitchApp_View(Base):
             )
         )
         results = db_engine.execute(s).fetchall()
-        dict_list = [dict(row) for row in results]
-        return flatten_list2d([d.values() for d in dict_list])
+        return flatten_list2d([d.values() for d in [dict(row) for row in results]])
 
     @classmethod
     def get_all_bbref_game_ids_combined_no_missing_pfx(
