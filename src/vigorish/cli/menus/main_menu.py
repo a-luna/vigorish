@@ -2,12 +2,14 @@
 import subprocess
 
 from halo import Halo
+from pyfiglet import Figlet
 from tabulate import tabulate
 
 from vigorish import __version__
 from vigorish.cli.components import (
     get_random_cli_color,
     get_random_dots_spinner,
+    get_random_figlet_font,
     print_heading,
     print_message,
 )
@@ -73,8 +75,12 @@ class MainMenu(Menu):
     def check_app_status(self):
         if not db_setup_complete(self.db_engine, self.db_session):
             return
-        spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        spinner.text = "Updating metrics..." if self.initialized else "Initializing..."
+        color = get_random_cli_color()
+        if not self.initialized:
+            f = Figlet(font=get_random_figlet_font())
+            print_message(f.renderText("vigorish"), wrap=False, fg=f"bright_{color}")
+        spinner = Halo(spinner=get_random_dots_spinner(), color=color)
+        spinner.text = "Updating metrics..." if self.initialized else "Loading..."
         spinner.start()
         self.audit_report = self.scraped_data.get_audit_report()
         spinner.stop()

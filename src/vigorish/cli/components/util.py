@@ -7,7 +7,7 @@ import click
 from getch import pause
 
 from vigorish.config.database import Season
-from vigorish.constants import CLI_COLORS
+from vigorish.constants import CLI_COLORS, FIGLET_FONTS
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
@@ -31,6 +31,10 @@ def get_random_bright_cli_color():
 
 def get_random_dots_spinner():
     return f"dots{randint(2, 9)}"
+
+
+def get_random_figlet_font():
+    return FIGLET_FONTS[randint(0, len(FIGLET_FONTS) - 1)]
 
 
 def print_message(message, wrap=True, max_line_len=70, fg=None, bg=None, bold=None, underline=None):
