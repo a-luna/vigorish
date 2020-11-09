@@ -7,6 +7,8 @@ venv
 *.rdb
 *.db
 *.DS_Store
+.prettierignore
+.prettierrc
 node_modules
 .mypy_cache
 backup

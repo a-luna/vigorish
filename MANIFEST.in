@@ -1,3 +1,16 @@
+prune tests
+prune .github
+exclude .gitattributes
+exclude .gitignore
+exclude .prettierignore
+exclude .prettierrc
+exclude .profile
+exclude .python-version
+exclude Aptfile
+exclude Procfile
+exclude package-lock.json
+exclude package.json
+exclude runtime.txt
 include src/vigorish/setup/csv/*.csv
 include src/vigorish/nightmarejs/list_functions.js
 include src/vigorish/nightmarejs/new_nightmare.js

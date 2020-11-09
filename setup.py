@@ -42,6 +42,7 @@ INSTALL_REQUIRES = [
     "lxml",
     "naked",
     "py-getch",
+    "pyfiglet",
     "python-dateutil",
     "python-dotenv",
     "rapidfuzz",
@@ -53,26 +54,6 @@ INSTALL_REQUIRES = [
     "urllib3",
     "w3lib",
 ]
-EXTRAS_REQUIRE = {
-    "dev": [
-        "black",
-        "coverage",
-        "flake8",
-        "isort",
-        "pydocstyle",
-        "pytest",
-        "pytest-black",
-        "pytest-clarity",
-        "pytest-cov",
-        "pytest-dotenv",
-        "pytest-flake8",
-        "pytest-mock",
-        "pytest-randomly",
-        "tox",
-        "twine",
-        "wheel",
-    ]
-}
 
 exec(open(str(APP_ROOT / "src/vigorish/version.py")).read())
 setup(
@@ -94,7 +75,6 @@ setup(
     python_requires=">=3.6",
     classifiers=CLASSIFIERS,
     install_requires=INSTALL_REQUIRES,
-    extras_require=EXTRAS_REQUIRE,
     entry_points="""
         [console_scripts]
         vig=vigorish.cli.vig:cli
