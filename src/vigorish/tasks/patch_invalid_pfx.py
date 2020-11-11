@@ -12,6 +12,7 @@ from vigorish.patch.brooks_pitchfx import (
     PatchBrooksPitchFxPitcherId,
 )
 from vigorish.tasks.base import Task
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_at_bat_id
 
@@ -43,6 +44,7 @@ PATCH_STAT_NAMES = [
 class PatchInvalidPitchFxTask(Task):
     def __init__(self, app):
         super().__init__(app)
+        self.combine_data = CombineScrapedDataTask(app)
         self.events = Events(
             (
                 "error_occurred",
@@ -93,7 +95,7 @@ class PatchInvalidPitchFxTask(Task):
         return Result.Ok()
 
     def verify_scraped_data_can_be_combined(self):
-        results = self.scraped_data.investigate_errors(self.bbref_game_id, apply_patch_list=True)
+        results = self.combine_data.investigate(self.bbref_game_id, apply_patch_list=True)
         if not results["get_all_pbp_events_success"]:
             error_message = "Failed to process play-by-play events and identify at_bat_ids"
         elif not results["get_all_pfx_data_success"]:
@@ -463,7 +465,7 @@ class PatchInvalidPitchFxTask(Task):
         return f"{change_sign}{abs(change)}"
 
     def combine_data_and_update_db(self):
-        result = self.scraped_data.combine_boxscore_and_pfx_data(self.bbref_game_id)
+        result = self.combine_data.execute(self.bbref_game_id)
         if not (
             result["gather_scraped_data_success"]
             and result["combined_data_success"]
@@ -471,8 +473,8 @@ class PatchInvalidPitchFxTask(Task):
         ):
             # this code should be unreachable
             error = (
-                "Critical Error! investigate_errors/combine_boxscore_and_pfx_data processes "
-                f"produced different results for same game: {self.bbref_game_id}"
+                "Critical Error! investigate_errors/combine_data processes produced different "
+                f"results for same game: {self.bbref_game_id}"
             )
             return Result.Fail(error)
         return Result.Ok()

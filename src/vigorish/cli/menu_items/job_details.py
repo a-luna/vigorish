@@ -13,7 +13,7 @@ from vigorish.util.list_helpers import report_dict
 from vigorish.util.result import Result
 
 
-class JobDetailsMenuItem(MenuItem):
+class JobDetails(MenuItem):
     def __init__(self, app, db_job, menu_item_number):
         super().__init__(app)
         self.db_job = db_job

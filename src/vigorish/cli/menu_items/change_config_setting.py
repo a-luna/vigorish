@@ -17,7 +17,7 @@ NUMERIC_SETTING_UNITS = {
 }
 
 
-class ChangeSetttingMenuItem(MenuItem):
+class ChangeConfigSettting(MenuItem):
     def __init__(self, app, setting_name):
         super().__init__(app)
         self.menu_item_text = "Change Setting"

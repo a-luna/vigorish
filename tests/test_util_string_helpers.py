@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import (
-    CalculateAverageTimeBetweenPitches,
+    CalculatePitchTimes,
 )
 from vigorish.util.string_helpers import ellipsize, parse_date, wrap_text
 
@@ -20,7 +20,7 @@ def test_ellipsize():
 
 
 def test_wrap_text(vig_app):
-    calc_pitch_times = CalculateAverageTimeBetweenPitches(vig_app)
+    calc_pitch_times = CalculatePitchTimes(vig_app)
     task_description_pages = calc_pitch_times.get_task_description_pages()
     wrapped_pages = []
     for page in task_description_pages:

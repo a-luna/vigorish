@@ -22,6 +22,7 @@ from vigorish.config.database import (
 )
 from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 from vigorish.tasks.backup_database import BackupDatabaseTask
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.tasks.restore_database import RestoreDatabaseTask
 
 GAME_ID_DICT = COMBINED_DATA_GAME_DICT["NO_ERRORS"]
@@ -41,7 +42,7 @@ def create_test_data(vig_app):
     update_scraped_boxscore(db_session, scraped_data, BBREF_GAME_ID)
     update_scraped_pitch_logs(db_session, scraped_data, GAME_DATE, BBREF_GAME_ID)
     update_scraped_pitchfx_logs(db_session, scraped_data, BB_GAME_ID)
-    scraped_data.combine_boxscore_and_pfx_data(BBREF_GAME_ID, APPLY_PATCH_LIST)
+    CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPLY_PATCH_LIST)
     add_pfx_to_db = AddPitchFxToDatabase(vig_app)
     add_pfx_to_db.execute(vig_app["scraped_data"].get_audit_report(), 2019)
     remove_everything_in_backup_folder()

@@ -4,7 +4,7 @@ from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 
 
-class ReturnToParentMenuItem(MenuItem):
+class ReturnToParent(MenuItem):
     def __init__(self, app, menu_item_text):
         super().__init__(app)
         self.menu_item_text = menu_item_text

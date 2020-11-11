@@ -23,6 +23,7 @@ from vigorish.cli.components.table_viewer import TableViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
 from vigorish.util.result import Result
@@ -32,6 +33,7 @@ from vigorish.util.string_helpers import inning_number_to_string, validate_at_ba
 class InvestigateInvalidPitchFx(MenuItem):
     def __init__(self, app, year, bbref_game_ids):
         super().__init__(app)
+        self.combine_data = CombineScrapedDataTask(app)
         self.patch_all_invalid_pfx = PatchAllInvalidPitchFxTask(app)
         self.patch_invalid_pfx = PatchInvalidPitchFxTask(app)
         self.year = year
@@ -357,7 +359,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = f"Combining scraped data for {self.game_id}..."
         spinner.start()
-        result = self.scraped_data.combine_boxscore_and_pfx_data(self.game_id)
+        result = self.combine_data.execute(self.game_id)
         if (
             not result["gather_scraped_data_success"]
             or not result["combined_data_success"]

@@ -6,7 +6,7 @@ from getch import pause
 from vigorish.cli.components import season_prompt, single_date_prompt, user_options_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.enums import StatusReport
+from vigorish.enums import StatusReport as Report
 from vigorish.status.report_status import (
     report_date_range_status,
     report_season_status,
@@ -17,7 +17,7 @@ from vigorish.util.result import Result
 PROMPT_TEXT = "Choose the type of report you wish to generate from the options below:"
 
 
-class StatusReportMenuItem(MenuItem):
+class StatusReport(MenuItem):
     def __init__(self, app):
         # TODO: Implement TableViewer with Date Range Summary reports, currently displays a huge
         #       wall of text when reporting a full season, for example
@@ -59,12 +59,12 @@ class StatusReportMenuItem(MenuItem):
         choice_text5 = f"{MENU_NUMBERS.get(5)}  All Dates In Season (Detail)"
         choice_text6 = f"{MENU_NUMBERS.get(6)}  All Dates In Season + Missing PitchFx IDs (Detail)"
         choices = {
-            choice_text1: StatusReport.SEASON_SUMMARY,
-            choice_text2: StatusReport.DATE_SUMMARY_MISSING_DATA,
-            choice_text3: StatusReport.DATE_SUMMARY_ALL_DATES,
-            choice_text4: StatusReport.DATE_DETAIL_MISSING_DATA,
-            choice_text5: StatusReport.DATE_DETAIL_ALL_DATES,
-            choice_text6: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
+            choice_text1: Report.SEASON_SUMMARY,
+            choice_text2: Report.DATE_SUMMARY_MISSING_DATA,
+            choice_text3: Report.DATE_SUMMARY_ALL_DATES,
+            choice_text4: Report.DATE_DETAIL_MISSING_DATA,
+            choice_text5: Report.DATE_DETAIL_ALL_DATES,
+            choice_text6: Report.DATE_DETAIL_MISSING_PITCHFX,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, PROMPT_TEXT)
@@ -74,9 +74,9 @@ class StatusReportMenuItem(MenuItem):
         choice_text2 = f"{MENU_NUMBERS.get(2)}  Detail Report + Missing PitchFx IDs"
         choice_text3 = f"{MENU_NUMBERS.get(3)}  Detail Report + Missing PitchFx IDs + Game Status"
         choices = {
-            choice_text1: StatusReport.DATE_DETAIL_ALL_DATES,
-            choice_text2: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
-            choice_text3: StatusReport.SINGLE_DATE_WITH_GAME_STATUS,
+            choice_text1: Report.DATE_DETAIL_ALL_DATES,
+            choice_text2: Report.DATE_DETAIL_MISSING_PITCHFX,
+            choice_text3: Report.SINGLE_DATE_WITH_GAME_STATUS,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, PROMPT_TEXT)
@@ -88,11 +88,11 @@ class StatusReportMenuItem(MenuItem):
         choice_text4 = f"{MENU_NUMBERS.get(4)}  All Dates In Range (Detail)"
         choice_text5 = f"{MENU_NUMBERS.get(5)}  All Dates In Range + Missing PitchFx IDs (Detail)"
         choices = {
-            choice_text1: StatusReport.DATE_SUMMARY_MISSING_DATA,
-            choice_text2: StatusReport.DATE_SUMMARY_ALL_DATES,
-            choice_text3: StatusReport.DATE_DETAIL_MISSING_DATA,
-            choice_text4: StatusReport.DATE_DETAIL_ALL_DATES,
-            choice_text5: StatusReport.DATE_DETAIL_MISSING_PITCHFX,
+            choice_text1: Report.DATE_SUMMARY_MISSING_DATA,
+            choice_text2: Report.DATE_SUMMARY_ALL_DATES,
+            choice_text3: Report.DATE_DETAIL_MISSING_DATA,
+            choice_text4: Report.DATE_DETAIL_ALL_DATES,
+            choice_text5: Report.DATE_DETAIL_MISSING_PITCHFX,
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, PROMPT_TEXT)

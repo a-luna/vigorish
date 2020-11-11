@@ -20,6 +20,7 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import AuditError, DataSet, ScrapeCondition
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
@@ -39,9 +40,10 @@ logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
-class CombineGameDataMenuItem(MenuItem):
+class CombineScrapedData(MenuItem):
     def __init__(self, app, audit_report):
         super().__init__(app)
+        self.combine_data = CombineScrapedDataTask(app)
         self._season = None
         self._date_game_id_map = {}
         self.pbar_manager = enlighten.get_manager()
@@ -341,7 +343,7 @@ class CombineGameDataMenuItem(MenuItem):
             self.current_game_id = bbref_game_id
             self.update_progress_bars(game_date)
             # LOGGER.info(f"Begin combining scraped data for game: {bbref_game_id}")
-            result = self.scraped_data.combine_boxscore_and_pfx_data(bbref_game_id)
+            result = self.combine_data.execute(bbref_game_id)
             if not result["gather_scraped_data_success"]:
                 LOGGER.info(f"Unable to combine data for game: {bbref_game_id}")
                 LOGGER.info(f"An error occurred gathering scraped data for game: {bbref_game_id}")
@@ -473,7 +475,7 @@ class CombineGameDataMenuItem(MenuItem):
         spinner = Halo(color=get_random_cli_color(), spinner=get_random_dots_spinner())
         spinner.text = f"Combining scraped data for {combine_game_id}..."
         spinner.start()
-        result = self.scraped_data.combine_boxscore_and_pfx_data(combine_game_id)
+        result = self.combine_data.execute(combine_game_id)
         if not (
             result["gather_scraped_data_success"]
             and result["combined_data_success"]

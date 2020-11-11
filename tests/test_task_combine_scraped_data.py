@@ -8,7 +8,6 @@ from tests.util import (
     GAME_ID_PATCH_PFX,
     GAME_ID_PFX_OUT_OF_SEQUENCE,
     GAME_ID_WITH_ERRORS,
-    get_avg_pitch_times,
     NO_ERRORS_PITCH_APP,
     update_scraped_bbref_games_for_date,
     update_scraped_boxscore,
@@ -18,6 +17,7 @@ from tests.util import (
 )
 from vigorish.config.database import GameScrapeStatus, PitchAppScrapeStatus
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
 from vigorish.util.exceptions import ScrapedDataException
@@ -35,10 +35,12 @@ def create_test_data(db_session, scraped_data, test_id):
     db_session.commit()
 
 
-def test_combine_data_no_errors(db_session, scraped_data):
+def test_combine_data_no_errors(vig_app):
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
     test_id = "NO_ERRORS"
     create_test_data(db_session, scraped_data, test_id)
-    combined_data = combine_scraped_data_for_game(db_session, scraped_data, GAME_ID_NO_ERRORS)
+    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_NO_ERRORS)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit
@@ -95,10 +97,12 @@ def test_combine_data_no_errors(db_session, scraped_data):
     db_session.commit()
 
 
-def test_combine_data_with_errors(db_session, scraped_data):
+def test_combine_data_with_errors(vig_app):
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
     test_id = "WITH_ERRORS"
     create_test_data(db_session, scraped_data, test_id)
-    combined_data = combine_scraped_data_for_game(db_session, scraped_data, GAME_ID_WITH_ERRORS)
+    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_WITH_ERRORS)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit
@@ -135,12 +139,12 @@ def test_combine_data_with_errors(db_session, scraped_data):
     db_session.commit()
 
 
-def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
+def test_combine_data_no_pfx_for_pitch_app(vig_app):
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
     test_id = "NO_PFX_FOR_PITCH_APP"
     create_test_data(db_session, scraped_data, test_id)
-    combined_data = combine_scraped_data_for_game(
-        db_session, scraped_data, GAME_ID_NO_PFX_FOR_PITCH_APP
-    )
+    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_NO_PFX_FOR_PITCH_APP)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit
@@ -179,12 +183,12 @@ def test_combine_data_no_pfx_for_pitch_app(db_session, scraped_data):
     db_session.commit()
 
 
-def test_combine_data_extra_pitchfx_removed(db_session, scraped_data):
+def test_combine_data_extra_pitchfx_removed(vig_app):
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
     test_id = "EXTRA_PFX_REMOVED"
     create_test_data(db_session, scraped_data, test_id)
-    combined_data = combine_scraped_data_for_game(
-        db_session, scraped_data, GAME_ID_EXTRA_PFX_REMOVED
-    )
+    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_EXTRA_PFX_REMOVED)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit
@@ -234,9 +238,7 @@ def test_combine_patched_pitchfx_data(vig_app):
 
     test_id = "PATCH_PFX"
     create_test_data(vig_app["db_session"], vig_app["scraped_data"], test_id)
-    combined_data = combine_scraped_data_for_game(
-        vig_app["db_session"], vig_app["scraped_data"], GAME_ID_PATCH_PFX
-    )
+    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PATCH_PFX)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit
@@ -381,9 +383,7 @@ def test_patch_all_invalid_pitchfx_data(vig_app):
     )
     if result.success and result.value.exists():
         result.value.unlink()
-    combined_data = combine_scraped_data_for_game(
-        vig_app["db_session"], vig_app["scraped_data"], GAME_ID_PATCH_PFX
-    )
+    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PATCH_PFX)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit
@@ -466,34 +466,27 @@ def test_patch_all_invalid_pitchfx_data(vig_app):
 
 
 def test_combine_patched_boxscore_data(vig_app):
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
     test_id = "PATCH_BOXSCORE"
-    create_test_data(vig_app["db_session"], vig_app["scraped_data"], test_id)
-    game_status = GameScrapeStatus.find_by_bbref_game_id(
-        vig_app["db_session"], GAME_ID_PATCH_BOXSCORE
+    create_test_data(db_session, scraped_data, test_id)
+    result = CombineScrapedDataTask(vig_app).execute(
+        GAME_ID_PATCH_BOXSCORE, apply_patch_list=False, write_json=False, update_db=False
     )
-    boxscore = vig_app["scraped_data"].get_bbref_boxscore(GAME_ID_PATCH_BOXSCORE)
-    pfx_logs = vig_app["scraped_data"].get_all_pitchfx_logs_for_game(GAME_ID_PATCH_BOXSCORE).value
-    avg_pitch_times = get_avg_pitch_times()
-    result = vig_app["scraped_data"].combine_data.execute(
-        game_status, boxscore, pfx_logs, avg_pitch_times
-    )
-    assert result.failure
-    assert "Invalid pitch abbreviation: a\nKeyError('a')" in result.error
+    assert not result["combined_data_success"]
+    assert "Invalid pitch abbreviation: a\nKeyError('a')" in result["error"]
     combined_data = combine_scraped_data_for_game(
-        vig_app["db_session"],
-        vig_app["scraped_data"],
-        GAME_ID_PATCH_BOXSCORE,
-        apply_patch_list=True,
+        vig_app, GAME_ID_PATCH_BOXSCORE, apply_patch_list=True
     )
     assert "pitchfx_vs_bbref_audit" in combined_data
 
 
-def test_find_pfx_out_of_sequence(db_session, scraped_data):
+def test_find_pfx_out_of_sequence(vig_app):
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
     test_id = "PFX_OUT_OF_SEQUENCE"
     create_test_data(db_session, scraped_data, test_id)
-    combined_data = combine_scraped_data_for_game(
-        db_session, scraped_data, GAME_ID_PFX_OUT_OF_SEQUENCE
-    )
+    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PFX_OUT_OF_SEQUENCE)
     assert "pitchfx_vs_bbref_audit" in combined_data
     data_audit = combined_data["pitchfx_vs_bbref_audit"]
     assert "batters_faced_bbref" in data_audit

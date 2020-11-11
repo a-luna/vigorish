@@ -4,7 +4,7 @@ from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
 
 
-class ExitProgramMenuItem(MenuItem):
+class ExitProgram(MenuItem):
     def __init__(self, app):
         super().__init__(app)
         self.menu_item_text = "Exit"

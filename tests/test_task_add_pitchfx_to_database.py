@@ -10,11 +10,14 @@ from tests.util import (
 )
 from vigorish.config.database import get_total_number_of_rows, PitchFx
 from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
 
 @pytest.fixture(scope="module", autouse=True)
-def create_test_data(db_session, scraped_data):
+def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_cli module."""
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
     game_id_dict = COMBINED_DATA_GAME_DICT["NO_ERRORS"]
     game_date = game_id_dict["game_date"]
     bbref_game_id = game_id_dict["bbref_game_id"]
@@ -25,7 +28,7 @@ def create_test_data(db_session, scraped_data):
     update_scraped_boxscore(db_session, scraped_data, bbref_game_id)
     update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id)
     update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
-    scraped_data.combine_boxscore_and_pfx_data(bbref_game_id, apply_patch_list)
+    CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
     db_session.commit()
     return True
 

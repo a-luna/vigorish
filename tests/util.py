@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from vigorish.config.database import (
-    GameScrapeStatus,
     PitchAppScrapeStatus,
     Season,
     TimeBetweenPitches,
@@ -23,6 +22,7 @@ from vigorish.status.update_status_brooks_games_for_date import (
 )
 from vigorish.status.update_status_brooks_pitch_logs import update_status_brooks_pitch_logs_for_game
 from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
 GAME_DATE_BR_DAILY = datetime(2018, 7, 26)
 GAME_DATE_BB_DAILY = datetime(2018, 4, 17)
@@ -89,7 +89,9 @@ COMBINED_DATA_GAME_DICT = {
 }
 
 
-def seed_database_with_2019_test_data(db_session, scraped_data):
+def seed_database_with_2019_test_data(vig_app):
+    db_session = vig_app["db_session"]
+    scraped_data = vig_app["scraped_data"]
     result = TimeBetweenPitches.from_calc_results(db_session, get_avg_pitch_times())
     assert result
     for game_id_dict in COMBINED_DATA_GAME_DICT.values():
@@ -102,7 +104,7 @@ def seed_database_with_2019_test_data(db_session, scraped_data):
         update_scraped_boxscore(db_session, scraped_data, bbref_game_id)
         update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id)
         update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
-        result_dict = scraped_data.combine_boxscore_and_pfx_data(bbref_game_id, apply_patch_list)
+        result_dict = CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
         assert result_dict["gather_scraped_data_success"]
         assert result_dict["combined_data_success"]
         assert result_dict["update_pitch_apps_success"]
@@ -249,26 +251,10 @@ def parse_brooks_pitchfx_from_html(scraped_data, bb_game_id, pitch_app_id):
     return pitchfx_log
 
 
-def combine_scraped_data_for_game(db_session, scraped_data, game_id, apply_patch_list=False):
-    game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, game_id)
-    assert game_status
-    boxscore = scraped_data.get_bbref_boxscore(game_id)
-    assert boxscore
-    if apply_patch_list:
-        result = scraped_data.apply_patch_list(DataSet.BBREF_BOXSCORES, game_id, boxscore)
-        assert result.success
-        boxscore = result.value
-    pfx_logs = scraped_data.get_all_pitchfx_logs_for_game(game_id).value
-    assert pfx_logs
-    if apply_patch_list:
-        result = scraped_data.apply_patch_list(DataSet.BROOKS_PITCHFX, game_id, pfx_logs, boxscore)
-        assert result.success
-        pfx_logs = result.value
-    avg_pitch_times = get_avg_pitch_times()
-    assert avg_pitch_times
-    result = scraped_data.combine_data.execute(game_status, boxscore, pfx_logs, avg_pitch_times)
-    assert result.success
-    return result.value
+def combine_scraped_data_for_game(vig_app, game_id, apply_patch_list=False):
+    result = CombineScrapedDataTask(vig_app).execute(game_id, apply_patch_list, update_db=False)
+    assert "results" in result
+    return result["results"]
 
 
 def get_avg_pitch_times():

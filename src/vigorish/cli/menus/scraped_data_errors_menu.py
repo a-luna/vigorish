@@ -6,7 +6,7 @@ from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.investigate_data_failures import InvestigateScrapedDataFailures
 from vigorish.cli.menu_items.investigate_invalid_pfx import InvestigateInvalidPitchFx
 from vigorish.cli.menu_items.investigate_pitchfx_errors import InvestigatePitchFxErrors
-from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
+from vigorish.cli.menu_items.return_to_parent import ReturnToParent
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.util.result import Result
 
@@ -48,7 +48,7 @@ class ScrapedDataErrorsMenu(Menu):
         invalid_pfx_gids = self.season_report.get("invalid_pfx", [])
         if invalid_pfx_gids:
             self.menu_items.append(InvestigateInvalidPitchFx(self.app, self.year, invalid_pfx_gids))
-        self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to Main Menu"))
+        self.menu_items.append(ReturnToParent(self.app, "Return to Main Menu"))
 
     def audit_report_season_prompt(self, audit_report):
         prompt = "Select an MLB season from the list below:"

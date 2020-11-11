@@ -14,7 +14,7 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id
 
 
-class ScrapedGameDataMenu(MenuItem):
+class ViewGameDataMenu(MenuItem):
     def __init__(self, app, audit_report):
         super().__init__(app)
         self.audit_report = audit_report
@@ -86,7 +86,10 @@ class ScrapedGameDataMenu(MenuItem):
             self.mlb_season = result.value
             game_ids = self.audit_report[self.mlb_season]["successful"]
             while True:
-                result = select_game_prompt(game_ids)
+                subprocess.run(["clear"])
+                heading = f"Scraped Data Viewer - Select Game (MLB Season: {self.mlb_season})"
+                print_heading(heading, fg="bright_yellow")
+                result = select_game_prompt(game_ids, use_numbers=False, clear_screen=False)
                 if result.failure:
                     break
                 self.game_id = result.value
@@ -104,9 +107,15 @@ class ScrapedGameDataMenu(MenuItem):
                 if result.failure:
                     self.team_id = None
                     break
-                team_game_ids = result.value
+                game_ids = result.value
                 while True:
-                    result = select_game_prompt(team_game_ids)
+                    subprocess.run(["clear"])
+                    heading = (
+                        "Scraped Data Viewer - Select Game "
+                        f"(MLB Season: {self.mlb_season}, Team: {self.team_id})"
+                    )
+                    print_heading(heading, fg="bright_yellow")
+                    result = select_game_prompt(game_ids, use_numbers=False, clear_screen=False)
                     if result.failure:
                         break
                     self.game_id = result.value

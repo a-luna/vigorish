@@ -8,9 +8,9 @@ MLB_YEAR = 2019
 
 
 @pytest.fixture(scope="module", autouse=True)
-def create_test_data(db_session, scraped_data):
+def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_cli module."""
-    seed_database_with_2019_test_data(db_session, scraped_data)
+    seed_database_with_2019_test_data(vig_app)
     return True
 
 
