@@ -226,30 +226,18 @@ def file_types_prompt(prompt, valid_file_types=VigFile.ALL):
     return file_types
 
 
-def select_game_prompt(game_ids, prompt=None, prompt_sort_order=False):
-    sort_order = "DATE"
-    if prompt_sort_order:
-        result = sort_options_prompt()
-        if result.failure:
-            return result
-        sort_order = result.value
-        if sort_order == "TEAM":
-            game_ids.sort()
+def select_game_prompt(game_ids, prompt=None, use_numbers=True, clear_screen=True):
     if not prompt:
         prompt = "Select a game from the list below:"
     choices = {
-        f"{MENU_NUMBERS.get(num, str(num))}  {game_id}": game_id
+        f"{_get_menu_item_emoji(use_numbers, num)}  {game_id}": game_id
         for num, game_id in enumerate(game_ids, start=1)
     }
     choices[f"{EMOJI_DICT.get('BACK')} Return to Main Menu"] = None
-    return user_options_prompt(choices, prompt)
+    return user_options_prompt(choices, prompt, clear_screen=clear_screen)
 
 
-def sort_options_prompt():
-    prompt = "How would you prefer to view the list of game IDs?"
-    choices = {
-        f"{MENU_NUMBERS.get(1)}  Sort By Date": "DATE",
-        f"{MENU_NUMBERS.get(2)}  Sort Alphabetically (By Home Team)": "TEAM",
-        f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
-    }
-    return user_options_prompt(choices, prompt)
+def _get_menu_item_emoji(use_numbers, num=None):
+    if use_numbers and num:
+        return MENU_NUMBERS.get(num, str(num))
+    return EMOJI_DICT.get("BLUE_DIAMOND")
