@@ -18,7 +18,7 @@ from vigorish.config.database import (
 )
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
-from vigorish.tasks.import_scraped_data import ImportScrapedDataInLocalFolder
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.util.result import Result
 
 SETUP_HEADING = (
@@ -43,11 +43,11 @@ IMPORT_SCRAPED_DATA_PROMPT = (
 DB_INITIALIZED = "Database has been successfully initialized.\n"
 
 
-class SetupDBMenuItem(MenuItem):
+class SetupDatabase(MenuItem):
     def __init__(self, app):
         super().__init__(app)
         self.update_id_map_task = UpdatePlayerIdMap(self.app)
-        self.import_data_task = ImportScrapedDataInLocalFolder(self.app)
+        self.import_data_task = ImportScrapedDataTask(self.app)
         self.db_initialized = db_setup_complete(self.db_engine, self.db_session)
         self.menu_item_text = "Reset Database" if self.db_initialized else "Setup Database"
         self.menu_item_emoji = EMOJI_DICT["BOMB"] if self.db_initialized else EMOJI_DICT["DIZZY"]

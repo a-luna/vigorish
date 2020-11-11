@@ -20,6 +20,7 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import AuditError, DataSet, ScrapeCondition
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
@@ -39,9 +40,10 @@ logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
-class CombineGameDataMenuItem(MenuItem):
+class CombineScrapedData(MenuItem):
     def __init__(self, app, audit_report):
         super().__init__(app)
+        self.combine_data = CombineScrapedDataTask(app)
         self._season = None
         self._date_game_id_map = {}
         self.pbar_manager = enlighten.get_manager()

@@ -12,7 +12,7 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.tasks.import_scraped_data import ImportScrapedDataInLocalFolder
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.util.result import Result
 
 IMPORT_DATA_MESSAGE = (
@@ -33,10 +33,10 @@ OVERWRITE_DATA_PROMPT = (
 )
 
 
-class ImportScrapedDataTask(MenuItem):
+class ImportScrapedData(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.import_scraped_data = ImportScrapedDataInLocalFolder(self.app)
+        self.import_scraped_data = ImportScrapedDataTask(self.app)
         self.spinner = Halo(color=get_random_cli_color(), spinner=get_random_dots_spinner())
         self.menu_item_text = "Import Scraped Data from Local Folders"
         self.menu_item_emoji = EMOJI_DICT.get("HONEY_POT")

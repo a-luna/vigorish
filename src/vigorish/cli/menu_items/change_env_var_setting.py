@@ -13,7 +13,7 @@ from vigorish.util.result import Result
 RESTART_WARNING = "\nApplication must be restarted for these changes to take effect!"
 
 
-class EnvVarSettingMenuItem(MenuItem):
+class ChangeEnvVarSetting(MenuItem):
     def __init__(self, app, setting_name):
         super().__init__(app)
         self.menu_item_text = setting_name

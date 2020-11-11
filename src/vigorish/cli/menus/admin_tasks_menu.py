@@ -3,15 +3,15 @@ from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.admin_tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 from vigorish.cli.menu_items.admin_tasks.backup_database import BackupDatabase
 from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import (
-    CalculateAverageTimeBetweenPitches,
+    CalculatePitchTimes,
 )
-from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedDataTask
+from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedData
 from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
 from vigorish.cli.menu_items.admin_tasks.restore_database import RestoreDatabase
 from vigorish.cli.menu_items.admin_tasks.sync_scraped_data import SyncScrapedData
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
-from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
-from vigorish.cli.menu_items.setup_db import SetupDBMenuItem
+from vigorish.cli.menu_items.return_to_parent import ReturnToParent
+from vigorish.cli.menu_items.setup_db import SetupDatabase
 from vigorish.config.database import db_setup_complete
 from vigorish.constants import EMOJI_DICT
 from vigorish.util.result import Result
@@ -35,13 +35,13 @@ class AdminTasksMenu(Menu):
         self.menu_items.append(UpdatePlayerIdMap(self.app))
         self.menu_items.append(SyncScrapedData(self.app))
         if db_setup_complete(self.db_engine, self.db_session):
-            self.menu_items.append(ImportScrapedDataTask(self.app))
+            self.menu_items.append(ImportScrapedData(self.app))
             self.menu_items.append(AddPitchFxToDatabase(self.app, self.audit_report))
             self.menu_items.append(BackupDatabase(self.app))
             self.menu_items.append(RestoreDatabase(self.app))
-            self.menu_items.append(CalculateAverageTimeBetweenPitches(self.app))
-            self.menu_items.append(SetupDBMenuItem(self.app))
-        self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to Main Menu"))
+            self.menu_items.append(CalculatePitchTimes(self.app))
+            self.menu_items.append(SetupDatabase(self.app))
+        self.menu_items.append(ReturnToParent(self.app, "Return to Main Menu"))
         # self.menu_items.insert(0, ReturnToParentMenuItem(self.app, "Return to Settings/Admin"))
 
     def prompt_user_for_menu_selection(self):

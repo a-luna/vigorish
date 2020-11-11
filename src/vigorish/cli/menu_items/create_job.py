@@ -18,7 +18,7 @@ from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 
 
-class CreateJobMenuItem(MenuItem):
+class CreateJob(MenuItem):
     def __init__(self, app):
         # TODO: Improve Create Job UX:
         #  - Create new input type that is initialized with a list of valid values
