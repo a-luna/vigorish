@@ -1,7 +1,7 @@
 """Menu that allows the user to execute incomplete jobs and view status of completed jobs."""
 from vigorish.cli.menu import Menu
-from vigorish.cli.menu_items.job_details import JobDetailsMenuItem
-from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
+from vigorish.cli.menu_items.job_details import JobDetails
+from vigorish.cli.menu_items.return_to_parent import ReturnToParent
 from vigorish.constants import MENU_NUMBERS
 
 
@@ -16,9 +16,9 @@ class JobsMenu(Menu):
 
     def populate_menu_items(self):
         self.menu_items = [
-            JobDetailsMenuItem(self.app, job, menu_item_number)
+            JobDetails(self.app, job, menu_item_number)
             for menu_item_number, job in enumerate(self.jobs, start=1)
         ]
-        self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to All Jobs Menu "))
+        self.menu_items.append(ReturnToParent(self.app, "Return to All Jobs Menu "))
         if len(self.jobs) > 8:
-            self.menu_items.insert(0, ReturnToParentMenuItem(self.app, "Return to All Jobs Menu"))
+            self.menu_items.insert(0, ReturnToParent(self.app, "Return to All Jobs Menu"))

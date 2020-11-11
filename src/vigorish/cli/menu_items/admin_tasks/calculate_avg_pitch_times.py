@@ -23,7 +23,7 @@ from vigorish.util.result import Result
 STAT_NAMES = ["avg", "min", "max"]
 
 
-class CalculateAverageTimeBetweenPitches(MenuItem):
+class CalculatePitchTimes(MenuItem):
     def __init__(self, app):
         super().__init__(app)
         self.calc_pitch_times = CalculatePitchTimesTask(app)

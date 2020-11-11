@@ -1,6 +1,6 @@
 """Menu that allows the user to view all jobs grouped by status."""
 from vigorish.cli.menu import Menu
-from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
+from vigorish.cli.menu_items.return_to_parent import ReturnToParent
 from vigorish.cli.menus.jobs_menu import JobsMenu
 from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
@@ -19,4 +19,4 @@ class AllJobsMenu(Menu):
             JobsMenu(self.app, jobs_grouped[status], status, menu_number)
             for menu_number, status in enumerate(jobs_grouped.keys(), start=1)
         ]
-        self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to Main Menu"))
+        self.menu_items.append(ReturnToParent(self.app, "Return to Main Menu"))

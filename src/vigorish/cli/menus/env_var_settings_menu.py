@@ -1,7 +1,7 @@
 """Menu that allows the user to view and modify all settings in vig.config.json."""
 from vigorish.cli.menu import Menu
-from vigorish.cli.menu_items.change_env_var_setting import EnvVarSettingMenuItem
-from vigorish.cli.menu_items.return_to_parent import ReturnToParentMenuItem
+from vigorish.cli.menu_items.change_env_var_setting import ChangeEnvVarSetting
+from vigorish.cli.menu_items.return_to_parent import ReturnToParent
 from vigorish.constants import EMOJI_DICT, ENV_VAR_NAMES
 
 
@@ -13,5 +13,5 @@ class EnvVarSettingsMenu(Menu):
         self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
 
     def populate_menu_items(self):
-        self.menu_items = [EnvVarSettingMenuItem(self.app, name) for name in ENV_VAR_NAMES]
-        self.menu_items.append(ReturnToParentMenuItem(self.app, "Return to Settings/Admin"))
+        self.menu_items = [ChangeEnvVarSetting(self.app, name) for name in ENV_VAR_NAMES]
+        self.menu_items.append(ReturnToParent(self.app, "Return to Settings/Admin"))

@@ -7,7 +7,7 @@ import click
 from vigorish.app import create_app
 from vigorish.cli.click_params import DateString, JobName, MlbSeason
 from vigorish.cli.components import print_message, validate_scrape_dates
-from vigorish.cli.menus.main_menu import MainMenu
+from vigorish.cli.main_menu import MainMenu
 from vigorish.config.database import initialize_database, ScrapeJob
 from vigorish.config.project_paths import VIG_FOLDER
 from vigorish.constants import DATA_SET_NAME_MAP, FILE_TYPE_NAME_MAP
@@ -35,6 +35,7 @@ def cli(ctx):
         if not VIG_FOLDER.exists():
             VIG_FOLDER.mkdir()
     ctx.obj = create_app()
+    # ctx.obj = create_app(db_url="sqlite:////Users/aaronluna/.vig/vig.db")
 
 
 @cli.command()
