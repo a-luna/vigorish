@@ -343,7 +343,7 @@ class CombineScrapedData(MenuItem):
             self.current_game_id = bbref_game_id
             self.update_progress_bars(game_date)
             # LOGGER.info(f"Begin combining scraped data for game: {bbref_game_id}")
-            result = self.scraped_data.combine_boxscore_and_pfx_data(bbref_game_id)
+            result = self.combine_data.execute(bbref_game_id)
             if not result["gather_scraped_data_success"]:
                 LOGGER.info(f"Unable to combine data for game: {bbref_game_id}")
                 LOGGER.info(f"An error occurred gathering scraped data for game: {bbref_game_id}")
@@ -475,7 +475,7 @@ class CombineScrapedData(MenuItem):
         spinner = Halo(color=get_random_cli_color(), spinner=get_random_dots_spinner())
         spinner.text = f"Combining scraped data for {combine_game_id}..."
         spinner.start()
-        result = self.scraped_data.combine_boxscore_and_pfx_data(combine_game_id)
+        result = self.combine_data.execute(combine_game_id)
         if not (
             result["gather_scraped_data_success"]
             and result["combined_data_success"]

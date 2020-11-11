@@ -20,7 +20,7 @@ from vigorish.tasks.base import Task
 from vigorish.util.result import Result
 
 
-class ImportScrapedDataInLocalFolder(Task):
+class ImportScrapedDataTask(Task):
     def __init__(self, app):
         super().__init__(app)
         self.events = Events(

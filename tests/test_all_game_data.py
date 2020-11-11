@@ -11,6 +11,7 @@ from tests.util import (
 from vigorish.data.all_game_data import AllGameData
 from vigorish.enums import DefensePosition
 from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
 TEST_ID = "NO_ERRORS"
 GAME_DICT = COMBINED_DATA_GAME_DICT[TEST_ID]
@@ -31,7 +32,7 @@ def create_test_data(vig_app):
     update_scraped_boxscore(db_session, scraped_data, bbref_game_id)
     update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id)
     update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
-    scraped_data.combine_boxscore_and_pfx_data(bbref_game_id, apply_patch_list)
+    CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
     add_pfx_to_db = AddPitchFxToDatabase(vig_app)
     add_pfx_to_db.execute(vig_app["scraped_data"].get_audit_report(), 2019)
     db_session.commit()

@@ -359,7 +359,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = f"Combining scraped data for {self.game_id}..."
         spinner.start()
-        result = self.scraped_data.combine_boxscore_and_pfx_data(self.game_id)
+        result = self.combine_data.execute(self.game_id)
         if (
             not result["gather_scraped_data_success"]
             or not result["combined_data_success"]
