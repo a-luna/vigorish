@@ -121,9 +121,10 @@ class ViewGameData(MenuItem):
     def view_boxscore(self, team_id, player_type):
         boxscore = self.get_boxscore(team_id, player_type)
         while True:
+            subprocess.run(["clear"])
             result = self.select_player_prompt(player_type, boxscore)
             if result.failure:
-                break
+                return Result.Ok()
             mlb_id = result.value
             self.view_at_bats_for_player(player_type, mlb_id)
 
@@ -155,8 +156,12 @@ class ViewGameData(MenuItem):
             for num, box in enumerate(pitch_boxscore.values(), start=1)
         }
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
-        prompt = "Select a player from the list below:"
-        return user_options_prompt(choices, prompt, auto_scroll=False)
+        prompt = (
+            "All pitchers that apppeared in the game are listed below. Select a player and "
+            "press ENTER to access information for each player's outing and career statistics:"
+        )
+        print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
+        return user_options_prompt(choices, prompt, auto_scroll=False, clear_screen=False)
 
     def get_name_max_length(self, boxscore):
         return max(len(box["name"]) for box in boxscore.values())
@@ -182,8 +187,12 @@ class ViewGameData(MenuItem):
             for order_num, box in bat_boxscore.items()
         }
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
-        prompt = "Select a player from the list below:"
-        return user_options_prompt(choices, prompt, auto_scroll=False)
+        prompt = (
+            "Starting lineup and all substitutes who made at least one plate appearance are "
+            "listed below. Select a player and press ENTER to view details of each at bat:"
+        )
+        print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
+        return user_options_prompt(choices, prompt, auto_scroll=False, clear_screen=False)
 
     def select_batter_text(self, lineup_slot, box, max_name_len):
         fill_count = max_name_len - len(box["name"])
