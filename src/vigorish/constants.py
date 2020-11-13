@@ -139,8 +139,8 @@ DATA_SET_NAMES_LONG = {
     "PitchFX Logs (brooksbaseball.net)": DataSet.BROOKS_PITCHFX,
 }
 
-FILE_TYPE_NAME_MAP = {str(ft): ft for ft in VigFile}
-DATA_SET_NAME_MAP = {str(ds): ds for ds in DataSet}
+# FILE_TYPE_NAME_MAP = {str(ft): ft for ft in VigFile}
+# DATA_SET_NAME_MAP = {str(ds): ds for ds in DataSet}
 
 CLI_COLORS = [
     "black",
