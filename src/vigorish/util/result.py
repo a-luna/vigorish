@@ -12,10 +12,15 @@ class Result:
 
     def __str__(self):
         """Informal string representation of a result."""
-        if self.success:
-            return "[Success]"
-        else:
-            return f"[Failure] {self.error}"
+        result = "Success" if self.success else "Fail"
+        detail = (
+            f" {self.error}"
+            if self.failure
+            else f" value={self.value} ({type(self.value)})"
+            if self.value
+            else ""
+        )
+        return f"[{result}]{detail}"
 
     def __repr__(self):
         """Official string representation of a result."""
