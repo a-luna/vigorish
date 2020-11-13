@@ -84,8 +84,8 @@ class UrlTracker:
             f"({len(self.completed_urls)}/{total_urls}) URLs"
         )
 
-    def create_url_set(self):
-        result = get_url_set(self.db_job, self.data_set, self.scraped_data)
+    def create_url_set(self, start_date, end_date):
+        result = get_url_set(start_date, end_date, self.db_job, self.data_set, self.scraped_data)
         if result.failure:
             return result
         self.all_urls = result.value

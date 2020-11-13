@@ -2,7 +2,6 @@
 from enum import auto, Enum, IntEnum
 
 from aenum import auto as auto_flag
-from aenum import IntFlag
 
 
 class VigFile(IntFlag):
@@ -60,6 +59,16 @@ class ScrapeCondition(Enum):
 
     def __str__(self):
         return self.name
+
+
+class ScrapeTaskOption(Enum):
+    """Allowed values for SCRAPE_TASK_OPTION config setting."""
+
+    BY_DATE = auto()
+    BY_DATA_SET = auto()
+
+    def __str__(self):
+        return str.__str__(self)
 
 
 class HtmlStorageOption(Enum):

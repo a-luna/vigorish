@@ -6,17 +6,19 @@ from datetime import datetime
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components import print_message
+from vigorish.cli.components import print_message, print_heading
 from vigorish.config.database import ScrapeError
 from vigorish.constants import FAKE_SPINNER, JOB_SPINNER_COLORS
-from vigorish.enums import DataSet, JobStatus, StatusReport
+from vigorish.enums import DataSet, JobStatus, ScrapeTaskOption, StatusReport
 from vigorish.scrape.bbref_boxscores.scrape_task import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_task import ScrapeBBRefGamesForDate
 from vigorish.scrape.brooks_games_for_date.scrape_task import ScrapeBrooksGamesForDate
 from vigorish.scrape.brooks_pitch_logs.scrape_task import ScrapeBrooksPitchLogs
 from vigorish.scrape.brooks_pitchfx.scrape_task import ScrapeBrooksPitchFx
 from vigorish.status.report_status import report_date_range_status, report_season_status
+from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_ONLY_2
+from vigorish.util.exceptions import ConfigSetingException
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
 
@@ -33,6 +35,9 @@ NPM_PACKAGES_INSTALL_ERROR = (
 
 
 class JobRunner:
+    scrape_date: datetime
+    data_set: DataSet
+
     def __init__(self, db_job, db_session, config, scraped_data):
         self.db_job = db_job
         self.job_id = self.db_job.id
@@ -46,32 +51,70 @@ class JobRunner:
         self.scraped_data = scraped_data
         self.spinners = defaultdict(lambda: Halo(spinner=FAKE_SPINNER))
         self.task_results = []
+        self.scrape_task_option = self.config.get_current_setting("SCRAPE_TASK_OPTION", DataSet.ALL)
         self.status_report = self.config.get_current_setting("STATUS_REPORT", DataSet.ALL)
 
     def execute(self):
         result = self.initialize()
         if result.failure:
             return self.job_failed(result)
-        for task_number, data_set in enumerate(self.data_sets, start=1):
-            self.report_task_results()
-            self.update_spinner(data_set, task_number)
-            result = self.get_scrape_task_for_data_set(data_set).execute()
-            if result.failure:
-                if "skip" in result.error:
-                    self.log_result_data_set_skipped(data_set, task_number)
-                    self.spinners[data_set].stop()
-                    continue
-                return self.job_failed(result, data_set)
-            self.log_result_data_set_scraped(data_set, task_number)
-            self.spinners[data_set].stop()
-        self.report_task_results()
+        result = self.run_job()
+        if result.failure:
+            return self.job_failed(result, self.data_set)
         result = self.show_status_report()
         pause(message="Press any key to continue...")
         if result.failure:
             return self.job_failed(result)
         return self.job_succeeded()
 
-    def get_scrape_task_for_data_set(self, data_set):
+    def run_job(self):
+        if self.scrape_task_option == ScrapeTaskOption.BY_DATE:
+            return self.run_job_day_by_day()
+        elif self.scrape_task_option == ScrapeTaskOption.BY_DATA_SET:
+            return self.run_job_full_date_range()
+        else:
+            raise ConfigSetingException(
+                setting_name="SCRAPE_TASK_OPTION",
+                current_value=self.scrape_task_option,
+                detail=f'"SCRAPE_TASK_OPTION" only has two valid values: BY_DATE and BY_DATA_SET',
+            )
+
+    def run_job_day_by_day(self):
+        for scrape_date in get_date_range(self.start_date, self.end_date):
+            self.scrape_date = scrape_date
+            for task_number, data_set in enumerate(self.data_sets, start=1):
+                self.data_set = data_set
+                result = self.scrape_date_range(task_number, data_set, scrape_date, scrape_date)
+                if result.failure:
+                    return result
+            self.task_results.clear()
+        self.report_task_results()
+        return Result.Ok()
+
+    def run_job_full_date_range(self):
+        for task_number, data_set in enumerate(self.data_sets, start=1):
+            self.data_set = data_set
+            result = self.scrape_date_range(task_number, data_set, self.start_date, self.end_date)
+            if result.failure:
+                return result
+        self.report_task_results()
+        return Result.Ok()
+
+    def scrape_date_range(self, task_number, data_set, start_date, end_date):
+        self.report_task_results()
+        self.update_spinner(data_set, task_number)
+        result = self.scrape_data_set(data_set, start_date, end_date)
+        if result.failure:
+            if "skip" in result.error:
+                self.log_result_data_set_skipped(data_set, task_number)
+                self.spinners[data_set].stop()
+                return Result.Ok()
+            return result
+        self.log_result_data_set_scraped(data_set, task_number)
+        self.spinners[data_set].stop()
+        return Result.Ok()
+
+    def scrape_data_set(self, data_set, start_date, end_date):
         task_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: ScrapeBrooksGamesForDate,
             DataSet.BROOKS_PITCH_LOGS: ScrapeBrooksPitchLogs,
@@ -79,7 +122,10 @@ class JobRunner:
             DataSet.BBREF_GAMES_FOR_DATE: ScrapeBBRefGamesForDate,
             DataSet.BBREF_BOXSCORES: ScrapeBBRefBoxscores,
         }
-        return task_dict[data_set](self.db_job, self.db_session, self.config, self.scraped_data)
+        scrape_task = task_dict[data_set](
+            self.db_job, self.db_session, self.config, self.scraped_data
+        )
+        return scrape_task.execute(start_date, end_date)
 
     def update_spinner(self, data_set, task_number):
         self.spinners[data_set].text = self.scrape_task_started_text(data_set, task_number)
@@ -106,13 +152,17 @@ class JobRunner:
 
     def report_task_results(self):
         subprocess.run(["clear"])
-        start_date_str = self.start_date.strftime(DATE_ONLY_2)
-        end_date_str = self.end_date.strftime(DATE_ONLY_2)
         job_name_id = f"Job Name: {self.job_name} (ID: {self.job_id.upper()})"
         if self.job_name == self.job_id:
             job_name_id = f"Job ID: {self.job_id.upper()}"
-        job_heading = f"{job_name_id} Date Range: {start_date_str}-{end_date_str}\n"
-        print_message(job_heading, wrap=False, fg="bright_yellow", bold=True, underline=True)
+        start_date_str = self.start_date.strftime(DATE_ONLY_2)
+        end_date_str = self.end_date.strftime(DATE_ONLY_2)
+        date_range = f"Scraping: {start_date_str}-{end_date_str}"
+        if self.scrape_date:
+            scrape_date_str = self.scrape_date.strftime(DATE_ONLY_2)
+            date_range += f" (Now: {scrape_date_str})"
+        job_heading = f"{job_name_id} {date_range}"
+        print_heading(job_heading, fg="bright_yellow")
         if not self.task_results:
             return
         for task_result in self.task_results:

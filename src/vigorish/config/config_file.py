@@ -19,8 +19,10 @@ from vigorish.enums import (
     HtmlStorageOption,
     JsonStorageOption,
     ScrapeCondition,
+    ScrapeTaskOption,
     StatusReport,
 )
+from vigorish.util.exceptions import ConfigSetingException
 from vigorish.util.list_helpers import dict_to_param_list
 from vigorish.util.result import Result
 
@@ -29,11 +31,14 @@ DEFAULT_CONFIG = VIG_FOLDER / "vig.config.json"
 
 
 class ConfigFile:
+    config_filepath: str
+
     def __init__(self, config_file_path=None):
-        if os.environ.get("ENV") == "TEST":
+        self.config_filepath = config_file_path
+        if not self.config_filepath:
             self.config_filepath = Path(os.getenv("CONFIG_FILE"))
-        else:
-            self.config_filepath = config_file_path if config_file_path else DEFAULT_CONFIG
+        if not self.config_filepath:
+            self.config_filepath = DEFAULT_CONFIG
         if isinstance(self.config_filepath, str):
             self.config_filepath = Path(self.config_filepath)
         if self.config_filepath.exists():
@@ -50,6 +55,12 @@ class ConfigFile:
     def get_current_setting(self, setting_name, data_set):
         config_dict = self.config_json.get(setting_name)
         config = self.config_factory(setting_name, config_dict) if config_dict else None
+        if not config:
+            raise ConfigSetingException(
+                setting_name,
+                data_set,
+                detail=f"Failed to retrieve ConfigSetting with name = {setting_name=}",
+            )
         return config.current_setting(data_set)
 
     def change_setting(self, setting_name, data_set, new_value):
@@ -247,19 +258,20 @@ class ConfigFile:
 
     def get_default_value(self, setting_name, data_set):
         default_value_dict = {
-            "STATUS_REPORT": StatusReport.SEASON_SUMMARY.name,
+            "STATUS_REPORT": StatusReport.SEASON_SUMMARY,
             "S3_BUCKET": "your-bucket",
-            "SCRAPE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA.name,
+            "SCRAPE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA,
+            "SCRAPE_TASK_OPTION": ScrapeTaskOption.BY_DATE,
             "URL_SCRAPE_DELAY": UrlScrapeDelay(True, True, None, 3, 6).to_dict(),
             "BATCH_JOB_SETTINGS": BatchJobSettings(True, True, None, 50, 80).to_dict(),
-            "HTML_STORAGE": HtmlStorageOption.NONE.name,
+            "HTML_STORAGE": HtmlStorageOption.NONE,
             "HTML_LOCAL_FOLDER_PATH": "html_storage/{year}/{data_set}/",
             "HTML_S3_FOLDER_PATH": "{year}/{data_set}/html/",
-            "JSON_STORAGE": JsonStorageOption.LOCAL_FOLDER.name,
+            "JSON_STORAGE": JsonStorageOption.LOCAL_FOLDER,
             "JSON_LOCAL_FOLDER_PATH": "json_storage/{year}/{data_set}/",
             "JSON_S3_FOLDER_PATH": "{year}/{data_set}",
-            "SCRAPED_DATA_COMBINE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA.name,
-            "COMBINED_DATA_STORAGE": CombinedDataStorageOption.LOCAL_FOLDER.name,
+            "SCRAPED_DATA_COMBINE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA,
+            "COMBINED_DATA_STORAGE": CombinedDataStorageOption.LOCAL_FOLDER,
             "COMBINED_DATA_LOCAL_FOLDER_PATH": "json_storage/{year}/combined_data",
             "COMBINED_DATA_S3_FOLDER_PATH": "{year}/combined_data",
             "DB_BACKUP_FOLDER_PATH": "backup",
@@ -304,6 +316,39 @@ class ConfigFile:
                     "By default, HTML is scraped and parsed only once (ONLY_MISSING_DATA). "
                     "You can overwrite existing data by selecting ALWAYS, or prevent any "
                     "data from being scraped by selecting NEVER."
+                ),
+                "SAME_SETTING_FOR_ALL_DATA_SETS": True,
+            },
+            "SCRAPE_TASK_OPTION": {
+                "CONFIG_TYPE": "Enum",
+                "ENUM_NAME": "ScrapeTaskOption",
+                "DESCRIPTION": (
+                    [
+                        (
+                            "A scrape job is created by choosing a start date, an end date and "
+                            "any data sets you wish to scrape for each day in the specified date "
+                            "range. When the job is ran, a list of dates is created from the "
+                            "start and end dates (both endpoints are included in the list).\n"
+                        ),
+                        (
+                            "If SCRAPE_TASK_OPTION == BY_DATE (default behavior), the job is "
+                            "executed by iterating through the list of dates. For each data set "
+                            "a list of URLs to scrape for the current date is generated. After "
+                            "all data sets specified for this job have been scraped, the job "
+                            "moves to the next date in the list and scrapes all data sets for "
+                            "that date. After all days in the list have been scraped, the job "
+                            "ends.\n"
+                        ),
+                        (
+                            "If SCRAPE_TASK_OPTION == BY_DATA_SET, the job is executed by "
+                            "iterating through the list of data sets to scrape. For each data "
+                            "set, a list of URLs to scrape for all days in the range specified "
+                            "by the start and end dates is generated. After all URLs for the "
+                            "data set have been scraped, the job moves on to the next data set "
+                            "and scrapes all URLs for the specified date range. After all data "
+                            "sets have been scraped, the job ends."
+                        ),
+                    ],
                 ),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },

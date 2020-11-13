@@ -2,14 +2,15 @@ from dacite import from_dict
 
 from vigorish.enums import DataSet, VigFile
 from vigorish.scrape.url_details import UrlDetails
+from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.regex import BBREF_BOXSCORE_URL_REGEX
 from vigorish.util.result import Result
 
 
-def create_url_set(db_job, data_set, scraped_data):
+def create_url_set(start_date, end_date, db_job, data_set, scraped_data):
     url_set = {}
-    for game_date in db_job.date_range:
+    for game_date in get_date_range(start_date, end_date):
         result = create_url_set_for_date(db_job, data_set, scraped_data, game_date)
         if result.failure:
             return result
