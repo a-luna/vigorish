@@ -10,7 +10,6 @@ from vigorish.cli.components import print_message, validate_scrape_dates
 from vigorish.cli.main_menu import MainMenu
 from vigorish.config.database import initialize_database, ScrapeJob
 from vigorish.config.project_paths import VIG_FOLDER
-from vigorish.constants import DATA_SET_NAME_MAP, FILE_TYPE_NAME_MAP
 from vigorish.enums import DataSet, StatusReport, SyncDirection, VigFile
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.status.report_status import (
@@ -66,9 +65,9 @@ def setup(app):
 @cli.command()
 @click.option(
     "--data-set",
-    type=click.Choice(DATA_SET_NAME_MAP.keys()),
+    type=click.Choice(list(DataSet)),
     multiple=True,
-    default=[str(DataSet.ALL)],
+    default=[DataSet.ALL],
     show_default=True,
     help="Data set to scrape, multiple values can be provided.",
 )
@@ -104,7 +103,7 @@ def setup(app):
 @click.pass_obj
 def scrape(app, data_set, start, end, name):
     """Scrape MLB data from websites."""
-    data_sets_int = sum(int(DATA_SET_NAME_MAP[ds]) for ds in data_set)
+    data_sets_int = sum(list(DataSet))
     result = validate_scrape_dates(app["db_session"], start, end)
     if result.failure:
         return exit_app(app, result)
@@ -263,23 +262,23 @@ def sync(app):
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "--file-type",
-    type=click.Choice([str(ft) for ft in VigFile if ft != VigFile.ALL]),
+    type=click.Choice([ft for ft in VigFile if ft != VigFile.ALL]),
     help="Type of file to sync, must provide only one value.",
     prompt=True,
 )
 @click.option(
     "--data-sets",
-    type=click.Choice([str(ds) for ds in DataSet]),
+    type=click.Choice(list(DataSet)),
     multiple=True,
-    default=[str(DataSet.ALL)],
+    default=[DataSet.ALL],
     show_default=True,
     help="Data set(s) to sync, multiple values can be provided.",
 )
 @click.pass_obj
 def sync_up_to_s3(app, year, file_type, data_sets):
     """Sync files from local folder to S3 bucket."""
-    file_type = FILE_TYPE_NAME_MAP.get(file_type, None)
-    data_sets_int = sum(int(DATA_SET_NAME_MAP[ds]) for ds in data_sets)
+    # file_type = FILE_TYPE_NAME_MAP.get(file_type, None)
+    data_sets_int = sum(list(DataSet))
     sync_task = SyncScrapedDataNoPrompts(app)
     result_dict = sync_task.execute(SyncDirection.UP_TO_S3, year, file_type, data_sets_int)
     result = Result.Combine([result for result in result_dict.values()])
@@ -290,23 +289,23 @@ def sync_up_to_s3(app, year, file_type, data_sets):
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "--file-type",
-    type=click.Choice([str(ft) for ft in VigFile if ft != VigFile.ALL]),
+    type=click.Choice([ft for ft in VigFile if ft != VigFile.ALL]),
     help="Type of file to sync, must provide only one value.",
     prompt=True,
 )
 @click.option(
     "--data-sets",
-    type=click.Choice([str(ds) for ds in DataSet]),
+    type=click.Choice(list(DataSet)),
     multiple=True,
-    default=[str(DataSet.ALL)],
+    default=[DataSet.ALL],
     show_default=True,
     help="Data set(s) to sync, multiple values can be provided.",
 )
 @click.pass_obj
 def sync_down_to_local(app, year, file_type, data_sets):
     """Sync files from S3 bucket to local folder."""
-    file_type = FILE_TYPE_NAME_MAP.get(file_type, None)
-    data_sets_int = sum(int(DATA_SET_NAME_MAP[ds]) for ds in data_sets)
+    # file_type = FILE_TYPE_NAME_MAP.get(file_type, None)
+    data_sets_int = sum(list(DataSet))
     sync_task = SyncScrapedDataNoPrompts(app)
     result_dict = sync_task.execute(SyncDirection.DOWN_TO_LOCAL, year, file_type, data_sets_int)
     result = Result.Combine([result for result in result_dict.values()])

@@ -15,7 +15,7 @@ class VigFile(IntFlag):
     ALL = SCRAPED_HTML | PARSED_JSON | COMBINED_GAME_DATA | PATCH_LIST
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class DataSet(IntFlag):
@@ -35,7 +35,7 @@ class DataSet(IntFlag):
     )
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class ConfigType(Enum):
@@ -48,7 +48,7 @@ class ConfigType(Enum):
     NONE = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class ScrapeCondition(Enum):
@@ -59,7 +59,7 @@ class ScrapeCondition(Enum):
     NEVER = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class HtmlStorageOption(Enum):
@@ -71,7 +71,7 @@ class HtmlStorageOption(Enum):
     BOTH = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class JsonStorageOption(Enum):
@@ -82,7 +82,7 @@ class JsonStorageOption(Enum):
     BOTH = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class CombinedDataStorageOption(Enum):
@@ -93,7 +93,7 @@ class CombinedDataStorageOption(Enum):
     BOTH = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class StatusReport(Enum):
@@ -109,7 +109,7 @@ class StatusReport(Enum):
     SINGLE_DATE_WITH_GAME_STATUS = 7
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class FileTask(Enum):
@@ -120,7 +120,7 @@ class FileTask(Enum):
     REMOVE_FILE = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class S3FileTask(Enum):
@@ -132,7 +132,7 @@ class S3FileTask(Enum):
     RENAME = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class LocalFileTask(Enum):
@@ -144,7 +144,7 @@ class LocalFileTask(Enum):
     DECODE_JSON = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class JobStatus(IntEnum):
@@ -155,7 +155,7 @@ class JobStatus(IntEnum):
     COMPLETE = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class DefensePosition(IntEnum):
@@ -228,7 +228,7 @@ class PlayByPlayEvent(Enum):
     MISC = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class AuditError(Enum):
@@ -253,7 +253,7 @@ class AuditTask(IntEnum):
     UPDATE_BOXSCORE = 5
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class PatchType(Enum):
@@ -263,7 +263,7 @@ class PatchType(Enum):
     CHANGE_PITCHER_ID = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class SyncDirection(Enum):
@@ -271,4 +271,4 @@ class SyncDirection(Enum):
     DOWN_TO_LOCAL = auto()
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
