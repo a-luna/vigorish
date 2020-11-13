@@ -23,10 +23,17 @@ class ConfigSetting(MenuItem):
         subprocess.run(["clear"])
         setting_heading = f"Setting: {self.setting_name_title} (Type: {self.data_type.name})"
         print_heading(setting_heading, fg="bright_magenta")
-        print_message(self.setting.description)
+        self.print_description()
         print()
         print_message(self.current_settings, wrap=False, fg="bright_yellow", bold=True)
         if yes_no_prompt("Change current setting?"):
             change_setting_menu = ChangeConfigSettting(self.app, self.setting_name)
             return change_setting_menu.launch()
         return Result.Ok(self.exit_menu)
+
+    def print_description(self):
+        if isinstance(self.setting.description, list):
+            for line in self.setting.description:
+                print_message(line)
+        else:
+            print_message(self.setting.description)
