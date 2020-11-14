@@ -34,6 +34,22 @@
         "BROOKS_PITCH_LOGS": null,
         "BROOKS_PITCHFX": null
     },
+    "SCRAPE_TASK_OPTION": {
+        "CONFIG_TYPE": "Enum",
+        "ENUM_NAME": "ScrapeTaskOption",
+        "DESCRIPTION": [
+            "A scrape job is created by choosing a start date, an end date and any data sets you wish to scrape for each day in the specified date range. When the job is ran, a list of dates is created from the start and end dates (both endpoints are included in the list).\n",
+            "If SCRAPE_TASK_OPTION == BY_DATE (default behavior), the job is executed by iterating through the list of dates. For each data set a list of URLs to scrape for the current date is generated. After all data sets specified for this job have been scraped, the job moves to the next date in the list and scrapes all data sets for that date. After all days in the list have been scraped, the job ends.\n",
+            "If SCRAPE_TASK_OPTION == BY_DATA_SET, the job is executed by iterating through the list of data sets to scrape. For each data set, a list of URLs to scrape for all days in the range specified by the start and end dates is generated. After all URLs for the data set have been scraped, the job moves on to the next data set and scrapes all URLs for the specified date range. After all data sets have been scraped, the job ends."
+        ],
+        "SAME_SETTING_FOR_ALL_DATA_SETS": true,
+        "ALL": "BY_DATE",
+        "BBREF_GAMES_FOR_DATE": null,
+        "BBREF_BOXSCORES": null,
+        "BROOKS_GAMES_FOR_DATE": null,
+        "BROOKS_PITCH_LOGS": null,
+        "BROOKS_PITCHFX": null
+    },
     "URL_SCRAPE_DELAY": {
         "CONFIG_TYPE": "Numeric",
         "CLASS_NAME": "UrlScrapeDelay",
