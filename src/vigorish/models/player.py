@@ -54,6 +54,20 @@ class Player(Base):
         primaryjoin="Player.id==Pitch_Mix_Left_View.id",
         foreign_keys="Pitch_Mix_Left_View.id",
     )
+    pitch_type_view = relationship(
+        "Pitch_Type_All_View",
+        backref="original",
+        uselist=False,
+        primaryjoin="Player.id==Pitch_Type_All_View.id",
+        foreign_keys="Pitch_Type_All_View.id",
+    )
+    pitch_type_by_year_view = relationship(
+        "Pitch_Type_By_Year_View",
+        backref="original",
+        uselist=False,
+        primaryjoin="Player.id==Pitch_Type_By_Year_View.id",
+        foreign_keys="Pitch_Type_By_Year_View.id",
+    )
 
     def __repr__(self):
         return f"<Player name={self.name_first} {self.name_last}, bbref_id={self.bbref_id}>"
@@ -66,15 +80,15 @@ class Player(Base):
 
     @hybrid_property
     def pitch_mix(self):
-        return calc_pitch_mix(self.pmix_all_view.__dict__, self.pmix_all_view.total_pitches)
+        return calc_pitch_mix(self.pmix_all_view.__dict__)
 
     @hybrid_property
     def pitch_mix_right(self):
-        return calc_pitch_mix(self.pmix_right_view.__dict__, self.pmix_right_view.total_pitches)
+        return calc_pitch_mix(self.pmix_right_view.__dict__)
 
     @hybrid_property
     def pitch_mix_left(self):
-        return calc_pitch_mix(self.pmix_left_view.__dict__, self.pmix_left_view.total_pitches)
+        return calc_pitch_mix(self.pmix_left_view.__dict__)
 
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):

@@ -1,4 +1,4 @@
-from sqlalchemy import case, func, join, or_, select
+from sqlalchemy import and_, case, func, join, or_, select
 from sqlalchemy_utils import create_view
 
 from vigorish.config.database import Base, PitchFx, PlayerId
@@ -176,6 +176,93 @@ class Pitch_Mix_By_Year_View(Base):
         )
         .group_by(PitchFx.season_id)
         .group_by(PlayerId.db_player_id)
+        .order_by(PlayerId.mlb_name),
+        metadata=Base.metadata,
+        cascade_on_drop=False,
+    )
+
+
+class Pitch_Type_All_View(Base):
+    __table__ = create_view(
+        name="pitch_type_all",
+        selectable=select(
+            [
+                PlayerId.db_player_id.label("id"),
+                PitchFx.season_id.label("season_id"),
+                PlayerId.mlb_id.label("mlb_id"),
+                PlayerId.mlb_name.label("name"),
+                PitchFx.mlbam_pitch_name.label("pitch_type"),
+                func.count(PitchFx.id).label("total_pitches"),
+                func.avg(PitchFx.start_speed).label("avg_speed"),
+                func.avg(PitchFx.pfx_x).label("avg_pfx_x"),
+                func.avg(PitchFx.pfx_z).label("avg_pfx_z"),
+                func.avg(PitchFx.px).label("avg_px"),
+                func.avg(PitchFx.pz).label("avg_pz"),
+            ]
+        )
+        .where(
+            and_(
+                PitchFx.is_duplicate_guid == 0,
+                PitchFx.is_duplicate_pitch_number == 0,
+                PitchFx.is_invalid_ibb == 0,
+                PitchFx.is_out_of_sequence == 0,
+                or_(PitchFx.stand == "L", PitchFx.stand == "R"),
+            )
+        )
+        .select_from(
+            join(
+                PlayerId,
+                PitchFx,
+                PlayerId.db_player_id == PitchFx.pitcher_id,
+                isouter=True,
+            )
+        )
+        .group_by(PlayerId.db_player_id)
+        .group_by(PitchFx.mlbam_pitch_name)
+        .order_by(PlayerId.mlb_name),
+        metadata=Base.metadata,
+        cascade_on_drop=False,
+    )
+
+
+class Pitch_Type_By_Year_View(Base):
+    __table__ = create_view(
+        name="pitch_type_by_year",
+        selectable=select(
+            [
+                PlayerId.db_player_id.label("id"),
+                PitchFx.season_id.label("season_id"),
+                PlayerId.mlb_id.label("mlb_id"),
+                PlayerId.mlb_name.label("name"),
+                PitchFx.mlbam_pitch_name.label("pitch_type"),
+                func.count(PitchFx.id).label("total_pitches"),
+                func.avg(PitchFx.start_speed).label("avg_speed"),
+                func.avg(PitchFx.pfx_x).label("avg_pfx_x"),
+                func.avg(PitchFx.pfx_z).label("avg_pfx_z"),
+                func.avg(PitchFx.px).label("avg_px"),
+                func.avg(PitchFx.pz).label("avg_pz"),
+            ]
+        )
+        .where(
+            and_(
+                PitchFx.is_duplicate_guid == 0,
+                PitchFx.is_duplicate_pitch_number == 0,
+                PitchFx.is_invalid_ibb == 0,
+                PitchFx.is_out_of_sequence == 0,
+                or_(PitchFx.stand == "L", PitchFx.stand == "R"),
+            )
+        )
+        .select_from(
+            join(
+                PlayerId,
+                PitchFx,
+                PlayerId.db_player_id == PitchFx.pitcher_id,
+                isouter=True,
+            )
+        )
+        .group_by(PitchFx.season_id)
+        .group_by(PlayerId.db_player_id)
+        .group_by(PitchFx.mlbam_pitch_name)
         .order_by(PlayerId.mlb_name),
         metadata=Base.metadata,
         cascade_on_drop=False,

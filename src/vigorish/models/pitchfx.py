@@ -77,8 +77,8 @@ class PitchFx(Base):
     date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    pitcher = relationship("Player", foreign_keys=[pitcher_id])
-    batter = relationship("Player", foreign_keys=[batter_id])
+    pitcher = relationship("Player", foreign_keys=[pitcher_id], backref="pfx_as_pitcher")
+    batter = relationship("Player", foreign_keys=[batter_id], backref="pfx_as_batter")
     team_pitching = relationship("Team", foreign_keys=[team_pitching_id])
     team_batting = relationship("Team", foreign_keys=[team_batting_id])
     game = relationship("GameScrapeStatus", foreign_keys=[game_status_id])
