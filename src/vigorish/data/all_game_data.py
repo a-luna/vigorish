@@ -433,10 +433,10 @@ class AllGameData:
         pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
         return {
             "pitch_app": pitch_app.pitch_mix,
-            "by_year": pitcher_data.pitch_mix_by_year(),
-            "all": pitcher_data.pitch_mix(),
-            "bat_r": pitcher_data.pitch_mix_right(),
-            "bat_l": pitcher_data.pitch_mix_left(),
+            "by_year": pitcher_data.pitch_mix_by_year,
+            "all": pitcher_data.pitch_mix,
+            "bat_r": pitcher_data.pitch_mix_right,
+            "bat_l": pitcher_data.pitch_mix_left,
         }
 
     def get_matchup_details(self):

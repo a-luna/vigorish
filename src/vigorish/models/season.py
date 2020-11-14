@@ -25,9 +25,9 @@ class Season(Base):
     asg_date = Column(DateTime, default=date.min)
     season_type = Column(Enum(SeasonType), default=SeasonType.NONE)
 
-    scrape_status_dates = relationship("DateScrapeStatus", backref="season")
-    scrape_status_games = relationship("GameScrapeStatus", backref="season")
-    scrape_status_pitchfx = relationship("PitchAppScrapeStatus", backref="season")
+    dates = relationship("DateScrapeStatus", backref="season")
+    games = relationship("GameScrapeStatus", backref="season")
+    pitch_apps = relationship("PitchAppScrapeStatus", backref="season")
     scrape_jobs = relationship("ScrapeJob", backref="season")
     pitch_app_status = relationship(
         "Season_PitchApp_View",
@@ -263,9 +263,7 @@ class Season(Base):
 
     @hybrid_property
     def total_pitch_apps_pitchfx_is_valid(self):
-        return sum(
-            not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
-        )
+        return sum(not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
 
     @hybrid_property
     def total_pitch_count_pitch_logs(self):
@@ -391,7 +389,7 @@ class Season(Base):
     def scraped_all_pitchfx_logs(self):
         if not self.scraped_all_brooks_pitch_logs:
             return False
-        if not self.scrape_status_pitchfx:
+        if not self.pitch_apps:
             return True
         return self.pitch_app_count_pitchfx == self.total_pitch_apps_scraped_pitchfx
 
@@ -399,7 +397,7 @@ class Season(Base):
     def combined_data_for_all_pitchfx_logs(self):
         if not self.scraped_all_pitchfx_logs:
             return False
-        if not self.scrape_status_pitchfx:
+        if not self.pitch_apps:
             return False
         return self.pitch_app_count_pitchfx == self.total_pitch_apps_combined_data
 
@@ -407,19 +405,17 @@ class Season(Base):
     def pitchfx_error_for_any_pitchfx_logs(self):
         if not self.scraped_all_pitchfx_logs:
             return False
-        if not self.scrape_status_pitchfx:
+        if not self.pitch_apps:
             return False
-        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx)
+        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
 
     @hybrid_property
     def pitchfx_is_valid_for_all_pitchfx_logs(self):
         if not self.scraped_all_pitchfx_logs:
             return True
-        if not self.scrape_status_pitchfx:
+        if not self.pitch_apps:
             return True
-        return all(
-            not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
-        )
+        return all(not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
@@ -545,25 +541,19 @@ class Season(Base):
 
     def get_all_bbref_game_ids_no_pitchfx_data_for_all_pitch_apps(self):
         return [
-            game.bbref_game_id
-            for game in self.scrape_status_games
-            if game.no_pitchfx_data_for_all_pitch_apps
+            game.bbref_game_id for game in self.games if game.no_pitchfx_data_for_all_pitch_apps
         ]
 
     def get_all_bbref_game_ids_no_pitchfx_data_for_any_pitch_apps(self):
         return [
-            game.bbref_game_id
-            for game in self.scrape_status_games
-            if game.no_pitchfx_data_for_any_pitch_apps
+            game.bbref_game_id for game in self.games if game.no_pitchfx_data_for_any_pitch_apps
         ]
 
     def get_all_bbref_game_ids_combined_data_success(self):
-        return [
-            game.bbref_game_id for game in self.scrape_status_games if game.combined_data_success
-        ]
+        return [game.bbref_game_id for game in self.games if game.combined_data_success]
 
     def get_all_bbref_game_ids_combined_data_fail(self):
-        return [game.bbref_game_id for game in self.scrape_status_games if game.combined_data_fail]
+        return [game.bbref_game_id for game in self.games if game.combined_data_fail]
 
     def get_all_bbref_game_ids_eligible_for_audit(self):
         return [
