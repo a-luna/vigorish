@@ -46,7 +46,7 @@ PEOPLE_CSV_FILENAME = "People.csv"
 
 
 def populate_players(app, csv_folder):
-    db_session = app["db_session"]
+    db_session = app.db_session
     """Populate player_id and player tables with initial data."""
     result = import_idmap_csv(db_session, app, csv_folder)
     if result.failure:

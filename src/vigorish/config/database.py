@@ -59,27 +59,17 @@ def get_db_url():
 def initialize_database(app, csv_folder=None):
     if not csv_folder:
         csv_folder = CSV_FOLDER
-    Base.metadata.drop_all(app["db_engine"])
-    Base.metadata.create_all(app["db_engine"])
+    Base.metadata.drop_all(app.db_engine)
+    Base.metadata.create_all(app.db_engine)
     return populate_tables(app, csv_folder)
 
 
 def prepare_database_for_restore(app, csv_folder=None):
     if not csv_folder:
         csv_folder = CSV_FOLDER
-    Base.metadata.drop_all(app["db_engine"])
-    Base.metadata.create_all(app["db_engine"])
+    Base.metadata.drop_all(app.db_engine)
+    Base.metadata.create_all(app.db_engine)
     return populate_tables_for_restore(app, csv_folder)
-
-
-def reset_database_connection(app, db_url=None):
-    if not db_url:
-        db_url = get_db_url()
-    result = delete_sqlite_database(db_url)
-    if result.failure:
-        return result
-    app = update_app_instance(app, db_url)
-    return Result.Ok(app)
 
 
 def delete_sqlite_database(db_url):
@@ -88,26 +78,6 @@ def delete_sqlite_database(db_url):
         return Result.Fail("Error occurred attempting to delete existing database file!")
     db_file.unlink()
     return Result.Ok()
-
-
-def update_app_instance(app, db_url):
-    app["db_session"].close()
-    app["db_session"] = None
-    db_engine = create_engine(db_url)
-    session_maker = sessionmaker(bind=db_engine)
-    db_session = session_maker()
-    dotenv = app["dotenv"]
-    config = app["config"]
-    scraped_data = app["scraped_data"]
-    scraped_data.db_engine = db_engine
-    scraped_data.db_session = db_session
-    return {
-        "dotenv": dotenv,
-        "config": config,
-        "db_engine": db_engine,
-        "db_session": db_session,
-        "scraped_data": scraped_data,
-    }
 
 
 def db_setup_complete(db_engine, db_session):

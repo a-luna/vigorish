@@ -2,9 +2,7 @@
 from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.admin_tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 from vigorish.cli.menu_items.admin_tasks.backup_database import BackupDatabase
-from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import (
-    CalculatePitchTimes,
-)
+from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import CalculatePitchTimes
 from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedData
 from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
 from vigorish.cli.menu_items.admin_tasks.restore_database import RestoreDatabase

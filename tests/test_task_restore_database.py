@@ -18,7 +18,6 @@ from vigorish.config.database import (
     PitchAppScrapeStatus,
     PitchFx,
     prepare_database_for_restore,
-    reset_database_connection,
 )
 from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 from vigorish.tasks.backup_database import BackupDatabaseTask
@@ -35,8 +34,8 @@ APPLY_PATCH_LIST = GAME_ID_DICT["apply_patch_list"]
 @pytest.fixture(scope="module", autouse=True)
 def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_cli module."""
-    db_session = vig_app["db_session"]
-    scraped_data = vig_app["scraped_data"]
+    db_session = vig_app.db_session
+    scraped_data = vig_app.scraped_data
     update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
     update_scraped_brooks_games_for_date(db_session, scraped_data, GAME_DATE)
     update_scraped_boxscore(db_session, scraped_data, BBREF_GAME_ID)
@@ -44,7 +43,7 @@ def create_test_data(vig_app):
     update_scraped_pitchfx_logs(db_session, scraped_data, BB_GAME_ID)
     CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPLY_PATCH_LIST)
     add_pfx_to_db = AddPitchFxToDatabase(vig_app)
-    add_pfx_to_db.execute(vig_app["scraped_data"].get_audit_report(), 2019)
+    add_pfx_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
     remove_everything_in_backup_folder()
     backup_db = BackupDatabaseTask(vig_app)
     result = backup_db.execute()
@@ -55,17 +54,16 @@ def create_test_data(vig_app):
 
 
 def test_restore_database(vig_app):
-    result = reset_database_connection(vig_app, SQLITE_URL)
+    result = vig_app.reset_database_connection(db_url=SQLITE_URL)
     if result.failure:
         return result
-    vig_app = result.value
     result = prepare_database_for_restore(vig_app, CSV_FOLDER)
     if result.failure:
         return result
     restore_db = RestoreDatabaseTask(vig_app)
     result = restore_db.execute()
     assert result.success
-    db_session = vig_app["db_session"]
+    db_session = vig_app.db_session
     status_date = DateScrapeStatus.find_by_date(db_session, GAME_DATE)
     assert status_date.scraped_daily_dash_bbref
     assert status_date.scraped_daily_dash_brooks

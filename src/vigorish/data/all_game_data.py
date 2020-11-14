@@ -31,9 +31,9 @@ class AllGameData:
     def __init__(self, app, bbref_game_id):
         # TODO: Create method to get pitch type counts for pitch app
         self.app = app
-        self.db_engine = app["db_engine"]
-        self.db_session = app["db_session"]
-        self.scraped_data = app["scraped_data"]
+        self.db_engine = app.db_engine
+        self.db_session = app.db_session
+        self.scraped_data = app.scraped_data
         combined_data = self.scraped_data.get_combined_game_data(bbref_game_id)
         if not combined_data:
             raise ScrapedDataException(

@@ -1,4 +1,12 @@
 # flake8: noqa
+from vigorish.cli.menu_items.admin_tasks.add_pitchfx_to_database import AddPitchFxToDatabase
+from vigorish.cli.menu_items.admin_tasks.backup_database import BackupDatabase
+from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import CalculatePitchTimes
+from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedData
+from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
+from vigorish.cli.menu_items.admin_tasks.restore_database import RestoreDatabase
+from vigorish.cli.menu_items.admin_tasks.sync_scraped_data import SyncScrapedData
+from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.cli.menu_items.change_config_setting import ChangeConfigSettting
 from vigorish.cli.menu_items.change_env_var_setting import ChangeEnvVarSetting
 from vigorish.cli.menu_items.combine_data import CombineScrapedData
@@ -13,11 +21,3 @@ from vigorish.cli.menu_items.return_to_parent import ReturnToParent
 from vigorish.cli.menu_items.setup_db import SetupDatabase
 from vigorish.cli.menu_items.status_report import StatusReport
 from vigorish.cli.menu_items.view_game_data import ViewGameData
-from vigorish.cli.menu_items.admin_tasks.add_pitchfx_to_database import AddPitchFxToDatabase
-from vigorish.cli.menu_items.admin_tasks.backup_database import BackupDatabase
-from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import CalculatePitchTimes
-from vigorish.cli.menu_items.admin_tasks.import_scraped_data import ImportScrapedData
-from vigorish.cli.menu_items.admin_tasks.npm_install_update import NpmInstallUpdate
-from vigorish.cli.menu_items.admin_tasks.restore_database import RestoreDatabase
-from vigorish.cli.menu_items.admin_tasks.sync_scraped_data import SyncScrapedData
-from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap

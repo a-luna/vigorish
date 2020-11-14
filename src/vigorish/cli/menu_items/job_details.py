@@ -37,12 +37,7 @@ class JobDetails(MenuItem):
                 return Result.Ok(self.exit_menu)
             user_choice = result.value
             if user_choice == "RUN":
-                job_runner = JobRunner(
-                    db_job=self.db_job,
-                    db_session=self.db_session,
-                    config=self.config,
-                    scraped_data=self.scraped_data,
-                )
+                job_runner = JobRunner(app=self.app, db_job=self.db_job)
                 result = job_runner.execute()
                 if result.failure:
                     return result
@@ -60,12 +55,7 @@ class JobDetails(MenuItem):
                 return Result.Ok(self.exit_menu)
             user_choice = result.value
             if user_choice == "RETRY":
-                job_runner = JobRunner(
-                    db_job=self.db_job,
-                    db_session=self.db_session,
-                    config=self.config,
-                    scraped_data=self.scraped_data,
-                )
+                job_runner = JobRunner(app=self.app, db_job=self.db_job)
                 result = job_runner.execute()
                 if result.failure:
                     return result

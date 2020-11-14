@@ -6,6 +6,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from vigorish.app import Vigorish
 from vigorish.config.config_file import ConfigFile
 from vigorish.config.database import initialize_database
 from vigorish.config.dotenv_file import DotEnvFile
@@ -63,15 +64,15 @@ def scraped_data(config, db_engine, db_session):
 
 
 @pytest.fixture(scope="module")
-def vig_app(dotenv, config, db_engine, db_session, scraped_data):
+def vig_app(request):
     """Returns a dict containing the same attributes/objects as the app object used in the CLI."""
-    return {
-        "dotenv": dotenv,
-        "config": config,
-        "db_engine": db_engine,
-        "db_session": db_session,
-        "scraped_data": scraped_data,
-    }
+    app = Vigorish(db_url=SQLITE_URL)
+
+    def fin():
+        app.db_session.close()
+
+    request.addfinalizer(fin)
+    return app
 
 
 @pytest.fixture(scope="module", autouse=True)

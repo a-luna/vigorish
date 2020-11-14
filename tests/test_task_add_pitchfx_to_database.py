@@ -16,8 +16,8 @@ from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 @pytest.fixture(scope="module", autouse=True)
 def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_cli module."""
-    db_session = vig_app["db_session"]
-    scraped_data = vig_app["scraped_data"]
+    db_session = vig_app.db_session
+    scraped_data = vig_app.scraped_data
     game_id_dict = COMBINED_DATA_GAME_DICT["NO_ERRORS"]
     game_date = game_id_dict["game_date"]
     bbref_game_id = game_id_dict["bbref_game_id"]
@@ -34,10 +34,10 @@ def create_test_data(vig_app):
 
 
 def test_add_pitchfx_to_database(vig_app):
-    db_session = vig_app["db_session"]
+    db_session = vig_app.db_session
     total_rows = get_total_number_of_rows(db_session, PitchFx)
     assert total_rows == 0
-    audit_report = vig_app["scraped_data"].get_audit_report()
+    audit_report = vig_app.scraped_data.get_audit_report()
     add_pfx_to_db = AddPitchFxToDatabase(vig_app)
     result = add_pfx_to_db.execute(audit_report, 2019)
     assert result.success
