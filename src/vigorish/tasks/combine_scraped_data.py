@@ -9,6 +9,7 @@ from vigorish.config.database import GameScrapeStatus, PlayerId, TimeBetweenPitc
 from vigorish.constants import PITCH_TYPE_DICT, PPB_PITCH_LOG_DICT
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
+from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
 from vigorish.tasks.base import Task
@@ -23,12 +24,8 @@ from vigorish.util.string_helpers import (
     validate_at_bat_id,
 )
 
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
-
 
 class CombineScrapedDataTask(Task):
-    game_status: GameScrapeStatus
     bbref_game_id: str
     boxscore: BBRefBoxscore
     pitchfx_logs_for_game: BrooksPitchFxLog
@@ -385,6 +382,7 @@ class CombineScrapedDataTask(Task):
 
     def get_all_pfx_data_for_game(self):
         self.removed_guid_dupes = []
+        self.dupe_guid_audit = defaultdict(list)
         for pitchfx_log in self.pitchfx_logs_for_game:
             (pitchfx_log, removed_pfx) = self.remove_duplicate_guids_from_pfx(pitchfx_log)
             if removed_pfx:
@@ -433,6 +431,7 @@ class CombineScrapedDataTask(Task):
                 dupe_rank_dict[pfx.play_guid].sort(
                     key=lambda x: (-x.has_zone_location, x.seconds_since_game_start)
                 )
+        self.audit_duplicate_guids(dupe_rank_dict)
         pfx_log_no_dupes = []
         dupe_tracker = {guid: False for guid in unique_guids.keys()}
         for pfx in pfx_log_copy:
@@ -453,6 +452,23 @@ class CombineScrapedDataTask(Task):
         pitchfx_log.total_pitch_count = len(pfx_log_no_dupes)
         pfx_log_copy = None
         return (pitchfx_log, removed_pfx)
+
+    def audit_duplicate_guids(self, dupe_rank_dict):
+        copied_all_dupes = deepcopy(dupe_rank_dict)
+        audit_complete = []
+        for guid, pfx_dupes in copied_all_dupes.items():
+            for pfx in pfx_dupes:
+                copied_dupes = deepcopy(pfx_dupes)
+                copied_dupes.remove(pfx)
+                for pc in audit_complete:
+                    if pc in copied_dupes:
+                        copied_dupes.remove(pc)
+                for pd in copied_dupes:
+                    diff_report = BrooksPitchFxData.compare(pfx.as_dict(), pd.as_dict())
+                    if diff_report:
+                        self.dupe_guid_audit[guid].append(diff_report)
+                audit_complete.append(pfx)
+        return self.dupe_guid_audit
 
     def update_duplicate_guid_pfx(self, removed_dupes):
         for pfx in removed_dupes:
@@ -655,7 +671,17 @@ class CombineScrapedDataTask(Task):
         if not pfx_for_at_bat:
             return {"removed_count": 0, "removed_dupes": []}
         removed_dupes = self.convert_pfx_to_dict_list(pfx_for_at_bat)
-        return {"removed_count": len(removed_dupes), "removed_dupes": removed_dupes}
+        dupe_guids_for_at_bat = [pfx.play_guid for pfx in pfx_for_at_bat]
+        false_positives = [
+            diff_report
+            for guid, diff_report in self.dupe_guid_audit.items()
+            if guid in dupe_guids_for_at_bat
+        ]
+        return {
+            "removed_count": len(removed_dupes),
+            "removed_dupes": removed_dupes,
+            "false_positives": false_positives,
+        }
 
     def get_all_removed_pfx_for_at_bat(self, at_bat_id):
         removed_pfx = [pfx for pfx in self.removed_pfx if pfx["at_bat_id"] == at_bat_id]
@@ -748,7 +774,6 @@ class CombineScrapedDataTask(Task):
         )
         ab_index = self.at_bat_ids.index(at_bat_id)
         if ab_index == 0:
-            LOGGER.info(error)
             return Result.Fail(error)
             # next_ab_id = self.at_bat_ids[ab_index + 1]
             # return self.correct_pfx_data_using_next_at_bat(
@@ -769,7 +794,6 @@ class CombineScrapedDataTask(Task):
             return result
         error_messages.append(result.error)
         error_messages.append(error)
-        LOGGER.info(error)
         return Result.Fail("\n".join(error_messages))
         # result = self.correct_pfx_data_using_next_at_bat(
         #     at_bat_id, next_ab_id, fix_pfx_data, pitch_count
@@ -1117,8 +1141,8 @@ class CombineScrapedDataTask(Task):
                     pfx = pfx_data[current_pitch - 1]
                     if abbrev == "X":
                         outcome = pfx["pdes"] if "missing_pdes" not in pfx["pdes"] else pfx["des"]
-                    pitch_type = PITCH_TYPE_DICT[pfx["mlbam_pitch_name"]]
-                    pfx_des = f'{pfx["start_speed"]:02.0f}mph {pitch_type}'
+                    pitch_type = PitchType.from_abbrev(pfx["mlbam_pitch_name"])
+                    pfx_des = f'{pfx["start_speed"]:02.0f}mph {pitch_type.print_name}'
                 if next_pitch_blocked_by_c:
                     blocked_by_c = "\n(pitch was blocked by catcher)"
                     next_pitch_blocked_by_c = False
