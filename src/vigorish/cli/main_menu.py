@@ -15,11 +15,11 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items import (
-    NpmInstallUpdate,
-    RestoreDatabase,
     CombineScrapedData,
     CreateJob,
     ExitProgram,
+    NpmInstallUpdate,
+    RestoreDatabase,
     SetupDatabase,
     StatusReport,
 )
@@ -27,8 +27,8 @@ from vigorish.cli.menus import (
     AdminTasksMenu,
     AllJobsMenu,
     ScrapedDataErrorsMenu,
-    ViewGameDataMenu,
     SettingsMenu,
+    ViewGameDataMenu,
 )
 from vigorish.config.database import db_setup_complete
 from vigorish.util.result import Result
@@ -99,7 +99,7 @@ class MainMenu(Menu):
             print_message("All prerequisites are installed and database is initialized.")
         else:
             self.display_initial_task_status()
-        print_message("\nMain Menu:\n", fg="bright_magenta", bold=True, underline=True)
+        print_message("\nMain Menu:\n", fg="bright_green", bold=True, underline=True)
 
     def display_audit_report(self):
         table_rows = [

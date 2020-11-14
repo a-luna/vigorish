@@ -19,8 +19,8 @@ PitchMix = Mapping[PitchType, Mapping[str, Union[int, float]]]
 class AllPlayerData:
     def __init__(self, app, mlb_id):
         self.app = app
-        self.db_engine = app["db_engine"]
-        self.db_session = app["db_session"]
+        self.db_engine = self.app.db_engine
+        self.db_session = self.app.db_session
         self.mlb_id = mlb_id
         self.player = Player.find_by_mlb_id(self.db_session, self.mlb_id)
 

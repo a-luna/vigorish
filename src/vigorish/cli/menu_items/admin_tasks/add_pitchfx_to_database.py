@@ -19,7 +19,7 @@ class AddPitchFxToDatabase(MenuItem):
     def __init__(self, app, audit_report):
         super().__init__(app)
         self.audit_report = audit_report
-        self.add_pfx_to_db = AddPitchFxToDatabaseTask(self.app)
+        self.add_pfx_to_db = AddPitchFxToDatabaseTask(app)
         self.menu_item_text = "Add PitchFx Data to Database"
         self.menu_item_emoji = EMOJI_DICT.get("BASEBALL")
         self.exit_menu = False

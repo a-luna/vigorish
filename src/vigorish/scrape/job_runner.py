@@ -6,7 +6,7 @@ from datetime import datetime
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components import print_message, print_heading
+from vigorish.cli.components import print_heading, print_message
 from vigorish.config.database import ScrapeError
 from vigorish.constants import FAKE_SPINNER, JOB_SPINNER_COLORS
 from vigorish.enums import DataSet, JobStatus, ScrapeTaskOption, StatusReport
@@ -38,7 +38,11 @@ class JobRunner:
     scrape_date: datetime
     data_set: DataSet
 
-    def __init__(self, db_job, db_session, config, scraped_data):
+    def __init__(self, app, db_job):
+        self.app = app
+        self.config = app.config
+        self.db_session = app.db_session
+        self.scraped_data = app.scraped_data
         self.db_job = db_job
         self.job_id = self.db_job.id
         self.job_name = self.db_job.name
@@ -46,9 +50,6 @@ class JobRunner:
         self.start_date = self.db_job.start_date
         self.end_date = self.db_job.end_date
         self.season = self.db_job.season
-        self.db_session = db_session
-        self.config = config
-        self.scraped_data = scraped_data
         self.spinners = defaultdict(lambda: Halo(spinner=FAKE_SPINNER))
         self.task_results = []
         self.scrape_task_option = self.config.get_current_setting("SCRAPE_TASK_OPTION", DataSet.ALL)
@@ -76,7 +77,7 @@ class JobRunner:
             raise ConfigSetingException(
                 setting_name="SCRAPE_TASK_OPTION",
                 current_value=self.scrape_task_option,
-                detail=f'"SCRAPE_TASK_OPTION" only has two valid values: BY_DATE and BY_DATA_SET',
+                detail='"SCRAPE_TASK_OPTION" only has two valid values: BY_DATE and BY_DATA_SET',
             )
 
     def run_job_day_by_day(self):
@@ -122,9 +123,7 @@ class JobRunner:
             DataSet.BBREF_GAMES_FOR_DATE: ScrapeBBRefGamesForDate,
             DataSet.BBREF_BOXSCORES: ScrapeBBRefBoxscores,
         }
-        scrape_task = task_dict[data_set](
-            self.db_job, self.db_session, self.config, self.scraped_data
-        )
+        scrape_task = task_dict[data_set](self.app, self.db_job)
         return scrape_task.execute(start_date, end_date)
 
     def update_spinner(self, data_set, task_number):

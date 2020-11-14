@@ -18,8 +18,8 @@ from vigorish.util.sys_helpers import zip_file_report
 @pytest.fixture(scope="module", autouse=True)
 def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_cli module."""
-    db_session = vig_app["db_session"]
-    scraped_data = vig_app["scraped_data"]
+    db_session = vig_app.db_session
+    scraped_data = vig_app.scraped_data
     game_id_dict = COMBINED_DATA_GAME_DICT["NO_ERRORS"]
     game_date = game_id_dict["game_date"]
     bbref_game_id = game_id_dict["bbref_game_id"]
@@ -32,7 +32,7 @@ def create_test_data(vig_app):
     update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
     CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
     add_pfx_to_db = AddPitchFxToDatabase(vig_app)
-    add_pfx_to_db.execute(vig_app["scraped_data"].get_audit_report(), 2019)
+    add_pfx_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
     db_session.commit()
     return True
 

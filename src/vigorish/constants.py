@@ -1,7 +1,7 @@
 """Constant values that are referenced from multiple places."""
 from bullet import colors
 
-from vigorish.enums import DataSet, VigFile
+from vigorish.enums import DataSet
 
 ENV_VAR_NAMES = [
     "AWS_ACCESS_KEY_ID",

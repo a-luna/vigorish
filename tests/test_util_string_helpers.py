@@ -2,9 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import (
-    CalculatePitchTimes,
-)
+from vigorish.cli.menu_items.admin_tasks.calculate_avg_pitch_times import CalculatePitchTimes
 from vigorish.util.string_helpers import ellipsize, parse_date, wrap_text
 
 

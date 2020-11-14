@@ -30,11 +30,12 @@ class ScrapeTaskABC(ABC):
     data_set: DataSet
     url_tracker: UrlTracker
 
-    def __init__(self, db_job, db_session, config, scraped_data):
+    def __init__(self, app, db_job):
+        self.app = app
+        self.config = app.config
+        self.db_session = app.db_session
+        self.scraped_data = app.scraped_data
         self.db_job = db_job
-        self.db_session = db_session
-        self.config = config
-        self.scraped_data = scraped_data
         self.start_date = None
         self.end_date = None
         self.season = self.db_job.season

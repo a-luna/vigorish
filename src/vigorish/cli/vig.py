@@ -4,7 +4,7 @@ import subprocess
 
 import click
 
-from vigorish.app import create_app
+from vigorish.app import Vigorish
 from vigorish.cli.click_params import DateString, JobName, MlbSeason
 from vigorish.cli.components import print_message, validate_scrape_dates
 from vigorish.cli.main_menu import MainMenu
@@ -33,7 +33,7 @@ def cli(ctx):
     if os.environ.get("ENV") != "TEST":
         if not VIG_FOLDER.exists():
             VIG_FOLDER.mkdir()
-    ctx.obj = create_app()
+    ctx.obj = Vigorish()
     # ctx.obj = create_app(db_url="sqlite:////Users/aaronluna/.vig/vig.db")
 
 
@@ -103,8 +103,8 @@ def setup(app):
 @click.pass_obj
 def scrape(app, data_set, start, end, name):
     """Scrape MLB data from websites."""
-    data_sets_int = sum(list(DataSet))
-    result = validate_scrape_dates(app["db_session"], start, end)
+    data_sets_int = sum(list(data_set))
+    result = validate_scrape_dates(app.db_session, start, end)
     if result.failure:
         return exit_app(app, result)
     season = result.value
@@ -116,14 +116,9 @@ def scrape(app, data_set, start, end, name):
         "season_id": season.id,
     }
     new_scrape_job = ScrapeJob(**scrape_job_dict)
-    app["db_session"].add(new_scrape_job)
-    app["db_session"].commit()
-    job_runner = JobRunner(
-        db_job=new_scrape_job,
-        db_session=app["db_session"],
-        config=app["config"],
-        scraped_data=app["scraped_data"],
-    )
+    app.db_session.add(new_scrape_job)
+    app.db_session.commit()
+    job_runner = JobRunner(app=app, db_job=new_scrape_job)
     result = job_runner.execute()
     return exit_app(app, result)
 
@@ -158,7 +153,7 @@ def status_date(app, game_date, missing_ids, with_games):
         report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
         report_type = StatusReport.DATE_DETAIL_ALL_DATES
-    result = report_status_single_date(app["db_session"], game_date, report_type)
+    result = report_status_single_date(app.db_session, game_date, report_type)
     return exit_app(app, result)
 
 
@@ -204,7 +199,7 @@ def status_date_range(app, start, end, verbosity):
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app(app, Result.Fail(error))
-    result = report_date_range_status(app["db_session"], start, end, report_type)
+    result = report_date_range_status(app.db_session, start, end, report_type)
     return exit_app(app, result)
 
 
@@ -247,7 +242,7 @@ def status_season(app, year, verbosity):
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app(app, Result.Fail(error))
-    result = report_season_status(app["db_session"], year, report_type)
+    result = report_season_status(app.db_session, year, report_type)
     return exit_app(app, result)
 
 
@@ -313,7 +308,7 @@ def sync_down_to_local(app, year, file_type, data_sets):
 
 
 def exit_app(app, result, message=None):
-    app["db_session"].close()
+    app.db_session.close()
     subprocess.run(["clear"])
     return exit_app_success(message) if result.success else exit_app_error(result.error)
 

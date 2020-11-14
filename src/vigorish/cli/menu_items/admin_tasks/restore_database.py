@@ -16,7 +16,7 @@ from vigorish.cli.components.util import (
     shutdown_cli_immediately,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.config.database import prepare_database_for_restore, reset_database_connection
+from vigorish.config.database import prepare_database_for_restore
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import DataSet
 from vigorish.tasks.restore_database import RestoreDatabaseTask
@@ -102,10 +102,9 @@ class RestoreDatabase(MenuItem):
     def prepare_database(self):
         subprocess.run(["clear"])
         print_heading("Restore Database from Backup", fg="bright_yellow")
-        result = reset_database_connection(self.app)
+        result = self.app.reset_database_connection()
         if result.failure:
             return result
-        self.app = result.value
         return prepare_database_for_restore(self.app)
 
     def unzip_backup_file_start(self):

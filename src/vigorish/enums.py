@@ -2,6 +2,7 @@
 from enum import auto, Enum, IntEnum
 
 from aenum import auto as auto_flag
+from aenum import IntFlag
 
 
 class VigFile(IntFlag):
@@ -212,6 +213,113 @@ class DefensePosition(IntEnum):
             "DH": cls.DH,
         }
         return abbrev_dict.get(abbrev, cls.NONE)
+
+
+class PitchType(IntFlag):
+    CHANGEUP = auto_flag()
+    CURVEBALL = auto_flag()
+    EEPHUS = auto_flag()
+    FASTBALL = auto_flag()
+    CUTTER = auto_flag()
+    FOUR_SEAM_FASTBALL = auto_flag()
+    SPLITTER = auto_flag()
+    TWO_SEAM_FASTBALL = auto_flag()
+    FORKBALL = auto_flag()
+    INTENT_BALL = auto_flag()
+    KNUCKLE_BALL_CURVE = auto_flag()
+    KNUCKLE_BALL = auto_flag()
+    PITCH_OUT = auto_flag()
+    SCREWBALL = auto_flag()
+    SINKER = auto_flag()
+    UNKNOWN = auto_flag()
+    SLIDER = auto_flag()
+    ALL = (
+        CHANGEUP
+        | CURVEBALL
+        | EEPHUS
+        | FASTBALL
+        | CUTTER
+        | FOUR_SEAM_FASTBALL
+        | SPLITTER
+        | TWO_SEAM_FASTBALL
+        | FORKBALL
+        | INTENT_BALL
+        | KNUCKLE_BALL_CURVE
+        | KNUCKLE_BALL
+        | PITCH_OUT
+        | SCREWBALL
+        | SINKER
+        | UNKNOWN
+        | SLIDER
+    )
+
+    def __str__(self):
+        abbrev_dict = {
+            "CHANGEUP": "CH",
+            "CURVEBALL": "CU",
+            "EEPHUS": "EP",
+            "FASTBALL": "FA",
+            "CUTTER": "FC",
+            "FOUR_SEAM_FASTBALL": "FF",
+            "SPLITTER": "FS",
+            "TWO_SEAM_FASTBALL": "FT",
+            "FORKBALL": "FO",
+            "INTENT_BALL": "IN",
+            "KNUCKLE_BALL_CURVE": "KC",
+            "KNUCKLE_BALL": "KN",
+            "PITCH_OUT": "PO",
+            "SCREWBALL": "SC",
+            "SINKER": "SI",
+            "SLIDER": "SL",
+            "UNKNOWN": "UN",
+        }
+        return abbrev_dict.get(self.name, self.name)
+
+    @property
+    def print_name(self):
+        name_dict = {
+            "CH": "Changeup",
+            "CU": "Curveball",
+            "EP": "Eephus",
+            "FA": "Fastball",
+            "FC": "Cutter",
+            "FF": "Four-seam Fastball",
+            "FS": "Splitter",
+            "FT": "Two-seam Fastball",
+            "FO": "Forkball",
+            "IN": "Intent ball",
+            "KC": "Knuckle ball Curve",
+            "KN": "Knuckle ball",
+            "PO": "Pitch Out",
+            "SC": "Screwball",
+            "SI": "Sinker",
+            "SL": "Slider",
+            "UN": "Unknown",
+        }
+        return name_dict.get(str(self), "Unknown")
+
+    @classmethod
+    def from_abbrev(cls, abbrev):
+        abbrev_dict = {
+            "CH": cls.CHANGEUP,
+            "CU": cls.CURVEBALL,
+            "EP": cls.EEPHUS,
+            "FA": cls.FASTBALL,
+            "FC": cls.CUTTER,
+            "FF": cls.FOUR_SEAM_FASTBALL,
+            "FS": cls.SPLITTER,
+            "FT": cls.TWO_SEAM_FASTBALL,
+            "FO": cls.FORKBALL,
+            "IN": cls.INTENT_BALL,
+            "KC": cls.KNUCKLE_BALL_CURVE,
+            "KN": cls.KNUCKLE_BALL,
+            "PO": cls.PITCH_OUT,
+            "SC": cls.SCREWBALL,
+            "SI": cls.SINKER,
+            "SL": cls.SLIDER,
+            "UN": cls.UNKNOWN,
+        }
+        return abbrev_dict.get(abbrev, cls.ALL)
 
 
 class SeasonType(Enum):

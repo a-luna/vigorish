@@ -27,7 +27,7 @@ class MlbSeason(click.ParamType):
     name = "year-number"
 
     def convert(self, value, param, ctx):
-        db_session = ctx.obj["db_session"]
+        db_session = ctx.obj.db_session
         try:
             year = int(value)
         except Exception:
