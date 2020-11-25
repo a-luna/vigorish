@@ -15,7 +15,14 @@ class VigFile(IntFlag):
     ALL = SCRAPED_HTML | PARSED_JSON | COMBINED_GAME_DATA | PATCH_LIST
 
     def __str__(self):
-        return str.__str__(self)
+        return self.name
+
+    @classmethod
+    def from_str(cls, file_type_name):
+        for file_type in cls:
+            if file_type_name.upper() not in file_type.name:
+                continue
+            return file_type
 
 
 class DataSet(IntFlag):
@@ -35,78 +42,85 @@ class DataSet(IntFlag):
     )
 
     def __str__(self):
-        return str.__str__(self)
+        return self.name
+
+    @classmethod
+    def from_str(cls, data_set_name):
+        for data_set in cls:
+            if data_set_name.upper() not in data_set.name:
+                continue
+            return data_set
 
 
-class ConfigType(Enum):
+class ConfigType(str, Enum):
     """Data types for configuration settings."""
 
-    STRING = auto()
-    NUMERIC = auto()
-    PATH = auto()
-    ENUM = auto()
-    NONE = auto()
+    STRING = "string"
+    NUMERIC = "numeric"
+    PATH = "path"
+    ENUM = "enum"
+    NONE = "none"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class ScrapeCondition(Enum):
+class ScrapeCondition(str, Enum):
     """Allowed values for SCRAPE_CONDITION config setting."""
 
-    ONLY_MISSING_DATA = auto()
-    ALWAYS = auto()
-    NEVER = auto()
+    ONLY_MISSING_DATA = "only_missing_data"
+    ALWAYS = "always"
+    NEVER = "never"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class ScrapeTaskOption(Enum):
+class ScrapeTaskOption(str, Enum):
     """Allowed values for SCRAPE_TASK_OPTION config setting."""
 
-    BY_DATE = auto()
-    BY_DATA_SET = auto()
+    BY_DATE = "by_date"
+    BY_DATA_SET = "by_data_set"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class HtmlStorageOption(Enum):
+class HtmlStorageOption(str, Enum):
     """Allowed values for HTML_STORAGE config setting."""
 
-    NONE = auto()
-    LOCAL_FOLDER = auto()
-    S3_BUCKET = auto()
-    BOTH = auto()
+    NONE = "none"
+    LOCAL_FOLDER = "local_folder"
+    S3_BUCKET = "s3_bucket"
+    BOTH = "both"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class JsonStorageOption(Enum):
+class JsonStorageOption(str, Enum):
     """Allowed values for JSON_STORAGE config setting."""
 
-    LOCAL_FOLDER = auto()
-    S3_BUCKET = auto()
-    BOTH = auto()
+    LOCAL_FOLDER = "local_folder"
+    S3_BUCKET = "s3_bucket"
+    BOTH = "both"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class CombinedDataStorageOption(Enum):
+class CombinedDataStorageOption(str, Enum):
     """Allowed values for COMBINED_DATA_STORAGE config setting."""
 
-    LOCAL_FOLDER = auto()
-    S3_BUCKET = auto()
-    BOTH = auto()
+    LOCAL_FOLDER = "local_folder"
+    S3_BUCKET = "s3_bucket"
+    BOTH = "both"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class StatusReport(Enum):
+class StatusReport(IntEnum):
     """The type of status report (if any) to display."""
 
     NONE = 0
@@ -119,39 +133,39 @@ class StatusReport(Enum):
     SINGLE_DATE_WITH_GAME_STATUS = 7
 
     def __str__(self):
-        return str.__str__(self)
+        return self.name
 
 
-class FileTask(Enum):
+class FileTask(str, Enum):
     """Generic file actions that are mapped to LocalFileTask and S3FileTask file actions."""
 
-    STORE_FILE = auto()
-    GET_FILE = auto()
-    REMOVE_FILE = auto()
+    STORE_FILE = "store_file"
+    GET_FILE = "get_file"
+    REMOVE_FILE = "remove_file"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class S3FileTask(Enum):
+class S3FileTask(str, Enum):
     """Type of action to perform on an object in an S3 bucket."""
 
-    UPLOAD = auto()
-    DOWNLOAD = auto()
-    DELETE = auto()
-    RENAME = auto()
+    UPLOAD = "upload"
+    DOWNLOAD = "download"
+    DELETE = "delete"
+    RENAME = "rename"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class LocalFileTask(Enum):
+class LocalFileTask(str, Enum):
     """Type of action to perform on a local file."""
 
-    WRITE_FILE = auto()
-    READ_FILE = auto()
-    DELETE_FILE = auto()
-    DECODE_JSON = auto()
+    WRITE_FILE = "write_file"
+    READ_FILE = "read_file"
+    DELETE_FILE = "delete_file"
+    DECODE_JSON = "decode_file"
 
     def __str__(self):
         return str.__str__(self)
@@ -160,12 +174,12 @@ class LocalFileTask(Enum):
 class JobStatus(IntEnum):
     """Status of a scrape job created by a user."""
 
-    INCOMPLETE = auto()
-    ERROR = auto()
-    COMPLETE = auto()
+    INCOMPLETE = 1
+    ERROR = 2
+    COMPLETE = 3
 
     def __str__(self):
-        return str.__str__(self)
+        return self.name
 
 
 class DefensePosition(IntEnum):
@@ -231,8 +245,8 @@ class PitchType(IntFlag):
     PITCH_OUT = auto_flag()
     SCREWBALL = auto_flag()
     SINKER = auto_flag()
-    UNKNOWN = auto_flag()
     SLIDER = auto_flag()
+    UNKNOWN = auto_flag()
     ALL = (
         CHANGEUP
         | CURVEBALL
@@ -249,8 +263,8 @@ class PitchType(IntFlag):
         | PITCH_OUT
         | SCREWBALL
         | SINKER
-        | UNKNOWN
         | SLIDER
+        | UNKNOWN
     )
 
     def __str__(self):
@@ -278,25 +292,13 @@ class PitchType(IntFlag):
     @property
     def print_name(self):
         name_dict = {
-            "CH": "Changeup",
-            "CU": "Curveball",
-            "EP": "Eephus",
-            "FA": "Fastball",
-            "FC": "Cutter",
             "FF": "Four-seam Fastball",
-            "FS": "Splitter",
             "FT": "Two-seam Fastball",
-            "FO": "Forkball",
             "IN": "Intent ball",
             "KC": "Knuckle ball Curve",
             "KN": "Knuckle ball",
-            "PO": "Pitch Out",
-            "SC": "Screwball",
-            "SI": "Sinker",
-            "SL": "Slider",
-            "UN": "Unknown",
         }
-        return name_dict.get(str(self), "Unknown")
+        return name_dict.get(str(self), self.name.replace("_", " ").title())
 
     @classmethod
     def from_abbrev(cls, abbrev):
@@ -319,16 +321,16 @@ class PitchType(IntFlag):
             "SL": cls.SLIDER,
             "UN": cls.UNKNOWN,
         }
-        return abbrev_dict.get(abbrev, cls.ALL)
+        return abbrev_dict.get(abbrev, cls.UNKNOWN)
 
 
-class SeasonType(Enum):
+class SeasonType(str, Enum):
     """Identifies games, stats, etc as Spring Training, Regular, or Post-Season."""
 
-    PRE_SEASON = auto()
-    REGULAR_SEASON = auto()
-    POST_SEASON = auto()
-    NONE = auto()
+    PRE_SEASON = "pre_season"
+    REGULAR_SEASON = "regular_season"
+    POST_SEASON = "post_season"
+    NONE = "none"
 
     def __str__(self):
         season_type_dict = {
@@ -339,19 +341,19 @@ class SeasonType(Enum):
         return season_type_dict.get(self.name, self.name)
 
 
-class PlayByPlayEvent(Enum):
-    AT_BAT = auto()
-    SUBSTITUTION = auto()
-    MISC = auto()
+class PlayByPlayEvent(str, Enum):
+    AT_BAT = "at_bat"
+    SUBSTITUTION = "substitution"
+    MISC = "misc"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class AuditError(Enum):
-    FAILED_TO_COMBINE = auto()
-    PITCHFX_ERROR = auto()
-    INVALID_PITCHFX_DATA = auto()
+class AuditError(str, Enum):
+    FAILED_TO_COMBINE = "failed_to_combine"
+    PITCHFX_ERROR = "pitchfx_error"
+    INVALID_PITCHFX_DATA = "invalid_pitchfx_data"
 
     def __str__(self):
         error_type_dict = {
@@ -370,22 +372,22 @@ class AuditTask(IntEnum):
     UPDATE_BOXSCORE = 5
 
     def __str__(self):
-        return str.__str__(self)
+        return self.name
 
 
-class PatchType(Enum):
-    CHANGE_BBREF_GAME_ID = auto()
-    CHANGE_PITCH_SEQUENCE = auto()
-    CHANGE_BATTER_ID = auto()
-    CHANGE_PITCHER_ID = auto()
+class PatchType(str, Enum):
+    CHANGE_BBREF_GAME_ID = "change_bbref_game_id"
+    CHANGE_PITCH_SEQUENCE = "change_pitch_sequence"
+    CHANGE_BATTER_ID = "change_batter_id"
+    CHANGE_PITCHER_ID = "change_pitcher_id"
 
     def __str__(self):
         return str.__str__(self)
 
 
-class SyncDirection(Enum):
-    UP_TO_S3 = auto()
-    DOWN_TO_LOCAL = auto()
+class SyncDirection(str, Enum):
+    UP_TO_S3 = "up_to_s3"
+    DOWN_TO_LOCAL = "down_to_local"
 
     def __str__(self):
         return str.__str__(self)

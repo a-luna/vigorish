@@ -258,20 +258,20 @@ class ConfigFile:
 
     def get_default_value(self, setting_name, data_set):
         default_value_dict = {
-            "STATUS_REPORT": StatusReport.SEASON_SUMMARY,
+            "STATUS_REPORT": str(StatusReport.SEASON_SUMMARY),
             "S3_BUCKET": "your-bucket",
-            "SCRAPE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA,
-            "SCRAPE_TASK_OPTION": ScrapeTaskOption.BY_DATE,
+            "SCRAPE_CONDITION": str(ScrapeCondition.ONLY_MISSING_DATA),
+            "SCRAPE_TASK_OPTION": str(ScrapeTaskOption.BY_DATE),
             "URL_SCRAPE_DELAY": UrlScrapeDelay(True, True, None, 3, 6).to_dict(),
             "BATCH_JOB_SETTINGS": BatchJobSettings(True, True, None, 50, 80).to_dict(),
-            "HTML_STORAGE": HtmlStorageOption.NONE,
+            "HTML_STORAGE": str(HtmlStorageOption.NONE),
             "HTML_LOCAL_FOLDER_PATH": "html_storage/{year}/{data_set}/",
             "HTML_S3_FOLDER_PATH": "{year}/{data_set}/html/",
-            "JSON_STORAGE": JsonStorageOption.LOCAL_FOLDER,
+            "JSON_STORAGE": str(JsonStorageOption.LOCAL_FOLDER),
             "JSON_LOCAL_FOLDER_PATH": "json_storage/{year}/{data_set}/",
-            "JSON_S3_FOLDER_PATH": "{year}/{data_set}",
-            "SCRAPED_DATA_COMBINE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA,
-            "COMBINED_DATA_STORAGE": CombinedDataStorageOption.LOCAL_FOLDER,
+            "JSON_S3_FOLDER_PATH": "{year}/{data_set}/",
+            "SCRAPED_DATA_COMBINE_CONDITION": str(ScrapeCondition.ONLY_MISSING_DATA),
+            "COMBINED_DATA_STORAGE": str(CombinedDataStorageOption.LOCAL_FOLDER),
             "COMBINED_DATA_LOCAL_FOLDER_PATH": "json_storage/{year}/combined_data",
             "COMBINED_DATA_S3_FOLDER_PATH": "{year}/combined_data",
             "DB_BACKUP_FOLDER_PATH": "backup",
@@ -486,6 +486,6 @@ class ConfigFile:
                     "Local folder path where csv files containing exported table data should be "
                     "stored."
                 ),
+                "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
-            "SAME_SETTING_FOR_ALL_DATA_SETS": True,
         }
