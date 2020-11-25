@@ -16,12 +16,14 @@ from vigorish.cli.components import (
     user_options_prompt,
 )
 from vigorish.cli.components.dict_viewer import DictListTableViewer
+from vigorish.cli.components.util import print_heading
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import DataSet, SyncDirection, VigFile
-from vigorish.tasks.sync_scraped_data import SyncScrapedData as SyncScrapedDataTask
-from vigorish.util.dt_format_strings import DT_AWARE
+from vigorish.tasks.sync_scraped_data import SyncScrapedDataTask
+from vigorish.util.dt_format_strings import DT_NAIVE_LESS
 from vigorish.util.result import Result
+from vigorish.util.sys_helpers import file_size_str
 
 SYNC_STATUS_TEXT_COLOR = {"out_of_sync": "bright_green", "in_sync": "blue"}
 
@@ -142,11 +144,12 @@ class SyncScrapedData(MenuItem):
 
     def report_sync_results(self):
         subprocess.run(["clear"])
+        heading = ""
         if self.sync_direction == SyncDirection.UP_TO_S3:
-            heading = "Syncing data from local folder to S3 bucket\n"
+            heading = "Syncing data from local folder to S3 bucket"
         if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            heading = "Syncing data from S3 bucket to local folder\n"
-        print_message(heading, fg="bright_yellow", wrap=False, bold=True, underline=True)
+            heading = "Syncing data from S3 bucket to local folder"
+        print_heading(heading, fg="bright_yellow")
         if not self.sync_results:
             return
         for task_result in self.sync_results:
@@ -215,8 +218,8 @@ class SyncScrapedData(MenuItem):
         dict_list = [
             {
                 "filename": f["name"],
-                "size": f["size"],
-                "last_modified": f["last_modified"].strftime(DT_AWARE),
+                "size": file_size_str(f["size"]),
+                "last_modified": f'{f["last_modified"].strftime(DT_NAIVE_LESS)} UTC',
                 "sync_operation": f["operation"],
             }
             for f in sync_files
