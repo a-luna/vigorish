@@ -15,7 +15,7 @@ from vigorish.util.regex import URL_ID_REGEX
 from vigorish.util.result import Result
 
 
-class SyncScrapedData(Task):
+class SyncScrapedDataTask(Task):
     def __init__(self, app, cached_s3_objects=None):
         super().__init__(app)
         self._cached_s3_objects = cached_s3_objects
