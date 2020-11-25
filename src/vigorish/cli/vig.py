@@ -257,13 +257,13 @@ def sync(app):
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "--file-type",
-    type=click.Choice([ft for ft in VigFile if ft != VigFile.ALL]),
+    type=click.Choice([ft.name for ft in VigFile if ft != VigFile.ALL]),
     help="Type of file to sync, must provide only one value.",
     prompt=True,
 )
 @click.option(
     "--data-sets",
-    type=click.Choice(list(DataSet)),
+    type=click.Choice(str(ds) for ds in DataSet),
     multiple=True,
     default=[DataSet.ALL],
     show_default=True,
@@ -272,8 +272,8 @@ def sync(app):
 @click.pass_obj
 def sync_up_to_s3(app, year, file_type, data_sets):
     """Sync files from local folder to S3 bucket."""
-    # file_type = FILE_TYPE_NAME_MAP.get(file_type, None)
-    data_sets_int = sum(list(DataSet))
+    file_type = VigFile.from_str(file_type)
+    data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
     sync_task = SyncScrapedDataNoPrompts(app)
     result_dict = sync_task.execute(SyncDirection.UP_TO_S3, year, file_type, data_sets_int)
     result = Result.Combine([result for result in result_dict.values()])
@@ -284,13 +284,13 @@ def sync_up_to_s3(app, year, file_type, data_sets):
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "--file-type",
-    type=click.Choice([ft for ft in VigFile if ft != VigFile.ALL]),
+    type=click.Choice([ft.name for ft in VigFile if ft != VigFile.ALL]),
     help="Type of file to sync, must provide only one value.",
     prompt=True,
 )
 @click.option(
     "--data-sets",
-    type=click.Choice(list(DataSet)),
+    type=click.Choice(str(ds) for ds in DataSet),
     multiple=True,
     default=[DataSet.ALL],
     show_default=True,
@@ -299,8 +299,8 @@ def sync_up_to_s3(app, year, file_type, data_sets):
 @click.pass_obj
 def sync_down_to_local(app, year, file_type, data_sets):
     """Sync files from S3 bucket to local folder."""
-    # file_type = FILE_TYPE_NAME_MAP.get(file_type, None)
-    data_sets_int = sum(list(DataSet))
+    file_type = VigFile.from_str(file_type)
+    data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
     sync_task = SyncScrapedDataNoPrompts(app)
     result_dict = sync_task.execute(SyncDirection.DOWN_TO_LOCAL, year, file_type, data_sets_int)
     result = Result.Combine([result for result in result_dict.values()])

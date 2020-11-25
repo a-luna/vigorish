@@ -162,6 +162,7 @@ class EnumConfigSetting(ConfigSetting):
 
     @staticmethod
     def get_enum(enum_name, value):
+        value = value.upper()
         if enum_name == "ScrapeCondition":
             return ScrapeCondition[value]
         if enum_name == "ScrapeTaskOption":
