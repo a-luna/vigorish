@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 import boto3
-from botocore.exceptions import ClientError
+import botocore
 
 from vigorish.data.json_decoder import (
     decode_bbref_boxscore,
@@ -25,12 +25,13 @@ from vigorish.util.result import Result
 class FileHelper:
     def __init__(self, config):
         self.config = config
+        self.bucket_name = self.config.get_current_setting("S3_BUCKET", DataSet.ALL)
+        self.s3_resource = None
         try:  # pragma: no cover
-            self.client = boto3.client("s3")
-            self.resource = boto3.resource("s3")
-        except ValueError:  # pragma: no cover
-            self.client = None
-            self.resource = None
+            if os.environ.get("ENV") != "TEST":
+                self.s3_resource = boto3.resource("s3")
+        except boto3.exceptions.ResourceNotExistsError:  # pragma: no cover
+            self.s3_resource = None
 
     @property
     def local_folderpath_dict(self):
@@ -162,10 +163,11 @@ class FileHelper:
 
     def check_s3_bucket(self):  # pragma: no cover
         try:
-            self.get_all_object_keys_in_s3_bucket()
-            return Result.Ok()
-        except Exception as e:
-            return Result.Fail(f"Error: {repr(e)}")
+            s3_bucket = self.s3_resource.Bucket(self.bucket_name) if self.bucket_name else None
+            return Result.Ok(s3_bucket)
+        except botocore.exceptions.ClientError as ex:
+            error_code = ex.response["Error"]["Code"]
+            return Result.Fail(f"{repr(ex)} (Error Code: {error_code})")
 
     def check_file_stored_local(self, file_type, data_set):
         storage_setting = self.file_storage_dict[file_type][data_set]
@@ -176,11 +178,12 @@ class FileHelper:
         return "S3_BUCKET" in storage_setting.name or "BOTH" in storage_setting.name
 
     def get_s3_bucket(self):  # pragma: no cover
-        bucket_name = self.config.get_current_setting("S3_BUCKET", DataSet.ALL)
-        return self.resource.Bucket(bucket_name)
+        result = self.check_s3_bucket()
+        return None if result.failure else result.value
 
     def get_all_object_keys_in_s3_bucket(self):  # pragma: no cover
-        return self.get_s3_bucket().objects.all()
+        s3_bucket = self.get_s3_bucket()
+        return s3_bucket.objects.all() if s3_bucket else None
 
     def perform_local_file_task(
         self,
@@ -288,15 +291,12 @@ class FileHelper:
             bb_game_id=bb_game_id,
             pitch_app_id=pitch_app_id,
         )
-        bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
         if task == S3FileTask.UPLOAD:
-            return self.upload_to_s3(
-                file_type, data_set, scraped_data, bucket_name, s3_key, Path(filepath)
-            )
+            return self.upload_to_s3(file_type, data_set, scraped_data, s3_key, Path(filepath))
         if task == S3FileTask.DOWNLOAD:
-            return self.download_from_s3(file_type, bucket_name, s3_key, Path(filepath))
+            return self.download_from_s3(file_type, s3_key, Path(filepath))
         if task == S3FileTask.DELETE:
-            return self.delete_from_s3(bucket_name, s3_key)
+            return self.delete_from_s3(s3_key)
 
     def get_object_key(
         self,
@@ -411,51 +411,53 @@ class FileHelper:
             error = f"Error: {repr(e)}"
             return Result.Fail(error)
 
-    def upload_to_s3(
-        self, file_type, data_set, scraped_data, bucket_name, s3_key, filepath
-    ):  # pragma: no cover
+    def upload_to_s3(self, file_type, data_set, scraped_data, s3_key, filepath):  # pragma: no cover
         delete_file = not self.check_file_stored_local(file_type, data_set)
         if file_type == VigFile.PARSED_JSON:
             result = self.write_to_file(file_type, scraped_data, filepath)
             if result.failure:
                 return result
         try:
-            self.client.upload_file(str(filepath), bucket_name, s3_key)
+            self.get_s3_bucket().upload_file(str(filepath), s3_key)
             if delete_file:
                 filepath.unlink()
             return Result.Ok() if delete_file else Result.Ok(filepath)
-        except Exception as e:
-            return Result.Fail(f"Error: {repr(e)}")
+        except botocore.exceptions.ClientError as ex:
+            error_code = ex.response["Error"]["Code"]
+            return Result.Fail(f"{repr(ex)} (Error Code: {error_code})")
 
-    def download_from_s3(self, file_type, bucket_name, s3_key, filepath):  # pragma: no cover
+    def download_from_s3(self, file_type, s3_key, filepath):  # pragma: no cover
         try:
-            self.resource.Bucket(bucket_name).download_file(s3_key, str(filepath))
+            self.get_s3_bucket().download_file(s3_key, str(filepath))
             if file_type == VigFile.SCRAPED_HTML and filepath.stat().st_size < ONE_KB:
-                self.resource.Object(bucket_name, s3_key).delete()
+                self.s3_resource.Object(self.bucket_name, s3_key).delete()
                 filepath.unlink()
                 error = f"Size of file downloaded from S3 is less than 1KB ({s3_key})"
                 return Result.Fail(error)
             return Result.Ok(filepath)
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "404":
+        except botocore.exceptions.ClientError as ex:
+            error_code = ex.response["Error"]["Code"]
+            if error_code == "404":
                 error = f'The object "{s3_key}" does not exist.'
             else:
-                error = repr(e)
+                error = f"{repr(ex)} (Error Code: {error_code})"
             return Result.Fail(error)
 
-    def delete_from_s3(self, bucket_name, s3_key):  # pragma: no cover
+    def delete_from_s3(self, s3_key):  # pragma: no cover
         try:
-            self.resource.Object(bucket_name, s3_key).delete()
+            self.s3_resource.Object(self.bucket_name, s3_key).delete()
             return Result.Ok()
-        except ClientError as e:
-            return Result.Fail(repr(e))
+        except botocore.exceptions.ClientError as ex:
+            error_code = ex.response["Error"]["Code"]
+            return Result.Fail(f"{repr(ex)} (Error Code: {error_code})")
 
-    def rename_s3_object(self, bucket_name, old_key, new_key):  # pragma: no cover
+    def rename_s3_object(self, old_key, new_key):  # pragma: no cover
         try:
-            self.resource.Object(bucket_name, new_key).copy_from(
-                CopySource=f"{bucket_name}/{old_key}"
+            self.s3_resource.Object(self.bucket_name, new_key).copy_from(
+                CopySource=f"{self.bucket_name}/{old_key}"
             )
-            self.resource.Object(bucket_name, old_key).delete()
+            self.s3_resource.Object(self.bucket_name, old_key).delete()
             return Result.Ok()
-        except ClientError as e:
-            return Result.Fail(repr(e))
+        except botocore.exceptions.ClientError as ex:
+            error_code = ex.response["Error"]["Code"]
+            return Result.Fail(f"{repr(ex)} (Error Code: {error_code})")
