@@ -632,15 +632,15 @@ class DateScrapeStatus(Base):
     @classmethod
     def get_all_bbref_game_ids_for_date(cls, db_session, game_date):
         date_status = cls.find_by_date(db_session, game_date)
-        if not date_status:
-            return None
+        if not date_status or not date_status.game_count_bbref:
+            return []
         return [g.bbref_game_id for g in date_status.games]
 
     @classmethod
     def get_all_brooks_game_ids_for_date(cls, db_session, game_date):
         date_status = cls.find_by_date(db_session, game_date)
-        if not date_status:
-            return None
+        if not date_status or not date_status.game_count_brooks:
+            return []
         return [game_status.bb_game_id for game_status in date_status.games]
 
     @classmethod
