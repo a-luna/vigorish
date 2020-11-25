@@ -1,17 +1,16 @@
 """Enum definitions."""
-from enum import auto, Enum, IntEnum
+from enum import Enum, IntEnum
 
-from aenum import auto as auto_flag
-from aenum import IntFlag
+from aenum import auto, IntFlag
 
 
 class VigFile(IntFlag):
     """File types that are scraped, created and stored by vigorish."""
 
-    SCRAPED_HTML = auto_flag()
-    PARSED_JSON = auto_flag()
-    COMBINED_GAME_DATA = auto_flag()
-    PATCH_LIST = auto_flag()
+    SCRAPED_HTML = auto()
+    PARSED_JSON = auto()
+    COMBINED_GAME_DATA = auto()
+    PATCH_LIST = auto()
     ALL = SCRAPED_HTML | PARSED_JSON | COMBINED_GAME_DATA | PATCH_LIST
 
     def __str__(self):
@@ -28,11 +27,11 @@ class VigFile(IntFlag):
 class DataSet(IntFlag):
     """MLB data sets."""
 
-    BBREF_GAMES_FOR_DATE = auto_flag()
-    BROOKS_GAMES_FOR_DATE = auto_flag()
-    BBREF_BOXSCORES = auto_flag()
-    BROOKS_PITCH_LOGS = auto_flag()
-    BROOKS_PITCHFX = auto_flag()
+    BBREF_GAMES_FOR_DATE = auto()
+    BROOKS_GAMES_FOR_DATE = auto()
+    BBREF_BOXSCORES = auto()
+    BROOKS_PITCH_LOGS = auto()
+    BROOKS_PITCHFX = auto()
     ALL = (
         BBREF_GAMES_FOR_DATE
         | BROOKS_GAMES_FOR_DATE
@@ -230,23 +229,23 @@ class DefensePosition(IntEnum):
 
 
 class PitchType(IntFlag):
-    CHANGEUP = auto_flag()
-    CURVEBALL = auto_flag()
-    EEPHUS = auto_flag()
-    FASTBALL = auto_flag()
-    CUTTER = auto_flag()
-    FOUR_SEAM_FASTBALL = auto_flag()
-    SPLITTER = auto_flag()
-    TWO_SEAM_FASTBALL = auto_flag()
-    FORKBALL = auto_flag()
-    INTENT_BALL = auto_flag()
-    KNUCKLE_BALL_CURVE = auto_flag()
-    KNUCKLE_BALL = auto_flag()
-    PITCH_OUT = auto_flag()
-    SCREWBALL = auto_flag()
-    SINKER = auto_flag()
-    SLIDER = auto_flag()
-    UNKNOWN = auto_flag()
+    CHANGEUP = auto()
+    CURVEBALL = auto()
+    EEPHUS = auto()
+    FASTBALL = auto()
+    CUTTER = auto()
+    FOUR_SEAM_FASTBALL = auto()
+    SPLITTER = auto()
+    TWO_SEAM_FASTBALL = auto()
+    FORKBALL = auto()
+    INTENT_BALL = auto()
+    KNUCKLE_BALL_CURVE = auto()
+    KNUCKLE_BALL = auto()
+    PITCH_OUT = auto()
+    SCREWBALL = auto()
+    SINKER = auto()
+    SLIDER = auto()
+    UNKNOWN = auto()
     ALL = (
         CHANGEUP
         | CURVEBALL

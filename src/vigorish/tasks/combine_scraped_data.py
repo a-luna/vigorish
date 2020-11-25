@@ -1,5 +1,4 @@
 """Aggregate pitchfx data and play-by-play data into a single object."""
-import logging
 from collections import Counter, defaultdict, OrderedDict
 from copy import deepcopy
 from datetime import datetime
