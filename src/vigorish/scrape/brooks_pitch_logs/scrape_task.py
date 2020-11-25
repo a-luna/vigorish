@@ -9,9 +9,9 @@ from vigorish.util.result import Result
 
 
 class ScrapeBrooksPitchLogs(ScrapeTaskABC):
-    def __init__(self, db_job, db_session, config, scraped_data):
+    def __init__(self, app, db_job):
         self.data_set = DataSet.BROOKS_PITCH_LOGS
-        super().__init__(db_job, db_session, config, scraped_data)
+        super().__init__(app, db_job)
 
     def check_prerequisites(self, game_date):
         brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(

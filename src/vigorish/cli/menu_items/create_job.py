@@ -56,12 +56,7 @@ class CreateJob(MenuItem):
         new_job = self.create_new_scrape_job(data_sets, start_date, end_date, season, job_name)
         subprocess.run(["clear"])
         if yes_no_prompt(prompt="Would you like to begin executing this job?"):
-            job_runner = JobRunner(
-                db_job=new_job,
-                db_session=self.db_session,
-                config=self.config,
-                scraped_data=self.scraped_data,
-            )
+            job_runner = JobRunner(app=self.app, db_job=new_job)
             result = job_runner.execute()
             if result.failure:
                 return result

@@ -9,7 +9,7 @@ from tests.util import (
     update_scraped_pitchfx_logs,
 )
 from vigorish.data.all_game_data import AllGameData
-from vigorish.enums import DefensePosition
+from vigorish.enums import DefensePosition, PitchType
 from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
@@ -21,8 +21,8 @@ GAME_DATE = COMBINED_DATA_GAME_DICT[TEST_ID]["game_date"]
 @pytest.fixture(scope="module", autouse=True)
 def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_all_game_data module."""
-    db_session = vig_app["db_session"]
-    scraped_data = vig_app["scraped_data"]
+    db_session = vig_app.db_session
+    scraped_data = vig_app.scraped_data
     game_date = GAME_DICT["game_date"]
     bbref_game_id = GAME_DICT["bbref_game_id"]
     bb_game_id = GAME_DICT["bb_game_id"]
@@ -34,7 +34,7 @@ def create_test_data(vig_app):
     update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
     CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
     add_pfx_to_db = AddPitchFxToDatabase(vig_app)
-    add_pfx_to_db.execute(vig_app["scraped_data"].get_audit_report(), 2019)
+    add_pfx_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
     db_session.commit()
     return True
 
@@ -123,38 +123,38 @@ def test_all_game_data(vig_app):
 
     pitch_mix = all_game_data.get_pitch_mix(571882)
     assert "all" in pitch_mix and pitch_mix["all"] == {
-        "ALL": {"count": 17, "percent": 1},
-        "CH": {"count": 3, "percent": 0.17647058823529413},
-        "CU": {"count": 6, "percent": 0.35294117647058826},
-        "FF": {"count": 6, "percent": 0.35294117647058826},
-        "SL": {"count": 2, "percent": 0.11764705882352941},
+        PitchType.ALL: {"count": 17, "percent": 1.000},
+        PitchType.CHANGEUP: {"count": 3, "percent": 0.176},
+        PitchType.CURVEBALL: {"count": 6, "percent": 0.353},
+        PitchType.FOUR_SEAM_FASTBALL: {"count": 6, "percent": 0.353},
+        PitchType.SLIDER: {"count": 2, "percent": 0.118},
     }
     assert "bat_l" in pitch_mix and pitch_mix["bat_l"] == {
-        "ALL": {"count": 12, "percent": 1},
-        "CH": {"count": 3, "percent": 0.25},
-        "CU": {"count": 4, "percent": 0.3333333333333333},
-        "FF": {"count": 3, "percent": 0.25},
-        "SL": {"count": 2, "percent": 0.16666666666666666},
+        PitchType.ALL: {"count": 12, "percent": 1.000},
+        PitchType.CHANGEUP: {"count": 3, "percent": 0.250},
+        PitchType.CURVEBALL: {"count": 4, "percent": 0.333},
+        PitchType.FOUR_SEAM_FASTBALL: {"count": 3, "percent": 0.250},
+        PitchType.SLIDER: {"count": 2, "percent": 0.167},
     }
     assert "bat_r" in pitch_mix and pitch_mix["bat_r"] == {
-        "ALL": {"count": 5, "percent": 1},
-        "CU": {"count": 2, "percent": 0.4},
-        "FF": {"count": 3, "percent": 0.6},
+        PitchType.ALL: {"count": 5, "percent": 1.000},
+        PitchType.CURVEBALL: {"count": 2, "percent": 0.400},
+        PitchType.FOUR_SEAM_FASTBALL: {"count": 3, "percent": 0.600},
     }
     assert "by_year" in pitch_mix and 2019 in pitch_mix["by_year"]
     assert pitch_mix["by_year"][2019] == {
-        "ALL": {"count": 17, "percent": 1},
-        "CH": {"count": 3, "percent": 0.17647058823529413},
-        "CU": {"count": 6, "percent": 0.35294117647058826},
-        "FF": {"count": 6, "percent": 0.35294117647058826},
-        "SL": {"count": 2, "percent": 0.11764705882352941},
+        PitchType.ALL: {"count": 17, "percent": 1.000},
+        PitchType.CHANGEUP: {"count": 3, "percent": 0.176},
+        PitchType.CURVEBALL: {"count": 6, "percent": 0.353},
+        PitchType.FOUR_SEAM_FASTBALL: {"count": 6, "percent": 0.353},
+        PitchType.SLIDER: {"count": 2, "percent": 0.118},
     }
     assert "pitch_app" in pitch_mix and pitch_mix["pitch_app"] == {
-        "ALL": {"count": 17, "percent": 1},
-        "CH": {"count": 3, "percent": 0.17647058823529413},
-        "CU": {"count": 6, "percent": 0.35294117647058826},
-        "FF": {"count": 6, "percent": 0.35294117647058826},
-        "SL": {"count": 2, "percent": 0.11764705882352941},
+        PitchType.ALL: {"count": 17, "percent": 1.000},
+        PitchType.CHANGEUP: {"count": 3, "percent": 0.176},
+        PitchType.CURVEBALL: {"count": 6, "percent": 0.353},
+        PitchType.FOUR_SEAM_FASTBALL: {"count": 6, "percent": 0.353},
+        PitchType.SLIDER: {"count": 2, "percent": 0.118},
     }
 
     matchup = all_game_data.get_matchup_details()

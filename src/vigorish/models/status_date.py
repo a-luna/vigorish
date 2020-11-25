@@ -22,9 +22,9 @@ class DateScrapeStatus(Base):
     game_count_brooks = Column(Integer, default=0)
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    scrape_status_games = relationship("GameScrapeStatus", backref="scrape_status_date")
-    scrape_status_pitchfx = relationship("PitchAppScrapeStatus", backref="scrape_status_date")
-    pitch_app_status = relationship(
+    games = relationship("GameScrapeStatus", backref="date")
+    pitch_apps = relationship("PitchAppScrapeStatus", backref="date")
+    date_pitch_app_view = relationship(
         "Date_PitchApp_View",
         backref="original",
         uselist=False,
@@ -38,15 +38,15 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_games(self):
-        return len(self.scrape_status_games) if self.scrape_status_games else 0
+        return len(self.games) if self.games else 0
 
     @hybrid_property
     def total_games_combined_success(self):
-        return sum(game.combined_data_success for game in self.scrape_status_games)
+        return sum(game.combined_data_success for game in self.games)
 
     @hybrid_property
     def total_games_combined_fail(self):
-        return sum(game.combined_data_fail for game in self.scrape_status_games)
+        return sum(game.combined_data_fail for game in self.games)
 
     @hybrid_property
     def total_games_combined(self):
@@ -54,13 +54,13 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_bbref_boxscores_scraped(self):
-        return sum(game.scraped_bbref_boxscore for game in self.scrape_status_games)
+        return sum(game.scraped_bbref_boxscore for game in self.games)
 
     @hybrid_property
     def percent_complete_bbref_boxscores_scraped(self):
         return (
-            self.total_bbref_boxscores_scraped / float(len(self.scrape_status_games))
-            if len(self.scrape_status_games) > 0
+            self.total_bbref_boxscores_scraped / float(len(self.games))
+            if len(self.games) > 0
             else 0.0
         )
 
@@ -68,17 +68,17 @@ class DateScrapeStatus(Base):
     def scraped_all_bbref_boxscores(self):
         if not self.scraped_daily_dash_bbref or not self.scraped_daily_dash_brooks:
             return False
-        return all(game.scraped_bbref_boxscore == 1 for game in self.scrape_status_games)
+        return all(game.scraped_bbref_boxscore == 1 for game in self.games)
 
     @hybrid_property
     def total_brooks_pitch_logs_scraped(self):
-        return sum(game.scraped_brooks_pitch_logs for game in self.scrape_status_games)
+        return sum(game.scraped_brooks_pitch_logs for game in self.games)
 
     @hybrid_property
     def percent_complete_brooks_pitch_logs(self):
         return (
-            self.total_brooks_pitch_logs_scraped / float(len(self.scrape_status_games))
-            if len(self.scrape_status_games) > 0
+            self.total_brooks_pitch_logs_scraped / float(len(self.games))
+            if len(self.games) > 0
             else 0.0
         )
 
@@ -86,37 +86,39 @@ class DateScrapeStatus(Base):
     def scraped_all_brooks_pitch_logs(self):
         if not self.scraped_daily_dash_bbref or not self.scraped_daily_dash_brooks:
             return False
-        return all(game.scraped_brooks_pitch_logs == 1 for game in self.scrape_status_games)
+        return all(game.scraped_brooks_pitch_logs == 1 for game in self.games)
 
     @hybrid_property
     def pitch_app_count_bbref(self):
-        return sum(game.pitch_app_count_bbref for game in self.scrape_status_games)
+        return sum(game.pitch_app_count_bbref for game in self.games)
 
     @hybrid_property
     def pitch_app_count_brooks(self):
-        return sum(game.pitch_app_count_brooks for game in self.scrape_status_games)
+        return sum(game.pitch_app_count_brooks for game in self.games)
 
     @hybrid_property
     def total_pitch_count_bbref(self):
-        return sum(game.total_pitch_count_bbref for game in self.scrape_status_games)
+        return sum(game.total_pitch_count_bbref for game in self.games)
 
     @hybrid_property
     def pitch_app_count_pitchfx(self):
-        return self.pitch_app_status.total_pitchfx if self.pitch_app_status.total_pitchfx else 0
+        return (
+            self.date_pitch_app_view.total_pitchfx if self.date_pitch_app_view.total_pitchfx else 0
+        )
 
     @hybrid_property
     def total_pitch_apps_scraped_pitchfx(self):
         return (
-            self.pitch_app_status.total_pitchfx_scraped
-            if self.pitch_app_status.total_pitchfx_scraped
+            self.date_pitch_app_view.total_pitchfx_scraped
+            if self.date_pitch_app_view.total_pitchfx_scraped
             else 0
         )
 
     @hybrid_property
     def total_pitch_apps_no_pitchfx_data(self):
         return (
-            self.pitch_app_status.total_no_pitchfx_data
-            if self.pitch_app_status.total_no_pitchfx_data
+            self.date_pitch_app_view.total_no_pitchfx_data
+            if self.date_pitch_app_view.total_no_pitchfx_data
             else 0
         )
 
@@ -127,24 +129,24 @@ class DateScrapeStatus(Base):
     @hybrid_property
     def total_pitch_apps_combined_data(self):
         return (
-            self.pitch_app_status.total_combined_pitchfx_bbref_data
-            if self.pitch_app_status.total_combined_pitchfx_bbref_data
+            self.date_pitch_app_view.total_combined_pitchfx_bbref_data
+            if self.date_pitch_app_view.total_combined_pitchfx_bbref_data
             else 0
         )
 
     @hybrid_property
     def total_pitch_apps_pitchfx_error(self):
         return (
-            self.pitch_app_status.total_pitchfx_error
-            if self.pitch_app_status.total_pitchfx_error
+            self.date_pitch_app_view.total_pitchfx_error
+            if self.date_pitch_app_view.total_pitchfx_error
             else 0
         )
 
     @hybrid_property
     def total_pitch_apps_invalid_pitchfx(self):
         return (
-            self.pitch_app_status.total_invalid_pitchfx
-            if self.pitch_app_status.total_invalid_pitchfx
+            self.date_pitch_app_view.total_invalid_pitchfx
+            if self.date_pitch_app_view.total_invalid_pitchfx
             else 0
         )
 
@@ -154,135 +156,133 @@ class DateScrapeStatus(Base):
 
     @hybrid_property
     def total_pitch_apps_pitchfx_is_valid(self):
-        return sum(
-            not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
-        )
+        return sum(not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
 
     @hybrid_property
     def total_pitch_count_pitch_logs(self):
         return (
-            self.pitch_app_status.total_pitch_count_pitch_log
-            if self.pitch_app_status.total_pitch_count_pitch_log
+            self.date_pitch_app_view.total_pitch_count_pitch_log
+            if self.date_pitch_app_view.total_pitch_count_pitch_log
             else 0
         )
 
     @hybrid_property
     def total_pitch_count_bbref_audited(self):
         return (
-            self.pitch_app_status.total_pitch_count_bbref
-            if self.pitch_app_status.total_pitch_count_bbref
+            self.date_pitch_app_view.total_pitch_count_bbref
+            if self.date_pitch_app_view.total_pitch_count_bbref
             else 0
         )
 
     @hybrid_property
     def total_pitch_count_pitchfx(self):
         return (
-            self.pitch_app_status.total_pitch_count_pitchfx
-            if self.pitch_app_status.total_pitch_count_pitchfx
+            self.date_pitch_app_view.total_pitch_count_pitchfx
+            if self.date_pitch_app_view.total_pitch_count_pitchfx
             else 0
         )
 
     @hybrid_property
     def total_pitch_count_pitchfx_audited(self):
         return (
-            self.pitch_app_status.total_pitch_count_pitchfx_audited
-            if self.pitch_app_status.total_pitch_count_pitchfx_audited
+            self.date_pitch_app_view.total_pitch_count_pitchfx_audited
+            if self.date_pitch_app_view.total_pitch_count_pitchfx_audited
             else 0
         )
 
     @hybrid_property
     def total_duplicate_pitchfx_removed_count(self):
         return (
-            self.pitch_app_status.total_duplicate_pitchfx_removed_count
-            if self.pitch_app_status.total_duplicate_pitchfx_removed_count
+            self.date_pitch_app_view.total_duplicate_pitchfx_removed_count
+            if self.date_pitch_app_view.total_duplicate_pitchfx_removed_count
             else 0
         )
 
     @hybrid_property
     def total_missing_pitchfx_count(self):
         return (
-            self.pitch_app_status.total_missing_pitchfx_count
-            if self.pitch_app_status.total_missing_pitchfx_count
+            self.date_pitch_app_view.total_missing_pitchfx_count
+            if self.date_pitch_app_view.total_missing_pitchfx_count
             else 0
         )
 
     @hybrid_property
     def total_extra_pitchfx_count(self):
         return (
-            self.pitch_app_status.total_extra_pitchfx_count
-            if self.pitch_app_status.total_extra_pitchfx_count
+            self.date_pitch_app_view.total_extra_pitchfx_count
+            if self.date_pitch_app_view.total_extra_pitchfx_count
             else 0
         )
 
     @hybrid_property
     def total_extra_pitchfx_removed_count(self):
         return (
-            self.pitch_app_status.total_extra_pitchfx_removed_count
-            if self.pitch_app_status.total_extra_pitchfx_removed_count
+            self.date_pitch_app_view.total_extra_pitchfx_removed_count
+            if self.date_pitch_app_view.total_extra_pitchfx_removed_count
             else 0
         )
 
     @hybrid_property
     def total_batters_faced_bbref(self):
         return (
-            self.pitch_app_status.total_batters_faced_bbref
-            if self.pitch_app_status.total_batters_faced_bbref
+            self.date_pitch_app_view.total_batters_faced_bbref
+            if self.date_pitch_app_view.total_batters_faced_bbref
             else 0
         )
 
     @hybrid_property
     def total_batters_faced_pitchfx(self):
         return (
-            self.pitch_app_status.total_batters_faced_pitchfx
-            if self.pitch_app_status.total_batters_faced_pitchfx
+            self.date_pitch_app_view.total_batters_faced_pitchfx
+            if self.date_pitch_app_view.total_batters_faced_pitchfx
             else 0
         )
 
     @hybrid_property
     def total_at_bats_pitchfx_complete(self):
         return (
-            self.pitch_app_status.total_at_bats_pitchfx_complete
-            if self.pitch_app_status.total_at_bats_pitchfx_complete
+            self.date_pitch_app_view.total_at_bats_pitchfx_complete
+            if self.date_pitch_app_view.total_at_bats_pitchfx_complete
             else 0
         )
 
     @hybrid_property
     def total_at_bats_missing_pitchfx(self):
         return (
-            self.pitch_app_status.total_at_bats_missing_pitchfx
-            if self.pitch_app_status.total_at_bats_missing_pitchfx
+            self.date_pitch_app_view.total_at_bats_missing_pitchfx
+            if self.date_pitch_app_view.total_at_bats_missing_pitchfx
             else 0
         )
 
     @hybrid_property
     def total_at_bats_extra_pitchfx(self):
         return (
-            self.pitch_app_status.total_at_bats_extra_pitchfx
-            if self.pitch_app_status.total_at_bats_extra_pitchfx
+            self.date_pitch_app_view.total_at_bats_extra_pitchfx
+            if self.date_pitch_app_view.total_at_bats_extra_pitchfx
             else 0
         )
 
     @hybrid_property
     def total_at_bats_extra_pitchfx_removed(self):
         return (
-            self.pitch_app_status.total_at_bats_extra_pitchfx_removed
-            if self.pitch_app_status.total_at_bats_pitchfx_error
+            self.date_pitch_app_view.total_at_bats_extra_pitchfx_removed
+            if self.date_pitch_app_view.total_at_bats_pitchfx_error
             else 0
         )
 
     @hybrid_property
     def total_at_bats_pitchfx_error(self):
         return (
-            self.pitch_app_status.total_at_bats_pitchfx_error
-            if self.pitch_app_status.total_at_bats_pitchfx_error
+            self.date_pitch_app_view.total_at_bats_pitchfx_error
+            if self.date_pitch_app_view.total_at_bats_pitchfx_error
             else 0
         )
 
     @hybrid_property
     def total_at_bats_invalid_pitchfx(self):
         return (
-            self.pitch_app_status.total_at_bats_invalid_pitchfx
-            if self.pitch_app_status.total_at_bats_invalid_pitchfx
+            self.date_pitch_app_view.total_at_bats_invalid_pitchfx
+            if self.date_pitch_app_view.total_at_bats_invalid_pitchfx
             else 0
         )
 
@@ -290,7 +290,7 @@ class DateScrapeStatus(Base):
     def scraped_all_pitchfx_logs(self):
         if not self.scraped_all_brooks_pitch_logs:
             return False
-        if not self.scrape_status_pitchfx:
+        if not self.pitch_apps:
             return True
         return self.pitch_app_count_pitchfx == self.total_pitch_apps_scraped_pitchfx
 
@@ -298,7 +298,7 @@ class DateScrapeStatus(Base):
     def combined_data_for_all_pitchfx_logs(self):
         if not self.scraped_all_pitchfx_logs:
             return False
-        if not self.scrape_status_pitchfx:
+        if not self.pitch_apps:
             return False
         return self.pitch_app_count_pitchfx == self.total_pitch_apps_combined_data
 
@@ -306,19 +306,17 @@ class DateScrapeStatus(Base):
     def pitchfx_error_for_any_pitchfx_logs(self):
         if not self.scraped_all_pitchfx_logs:
             return False
-        if not self.scrape_status_pitchfx:
+        if not self.pitch_apps:
             return False
-        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx)
+        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
 
     @hybrid_property
     def pitchfx_is_valid_for_all_pitchfx_logs(self):
         if not self.scraped_all_pitchfx_logs:
             return True
-        if not self.scrape_status_pitchfx:
+        if not self.pitch_apps:
             return True
-        return all(
-            not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.scrape_status_pitchfx
-        )
+        return all(not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
@@ -536,7 +534,7 @@ class DateScrapeStatus(Base):
         )
 
     def games_status_report(self):
-        return "\n".join([game_status.status_report() for game_status in self.scrape_status_games])
+        return "\n".join([g.status_report() for g in self.games])
 
     def as_csv_dict(self):
         return dict_from_dataclass(self, DateScrapeStatusCsvRow, date_format=DATE_ONLY)
@@ -599,11 +597,7 @@ class DateScrapeStatus(Base):
     @classmethod
     def get_unscraped_pitch_appearances_for_date(cls, db_session, game_date):
         date_status = cls.find_by_date(db_session, game_date)
-        return [
-            pitch_app
-            for pitch_app in date_status.scrape_status_pitchfx
-            if pitch_app.scraped_pitchfx == 0
-        ]
+        return [pitch_app for pitch_app in date_status.pitch_apps if pitch_app.scraped_pitchfx == 0]
 
     @classmethod
     def get_unscraped_pitch_app_ids_for_date(cls, db_session, game_date):
@@ -638,16 +632,16 @@ class DateScrapeStatus(Base):
     @classmethod
     def get_all_bbref_game_ids_for_date(cls, db_session, game_date):
         date_status = cls.find_by_date(db_session, game_date)
-        if not date_status:
-            return None
-        return [game_status.bbref_game_id for game_status in date_status.scrape_status_games]
+        if not date_status or not date_status.game_count_bbref:
+            return []
+        return [g.bbref_game_id for g in date_status.games]
 
     @classmethod
     def get_all_brooks_game_ids_for_date(cls, db_session, game_date):
         date_status = cls.find_by_date(db_session, game_date)
-        if not date_status:
-            return None
-        return [game_status.bb_game_id for game_status in date_status.scrape_status_games]
+        if not date_status or not date_status.game_count_brooks:
+            return []
+        return [game_status.bb_game_id for game_status in date_status.games]
 
     @classmethod
     def get_date_id_map(cls, db_session):

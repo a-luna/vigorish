@@ -1,31 +1,37 @@
 """Enum definitions."""
-from enum import auto, Enum, IntEnum
+from enum import Enum, IntEnum
 
-from aenum import auto as auto_flag
-from aenum import IntFlag
+from aenum import auto, IntFlag
 
 
 class VigFile(IntFlag):
     """File types that are scraped, created and stored by vigorish."""
 
-    SCRAPED_HTML = auto_flag()
-    PARSED_JSON = auto_flag()
-    COMBINED_GAME_DATA = auto_flag()
-    PATCH_LIST = auto_flag()
+    SCRAPED_HTML = auto()
+    PARSED_JSON = auto()
+    COMBINED_GAME_DATA = auto()
+    PATCH_LIST = auto()
     ALL = SCRAPED_HTML | PARSED_JSON | COMBINED_GAME_DATA | PATCH_LIST
 
     def __str__(self):
         return self.name
 
+    @classmethod
+    def from_str(cls, file_type_name):
+        for file_type in cls:
+            if file_type_name.upper() not in file_type.name:
+                continue
+            return file_type
+
 
 class DataSet(IntFlag):
     """MLB data sets."""
 
-    BBREF_GAMES_FOR_DATE = auto_flag()
-    BROOKS_GAMES_FOR_DATE = auto_flag()
-    BBREF_BOXSCORES = auto_flag()
-    BROOKS_PITCH_LOGS = auto_flag()
-    BROOKS_PITCHFX = auto_flag()
+    BBREF_GAMES_FOR_DATE = auto()
+    BROOKS_GAMES_FOR_DATE = auto()
+    BBREF_BOXSCORES = auto()
+    BROOKS_PITCH_LOGS = auto()
+    BROOKS_PITCHFX = auto()
     ALL = (
         BBREF_GAMES_FOR_DATE
         | BROOKS_GAMES_FOR_DATE
@@ -37,66 +43,83 @@ class DataSet(IntFlag):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def from_str(cls, data_set_name):
+        for data_set in cls:
+            if data_set_name.upper() not in data_set.name:
+                continue
+            return data_set
 
-class ConfigType(Enum):
+
+class ConfigType(str, Enum):
     """Data types for configuration settings."""
 
-    STRING = auto()
-    NUMERIC = auto()
-    PATH = auto()
-    ENUM = auto()
-    NONE = auto()
+    STRING = "string"
+    NUMERIC = "numeric"
+    PATH = "path"
+    ENUM = "enum"
+    NONE = "none"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class ScrapeCondition(Enum):
+class ScrapeCondition(str, Enum):
     """Allowed values for SCRAPE_CONDITION config setting."""
 
-    ONLY_MISSING_DATA = auto()
-    ALWAYS = auto()
-    NEVER = auto()
+    ONLY_MISSING_DATA = "only_missing_data"
+    ALWAYS = "always"
+    NEVER = "never"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class HtmlStorageOption(Enum):
+class ScrapeTaskOption(str, Enum):
+    """Allowed values for SCRAPE_TASK_OPTION config setting."""
+
+    BY_DATE = "by_date"
+    BY_DATA_SET = "by_data_set"
+
+    def __str__(self):
+        return str.__str__(self)
+
+
+class HtmlStorageOption(str, Enum):
     """Allowed values for HTML_STORAGE config setting."""
 
-    NONE = auto()
-    LOCAL_FOLDER = auto()
-    S3_BUCKET = auto()
-    BOTH = auto()
+    NONE = "none"
+    LOCAL_FOLDER = "local_folder"
+    S3_BUCKET = "s3_bucket"
+    BOTH = "both"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class JsonStorageOption(Enum):
+class JsonStorageOption(str, Enum):
     """Allowed values for JSON_STORAGE config setting."""
 
-    LOCAL_FOLDER = auto()
-    S3_BUCKET = auto()
-    BOTH = auto()
+    LOCAL_FOLDER = "local_folder"
+    S3_BUCKET = "s3_bucket"
+    BOTH = "both"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class CombinedDataStorageOption(Enum):
+class CombinedDataStorageOption(str, Enum):
     """Allowed values for COMBINED_DATA_STORAGE config setting."""
 
-    LOCAL_FOLDER = auto()
-    S3_BUCKET = auto()
-    BOTH = auto()
+    LOCAL_FOLDER = "local_folder"
+    S3_BUCKET = "s3_bucket"
+    BOTH = "both"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class StatusReport(Enum):
+class StatusReport(IntEnum):
     """The type of status report (if any) to display."""
 
     NONE = 0
@@ -112,47 +135,47 @@ class StatusReport(Enum):
         return self.name
 
 
-class FileTask(Enum):
+class FileTask(str, Enum):
     """Generic file actions that are mapped to LocalFileTask and S3FileTask file actions."""
 
-    STORE_FILE = auto()
-    GET_FILE = auto()
-    REMOVE_FILE = auto()
+    STORE_FILE = "store_file"
+    GET_FILE = "get_file"
+    REMOVE_FILE = "remove_file"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class S3FileTask(Enum):
+class S3FileTask(str, Enum):
     """Type of action to perform on an object in an S3 bucket."""
 
-    UPLOAD = auto()
-    DOWNLOAD = auto()
-    DELETE = auto()
-    RENAME = auto()
+    UPLOAD = "upload"
+    DOWNLOAD = "download"
+    DELETE = "delete"
+    RENAME = "rename"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class LocalFileTask(Enum):
+class LocalFileTask(str, Enum):
     """Type of action to perform on a local file."""
 
-    WRITE_FILE = auto()
-    READ_FILE = auto()
-    DELETE_FILE = auto()
-    DECODE_JSON = auto()
+    WRITE_FILE = "write_file"
+    READ_FILE = "read_file"
+    DELETE_FILE = "delete_file"
+    DECODE_JSON = "decode_file"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
 class JobStatus(IntEnum):
     """Status of a scrape job created by a user."""
 
-    INCOMPLETE = auto()
-    ERROR = auto()
-    COMPLETE = auto()
+    INCOMPLETE = 1
+    ERROR = 2
+    COMPLETE = 3
 
     def __str__(self):
         return self.name
@@ -205,13 +228,108 @@ class DefensePosition(IntEnum):
         return abbrev_dict.get(abbrev, cls.NONE)
 
 
-class SeasonType(Enum):
+class PitchType(IntFlag):
+    CHANGEUP = auto()
+    CURVEBALL = auto()
+    EEPHUS = auto()
+    FASTBALL = auto()
+    CUTTER = auto()
+    FOUR_SEAM_FASTBALL = auto()
+    SPLITTER = auto()
+    TWO_SEAM_FASTBALL = auto()
+    FORKBALL = auto()
+    INTENT_BALL = auto()
+    KNUCKLE_BALL_CURVE = auto()
+    KNUCKLE_BALL = auto()
+    PITCH_OUT = auto()
+    SCREWBALL = auto()
+    SINKER = auto()
+    SLIDER = auto()
+    UNKNOWN = auto()
+    ALL = (
+        CHANGEUP
+        | CURVEBALL
+        | EEPHUS
+        | FASTBALL
+        | CUTTER
+        | FOUR_SEAM_FASTBALL
+        | SPLITTER
+        | TWO_SEAM_FASTBALL
+        | FORKBALL
+        | INTENT_BALL
+        | KNUCKLE_BALL_CURVE
+        | KNUCKLE_BALL
+        | PITCH_OUT
+        | SCREWBALL
+        | SINKER
+        | SLIDER
+        | UNKNOWN
+    )
+
+    def __str__(self):
+        abbrev_dict = {
+            "CHANGEUP": "CH",
+            "CURVEBALL": "CU",
+            "EEPHUS": "EP",
+            "FASTBALL": "FA",
+            "CUTTER": "FC",
+            "FOUR_SEAM_FASTBALL": "FF",
+            "SPLITTER": "FS",
+            "TWO_SEAM_FASTBALL": "FT",
+            "FORKBALL": "FO",
+            "INTENT_BALL": "IN",
+            "KNUCKLE_BALL_CURVE": "KC",
+            "KNUCKLE_BALL": "KN",
+            "PITCH_OUT": "PO",
+            "SCREWBALL": "SC",
+            "SINKER": "SI",
+            "SLIDER": "SL",
+            "UNKNOWN": "UN",
+        }
+        return abbrev_dict.get(self.name, self.name)
+
+    @property
+    def print_name(self):
+        name_dict = {
+            "FF": "Four-seam Fastball",
+            "FT": "Two-seam Fastball",
+            "IN": "Intent ball",
+            "KC": "Knuckle ball Curve",
+            "KN": "Knuckle ball",
+        }
+        return name_dict.get(str(self), self.name.replace("_", " ").title())
+
+    @classmethod
+    def from_abbrev(cls, abbrev):
+        abbrev_dict = {
+            "CH": cls.CHANGEUP,
+            "CU": cls.CURVEBALL,
+            "EP": cls.EEPHUS,
+            "FA": cls.FASTBALL,
+            "FC": cls.CUTTER,
+            "FF": cls.FOUR_SEAM_FASTBALL,
+            "FS": cls.SPLITTER,
+            "FT": cls.TWO_SEAM_FASTBALL,
+            "FO": cls.FORKBALL,
+            "IN": cls.INTENT_BALL,
+            "KC": cls.KNUCKLE_BALL_CURVE,
+            "KN": cls.KNUCKLE_BALL,
+            "PO": cls.PITCH_OUT,
+            "SC": cls.SCREWBALL,
+            "SI": cls.SINKER,
+            "SL": cls.SLIDER,
+            "UN": cls.UNKNOWN,
+        }
+        return abbrev_dict.get(abbrev, cls.UNKNOWN)
+
+
+class SeasonType(str, Enum):
     """Identifies games, stats, etc as Spring Training, Regular, or Post-Season."""
 
-    PRE_SEASON = auto()
-    REGULAR_SEASON = auto()
-    POST_SEASON = auto()
-    NONE = auto()
+    PRE_SEASON = "pre_season"
+    REGULAR_SEASON = "regular_season"
+    POST_SEASON = "post_season"
+    NONE = "none"
 
     def __str__(self):
         season_type_dict = {
@@ -222,19 +340,19 @@ class SeasonType(Enum):
         return season_type_dict.get(self.name, self.name)
 
 
-class PlayByPlayEvent(Enum):
-    AT_BAT = auto()
-    SUBSTITUTION = auto()
-    MISC = auto()
+class PlayByPlayEvent(str, Enum):
+    AT_BAT = "at_bat"
+    SUBSTITUTION = "substitution"
+    MISC = "misc"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class AuditError(Enum):
-    FAILED_TO_COMBINE = auto()
-    PITCHFX_ERROR = auto()
-    INVALID_PITCHFX_DATA = auto()
+class AuditError(str, Enum):
+    FAILED_TO_COMBINE = "failed_to_combine"
+    PITCHFX_ERROR = "pitchfx_error"
+    INVALID_PITCHFX_DATA = "invalid_pitchfx_data"
 
     def __str__(self):
         error_type_dict = {
@@ -256,19 +374,19 @@ class AuditTask(IntEnum):
         return self.name
 
 
-class PatchType(Enum):
-    CHANGE_BBREF_GAME_ID = auto()
-    CHANGE_PITCH_SEQUENCE = auto()
-    CHANGE_BATTER_ID = auto()
-    CHANGE_PITCHER_ID = auto()
+class PatchType(str, Enum):
+    CHANGE_BBREF_GAME_ID = "change_bbref_game_id"
+    CHANGE_PITCH_SEQUENCE = "change_pitch_sequence"
+    CHANGE_BATTER_ID = "change_batter_id"
+    CHANGE_PITCHER_ID = "change_pitcher_id"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)
 
 
-class SyncDirection(Enum):
-    UP_TO_S3 = auto()
-    DOWN_TO_LOCAL = auto()
+class SyncDirection(str, Enum):
+    UP_TO_S3 = "up_to_s3"
+    DOWN_TO_LOCAL = "down_to_local"
 
     def __str__(self):
-        return self.name
+        return str.__str__(self)

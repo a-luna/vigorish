@@ -2,14 +2,15 @@ from dacite import from_dict
 
 from vigorish.enums import DataSet, VigFile
 from vigorish.scrape.url_details import UrlDetails
+from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.regex import BBREF_BOXSCORE_URL_REGEX
 from vigorish.util.result import Result
 
 
-def create_url_set(db_job, data_set, scraped_data):
+def create_url_set(start_date, end_date, db_job, data_set, scraped_data):
     url_set = {}
-    for game_date in db_job.date_range:
+    for game_date in get_date_range(start_date, end_date):
         result = create_url_set_for_date(db_job, data_set, scraped_data, game_date)
         if result.failure:
             return result
@@ -67,11 +68,17 @@ def create_urls_for_brooks_pitch_logs_for_date(db_job, scraped_data, game_date):
 
 def create_urls_for_brooks_pitchfx_logs_for_date(db_job, scraped_data, game_date):
     data_set = DataSet.BROOKS_PITCHFX
-    req_data_set = DataSet.BROOKS_PITCH_LOGS
+    req_data_set_1 = DataSet.BROOKS_GAMES_FOR_DATE
+    req_data_set_2 = DataSet.BROOKS_PITCH_LOGS
+    games_for_date = scraped_data.get_brooks_games_for_date(game_date)
+    if not games_for_date:
+        return Result.Fail(get_unscraped_data_error(data_set, req_data_set_1, game_date))
+    urls = []
+    if not games_for_date.game_count:
+        return Result.Ok(urls)
     pitch_logs_for_date = scraped_data.get_all_brooks_pitch_logs_for_date(game_date)
     if not pitch_logs_for_date:
-        return Result.Fail(get_unscraped_data_error(data_set, req_data_set, game_date))
-    urls = []
+        return Result.Fail(get_unscraped_data_error(data_set, req_data_set_2, game_date))
     for pitch_logs_for_game in pitch_logs_for_date:
         for pitch_log in pitch_logs_for_game.pitch_logs:
             if not pitch_log.parsed_all_info:

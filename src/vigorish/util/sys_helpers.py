@@ -62,7 +62,7 @@ def program_is_installed(exe_name, version_option="--version"):  # pragma: no co
             encoding="utf-8",
         )
         output = check_version.stdout.strip()
-        return True if re.compile(r"[vV]?\d+\.").match(output) else False
+        return True if re.compile(r"[vV]?\d+\.").search(output) else False
     except FileNotFoundError:
         return False
 

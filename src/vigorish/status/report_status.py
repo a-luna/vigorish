@@ -1,6 +1,9 @@
+import os
+
 from pprint import pformat
 
 from vigorish.cli.components import print_message
+from vigorish.cli.components.dict_viewer import DictListTableViewer
 from vigorish.config.database import DateScrapeStatus, Season
 from vigorish.enums import StatusReport
 from vigorish.util.datetime_util import get_date_range
@@ -116,9 +119,7 @@ def display_date_range_status(db_session, start_date, end_date, status_date_rang
         return display_detailed_report_for_date_range(db_session, status_date_range, False)
     if report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX:
         return display_detailed_report_for_date_range(db_session, status_date_range, True)
-    return display_summary_report_for_date_range(
-        db_session, start_date, end_date, status_date_range
-    )
+    return display_summary_report_for_date_range(start_date, end_date, status_date_range)
 
 
 def display_detailed_report_for_date_range(db_session, status_date_range, missing_pitchfx):
@@ -148,17 +149,29 @@ def display_detailed_report_for_date_range(db_session, status_date_range, missin
     return Result.Ok()
 
 
-def display_summary_report_for_date_range(db_session, start_date, end_date, status_date_range):
-    start_str = start_date.strftime(DATE_MONTH_NAME)
-    end_str = end_date.strftime(DATE_MONTH_NAME)
-    print_message(
-        f"\n### STATUS REPORT FOR {start_str} - {end_str} ###", fg="bright_magenta", bold=True
-    )
+def display_summary_report_for_date_range(start_date, end_date, status_date_range):
     if not status_date_range:
         print_message("All data has been scraped for all dates in the requested range")
         return Result.Ok()
-    for status in status_date_range:
-        date_str = status.game_date_str
-        status_description = status.scrape_status_description
-        print_message(f"{date_str}: {status_description}", wrap=False, fg="bright_magenta")
+    row_data = [
+        {
+            "game_date": date_status.game_date_str,
+            "status": date_status.scrape_status_description,
+        }
+        for date_status in status_date_range
+    ]
+    start_str = start_date.strftime(DATE_MONTH_NAME)
+    end_str = end_date.strftime(DATE_MONTH_NAME)
+    heading = f"\n### STATUS REPORT FOR {start_str} - {end_str} ###"
+    table_viewer = DictListTableViewer(
+        row_data,
+        prompt="Press Enter to return to the Main Menu",
+        confirm_only=True,
+        heading=heading,
+        heading_color="bright_magenta",
+        message=None,
+        table_color="bright_magenta",
+    )
+    if os.environ.get("ENV") != "TEST":
+        table_viewer.launch()
     return Result.Ok()

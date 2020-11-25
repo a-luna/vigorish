@@ -1,10 +1,6 @@
 from datetime import datetime
 
-from vigorish.config.database import (
-    PitchAppScrapeStatus,
-    Season,
-    TimeBetweenPitches,
-)
+from vigorish.config.database import PitchAppScrapeStatus, Season, TimeBetweenPitches
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
@@ -90,8 +86,8 @@ COMBINED_DATA_GAME_DICT = {
 
 
 def seed_database_with_2019_test_data(vig_app):
-    db_session = vig_app["db_session"]
-    scraped_data = vig_app["scraped_data"]
+    db_session = vig_app.db_session
+    scraped_data = vig_app.scraped_data
     result = TimeBetweenPitches.from_calc_results(db_session, get_avg_pitch_times())
     assert result
     for game_id_dict in COMBINED_DATA_GAME_DICT.values():

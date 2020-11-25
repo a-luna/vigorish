@@ -10,12 +10,7 @@ from vigorish.cli.components.prompts import yes_no_prompt
 from vigorish.cli.components.util import print_heading, print_message, shutdown_cli_immediately
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
-from vigorish.config.database import (
-    db_setup_complete,
-    initialize_database,
-    reset_database_connection,
-    Season,
-)
+from vigorish.config.database import db_setup_complete, initialize_database, Season
 from vigorish.constants import EMOJI_DICT
 from vigorish.enums import DataSet
 from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
@@ -96,11 +91,7 @@ class SetupDatabase(MenuItem):
     def update_database_connection(self):
         if not self.db_initialized:
             return Result.Ok()
-        result = reset_database_connection(self.app)
-        if result.failure:
-            return result
-        self.app = result.value
-        return Result.Ok()
+        return self.app.reset_database_connection()
 
     def create_and_populate_database_tables(self):
         subprocess.run(["clear"])

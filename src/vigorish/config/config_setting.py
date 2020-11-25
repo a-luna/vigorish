@@ -10,6 +10,7 @@ from vigorish.enums import (
     HtmlStorageOption,
     JsonStorageOption,
     ScrapeCondition,
+    ScrapeTaskOption,
     StatusReport,
 )
 from vigorish.util.list_helpers import report_dict
@@ -60,6 +61,7 @@ class ConfigSetting:
         return self.setting_name in [
             "STATUS_REPORT",
             "S3_BUCKET",
+            "SCRAPE_TASK_OPTION",
             "SCRAPED_DATA_COMBINE_CONDITION",
             "COMBINED_DATA_STORAGE",
             "COMBINED_DATA_LOCAL_FOLDER_PATH",
@@ -142,6 +144,8 @@ class EnumConfigSetting(ConfigSetting):
         enum_name = self.config_dict.get("ENUM_NAME")
         if enum_name == "ScrapeCondition":
             return [member for member in ScrapeCondition]
+        if enum_name == "ScrapeTaskOption":
+            return [member for member in ScrapeTaskOption]
         if enum_name == "HtmlStorageOption":
             return [member for member in HtmlStorageOption]
         if enum_name == "JsonStorageOption":
@@ -158,8 +162,11 @@ class EnumConfigSetting(ConfigSetting):
 
     @staticmethod
     def get_enum(enum_name, value):
+        value = value.upper()
         if enum_name == "ScrapeCondition":
             return ScrapeCondition[value]
+        if enum_name == "ScrapeTaskOption":
+            return ScrapeTaskOption[value]
         if enum_name == "HtmlStorageOption":
             return HtmlStorageOption[value]
         if enum_name == "JsonStorageOption":

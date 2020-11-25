@@ -2,9 +2,11 @@
 import subprocess
 from tempfile import TemporaryDirectory
 
+from halo import Halo
 from getch import pause
 
-from vigorish.cli.components import print_message, yes_no_prompt
+from vigorish.cli.components import print_heading, print_message, yes_no_prompt
+from vigorish.cli.components.util import get_random_cli_color, get_random_dots_spinner
 from vigorish.cli.menu_item import MenuItem
 from vigorish.config.project_paths import NIGHTMAREJS_FOLDER, NODEJS_INBOX
 from vigorish.constants import EMOJI_DICT
@@ -27,13 +29,15 @@ UPDATE_PROMPT = (
 class NpmInstallUpdate(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.menu_item_text = (
+        self.menu_heading = (
             "Update Node Packages" if node_modules_folder_exists() else "Install Node Packages"
         )
+        self.menu_item_text = self.menu_heading
         self.menu_item_emoji = EMOJI_DICT.get("PACKAGE")
 
     def launch(self):
         subprocess.run(["clear"])
+        print_heading(self.menu_heading, fg="bright_yellow")
         if not node_is_installed():
             print_message(INSTALL_ERROR, fg="bright_red", bold=True)
             pause(message="Press any key to continue...")
@@ -54,9 +58,27 @@ class NpmInstallUpdate(MenuItem):
         if not yes_no_prompt(prompt, wrap=False):
             return Result.Ok(self.exit_menu)
         subprocess.run(["clear"])
+        print_heading(self.menu_heading, fg="bright_yellow")
+        spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
+        spinner.text = (
+            "Updating node packages..."
+            if node_modules_folder_exists()
+            else "Installing node packages..."
+        )
+        spinner.start()
+        cmd_output = []
         for line in run_command(command, cwd=str(NIGHTMAREJS_FOLDER)):
-            print(line)
+            cmd_output.append(line)
+        subprocess.run(["clear"])
+        print_heading(self.menu_heading, fg="bright_yellow")
+        spinner.succeed(
+            "All node packages are up-to-date!"
+            if node_modules_folder_exists()
+            else "Successfully installed all node dependencies!"
+        )
+        for s in cmd_output:
+            print_message(s)
         if temp_folder:
             temp_folder.cleanup()
-        pause(message="Press any key to continue...")
+        pause(message="\nPress any key to continue...")
         return Result.Ok(self.exit_menu)

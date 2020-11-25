@@ -7,7 +7,7 @@ from vigorish.setup.populate_teams import populate_teams
 
 
 def populate_tables(app, csv_folder):
-    db_session = app["db_session"]
+    db_session = app.db_session
     result = (
         populate_base_tables(db_session)
         .on_success(populate_seasons, db_session)
@@ -24,7 +24,7 @@ def populate_tables(app, csv_folder):
 
 
 def populate_tables_for_restore(app, csv_folder):
-    db_session = app["db_session"]
+    db_session = app.db_session
     result = (
         populate_base_tables(db_session)
         .on_success(populate_seasons, db_session)

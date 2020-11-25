@@ -12,7 +12,7 @@ from vigorish.cli.components import (
 )
 from vigorish.enums import DataSet, SyncDirection, VigFile
 from vigorish.tasks.base import Task
-from vigorish.tasks.sync_scraped_data import SyncScrapedData
+from vigorish.tasks.sync_scraped_data import SyncScrapedDataTask
 from vigorish.util.result import Result
 
 SYNC_STATUS_TEXT_COLOR = {
@@ -105,7 +105,7 @@ class SyncScrapedDataNoPrompts(Task):
 
     def initialize_s3_sync_task(self):
         s3_objects = self.get_all_objects_in_s3()
-        self.s3_sync = SyncScrapedData(self.app, cached_s3_objects=s3_objects)
+        self.s3_sync = SyncScrapedDataTask(self.app, cached_s3_objects=s3_objects)
         self.s3_sync.events.error_occurred += self.error_occurred
         self.s3_sync.events.get_sync_files_start += self.get_sync_files_start
         self.s3_sync.events.get_sync_files_complete += self.get_sync_files_complete
@@ -155,8 +155,13 @@ class SyncScrapedDataNoPrompts(Task):
     def print_header_message(self):
         if self.sync_direction == SyncDirection.UP_TO_S3:
             heading = "Syncing data from local folder to S3 bucket"
-        if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
+        elif self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
             heading = "Syncing data from S3 bucket to local folder"
+        else:
+            raise ValueError(
+                "sync_direction can only be one of two values ('UP_TO_S3' or 'DOWN_TO_LOCAL'), "
+                f"unable to complete sync operation (current value: {self.sync_direction})."
+            )
         print_heading(heading, fg="bright_yellow")
 
     def teardown(self):

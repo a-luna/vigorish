@@ -4,13 +4,12 @@ import subprocess
 
 import click
 
-from vigorish.app import create_app
+from vigorish.app import Vigorish
 from vigorish.cli.click_params import DateString, JobName, MlbSeason
 from vigorish.cli.components import print_message, validate_scrape_dates
 from vigorish.cli.main_menu import MainMenu
 from vigorish.config.database import initialize_database, ScrapeJob
 from vigorish.config.project_paths import VIG_FOLDER
-from vigorish.constants import DATA_SET_NAME_MAP, FILE_TYPE_NAME_MAP
 from vigorish.enums import DataSet, StatusReport, SyncDirection, VigFile
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.status.report_status import (
@@ -34,7 +33,7 @@ def cli(ctx):
     if os.environ.get("ENV") != "TEST":
         if not VIG_FOLDER.exists():
             VIG_FOLDER.mkdir()
-    ctx.obj = create_app()
+    ctx.obj = Vigorish()
     # ctx.obj = create_app(db_url="sqlite:////Users/aaronluna/.vig/vig.db")
 
 
@@ -66,9 +65,9 @@ def setup(app):
 @cli.command()
 @click.option(
     "--data-set",
-    type=click.Choice(DATA_SET_NAME_MAP.keys()),
+    type=click.Choice(list(DataSet)),
     multiple=True,
-    default=[str(DataSet.ALL)],
+    default=[DataSet.ALL],
     show_default=True,
     help="Data set to scrape, multiple values can be provided.",
 )
@@ -104,8 +103,8 @@ def setup(app):
 @click.pass_obj
 def scrape(app, data_set, start, end, name):
     """Scrape MLB data from websites."""
-    data_sets_int = sum(int(DATA_SET_NAME_MAP[ds]) for ds in data_set)
-    result = validate_scrape_dates(app["db_session"], start, end)
+    data_sets_int = sum(list(data_set))
+    result = validate_scrape_dates(app.db_session, start, end)
     if result.failure:
         return exit_app(app, result)
     season = result.value
@@ -117,14 +116,9 @@ def scrape(app, data_set, start, end, name):
         "season_id": season.id,
     }
     new_scrape_job = ScrapeJob(**scrape_job_dict)
-    app["db_session"].add(new_scrape_job)
-    app["db_session"].commit()
-    job_runner = JobRunner(
-        db_job=new_scrape_job,
-        db_session=app["db_session"],
-        config=app["config"],
-        scraped_data=app["scraped_data"],
-    )
+    app.db_session.add(new_scrape_job)
+    app.db_session.commit()
+    job_runner = JobRunner(app=app, db_job=new_scrape_job)
     result = job_runner.execute()
     return exit_app(app, result)
 
@@ -159,7 +153,7 @@ def status_date(app, game_date, missing_ids, with_games):
         report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
         report_type = StatusReport.DATE_DETAIL_ALL_DATES
-    result = report_status_single_date(app["db_session"], game_date, report_type)
+    result = report_status_single_date(app.db_session, game_date, report_type)
     return exit_app(app, result)
 
 
@@ -205,7 +199,7 @@ def status_date_range(app, start, end, verbosity):
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app(app, Result.Fail(error))
-    result = report_date_range_status(app["db_session"], start, end, report_type)
+    result = report_date_range_status(app.db_session, start, end, report_type)
     return exit_app(app, result)
 
 
@@ -248,7 +242,7 @@ def status_season(app, year, verbosity):
     else:
         error = "Unknown error occurred, unable to display status report."
         return exit_app(app, Result.Fail(error))
-    result = report_season_status(app["db_session"], year, report_type)
+    result = report_season_status(app.db_session, year, report_type)
     return exit_app(app, result)
 
 
@@ -263,23 +257,23 @@ def sync(app):
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "--file-type",
-    type=click.Choice([str(ft) for ft in VigFile if ft != VigFile.ALL]),
+    type=click.Choice([ft.name for ft in VigFile if ft != VigFile.ALL]),
     help="Type of file to sync, must provide only one value.",
     prompt=True,
 )
 @click.option(
     "--data-sets",
-    type=click.Choice([str(ds) for ds in DataSet]),
+    type=click.Choice(str(ds) for ds in DataSet),
     multiple=True,
-    default=[str(DataSet.ALL)],
+    default=[DataSet.ALL],
     show_default=True,
     help="Data set(s) to sync, multiple values can be provided.",
 )
 @click.pass_obj
 def sync_up_to_s3(app, year, file_type, data_sets):
     """Sync files from local folder to S3 bucket."""
-    file_type = FILE_TYPE_NAME_MAP.get(file_type, None)
-    data_sets_int = sum(int(DATA_SET_NAME_MAP[ds]) for ds in data_sets)
+    file_type = VigFile.from_str(file_type)
+    data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
     sync_task = SyncScrapedDataNoPrompts(app)
     result_dict = sync_task.execute(SyncDirection.UP_TO_S3, year, file_type, data_sets_int)
     result = Result.Combine([result for result in result_dict.values()])
@@ -290,23 +284,23 @@ def sync_up_to_s3(app, year, file_type, data_sets):
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "--file-type",
-    type=click.Choice([str(ft) for ft in VigFile if ft != VigFile.ALL]),
+    type=click.Choice([ft.name for ft in VigFile if ft != VigFile.ALL]),
     help="Type of file to sync, must provide only one value.",
     prompt=True,
 )
 @click.option(
     "--data-sets",
-    type=click.Choice([str(ds) for ds in DataSet]),
+    type=click.Choice(str(ds) for ds in DataSet),
     multiple=True,
-    default=[str(DataSet.ALL)],
+    default=[DataSet.ALL],
     show_default=True,
     help="Data set(s) to sync, multiple values can be provided.",
 )
 @click.pass_obj
 def sync_down_to_local(app, year, file_type, data_sets):
     """Sync files from S3 bucket to local folder."""
-    file_type = FILE_TYPE_NAME_MAP.get(file_type, None)
-    data_sets_int = sum(int(DATA_SET_NAME_MAP[ds]) for ds in data_sets)
+    file_type = VigFile.from_str(file_type)
+    data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
     sync_task = SyncScrapedDataNoPrompts(app)
     result_dict = sync_task.execute(SyncDirection.DOWN_TO_LOCAL, year, file_type, data_sets_int)
     result = Result.Combine([result for result in result_dict.values()])
@@ -314,7 +308,7 @@ def sync_down_to_local(app, year, file_type, data_sets):
 
 
 def exit_app(app, result, message=None):
-    app["db_session"].close()
+    app.db_session.close()
     subprocess.run(["clear"])
     return exit_app_success(message) if result.success else exit_app_error(result.error)
 

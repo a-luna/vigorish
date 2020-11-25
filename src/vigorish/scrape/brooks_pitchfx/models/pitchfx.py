@@ -180,3 +180,46 @@ class BrooksPitchFxData:
 
     def get_time_pitch_thrown_str(self):
         return self.time_pitch_thrown.strftime(DT_AWARE) if self.time_pitch_thrown else None
+
+    @classmethod
+    def compare(cls, first, second):
+        compare_keys = [
+            "pitcher_id",
+            "batter_id",
+            "park_sv_id",
+            "ab_total",
+            "ab_count",
+            "ab_id",
+            "des",
+            "type",
+            "id",
+            "mlbam_pitch_name",
+            "strikes",
+            "balls",
+            "pdes",
+            "inning",
+        ]
+        report = []
+        for key in compare_keys:
+            diff = cls._compare_item(first, second, key)
+            if not diff:
+                continue
+            report.append(diff)
+        return report
+
+    @staticmethod
+    def _compare_item(first, second, key):
+        first_val = first.get(key)
+        second_val = second.get(key)
+        if not first_val and not second_val:
+            return None
+        if (
+            (not first_val and second_val)
+            or (first_val and not second_val)
+            or (first_val != second_val)
+        ):
+            diff_type = "change"
+            if not first_val or not second_val:
+                diff_type = "missing"
+            return {"diff": diff_type, "key": key, "first": first_val, "second": second_val}
+        return None

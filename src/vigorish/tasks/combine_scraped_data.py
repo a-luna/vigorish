@@ -1,14 +1,14 @@
 """Aggregate pitchfx data and play-by-play data into a single object."""
-import logging
 from collections import Counter, defaultdict, OrderedDict
 from copy import deepcopy
 from datetime import datetime
 from typing import Dict, List
 
 from vigorish.config.database import GameScrapeStatus, PlayerId, TimeBetweenPitches
-from vigorish.constants import PITCH_TYPE_DICT, PPB_PITCH_LOG_DICT
-from vigorish.enums import DataSet
+from vigorish.constants import PPB_PITCH_LOG_DICT
+from vigorish.enums import DataSet, PitchType
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
+from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
 from vigorish.tasks.base import Task
@@ -23,13 +23,10 @@ from vigorish.util.string_helpers import (
     validate_at_bat_id,
 )
 
-logging.basicConfig(level=logging.INFO)
-LOGGER = logging.getLogger(__name__)
-
 
 class CombineScrapedDataTask(Task):
-    game_status: GameScrapeStatus
     bbref_game_id: str
+    game_status: GameScrapeStatus
     boxscore: BBRefBoxscore
     pitchfx_logs_for_game: BrooksPitchFxLog
     player_id_dict: Dict
@@ -42,10 +39,13 @@ class CombineScrapedDataTask(Task):
     all_removed_pfx: defaultdict
     invalid_pitchfx: defaultdict
     game_events_combined_data: List
+    gather_scraped_data_success: bool
+    combined_data_success: bool
+    save_combined_data_success: bool
+    error_messages: List[str]
 
     def __init__(self, app):
         super().__init__(app)
-        self.db_session = self.app["db_session"]
 
     @property
     def away_team_id_br(self):
@@ -72,53 +72,29 @@ class CombineScrapedDataTask(Task):
         return self.game_start_time.strftime(DT_AWARE) if self.game_status else None
 
     def execute(self, bbref_game_id, apply_patch_list=True, write_json=True, update_db=True):
+        self.apply_patch_list = apply_patch_list
         self.bbref_game_id = bbref_game_id
         self.update_db = update_db
-        result = self.gather_scraped_data(apply_patch_list)
-        if result.failure:
-            return {"gather_scraped_data_success": False, "error": result.error}
+        self.write_json = write_json
+        self.error_messages = []
         result = (
-            self.check_pfx_game_start_time()
+            self.gather_scraped_data()
+            .on_failure(self.gather_scraped_data_failed)
+            .on_success(self.check_pfx_game_start_time)
             .on_success(self.get_all_pbp_events_for_game)
             .on_success(self.get_all_pfx_data_for_game)
             .on_success(self.combine_pbp_events_with_pfx_data)
             .on_success(self.update_boxscore_with_combined_data)
+            .on_both(self.update_game_status)
+            .on_failure(self.combined_data_failed)
+            .on_success(self.save_combined_data)
+            .on_failure(self.save_combined_data_failed)
+            .on_success(self.check_update_db)
+            .on_success(self.update_pitch_app_status)
         )
-        if result.failure:
-            self.update_game_status(success=False)
-            return {
-                "gather_scraped_data_success": True,
-                "combined_data_success": False,
-                "error": result.error,
-            }
-        self.update_game_status(success=True)
-        combined_data = result.value
-        if write_json:
-            result = self.scraped_data.save_combined_game_data(combined_data)
-        if result.failure:
-            return result
-        if not update_db:
-            return {
-                "gather_scraped_data_success": True,
-                "combined_data_success": True,
-                "results": combined_data,
-            }
-        result = update_pitch_apps_for_game_combined_data(self.db_session, combined_data)
-        if result.failure:
-            return {
-                "gather_scraped_data_success": True,
-                "combined_data_success": True,
-                "update_pitch_apps_success": False,
-                "error": result.error,
-            }
-        return {
-            "gather_scraped_data_success": True,
-            "combined_data_success": True,
-            "update_pitch_apps_success": True,
-            "results": result.value,
-        }
+        return result.value
 
-    def gather_scraped_data(self, apply_patch_list):
+    def gather_scraped_data(self):
         self.game_status = GameScrapeStatus.find_by_bbref_game_id(
             self.db_session, self.bbref_game_id
         )
@@ -126,7 +102,7 @@ class CombineScrapedDataTask(Task):
         if not self.boxscore:
             error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {self.bbref_game_id})"
             Result.Ok(error)
-        if apply_patch_list:
+        if self.apply_patch_list:
             result = self.scraped_data.apply_patch_list(
                 DataSet.BBREF_BOXSCORES, self.bbref_game_id, self.boxscore
             )
@@ -137,7 +113,7 @@ class CombineScrapedDataTask(Task):
         if result.failure:
             return result
         self.pitchfx_logs_for_game = result.value
-        if apply_patch_list:
+        if self.apply_patch_list:
             result = self.scraped_data.apply_patch_list(
                 DataSet.BROOKS_PITCHFX,
                 self.bbref_game_id,
@@ -152,7 +128,8 @@ class CombineScrapedDataTask(Task):
 
     def investigate(self, bbref_game_id, apply_patch_list=False):
         self.bbref_game_id = bbref_game_id
-        result = self.gather_scraped_data(apply_patch_list)
+        self.apply_patch_list = apply_patch_list
+        result = self.gather_scraped_data()
         if result.failure:
             return {"gather_scraped_data_success": False, "error": result.error}
         self.check_pfx_game_start_time()
@@ -195,6 +172,7 @@ class CombineScrapedDataTask(Task):
         return audit_results
 
     def check_pfx_game_start_time(self):
+        self.gather_scraped_data_success = True
         if not self.game_status.game_start_time:
             self.update_game_start_time()
         for pitchfx_log in self.pitchfx_logs_for_game:
@@ -385,6 +363,7 @@ class CombineScrapedDataTask(Task):
 
     def get_all_pfx_data_for_game(self):
         self.removed_guid_dupes = []
+        self.dupe_guid_audit = defaultdict(list)
         for pitchfx_log in self.pitchfx_logs_for_game:
             (pitchfx_log, removed_pfx) = self.remove_duplicate_guids_from_pfx(pitchfx_log)
             if removed_pfx:
@@ -433,6 +412,7 @@ class CombineScrapedDataTask(Task):
                 dupe_rank_dict[pfx.play_guid].sort(
                     key=lambda x: (-x.has_zone_location, x.seconds_since_game_start)
                 )
+        self.audit_duplicate_guids(dupe_rank_dict)
         pfx_log_no_dupes = []
         dupe_tracker = {guid: False for guid in unique_guids.keys()}
         for pfx in pfx_log_copy:
@@ -453,6 +433,23 @@ class CombineScrapedDataTask(Task):
         pitchfx_log.total_pitch_count = len(pfx_log_no_dupes)
         pfx_log_copy = None
         return (pitchfx_log, removed_pfx)
+
+    def audit_duplicate_guids(self, dupe_rank_dict):
+        copied_all_dupes = deepcopy(dupe_rank_dict)
+        audit_complete = []
+        for guid, pfx_dupes in copied_all_dupes.items():
+            for pfx in pfx_dupes:
+                copied_dupes = deepcopy(pfx_dupes)
+                copied_dupes.remove(pfx)
+                for pc in audit_complete:
+                    if pc in copied_dupes:
+                        copied_dupes.remove(pc)
+                for pd in copied_dupes:
+                    diff_report = BrooksPitchFxData.compare(pfx.as_dict(), pd.as_dict())
+                    if diff_report:
+                        self.dupe_guid_audit[guid].append(diff_report)
+                audit_complete.append(pfx)
+        return self.dupe_guid_audit
 
     def update_duplicate_guid_pfx(self, removed_dupes):
         for pfx in removed_dupes:
@@ -655,7 +652,17 @@ class CombineScrapedDataTask(Task):
         if not pfx_for_at_bat:
             return {"removed_count": 0, "removed_dupes": []}
         removed_dupes = self.convert_pfx_to_dict_list(pfx_for_at_bat)
-        return {"removed_count": len(removed_dupes), "removed_dupes": removed_dupes}
+        dupe_guids_for_at_bat = [pfx.play_guid for pfx in pfx_for_at_bat]
+        false_positives = [
+            diff_report
+            for guid, diff_report in self.dupe_guid_audit.items()
+            if guid in dupe_guids_for_at_bat
+        ]
+        return {
+            "removed_count": len(removed_dupes),
+            "removed_dupes": removed_dupes,
+            "false_positives": false_positives,
+        }
 
     def get_all_removed_pfx_for_at_bat(self, at_bat_id):
         removed_pfx = [pfx for pfx in self.removed_pfx if pfx["at_bat_id"] == at_bat_id]
@@ -748,7 +755,6 @@ class CombineScrapedDataTask(Task):
         )
         ab_index = self.at_bat_ids.index(at_bat_id)
         if ab_index == 0:
-            LOGGER.info(error)
             return Result.Fail(error)
             # next_ab_id = self.at_bat_ids[ab_index + 1]
             # return self.correct_pfx_data_using_next_at_bat(
@@ -769,7 +775,6 @@ class CombineScrapedDataTask(Task):
             return result
         error_messages.append(result.error)
         error_messages.append(error)
-        LOGGER.info(error)
         return Result.Fail("\n".join(error_messages))
         # result = self.correct_pfx_data_using_next_at_bat(
         #     at_bat_id, next_ab_id, fix_pfx_data, pitch_count
@@ -1117,8 +1122,8 @@ class CombineScrapedDataTask(Task):
                     pfx = pfx_data[current_pitch - 1]
                     if abbrev == "X":
                         outcome = pfx["pdes"] if "missing_pdes" not in pfx["pdes"] else pfx["des"]
-                    pitch_type = PITCH_TYPE_DICT[pfx["mlbam_pitch_name"]]
-                    pfx_des = f'{pfx["start_speed"]:02.0f}mph {pitch_type}'
+                    pitch_type = PitchType.from_abbrev(pfx["mlbam_pitch_name"])
+                    pfx_des = f'{pfx["start_speed"]:02.0f}mph {pitch_type.print_name}'
                 if next_pitch_blocked_by_c:
                     blocked_by_c = "\n(pitch was blocked by catcher)"
                     next_pitch_blocked_by_c = False
@@ -1866,8 +1871,87 @@ class CombineScrapedDataTask(Task):
         }
         return pitchfx_vs_bbref_audit
 
-    def update_game_status(self, success):
+    def gather_scraped_data_failed(self, error):
+        self.gather_scraped_data_success = False
+        self.update_db = False
+        self.write_json = False
+        self.error_messages.append(error)
+        result = Result.Fail("")
+        result.value = {
+            "gather_scraped_data_success": self.gather_scraped_data_success,
+            "error": "\n".join(self.error_messages),
+        }
+        return result
+
+    def combined_data_failed(self, error):
+        self.combined_data_success = False
+        self.write_json = False
+        self.error_messages.append(error)
+        result = Result.Fail("")
+        result.value = {
+            "gather_scraped_data_success": self.gather_scraped_data_success,
+            "combined_data_success": self.combined_data_success,
+            "error": "\n".join(self.error_messages),
+        }
+        return result
+
+    def update_game_status(self, result):
         if self.update_db:
-            self.game_status.combined_data_success = 1 if success else 0
-            self.game_status.combined_data_fail = 0 if success else 1
+            self.game_status.combined_data_success = 1 if result.success else 0
+            self.game_status.combined_data_fail = 0 if result.success else 1
             self.db_session.commit()
+        return result
+
+    def save_combined_data(self, combined_data):
+        self.combined_data_success = True
+        self.combined_data = combined_data
+        if self.write_json:
+            return self.scraped_data.save_combined_game_data(combined_data)
+        return Result.Ok()
+
+    def save_combined_data_failed(self, error):
+        self.save_combined_data_success = False
+        self.error_messages.append(error)
+        result = Result.Fail("")
+        result.value = {
+            "gather_scraped_data_success": self.gather_scraped_data_success,
+            "combined_data_success": self.combined_data_success,
+            "save_combined_data_success": self.save_combined_data_success,
+            "error": "\n".join(self.error_messages),
+        }
+        return result
+
+    def check_update_db(self, value):
+        self.save_combined_data_success = True
+        if self.update_db:
+            return Result.Ok()
+        result = Result.Fail("")
+        result.value = {
+            "gather_scraped_data_success": self.gather_scraped_data_success,
+            "combined_data_success": self.combined_data_success,
+            "save_combined_data_success": self.save_combined_data_success,
+            "results": self.combined_data,
+        }
+        return result
+
+    def update_pitch_app_status(self):
+        result = update_pitch_apps_for_game_combined_data(self.db_session, self.combined_data)
+        if result.failure:
+            self.error_messages.append(result.error)
+            result.value = {
+                "gather_scraped_data_success": self.gather_scraped_data_success,
+                "combined_data_success": self.combined_data_success,
+                "save_combined_data_success": self.save_combined_data_success,
+                "update_pitch_apps_success": False,
+                "error": "\n".join(self.error_messages),
+            }
+            return result
+        results = {
+            "gather_scraped_data_success": self.gather_scraped_data_success,
+            "combined_data_success": self.combined_data_success,
+            "save_combined_data_success": self.save_combined_data_success,
+            "update_pitch_apps_success": True,
+            "results": result.value,
+        }
+        result.value = results
+        return result

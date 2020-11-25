@@ -30,13 +30,14 @@ class ScrapeTaskABC(ABC):
     data_set: DataSet
     url_tracker: UrlTracker
 
-    def __init__(self, db_job, db_session, config, scraped_data):
+    def __init__(self, app, db_job):
+        self.app = app
+        self.config = app.config
+        self.db_session = app.db_session
+        self.scraped_data = app.scraped_data
         self.db_job = db_job
-        self.db_session = db_session
-        self.config = config
-        self.scraped_data = scraped_data
-        self.start_date = self.db_job.start_date
-        self.end_date = self.db_job.end_date
+        self.start_date = None
+        self.end_date = None
         self.season = self.db_job.season
         self.total_days = self.db_job.total_days
         self.scrape_condition = self.config.get_current_setting("SCRAPE_CONDITION", self.data_set)
@@ -46,7 +47,14 @@ class ScrapeTaskABC(ABC):
     def date_range(self):
         return get_date_range(self.start_date, self.end_date)
 
-    def execute(self):
+    def execute(self, start_date=None, end_date=None):
+        self.start_date = start_date
+        self.end_date = end_date
+        if not start_date:
+            self.start_date = self.db_job.start_date
+        if not end_date:
+            self.end_date = self.db_job.end_date
+
         result = (
             self.initialize()
             .on_success(self.identify_needed_urls)
@@ -67,8 +75,14 @@ class ScrapeTaskABC(ABC):
         self.spinner.text = "Building URL List..."
         self.spinner.start()
         self.url_tracker = UrlTracker(self.db_job, self.data_set, self.scraped_data)
-        result = self.url_tracker.create_url_set()
-        return result if self.url_tracker.total_urls else Result.Fail("Unable to generate URL set.")
+        result = self.url_tracker.create_url_set(self.start_date, self.end_date)
+        return (
+            result
+            if result.failure
+            else Result.Ok()
+            if self.url_tracker.total_urls
+            else Result.Fail("skip")
+        )
 
     def identify_needed_urls(self):
         self.spinner.text = self.url_tracker.identify_html_report

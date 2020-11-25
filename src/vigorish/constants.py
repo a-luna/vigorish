@@ -1,7 +1,7 @@
 """Constant values that are referenced from multiple places."""
 from bullet import colors
 
-from vigorish.enums import DataSet, VigFile
+from vigorish.enums import DataSet
 
 ENV_VAR_NAMES = [
     "AWS_ACCESS_KEY_ID",
@@ -139,8 +139,8 @@ DATA_SET_NAMES_LONG = {
     "PitchFX Logs (brooksbaseball.net)": DataSet.BROOKS_PITCHFX,
 }
 
-FILE_TYPE_NAME_MAP = {str(ft): ft for ft in VigFile}
-DATA_SET_NAME_MAP = {str(ds): ds for ds in DataSet}
+# FILE_TYPE_NAME_MAP = {str(ft): ft for ft in VigFile}
+# DATA_SET_NAME_MAP = {str(ds): ds for ds in DataSet}
 
 CLI_COLORS = [
     "black",

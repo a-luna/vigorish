@@ -3,6 +3,7 @@
 DATE_ONLY = "%Y-%m-%d"
 DATE_ONLY_2 = "%m/%d/%Y"
 DATE_ONLY_TABLE_ID = "%Y%m%d"
+DT_NAIVE_LESS = "%m/%d/%Y %I:%M %p"
 DT_NAIVE = "%m/%d/%Y %I:%M:%S %p"
 DT_AWARE = "%m/%d/%Y %I:%M:%S %p %z"
 DT_STR_FORMAT = "%m/%d/%Y %I:%M %p %Z%z"

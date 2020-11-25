@@ -50,17 +50,30 @@ class PitchAppScrapeStatus(Base):
     scrape_status_game_id = Column(Integer, ForeignKey("scrape_status_game.id"), index=True)
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
+
+    pitchfx = relationship("PitchFx")
     pitch_mix_view = relationship(
-        "PitchApp_PitchFx_View",
+        "PitchApp_PitchMix_View",
         backref="original",
         uselist=False,
-        primaryjoin="PitchAppScrapeStatus.id==PitchApp_PitchFx_View.id",
-        foreign_keys="PitchApp_PitchFx_View.id",
+        primaryjoin="PitchAppScrapeStatus.id==PitchApp_PitchMix_View.id",
+        foreign_keys="PitchApp_PitchMix_View.id",
+    )
+    pitch_type_view = relationship(
+        "PitchApp_PitchType_View",
+        backref="original",
+        uselist=False,
+        primaryjoin="PitchAppScrapeStatus.id==PitchApp_PitchType_View.id",
+        foreign_keys="PitchApp_PitchType_View.id",
     )
 
     @hybrid_property
+    def game_date(self):
+        return self.date.game_date
+
+    @hybrid_property
     def pitch_mix(self):
-        return calc_pitch_mix(self.pitch_mix_view.__dict__, self.pitch_mix_view.total_pitches)
+        return calc_pitch_mix(self.pitch_mix_view.__dict__)
 
     @hybrid_property
     def contains_patched_data(self):
