@@ -118,7 +118,11 @@ class PatchBrooksPitchFxBatterId(Patch):
                 f"pitch_app_id: {self.pitch_app_id}, park_sv_id: {self.park_sv_id}"
             )
             return Result.Fail(error)
-        matches[0].batter_id = self.new_batter_idxcc
+        matches[0].batter_id = self.new_batter_id
+        matches[0].is_patched = True
+        return Result.Ok(data)
+
+
 @dataclass
 class PatchBrooksPitchFxPitcherId(Patch):
     bbref_game_id: str
