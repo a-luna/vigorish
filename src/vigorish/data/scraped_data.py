@@ -129,7 +129,7 @@ class ScrapedData:
             for obj in self.file_helper.get_all_object_keys_in_s3_bucket()
             if json_folder in obj.key and html_folder not in obj.key
         ]
-        return Result.Ok(scraped_dates)
+        return scraped_dates
 
     def get_all_brooks_pitch_logs_scraped_html(self, year):
         html_folder = self.file_helper.get_s3_folderpath(
@@ -154,7 +154,7 @@ class ScrapedData:
             for obj in self.file_helper.get_all_object_keys_in_s3_bucket()
             if json_folder in obj.key and html_folder not in obj.key
         ]
-        return Result.Ok(scraped_gameids)
+        return scraped_gameids
 
     def get_all_pitchfx_pitch_app_ids_scraped_html(self, year):
         html_folder = self.file_helper.get_s3_folderpath(
@@ -229,7 +229,7 @@ class ScrapedData:
             for obj in self.file_helper.get_all_object_keys_in_s3_bucket()
             if json_folder in obj.key and html_folder not in obj.key
         ]
-        return Result.Ok(scraped_game_ids)
+        return scraped_game_ids
 
     def get_audit_report(self):
         all_seasons = Season.all_regular_seasons(self.db_session)
