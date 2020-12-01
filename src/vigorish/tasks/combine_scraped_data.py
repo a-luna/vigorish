@@ -261,16 +261,12 @@ class CombineScrapedDataTask(Task):
         return Result.Ok(player_id_dict)
 
     def get_all_events(self):
-        game_events = [
-            event for event in [inning.game_events for inning in self.boxscore.innings_list]
-        ]
-        substitutions = [
-            sub for sub in [inning.substitutions for inning in self.boxscore.innings_list]
-        ]
-        misc_events = [
-            misc for misc in [inning.misc_events for inning in self.boxscore.innings_list]
-        ]
-        all_events = flatten_list2d(game_events + substitutions + misc_events)
+        game_events = flatten_list2d([inning.game_events for inning in self.boxscore.innings_list])
+        substitutions = flatten_list2d(
+            [inning.substitutions for inning in self.boxscore.innings_list]
+        )
+        misc_events = flatten_list2d([inning.misc_events for inning in self.boxscore.innings_list])
+        all_events = game_events + substitutions + misc_events
         all_events.sort(key=lambda x: x.pbp_table_row_number)
         return all_events
 
@@ -374,12 +370,12 @@ class CombineScrapedDataTask(Task):
                 pfx.at_bat_id = self.get_at_bat_id_for_pfx_data(pfx)
             self.all_pfx_data_for_game.extend(pitchfx_log.pitchfx_log)
         self.all_pfx_data_for_game.sort(key=lambda x: (x.ab_id, x.ab_count))
-        all_at_bat_ids = list(set([pfx.at_bat_id for pfx in self.all_pfx_data_for_game]))
-        for at_bat_id in all_at_bat_ids:
+        all_at_bat_ids = {pfx.at_bat_id for pfx in self.all_pfx_data_for_game}
+        for at_bat_id in list(all_at_bat_ids):
             pfx_for_at_bat = [
                 pfx for pfx in self.all_pfx_data_for_game if pfx.at_bat_id == at_bat_id
             ]
-            pfx_ab_ids_for_at_bat = list(set([pfx.ab_id for pfx in pfx_for_at_bat]))
+            pfx_ab_ids_for_at_bat = list({pfx.ab_id for pfx in pfx_for_at_bat})
             if len(pfx_ab_ids_for_at_bat) <= 1:
                 continue
             for instance_number, pfx_ab_id in enumerate(sorted(pfx_ab_ids_for_at_bat)):
@@ -389,7 +385,7 @@ class CombineScrapedDataTask(Task):
         self.update_pfx_attributes()
         self.all_pfx_data_for_game = []
         for pitchfx_log in self.pitchfx_logs_for_game:
-            pitchfx_log.at_bat_ids = list(set([pfx.at_bat_id for pfx in pitchfx_log.pitchfx_log]))
+            pitchfx_log.at_bat_ids = list({pfx.at_bat_id for pfx in pitchfx_log.pitchfx_log})
             self.all_pfx_data_for_game.extend(pitchfx_log.pitchfx_log)
         self.all_pfx_data_for_game.sort(key=lambda x: (x.ab_id, x.ab_count))
         return Result.Ok()
@@ -425,7 +421,7 @@ class CombineScrapedDataTask(Task):
                 pfx_log_no_dupes.append(pfx)
             dupe_tracker[pfx.play_guid] = True
         pfx_log_no_dupes.sort(key=lambda x: (x.ab_id, x.ab_count))
-        removed_dupes = flatten_list2d([dupes for dupes in dupe_rank_dict.values()])
+        removed_dupes = flatten_list2d(list(dupe_rank_dict.values()))
         removed_pfx = self.update_duplicate_guid_pfx(removed_dupes)
         pitchfx_log.duplicate_guid_removed_count = len(pfx_log_copy) - len(pfx_log_no_dupes)
         pitchfx_log.pitchfx_log = pfx_log_no_dupes
@@ -614,7 +610,7 @@ class CombineScrapedDataTask(Task):
         return Result.Ok()
 
     def reconcile_at_bat_ids(self):
-        at_bat_ids_from_box = list(set([ab_id for ab_id in self.at_bat_event_groups.keys()]))
+        at_bat_ids_from_box = list(set(self.at_bat_event_groups.keys()))
         at_bat_ids_from_box = self.order_at_bat_ids_by_time(at_bat_ids_from_box)
         at_bat_ids_from_pfx = [pfx.at_bat_id for pfx in self.all_pfx_data_for_game]
         at_bat_ids_invalid_pfx = list(set(at_bat_ids_from_pfx) - set(at_bat_ids_from_box))
@@ -728,7 +724,7 @@ class CombineScrapedDataTask(Task):
                 pfx_no_dupes.append(pfx)
             dupe_tracker[pfx["ab_count"]] = True
         pfx_no_dupes.sort(key=lambda x: x["ab_count"])
-        removed_dupes = flatten_list2d([dupes for dupes in dupe_rank_dict.values()])
+        removed_dupes = flatten_list2d(list(dupe_rank_dict.values()))
         removed_dupes = self.update_duplicate_pitch_number_pfx(removed_dupes)
         removed_pfx = {"removed_count": len(removed_dupes), "removed_dupes": removed_dupes}
         return (pfx_no_dupes, removed_pfx)
@@ -1068,7 +1064,7 @@ class CombineScrapedDataTask(Task):
 
     def get_missing_pitch_numbers(self, pfx_data, pitch_count):
         pitch_numbers = set(range(1, pitch_count + 1))
-        pitch_numbers_pfx = set(pfx["ab_count"] for pfx in pfx_data)
+        pitch_numbers_pfx = {pfx["ab_count"] for pfx in pfx_data}
         return list(pitch_numbers - pitch_numbers_pfx)
 
     def get_at_bat_duration(self, pfx_data):
@@ -1143,7 +1139,7 @@ class CombineScrapedDataTask(Task):
         return Result.Ok(sequence_description)
 
     def get_all_other_events_for_at_bat(self, at_bat_id, final_event_this_at_bat):
-        all_other_events = [event for event in self.at_bat_event_groups[at_bat_id]]
+        all_other_events = list(self.at_bat_event_groups[at_bat_id])
         all_other_events.sort(key=lambda x: x["pbp_table_row_number"])
         all_other_events.remove(final_event_this_at_bat)
         if not all_other_events:
@@ -1354,13 +1350,13 @@ class CombineScrapedDataTask(Task):
         pitchfx_error = any(event["at_bat_pitchfx_audit"]["pitchfx_error"] for event in game_events)
 
         at_bat_ids_pitchfx_complete = list(
-            set(
+            {
                 event["at_bat_id"]
                 for event in game_events
                 if event["at_bat_pitchfx_audit"]["missing_pitchfx_count"] == 0
                 and event["at_bat_pitchfx_audit"]["extra_pitchfx_count"] == 0
                 and not event["at_bat_pitchfx_audit"]["pitchfx_error"]
-            )
+            }
         )
         at_bat_ids_patched_pitchfx = list(
             set(
