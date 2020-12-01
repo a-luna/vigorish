@@ -60,7 +60,7 @@ class Season(Base):
 
     @hybrid_property
     def name(self):
-        return f"MLB {self.year} {self.season_type}"
+        return f'MLB {self.year} {self.season_type.replace("_", " ").title()}'
 
     @hybrid_property
     def start_date_str(self):
