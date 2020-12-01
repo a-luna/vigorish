@@ -25,11 +25,12 @@ class PageViewer(Bullet):
         no_choice="NO",
         heading_color=None,
         text_color=None,
+        wrap_text=True,
     ):
         self.choices_dict = self.get_prompt_choices(confirm_only, yes_choice, no_choice)
         super(PageViewer, self).__init__(
             prompt=prompt,
-            choices=[choice for choice in self.choices_dict.keys()],
+            choices=list(self.choices_dict.keys()),
             bullet="",
             bullet_color=colors.foreground["default"],
             word_color=colors.foreground["default"],
@@ -47,6 +48,7 @@ class PageViewer(Bullet):
         self.confirm_only = confirm_only
         self.heading_color = heading_color
         self.text_color = text_color
+        self.wrap_text = wrap_text
         self.page_count = len(pages)
         self.page_index = 0
         self.needs_update = False
@@ -88,7 +90,11 @@ class PageViewer(Bullet):
     def launch(self):
         while True:
             subprocess.run(["clear"])
-            self.current_page.display(text_color=self.text_color, heading_color=self.heading_color)
+            self.current_page.display(
+                text_color=self.text_color,
+                heading_color=self.heading_color,
+                wrap_text=self.wrap_text,
+            )
             self.print_page_nav()
             self.needs_update = False
             self.print_prompt()
