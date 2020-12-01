@@ -21,8 +21,18 @@ def test_status_single_date_without_games_without_missing_pfx():
     result = runner.invoke(cli, f"status date {game_date}")
     assert result.exit_code == 0
     assert "### OVERALL STATUS FOR Jun 17 2019 ###" in result.output
-    assert "### MISSING PITCHFX LOGS FOR Jun 17 2019 ###" not in result.output
-    assert "### STATUS FOR EACH GAME PLAYED Jun 17 2019 ###" not in result.output
+    assert "### STATUS FOR SEA201906170 (Game " not in result.output
+    assert "### STATUS FOR ATL201906170 (Game " not in result.output
+    assert "### STATUS FOR OAK201906170 (Game " not in result.output
+    assert "### STATUS FOR SLN201906170 (Game " not in result.output
+    assert "### STATUS FOR TEX201906170 (Game " not in result.output
+    assert "### STATUS FOR SDN201906170 (Game " not in result.output
+    assert "### STATUS FOR LAN201906170 (Game " not in result.output
+    assert "### STATUS FOR CIN201906170 (Game " not in result.output
+    assert "### STATUS FOR NYA201906170 (Game " not in result.output
+    assert "### STATUS FOR MIN201906170 (Game " not in result.output
+    assert "### STATUS FOR TOR201906170 (Game " not in result.output
+    assert "### MISSING PITCHFX DATA FOR Jun 17 2019 ###" not in result.output
 
 
 def test_status_single_date_without_games_with_missing_pfx():
@@ -31,8 +41,18 @@ def test_status_single_date_without_games_with_missing_pfx():
     result = runner.invoke(cli, f"status date {game_date} --missing-ids")
     assert result.exit_code == 0
     assert "### OVERALL STATUS FOR Jun 17 2019 ###" in result.output
-    assert "### MISSING PITCHFX LOGS FOR Jun 17 2019 ###" in result.output
-    assert "### STATUS FOR EACH GAME PLAYED Jun 17 2019 ###" not in result.output
+    assert "### STATUS FOR SEA201906170 (Game " not in result.output
+    assert "### STATUS FOR ATL201906170 (Game " not in result.output
+    assert "### STATUS FOR OAK201906170 (Game " not in result.output
+    assert "### STATUS FOR SLN201906170 (Game " not in result.output
+    assert "### STATUS FOR TEX201906170 (Game " not in result.output
+    assert "### STATUS FOR SDN201906170 (Game " not in result.output
+    assert "### STATUS FOR LAN201906170 (Game " not in result.output
+    assert "### STATUS FOR CIN201906170 (Game " not in result.output
+    assert "### STATUS FOR NYA201906170 (Game " not in result.output
+    assert "### STATUS FOR MIN201906170 (Game " not in result.output
+    assert "### STATUS FOR TOR201906170 (Game " not in result.output
+    assert "### MISSING PITCHFX DATA FOR Jun 17 2019 ###" in result.output
 
 
 def test_status_single_date_with_games_with_missing_pfx():
@@ -41,8 +61,18 @@ def test_status_single_date_with_games_with_missing_pfx():
     result = runner.invoke(cli, f"status date {game_date} --missing-ids --with-games")
     assert result.exit_code == 0
     assert "### OVERALL STATUS FOR Jun 17 2019 ###" in result.output
-    assert "### MISSING PITCHFX LOGS FOR Jun 17 2019 ###" in result.output
-    assert "### STATUS FOR EACH GAME PLAYED Jun 17 2019 ###" in result.output
+    assert "### STATUS FOR SEA201906170 (Game " in result.output
+    assert "### STATUS FOR ATL201906170 (Game " in result.output
+    assert "### STATUS FOR OAK201906170 (Game " in result.output
+    assert "### STATUS FOR SLN201906170 (Game " in result.output
+    assert "### STATUS FOR TEX201906170 (Game " in result.output
+    assert "### STATUS FOR SDN201906170 (Game " in result.output
+    assert "### STATUS FOR LAN201906170 (Game " in result.output
+    assert "### STATUS FOR CIN201906170 (Game " in result.output
+    assert "### STATUS FOR NYA201906170 (Game " in result.output
+    assert "### STATUS FOR MIN201906170 (Game " in result.output
+    assert "### STATUS FOR TOR201906170 (Game " in result.output
+    assert "### MISSING PITCHFX DATA FOR Jun 17 2019 ###" in result.output
 
 
 def test_status_season_overall_summary():
