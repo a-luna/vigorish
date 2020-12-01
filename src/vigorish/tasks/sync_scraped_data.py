@@ -297,6 +297,6 @@ class SyncScrapedDataTask(Task):
 
     def send_file(self, sync_direction, local_path, s3_key):
         if sync_direction == SyncDirection.UP_TO_S3:
-            self.file_helper.client.upload_file(local_path, self.bucket_name, s3_key)
+            self.file_helper.get_s3_bucket().upload_file(str(local_path), s3_key)
         if sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            self.file_helper.resource.Bucket(self.bucket_name).download_file(s3_key, local_path)
+            self.file_helper.get_s3_bucket().download_file(s3_key, str(local_path))
