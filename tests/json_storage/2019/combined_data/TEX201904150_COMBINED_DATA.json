@@ -11,16 +11,16 @@
     "missing_pitchfx_count": 0,
     "extra_pitchfx_count": 0,
     "invalid_pitchfx_count": 0,
-    "extra_pitchfx_removed_count": 2,
-    "duplicate_guid_removed_count": 1,
+    "extra_pitchfx_removed_count": 3,
+    "duplicate_guid_removed_count": 0,
     "batters_faced_bbref": 90,
     "batters_faced_pitchfx": 90,
     "total_at_bats_pitchfx_complete": 90,
     "total_at_bats_extra_pitchfx": 0,
     "total_at_bats_patched_pitchfx": 0,
     "total_at_bats_missing_pitchfx": 0,
-    "total_at_bats_extra_pitchfx_removed": 2,
-    "total_at_bats_duplicate_guid_removed": 1,
+    "total_at_bats_extra_pitchfx_removed": 3,
+    "total_at_bats_duplicate_guid_removed": 0,
     "total_at_bats_pitchfx_error": 0,
     "total_at_bats_invalid_pitchfx": 0,
     "at_bat_ids_pitchfx_complete": [
@@ -119,12 +119,11 @@
     "at_bat_ids_missing_pitchfx": [],
     "at_bat_ids_extra_pitchfx": [],
     "at_bat_ids_extra_pitchfx_removed": [
+      "TEX201904150_02_TEX_571946_ANA_545361_0",
       "TEX201904150_05_TEX_571946_ANA_592743_0",
       "TEX201904150_05_TEX_571946_ANA_405395_0"
     ],
-    "at_bat_ids_duplicate_guid_removed": [
-      "TEX201904150_02_TEX_571946_ANA_545361_0"
-    ],
+    "at_bat_ids_duplicate_guid_removed": [],
     "at_bat_ids_pitchfx_error": [],
     "at_bat_ids_invalid_pitchfx": []
   },
@@ -773,10 +772,10 @@
         "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
         "bbref_game_id": "TEX201904150",
         "pitch_count_by_inning": {
-          "1": 17,
-          "2": 14,
+          "4": 20,
           "3": 20,
-          "4": 20
+          "1": 17,
+          "2": 14
         },
         "pitch_count_by_pitch_type": {
           "KC": 20,
@@ -958,8 +957,8 @@
         "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
         "bbref_game_id": "TEX201904150",
         "pitch_count_by_inning": {
-          "5": 5,
-          "6": 30
+          "6": 30,
+          "5": 5
         },
         "pitch_count_by_pitch_type": {
           "CU": 13,
@@ -1043,9 +1042,9 @@
         "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
         "bbref_game_id": "TEX201904150",
         "pitch_count_by_inning": {
-          "6": 3,
+          "8": 26,
           "7": 19,
-          "8": 26
+          "6": 3
         },
         "pitch_count_by_pitch_type": {
           "FF": 27,
@@ -1748,10 +1747,10 @@
         "bbref_game_id": "TEX201904150",
         "pitch_count_by_inning": {
           "1": 21,
-          "2": 28,
-          "3": 22,
+          "2": 29,
+          "5": 9,
           "4": 9,
-          "5": 9
+          "3": 22
         },
         "pitch_count_by_pitch_type": {
           "FF": 55,
@@ -1769,16 +1768,16 @@
           "missing_pitchfx_count": 0,
           "extra_pitchfx_count": 0,
           "invalid_pitchfx_count": 0,
-          "extra_pitchfx_removed_count": 2,
-          "duplicate_guid_removed_count": 1,
+          "extra_pitchfx_removed_count": 3,
+          "duplicate_guid_removed_count": 0,
           "batters_faced_bbref": 22,
           "batters_faced_pitchfx": 22,
           "total_at_bats_pitchfx_complete": 22,
           "total_at_bats_extra_pitchfx": 0,
           "total_at_bats_patched_pitchfx": 0,
           "total_at_bats_missing_pitchfx": 0,
-          "total_at_bats_extra_pitchfx_removed": 2,
-          "total_at_bats_duplicate_guid_removed": 1,
+          "total_at_bats_extra_pitchfx_removed": 3,
+          "total_at_bats_duplicate_guid_removed": 0,
           "total_at_bats_pitchfx_error": 0,
           "total_at_bats_invalid_pitchfx": 0,
           "at_bat_ids_pitchfx_complete": [
@@ -1809,12 +1808,11 @@
           "at_bat_ids_missing_pitchfx": [],
           "at_bat_ids_extra_pitchfx": [],
           "at_bat_ids_extra_pitchfx_removed": [
+            "TEX201904150_02_TEX_571946_ANA_545361_0",
             "TEX201904150_05_TEX_571946_ANA_592743_0",
             "TEX201904150_05_TEX_571946_ANA_405395_0"
           ],
-          "at_bat_ids_duplicate_guid_removed": [
-            "TEX201904150_02_TEX_571946_ANA_545361_0"
-          ],
+          "at_bat_ids_duplicate_guid_removed": [],
           "at_bat_ids_pitchfx_error": [],
           "at_bat_ids_invalid_pitchfx": []
         },
@@ -1856,9 +1854,9 @@
         "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
         "bbref_game_id": "TEX201904150",
         "pitch_count_by_inning": {
-          "5": 13,
+          "7": 18,
           "6": 8,
-          "7": 18
+          "5": 13
         },
         "pitch_count_by_pitch_type": {
           "FF": 34,
@@ -1945,8 +1943,8 @@
         "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
         "bbref_game_id": "TEX201904150",
         "pitch_count_by_inning": {
-          "8": 17,
-          "9": 20
+          "9": 20,
+          "8": 17
         },
         "pitch_count_by_pitch_type": {
           "SI": 23,
@@ -2283,7 +2281,7 @@
               "seconds_since_game_start": 127
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -2805,7 +2803,7 @@
               "seconds_since_game_start": 266
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -3022,7 +3020,7 @@
               "seconds_since_game_start": 325
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -3239,7 +3237,7 @@
               "seconds_since_game_start": 402
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -3831,7 +3829,7 @@
               "seconds_since_game_start": 615
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -4123,7 +4121,7 @@
               "seconds_since_game_start": 703
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -4386,7 +4384,7 @@
               "seconds_since_game_start": 874
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -4833,7 +4831,7 @@
               "seconds_since_game_start": 1038
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -5280,7 +5278,7 @@
               "seconds_since_game_start": 1190
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -5422,7 +5420,7 @@
               "seconds_since_game_start": 1242
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -5789,7 +5787,7 @@
               "seconds_since_game_start": 1377
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -5814,14 +5812,14 @@
         "patched_pitchfx_count": 0,
         "missing_pitchfx_count": 0,
         "extra_pitchfx_count": 0,
-        "duplicate_guid_removed_count": 1,
-        "extra_pitchfx_removed_count": 0,
+        "duplicate_guid_removed_count": 0,
+        "extra_pitchfx_removed_count": 1,
         "total_at_bats_pitchfx_complete": 6,
         "total_at_bats_patched_pitchfx": 0,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
-        "total_at_bats_extra_pitchfx_removed": 0,
-        "total_at_bats_duplicate_guid_removed": 1,
+        "total_at_bats_extra_pitchfx_removed": 1,
+        "total_at_bats_duplicate_guid_removed": 0,
         "total_at_bats_pitchfx_error": 0,
         "at_bat_ids_pitchfx_complete": [
           "TEX201904150_02_TEX_571946_ANA_600303_0",
@@ -5834,10 +5832,10 @@
         "at_bat_ids_patched_pitchfx": [],
         "at_bat_ids_missing_pitchfx": [],
         "at_bat_ids_extra_pitchfx": [],
-        "at_bat_ids_extra_pitchfx_removed": [],
-        "at_bat_ids_duplicate_guid_removed": [
+        "at_bat_ids_extra_pitchfx_removed": [
           "TEX201904150_02_TEX_571946_ANA_545361_0"
         ],
+        "at_bat_ids_duplicate_guid_removed": [],
         "at_bat_ids_pitchfx_error": []
       },
       "inning_events": [
@@ -6205,7 +6203,7 @@
               "seconds_since_game_start": 1554
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -6497,7 +6495,7 @@
               "seconds_since_game_start": 1618
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -6864,7 +6862,7 @@
               "seconds_since_game_start": 1690
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -7456,7 +7454,7 @@
               "seconds_since_game_start": 1920
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -7477,8 +7475,8 @@
             "missing_pitchfx_count": 0,
             "missing_pitch_numbers": [],
             "extra_pitchfx_count": 0,
-            "extra_pitchfx_removed_count": 0,
-            "duplicate_guid_removed_count": 1,
+            "extra_pitchfx_removed_count": 1,
+            "duplicate_guid_removed_count": 0,
             "pitchfx_error": false,
             "pitchfx_error_message": null
           },
@@ -8058,82 +8056,79 @@
               "seconds_since_game_start": 2105
             }
           ],
-          "removed_pitchfx": {},
-          "removed_duplicate_guid": {
-            "removed_count": 1,
-            "removed_dupes": [
-              {
-                "pitcher_name": "Shelby Miller",
-                "pitch_app_id": "TEX201904150_571946",
-                "pitcher_id": "571946",
-                "batter_id": "545361",
-                "pitcher_team_id_bb": "TEX",
-                "opponent_team_id_bb": "ANA",
-                "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
-                "bbref_game_id": "TEX201904150",
-                "table_row_number": 72,
-                "park_sv_id": "190416_003804tex",
-                "play_guid": "5069aba8-3e68-40d5-be04-4499e09747d8",
-                "ab_total": 2,
-                "ab_count": 2,
-                "ab_id": 16,
-                "des": "Walk",
-                "type": "S",
-                "id": 30,
-                "sz_top": 3.5,
-                "sz_bot": 1.64,
-                "pfx_xdatafile": 3.14,
-                "pfx_zdatafile": 3.89,
-                "mlbam_pitch_name": "FC",
-                "zone_location": 99,
-                "pitch_con": 0.0,
-                "stand": "R",
-                "strikes": 0,
-                "balls": 1,
-                "p_throws": "R",
-                "pdes": "Foul",
-                "spin": 141.156,
-                "norm_ht": 0.247312,
-                "inning": 2,
-                "tstart": 0.07734694378802971,
-                "vystart": -128.4411829631016,
-                "ftime": 0.3085057385330068,
-                "pfx_x": 3.1807749472385507,
-                "pfx_z": 3.90144623053407,
-                "uncorrected_pfx_x": 3.14,
-                "uncorrected_pfx_z": 3.89,
-                "x0": -1.9949170340012536,
-                "y0": 55.0,
-                "z0": 5.543161092807368,
-                "vx0": 2.6066767223289062,
-                "vy0": -130.97220116754593,
-                "vz0": -1.2682455405698256,
-                "ax": 5.570000038146973,
-                "ay": 21.885999923706056,
-                "az": -25.346999618530273,
-                "start_speed": 89.32,
-                "px": -0.3882718996424245,
-                "pz": 2.7252488882785477,
-                "pxold": -0.45,
-                "pzold": 2.8,
-                "tm_spin": 0,
-                "sb": 10,
-                "game_start_time_str": "04/15/2019 08:05:00 PM -0400",
-                "time_pitch_thrown_str": "04/15/2019 08:38:04 PM -0400",
-                "has_zone_location": false,
-                "is_patched": false,
-                "is_duplicate_guid": true,
-                "is_duplicate_pitch_number": false,
-                "is_invalid_ibb": false,
-                "is_out_of_sequence": false,
-                "at_bat_id": "TEX201904150_02_TEX_571946_ANA_545361_0",
-                "inning_id": "TEX201904150_INN_TOP02",
-                "pitcher_id_bbref": "millesh01",
-                "batter_id_bbref": "troutmi01",
-                "seconds_since_game_start": 1984
-              }
-            ]
-          }
+          "removed_pitchfx": [
+            {
+              "pitcher_name": "Shelby Miller",
+              "pitch_app_id": "TEX201904150_571946",
+              "pitcher_id": "571946",
+              "batter_id": "545361",
+              "pitcher_team_id_bb": "TEX",
+              "opponent_team_id_bb": "ANA",
+              "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
+              "bbref_game_id": "TEX201904150",
+              "table_row_number": 72,
+              "park_sv_id": "190416_003804tex",
+              "play_guid": "5069aba8-3e68-40d5-be04-4499e09747d8",
+              "ab_total": 2,
+              "ab_count": 2,
+              "ab_id": 16,
+              "des": "Walk",
+              "type": "S",
+              "id": 30,
+              "sz_top": 3.5,
+              "sz_bot": 1.64,
+              "pfx_xdatafile": 3.14,
+              "pfx_zdatafile": 3.89,
+              "mlbam_pitch_name": "FC",
+              "zone_location": 99,
+              "pitch_con": 0.0,
+              "stand": "R",
+              "strikes": 0,
+              "balls": 1,
+              "p_throws": "R",
+              "pdes": "Foul",
+              "spin": 141.156,
+              "norm_ht": 0.247312,
+              "inning": 2,
+              "tstart": 0.07734694378802971,
+              "vystart": -128.4411829631016,
+              "ftime": 0.3085057385330068,
+              "pfx_x": 3.1807749472385507,
+              "pfx_z": 3.90144623053407,
+              "uncorrected_pfx_x": 3.14,
+              "uncorrected_pfx_z": 3.89,
+              "x0": -1.9949170340012536,
+              "y0": 55.0,
+              "z0": 5.543161092807368,
+              "vx0": 2.6066767223289062,
+              "vy0": -130.97220116754593,
+              "vz0": -1.2682455405698256,
+              "ax": 5.570000038146973,
+              "ay": 21.885999923706056,
+              "az": -25.346999618530273,
+              "start_speed": 89.32,
+              "px": -0.3882718996424245,
+              "pz": 2.7252488882785477,
+              "pxold": -0.45,
+              "pzold": 2.8,
+              "tm_spin": 0,
+              "sb": 10,
+              "game_start_time_str": "04/15/2019 08:05:00 PM -0400",
+              "time_pitch_thrown_str": "04/15/2019 08:38:04 PM -0400",
+              "has_zone_location": false,
+              "is_patched": false,
+              "is_duplicate_guid": false,
+              "is_duplicate_pitch_number": false,
+              "is_invalid_ibb": false,
+              "is_out_of_sequence": true,
+              "at_bat_id": "TEX201904150_02_TEX_571946_ANA_545361_0",
+              "inning_id": "TEX201904150_INN_TOP02",
+              "pitcher_id_bbref": "millesh01",
+              "batter_id_bbref": "troutmi01",
+              "seconds_since_game_start": 1984
+            }
+          ],
+          "removed_duplicate_guid": {}
         },
         {
           "at_bat_id": "TEX201904150_02_TEX_571946_ANA_592743_0",
@@ -8424,7 +8419,7 @@
               "seconds_since_game_start": 2219
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -8986,7 +8981,7 @@
               "seconds_since_game_start": 2443
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -9378,7 +9373,7 @@
               "seconds_since_game_start": 2569
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -9520,7 +9515,7 @@
               "seconds_since_game_start": 2604
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -9812,7 +9807,7 @@
               "seconds_since_game_start": 2678
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -10450,7 +10445,7 @@
               "seconds_since_game_start": 2908
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -10892,7 +10887,7 @@
               "seconds_since_game_start": 3038
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -11034,7 +11029,7 @@
               "seconds_since_game_start": 3070
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -11401,7 +11396,7 @@
               "seconds_since_game_start": 3187
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -11848,7 +11843,7 @@
               "seconds_since_game_start": 3319
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -12037,7 +12032,7 @@
               "seconds_since_game_start": 3459
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12179,7 +12174,7 @@
               "seconds_since_game_start": 3499
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12576,7 +12571,7 @@
               "seconds_since_game_start": 3649
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -13018,7 +13013,7 @@
               "seconds_since_game_start": 3819
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -13535,7 +13530,7 @@
               "seconds_since_game_start": 3942
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -13827,7 +13822,7 @@
               "seconds_since_game_start": 4026
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -14088,7 +14083,7 @@
               "seconds_since_game_start": 4171
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -14380,7 +14375,7 @@
               "seconds_since_game_start": 4259
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -14747,7 +14742,7 @@
               "seconds_since_game_start": 4349
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -15310,7 +15305,7 @@
               "seconds_since_game_start": 4575
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -15827,7 +15822,7 @@
               "seconds_since_game_start": 4700
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -16049,7 +16044,7 @@
               "seconds_since_game_start": 4788
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -16416,7 +16411,7 @@
               "seconds_since_game_start": 4972
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -16633,7 +16628,7 @@
               "seconds_since_game_start": 5097
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -16974,81 +16969,78 @@
               "seconds_since_game_start": 5262
             }
           ],
-          "removed_pitchfx": {
-            "removed_count": 1,
-            "removed_dupes": [
-              {
-                "pitcher_name": "Shelby Miller",
-                "pitch_app_id": "TEX201904150_571946",
-                "pitcher_id": "571946",
-                "batter_id": "592743",
-                "pitcher_team_id_bb": "TEX",
-                "opponent_team_id_bb": "ANA",
-                "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
-                "bbref_game_id": "TEX201904150",
-                "table_row_number": 2,
-                "park_sv_id": "190416_015054tex",
-                "play_guid": "39315da1-0993-4968-bb54-881847fc1aaa",
-                "ab_total": 3,
-                "ab_count": 1,
-                "ab_id": 41,
-                "des": "Groundout",
-                "type": "B",
-                "id": 2,
-                "sz_top": 3.47,
-                "sz_bot": 1.63,
-                "pfx_xdatafile": 4.91,
-                "pfx_zdatafile": -4.67,
-                "mlbam_pitch_name": "CU",
-                "zone_location": 99,
-                "pitch_con": 0.0,
-                "stand": "R",
-                "strikes": 0,
-                "balls": 0,
-                "p_throws": "R",
-                "pdes": "Ball",
-                "spin": 46.4656,
-                "norm_ht": -2.77174,
-                "inning": 5,
-                "tstart": 0.08892042947357409,
-                "vystart": -111.60619273957208,
-                "ftime": 0.3566545706339843,
-                "pfx_x": 4.9685290491614476,
-                "pfx_z": -4.593027247285465,
-                "uncorrected_pfx_x": 4.91,
-                "uncorrected_pfx_z": -4.67,
-                "x0": -1.4082506627683045,
-                "y0": 55.0,
-                "z0": 5.698171915549589,
-                "vx0": 4.343811156621771,
-                "vy0": -114.15832096863733,
-                "vz0": 0.7901933302598165,
-                "ax": 6.510000095367432,
-                "ay": 19.205999618530274,
-                "az": -38.197,
-                "start_speed": 77.89,
-                "px": 1.4982263709499546,
-                "pz": 1.5081804531979417,
-                "pxold": 0.0,
-                "pzold": 0.0,
-                "tm_spin": 0,
-                "sb": 0,
-                "game_start_time_str": "04/15/2019 08:05:00 PM -0400",
-                "time_pitch_thrown_str": "04/15/2019 09:50:54 PM -0400",
-                "has_zone_location": false,
-                "is_patched": false,
-                "is_duplicate_guid": false,
-                "is_duplicate_pitch_number": true,
-                "is_invalid_ibb": false,
-                "is_out_of_sequence": false,
-                "at_bat_id": "TEX201904150_05_TEX_571946_ANA_592743_0",
-                "inning_id": "TEX201904150_INN_TOP05",
-                "pitcher_id_bbref": "millesh01",
-                "batter_id_bbref": "simmoan01",
-                "seconds_since_game_start": 6354
-              }
-            ]
-          },
+          "removed_pitchfx": [
+            {
+              "pitcher_name": "Shelby Miller",
+              "pitch_app_id": "TEX201904150_571946",
+              "pitcher_id": "571946",
+              "batter_id": "592743",
+              "pitcher_team_id_bb": "TEX",
+              "opponent_team_id_bb": "ANA",
+              "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
+              "bbref_game_id": "TEX201904150",
+              "table_row_number": 2,
+              "park_sv_id": "190416_015054tex",
+              "play_guid": "39315da1-0993-4968-bb54-881847fc1aaa",
+              "ab_total": 3,
+              "ab_count": 1,
+              "ab_id": 41,
+              "des": "Groundout",
+              "type": "B",
+              "id": 2,
+              "sz_top": 3.47,
+              "sz_bot": 1.63,
+              "pfx_xdatafile": 4.91,
+              "pfx_zdatafile": -4.67,
+              "mlbam_pitch_name": "CU",
+              "zone_location": 99,
+              "pitch_con": 0.0,
+              "stand": "R",
+              "strikes": 0,
+              "balls": 0,
+              "p_throws": "R",
+              "pdes": "Ball",
+              "spin": 46.4656,
+              "norm_ht": -2.77174,
+              "inning": 5,
+              "tstart": 0.08892042947357409,
+              "vystart": -111.60619273957208,
+              "ftime": 0.3566545706339843,
+              "pfx_x": 4.9685290491614476,
+              "pfx_z": -4.593027247285465,
+              "uncorrected_pfx_x": 4.91,
+              "uncorrected_pfx_z": -4.67,
+              "x0": -1.4082506627683045,
+              "y0": 55.0,
+              "z0": 5.698171915549589,
+              "vx0": 4.343811156621771,
+              "vy0": -114.15832096863733,
+              "vz0": 0.7901933302598165,
+              "ax": 6.510000095367432,
+              "ay": 19.205999618530274,
+              "az": -38.197,
+              "start_speed": 77.89,
+              "px": 1.4982263709499546,
+              "pz": 1.5081804531979417,
+              "pxold": 0.0,
+              "pzold": 0.0,
+              "tm_spin": 0,
+              "sb": 0,
+              "game_start_time_str": "04/15/2019 08:05:00 PM -0400",
+              "time_pitch_thrown_str": "04/15/2019 09:50:54 PM -0400",
+              "has_zone_location": false,
+              "is_patched": false,
+              "is_duplicate_guid": false,
+              "is_duplicate_pitch_number": false,
+              "is_invalid_ibb": false,
+              "is_out_of_sequence": true,
+              "at_bat_id": "TEX201904150_05_TEX_571946_ANA_592743_0",
+              "inning_id": "TEX201904150_INN_TOP05",
+              "pitcher_id_bbref": "millesh01",
+              "batter_id_bbref": "simmoan01",
+              "seconds_since_game_start": 6354
+            }
+          ],
           "removed_duplicate_guid": {}
         },
         {
@@ -17415,81 +17407,78 @@
               "seconds_since_game_start": 5339
             }
           ],
-          "removed_pitchfx": {
-            "removed_count": 1,
-            "removed_dupes": [
-              {
-                "pitcher_name": "Shelby Miller",
-                "pitch_app_id": "TEX201904150_571946",
-                "pitcher_id": "571946",
-                "batter_id": "405395",
-                "pitcher_team_id_bb": "TEX",
-                "opponent_team_id_bb": "ANA",
-                "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
-                "bbref_game_id": "TEX201904150",
-                "table_row_number": 25,
-                "park_sv_id": "190416_015103tex",
-                "play_guid": "16f5e10a-9267-4b9d-af08-88dea4064099",
-                "ab_total": 4,
-                "ab_count": 2,
-                "ab_id": 42,
-                "des": "Walk",
-                "type": "B",
-                "id": 8,
-                "sz_top": 3.24,
-                "sz_bot": 1.55,
-                "pfx_xdatafile": -3.98,
-                "pfx_zdatafile": 10.36,
-                "mlbam_pitch_name": "FF",
-                "zone_location": 99,
-                "pitch_con": 0.0,
-                "stand": "R",
-                "strikes": 0,
-                "balls": 1,
-                "p_throws": "R",
-                "pdes": "Ball",
-                "spin": 200.985,
-                "norm_ht": -2.83432,
-                "inning": 5,
-                "tstart": 0.0740617395911397,
-                "vystart": -133.88096972970294,
-                "ftime": 0.29844543537814194,
-                "pfx_x": -3.9012518103888074,
-                "pfx_z": 10.336714075946468,
-                "uncorrected_pfx_x": -3.98,
-                "uncorrected_pfx_z": 10.36,
-                "x0": -1.4997698844604388,
-                "y0": 55.0,
-                "z0": 5.5831509053799095,
-                "vx0": 8.576953729539976,
-                "vy0": -137.2912745570473,
-                "vz0": -4.609563297837907,
-                "ax": -7.299999847412109,
-                "ay": 30.826000457763673,
-                "az": -12.837000343322753,
-                "start_speed": 93.84,
-                "px": 1.3980397892098675,
-                "pz": 2.623421126517602,
-                "pxold": 0.0,
-                "pzold": 0.0,
-                "tm_spin": 0,
-                "sb": 10,
-                "game_start_time_str": "04/15/2019 08:05:00 PM -0400",
-                "time_pitch_thrown_str": "04/15/2019 09:51:03 PM -0400",
-                "has_zone_location": false,
-                "is_patched": false,
-                "is_duplicate_guid": false,
-                "is_duplicate_pitch_number": true,
-                "is_invalid_ibb": false,
-                "is_out_of_sequence": false,
-                "at_bat_id": "TEX201904150_05_TEX_571946_ANA_405395_0",
-                "inning_id": "TEX201904150_INN_TOP05",
-                "pitcher_id_bbref": "millesh01",
-                "batter_id_bbref": "pujolal01",
-                "seconds_since_game_start": 6363
-              }
-            ]
-          },
+          "removed_pitchfx": [
+            {
+              "pitcher_name": "Shelby Miller",
+              "pitch_app_id": "TEX201904150_571946",
+              "pitcher_id": "571946",
+              "batter_id": "405395",
+              "pitcher_team_id_bb": "TEX",
+              "opponent_team_id_bb": "ANA",
+              "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
+              "bbref_game_id": "TEX201904150",
+              "table_row_number": 25,
+              "park_sv_id": "190416_015103tex",
+              "play_guid": "16f5e10a-9267-4b9d-af08-88dea4064099",
+              "ab_total": 4,
+              "ab_count": 2,
+              "ab_id": 42,
+              "des": "Walk",
+              "type": "B",
+              "id": 8,
+              "sz_top": 3.24,
+              "sz_bot": 1.55,
+              "pfx_xdatafile": -3.98,
+              "pfx_zdatafile": 10.36,
+              "mlbam_pitch_name": "FF",
+              "zone_location": 99,
+              "pitch_con": 0.0,
+              "stand": "R",
+              "strikes": 0,
+              "balls": 1,
+              "p_throws": "R",
+              "pdes": "Ball",
+              "spin": 200.985,
+              "norm_ht": -2.83432,
+              "inning": 5,
+              "tstart": 0.0740617395911397,
+              "vystart": -133.88096972970294,
+              "ftime": 0.29844543537814194,
+              "pfx_x": -3.9012518103888074,
+              "pfx_z": 10.336714075946468,
+              "uncorrected_pfx_x": -3.98,
+              "uncorrected_pfx_z": 10.36,
+              "x0": -1.4997698844604388,
+              "y0": 55.0,
+              "z0": 5.5831509053799095,
+              "vx0": 8.576953729539976,
+              "vy0": -137.2912745570473,
+              "vz0": -4.609563297837907,
+              "ax": -7.299999847412109,
+              "ay": 30.826000457763673,
+              "az": -12.837000343322753,
+              "start_speed": 93.84,
+              "px": 1.3980397892098675,
+              "pz": 2.623421126517602,
+              "pxold": 0.0,
+              "pzold": 0.0,
+              "tm_spin": 0,
+              "sb": 10,
+              "game_start_time_str": "04/15/2019 08:05:00 PM -0400",
+              "time_pitch_thrown_str": "04/15/2019 09:51:03 PM -0400",
+              "has_zone_location": false,
+              "is_patched": false,
+              "is_duplicate_guid": false,
+              "is_duplicate_pitch_number": false,
+              "is_invalid_ibb": false,
+              "is_out_of_sequence": true,
+              "at_bat_id": "TEX201904150_05_TEX_571946_ANA_405395_0",
+              "inning_id": "TEX201904150_INN_TOP05",
+              "pitcher_id_bbref": "millesh01",
+              "batter_id_bbref": "pujolal01",
+              "seconds_since_game_start": 6363
+            }
+          ],
           "removed_duplicate_guid": {}
         },
         {
@@ -17876,7 +17865,7 @@
               "seconds_since_game_start": 5553
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -18398,7 +18387,7 @@
               "seconds_since_game_start": 6335
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -18690,7 +18679,7 @@
               "seconds_since_game_start": 5780
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -19126,7 +19115,7 @@
               "seconds_since_game_start": 6034
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -19743,7 +19732,7 @@
               "seconds_since_game_start": 6264
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -20110,7 +20099,7 @@
               "seconds_since_game_start": 6379
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -20777,7 +20766,7 @@
               "seconds_since_game_start": 6736
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -21069,7 +21058,7 @@
               "seconds_since_game_start": 6835
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -21286,7 +21275,7 @@
               "seconds_since_game_start": 6919
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -21803,7 +21792,7 @@
               "seconds_since_game_start": 7113
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -22305,7 +22294,7 @@
               "seconds_since_game_start": 7475
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -22566,7 +22555,7 @@
               "seconds_since_game_start": 7616
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -22858,7 +22847,7 @@
               "seconds_since_game_start": 7681
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -23150,7 +23139,7 @@
               "seconds_since_game_start": 7761
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -23415,7 +23404,7 @@
               "seconds_since_game_start": 7908
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -24182,7 +24171,7 @@
               "seconds_since_game_start": 8227
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -24849,7 +24838,7 @@
               "seconds_since_game_start": 8491
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -25141,7 +25130,7 @@
               "seconds_since_game_start": 8575
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -25358,7 +25347,7 @@
               "seconds_since_game_start": 8642
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -25875,7 +25864,7 @@
               "seconds_since_game_start": 8783
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -26187,7 +26176,7 @@
               "seconds_since_game_start": 8970
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -26600,7 +26589,7 @@
               "seconds_since_game_start": 9159
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -26892,7 +26881,7 @@
               "seconds_since_game_start": 9229
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -27184,7 +27173,7 @@
               "seconds_since_game_start": 9312
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -27776,7 +27765,7 @@
               "seconds_since_game_start": 9527
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -27918,7 +27907,7 @@
               "seconds_since_game_start": 9569
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -28481,7 +28470,7 @@
               "seconds_since_game_start": 9793
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -28623,7 +28612,7 @@
               "seconds_since_game_start": 9830
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -28915,7 +28904,7 @@
               "seconds_since_game_start": 9912
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -29282,7 +29271,7 @@
               "seconds_since_game_start": 10008
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -29734,7 +29723,7 @@
               "seconds_since_game_start": 10163
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -29942,7 +29931,7 @@
               "seconds_since_game_start": 10325
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -30459,7 +30448,7 @@
               "seconds_since_game_start": 10442
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -30826,7 +30815,7 @@
               "seconds_since_game_start": 10533
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -31268,7 +31257,7 @@
               "seconds_since_game_start": 10670
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -31410,7 +31399,7 @@
               "seconds_since_game_start": 10717
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -32049,7 +32038,7 @@
               "seconds_since_game_start": 10953
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -32341,7 +32330,7 @@
               "seconds_since_game_start": 11053
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -32783,7 +32772,7 @@
               "seconds_since_game_start": 11200
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -33225,7 +33214,7 @@
               "seconds_since_game_start": 11329
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -33667,7 +33656,7 @@
               "seconds_since_game_start": 11457
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -33809,7 +33798,7 @@
               "seconds_since_game_start": 11503
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -34148,7 +34137,7 @@
               "seconds_since_game_start": 11684
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -34515,7 +34504,7 @@
               "seconds_since_game_start": 11757
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -34807,7 +34796,7 @@
               "seconds_since_game_start": 11826
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -35174,7 +35163,7 @@
               "seconds_since_game_start": 11924
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -35696,7 +35685,7 @@
               "seconds_since_game_start": 12087
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -36331,13 +36320,14 @@
               "seconds_since_game_start": 12399
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
     }
   ],
-  "duplicate_guids": {
+  "duplicate_guids": {},
+  "removed_pitchfx": {
     "TEX201904150_INN_TOP02": {
       "TEX201904150_02_TEX_571946_ANA_545361_0": {
         "at_bat_id": "TEX201904150_02_TEX_571946_ANA_545361_0",
@@ -36410,10 +36400,10 @@
             "time_pitch_thrown_str": "04/15/2019 08:38:04 PM -0400",
             "has_zone_location": false,
             "is_patched": false,
-            "is_duplicate_guid": true,
+            "is_duplicate_guid": false,
             "is_duplicate_pitch_number": false,
             "is_invalid_ibb": false,
-            "is_out_of_sequence": false,
+            "is_out_of_sequence": true,
             "at_bat_id": "TEX201904150_02_TEX_571946_ANA_545361_0",
             "inning_id": "TEX201904150_INN_TOP02",
             "pitcher_id_bbref": "millesh01",
@@ -36422,9 +36412,7 @@
           }
         ]
       }
-    }
-  },
-  "removed_pitchfx": {
+    },
     "TEX201904150_INN_TOP05": {
       "TEX201904150_05_TEX_571946_ANA_592743_0": {
         "at_bat_id": "TEX201904150_05_TEX_571946_ANA_592743_0",
@@ -36498,9 +36486,9 @@
             "has_zone_location": false,
             "is_patched": false,
             "is_duplicate_guid": false,
-            "is_duplicate_pitch_number": true,
+            "is_duplicate_pitch_number": false,
             "is_invalid_ibb": false,
-            "is_out_of_sequence": false,
+            "is_out_of_sequence": true,
             "at_bat_id": "TEX201904150_05_TEX_571946_ANA_592743_0",
             "inning_id": "TEX201904150_INN_TOP05",
             "pitcher_id_bbref": "millesh01",
@@ -36581,9 +36569,9 @@
             "has_zone_location": false,
             "is_patched": false,
             "is_duplicate_guid": false,
-            "is_duplicate_pitch_number": true,
+            "is_duplicate_pitch_number": false,
             "is_invalid_ibb": false,
-            "is_out_of_sequence": false,
+            "is_out_of_sequence": true,
             "at_bat_id": "TEX201904150_05_TEX_571946_ANA_405395_0",
             "inning_id": "TEX201904150_INN_TOP05",
             "pitcher_id_bbref": "millesh01",

@@ -11,16 +11,16 @@
     "missing_pitchfx_count": 34,
     "extra_pitchfx_count": 0,
     "invalid_pitchfx_count": 0,
-    "extra_pitchfx_removed_count": 0,
-    "duplicate_guid_removed_count": 1,
+    "extra_pitchfx_removed_count": 1,
+    "duplicate_guid_removed_count": 0,
     "batters_faced_bbref": 79,
     "batters_faced_pitchfx": 75,
     "total_at_bats_pitchfx_complete": 72,
     "total_at_bats_extra_pitchfx": 0,
     "total_at_bats_patched_pitchfx": 0,
     "total_at_bats_missing_pitchfx": 7,
-    "total_at_bats_extra_pitchfx_removed": 0,
-    "total_at_bats_duplicate_guid_removed": 1,
+    "total_at_bats_extra_pitchfx_removed": 1,
+    "total_at_bats_duplicate_guid_removed": 0,
     "total_at_bats_pitchfx_error": 0,
     "total_at_bats_invalid_pitchfx": 0,
     "at_bat_ids_pitchfx_complete": [
@@ -108,10 +108,10 @@
       "PIT201909070_09_SLN_594965_PIT_591741_0"
     ],
     "at_bat_ids_extra_pitchfx": [],
-    "at_bat_ids_extra_pitchfx_removed": [],
-    "at_bat_ids_duplicate_guid_removed": [
+    "at_bat_ids_extra_pitchfx_removed": [
       "PIT201909070_08_PIT_664129_SLN_543939_0"
     ],
+    "at_bat_ids_duplicate_guid_removed": [],
     "at_bat_ids_pitchfx_error": [],
     "at_bat_ids_invalid_pitchfx": []
   },
@@ -920,13 +920,13 @@
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
         "bbref_game_id": "PIT201909070",
         "pitch_count_by_inning": {
-          "1": 20,
-          "2": 11,
-          "3": 17,
           "4": 16,
           "5": 9,
-          "6": 16,
-          "7": 6
+          "2": 11,
+          "1": 20,
+          "7": 6,
+          "3": 17,
+          "6": 16
         },
         "pitch_count_by_pitch_type": {
           "CU": 44,
@@ -1828,10 +1828,10 @@
         "pitch_count_by_inning": {
           "1": 20,
           "2": 13,
-          "3": 25,
           "4": 8,
           "5": 11,
-          "6": 19
+          "6": 19,
+          "3": 25
         },
         "pitch_count_by_pitch_type": {
           "FF": 39,
@@ -1936,8 +1936,8 @@
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
         "bbref_game_id": "PIT201909070",
         "pitch_count_by_inning": {
-          "6": 11,
-          "7": 23
+          "7": 23,
+          "6": 11
         },
         "pitch_count_by_pitch_type": {
           "SI": 14,
@@ -2022,7 +2022,7 @@
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
         "bbref_game_id": "PIT201909070",
         "pitch_count_by_inning": {
-          "8": 29
+          "8": 30
         },
         "pitch_count_by_pitch_type": {
           "FF": 19,
@@ -2038,16 +2038,16 @@
           "missing_pitchfx_count": 0,
           "extra_pitchfx_count": 0,
           "invalid_pitchfx_count": 0,
-          "extra_pitchfx_removed_count": 0,
-          "duplicate_guid_removed_count": 1,
+          "extra_pitchfx_removed_count": 1,
+          "duplicate_guid_removed_count": 0,
           "batters_faced_bbref": 6,
           "batters_faced_pitchfx": 6,
           "total_at_bats_pitchfx_complete": 6,
           "total_at_bats_extra_pitchfx": 0,
           "total_at_bats_patched_pitchfx": 0,
           "total_at_bats_missing_pitchfx": 0,
-          "total_at_bats_extra_pitchfx_removed": 0,
-          "total_at_bats_duplicate_guid_removed": 1,
+          "total_at_bats_extra_pitchfx_removed": 1,
+          "total_at_bats_duplicate_guid_removed": 0,
           "total_at_bats_pitchfx_error": 0,
           "total_at_bats_invalid_pitchfx": 0,
           "at_bat_ids_pitchfx_complete": [
@@ -2061,10 +2061,10 @@
           "at_bat_ids_patched_pitchfx": [],
           "at_bat_ids_missing_pitchfx": [],
           "at_bat_ids_extra_pitchfx": [],
-          "at_bat_ids_extra_pitchfx_removed": [],
-          "at_bat_ids_duplicate_guid_removed": [
+          "at_bat_ids_extra_pitchfx_removed": [
             "PIT201909070_08_PIT_664129_SLN_543939_0"
           ],
+          "at_bat_ids_duplicate_guid_removed": [],
           "at_bat_ids_pitchfx_error": [],
           "at_bat_ids_invalid_pitchfx": []
         },
@@ -2361,7 +2361,7 @@
               "seconds_since_game_start": 122
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -2878,7 +2878,7 @@
               "seconds_since_game_start": 255
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -3320,7 +3320,7 @@
               "seconds_since_game_start": 358
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -4012,7 +4012,7 @@
               "seconds_since_game_start": 646
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -4500,7 +4500,7 @@
               "seconds_since_game_start": 861
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -4942,7 +4942,7 @@
               "seconds_since_game_start": 1009
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -5172,7 +5172,7 @@
               "seconds_since_game_start": 1167
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -5689,7 +5689,7 @@
               "seconds_since_game_start": 1365
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -5906,7 +5906,7 @@
               "seconds_since_game_start": 1437
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -6093,7 +6093,7 @@
               "seconds_since_game_start": 1588
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -6460,7 +6460,7 @@
               "seconds_since_game_start": 1666
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -6752,7 +6752,7 @@
               "seconds_since_game_start": 1739
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -7224,7 +7224,7 @@
               "seconds_since_game_start": 1929
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -7485,7 +7485,7 @@
               "seconds_since_game_start": 2130
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -7927,7 +7927,7 @@
               "seconds_since_game_start": 2239
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -8294,7 +8294,7 @@
               "seconds_since_game_start": 2327
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -8634,7 +8634,7 @@
               "seconds_since_game_start": 2523
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -9001,7 +9001,7 @@
               "seconds_since_game_start": 2656
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -9143,7 +9143,7 @@
               "seconds_since_game_start": 2706
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -9810,7 +9810,7 @@
               "seconds_since_game_start": 3053
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -10057,7 +10057,7 @@
               "seconds_since_game_start": 3172
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -10349,7 +10349,7 @@
               "seconds_since_game_start": 3311
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -10716,7 +10716,7 @@
               "seconds_since_game_start": 3456
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -10979,7 +10979,7 @@
               "seconds_since_game_start": 3633
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -11346,7 +11346,7 @@
               "seconds_since_game_start": 3740
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -11863,7 +11863,7 @@
               "seconds_since_game_start": 3947
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12230,7 +12230,7 @@
               "seconds_since_game_start": 4086
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12377,7 +12377,7 @@
               "seconds_since_game_start": 4166
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -12638,7 +12638,7 @@
               "seconds_since_game_start": 4322
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12855,7 +12855,7 @@
               "seconds_since_game_start": 4375
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -13222,7 +13222,7 @@
               "seconds_since_game_start": 4465
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -13709,7 +13709,7 @@
               "seconds_since_game_start": 4777
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -14151,7 +14151,7 @@
               "seconds_since_game_start": 4914
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -14368,7 +14368,7 @@
               "seconds_since_game_start": 4977
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -14745,7 +14745,7 @@
               "seconds_since_game_start": 5171
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -15081,7 +15081,7 @@
               "seconds_since_game_start": 5380
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -15598,7 +15598,7 @@
               "seconds_since_game_start": 5507
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -15815,7 +15815,7 @@
               "seconds_since_game_start": 5560
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -16076,7 +16076,7 @@
               "seconds_since_game_start": 5740
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -16218,7 +16218,7 @@
               "seconds_since_game_start": 5786
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -16735,7 +16735,7 @@
               "seconds_since_game_start": 5946
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -17225,7 +17225,7 @@
               "seconds_since_game_start": 6152
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -17542,7 +17542,7 @@
               "seconds_since_game_start": 6295
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -18159,7 +18159,7 @@
               "seconds_since_game_start": 6633
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -18301,7 +18301,7 @@
               "seconds_since_game_start": 6686
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -18598,7 +18598,7 @@
               "seconds_since_game_start": 6828
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -19165,7 +19165,7 @@
               "seconds_since_game_start": 8448
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -19607,7 +19607,7 @@
               "seconds_since_game_start": 7390
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -20168,7 +20168,7 @@
               "seconds_since_game_start": 7665
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -20685,7 +20685,7 @@
               "seconds_since_game_start": 7809
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -21052,7 +21052,7 @@
               "seconds_since_game_start": 7911
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -21241,7 +21241,7 @@
               "seconds_since_game_start": 8063
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -21758,7 +21758,7 @@
               "seconds_since_game_start": 8270
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -22275,7 +22275,7 @@
               "seconds_since_game_start": 8490
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -22567,7 +22567,7 @@
               "seconds_since_game_start": 8623
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -22709,7 +22709,7 @@
               "seconds_since_game_start": 8686
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -23226,7 +23226,7 @@
               "seconds_since_game_start": 8875
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -23412,7 +23412,7 @@
               "seconds_since_game_start": 9194
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -23629,7 +23629,7 @@
               "seconds_since_game_start": 9252
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -23921,7 +23921,7 @@
               "seconds_since_game_start": 9325
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -23946,14 +23946,14 @@
         "patched_pitchfx_count": 0,
         "missing_pitchfx_count": 0,
         "extra_pitchfx_count": 0,
-        "duplicate_guid_removed_count": 1,
-        "extra_pitchfx_removed_count": 0,
+        "duplicate_guid_removed_count": 0,
+        "extra_pitchfx_removed_count": 1,
         "total_at_bats_pitchfx_complete": 6,
         "total_at_bats_patched_pitchfx": 0,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
-        "total_at_bats_extra_pitchfx_removed": 0,
-        "total_at_bats_duplicate_guid_removed": 1,
+        "total_at_bats_extra_pitchfx_removed": 1,
+        "total_at_bats_duplicate_guid_removed": 0,
         "total_at_bats_pitchfx_error": 0,
         "at_bat_ids_pitchfx_complete": [
           "PIT201909070_08_PIT_664129_SLN_664056_0",
@@ -23966,10 +23966,10 @@
         "at_bat_ids_patched_pitchfx": [],
         "at_bat_ids_missing_pitchfx": [],
         "at_bat_ids_extra_pitchfx": [],
-        "at_bat_ids_extra_pitchfx_removed": [],
-        "at_bat_ids_duplicate_guid_removed": [
+        "at_bat_ids_extra_pitchfx_removed": [
           "PIT201909070_08_PIT_664129_SLN_543939_0"
         ],
+        "at_bat_ids_duplicate_guid_removed": [],
         "at_bat_ids_pitchfx_error": []
       },
       "inning_events": [
@@ -24357,7 +24357,7 @@
               "seconds_since_game_start": 9552
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -24649,7 +24649,7 @@
               "seconds_since_game_start": 9643
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -25091,7 +25091,7 @@
               "seconds_since_game_start": 9795
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -25112,8 +25112,8 @@
             "missing_pitchfx_count": 0,
             "missing_pitch_numbers": [],
             "extra_pitchfx_count": 0,
-            "extra_pitchfx_removed_count": 0,
-            "duplicate_guid_removed_count": 1,
+            "extra_pitchfx_removed_count": 1,
+            "duplicate_guid_removed_count": 0,
             "pitchfx_error": false,
             "pitchfx_error_message": null
           },
@@ -25533,82 +25533,79 @@
               "seconds_since_game_start": 9930
             }
           ],
-          "removed_pitchfx": {},
-          "removed_duplicate_guid": {
-            "removed_count": 1,
-            "removed_dupes": [
-              {
-                "pitcher_name": "Geoff Hartlieb",
-                "pitch_app_id": "PIT201909070_664129",
-                "pitcher_id": "664129",
-                "batter_id": "543939",
-                "pitcher_team_id_bb": "PIT",
-                "opponent_team_id_bb": "SLN",
-                "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
-                "bbref_game_id": "PIT201909070",
-                "table_row_number": 16,
-                "park_sv_id": "190908_014959pit",
-                "play_guid": "42734d57-b77d-4189-b147-6a23712b2f82",
-                "ab_total": 4,
-                "ab_count": 4,
-                "ab_id": 64,
-                "des": "Forceout",
-                "type": "B",
-                "id": 25,
-                "sz_top": 3.14,
-                "sz_bot": 1.5,
-                "pfx_xdatafile": -4.47,
-                "pfx_zdatafile": 7.64,
-                "mlbam_pitch_name": "FF",
-                "zone_location": 99,
-                "pitch_con": 0.0,
-                "stand": "L",
-                "strikes": 2,
-                "balls": 1,
-                "p_throws": "R",
-                "pdes": "Ball",
-                "spin": 210.324,
-                "norm_ht": -0.512195,
-                "inning": 8,
-                "tstart": 0.0704663309393344,
-                "vystart": -140.77949219013578,
-                "ftime": 0.2832248387376416,
-                "pfx_x": -4.081887242438822,
-                "pfx_z": 7.965479364421287,
-                "uncorrected_pfx_x": -4.47,
-                "uncorrected_pfx_z": 7.64,
-                "x0": -1.92113609142856,
-                "y0": 55.0,
-                "z0": 6.2172700078120355,
-                "vx0": 9.227291965096855,
-                "vy0": -144.16291273271221,
-                "vz0": -8.150827389271402,
-                "ax": -8.481000267028808,
-                "ay": 32.13599954223633,
-                "az": -15.629000305175781,
-                "start_speed": 98.65,
-                "px": 1.02367860644183,
-                "pz": 1.8711175878619921,
-                "pxold": 1.09,
-                "pzold": 1.9,
-                "tm_spin": 0,
-                "sb": 12,
-                "game_start_time_str": "09/07/2019 07:05:00 PM -0400",
-                "time_pitch_thrown_str": "09/07/2019 09:49:59 PM -0400",
-                "has_zone_location": false,
-                "is_patched": false,
-                "is_duplicate_guid": true,
-                "is_duplicate_pitch_number": false,
-                "is_invalid_ibb": false,
-                "is_out_of_sequence": false,
-                "at_bat_id": "PIT201909070_08_PIT_664129_SLN_543939_0",
-                "inning_id": "PIT201909070_INN_TOP08",
-                "pitcher_id_bbref": "hartlge01",
-                "batter_id_bbref": "wongko01",
-                "seconds_since_game_start": 9899
-              }
-            ]
-          }
+          "removed_pitchfx": [
+            {
+              "pitcher_name": "Geoff Hartlieb",
+              "pitch_app_id": "PIT201909070_664129",
+              "pitcher_id": "664129",
+              "batter_id": "543939",
+              "pitcher_team_id_bb": "PIT",
+              "opponent_team_id_bb": "SLN",
+              "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
+              "bbref_game_id": "PIT201909070",
+              "table_row_number": 16,
+              "park_sv_id": "190908_014959pit",
+              "play_guid": "42734d57-b77d-4189-b147-6a23712b2f82",
+              "ab_total": 4,
+              "ab_count": 4,
+              "ab_id": 64,
+              "des": "Forceout",
+              "type": "B",
+              "id": 25,
+              "sz_top": 3.14,
+              "sz_bot": 1.5,
+              "pfx_xdatafile": -4.47,
+              "pfx_zdatafile": 7.64,
+              "mlbam_pitch_name": "FF",
+              "zone_location": 99,
+              "pitch_con": 0.0,
+              "stand": "L",
+              "strikes": 2,
+              "balls": 1,
+              "p_throws": "R",
+              "pdes": "Ball",
+              "spin": 210.324,
+              "norm_ht": -0.512195,
+              "inning": 8,
+              "tstart": 0.0704663309393344,
+              "vystart": -140.77949219013578,
+              "ftime": 0.2832248387376416,
+              "pfx_x": -4.081887242438822,
+              "pfx_z": 7.965479364421287,
+              "uncorrected_pfx_x": -4.47,
+              "uncorrected_pfx_z": 7.64,
+              "x0": -1.92113609142856,
+              "y0": 55.0,
+              "z0": 6.2172700078120355,
+              "vx0": 9.227291965096855,
+              "vy0": -144.16291273271221,
+              "vz0": -8.150827389271402,
+              "ax": -8.481000267028808,
+              "ay": 32.13599954223633,
+              "az": -15.629000305175781,
+              "start_speed": 98.65,
+              "px": 1.02367860644183,
+              "pz": 1.8711175878619921,
+              "pxold": 1.09,
+              "pzold": 1.9,
+              "tm_spin": 0,
+              "sb": 12,
+              "game_start_time_str": "09/07/2019 07:05:00 PM -0400",
+              "time_pitch_thrown_str": "09/07/2019 09:49:59 PM -0400",
+              "has_zone_location": false,
+              "is_patched": false,
+              "is_duplicate_guid": false,
+              "is_duplicate_pitch_number": false,
+              "is_invalid_ibb": false,
+              "is_out_of_sequence": true,
+              "at_bat_id": "PIT201909070_08_PIT_664129_SLN_543939_0",
+              "inning_id": "PIT201909070_INN_TOP08",
+              "pitcher_id_bbref": "hartlge01",
+              "batter_id_bbref": "wongko01",
+              "seconds_since_game_start": 9899
+            }
+          ],
+          "removed_duplicate_guid": {}
         },
         {
           "at_bat_id": "PIT201909070_08_PIT_664129_SLN_502671_0",
@@ -26224,7 +26221,7 @@
               "seconds_since_game_start": 10151
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -26666,7 +26663,7 @@
               "seconds_since_game_start": 10379
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -27192,7 +27189,7 @@
               "seconds_since_game_start": 10644
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -27484,7 +27481,7 @@
               "seconds_since_game_start": 10728
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -27926,7 +27923,7 @@
               "seconds_since_game_start": 10857
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -28381,7 +28378,7 @@
               "seconds_since_game_start": 11098
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -28598,7 +28595,7 @@
               "seconds_since_game_start": 11173
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -28910,7 +28907,7 @@
               "seconds_since_game_start": 11263
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -29007,7 +29004,7 @@
             }
           ],
           "pitchfx": [],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -29130,7 +29127,7 @@
             }
           ],
           "pitchfx": [],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -29229,7 +29226,7 @@
             }
           ],
           "pitchfx": [],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -29543,7 +29540,7 @@
             }
           ],
           "pitchfx": [],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -29666,7 +29663,7 @@
             }
           ],
           "pitchfx": [],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -29763,7 +29760,7 @@
             }
           ],
           "pitchfx": [],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -29848,13 +29845,14 @@
             }
           ],
           "pitchfx": [],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
     }
   ],
-  "duplicate_guids": {
+  "duplicate_guids": {},
+  "removed_pitchfx": {
     "PIT201909070_INN_TOP08": {
       "PIT201909070_08_PIT_664129_SLN_543939_0": {
         "at_bat_id": "PIT201909070_08_PIT_664129_SLN_543939_0",
@@ -29927,10 +29925,10 @@
             "time_pitch_thrown_str": "09/07/2019 09:49:59 PM -0400",
             "has_zone_location": false,
             "is_patched": false,
-            "is_duplicate_guid": true,
+            "is_duplicate_guid": false,
             "is_duplicate_pitch_number": false,
             "is_invalid_ibb": false,
-            "is_out_of_sequence": false,
+            "is_out_of_sequence": true,
             "at_bat_id": "PIT201909070_08_PIT_664129_SLN_543939_0",
             "inning_id": "PIT201909070_INN_TOP08",
             "pitcher_id_bbref": "hartlge01",
@@ -29941,7 +29939,6 @@
       }
     }
   },
-  "removed_pitchfx": {},
   "invalid_pitchfx": {},
   "player_id_dict": {
     "fowlede01": {

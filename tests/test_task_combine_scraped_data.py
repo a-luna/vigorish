@@ -42,31 +42,120 @@ def test_combine_data_no_errors(vig_app):
     create_test_data(db_session, scraped_data, test_id)
     combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_NO_ERRORS)
     assert "pitchfx_vs_bbref_audit" in combined_data
-    data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "batters_faced_bbref" in data_audit
-    assert data_audit["batters_faced_bbref"] == 82
-    assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 82
-    assert "total_at_bats_missing_pitchfx" in data_audit
-    assert data_audit["total_at_bats_missing_pitchfx"] == 0
-    assert "total_at_bats_extra_pitchfx" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx"] == 0
-    assert "pitch_count_bbref_stats_table" in data_audit
-    assert data_audit["pitch_count_bbref_stats_table"] == 298
-    assert "pitch_count_bbref" in data_audit
-    assert data_audit["pitch_count_bbref"] == 298
-    assert "pitch_count_pitchfx" in data_audit
-    assert data_audit["pitch_count_pitchfx"] == 298
-    assert "missing_pitchfx_count" in data_audit
-    assert data_audit["missing_pitchfx_count"] == 0
-    assert "at_bat_ids_missing_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_missing_pitchfx"] == []
-    assert "pitchfx_error" in data_audit
-    assert not data_audit["pitchfx_error"]
-    assert "at_bat_ids_pitchfx_error" in data_audit
-    assert data_audit["at_bat_ids_pitchfx_error"] == []
-    assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 1
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": False,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 298,
+        "pitch_count_bbref": 298,
+        "pitch_count_pitchfx": 298,
+        "patched_pitchfx_count": 0,
+        "missing_pitchfx_count": 0,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 0,
+        "extra_pitchfx_removed_count": 1,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 82,
+        "batters_faced_pitchfx": 82,
+        "total_at_bats_pitchfx_complete": 82,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 0,
+        "total_at_bats_extra_pitchfx_removed": 1,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 0,
+        "at_bat_ids_pitchfx_complete": [
+            "TOR201906170_01_TOR_571882_ANA_600303_0",
+            "TOR201906170_01_TOR_571882_ANA_545361_0",
+            "TOR201906170_01_TOR_571882_ANA_660271_0",
+            "TOR201906170_01_ANA_472610_TOR_519299_0",
+            "TOR201906170_01_ANA_472610_TOR_624415_0",
+            "TOR201906170_01_ANA_472610_TOR_665489_0",
+            "TOR201906170_01_ANA_472610_TOR_642133_0",
+            "TOR201906170_02_TOR_429719_ANA_457708_0",
+            "TOR201906170_02_TOR_429719_ANA_594777_0",
+            "TOR201906170_02_TOR_429719_ANA_664058_0",
+            "TOR201906170_02_TOR_429719_ANA_571506_0",
+            "TOR201906170_02_TOR_429719_ANA_518960_0",
+            "TOR201906170_02_TOR_429719_ANA_541600_0",
+            "TOR201906170_02_TOR_429719_ANA_600303_0",
+            "TOR201906170_02_TOR_429719_ANA_545361_0",
+            "TOR201906170_02_TOR_429719_ANA_660271_0",
+            "TOR201906170_02_TOR_429719_ANA_457708_1",
+            "TOR201906170_02_TOR_543208_ANA_594777_0",
+            "TOR201906170_02_ANA_570240_TOR_606192_0",
+            "TOR201906170_02_ANA_570240_TOR_545341_0",
+            "TOR201906170_02_ANA_570240_TOR_520471_0",
+            "TOR201906170_03_TOR_543208_ANA_664058_0",
+            "TOR201906170_03_TOR_543208_ANA_571506_0",
+            "TOR201906170_03_TOR_543208_ANA_518960_0",
+            "TOR201906170_03_TOR_543208_ANA_541600_0",
+            "TOR201906170_03_TOR_543208_ANA_600303_0",
+            "TOR201906170_03_ANA_570240_TOR_592273_0",
+            "TOR201906170_03_ANA_570240_TOR_571912_0",
+            "TOR201906170_03_ANA_570240_TOR_519299_0",
+            "TOR201906170_04_TOR_543208_ANA_545361_0",
+            "TOR201906170_04_TOR_543208_ANA_660271_0",
+            "TOR201906170_04_TOR_543208_ANA_457708_0",
+            "TOR201906170_04_ANA_570240_TOR_624415_0",
+            "TOR201906170_04_ANA_570240_TOR_665489_0",
+            "TOR201906170_04_ANA_570240_TOR_642133_0",
+            "TOR201906170_04_ANA_570240_TOR_606192_0",
+            "TOR201906170_05_TOR_543208_ANA_594777_0",
+            "TOR201906170_05_TOR_543208_ANA_664058_0",
+            "TOR201906170_05_TOR_543208_ANA_571506_0",
+            "TOR201906170_05_TOR_543208_ANA_518960_0",
+            "TOR201906170_05_ANA_570240_TOR_545341_0",
+            "TOR201906170_05_ANA_570240_TOR_520471_0",
+            "TOR201906170_05_ANA_570240_TOR_592273_0",
+            "TOR201906170_06_TOR_592468_ANA_541600_0",
+            "TOR201906170_06_TOR_592468_ANA_600303_0",
+            "TOR201906170_06_TOR_592468_ANA_545361_0",
+            "TOR201906170_06_TOR_592468_ANA_660271_0",
+            "TOR201906170_06_TOR_592468_ANA_457708_0",
+            "TOR201906170_06_TOR_592468_ANA_594777_0",
+            "TOR201906170_06_ANA_570240_TOR_571912_0",
+            "TOR201906170_06_ANA_570240_TOR_519299_0",
+            "TOR201906170_06_ANA_570240_TOR_624415_0",
+            "TOR201906170_06_ANA_570240_TOR_665489_0",
+            "TOR201906170_07_TOR_475479_ANA_664058_0",
+            "TOR201906170_07_TOR_475479_ANA_571506_0",
+            "TOR201906170_07_TOR_475479_ANA_518960_0",
+            "TOR201906170_07_TOR_475479_ANA_541600_0",
+            "TOR201906170_07_ANA_570240_TOR_642133_0",
+            "TOR201906170_07_ANA_570240_TOR_666971_0",
+            "TOR201906170_07_ANA_570240_TOR_545341_0",
+            "TOR201906170_07_ANA_570240_TOR_520471_0",
+            "TOR201906170_07_ANA_570240_TOR_592273_0",
+            "TOR201906170_07_ANA_570240_TOR_571912_0",
+            "TOR201906170_08_TOR_641835_ANA_600303_0",
+            "TOR201906170_08_TOR_641835_ANA_545361_0",
+            "TOR201906170_08_TOR_641835_ANA_660271_0",
+            "TOR201906170_08_TOR_641835_ANA_457708_0",
+            "TOR201906170_08_ANA_570240_TOR_519299_0",
+            "TOR201906170_08_ANA_570240_TOR_624415_0",
+            "TOR201906170_08_ANA_598287_TOR_665489_0",
+            "TOR201906170_08_ANA_598287_TOR_642133_0",
+            "TOR201906170_08_ANA_598287_TOR_666971_0",
+            "TOR201906170_08_ANA_598287_TOR_545341_0",
+            "TOR201906170_08_ANA_621142_TOR_520471_0",
+            "TOR201906170_09_TOR_543339_ANA_594777_0",
+            "TOR201906170_09_TOR_543339_ANA_664058_0",
+            "TOR201906170_09_TOR_543339_ANA_571506_0",
+            "TOR201906170_09_TOR_543339_ANA_518960_0",
+            "TOR201906170_09_TOR_543339_ANA_541600_0",
+            "TOR201906170_09_ANA_605121_TOR_592273_0",
+            "TOR201906170_09_ANA_605121_TOR_571912_0",
+            "TOR201906170_09_ANA_605121_TOR_519299_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [],
+        "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": ["TOR201906170_03_TOR_543208_ANA_541600_0"],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [],
+    }
 
     pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, NO_ERRORS_PITCH_APP)
     assert pitch_app_status
@@ -104,38 +193,122 @@ def test_combine_data_with_errors(vig_app):
     create_test_data(db_session, scraped_data, test_id)
     combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_WITH_ERRORS)
     assert "pitchfx_vs_bbref_audit" in combined_data
-    data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "batters_faced_bbref" in data_audit
-    assert data_audit["batters_faced_bbref"] == 83
-    assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 78
-    assert "total_at_bats_missing_pitchfx" in data_audit
-    assert data_audit["total_at_bats_missing_pitchfx"] == 5
-    assert "total_at_bats_extra_pitchfx" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx"] == 0
-    assert "pitch_count_bbref_stats_table" in data_audit
-    assert data_audit["pitch_count_bbref_stats_table"] == 334
-    assert "pitch_count_bbref" in data_audit
-    assert data_audit["pitch_count_bbref"] == 334
-    assert "pitch_count_pitchfx" in data_audit
-    assert data_audit["pitch_count_pitchfx"] == 320
-    assert "missing_pitchfx_count" in data_audit
-    assert data_audit["missing_pitchfx_count"] == 14
-    assert "at_bat_ids_missing_pitchfx" in data_audit
-    assert len(data_audit["at_bat_ids_missing_pitchfx"]) == 5
-    assert data_audit["at_bat_ids_missing_pitchfx"] == [
-        "NYA201906112_03_NYN_450306_NYA_572228_0",
-        "NYA201906112_03_NYN_450306_NYA_570482_0",
-        "NYA201906112_03_NYN_450306_NYA_457727_0",
-        "NYA201906112_04_NYA_664856_NYN_605204_0",
-        "NYA201906112_04_NYA_664856_NYN_624424_0",
-    ]
-    assert "pitchfx_error" in data_audit
-    assert not data_audit["pitchfx_error"]
-    assert "at_bat_ids_pitchfx_error" in data_audit
-    assert data_audit["at_bat_ids_pitchfx_error"] == []
-    assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 1
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": False,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 334,
+        "pitch_count_bbref": 334,
+        "pitch_count_pitchfx": 320,
+        "patched_pitchfx_count": 0,
+        "missing_pitchfx_count": 14,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 0,
+        "extra_pitchfx_removed_count": 1,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 83,
+        "batters_faced_pitchfx": 83,
+        "total_at_bats_pitchfx_complete": 78,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 5,
+        "total_at_bats_extra_pitchfx_removed": 1,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 0,
+        "at_bat_ids_pitchfx_complete": [
+            "NYA201906112_01_NYA_572020_NYN_643446_0",
+            "NYA201906112_01_NYA_572020_NYN_605204_0",
+            "NYA201906112_01_NYA_572020_NYN_624413_0",
+            "NYA201906112_01_NYA_572020_NYN_453943_0",
+            "NYA201906112_01_NYA_572020_NYN_624424_0",
+            "NYA201906112_01_NYA_572020_NYN_467092_0",
+            "NYA201906112_01_NYN_450306_NYA_518934_0",
+            "NYA201906112_01_NYN_450306_NYA_572228_0",
+            "NYA201906112_01_NYN_450306_NYA_596142_0",
+            "NYA201906112_01_NYN_450306_NYA_650402_0",
+            "NYA201906112_01_NYN_450306_NYA_640449_0",
+            "NYA201906112_02_NYA_572020_NYN_642708_0",
+            "NYA201906112_02_NYA_572020_NYN_588751_0",
+            "NYA201906112_02_NYA_572020_NYN_460576_0",
+            "NYA201906112_02_NYA_572020_NYN_643446_0",
+            "NYA201906112_02_NYN_450306_NYA_570482_0",
+            "NYA201906112_02_NYN_450306_NYA_457727_0",
+            "NYA201906112_02_NYN_450306_NYA_519222_0",
+            "NYA201906112_02_NYN_450306_NYA_458731_0",
+            "NYA201906112_03_NYA_572020_NYN_605204_0",
+            "NYA201906112_03_NYA_572020_NYN_624413_0",
+            "NYA201906112_03_NYA_572020_NYN_453943_0",
+            "NYA201906112_03_NYA_572020_NYN_624424_0",
+            "NYA201906112_03_NYA_572020_NYN_467092_0",
+            "NYA201906112_03_NYA_572020_NYN_642708_0",
+            "NYA201906112_03_NYA_572020_NYN_588751_0",
+            "NYA201906112_03_NYA_664856_NYN_460576_0",
+            "NYA201906112_03_NYN_450306_NYA_518934_0",
+            "NYA201906112_03_NYN_450306_NYA_596142_0",
+            "NYA201906112_03_NYN_450306_NYA_650402_0",
+            "NYA201906112_03_NYN_450306_NYA_640449_0",
+            "NYA201906112_04_NYA_664856_NYN_643446_0",
+            "NYA201906112_04_NYA_664856_NYN_624413_0",
+            "NYA201906112_04_NYA_664856_NYN_453943_0",
+            "NYA201906112_04_NYA_664856_NYN_467092_0",
+            "NYA201906112_04_NYN_450306_NYA_519222_0",
+            "NYA201906112_04_NYN_450306_NYA_458731_0",
+            "NYA201906112_04_NYN_450306_NYA_518934_0",
+            "NYA201906112_04_NYN_450306_NYA_572228_0",
+            "NYA201906112_04_NYN_450306_NYA_596142_0",
+            "NYA201906112_05_NYA_664856_NYN_642708_0",
+            "NYA201906112_05_NYA_664856_NYN_588751_0",
+            "NYA201906112_05_NYA_664856_NYN_460576_0",
+            "NYA201906112_05_NYA_664856_NYN_643446_0",
+            "NYA201906112_05_NYA_664856_NYN_605204_0",
+            "NYA201906112_05_NYN_450306_NYA_650402_0",
+            "NYA201906112_05_NYN_450306_NYA_640449_0",
+            "NYA201906112_05_NYN_450306_NYA_570482_0",
+            "NYA201906112_06_NYA_664856_NYN_624413_0",
+            "NYA201906112_06_NYA_664856_NYN_453943_0",
+            "NYA201906112_06_NYA_664856_NYN_624424_0",
+            "NYA201906112_06_NYA_664856_NYN_467092_0",
+            "NYA201906112_06_NYN_450306_NYA_457727_0",
+            "NYA201906112_06_NYN_450306_NYA_519222_0",
+            "NYA201906112_06_NYN_450306_NYA_458731_0",
+            "NYA201906112_07_NYA_664856_NYN_642708_0",
+            "NYA201906112_07_NYA_664856_NYN_588751_0",
+            "NYA201906112_07_NYA_664856_NYN_460576_0",
+            "NYA201906112_07_NYN_544727_NYA_518934_0",
+            "NYA201906112_07_NYN_544727_NYA_572228_0",
+            "NYA201906112_07_NYN_544727_NYA_596142_0",
+            "NYA201906112_07_NYN_544727_NYA_650402_0",
+            "NYA201906112_07_NYN_544727_NYA_640449_0",
+            "NYA201906112_08_NYA_570666_NYN_643446_0",
+            "NYA201906112_08_NYA_570666_NYN_605204_0",
+            "NYA201906112_08_NYA_570666_NYN_624413_0",
+            "NYA201906112_08_NYN_607625_NYA_570482_0",
+            "NYA201906112_08_NYN_607625_NYA_457727_0",
+            "NYA201906112_08_NYN_607625_NYA_519222_0",
+            "NYA201906112_09_NYA_605501_NYN_453943_0",
+            "NYA201906112_09_NYA_605501_NYN_624424_0",
+            "NYA201906112_09_NYA_605501_NYN_467092_0",
+            "NYA201906112_09_NYA_605501_NYN_642708_0",
+            "NYA201906112_09_NYA_605501_NYN_588751_0",
+            "NYA201906112_09_NYN_543193_NYA_458731_0",
+            "NYA201906112_09_NYN_543193_NYA_518934_0",
+            "NYA201906112_09_NYN_543193_NYA_572228_0",
+            "NYA201906112_09_NYN_543193_NYA_596142_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [],
+        "at_bat_ids_missing_pitchfx": [
+            "NYA201906112_03_NYN_450306_NYA_572228_0",
+            "NYA201906112_03_NYN_450306_NYA_570482_0",
+            "NYA201906112_03_NYN_450306_NYA_457727_0",
+            "NYA201906112_04_NYA_664856_NYN_605204_0",
+            "NYA201906112_04_NYA_664856_NYN_624424_0",
+        ],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": ["NYA201906112_03_NYA_572020_NYN_642708_0"],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [],
+    }
     db_session.commit()
 
 
@@ -146,40 +319,118 @@ def test_combine_data_no_pfx_for_pitch_app(vig_app):
     create_test_data(db_session, scraped_data, test_id)
     combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_NO_PFX_FOR_PITCH_APP)
     assert "pitchfx_vs_bbref_audit" in combined_data
-    data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "batters_faced_bbref" in data_audit
-    assert data_audit["batters_faced_bbref"] == 79
-    assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 72
-    assert "total_at_bats_missing_pitchfx" in data_audit
-    assert data_audit["total_at_bats_missing_pitchfx"] == 7
-    assert "total_at_bats_extra_pitchfx" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx"] == 0
-    assert "pitch_count_bbref_stats_table" in data_audit
-    assert data_audit["pitch_count_bbref_stats_table"] == 310
-    assert "pitch_count_bbref" in data_audit
-    assert data_audit["pitch_count_bbref"] == 310
-    assert "pitch_count_pitchfx" in data_audit
-    assert data_audit["pitch_count_pitchfx"] == 276
-    assert "missing_pitchfx_count" in data_audit
-    assert data_audit["missing_pitchfx_count"] == 34
-    assert "at_bat_ids_missing_pitchfx" in data_audit
-    assert len(data_audit["at_bat_ids_missing_pitchfx"]) == 7
-    assert data_audit["at_bat_ids_missing_pitchfx"] == [
-        "PIT201909070_09_PIT_571917_SLN_664056_0",
-        "PIT201909070_09_PIT_571917_SLN_592660_0",
-        "PIT201909070_09_PIT_571917_SLN_668227_0",
-        "PIT201909070_09_SLN_594965_PIT_622569_0",
-        "PIT201909070_09_SLN_594965_PIT_571467_0",
-        "PIT201909070_09_SLN_594965_PIT_592567_0",
-        "PIT201909070_09_SLN_594965_PIT_591741_0",
-    ]
-    assert "pitchfx_error" in data_audit
-    assert not data_audit["pitchfx_error"]
-    assert "at_bat_ids_pitchfx_error" in data_audit
-    assert data_audit["at_bat_ids_pitchfx_error"] == []
-    assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 1
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": False,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 310,
+        "pitch_count_bbref": 310,
+        "pitch_count_pitchfx": 276,
+        "patched_pitchfx_count": 0,
+        "missing_pitchfx_count": 34,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 0,
+        "extra_pitchfx_removed_count": 1,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 79,
+        "batters_faced_pitchfx": 75,
+        "total_at_bats_pitchfx_complete": 72,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 7,
+        "total_at_bats_extra_pitchfx_removed": 1,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 0,
+        "at_bat_ids_pitchfx_complete": [
+            "PIT201909070_01_PIT_643230_SLN_451594_0",
+            "PIT201909070_01_PIT_643230_SLN_543939_0",
+            "PIT201909070_01_PIT_643230_SLN_502671_0",
+            "PIT201909070_01_PIT_643230_SLN_542303_0",
+            "PIT201909070_01_SLN_425794_PIT_621028_0",
+            "PIT201909070_01_SLN_425794_PIT_668804_0",
+            "PIT201909070_01_SLN_425794_PIT_516782_0",
+            "PIT201909070_01_SLN_425794_PIT_605137_0",
+            "PIT201909070_01_SLN_425794_PIT_592567_0",
+            "PIT201909070_02_PIT_643230_SLN_657557_0",
+            "PIT201909070_02_PIT_643230_SLN_425877_0",
+            "PIT201909070_02_PIT_643230_SLN_669242_0",
+            "PIT201909070_02_PIT_643230_SLN_664056_0",
+            "PIT201909070_02_SLN_425794_PIT_591741_0",
+            "PIT201909070_02_SLN_425794_PIT_624428_0",
+            "PIT201909070_02_SLN_425794_PIT_553869_0",
+            "PIT201909070_03_PIT_643230_SLN_425794_0",
+            "PIT201909070_03_PIT_643230_SLN_451594_0",
+            "PIT201909070_03_PIT_643230_SLN_543939_0",
+            "PIT201909070_03_PIT_643230_SLN_502671_0",
+            "PIT201909070_03_PIT_643230_SLN_542303_0",
+            "PIT201909070_03_PIT_643230_SLN_657557_0",
+            "PIT201909070_03_PIT_643230_SLN_425877_0",
+            "PIT201909070_03_SLN_425794_PIT_643230_0",
+            "PIT201909070_03_SLN_425794_PIT_621028_0",
+            "PIT201909070_03_SLN_425794_PIT_668804_0",
+            "PIT201909070_03_SLN_425794_PIT_516782_0",
+            "PIT201909070_03_SLN_425794_PIT_605137_0",
+            "PIT201909070_04_PIT_643230_SLN_669242_0",
+            "PIT201909070_04_PIT_643230_SLN_664056_0",
+            "PIT201909070_04_PIT_643230_SLN_425794_0",
+            "PIT201909070_04_SLN_425794_PIT_592567_0",
+            "PIT201909070_04_SLN_425794_PIT_591741_0",
+            "PIT201909070_04_SLN_425794_PIT_624428_0",
+            "PIT201909070_04_SLN_425794_PIT_553869_0",
+            "PIT201909070_05_PIT_643230_SLN_451594_0",
+            "PIT201909070_05_PIT_643230_SLN_543939_0",
+            "PIT201909070_05_PIT_643230_SLN_502671_0",
+            "PIT201909070_05_SLN_425794_PIT_643230_0",
+            "PIT201909070_05_SLN_425794_PIT_621028_0",
+            "PIT201909070_05_SLN_425794_PIT_668804_0",
+            "PIT201909070_06_PIT_643230_SLN_542303_0",
+            "PIT201909070_06_PIT_643230_SLN_657557_0",
+            "PIT201909070_06_PIT_643230_SLN_425877_0",
+            "PIT201909070_06_PIT_643230_SLN_669242_0",
+            "PIT201909070_06_PIT_643230_SLN_664056_0",
+            "PIT201909070_06_PIT_605280_SLN_425794_0",
+            "PIT201909070_06_PIT_605280_SLN_451594_0",
+            "PIT201909070_06_SLN_425794_PIT_516782_0",
+            "PIT201909070_06_SLN_425794_PIT_605137_0",
+            "PIT201909070_06_SLN_425794_PIT_592567_0",
+            "PIT201909070_07_PIT_605280_SLN_543939_0",
+            "PIT201909070_07_PIT_605280_SLN_502671_0",
+            "PIT201909070_07_PIT_605280_SLN_542303_0",
+            "PIT201909070_07_PIT_605280_SLN_657557_0",
+            "PIT201909070_07_PIT_605280_SLN_425877_0",
+            "PIT201909070_07_PIT_605280_SLN_669242_0",
+            "PIT201909070_07_SLN_425794_PIT_591741_0",
+            "PIT201909070_07_SLN_425794_PIT_624428_0",
+            "PIT201909070_07_SLN_425794_PIT_553869_0",
+            "PIT201909070_08_PIT_664129_SLN_664056_0",
+            "PIT201909070_08_PIT_664129_SLN_425794_0",
+            "PIT201909070_08_PIT_664129_SLN_451594_0",
+            "PIT201909070_08_PIT_664129_SLN_543939_0",
+            "PIT201909070_08_PIT_664129_SLN_502671_0",
+            "PIT201909070_08_PIT_664129_SLN_542303_0",
+            "PIT201909070_08_SLN_658551_PIT_596012_0",
+            "PIT201909070_08_SLN_658551_PIT_621028_0",
+            "PIT201909070_08_SLN_658551_PIT_668804_0",
+            "PIT201909070_09_PIT_571917_SLN_624641_0",
+            "PIT201909070_09_PIT_571917_SLN_425877_0",
+            "PIT201909070_09_PIT_571917_SLN_669242_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [],
+        "at_bat_ids_missing_pitchfx": [
+            "PIT201909070_09_PIT_571917_SLN_664056_0",
+            "PIT201909070_09_PIT_571917_SLN_592660_0",
+            "PIT201909070_09_PIT_571917_SLN_668227_0",
+            "PIT201909070_09_SLN_594965_PIT_622569_0",
+            "PIT201909070_09_SLN_594965_PIT_571467_0",
+            "PIT201909070_09_SLN_594965_PIT_592567_0",
+            "PIT201909070_09_SLN_594965_PIT_591741_0",
+        ],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": ["PIT201909070_08_PIT_664129_SLN_543939_0"],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [],
+    }
     db_session.commit()
 
 
@@ -190,39 +441,132 @@ def test_combine_data_extra_pitchfx_removed(vig_app):
     create_test_data(db_session, scraped_data, test_id)
     combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_EXTRA_PFX_REMOVED)
     assert "pitchfx_vs_bbref_audit" in combined_data
-    data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "batters_faced_bbref" in data_audit
-    assert data_audit["batters_faced_bbref"] == 90
-    assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 90
-    assert "total_at_bats_missing_pitchfx" in data_audit
-    assert data_audit["total_at_bats_missing_pitchfx"] == 0
-    assert "total_at_bats_extra_pitchfx" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx"] == 0
-    assert "total_at_bats_extra_pitchfx_removed" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx_removed"] == 2
-    assert "pitch_count_bbref_stats_table" in data_audit
-    assert data_audit["pitch_count_bbref_stats_table"] == 358
-    assert "pitch_count_bbref" in data_audit
-    assert data_audit["pitch_count_bbref"] == 358
-    assert "pitch_count_pitchfx" in data_audit
-    assert data_audit["pitch_count_pitchfx"] == 358
-    assert "missing_pitchfx_count" in data_audit
-    assert data_audit["missing_pitchfx_count"] == 0
-    assert "at_bat_ids_missing_pitchfx" in data_audit
-    assert len(data_audit["at_bat_ids_missing_pitchfx"]) == 0
-    assert data_audit["at_bat_ids_missing_pitchfx"] == []
-    assert "pitchfx_error" in data_audit
-    assert not data_audit["pitchfx_error"]
-    assert "at_bat_ids_pitchfx_error" in data_audit
-    assert data_audit["at_bat_ids_pitchfx_error"] == []
-    assert "at_bat_ids_extra_pitchfx_removed" in data_audit
-    assert data_audit["at_bat_ids_extra_pitchfx_removed"] == [
-        "TEX201904150_05_TEX_571946_ANA_592743_0",
-        "TEX201904150_05_TEX_571946_ANA_405395_0",
-    ]
-    assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 1
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": False,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 358,
+        "pitch_count_bbref": 358,
+        "pitch_count_pitchfx": 358,
+        "patched_pitchfx_count": 0,
+        "missing_pitchfx_count": 0,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 0,
+        "extra_pitchfx_removed_count": 3,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 90,
+        "batters_faced_pitchfx": 90,
+        "total_at_bats_pitchfx_complete": 90,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 0,
+        "total_at_bats_extra_pitchfx_removed": 3,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 0,
+        "at_bat_ids_pitchfx_complete": [
+            "TEX201904150_01_TEX_571946_ANA_594777_0",
+            "TEX201904150_01_TEX_571946_ANA_545361_0",
+            "TEX201904150_01_TEX_571946_ANA_592743_0",
+            "TEX201904150_01_TEX_571946_ANA_405395_0",
+            "TEX201904150_01_TEX_571946_ANA_571718_0",
+            "TEX201904150_01_TEX_571946_ANA_607345_0",
+            "TEX201904150_01_ANA_502239_TEX_425783_0",
+            "TEX201904150_01_ANA_502239_TEX_542454_0",
+            "TEX201904150_01_ANA_502239_TEX_462101_0",
+            "TEX201904150_01_ANA_502239_TEX_608577_0",
+            "TEX201904150_01_ANA_502239_TEX_608336_0",
+            "TEX201904150_02_TEX_571946_ANA_600303_0",
+            "TEX201904150_02_TEX_571946_ANA_446359_0",
+            "TEX201904150_02_TEX_571946_ANA_664058_0",
+            "TEX201904150_02_TEX_571946_ANA_594777_0",
+            "TEX201904150_02_TEX_571946_ANA_545361_0",
+            "TEX201904150_02_TEX_571946_ANA_592743_0",
+            "TEX201904150_02_ANA_502239_TEX_452678_0",
+            "TEX201904150_02_ANA_502239_TEX_523253_0",
+            "TEX201904150_02_ANA_502239_TEX_643396_0",
+            "TEX201904150_02_ANA_502239_TEX_592261_0",
+            "TEX201904150_03_TEX_571946_ANA_405395_0",
+            "TEX201904150_03_TEX_571946_ANA_571718_0",
+            "TEX201904150_03_TEX_571946_ANA_607345_0",
+            "TEX201904150_03_TEX_571946_ANA_600303_0",
+            "TEX201904150_03_TEX_571946_ANA_446359_0",
+            "TEX201904150_03_ANA_502239_TEX_425783_0",
+            "TEX201904150_03_ANA_502239_TEX_542454_0",
+            "TEX201904150_03_ANA_502239_TEX_462101_0",
+            "TEX201904150_03_ANA_502239_TEX_608577_0",
+            "TEX201904150_03_ANA_502239_TEX_608336_0",
+            "TEX201904150_03_ANA_502239_TEX_452678_0",
+            "TEX201904150_04_TEX_571946_ANA_664058_0",
+            "TEX201904150_04_TEX_571946_ANA_594777_0",
+            "TEX201904150_04_TEX_571946_ANA_545361_0",
+            "TEX201904150_04_ANA_502239_TEX_523253_0",
+            "TEX201904150_04_ANA_502239_TEX_643396_0",
+            "TEX201904150_04_ANA_502239_TEX_592261_0",
+            "TEX201904150_04_ANA_502239_TEX_425783_0",
+            "TEX201904150_04_ANA_502239_TEX_542454_0",
+            "TEX201904150_05_TEX_571946_ANA_592743_0",
+            "TEX201904150_05_TEX_571946_ANA_405395_0",
+            "TEX201904150_05_TEX_664871_ANA_571718_0",
+            "TEX201904150_05_TEX_664871_ANA_607345_0",
+            "TEX201904150_05_TEX_664871_ANA_600303_0",
+            "TEX201904150_05_ANA_592135_TEX_462101_0",
+            "TEX201904150_05_ANA_592135_TEX_608577_0",
+            "TEX201904150_05_ANA_592135_TEX_608336_0",
+            "TEX201904150_05_ANA_592135_TEX_452678_0",
+            "TEX201904150_05_ANA_592135_TEX_523253_0",
+            "TEX201904150_05_ANA_592135_TEX_643396_0",
+            "TEX201904150_05_ANA_592135_TEX_592261_0",
+            "TEX201904150_05_ANA_657228_TEX_425783_0",
+            "TEX201904150_06_TEX_664871_ANA_446359_0",
+            "TEX201904150_06_TEX_664871_ANA_664058_0",
+            "TEX201904150_06_TEX_664871_ANA_594777_0",
+            "TEX201904150_06_ANA_657228_TEX_542454_0",
+            "TEX201904150_06_ANA_657228_TEX_462101_0",
+            "TEX201904150_06_ANA_657228_TEX_608577_0",
+            "TEX201904150_06_ANA_657228_TEX_608336_0",
+            "TEX201904150_06_ANA_657228_TEX_452678_0",
+            "TEX201904150_06_ANA_657228_TEX_523253_0",
+            "TEX201904150_06_ANA_595928_TEX_643396_0",
+            "TEX201904150_07_TEX_664871_ANA_545361_0",
+            "TEX201904150_07_TEX_664871_ANA_592743_0",
+            "TEX201904150_07_TEX_664871_ANA_405395_0",
+            "TEX201904150_07_TEX_664871_ANA_571718_0",
+            "TEX201904150_07_TEX_664871_ANA_607345_0",
+            "TEX201904150_07_ANA_595928_TEX_592261_0",
+            "TEX201904150_07_ANA_595928_TEX_425783_0",
+            "TEX201904150_07_ANA_595928_TEX_542454_0",
+            "TEX201904150_07_ANA_595928_TEX_462101_0",
+            "TEX201904150_07_ANA_595928_TEX_608577_0",
+            "TEX201904150_08_TEX_613317_ANA_600303_0",
+            "TEX201904150_08_TEX_613317_ANA_446359_0",
+            "TEX201904150_08_TEX_613317_ANA_664058_0",
+            "TEX201904150_08_TEX_613317_ANA_594777_0",
+            "TEX201904150_08_TEX_613317_ANA_545361_0",
+            "TEX201904150_08_ANA_595928_TEX_608336_0",
+            "TEX201904150_08_ANA_595928_TEX_452678_0",
+            "TEX201904150_08_ANA_595928_TEX_523253_0",
+            "TEX201904150_08_ANA_595928_TEX_643396_0",
+            "TEX201904150_08_ANA_595928_TEX_592261_0",
+            "TEX201904150_08_ANA_595928_TEX_425783_0",
+            "TEX201904150_09_TEX_613317_ANA_592743_0",
+            "TEX201904150_09_TEX_613317_ANA_405395_0",
+            "TEX201904150_09_TEX_613317_ANA_571718_0",
+            "TEX201904150_09_TEX_613317_ANA_607345_0",
+            "TEX201904150_09_TEX_613317_ANA_600303_0",
+            "TEX201904150_09_TEX_600917_ANA_446359_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [],
+        "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": [
+            "TEX201904150_02_TEX_571946_ANA_545361_0",
+            "TEX201904150_05_TEX_571946_ANA_592743_0",
+            "TEX201904150_05_TEX_571946_ANA_405395_0",
+        ],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [],
+    }
     db_session.commit()
 
 
@@ -240,69 +584,133 @@ def test_combine_patched_pitchfx_data(vig_app):
     create_test_data(vig_app.db_session, vig_app.scraped_data, test_id)
     combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PATCH_PFX)
     assert "pitchfx_vs_bbref_audit" in combined_data
-    data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "batters_faced_bbref" in data_audit
-    assert data_audit["batters_faced_bbref"] == 78
-    assert "batters_faced_pitchfx" in data_audit
-    assert data_audit["batters_faced_pitchfx"] == 75
-    assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 75
-    assert "total_at_bats_patched_pitchfx" in data_audit
-    assert data_audit["total_at_bats_patched_pitchfx"] == 0
-    assert "total_at_bats_missing_pitchfx" in data_audit
-    assert data_audit["total_at_bats_missing_pitchfx"] == 3
-    assert "total_at_bats_extra_pitchfx" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx"] == 0
-    assert "total_at_bats_extra_pitchfx_removed" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx_removed"] == 0
-    assert "total_at_bats_duplicate_guid_removed" in data_audit
-    assert data_audit["total_at_bats_duplicate_guid_removed"] == 11
-    assert "pitch_count_bbref_stats_table" in data_audit
-    assert data_audit["pitch_count_bbref_stats_table"] == 329
-    assert "pitch_count_bbref" in data_audit
-    assert data_audit["pitch_count_bbref"] == 329
-    assert "pitch_count_pitchfx" in data_audit
-    assert data_audit["pitch_count_pitchfx"] == 313
-    assert "patched_pitchfx_count" in data_audit
-    assert data_audit["patched_pitchfx_count"] == 0
-    assert "missing_pitchfx_count" in data_audit
-    assert data_audit["missing_pitchfx_count"] == 16
-    assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 18
-    assert "at_bat_ids_patched_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_patched_pitchfx"] == []
-    assert "at_bat_ids_missing_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_missing_pitchfx"] == [
-        "OAK201904030_08_OAK_465657_BOS_646240_0",
-        "OAK201904030_08_OAK_465657_BOS_502110_0",
-        "OAK201904030_08_OAK_465657_BOS_519048_0",
-    ]
-    assert "pitchfx_error" in data_audit
-    assert not data_audit["pitchfx_error"]
-    assert "at_bat_ids_pitchfx_error" in data_audit
-    assert data_audit["at_bat_ids_pitchfx_error"] == []
-    assert "at_bat_ids_extra_pitchfx_removed" in data_audit
-    assert data_audit["at_bat_ids_extra_pitchfx_removed"] == []
-    assert "at_bat_ids_duplicate_guid_removed" in data_audit
-    assert data_audit["at_bat_ids_duplicate_guid_removed"] == [
-        "OAK201904030_01_OAK_462136_BOS_605141_0",
-        "OAK201904030_01_OAK_462136_BOS_643217_0",
-        "OAK201904030_01_OAK_462136_BOS_646240_0",
-        "OAK201904030_01_BOS_543135_OAK_543257_0",
-        "OAK201904030_01_BOS_543135_OAK_656305_0",
-        "OAK201904030_01_BOS_543135_OAK_572039_0",
-        "OAK201904030_01_BOS_543135_OAK_501981_0",
-        "OAK201904030_04_OAK_462136_BOS_646240_0",
-        "OAK201904030_06_BOS_605155_OAK_657656_0",
-        "OAK201904030_08_BOS_598264_OAK_434778_0",
-        "OAK201904030_08_BOS_598264_OAK_595777_0",
-    ]
-    assert "invalid_pitchfx" in data_audit
-    assert data_audit["invalid_pitchfx"]
-    assert "at_bat_ids_invalid_pitchfx" in data_audit
-    assert "OAK201904030_08_OAK_605525_BOS_519048_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "OAK201904030_08_OAK_605525_BOS_646240_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "OAK201904030_08_OAK_605525_BOS_502110_0" in data_audit["at_bat_ids_invalid_pitchfx"]
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": True,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 329,
+        "pitch_count_bbref": 329,
+        "pitch_count_pitchfx": 313,
+        "patched_pitchfx_count": 0,
+        "missing_pitchfx_count": 16,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 16,
+        "extra_pitchfx_removed_count": 16,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 78,
+        "batters_faced_pitchfx": 75,
+        "total_at_bats_pitchfx_complete": 75,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 3,
+        "total_at_bats_extra_pitchfx_removed": 11,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 3,
+        "at_bat_ids_pitchfx_complete": [
+            "OAK201904030_01_OAK_462136_BOS_605141_0",
+            "OAK201904030_01_OAK_462136_BOS_643217_0",
+            "OAK201904030_01_OAK_462136_BOS_646240_0",
+            "OAK201904030_01_BOS_543135_OAK_543257_0",
+            "OAK201904030_01_BOS_543135_OAK_656305_0",
+            "OAK201904030_01_BOS_543135_OAK_572039_0",
+            "OAK201904030_01_BOS_543135_OAK_501981_0",
+            "OAK201904030_02_OAK_462136_BOS_502110_0",
+            "OAK201904030_02_OAK_462136_BOS_519048_0",
+            "OAK201904030_02_OAK_462136_BOS_456488_0",
+            "OAK201904030_02_OAK_462136_BOS_571788_0",
+            "OAK201904030_02_OAK_462136_BOS_596119_0",
+            "OAK201904030_02_BOS_543135_OAK_434778_0",
+            "OAK201904030_02_BOS_543135_OAK_595777_0",
+            "OAK201904030_02_BOS_543135_OAK_543760_0",
+            "OAK201904030_02_BOS_543135_OAK_657656_0",
+            "OAK201904030_02_BOS_543135_OAK_460026_0",
+            "OAK201904030_02_BOS_543135_OAK_543257_0",
+            "OAK201904030_02_BOS_543135_OAK_656305_0",
+            "OAK201904030_03_OAK_462136_BOS_598265_0",
+            "OAK201904030_03_OAK_462136_BOS_605141_0",
+            "OAK201904030_03_OAK_462136_BOS_643217_0",
+            "OAK201904030_03_BOS_543135_OAK_572039_0",
+            "OAK201904030_03_BOS_543135_OAK_501981_0",
+            "OAK201904030_03_BOS_543135_OAK_434778_0",
+            "OAK201904030_03_BOS_543135_OAK_595777_0",
+            "OAK201904030_04_OAK_462136_BOS_646240_0",
+            "OAK201904030_04_OAK_462136_BOS_502110_0",
+            "OAK201904030_04_OAK_462136_BOS_519048_0",
+            "OAK201904030_04_BOS_543135_OAK_543760_0",
+            "OAK201904030_04_BOS_543135_OAK_657656_0",
+            "OAK201904030_04_BOS_543135_OAK_460026_0",
+            "OAK201904030_04_BOS_543135_OAK_543257_0",
+            "OAK201904030_04_BOS_543135_OAK_656305_0",
+            "OAK201904030_05_OAK_462136_BOS_456488_0",
+            "OAK201904030_05_OAK_462136_BOS_571788_0",
+            "OAK201904030_05_OAK_462136_BOS_596119_0",
+            "OAK201904030_05_OAK_462136_BOS_598265_0",
+            "OAK201904030_05_BOS_543135_OAK_572039_0",
+            "OAK201904030_05_BOS_543135_OAK_501981_0",
+            "OAK201904030_05_BOS_543135_OAK_434778_0",
+            "OAK201904030_06_OAK_462136_BOS_605141_0",
+            "OAK201904030_06_OAK_462136_BOS_643217_0",
+            "OAK201904030_06_OAK_462136_BOS_646240_0",
+            "OAK201904030_06_OAK_462136_BOS_502110_0",
+            "OAK201904030_06_OAK_488748_BOS_519048_0",
+            "OAK201904030_06_OAK_605525_BOS_456488_0",
+            "OAK201904030_06_OAK_605525_BOS_571788_0",
+            "OAK201904030_06_BOS_605155_OAK_595777_0",
+            "OAK201904030_06_BOS_605155_OAK_543760_0",
+            "OAK201904030_06_BOS_605155_OAK_657656_0",
+            "OAK201904030_06_BOS_605155_OAK_460026_0",
+            "OAK201904030_07_OAK_605525_BOS_596119_0",
+            "OAK201904030_07_OAK_605525_BOS_598265_0",
+            "OAK201904030_07_OAK_605525_BOS_605141_0",
+            "OAK201904030_07_OAK_605525_BOS_643217_0",
+            "OAK201904030_07_BOS_605155_OAK_543257_0",
+            "OAK201904030_07_BOS_605155_OAK_656305_0",
+            "OAK201904030_07_BOS_605155_OAK_572039_0",
+            "OAK201904030_07_BOS_598264_OAK_501981_0",
+            "OAK201904030_08_BOS_598264_OAK_434778_0",
+            "OAK201904030_08_BOS_598264_OAK_595777_0",
+            "OAK201904030_08_BOS_598264_OAK_543760_0",
+            "OAK201904030_08_BOS_598264_OAK_657656_0",
+            "OAK201904030_09_OAK_407845_BOS_456488_0",
+            "OAK201904030_09_OAK_407845_BOS_571788_0",
+            "OAK201904030_09_OAK_407845_BOS_596119_0",
+            "OAK201904030_09_OAK_407845_BOS_598265_0",
+            "OAK201904030_09_OAK_407845_BOS_605141_0",
+            "OAK201904030_09_OAK_433589_BOS_643217_0",
+            "OAK201904030_09_OAK_433589_BOS_646240_0",
+            "OAK201904030_09_BOS_518489_OAK_640461_0",
+            "OAK201904030_09_BOS_518489_OAK_543257_0",
+            "OAK201904030_09_BOS_518489_OAK_656305_0",
+            "OAK201904030_09_BOS_518489_OAK_572039_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [],
+        "at_bat_ids_missing_pitchfx": [
+            "OAK201904030_08_OAK_465657_BOS_646240_0",
+            "OAK201904030_08_OAK_465657_BOS_502110_0",
+            "OAK201904030_08_OAK_465657_BOS_519048_0",
+        ],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": [
+            "OAK201904030_01_OAK_462136_BOS_605141_0",
+            "OAK201904030_01_OAK_462136_BOS_643217_0",
+            "OAK201904030_01_OAK_462136_BOS_646240_0",
+            "OAK201904030_01_BOS_543135_OAK_543257_0",
+            "OAK201904030_01_BOS_543135_OAK_656305_0",
+            "OAK201904030_01_BOS_543135_OAK_572039_0",
+            "OAK201904030_01_BOS_543135_OAK_501981_0",
+            "OAK201904030_04_OAK_462136_BOS_646240_0",
+            "OAK201904030_06_BOS_605155_OAK_657656_0",
+            "OAK201904030_08_BOS_598264_OAK_434778_0",
+            "OAK201904030_08_BOS_598264_OAK_595777_0",
+        ],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [
+            "OAK201904030_08_OAK_605525_BOS_646240_0",
+            "OAK201904030_08_OAK_605525_BOS_502110_0",
+            "OAK201904030_08_OAK_605525_BOS_519048_0",
+        ],
+    }
 
     patch_invalid_pfx = PatchInvalidPitchFxTask(vig_app)
     result = patch_invalid_pfx.execute(GAME_ID_PATCH_PFX, no_prompts=True)
@@ -312,66 +720,133 @@ def test_combine_patched_pitchfx_data(vig_app):
     assert patch_results["fixed_all_errors"]
     combined_data = vig_app.scraped_data.get_combined_game_data(GAME_ID_PATCH_PFX)
     assert "pitchfx_vs_bbref_audit" in combined_data
-    data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "batters_faced_bbref" in data_audit
-    assert data_audit["batters_faced_bbref"] == 78
-    assert "batters_faced_pitchfx" in data_audit
-    assert data_audit["batters_faced_pitchfx"] == 78
-    assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 78
-    assert "total_at_bats_patched_pitchfx" in data_audit
-    assert data_audit["total_at_bats_patched_pitchfx"] == 3
-    assert "total_at_bats_missing_pitchfx" in data_audit
-    assert data_audit["total_at_bats_missing_pitchfx"] == 0
-    assert "total_at_bats_extra_pitchfx" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx"] == 0
-    assert "total_at_bats_extra_pitchfx_removed" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx_removed"] == 0
-    assert "total_at_bats_duplicate_guid_removed" in data_audit
-    assert data_audit["total_at_bats_duplicate_guid_removed"] == 12
-    assert "pitch_count_bbref_stats_table" in data_audit
-    assert data_audit["pitch_count_bbref_stats_table"] == 329
-    assert "pitch_count_bbref" in data_audit
-    assert data_audit["pitch_count_bbref"] == 329
-    assert "pitch_count_pitchfx" in data_audit
-    assert data_audit["pitch_count_pitchfx"] == 329
-    assert "patched_pitchfx_count" in data_audit
-    assert data_audit["patched_pitchfx_count"] == 16
-    assert "missing_pitchfx_count" in data_audit
-    assert data_audit["missing_pitchfx_count"] == 0
-    assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 18
-    assert "at_bat_ids_patched_pitchfx" in data_audit
-    assert "OAK201904030_08_OAK_465657_BOS_519048_0" in data_audit["at_bat_ids_patched_pitchfx"]
-    assert "OAK201904030_08_OAK_465657_BOS_646240_0" in data_audit["at_bat_ids_patched_pitchfx"]
-    assert "OAK201904030_08_OAK_465657_BOS_502110_0" in data_audit["at_bat_ids_patched_pitchfx"]
-    assert "at_bat_ids_missing_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_missing_pitchfx"] == []
-    assert "pitchfx_error" in data_audit
-    assert not data_audit["pitchfx_error"]
-    assert "at_bat_ids_pitchfx_error" in data_audit
-    assert data_audit["at_bat_ids_pitchfx_error"] == []
-    assert "at_bat_ids_extra_pitchfx_removed" in data_audit
-    assert data_audit["at_bat_ids_extra_pitchfx_removed"] == []
-    assert "at_bat_ids_duplicate_guid_removed" in data_audit
-    assert data_audit["at_bat_ids_duplicate_guid_removed"] == [
-        "OAK201904030_01_OAK_462136_BOS_605141_0",
-        "OAK201904030_01_OAK_462136_BOS_643217_0",
-        "OAK201904030_01_OAK_462136_BOS_646240_0",
-        "OAK201904030_01_BOS_543135_OAK_543257_0",
-        "OAK201904030_01_BOS_543135_OAK_656305_0",
-        "OAK201904030_01_BOS_543135_OAK_572039_0",
-        "OAK201904030_01_BOS_543135_OAK_501981_0",
-        "OAK201904030_04_OAK_462136_BOS_646240_0",
-        "OAK201904030_06_BOS_605155_OAK_657656_0",
-        "OAK201904030_08_OAK_465657_BOS_502110_0",
-        "OAK201904030_08_BOS_598264_OAK_434778_0",
-        "OAK201904030_08_BOS_598264_OAK_595777_0",
-    ]
-    assert "invalid_pitchfx" in data_audit
-    assert not data_audit["invalid_pitchfx"]
-    assert "at_bat_ids_invalid_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_invalid_pitchfx"] == []
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": False,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 329,
+        "pitch_count_bbref": 329,
+        "pitch_count_pitchfx": 329,
+        "patched_pitchfx_count": 16,
+        "missing_pitchfx_count": 0,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 0,
+        "extra_pitchfx_removed_count": 18,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 78,
+        "batters_faced_pitchfx": 78,
+        "total_at_bats_pitchfx_complete": 78,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 3,
+        "total_at_bats_missing_pitchfx": 0,
+        "total_at_bats_extra_pitchfx_removed": 12,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 0,
+        "at_bat_ids_pitchfx_complete": [
+            "OAK201904030_01_OAK_462136_BOS_605141_0",
+            "OAK201904030_01_OAK_462136_BOS_643217_0",
+            "OAK201904030_01_OAK_462136_BOS_646240_0",
+            "OAK201904030_01_BOS_543135_OAK_543257_0",
+            "OAK201904030_01_BOS_543135_OAK_656305_0",
+            "OAK201904030_01_BOS_543135_OAK_572039_0",
+            "OAK201904030_01_BOS_543135_OAK_501981_0",
+            "OAK201904030_02_OAK_462136_BOS_502110_0",
+            "OAK201904030_02_OAK_462136_BOS_519048_0",
+            "OAK201904030_02_OAK_462136_BOS_456488_0",
+            "OAK201904030_02_OAK_462136_BOS_571788_0",
+            "OAK201904030_02_OAK_462136_BOS_596119_0",
+            "OAK201904030_02_BOS_543135_OAK_434778_0",
+            "OAK201904030_02_BOS_543135_OAK_595777_0",
+            "OAK201904030_02_BOS_543135_OAK_543760_0",
+            "OAK201904030_02_BOS_543135_OAK_657656_0",
+            "OAK201904030_02_BOS_543135_OAK_460026_0",
+            "OAK201904030_02_BOS_543135_OAK_543257_0",
+            "OAK201904030_02_BOS_543135_OAK_656305_0",
+            "OAK201904030_03_OAK_462136_BOS_598265_0",
+            "OAK201904030_03_OAK_462136_BOS_605141_0",
+            "OAK201904030_03_OAK_462136_BOS_643217_0",
+            "OAK201904030_03_BOS_543135_OAK_572039_0",
+            "OAK201904030_03_BOS_543135_OAK_501981_0",
+            "OAK201904030_03_BOS_543135_OAK_434778_0",
+            "OAK201904030_03_BOS_543135_OAK_595777_0",
+            "OAK201904030_04_OAK_462136_BOS_646240_0",
+            "OAK201904030_04_OAK_462136_BOS_502110_0",
+            "OAK201904030_04_OAK_462136_BOS_519048_0",
+            "OAK201904030_04_BOS_543135_OAK_543760_0",
+            "OAK201904030_04_BOS_543135_OAK_657656_0",
+            "OAK201904030_04_BOS_543135_OAK_460026_0",
+            "OAK201904030_04_BOS_543135_OAK_543257_0",
+            "OAK201904030_04_BOS_543135_OAK_656305_0",
+            "OAK201904030_05_OAK_462136_BOS_456488_0",
+            "OAK201904030_05_OAK_462136_BOS_571788_0",
+            "OAK201904030_05_OAK_462136_BOS_596119_0",
+            "OAK201904030_05_OAK_462136_BOS_598265_0",
+            "OAK201904030_05_BOS_543135_OAK_572039_0",
+            "OAK201904030_05_BOS_543135_OAK_501981_0",
+            "OAK201904030_05_BOS_543135_OAK_434778_0",
+            "OAK201904030_06_OAK_462136_BOS_605141_0",
+            "OAK201904030_06_OAK_462136_BOS_643217_0",
+            "OAK201904030_06_OAK_462136_BOS_646240_0",
+            "OAK201904030_06_OAK_462136_BOS_502110_0",
+            "OAK201904030_06_OAK_488748_BOS_519048_0",
+            "OAK201904030_06_OAK_605525_BOS_456488_0",
+            "OAK201904030_06_OAK_605525_BOS_571788_0",
+            "OAK201904030_06_BOS_605155_OAK_595777_0",
+            "OAK201904030_06_BOS_605155_OAK_543760_0",
+            "OAK201904030_06_BOS_605155_OAK_657656_0",
+            "OAK201904030_06_BOS_605155_OAK_460026_0",
+            "OAK201904030_07_OAK_605525_BOS_596119_0",
+            "OAK201904030_07_OAK_605525_BOS_598265_0",
+            "OAK201904030_07_OAK_605525_BOS_605141_0",
+            "OAK201904030_07_OAK_605525_BOS_643217_0",
+            "OAK201904030_07_BOS_605155_OAK_543257_0",
+            "OAK201904030_07_BOS_605155_OAK_656305_0",
+            "OAK201904030_07_BOS_605155_OAK_572039_0",
+            "OAK201904030_07_BOS_598264_OAK_501981_0",
+            "OAK201904030_08_OAK_465657_BOS_646240_0",
+            "OAK201904030_08_OAK_465657_BOS_502110_0",
+            "OAK201904030_08_OAK_465657_BOS_519048_0",
+            "OAK201904030_08_BOS_598264_OAK_434778_0",
+            "OAK201904030_08_BOS_598264_OAK_595777_0",
+            "OAK201904030_08_BOS_598264_OAK_543760_0",
+            "OAK201904030_08_BOS_598264_OAK_657656_0",
+            "OAK201904030_09_OAK_407845_BOS_456488_0",
+            "OAK201904030_09_OAK_407845_BOS_571788_0",
+            "OAK201904030_09_OAK_407845_BOS_596119_0",
+            "OAK201904030_09_OAK_407845_BOS_598265_0",
+            "OAK201904030_09_OAK_407845_BOS_605141_0",
+            "OAK201904030_09_OAK_433589_BOS_643217_0",
+            "OAK201904030_09_OAK_433589_BOS_646240_0",
+            "OAK201904030_09_BOS_518489_OAK_640461_0",
+            "OAK201904030_09_BOS_518489_OAK_543257_0",
+            "OAK201904030_09_BOS_518489_OAK_656305_0",
+            "OAK201904030_09_BOS_518489_OAK_572039_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [
+            "OAK201904030_08_OAK_465657_BOS_646240_0",
+            "OAK201904030_08_OAK_465657_BOS_502110_0",
+            "OAK201904030_08_OAK_465657_BOS_519048_0",
+        ],
+        "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": [
+            "OAK201904030_01_OAK_462136_BOS_605141_0",
+            "OAK201904030_01_OAK_462136_BOS_643217_0",
+            "OAK201904030_01_OAK_462136_BOS_646240_0",
+            "OAK201904030_01_BOS_543135_OAK_543257_0",
+            "OAK201904030_01_BOS_543135_OAK_656305_0",
+            "OAK201904030_01_BOS_543135_OAK_572039_0",
+            "OAK201904030_01_BOS_543135_OAK_501981_0",
+            "OAK201904030_04_OAK_462136_BOS_646240_0",
+            "OAK201904030_06_BOS_605155_OAK_657656_0",
+            "OAK201904030_08_OAK_465657_BOS_502110_0",
+            "OAK201904030_08_BOS_598264_OAK_434778_0",
+            "OAK201904030_08_BOS_598264_OAK_595777_0",
+        ],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [],
+    }
     vig_app.db_session.commit()
 
 
@@ -385,69 +860,133 @@ def test_patch_all_invalid_pitchfx_data(vig_app):
         result.value.unlink()
     combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PATCH_PFX)
     assert "pitchfx_vs_bbref_audit" in combined_data
-    data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "batters_faced_bbref" in data_audit
-    assert data_audit["batters_faced_bbref"] == 78
-    assert "batters_faced_pitchfx" in data_audit
-    assert data_audit["batters_faced_pitchfx"] == 75
-    assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 75
-    assert "total_at_bats_patched_pitchfx" in data_audit
-    assert data_audit["total_at_bats_patched_pitchfx"] == 0
-    assert "total_at_bats_missing_pitchfx" in data_audit
-    assert data_audit["total_at_bats_missing_pitchfx"] == 3
-    assert "total_at_bats_extra_pitchfx" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx"] == 0
-    assert "total_at_bats_extra_pitchfx_removed" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx_removed"] == 0
-    assert "total_at_bats_duplicate_guid_removed" in data_audit
-    assert data_audit["total_at_bats_duplicate_guid_removed"] == 11
-    assert "pitch_count_bbref_stats_table" in data_audit
-    assert data_audit["pitch_count_bbref_stats_table"] == 329
-    assert "pitch_count_bbref" in data_audit
-    assert data_audit["pitch_count_bbref"] == 329
-    assert "pitch_count_pitchfx" in data_audit
-    assert data_audit["pitch_count_pitchfx"] == 313
-    assert "patched_pitchfx_count" in data_audit
-    assert data_audit["patched_pitchfx_count"] == 0
-    assert "missing_pitchfx_count" in data_audit
-    assert data_audit["missing_pitchfx_count"] == 16
-    assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 18
-    assert "at_bat_ids_patched_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_patched_pitchfx"] == []
-    assert "at_bat_ids_missing_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_missing_pitchfx"] == [
-        "OAK201904030_08_OAK_465657_BOS_646240_0",
-        "OAK201904030_08_OAK_465657_BOS_502110_0",
-        "OAK201904030_08_OAK_465657_BOS_519048_0",
-    ]
-    assert "pitchfx_error" in data_audit
-    assert not data_audit["pitchfx_error"]
-    assert "at_bat_ids_pitchfx_error" in data_audit
-    assert data_audit["at_bat_ids_pitchfx_error"] == []
-    assert "at_bat_ids_extra_pitchfx_removed" in data_audit
-    assert data_audit["at_bat_ids_extra_pitchfx_removed"] == []
-    assert "at_bat_ids_duplicate_guid_removed" in data_audit
-    assert data_audit["at_bat_ids_duplicate_guid_removed"] == [
-        "OAK201904030_01_OAK_462136_BOS_605141_0",
-        "OAK201904030_01_OAK_462136_BOS_643217_0",
-        "OAK201904030_01_OAK_462136_BOS_646240_0",
-        "OAK201904030_01_BOS_543135_OAK_543257_0",
-        "OAK201904030_01_BOS_543135_OAK_656305_0",
-        "OAK201904030_01_BOS_543135_OAK_572039_0",
-        "OAK201904030_01_BOS_543135_OAK_501981_0",
-        "OAK201904030_04_OAK_462136_BOS_646240_0",
-        "OAK201904030_06_BOS_605155_OAK_657656_0",
-        "OAK201904030_08_BOS_598264_OAK_434778_0",
-        "OAK201904030_08_BOS_598264_OAK_595777_0",
-    ]
-    assert "invalid_pitchfx" in data_audit
-    assert data_audit["invalid_pitchfx"]
-    assert "at_bat_ids_invalid_pitchfx" in data_audit
-    assert "OAK201904030_08_OAK_605525_BOS_519048_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "OAK201904030_08_OAK_605525_BOS_646240_0" in data_audit["at_bat_ids_invalid_pitchfx"]
-    assert "OAK201904030_08_OAK_605525_BOS_502110_0" in data_audit["at_bat_ids_invalid_pitchfx"]
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": True,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 329,
+        "pitch_count_bbref": 329,
+        "pitch_count_pitchfx": 313,
+        "patched_pitchfx_count": 0,
+        "missing_pitchfx_count": 16,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 16,
+        "extra_pitchfx_removed_count": 16,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 78,
+        "batters_faced_pitchfx": 75,
+        "total_at_bats_pitchfx_complete": 75,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 3,
+        "total_at_bats_extra_pitchfx_removed": 11,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 3,
+        "at_bat_ids_pitchfx_complete": [
+            "OAK201904030_01_OAK_462136_BOS_605141_0",
+            "OAK201904030_01_OAK_462136_BOS_643217_0",
+            "OAK201904030_01_OAK_462136_BOS_646240_0",
+            "OAK201904030_01_BOS_543135_OAK_543257_0",
+            "OAK201904030_01_BOS_543135_OAK_656305_0",
+            "OAK201904030_01_BOS_543135_OAK_572039_0",
+            "OAK201904030_01_BOS_543135_OAK_501981_0",
+            "OAK201904030_02_OAK_462136_BOS_502110_0",
+            "OAK201904030_02_OAK_462136_BOS_519048_0",
+            "OAK201904030_02_OAK_462136_BOS_456488_0",
+            "OAK201904030_02_OAK_462136_BOS_571788_0",
+            "OAK201904030_02_OAK_462136_BOS_596119_0",
+            "OAK201904030_02_BOS_543135_OAK_434778_0",
+            "OAK201904030_02_BOS_543135_OAK_595777_0",
+            "OAK201904030_02_BOS_543135_OAK_543760_0",
+            "OAK201904030_02_BOS_543135_OAK_657656_0",
+            "OAK201904030_02_BOS_543135_OAK_460026_0",
+            "OAK201904030_02_BOS_543135_OAK_543257_0",
+            "OAK201904030_02_BOS_543135_OAK_656305_0",
+            "OAK201904030_03_OAK_462136_BOS_598265_0",
+            "OAK201904030_03_OAK_462136_BOS_605141_0",
+            "OAK201904030_03_OAK_462136_BOS_643217_0",
+            "OAK201904030_03_BOS_543135_OAK_572039_0",
+            "OAK201904030_03_BOS_543135_OAK_501981_0",
+            "OAK201904030_03_BOS_543135_OAK_434778_0",
+            "OAK201904030_03_BOS_543135_OAK_595777_0",
+            "OAK201904030_04_OAK_462136_BOS_646240_0",
+            "OAK201904030_04_OAK_462136_BOS_502110_0",
+            "OAK201904030_04_OAK_462136_BOS_519048_0",
+            "OAK201904030_04_BOS_543135_OAK_543760_0",
+            "OAK201904030_04_BOS_543135_OAK_657656_0",
+            "OAK201904030_04_BOS_543135_OAK_460026_0",
+            "OAK201904030_04_BOS_543135_OAK_543257_0",
+            "OAK201904030_04_BOS_543135_OAK_656305_0",
+            "OAK201904030_05_OAK_462136_BOS_456488_0",
+            "OAK201904030_05_OAK_462136_BOS_571788_0",
+            "OAK201904030_05_OAK_462136_BOS_596119_0",
+            "OAK201904030_05_OAK_462136_BOS_598265_0",
+            "OAK201904030_05_BOS_543135_OAK_572039_0",
+            "OAK201904030_05_BOS_543135_OAK_501981_0",
+            "OAK201904030_05_BOS_543135_OAK_434778_0",
+            "OAK201904030_06_OAK_462136_BOS_605141_0",
+            "OAK201904030_06_OAK_462136_BOS_643217_0",
+            "OAK201904030_06_OAK_462136_BOS_646240_0",
+            "OAK201904030_06_OAK_462136_BOS_502110_0",
+            "OAK201904030_06_OAK_488748_BOS_519048_0",
+            "OAK201904030_06_OAK_605525_BOS_456488_0",
+            "OAK201904030_06_OAK_605525_BOS_571788_0",
+            "OAK201904030_06_BOS_605155_OAK_595777_0",
+            "OAK201904030_06_BOS_605155_OAK_543760_0",
+            "OAK201904030_06_BOS_605155_OAK_657656_0",
+            "OAK201904030_06_BOS_605155_OAK_460026_0",
+            "OAK201904030_07_OAK_605525_BOS_596119_0",
+            "OAK201904030_07_OAK_605525_BOS_598265_0",
+            "OAK201904030_07_OAK_605525_BOS_605141_0",
+            "OAK201904030_07_OAK_605525_BOS_643217_0",
+            "OAK201904030_07_BOS_605155_OAK_543257_0",
+            "OAK201904030_07_BOS_605155_OAK_656305_0",
+            "OAK201904030_07_BOS_605155_OAK_572039_0",
+            "OAK201904030_07_BOS_598264_OAK_501981_0",
+            "OAK201904030_08_BOS_598264_OAK_434778_0",
+            "OAK201904030_08_BOS_598264_OAK_595777_0",
+            "OAK201904030_08_BOS_598264_OAK_543760_0",
+            "OAK201904030_08_BOS_598264_OAK_657656_0",
+            "OAK201904030_09_OAK_407845_BOS_456488_0",
+            "OAK201904030_09_OAK_407845_BOS_571788_0",
+            "OAK201904030_09_OAK_407845_BOS_596119_0",
+            "OAK201904030_09_OAK_407845_BOS_598265_0",
+            "OAK201904030_09_OAK_407845_BOS_605141_0",
+            "OAK201904030_09_OAK_433589_BOS_643217_0",
+            "OAK201904030_09_OAK_433589_BOS_646240_0",
+            "OAK201904030_09_BOS_518489_OAK_640461_0",
+            "OAK201904030_09_BOS_518489_OAK_543257_0",
+            "OAK201904030_09_BOS_518489_OAK_656305_0",
+            "OAK201904030_09_BOS_518489_OAK_572039_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [],
+        "at_bat_ids_missing_pitchfx": [
+            "OAK201904030_08_OAK_465657_BOS_646240_0",
+            "OAK201904030_08_OAK_465657_BOS_502110_0",
+            "OAK201904030_08_OAK_465657_BOS_519048_0",
+        ],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": [
+            "OAK201904030_01_OAK_462136_BOS_605141_0",
+            "OAK201904030_01_OAK_462136_BOS_643217_0",
+            "OAK201904030_01_OAK_462136_BOS_646240_0",
+            "OAK201904030_01_BOS_543135_OAK_543257_0",
+            "OAK201904030_01_BOS_543135_OAK_656305_0",
+            "OAK201904030_01_BOS_543135_OAK_572039_0",
+            "OAK201904030_01_BOS_543135_OAK_501981_0",
+            "OAK201904030_04_OAK_462136_BOS_646240_0",
+            "OAK201904030_06_BOS_605155_OAK_657656_0",
+            "OAK201904030_08_BOS_598264_OAK_434778_0",
+            "OAK201904030_08_BOS_598264_OAK_595777_0",
+        ],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [
+            "OAK201904030_08_OAK_605525_BOS_646240_0",
+            "OAK201904030_08_OAK_605525_BOS_502110_0",
+            "OAK201904030_08_OAK_605525_BOS_519048_0",
+        ],
+    }
 
     game_status = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, GAME_ID_PATCH_PFX)
     game_status.combined_data_success = 1
@@ -479,6 +1018,112 @@ def test_combine_patched_boxscore_data(vig_app):
         vig_app, GAME_ID_PATCH_BOXSCORE, apply_patch_list=True
     )
     assert "pitchfx_vs_bbref_audit" in combined_data
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": False,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 270,
+        "pitch_count_bbref": 270,
+        "pitch_count_pitchfx": 270,
+        "patched_pitchfx_count": 0,
+        "missing_pitchfx_count": 0,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 0,
+        "extra_pitchfx_removed_count": 0,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 72,
+        "batters_faced_pitchfx": 72,
+        "total_at_bats_pitchfx_complete": 74,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 0,
+        "total_at_bats_extra_pitchfx_removed": 0,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 0,
+        "at_bat_ids_pitchfx_complete": [
+            "TOR201908170_01_TOR_663423_SEA_621005_0",
+            "TOR201908170_01_TOR_663423_SEA_641487_0",
+            "TOR201908170_01_TOR_663423_SEA_553882_0",
+            "TOR201908170_01_SEA_596035_TOR_666182_0",
+            "TOR201908170_01_SEA_596035_TOR_624415_0",
+            "TOR201908170_01_SEA_596035_TOR_665489_0",
+            "TOR201908170_02_TOR_663423_SEA_572122_0",
+            "TOR201908170_02_TOR_663423_SEA_543592_0",
+            "TOR201908170_02_TOR_663423_SEA_596129_0",
+            "TOR201908170_02_TOR_663423_SEA_543829_0",
+            "TOR201908170_02_TOR_663423_SEA_542979_0",
+            "TOR201908170_02_TOR_663423_SEA_664238_0",
+            "TOR201908170_02_TOR_663423_SEA_621005_0",
+            "TOR201908170_02_SEA_596035_TOR_642133_0",
+            "TOR201908170_02_SEA_596035_TOR_545341_0",
+            "TOR201908170_02_SEA_596035_TOR_475253_0",
+            "TOR201908170_02_SEA_596035_TOR_605233_0",
+            "TOR201908170_02_SEA_596035_TOR_641856_0",
+            "TOR201908170_02_SEA_596035_TOR_624512_0",
+            "TOR201908170_03_TOR_663423_SEA_641487_0",
+            "TOR201908170_03_TOR_663423_SEA_553882_0",
+            "TOR201908170_03_TOR_663423_SEA_572122_0",
+            "TOR201908170_03_SEA_518715_TOR_666182_0",
+            "TOR201908170_03_SEA_518715_TOR_624415_0",
+            "TOR201908170_03_SEA_518715_TOR_592273_0",
+            "TOR201908170_04_TOR_663423_SEA_543592_0",
+            "TOR201908170_04_TOR_663423_SEA_596129_0",
+            "TOR201908170_04_TOR_663423_SEA_543829_0",
+            "TOR201908170_04_TOR_663423_SEA_542979_0",
+            "TOR201908170_04_TOR_663423_SEA_664238_0",
+            "TOR201908170_04_SEA_518715_TOR_642133_0",
+            "TOR201908170_04_SEA_518715_TOR_545341_0",
+            "TOR201908170_04_SEA_518715_TOR_475253_0",
+            "TOR201908170_04_SEA_607555_TOR_605233_0",
+            "TOR201908170_05_TOR_663423_SEA_621005_0",
+            "TOR201908170_05_TOR_663423_SEA_641487_0",
+            "TOR201908170_05_TOR_663423_SEA_553882_0",
+            "TOR201908170_05_TOR_663423_SEA_572122_0",
+            "TOR201908170_05_SEA_607555_TOR_641856_0",
+            "TOR201908170_05_SEA_607555_TOR_624512_0",
+            "TOR201908170_05_SEA_607555_TOR_666182_0",
+            "TOR201908170_05_SEA_607555_TOR_624415_0",
+            "TOR201908170_05_SEA_665093_TOR_592273_0",
+            "TOR201908170_05_SEA_665093_TOR_642133_0",
+            "TOR201908170_06_TOR_663423_SEA_543592_0",
+            "TOR201908170_06_TOR_663423_SEA_596129_0",
+            "TOR201908170_06_TOR_663423_SEA_543829_0",
+            "TOR201908170_06_TOR_663423_SEA_542979_0",
+            "TOR201908170_06_SEA_665093_TOR_545341_0",
+            "TOR201908170_06_SEA_665093_TOR_475253_0",
+            "TOR201908170_06_SEA_665093_TOR_605233_0",
+            "TOR201908170_06_SEA_665093_TOR_641856_0",
+            "TOR201908170_07_TOR_543208_SEA_542979_0",
+            "TOR201908170_07_TOR_543208_SEA_664238_0",
+            "TOR201908170_07_TOR_543208_SEA_621005_0",
+            "TOR201908170_07_SEA_542914_TOR_624512_0",
+            "TOR201908170_07_SEA_542914_TOR_666182_0",
+            "TOR201908170_07_SEA_542914_TOR_624415_0",
+            "TOR201908170_07_SEA_542914_TOR_592273_0",
+            "TOR201908170_08_TOR_641835_SEA_641487_0",
+            "TOR201908170_08_TOR_641835_SEA_553882_0",
+            "TOR201908170_08_TOR_641835_SEA_572122_0",
+            "TOR201908170_08_TOR_571882_SEA_543592_0",
+            "TOR201908170_08_SEA_592815_TOR_642133_0",
+            "TOR201908170_08_SEA_592815_TOR_545341_0",
+            "TOR201908170_08_SEA_592815_TOR_475253_0",
+            "TOR201908170_09_TOR_571882_SEA_596129_0",
+            "TOR201908170_09_TOR_571882_SEA_543829_0",
+            "TOR201908170_09_TOR_571882_SEA_542979_0",
+            "TOR201908170_09_TOR_571882_SEA_664238_0",
+            "TOR201908170_09_SEA_543483_TOR_605233_0",
+            "TOR201908170_09_SEA_543483_TOR_641856_0",
+            "TOR201908170_09_SEA_543483_TOR_624512_0",
+            "TOR201908170_09_SEA_543483_TOR_666182_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [],
+        "at_bat_ids_missing_pitchfx": [],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": [],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [],
+    }
 
 
 def test_find_pfx_out_of_sequence(vig_app):
@@ -488,77 +1133,145 @@ def test_find_pfx_out_of_sequence(vig_app):
     create_test_data(db_session, scraped_data, test_id)
     combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PFX_OUT_OF_SEQUENCE)
     assert "pitchfx_vs_bbref_audit" in combined_data
-    data_audit = combined_data["pitchfx_vs_bbref_audit"]
-    assert "batters_faced_bbref" in data_audit
-    assert data_audit["batters_faced_bbref"] == 86
-    assert "total_at_bats_pitchfx_complete" in data_audit
-    assert data_audit["total_at_bats_pitchfx_complete"] == 80
-    assert "total_at_bats_missing_pitchfx" in data_audit
-    assert data_audit["total_at_bats_missing_pitchfx"] == 6
-    assert "total_at_bats_extra_pitchfx" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx"] == 0
-    assert "total_at_bats_invalid_pitchfx" in data_audit
-    assert data_audit["total_at_bats_invalid_pitchfx"] == 6
-    assert "total_at_bats_extra_pitchfx_removed" in data_audit
-    assert data_audit["total_at_bats_extra_pitchfx_removed"] == 2
-    assert "total_at_bats_duplicate_guid_removed" in data_audit
-    assert data_audit["total_at_bats_duplicate_guid_removed"] == 13
-    assert "pitch_count_bbref_stats_table" in data_audit
-    assert data_audit["pitch_count_bbref_stats_table"] == 344
-    assert "pitch_count_bbref" in data_audit
-    assert data_audit["pitch_count_bbref"] == 344
-    assert "pitch_count_pitchfx" in data_audit
-    assert data_audit["pitch_count_pitchfx"] == 322
-    assert "missing_pitchfx_count" in data_audit
-    assert data_audit["missing_pitchfx_count"] == 22
-    assert "extra_pitchfx_count" in data_audit
-    assert data_audit["extra_pitchfx_count"] == 0
-    assert "invalid_pitchfx_count" in data_audit
-    assert data_audit["invalid_pitchfx_count"] == 19
-    assert "extra_pitchfx_removed_count" in data_audit
-    assert data_audit["extra_pitchfx_removed_count"] == 3
-    assert "duplicate_guid_removed_count" in data_audit
-    assert data_audit["duplicate_guid_removed_count"] == 35
-    assert "at_bat_ids_missing_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_missing_pitchfx"] == [
-        "WAS201904030_06_WAS_502522_PHI_457705_0",
-        "WAS201904030_06_PHI_504379_WAS_594694_0",
-        "WAS201904030_06_PHI_504379_WAS_543228_0",
-        "WAS201904030_06_PHI_504379_WAS_645302_0",
-        "WAS201904030_06_PHI_504379_WAS_594809_0",
-        "WAS201904030_06_PHI_504379_WAS_572821_0",
-    ]
-    assert "at_bat_ids_extra_pitchfx_removed" in data_audit
-    assert data_audit["at_bat_ids_extra_pitchfx_removed"] == [
-        "WAS201904030_06_WAS_502522_PHI_596748_0",
-        "WAS201904030_06_WAS_502522_PHI_664068_0",
-    ]
-    assert "at_bat_ids_duplicate_guid_removed" in data_audit
-    assert data_audit["at_bat_ids_duplicate_guid_removed"] == [
-        "WAS201904030_01_WAS_434671_PHI_457705_0",
-        "WAS201904030_01_WAS_434671_PHI_516416_0",
-        "WAS201904030_01_WAS_434671_PHI_547180_0",
-        "WAS201904030_01_WAS_434671_PHI_656555_0",
-        "WAS201904030_01_WAS_434671_PHI_592663_0",
-        "WAS201904030_01_WAS_434671_PHI_546318_0",
-        "WAS201904030_01_PHI_605400_WAS_594809_0",
-        "WAS201904030_01_PHI_605400_WAS_543685_0",
-        "WAS201904030_01_PHI_605400_WAS_665742_0",
-        "WAS201904030_01_PHI_605400_WAS_475582_0",
-        "WAS201904030_01_PHI_605400_WAS_435559_0",
-        "WAS201904030_03_PHI_605400_WAS_594694_0",
-        "WAS201904030_08_PHI_622554_WAS_645302_0",
-    ]
-    assert "pitchfx_error" in data_audit
-    assert not data_audit["pitchfx_error"]
-    assert "at_bat_ids_pitchfx_error" in data_audit
-    assert data_audit["at_bat_ids_pitchfx_error"] == []
-    assert "at_bat_ids_invalid_pitchfx" in data_audit
-    assert data_audit["at_bat_ids_invalid_pitchfx"] == [
-        "WAS201904030_05_PHI_504379_WAS_594694_0",
-        "WAS201904030_06_WAS_502522_PHI_516416_0",
-        "WAS201904030_06_WAS_502522_PHI_547180_0",
-        "WAS201904030_06_PHI_591693_WAS_645302_0",
-        "WAS201904030_06_PHI_591693_WAS_594809_0",
-        "WAS201904030_06_PHI_591693_WAS_572821_0",
-    ]
+    assert combined_data["pitchfx_vs_bbref_audit"] == {
+        "invalid_pitchfx": True,
+        "pitchfx_error": False,
+        "pitch_count_bbref_stats_table": 344,
+        "pitch_count_bbref": 344,
+        "pitch_count_pitchfx": 322,
+        "patched_pitchfx_count": 0,
+        "missing_pitchfx_count": 22,
+        "extra_pitchfx_count": 0,
+        "invalid_pitchfx_count": 19,
+        "extra_pitchfx_removed_count": 38,
+        "duplicate_guid_removed_count": 0,
+        "batters_faced_bbref": 86,
+        "batters_faced_pitchfx": 86,
+        "total_at_bats_pitchfx_complete": 80,
+        "total_at_bats_extra_pitchfx": 0,
+        "total_at_bats_patched_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 6,
+        "total_at_bats_extra_pitchfx_removed": 15,
+        "total_at_bats_duplicate_guid_removed": 0,
+        "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_invalid_pitchfx": 6,
+        "at_bat_ids_pitchfx_complete": [
+            "WAS201904030_01_WAS_434671_PHI_457705_0",
+            "WAS201904030_01_WAS_434671_PHI_516416_0",
+            "WAS201904030_01_WAS_434671_PHI_547180_0",
+            "WAS201904030_01_WAS_434671_PHI_656555_0",
+            "WAS201904030_01_WAS_434671_PHI_592663_0",
+            "WAS201904030_01_WAS_434671_PHI_546318_0",
+            "WAS201904030_01_PHI_605400_WAS_594809_0",
+            "WAS201904030_01_PHI_605400_WAS_572821_0",
+            "WAS201904030_01_PHI_605400_WAS_543685_0",
+            "WAS201904030_01_PHI_605400_WAS_665742_0",
+            "WAS201904030_01_PHI_605400_WAS_475582_0",
+            "WAS201904030_01_PHI_605400_WAS_435559_0",
+            "WAS201904030_02_WAS_434671_PHI_514917_0",
+            "WAS201904030_02_WAS_434671_PHI_596748_0",
+            "WAS201904030_02_WAS_434671_PHI_605400_0",
+            "WAS201904030_02_PHI_605400_WAS_594694_0",
+            "WAS201904030_02_PHI_605400_WAS_434671_0",
+            "WAS201904030_02_PHI_605400_WAS_645302_0",
+            "WAS201904030_03_WAS_434671_PHI_457705_0",
+            "WAS201904030_03_WAS_434671_PHI_516416_0",
+            "WAS201904030_03_WAS_434671_PHI_547180_0",
+            "WAS201904030_03_WAS_434671_PHI_656555_0",
+            "WAS201904030_03_PHI_605400_WAS_594809_0",
+            "WAS201904030_03_PHI_605400_WAS_572821_0",
+            "WAS201904030_03_PHI_605400_WAS_543685_0",
+            "WAS201904030_03_PHI_605400_WAS_665742_0",
+            "WAS201904030_03_PHI_605400_WAS_475582_0",
+            "WAS201904030_03_PHI_605400_WAS_435559_0",
+            "WAS201904030_03_PHI_605400_WAS_594694_0",
+            "WAS201904030_04_WAS_434671_PHI_592663_0",
+            "WAS201904030_04_WAS_434671_PHI_546318_0",
+            "WAS201904030_04_WAS_434671_PHI_514917_0",
+            "WAS201904030_04_WAS_434671_PHI_596748_0",
+            "WAS201904030_04_WAS_434671_PHI_608384_0",
+            "WAS201904030_04_WAS_434671_PHI_457705_0",
+            "WAS201904030_04_WAS_434671_PHI_516416_0",
+            "WAS201904030_04_PHI_591693_WAS_434671_0",
+            "WAS201904030_04_PHI_591693_WAS_645302_0",
+            "WAS201904030_04_PHI_591693_WAS_594809_0",
+            "WAS201904030_04_PHI_591693_WAS_572821_0",
+            "WAS201904030_05_WAS_594840_PHI_547180_0",
+            "WAS201904030_05_WAS_594840_PHI_656555_0",
+            "WAS201904030_05_WAS_594840_PHI_592663_0",
+            "WAS201904030_05_WAS_594840_PHI_546318_0",
+            "WAS201904030_05_WAS_594840_PHI_514917_0",
+            "WAS201904030_05_PHI_591693_WAS_543685_0",
+            "WAS201904030_05_PHI_591693_WAS_665742_0",
+            "WAS201904030_05_PHI_591693_WAS_475582_0",
+            "WAS201904030_05_PHI_504379_WAS_435559_0",
+            "WAS201904030_06_WAS_502522_PHI_596748_0",
+            "WAS201904030_06_WAS_502522_PHI_664068_0",
+            "WAS201904030_07_WAS_502522_PHI_516416_0",
+            "WAS201904030_07_WAS_502522_PHI_547180_0",
+            "WAS201904030_07_WAS_502522_PHI_656555_0",
+            "WAS201904030_07_WAS_502522_PHI_592663_0",
+            "WAS201904030_07_PHI_593576_WAS_543685_0",
+            "WAS201904030_07_PHI_593576_WAS_665742_0",
+            "WAS201904030_07_PHI_593576_WAS_475582_0",
+            "WAS201904030_08_WAS_448609_PHI_546318_0",
+            "WAS201904030_08_WAS_448609_PHI_595284_0",
+            "WAS201904030_08_WAS_572096_PHI_596748_0",
+            "WAS201904030_08_WAS_572096_PHI_664068_0",
+            "WAS201904030_08_WAS_607457_PHI_457705_0",
+            "WAS201904030_08_WAS_607457_PHI_516416_0",
+            "WAS201904030_08_WAS_607457_PHI_547180_0",
+            "WAS201904030_08_WAS_607457_PHI_656555_0",
+            "WAS201904030_08_WAS_607457_PHI_592663_0",
+            "WAS201904030_08_PHI_622554_WAS_664057_0",
+            "WAS201904030_08_PHI_622554_WAS_594694_0",
+            "WAS201904030_08_PHI_622554_WAS_543228_0",
+            "WAS201904030_08_PHI_622554_WAS_645302_0",
+            "WAS201904030_08_PHI_622554_WAS_594809_0",
+            "WAS201904030_08_PHI_622554_WAS_572821_0",
+            "WAS201904030_09_WAS_448281_PHI_546318_0",
+            "WAS201904030_09_WAS_448281_PHI_571437_0",
+            "WAS201904030_09_WAS_448281_PHI_596748_0",
+            "WAS201904030_09_PHI_502085_WAS_543685_0",
+            "WAS201904030_09_PHI_502085_WAS_665742_0",
+            "WAS201904030_09_PHI_502085_WAS_475582_0",
+            "WAS201904030_09_PHI_502085_WAS_669738_0",
+        ],
+        "at_bat_ids_patched_pitchfx": [],
+        "at_bat_ids_missing_pitchfx": [
+            "WAS201904030_06_WAS_502522_PHI_457705_0",
+            "WAS201904030_06_PHI_504379_WAS_594694_0",
+            "WAS201904030_06_PHI_504379_WAS_543228_0",
+            "WAS201904030_06_PHI_504379_WAS_645302_0",
+            "WAS201904030_06_PHI_504379_WAS_594809_0",
+            "WAS201904030_06_PHI_504379_WAS_572821_0",
+        ],
+        "at_bat_ids_extra_pitchfx": [],
+        "at_bat_ids_extra_pitchfx_removed": [
+            "WAS201904030_01_WAS_434671_PHI_457705_0",
+            "WAS201904030_01_WAS_434671_PHI_516416_0",
+            "WAS201904030_01_WAS_434671_PHI_547180_0",
+            "WAS201904030_01_WAS_434671_PHI_656555_0",
+            "WAS201904030_01_WAS_434671_PHI_592663_0",
+            "WAS201904030_01_WAS_434671_PHI_546318_0",
+            "WAS201904030_01_PHI_605400_WAS_594809_0",
+            "WAS201904030_01_PHI_605400_WAS_543685_0",
+            "WAS201904030_01_PHI_605400_WAS_665742_0",
+            "WAS201904030_01_PHI_605400_WAS_475582_0",
+            "WAS201904030_01_PHI_605400_WAS_435559_0",
+            "WAS201904030_03_PHI_605400_WAS_594694_0",
+            "WAS201904030_06_WAS_502522_PHI_596748_0",
+            "WAS201904030_06_WAS_502522_PHI_664068_0",
+            "WAS201904030_08_PHI_622554_WAS_645302_0",
+        ],
+        "at_bat_ids_duplicate_guid_removed": [],
+        "at_bat_ids_pitchfx_error": [],
+        "at_bat_ids_invalid_pitchfx": [
+            "WAS201904030_05_PHI_504379_WAS_594694_0",
+            "WAS201904030_06_WAS_502522_PHI_516416_0",
+            "WAS201904030_06_WAS_502522_PHI_547180_0",
+            "WAS201904030_06_PHI_591693_WAS_645302_0",
+            "WAS201904030_06_PHI_591693_WAS_594809_0",
+            "WAS201904030_06_PHI_591693_WAS_572821_0",
+        ],
+    }

@@ -69,7 +69,7 @@ class PatchInvalidPitchFxTask(Task):
 
     def execute_with_prompts(self):
         self.initialize_attributes()
-        result = self.verify_scraped_data_can_be_combined()
+        result = self.verify_scraped_data_can_be_combined(apply_patch_list=False)
         if result.failure:
             return result
         if not self.game_contains_invalid_pfx():
@@ -79,7 +79,7 @@ class PatchInvalidPitchFxTask(Task):
     def execute_no_prompts(self):
         return (
             self.initialize_attributes()
-            .on_success(self.verify_scraped_data_can_be_combined)
+            .on_success(self.verify_scraped_data_can_be_combined, False)
             .on_success(self.get_invalid_pfx_map)
             .on_success(self.match_missing_pfx_data)
             .on_success(self.create_patch_list)
@@ -94,8 +94,8 @@ class PatchInvalidPitchFxTask(Task):
         self.patch_list = None
         return Result.Ok()
 
-    def verify_scraped_data_can_be_combined(self):
-        results = self.combine_data.investigate(self.bbref_game_id, apply_patch_list=True)
+    def verify_scraped_data_can_be_combined(self, apply_patch_list):
+        results = self.combine_data.investigate(self.bbref_game_id, apply_patch_list)
         if not results["get_all_pbp_events_success"]:
             error_message = "Failed to process play-by-play events and identify at_bat_ids"
         elif not results["get_all_pfx_data_success"]:
@@ -360,10 +360,12 @@ class PatchInvalidPitchFxTask(Task):
         return patch_list
 
     def get_all_pfx_data_to_patch(self, invalid_pfx):
-        dupe_pfx_count = invalid_pfx["at_bat_pitchfx_audit"]["duplicate_guid_removed_count"]
-        if not dupe_pfx_count:
-            return invalid_pfx["pitchfx"]
-        return invalid_pfx["pitchfx"] + invalid_pfx["removed_duplicate_guid"]["removed_dupes"]
+        removed_pfx_count = invalid_pfx["at_bat_pitchfx_audit"]["extra_pitchfx_removed_count"]
+        return (
+            invalid_pfx["pitchfx"] + invalid_pfx["removed_pitchfx"]
+            if removed_pfx_count
+            else invalid_pfx["pitchfx"]
+        )
 
     def combine_patch_lists(self, new_patch_list, old_patch_list):
         new_ids = [p.park_sv_id for p in new_patch_list]
@@ -379,7 +381,7 @@ class PatchInvalidPitchFxTask(Task):
             return Result.Ok({"created_patch_list": False})
         self.events.combine_scraped_data_start()
         box_before = deepcopy(self.boxscore)
-        result = self.verify_scraped_data_can_be_combined()
+        result = self.verify_scraped_data_can_be_combined(apply_patch_list=True)
         if result.failure:
             return result
         box_after = deepcopy(self.boxscore)
