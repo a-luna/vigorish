@@ -19,8 +19,6 @@ PROMPT_TEXT = "Choose the type of report you wish to generate from the options b
 
 class StatusReport(MenuItem):
     def __init__(self, app):
-        # TODO: Implement TableViewer with Date Range Summary reports, currently displays a huge
-        #       wall of text when reporting a full season, for example
         # TODO: New Status Report menu option - Single Game. User can provide either BB or BR ID
         # TODO: Another Status Report option - Pitch Appearance. Simply call .display() method
         super().__init__(app)

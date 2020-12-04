@@ -6,7 +6,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.enums import SeasonType
 from vigorish.util.datetime_util import get_date_range as get_date_range_util
 from vigorish.util.dt_format_strings import DATE_ONLY
@@ -60,7 +60,7 @@ class Season(Base):
 
     @hybrid_property
     def name(self):
-        return f"MLB {self.year} {self.season_type}"
+        return f'MLB {self.year} {self.season_type.replace("_", " ").title()}'
 
     @hybrid_property
     def start_date_str(self):

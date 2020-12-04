@@ -5,11 +5,10 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.list_helpers import display_dict
-from vigorish.util.pitch_calcs import calc_pitch_mix
 
 
 class PitchAppScrapeStatus(Base):
@@ -52,28 +51,10 @@ class PitchAppScrapeStatus(Base):
     season_id = Column(Integer, ForeignKey("season.id"))
 
     pitchfx = relationship("PitchFx")
-    pitch_mix_view = relationship(
-        "PitchApp_PitchMix_View",
-        backref="original",
-        uselist=False,
-        primaryjoin="PitchAppScrapeStatus.id==PitchApp_PitchMix_View.id",
-        foreign_keys="PitchApp_PitchMix_View.id",
-    )
-    pitch_type_view = relationship(
-        "PitchApp_PitchType_View",
-        backref="original",
-        uselist=False,
-        primaryjoin="PitchAppScrapeStatus.id==PitchApp_PitchType_View.id",
-        foreign_keys="PitchApp_PitchType_View.id",
-    )
 
     @hybrid_property
     def game_date(self):
         return self.date.game_date
-
-    @hybrid_property
-    def pitch_mix(self):
-        return calc_pitch_mix(self.pitch_mix_view.__dict__)
 
     @hybrid_property
     def contains_patched_data(self):
@@ -100,7 +81,7 @@ class PitchAppScrapeStatus(Base):
 
     @classmethod
     def get_csv_col_names(cls):
-        return [name for name in PitchAppScrapeStatusCsvRow.__dataclass_fields__.keys()]
+        return list(PitchAppScrapeStatusCsvRow.__dataclass_fields__.keys())
 
     @classmethod
     def export_table_as_csv(cls, db_session):
@@ -167,14 +148,14 @@ class PitchAppScrapeStatus(Base):
 
     @classmethod
     def get_all_scraped_pitch_app_ids_for_game_with_pitchfx_data(cls, db_session, bbref_game_id):
-        pitch_apps_with_pfx_data = [
-            pitch_app_status
-            for pitch_app_status in db_session.query(cls)
+        pitch_apps_with_pfx_data = list(
+            db_session.query(cls)
             .filter_by(bbref_game_id=bbref_game_id)
             .filter_by(scraped_pitchfx=1)
             .filter_by(no_pitchfx_data=0)
             .all()
-        ]
+        )
+
         return [
             pitch_app_status.pitch_app_id
             for pitch_app_status in pitch_apps_with_pfx_data

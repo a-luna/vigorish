@@ -1,7 +1,7 @@
 """Values used to identify a single player in various websites and databases."""
 from sqlalchemy import Column, ForeignKey, Integer, String
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.util.string_helpers import validate_at_bat_id
 
 

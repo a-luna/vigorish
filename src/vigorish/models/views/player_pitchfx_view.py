@@ -1,185 +1,7 @@
-from sqlalchemy import and_, case, func, join, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy_utils import create_view
 
-from vigorish.config.database import Base, PitchFx, PlayerId
-
-
-class Pitch_Mix_All_View(Base):
-    __table__ = create_view(
-        name="pitch_mix_all",
-        selectable=select(
-            [
-                PlayerId.db_player_id.label("id"),
-                PlayerId.mlb_id.label("mlb_id"),
-                PlayerId.mlb_name.label("name"),
-                func.count(PitchFx.id).label("total_pitches"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "CH", 1)], else_=0)).label("ch_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "CU", 1)], else_=0)).label("cu_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "EP", 1)], else_=0)).label("ep_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FA", 1)], else_=0)).label("fa_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FC", 1)], else_=0)).label("fc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FF", 1)], else_=0)).label("ff_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FS", 1)], else_=0)).label("fs_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FT", 1)], else_=0)).label("ft_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FO", 1)], else_=0)).label("fo_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "IN", 1)], else_=0)).label("in_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "KC", 1)], else_=0)).label("kc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "KN", 1)], else_=0)).label("kn_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "PO", 1)], else_=0)).label("po_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SC", 1)], else_=0)).label("sc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SI", 1)], else_=0)).label("si_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SL", 1)], else_=0)).label("sl_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "UN", 1)], else_=0)).label("un_count"),
-            ]
-        )
-        .where(or_(PitchFx.stand == "L", PitchFx.stand == "R"))
-        .select_from(
-            join(
-                PlayerId,
-                PitchFx,
-                PlayerId.db_player_id == PitchFx.pitcher_id,
-                isouter=True,
-            )
-        )
-        .group_by(PlayerId.db_player_id)
-        .order_by(PlayerId.mlb_name),
-        metadata=Base.metadata,
-        cascade_on_drop=False,
-    )
-
-
-class Pitch_Mix_Left_View(Base):
-    __table__ = create_view(
-        name="pitch_mix_left",
-        selectable=select(
-            [
-                PlayerId.db_player_id.label("id"),
-                PlayerId.mlb_id.label("mlb_id"),
-                PlayerId.mlb_name.label("name"),
-                func.count(PitchFx.id).label("total_pitches"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "CH", 1)], else_=0)).label("ch_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "CU", 1)], else_=0)).label("cu_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "EP", 1)], else_=0)).label("ep_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FA", 1)], else_=0)).label("fa_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FC", 1)], else_=0)).label("fc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FF", 1)], else_=0)).label("ff_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FS", 1)], else_=0)).label("fs_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FT", 1)], else_=0)).label("ft_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FO", 1)], else_=0)).label("fo_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "IN", 1)], else_=0)).label("in_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "KC", 1)], else_=0)).label("kc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "KN", 1)], else_=0)).label("kn_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "PO", 1)], else_=0)).label("po_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SC", 1)], else_=0)).label("sc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SI", 1)], else_=0)).label("si_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SL", 1)], else_=0)).label("sl_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "UN", 1)], else_=0)).label("un_count"),
-            ]
-        )
-        .where(PitchFx.stand == "L")
-        .select_from(
-            join(
-                PlayerId,
-                PitchFx,
-                PlayerId.db_player_id == PitchFx.pitcher_id,
-                isouter=True,
-            )
-        )
-        .group_by(PlayerId.db_player_id)
-        .order_by(PlayerId.mlb_name),
-        metadata=Base.metadata,
-        cascade_on_drop=False,
-    )
-
-
-class Pitch_Mix_Right_View(Base):
-    __table__ = create_view(
-        name="pitch_mix_right",
-        selectable=select(
-            [
-                PlayerId.db_player_id.label("id"),
-                PlayerId.mlb_id.label("mlb_id"),
-                PlayerId.mlb_name.label("name"),
-                func.count(PitchFx.id).label("total_pitches"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "CH", 1)], else_=0)).label("ch_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "CU", 1)], else_=0)).label("cu_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "EP", 1)], else_=0)).label("ep_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FA", 1)], else_=0)).label("fa_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FC", 1)], else_=0)).label("fc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FF", 1)], else_=0)).label("ff_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FS", 1)], else_=0)).label("fs_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FT", 1)], else_=0)).label("ft_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FO", 1)], else_=0)).label("fo_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "IN", 1)], else_=0)).label("in_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "KC", 1)], else_=0)).label("kc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "KN", 1)], else_=0)).label("kn_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "PO", 1)], else_=0)).label("po_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SC", 1)], else_=0)).label("sc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SI", 1)], else_=0)).label("si_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SL", 1)], else_=0)).label("sl_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "UN", 1)], else_=0)).label("un_count"),
-            ]
-        )
-        .where(PitchFx.stand == "R")
-        .select_from(
-            join(
-                PlayerId,
-                PitchFx,
-                PlayerId.db_player_id == PitchFx.pitcher_id,
-                isouter=True,
-            )
-        )
-        .group_by(PlayerId.db_player_id)
-        .order_by(PlayerId.mlb_name),
-        metadata=Base.metadata,
-        cascade_on_drop=False,
-    )
-
-
-class Pitch_Mix_By_Year_View(Base):
-    __table__ = create_view(
-        name="pitch_mix_by_year",
-        selectable=select(
-            [
-                PlayerId.db_player_id.label("id"),
-                PitchFx.season_id.label("season_id"),
-                PlayerId.mlb_id.label("mlb_id"),
-                PlayerId.mlb_name.label("name"),
-                func.count(PitchFx.id).label("total_pitches"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "CH", 1)], else_=0)).label("ch_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "CU", 1)], else_=0)).label("cu_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "EP", 1)], else_=0)).label("ep_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FA", 1)], else_=0)).label("fa_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FC", 1)], else_=0)).label("fc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FF", 1)], else_=0)).label("ff_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FS", 1)], else_=0)).label("fs_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FT", 1)], else_=0)).label("ft_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "FO", 1)], else_=0)).label("fo_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "IN", 1)], else_=0)).label("in_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "KC", 1)], else_=0)).label("kc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "KN", 1)], else_=0)).label("kn_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "PO", 1)], else_=0)).label("po_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SC", 1)], else_=0)).label("sc_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SI", 1)], else_=0)).label("si_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "SL", 1)], else_=0)).label("sl_count"),
-                func.sum(case([(PitchFx.mlbam_pitch_name == "UN", 1)], else_=0)).label("un_count"),
-            ]
-        )
-        .where(or_(PitchFx.stand == "L", PitchFx.stand == "R"))
-        .select_from(
-            join(
-                PlayerId,
-                PitchFx,
-                PlayerId.db_player_id == PitchFx.pitcher_id,
-                isouter=True,
-            )
-        )
-        .group_by(PitchFx.season_id)
-        .group_by(PlayerId.db_player_id)
-        .order_by(PlayerId.mlb_name),
-        metadata=Base.metadata,
-        cascade_on_drop=False,
-    )
+from vigorish.database import Base, PitchFx
 
 
 class Pitch_Type_All_View(Base):
@@ -187,10 +9,16 @@ class Pitch_Type_All_View(Base):
         name="pitch_type_all",
         selectable=select(
             [
-                PlayerId.db_player_id.label("id"),
+                PitchFx.pitcher_id.label("id"),
+                PitchFx.pitcher_id_mlb.label("pitcher_id_mlb"),
+                PitchFx.pitch_app_db_id.label("pitch_app_db_id"),
+                PitchFx.pitch_app_id.label("pitch_app_id"),
+                PitchFx.bbref_game_id.label("bbref_game_id"),
+                PitchFx.team_pitching_id.label("team_pitching_id"),
+                PitchFx.team_batting_id.label("team_batting_id"),
+                PitchFx.game_status_id.label("game_status_id"),
+                PitchFx.date_id.label("date_id"),
                 PitchFx.season_id.label("season_id"),
-                PlayerId.mlb_id.label("mlb_id"),
-                PlayerId.mlb_name.label("name"),
                 PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(PitchFx.id).label("total_pitches"),
                 func.avg(PitchFx.start_speed).label("avg_speed"),
@@ -209,17 +37,94 @@ class Pitch_Type_All_View(Base):
                 or_(PitchFx.stand == "L", PitchFx.stand == "R"),
             )
         )
-        .select_from(
-            join(
-                PlayerId,
-                PitchFx,
-                PlayerId.db_player_id == PitchFx.pitcher_id,
-                isouter=True,
+        .select_from(PitchFx)
+        .group_by(PitchFx.pitcher_id)
+        .group_by(PitchFx.mlbam_pitch_name)
+        .order_by(PitchFx.pitch_app_id),
+        metadata=Base.metadata,
+        cascade_on_drop=False,
+    )
+
+
+class Pitch_Type_Right_View(Base):
+    __table__ = create_view(
+        name="pitch_type_right",
+        selectable=select(
+            [
+                PitchFx.pitcher_id.label("id"),
+                PitchFx.pitcher_id_mlb.label("pitcher_id_mlb"),
+                PitchFx.pitch_app_db_id.label("pitch_app_db_id"),
+                PitchFx.pitch_app_id.label("pitch_app_id"),
+                PitchFx.bbref_game_id.label("bbref_game_id"),
+                PitchFx.team_pitching_id.label("team_pitching_id"),
+                PitchFx.team_batting_id.label("team_batting_id"),
+                PitchFx.game_status_id.label("game_status_id"),
+                PitchFx.date_id.label("date_id"),
+                PitchFx.season_id.label("season_id"),
+                PitchFx.mlbam_pitch_name.label("pitch_type"),
+                func.count(PitchFx.id).label("total_pitches"),
+                func.avg(PitchFx.start_speed).label("avg_speed"),
+                func.avg(PitchFx.pfx_x).label("avg_pfx_x"),
+                func.avg(PitchFx.pfx_z).label("avg_pfx_z"),
+                func.avg(PitchFx.px).label("avg_px"),
+                func.avg(PitchFx.pz).label("avg_pz"),
+            ]
+        )
+        .where(
+            and_(
+                PitchFx.is_duplicate_guid == 0,
+                PitchFx.is_duplicate_pitch_number == 0,
+                PitchFx.is_invalid_ibb == 0,
+                PitchFx.is_out_of_sequence == 0,
+                PitchFx.stand == "R",
             )
         )
-        .group_by(PlayerId.db_player_id)
+        .select_from(PitchFx)
+        .group_by(PitchFx.pitcher_id)
         .group_by(PitchFx.mlbam_pitch_name)
-        .order_by(PlayerId.mlb_name),
+        .order_by(PitchFx.pitch_app_id),
+        metadata=Base.metadata,
+        cascade_on_drop=False,
+    )
+
+
+class Pitch_Type_Left_View(Base):
+    __table__ = create_view(
+        name="pitch_type_left",
+        selectable=select(
+            [
+                PitchFx.pitcher_id.label("id"),
+                PitchFx.pitcher_id_mlb.label("pitcher_id_mlb"),
+                PitchFx.pitch_app_db_id.label("pitch_app_db_id"),
+                PitchFx.pitch_app_id.label("pitch_app_id"),
+                PitchFx.bbref_game_id.label("bbref_game_id"),
+                PitchFx.team_pitching_id.label("team_pitching_id"),
+                PitchFx.team_batting_id.label("team_batting_id"),
+                PitchFx.game_status_id.label("game_status_id"),
+                PitchFx.date_id.label("date_id"),
+                PitchFx.season_id.label("season_id"),
+                PitchFx.mlbam_pitch_name.label("pitch_type"),
+                func.count(PitchFx.id).label("total_pitches"),
+                func.avg(PitchFx.start_speed).label("avg_speed"),
+                func.avg(PitchFx.pfx_x).label("avg_pfx_x"),
+                func.avg(PitchFx.pfx_z).label("avg_pfx_z"),
+                func.avg(PitchFx.px).label("avg_px"),
+                func.avg(PitchFx.pz).label("avg_pz"),
+            ]
+        )
+        .where(
+            and_(
+                PitchFx.is_duplicate_guid == 0,
+                PitchFx.is_duplicate_pitch_number == 0,
+                PitchFx.is_invalid_ibb == 0,
+                PitchFx.is_out_of_sequence == 0,
+                PitchFx.stand == "L",
+            )
+        )
+        .select_from(PitchFx)
+        .group_by(PitchFx.pitcher_id)
+        .group_by(PitchFx.mlbam_pitch_name)
+        .order_by(PitchFx.pitch_app_id),
         metadata=Base.metadata,
         cascade_on_drop=False,
     )
@@ -230,10 +135,16 @@ class Pitch_Type_By_Year_View(Base):
         name="pitch_type_by_year",
         selectable=select(
             [
-                PlayerId.db_player_id.label("id"),
+                PitchFx.pitcher_id.label("id"),
+                PitchFx.pitcher_id_mlb.label("pitcher_id_mlb"),
+                PitchFx.pitch_app_db_id.label("pitch_app_db_id"),
+                PitchFx.pitch_app_id.label("pitch_app_id"),
+                PitchFx.bbref_game_id.label("bbref_game_id"),
+                PitchFx.team_pitching_id.label("team_pitching_id"),
+                PitchFx.team_batting_id.label("team_batting_id"),
+                PitchFx.game_status_id.label("game_status_id"),
+                PitchFx.date_id.label("date_id"),
                 PitchFx.season_id.label("season_id"),
-                PlayerId.mlb_id.label("mlb_id"),
-                PlayerId.mlb_name.label("name"),
                 PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(PitchFx.id).label("total_pitches"),
                 func.avg(PitchFx.start_speed).label("avg_speed"),
@@ -252,18 +163,11 @@ class Pitch_Type_By_Year_View(Base):
                 or_(PitchFx.stand == "L", PitchFx.stand == "R"),
             )
         )
-        .select_from(
-            join(
-                PlayerId,
-                PitchFx,
-                PlayerId.db_player_id == PitchFx.pitcher_id,
-                isouter=True,
-            )
-        )
+        .select_from(PitchFx)
         .group_by(PitchFx.season_id)
-        .group_by(PlayerId.db_player_id)
+        .group_by(PitchFx.pitcher_id)
         .group_by(PitchFx.mlbam_pitch_name)
-        .order_by(PlayerId.mlb_name),
+        .order_by(PitchFx.pitch_app_id),
         metadata=Base.metadata,
         cascade_on_drop=False,
     )

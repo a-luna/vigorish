@@ -2,7 +2,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.util.list_helpers import display_dict
 
 

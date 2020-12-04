@@ -7,7 +7,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.models.season import Season
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import (
@@ -407,35 +407,53 @@ class GameScrapeStatus(Base):
         total_pitchfx_removed_count = (
             self.total_duplicate_pitchfx_removed_count + self.total_extra_pitchfx_removed_count
         )
-        return (
-            f"BBRef Game ID................................: {bbref_game_id}\n"
-            f"brooksbaseball.net Game ID...................: {bb_game_id}\n"
-            f"Game Date-Time...............................: {self.game_date_time_str}\n"
-            f"Scraped BBRef Boxscore.......................: {scraped_bbref_boxscore}\n"
-            f"Scraped Brooks Pitch Logs....................: {scraped_brooks_pitch_logs}\n"
-            f"PitchFx Logs Scraped.........................: {scraped_all_pitchfx_logs} "
-            f"{self.total_pitch_apps_scraped_pitchfx}/{self.pitch_app_count_pitchfx}\n"
-            "Combined BBRef/PitchFX Data..................: "
-            f"{combined_data_for_all_pitchfx_logs}\n"
-            f"PitchFX Data Errors (Valid AB/Invalid AB)....: {pitchfx_error_for_any_pitchfx_logs} "
-            f"{self.total_pitch_apps_pitchfx_error}/{self.total_pitch_apps_invalid_pitchfx}\n"
-            f"Pitch App Count (BBRef/Brooks)...............: "
-            f"{self.pitch_app_count_bbref}/{self.pitch_app_count_brooks}\n"
-            f"Pitch App Count (PFx/data/no data)...........: {self.pitch_app_count_pitchfx}/"
-            f"{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
-            f"Pitch Count (BBRef/Brooks/PFx)...............: {self.total_pitch_count_bbref}/"
-            f"{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}\n"
-            "Pitch Count Audited (BBRef/PFx/Removed)......: "
-            f"{self.total_pitch_count_bbref_audited}/{self.total_pitch_count_pitchfx_audited}/"
-            f"{total_pitchfx_removed_count}\n"
-        )
+        return [
+            f"BBRef Game ID................................: {bbref_game_id}",
+            f"brooksbaseball.net Game ID...................: {bb_game_id}",
+            f"Game Date-Time...............................: {self.game_date_time_str}",
+            f"Scraped BBRef Boxscore.......................: {scraped_bbref_boxscore}",
+            f"Scraped Brooks Pitch Logs....................: {scraped_brooks_pitch_logs}",
+            (
+                f"PitchFx Logs Scraped.........................: {scraped_all_pitchfx_logs} "
+                f"{self.total_pitch_apps_scraped_pitchfx}/{self.pitch_app_count_pitchfx}"
+            ),
+            (
+                "Combined BBRef/PitchFX Data..................: "
+                f"{combined_data_for_all_pitchfx_logs}"
+            ),
+            (
+                f"PitchFX Data Errors (Valid AB/Invalid AB)....: "
+                f"{pitchfx_error_for_any_pitchfx_logs} "
+                f"{self.total_pitch_apps_pitchfx_error}/{self.total_pitch_apps_invalid_pitchfx}"
+            ),
+            (
+                f"Pitch App Count (BBRef/Brooks)...............: "
+                f"{self.pitch_app_count_bbref}/{self.pitch_app_count_brooks}"
+            ),
+            (
+                f"Pitch App Count (PFx/data/no data)...........: "
+                f"{self.pitch_app_count_pitchfx}/"
+                f"{self.total_pitch_apps_with_pitchfx_data}/"
+                f"{self.total_pitch_apps_no_pitchfx_data}"
+            ),
+            (
+                f"Pitch Count (BBRef/Brooks/PFx)...............: {self.total_pitch_count_bbref}/"
+                f"{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}"
+            ),
+            (
+                "Pitch Count Audited (BBRef/PFx/Removed)......: "
+                f"{self.total_pitch_count_bbref_audited}/"
+                f"{self.total_pitch_count_pitchfx_audited}/"
+                f"{total_pitchfx_removed_count}"
+            ),
+        ]
 
     def as_csv_dict(self):
         return dict_from_dataclass(self, GameScrapeStatusCsvRow, date_format=DATE_ONLY)
 
     @classmethod
     def get_csv_col_names(cls):
-        return [name for name in GameScrapeStatusCsvRow.__dataclass_fields__.keys()]
+        return list(GameScrapeStatusCsvRow.__dataclass_fields__.keys())
 
     @classmethod
     def export_table_as_csv(cls, db_session):
@@ -524,9 +542,7 @@ class GameScrapeStatus(Base):
         season = Season.find_by_year(db_session, year)
         if not season:
             return None
-        games_for_season = [
-            game for game in db_session.query(cls).filter_by(season_id=season.id).all()
-        ]
+        games_for_season = list(db_session.query(cls).filter_by(season_id=season.id).all())
         games_for_season.sort(key=lambda x: x.scrape_status_date_id)
         bb_team_id = get_brooks_team_id(team_id_br)
         return [

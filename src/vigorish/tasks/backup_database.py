@@ -5,7 +5,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from events import Events
 
-from vigorish.config.database import (
+from vigorish.database import (
     DateScrapeStatus,
     GameScrapeStatus,
     get_total_number_of_rows,

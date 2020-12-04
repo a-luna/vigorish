@@ -1,4 +1,4 @@
-from vigorish.config.database import DateScrapeStatus, GameScrapeStatus, Season
+from vigorish.database import DateScrapeStatus, GameScrapeStatus, Season
 from vigorish.enums import DataSet
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result

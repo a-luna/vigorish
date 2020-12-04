@@ -6,7 +6,7 @@ from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.datetime_util import make_tzaware, TIME_ZONE_NEW_YORK
 from vigorish.util.dt_format_strings import CSV_UTC, DT_AWARE
@@ -106,7 +106,7 @@ class PitchFx(Base):
 
     @classmethod
     def get_csv_col_names(cls):
-        return [name for name in PitchFxCsvRow.__dataclass_fields__.keys()]
+        return list(PitchFxCsvRow.__dataclass_fields__.keys())
 
     @classmethod
     def export_table_as_csv(cls, db_session):

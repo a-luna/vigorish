@@ -8,8 +8,8 @@ from vigorish.cli.components.prompts import select_game_prompt, user_options_pro
 from vigorish.cli.components.util import print_error, print_heading
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.view_game_data import ViewGameData
-from vigorish.config.database import GameScrapeStatus, Team
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.database import GameScrapeStatus, Team
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id
 

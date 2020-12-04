@@ -7,8 +7,8 @@ from getch import pause
 from halo import Halo
 
 from vigorish.cli.components import print_heading, print_message
-from vigorish.config.database import ScrapeError
 from vigorish.constants import FAKE_SPINNER, JOB_SPINNER_COLORS
+from vigorish.database import ScrapeError
 from vigorish.enums import DataSet, JobStatus, ScrapeTaskOption, StatusReport
 from vigorish.scrape.bbref_boxscores.scrape_task import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_task import ScrapeBBRefGamesForDate

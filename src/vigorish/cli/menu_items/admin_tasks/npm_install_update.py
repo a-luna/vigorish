@@ -2,8 +2,8 @@
 import subprocess
 from tempfile import TemporaryDirectory
 
-from halo import Halo
 from getch import pause
+from halo import Halo
 
 from vigorish.cli.components import print_heading, print_message, yes_no_prompt
 from vigorish.cli.components.util import get_random_cli_color, get_random_dots_spinner

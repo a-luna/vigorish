@@ -6,18 +6,40 @@ from vigorish.enums import DataSet, VigFile
 TIMESTAMP_REGEX = re.compile(r"(?P<hour>\d?\d):(?P<minute>\d\d)")
 JOB_NAME_PATTERN = r"^[\w\s-]+$"
 JOB_NAME_REGEX = re.compile(JOB_NAME_PATTERN)
-DATE_ONLY_TABLE_ID_REGEX = re.compile(r"(?P<year>\d{4,4})(?P<month>\d{2,2})(?P<day>\d{2,2})")
-BBREF_BOXSCORE_URL_PATTERN = (
-    r"^https:\/\/www.baseball-reference.com\/boxes\/"
-    r"(?P<team_id>[A-Z]{3,3})\/(?P<game_id>[0-9A-Z]{12,12}).shtml$"
+DATE_ONLY_TABLE_ID_REGEX = re.compile(
+    r"""
+    (?P<year>\d{4,4})
+    (?P<month>\d{2,2})
+    (?P<day>\d{2,2})
+""",
+    re.VERBOSE,
 )
-BBREF_BOXSCORE_URL_REGEX = re.compile(BBREF_BOXSCORE_URL_PATTERN)
+BBREF_BOXSCORE_URL_PATTERN = r"""
+    ^
+    https:\/\/www.baseball-reference.com\/boxes\/
+    (?P<team_id>[A-Z]{3,3})\/
+    (?P<game_id>[0-9A-Z]{12,12}).shtml
+    $
+"""
+BBREF_BOXSCORE_URL_REGEX = re.compile(BBREF_BOXSCORE_URL_PATTERN, re.VERBOSE)
 
 BBREF_DAILY_JSON_FILENAME_REGEX = re.compile(
-    r"bbref_games_for_date_(?P<year>\d{4,4})-(?P<month>\d{2,2})-(?P<day>\d{2,2})"
+    r"""
+    bbref_games_for_date_
+    (?P<year>\d{4,4})-
+    (?P<month>\d{2,2})-
+    (?P<day>\d{2,2})
+""",
+    re.VERBOSE,
 )
 BB_DAILY_JSON_FILENAME_REGEX = re.compile(
-    r"brooks_games_for_date_(?P<year>\d{4,4})-(?P<month>\d{2,2})-(?P<day>\d{2,2})"
+    r"""
+    brooks_games_for_date_
+    (?P<year>\d{4,4})-
+    (?P<month>\d{2,2})-
+    (?P<day>\d{2,2})
+""",
+    re.VERBOSE,
 )
 
 PFX_TIMESTAMP_REGEX = re.compile(

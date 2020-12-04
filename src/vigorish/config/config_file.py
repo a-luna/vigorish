@@ -247,7 +247,7 @@ class ConfigFile:
         self.config_json = deepcopy(self.settings_meta)
         for setting, config_dict in self.config_json.items():
             if config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"]:
-                config_dict["ALL"] = self.get_default_value(setting, DataSet.ALL)
+                config_dict[DataSet.ALL.name] = self.get_default_value(setting, DataSet.ALL)
                 for data_set in [data_set for data_set in DataSet if data_set != DataSet.ALL]:
                     config_dict[data_set.name] = None
             else:
@@ -258,20 +258,20 @@ class ConfigFile:
 
     def get_default_value(self, setting_name, data_set):
         default_value_dict = {
-            "STATUS_REPORT": str(StatusReport.SEASON_SUMMARY),
+            "STATUS_REPORT": StatusReport.SEASON_SUMMARY.name,
             "S3_BUCKET": "your-bucket",
-            "SCRAPE_CONDITION": str(ScrapeCondition.ONLY_MISSING_DATA),
-            "SCRAPE_TASK_OPTION": str(ScrapeTaskOption.BY_DATE),
+            "SCRAPE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA.name,
+            "SCRAPE_TASK_OPTION": ScrapeTaskOption.BY_DATE.name,
             "URL_SCRAPE_DELAY": UrlScrapeDelay(True, True, None, 3, 6).to_dict(),
             "BATCH_JOB_SETTINGS": BatchJobSettings(True, True, None, 50, 80).to_dict(),
-            "HTML_STORAGE": str(HtmlStorageOption.NONE),
+            "HTML_STORAGE": HtmlStorageOption.NONE.name,
             "HTML_LOCAL_FOLDER_PATH": "html_storage/{year}/{data_set}/",
             "HTML_S3_FOLDER_PATH": "{year}/{data_set}/html/",
-            "JSON_STORAGE": str(JsonStorageOption.LOCAL_FOLDER),
+            "JSON_STORAGE": JsonStorageOption.LOCAL_FOLDER.name,
             "JSON_LOCAL_FOLDER_PATH": "json_storage/{year}/{data_set}/",
             "JSON_S3_FOLDER_PATH": "{year}/{data_set}/",
-            "SCRAPED_DATA_COMBINE_CONDITION": str(ScrapeCondition.ONLY_MISSING_DATA),
-            "COMBINED_DATA_STORAGE": str(CombinedDataStorageOption.LOCAL_FOLDER),
+            "SCRAPED_DATA_COMBINE_CONDITION": ScrapeCondition.ONLY_MISSING_DATA.name,
+            "COMBINED_DATA_STORAGE": CombinedDataStorageOption.LOCAL_FOLDER.name,
             "COMBINED_DATA_LOCAL_FOLDER_PATH": "json_storage/{year}/combined_data",
             "COMBINED_DATA_S3_FOLDER_PATH": "{year}/combined_data",
             "DB_BACKUP_FOLDER_PATH": "backup",

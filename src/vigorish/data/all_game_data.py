@@ -7,8 +7,8 @@ from tabulate import tabulate
 
 from vigorish.cli.components.models import DisplayTable
 from vigorish.cli.components.table_viewer import TableViewer
-from vigorish.config.database import PitchAppScrapeStatus, PlayerId, Team
 from vigorish.data.all_player_data import AllPlayerData
+from vigorish.database import PlayerId, Team
 from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.dt_format_strings import DT_AWARE, DT_AWARE_VERBOSE
 from vigorish.util.exceptions import ScrapedDataException
@@ -29,7 +29,6 @@ AT_BAT_DESC_MAX_WIDTH = 35
 
 class AllGameData:
     def __init__(self, app, bbref_game_id):
-        # TODO: Create method to get pitch type counts for pitch app
         self.app = app
         self.db_engine = app.db_engine
         self.db_session = app.db_session
@@ -86,7 +85,7 @@ class AllGameData:
 
     @property
     def pitch_stats_player_ids(self):
-        return [mlb_id for mlb_id in self.get_pitch_stat_map().keys()]
+        return list(self.get_pitch_stat_map().keys())
 
     @property
     def team_data(self):
@@ -423,20 +422,20 @@ class AllGameData:
             for at_bat in inning_dict.values()
         ]
 
-    def get_pitch_mix(self, mlb_id):
+    def get_pitch_types_for_player(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
             return result
         mlb_id = result.value
         pitch_app_id = f"{self.bbref_game_id}_{mlb_id}"
+        pitch_app_metrics = self.scraped_data.get_metrics_for_pitch_app(pitch_app_id)
         pitcher_data = AllPlayerData(self.app, mlb_id)
-        pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
         return {
-            "pitch_app": pitch_app.pitch_mix,
-            "by_year": pitcher_data.pitch_mix_by_year,
-            "all": pitcher_data.pitch_mix,
-            "bat_r": pitcher_data.pitch_mix_right,
-            "bat_l": pitcher_data.pitch_mix_left,
+            "pitch_app": pitch_app_metrics,
+            "by_year": pitcher_data.pitch_types_by_year,
+            "all": pitcher_data.pitch_types,
+            "bat_r": pitcher_data.pitch_types_right,
+            "bat_l": pitcher_data.pitch_types_left,
         }
 
     def get_matchup_details(self):
@@ -538,9 +537,7 @@ def create_linescore_table(
 
 def add_filler_columns(list_to_pad):
     pad_length = 9 - len(list_to_pad)
-    for i in range(pad_length):
-        list_to_pad.append("  ")
-    return list_to_pad
+    return f'{list_to_pad}{"  "*pad_length}'
 
 
 def get_linescore_inning_numbers(start, end):
@@ -552,7 +549,7 @@ def get_linescore_inning_numbers(start, end):
 
 
 def get_innings_sorted(innings_unsorted):
-    inning_ids = set([inning["inning_id"] for inning in innings_unsorted])
+    inning_ids = {inning["inning_id"] for inning in innings_unsorted}
     inning_weights = {inning_id: get_inning_weight(inning_id) for inning_id in inning_ids}
     return sorted(innings_unsorted, key=lambda x: inning_weights[x["inning_id"]])
 
@@ -657,7 +654,7 @@ def get_detailed_bat_stats(bat_stats):
         bases_on_balls = bat_stats["bases_on_balls"] if bat_stats["bases_on_balls"] > 1 else ""
         stat_list.append(f"{bases_on_balls}BB")
     if stats:
-        stat_list.extend([remaining_stat for remaining_stat in stats.values()])
+        stat_list.extend(list(stats.values()))
     return ", ".join(stat_list)
 
 

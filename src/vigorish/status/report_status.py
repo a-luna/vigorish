@@ -1,17 +1,59 @@
 import os
 
-from pprint import pformat
-
 from vigorish.cli.components import print_message
 from vigorish.cli.components.dict_viewer import DictListTableViewer
-from vigorish.config.database import DateScrapeStatus, Season
+from vigorish.cli.components.models import DisplayPage
+from vigorish.cli.components.page_viewer import PageViewer
+from vigorish.database import DateScrapeStatus, Season
 from vigorish.enums import StatusReport
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY
+from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
 
 
 def report_status_single_date(db_session, game_date, report_type):
+    pages = []
+    result = validate_single_date(db_session, game_date)
+    if result.failure:
+        return result
+    date_status = result.value
+    date_str = game_date.strftime(DATE_MONTH_NAME)
+    heading = f"\n### OVERALL STATUS FOR {date_str} ###"
+    pages.append(DisplayPage(date_status.status_report(), heading))
+    if report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS:
+        game_status_dict = date_status.games_status_report()
+        for num, (game_id, game_report) in enumerate(game_status_dict.items(), start=1):
+            heading = f"\n### STATUS FOR {game_id} (Game {num}/{len(game_status_dict)}) ###"
+            pages.append(DisplayPage(game_report, heading))
+    if (
+        report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX
+        or report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS
+    ):
+        heading = f"\n### MISSING PITCHFX DATA FOR {date_str} ###"
+        missing_ids_str = _get_missing_pfx_ids_for_date(db_session, date_status)
+        pages.append(DisplayPage(missing_ids_str, heading))
+    date_report = PageViewer(
+        pages,
+        prompt="Press Enter to return to the Main Menu",
+        confirm_only=True,
+        heading_color="bright_magenta",
+        text_color="bright_magenta",
+        wrap_text=False,
+    )
+    if os.environ.get("ENV") != "TEST":
+        date_report.launch()
+    else:
+        for page in pages:
+            page.display(
+                heading_color="bright_magenta",
+                text_color="bright_magenta",
+                wrap_text=False,
+            )
+    return Result.Ok()
+
+
+def validate_single_date(db_session, game_date):
     season = Season.find_by_year(db_session, game_date.year)
     date_is_valid = Season.is_date_in_season(db_session, game_date).success
     date_str = game_date.strftime(DATE_ONLY)
@@ -26,41 +68,7 @@ def report_status_single_date(db_session, game_date, report_type):
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
         return Result.Fail(error)
-    missing_pitchfx = (
-        report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX
-        or report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS
-    )
-    missing_ids_str = ""
-    if missing_pitchfx:
-        if date_status.scraped_all_pitchfx_logs:
-            missing_ids_str = "All PitchFX logs have been scraped"
-        elif date_status.scraped_all_brooks_pitch_logs:
-            missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
-                db_session, game_date
-            )
-            missing_ids_str = (
-                f"MISSING: {pformat(missing_pitch_app_ids)}"
-                if missing_pitch_app_ids
-                else "All PitchFX logs have been scraped"
-            )
-        else:
-            missing_ids_str = (
-                "Missing IDs cannot be reported until all pitch logs have been scraped."
-            )
-    date_str = game_date.strftime(DATE_MONTH_NAME)
-    print_message(f"\n### OVERALL STATUS FOR {date_str} ###", fg="bright_cyan", bold=True)
-    print_message(date_status.status_report(), wrap=False, fg="bright_cyan")
-    if report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS:
-        print_message(
-            f"\n### STATUS FOR EACH GAME PLAYED {date_str} ###", fg="bright_green", bold=True
-        )
-        print_message(date_status.games_status_report(), wrap=False, fg="bright_green")
-    if missing_pitchfx:
-        print_message(
-            f"\n### MISSING PITCHFX LOGS FOR {date_str} ###", fg="bright_magenta", bold=True
-        )
-        print_message(missing_ids_str, wrap=False, fg="bright_magenta")
-    return Result.Ok()
+    return Result.Ok(date_status)
 
 
 def report_season_status(db_session, year, report_type):
@@ -123,30 +131,54 @@ def display_date_range_status(db_session, start_date, end_date, status_date_rang
 
 
 def display_detailed_report_for_date_range(db_session, status_date_range, missing_pitchfx):
+    pages = []
     for date_status in status_date_range:
         game_date_str = date_status.game_date.strftime(DATE_MONTH_NAME)
+        heading = f"\n### STATUS REPORT FOR {game_date_str} ###"
+        pages.append(DisplayPage(date_status.status_report(), heading))
         missing_ids_str = ""
         if missing_pitchfx:
-            if date_status.scraped_all_pitchfx_logs:
-                missing_ids_str = "All PitchFX logs have been scraped"
-            elif date_status.scraped_all_brooks_pitch_logs:
-                missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
-                    db_session, date_status.game_date
-                )
-                missing_ids_str = (
-                    f"MISSING: {pformat(missing_pitch_app_ids)}"
-                    if missing_pitch_app_ids
-                    else "All PitchFX logs have been scraped"
-                )
-            else:
-                missing_ids_str = (
-                    "Missing IDs cannot be reported until all pitch logs have been scraped."
-                )
-        print_message(f"\n### STATUS REPORT FOR {game_date_str} ###", fg="bright_cyan", bold=True)
-        print_message(date_status.status_report(), wrap=False, fg="bright_cyan")
-        if missing_pitchfx:
-            print_message(missing_ids_str, wrap=False, fg="bright_cyan")
+            heading = f"\n### MISSING PITCHFX DATA FOR {game_date_str} ###"
+            missing_ids_str = _get_missing_pfx_ids_for_date(db_session, date_status)
+            pages.append(DisplayPage(missing_ids_str, heading))
+    date_report = PageViewer(
+        pages,
+        prompt="Press Enter to return to the Main Menu",
+        confirm_only=True,
+        heading_color="bright_cyan",
+        text_color="bright_cyan",
+        wrap_text=False,
+    )
+    if os.environ.get("ENV") != "TEST":
+        date_report.launch()
+    else:
+        for page in pages:
+            page.display(
+                heading_color="bright_cyan",
+                text_color="bright_cyan",
+                wrap_text=False,
+            )
     return Result.Ok()
+
+
+def _get_missing_pfx_ids_for_date(db_session, date_status):
+    if date_status.scraped_all_pitchfx_logs:
+        return ["All PitchFX logs have been scraped"]
+    elif date_status.scraped_all_brooks_pitch_logs:
+        missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
+            db_session, date_status.game_date
+        )
+        missing_ids_str = [
+            [f"GAME ID: {game_id}", f'{", ".join(pitch_app_id_list)}\n']
+            for game_id, pitch_app_id_list in missing_pitch_app_ids.items()
+        ]
+        return (
+            flatten_list2d(missing_ids_str)
+            if missing_ids_str
+            else ["All PitchFX logs have been scraped"]
+        )
+    else:
+        return ["Missing IDs cannot be reported until all pitch logs have been scraped."]
 
 
 def display_summary_report_for_date_range(start_date, end_date, status_date_range):

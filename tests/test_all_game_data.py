@@ -121,40 +121,139 @@ def test_all_game_data(vig_app):
     mlb_id = result.value
     assert mlb_id == bat_stats_player_id
 
-    pitch_mix = all_game_data.get_pitch_mix(571882)
-    assert "all" in pitch_mix and pitch_mix["all"] == {
-        PitchType.ALL: {"count": 17, "percent": 1.000},
-        PitchType.CHANGEUP: {"count": 3, "percent": 0.176},
-        PitchType.CURVEBALL: {"count": 6, "percent": 0.353},
-        PitchType.FOUR_SEAM_FASTBALL: {"count": 6, "percent": 0.353},
-        PitchType.SLIDER: {"count": 2, "percent": 0.118},
+    pitch_mix = all_game_data.get_pitch_types_for_player(571882)
+    assert "all" in pitch_mix
+    (pitch_mix_total_all, pitch_mix_detail_all) = pitch_mix["all"]
+    assert pitch_mix_total_all == {
+        "count": 17,
+        "percent": 1.0,
+        "type": [
+            PitchType.CHANGEUP,
+            PitchType.CURVEBALL,
+            PitchType.FOUR_SEAM_FASTBALL,
+            PitchType.SLIDER,
+        ],
     }
-    assert "bat_l" in pitch_mix and pitch_mix["bat_l"] == {
-        PitchType.ALL: {"count": 12, "percent": 1.000},
-        PitchType.CHANGEUP: {"count": 3, "percent": 0.250},
-        PitchType.CURVEBALL: {"count": 4, "percent": 0.333},
-        PitchType.FOUR_SEAM_FASTBALL: {"count": 3, "percent": 0.250},
-        PitchType.SLIDER: {"count": 2, "percent": 0.167},
+    pitch_mix_detail_all[PitchType.CHANGEUP] = {
+        "avg_pfx_x": -6.37,
+        "avg_pfx_z": 7.137,
+        "avg_px": -0.3,
+        "avg_pz": 2.37,
+        "avg_speed": 86.037,
+        "count": 3,
+        "percent": 0.176,
+        "pitch_type": PitchType.CHANGEUP,
     }
-    assert "bat_r" in pitch_mix and pitch_mix["bat_r"] == {
-        PitchType.ALL: {"count": 5, "percent": 1.000},
-        PitchType.CURVEBALL: {"count": 2, "percent": 0.400},
-        PitchType.FOUR_SEAM_FASTBALL: {"count": 3, "percent": 0.600},
+    pitch_mix_detail_all[PitchType.CURVEBALL] = {
+        "avg_pfx_x": 2.912,
+        "avg_pfx_z": -4.573,
+        "avg_px": 0.007,
+        "avg_pz": 1.785,
+        "avg_speed": 78.692,
+        "count": 6,
+        "percent": 0.353,
+        "pitch_type": PitchType.CURVEBALL,
     }
-    assert "by_year" in pitch_mix and 2019 in pitch_mix["by_year"]
-    assert pitch_mix["by_year"][2019] == {
-        PitchType.ALL: {"count": 17, "percent": 1.000},
-        PitchType.CHANGEUP: {"count": 3, "percent": 0.176},
-        PitchType.CURVEBALL: {"count": 6, "percent": 0.353},
-        PitchType.FOUR_SEAM_FASTBALL: {"count": 6, "percent": 0.353},
-        PitchType.SLIDER: {"count": 2, "percent": 0.118},
+    pitch_mix_detail_all[PitchType.FOUR_SEAM_FASTBALL] = {
+        "avg_pfx_x": -1.258,
+        "avg_pfx_z": 8.69,
+        "avg_px": -0.05,
+        "avg_pz": 3.307,
+        "avg_speed": 94.26,
+        "count": 6,
+        "percent": 0.353,
+        "pitch_type": PitchType.FOUR_SEAM_FASTBALL,
     }
-    assert "pitch_app" in pitch_mix and pitch_mix["pitch_app"] == {
-        PitchType.ALL: {"count": 17, "percent": 1.000},
-        PitchType.CHANGEUP: {"count": 3, "percent": 0.176},
-        PitchType.CURVEBALL: {"count": 6, "percent": 0.353},
-        PitchType.FOUR_SEAM_FASTBALL: {"count": 6, "percent": 0.353},
-        PitchType.SLIDER: {"count": 2, "percent": 0.118},
+    pitch_mix_detail_all[PitchType.SLIDER] = {
+        "avg_pfx_x": 1.83,
+        "avg_pfx_z": -1.265,
+        "avg_px": 0.845,
+        "avg_pz": 0.54,
+        "avg_speed": 84.225,
+        "count": 2,
+        "percent": 0.118,
+        "pitch_type": PitchType.SLIDER,
+    }
+
+    assert "bat_r" in pitch_mix
+    (pitch_mix_total_bat_r, pitch_mix_detail_bat_r) = pitch_mix["bat_r"]
+    assert pitch_mix_total_bat_r == {
+        "count": 5,
+        "percent": 1.0,
+        "type": [PitchType.CURVEBALL, PitchType.FOUR_SEAM_FASTBALL],
+    }
+    pitch_mix_detail_bat_r[PitchType.CURVEBALL] = {
+        "avg_pfx_x": 2.215,
+        "avg_pfx_z": -3.9,
+        "avg_px": 0.53,
+        "avg_pz": 2.09,
+        "avg_speed": 78.88,
+        "count": 2,
+        "percent": 0.4,
+        "pitch_type": PitchType.CURVEBALL,
+    }
+    pitch_mix_detail_bat_r[PitchType.FOUR_SEAM_FASTBALL] = {
+        "avg_pfx_x": -1.258,
+        "avg_pfx_z": 8.69,
+        "avg_px": -0.05,
+        "avg_pz": 3.307,
+        "avg_speed": 94.26,
+        "count": 6,
+        "percent": 0.353,
+        "pitch_type": PitchType.FOUR_SEAM_FASTBALL,
+    }
+
+    assert "bat_l" in pitch_mix
+    (pitch_mix_total_bat_l, pitch_mix_detail_bat_l) = pitch_mix["bat_l"]
+    assert pitch_mix_total_bat_l == {
+        "count": 12,
+        "percent": 1.0,
+        "type": [
+            PitchType.CHANGEUP,
+            PitchType.CURVEBALL,
+            PitchType.FOUR_SEAM_FASTBALL,
+            PitchType.SLIDER,
+        ],
+    }
+    pitch_mix_detail_bat_l[PitchType.CHANGEUP] = {
+        "avg_pfx_x": -6.37,
+        "avg_pfx_z": 7.137,
+        "avg_px": -0.3,
+        "avg_pz": 2.37,
+        "avg_speed": 86.037,
+        "count": 3,
+        "percent": 0.25,
+        "pitch_type": PitchType.CHANGEUP,
+    }
+    pitch_mix_detail_bat_l[PitchType.CURVEBALL] = {
+        "avg_pfx_x": 3.26,
+        "avg_pfx_z": -4.91,
+        "avg_px": -0.255,
+        "avg_pz": 1.633,
+        "avg_speed": 78.597,
+        "count": 4,
+        "percent": 0.333,
+        "pitch_type": PitchType.CURVEBALL,
+    }
+    pitch_mix_detail_bat_l[PitchType.FOUR_SEAM_FASTBALL] = {
+        "avg_pfx_x": -0.593,
+        "avg_pfx_z": 8.187,
+        "avg_px": -0.053,
+        "avg_pz": 3.16,
+        "avg_speed": 93.67,
+        "count": 3,
+        "percent": 0.25,
+        "pitch_type": PitchType.FOUR_SEAM_FASTBALL,
+    }
+    pitch_mix_detail_bat_l[PitchType.SLIDER] = {
+        "avg_pfx_x": 1.83,
+        "avg_pfx_z": -1.265,
+        "avg_px": 0.845,
+        "avg_pz": 0.54,
+        "avg_speed": 84.225,
+        "count": 2,
+        "percent": 0.167,
+        "pitch_type": PitchType.SLIDER,
     }
 
     matchup = all_game_data.get_matchup_details()

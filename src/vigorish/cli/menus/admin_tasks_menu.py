@@ -10,15 +10,14 @@ from vigorish.cli.menu_items.admin_tasks.sync_scraped_data import SyncScrapedDat
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.cli.menu_items.return_to_parent import ReturnToParent
 from vigorish.cli.menu_items.setup_db import SetupDatabase
-from vigorish.config.database import db_setup_complete
 from vigorish.constants import EMOJI_DICT
+from vigorish.database import db_setup_complete
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed
 
 
 class AdminTasksMenu(Menu):
     def __init__(self, app, audit_report):
-        # TODO: Add Refresh Game Data menu option
         # TODO: Add Admin Task menu item to edit season dates and add new seasons
         super().__init__(app)
         self.audit_report = audit_report

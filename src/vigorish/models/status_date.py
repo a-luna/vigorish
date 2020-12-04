@@ -1,3 +1,4 @@
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -6,7 +7,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2, DATE_ONLY_TABLE_ID
 
@@ -507,34 +508,56 @@ class DateScrapeStatus(Base):
         total_pitchfx_removed_count = (
             self.total_duplicate_pitchfx_removed_count + self.total_extra_pitchfx_removed_count
         )
-        return (
-            f"Overall Status For Date......................: {self.scrape_status_description}\n"
-            f"Scraped Daily Dashboard (BBRef/Brooks).......: "
-            f"{scraped_daily_bbref}/{scraped_daily_brooks}\n"
-            f"BBref Boxscores Scraped......................: {scraped_bbref_boxscores} "
-            f"{self.total_bbref_boxscores_scraped}/{self.total_games}\n"
-            f"Brooks Games Scraped.........................: {scraped_brooks_pitch_logs} "
-            f"{self.total_brooks_pitch_logs_scraped}/{self.total_games}\n"
-            f"PitchFx Logs Scraped.........................: {scraped_all_pitchfx_logs} "
-            f"{self.total_pitch_apps_scraped_pitchfx}/{self.pitch_app_count_pitchfx} "
-            f"({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
-            f"Combined BBRef/PitchFX Data (Success/Total)..: {combined_data_for_all_pitchfx_logs} "
-            f"{self.total_games_combined_success}/{self.total_games_combined}\n"
-            f"Pitch App Count (BBRef/Brooks)...............: "
-            f"{self.pitch_app_count_bbref}/{self.pitch_app_count_brooks}\n"
-            f"Pitch App Count (PFx/data/no data)...........: {self.pitch_app_count_pitchfx}/"
-            f"{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
-            f"PitchFX Data Errors (Valid AB/Invalid AB)....: {pitchfx_error_for_any_pitchfx_logs} "
-            f"{self.total_pitch_apps_pitchfx_error}/{self.total_pitch_apps_invalid_pitchfx}\n"
-            f"Pitch Count (BBRef/Brooks/PFx)...............: {self.total_pitch_count_bbref}/"
-            f"{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}\n"
-            "Pitch Count Audited (BBRef/PFx/Removed)......: "
-            f"{self.total_pitch_count_bbref_audited}/{self.total_pitch_count_pitchfx_audited}/"
-            f"{total_pitchfx_removed_count}\n"
-        )
+        return [
+            f"Overall Status For Date......................: {self.scrape_status_description}",
+            (
+                f"Scraped Daily Dashboard (BBRef/Brooks).......: "
+                f"{scraped_daily_bbref}/{scraped_daily_brooks}"
+            ),
+            (
+                f"BBref Boxscores Scraped......................: {scraped_bbref_boxscores} "
+                f"{self.total_bbref_boxscores_scraped}/{self.total_games}"
+            ),
+            (
+                f"Brooks Games Scraped.........................: {scraped_brooks_pitch_logs} "
+                f"{self.total_brooks_pitch_logs_scraped}/{self.total_games}"
+            ),
+            (
+                f"PitchFx Logs Scraped.........................: {scraped_all_pitchfx_logs} "
+                f"{self.total_pitch_apps_scraped_pitchfx}/{self.pitch_app_count_pitchfx} "
+                f"({self.percent_complete_pitchfx_logs_scraped:.0%})"
+            ),
+            (
+                f"Combined BBRef/PitchFX Data (Success/Total)..: "
+                f"{combined_data_for_all_pitchfx_logs} "
+                f"{self.total_games_combined_success}/{self.total_games_combined}"
+            ),
+            (
+                f"Pitch App Count (BBRef/Brooks)...............: "
+                f"{self.pitch_app_count_bbref}/{self.pitch_app_count_brooks}"
+            ),
+            (
+                f"Pitch App Count (PFx/data/no data)...........: {self.pitch_app_count_pitchfx}/"
+                f"{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}"
+            ),
+            (
+                f"PitchFX Data Errors (Valid AB/Invalid AB)....: "
+                f"{pitchfx_error_for_any_pitchfx_logs} "
+                f"{self.total_pitch_apps_pitchfx_error}/{self.total_pitch_apps_invalid_pitchfx}"
+            ),
+            (
+                f"Pitch Count (BBRef/Brooks/PFx)...............: {self.total_pitch_count_bbref}/"
+                f"{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}"
+            ),
+            (
+                "Pitch Count Audited (BBRef/PFx/Removed)......: "
+                f"{self.total_pitch_count_bbref_audited}/{self.total_pitch_count_pitchfx_audited}/"
+                f"{total_pitchfx_removed_count}"
+            ),
+        ]
 
     def games_status_report(self):
-        return "\n".join([g.status_report() for g in self.games])
+        return {g.bbref_game_id: g.status_report() for g in self.games}
 
     def as_csv_dict(self):
         return dict_from_dataclass(self, DateScrapeStatusCsvRow, date_format=DATE_ONLY)
@@ -602,7 +625,10 @@ class DateScrapeStatus(Base):
     @classmethod
     def get_unscraped_pitch_app_ids_for_date(cls, db_session, game_date):
         unscraped_pitch_apps = cls.get_unscraped_pitch_appearances_for_date(db_session, game_date)
-        return [pitch_app.pitch_app_id for pitch_app in unscraped_pitch_apps]
+        pitch_app_dict = defaultdict(list)
+        for pa in unscraped_pitch_apps:
+            pitch_app_dict[pa.bbref_game_id].append(pa.pitch_app_id)
+        return pitch_app_dict
 
     @classmethod
     def verify_bbref_daily_dashboard_scraped_for_date(cls, db_session, game_date):

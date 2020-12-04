@@ -1,4 +1,4 @@
-from vigorish.config.database import PitchAppScrapeStatus
+from vigorish.database import PitchAppScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 

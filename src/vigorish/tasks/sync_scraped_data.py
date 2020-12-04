@@ -47,8 +47,7 @@ class SyncScrapedDataTask(Task):
     def cached_s3_objects(self):
         if self._cached_s3_objects:
             return self._cached_s3_objects
-        s3_objects = self.file_helper.get_all_object_keys_in_s3_bucket()
-        self._cached_s3_objects = [obj for obj in s3_objects]
+        self._cached_s3_objects = list(self.file_helper.get_all_object_keys_in_s3_bucket())
         return self._cached_s3_objects
 
     def execute(self, sync_direction, file_type, data_set, year):
@@ -224,8 +223,8 @@ class SyncScrapedDataTask(Task):
         return (True, new_files, update_files)
 
     def find_files_not_in_dest(self, src_files, dest_files):
-        src_names = set(f["name"] for f in src_files if f["size"] > 0)
-        dest_names = set(f["name"] for f in dest_files if f["size"] > 0)
+        src_names = {f["name"] for f in src_files if f["size"] > 0}
+        dest_names = {f["name"] for f in dest_files if f["size"] > 0}
         sync_files = list(src_names - dest_names)
         return [self.add_new_file(f) for f in src_files if f["name"] in sync_files]
 
@@ -242,16 +241,8 @@ class SyncScrapedDataTask(Task):
             and src_sync[i]["size"] != dest_sync[i]["size"]
         ]
 
-    def update_existing_file(self, file):
-        file["operation"] = "UPDATE EXISTING FILE"
-        return file
-
-    def src_file_is_newer(self, src, dest, min_diff_seconds=60):
-        diff = src["last_modified"] - dest["last_modified"]
-        return diff.total_seconds() > min_diff_seconds
-
     def find_files_in_common(self, src_files, dest_files):
-        src_names = set(f["name"] for f in src_files if f["size"] > 0)
+        src_names = {f["name"] for f in src_files if f["size"] > 0}
         dest_names = [f["name"] for f in dest_files if f["size"] > 0]
         sync_files = list(src_names.intersection(dest_names))
         src_sync = [f for f in src_files if f["name"] in sync_files]
@@ -259,6 +250,14 @@ class SyncScrapedDataTask(Task):
         src_sync.sort(key=lambda x: x["name"])
         dest_sync.sort(key=lambda x: x["name"])
         return (src_sync, dest_sync)
+
+    def update_existing_file(self, file):
+        file["operation"] = "UPDATE EXISTING FILE"
+        return file
+
+    def src_file_is_newer(self, src, dest, min_diff_seconds=60):
+        diff = src["last_modified"] - dest["last_modified"]
+        return diff.total_seconds() > min_diff_seconds
 
     def upload_files_to_s3(self, new_files, update_files, file_type, data_set, year):
         sync_files = self.get_sync_files(new_files, update_files)
@@ -279,6 +278,7 @@ class SyncScrapedDataTask(Task):
         return sync_files
 
     def sync_files(self, sync_direction, files, file_type, data_set, year):
+        self.file_helper.create_all_folderpaths(year)
         self.bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
         self.events.sync_files_start(files[0]["name"], 0, len(files))
         for num, file in enumerate(files, start=1):
@@ -297,6 +297,6 @@ class SyncScrapedDataTask(Task):
 
     def send_file(self, sync_direction, local_path, s3_key):
         if sync_direction == SyncDirection.UP_TO_S3:
-            self.file_helper.client.upload_file(local_path, self.bucket_name, s3_key)
+            self.file_helper.get_s3_bucket().upload_file(str(local_path), s3_key)
         if sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            self.file_helper.resource.Bucket(self.bucket_name).download_file(s3_key, local_path)
+            self.file_helper.get_s3_bucket().download_file(s3_key, str(local_path))

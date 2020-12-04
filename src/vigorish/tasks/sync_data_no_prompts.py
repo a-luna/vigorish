@@ -93,11 +93,10 @@ class SyncScrapedDataNoPrompts(Task):
             self.task_number += 1
             self.current_data_set = data_set
             self.report_sync_results()
-            result = self.s3_sync.execute(sync_direction, file_type, data_set, year)
-            self.results[data_set] = result
-            self.spinners[data_set].stop()
-            if result.failure:
+            self.results[data_set] = self.s3_sync.execute(sync_direction, file_type, data_set, year)
+            if self.results[data_set].failure:
                 return self.results
+            self.spinners[data_set].stop()
         self.report_sync_results()
         self.teardown()
         pause(message="\nPress any key to continue...")
@@ -220,12 +219,13 @@ class SyncScrapedDataNoPrompts(Task):
         self.sync_files_progress(name, complete, total)
 
     def sync_files_progress(self, name, complete, total):
-        direction = "Down" if self.sync_direction == "SYNC_DOWN" else "Up"
+        direction = "Down" if self.sync_direction == SyncDirection.DOWN_TO_LOCAL else "Up"
         percent = complete / float(total)
         progress_message = f"{direction}loading: {name} | {percent:.0%} ({complete}/{total} Files)"
         self.spinners[self.current_data_set].text = progress_message
 
     def sync_files_complete(self):
+        sync_complete = None
         if self.sync_direction == SyncDirection.UP_TO_S3:
             sync_complete = (
                 f"[{self.year} {self.file_type} {self.current_data_set}] "

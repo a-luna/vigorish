@@ -5,7 +5,7 @@ from events import Events
 from halo import Halo
 
 from vigorish.cli.components import get_random_cli_color
-from vigorish.config.database import Season
+from vigorish.database import Season
 from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore_list
 from vigorish.status.update_status_bbref_games_for_date import update_bbref_games_for_date_list
@@ -112,10 +112,7 @@ class ImportScrapedDataTask(Task):
         spinner.text = f"Updating {data_set} for MLB {year}..."
         spinner.start()
         if not overwrite_existing:
-            result = self.scraped_data.get_scraped_ids_from_database(data_set, year)
-            if result.failure:
-                return result
-            existing_scraped_ids = result.value
+            existing_scraped_ids = self.scraped_data.get_scraped_ids_from_database(data_set, year)
             scraped_ids = list(set(scraped_ids) - set(existing_scraped_ids))
         result = self.update_status_for_data_set(data_set, scraped_ids)
         if result.failure:

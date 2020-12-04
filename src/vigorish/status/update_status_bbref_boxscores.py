@@ -1,4 +1,4 @@
-from vigorish.config.database import GameScrapeStatus
+from vigorish.database import GameScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
