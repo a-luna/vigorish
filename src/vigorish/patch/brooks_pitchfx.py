@@ -40,7 +40,7 @@ class BrooksPitchFxPatchList(PatchList):
             og_pfx_log.pitchfx_log = pitchfx_log
             og_pfx_log.pitch_count_by_inning = self.get_pitch_count_by_inning(pitchfx_log)
             og_pfx_log.total_pitch_count = len(pitchfx_log)
-        patched_pfx_logs = [pfx_log for pfx_log in self.original_pfx_logs.values()]
+        patched_pfx_logs = list(self.original_pfx_logs.values())
         return patched_pfx_logs
 
     def get_pitch_count_by_inning(self, pitchfx_log):

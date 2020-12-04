@@ -1025,8 +1025,8 @@
         "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
         "bbref_game_id": "TOR201908170",
         "pitch_count_by_inning": {
-          "4": 6,
-          "5": 18
+          "5": 18,
+          "4": 6
         },
         "pitch_count_by_pitch_type": {
           "SL": 24
@@ -1105,8 +1105,8 @@
         "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
         "bbref_game_id": "TOR201908170",
         "pitch_count_by_inning": {
-          "5": 4,
-          "6": 23
+          "6": 23,
+          "5": 4
         },
         "pitch_count_by_pitch_type": {
           "FF": 15,
@@ -2097,10 +2097,10 @@
         "pitch_count_by_inning": {
           "1": 12,
           "2": 24,
-          "3": 12,
           "4": 12,
           "5": 16,
-          "6": 10
+          "6": 10,
+          "3": 12
         },
         "pitch_count_by_pitch_type": {
           "FF": 42,
@@ -2361,8 +2361,8 @@
         "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
         "bbref_game_id": "TOR201908170",
         "pitch_count_by_inning": {
-          "8": 7,
-          "9": 14
+          "9": 14,
+          "8": 7
         },
         "pitch_count_by_pitch_type": {
           "CU": 8,
@@ -2991,7 +2991,7 @@
               "seconds_since_game_start": 176
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -3358,7 +3358,7 @@
               "seconds_since_game_start": 274
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -3575,7 +3575,7 @@
               "seconds_since_game_start": 336
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -3836,7 +3836,7 @@
               "seconds_since_game_start": 508
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -4058,7 +4058,7 @@
               "seconds_since_game_start": 587
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -4480,7 +4480,7 @@
               "seconds_since_game_start": 761
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -4820,7 +4820,7 @@
               "seconds_since_game_start": 947
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -4962,7 +4962,7 @@
               "seconds_since_game_start": 973
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -5354,7 +5354,7 @@
               "seconds_since_game_start": 1091
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -6021,7 +6021,7 @@
               "seconds_since_game_start": 1318
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -6238,7 +6238,7 @@
               "seconds_since_game_start": 1429
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -6605,7 +6605,7 @@
               "seconds_since_game_start": 1532
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -6822,7 +6822,7 @@
               "seconds_since_game_start": 1597
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -7236,7 +7236,7 @@
               "seconds_since_game_start": 1812
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -7678,7 +7678,7 @@
               "seconds_since_game_start": 1915
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -7970,7 +7970,7 @@
               "seconds_since_game_start": 1991
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -8487,7 +8487,7 @@
               "seconds_since_game_start": 2179
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -8704,7 +8704,7 @@
               "seconds_since_game_start": 2252
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -8846,7 +8846,7 @@
               "seconds_since_game_start": 2330
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -9352,7 +9352,7 @@
               "seconds_since_game_start": 2572
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -9794,7 +9794,7 @@
               "seconds_since_game_start": 2672
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -10011,7 +10011,7 @@
               "seconds_since_game_start": 2725
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -10667,7 +10667,7 @@
               "seconds_since_game_start": 3059
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -10809,7 +10809,7 @@
               "seconds_since_game_start": 3097
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -11326,7 +11326,7 @@
               "seconds_since_game_start": 3276
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -11814,7 +11814,7 @@
               "seconds_since_game_start": 3498
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12181,7 +12181,7 @@
               "seconds_since_game_start": 3586
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12323,7 +12323,7 @@
               "seconds_since_game_start": 3641
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12465,7 +12465,7 @@
               "seconds_since_game_start": 3694
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -12607,7 +12607,7 @@
               "seconds_since_game_start": 3727
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -12794,7 +12794,7 @@
               "seconds_since_game_start": 3888
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -13086,7 +13086,7 @@
               "seconds_since_game_start": 3972
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -13466,7 +13466,7 @@
               "seconds_since_game_start": 4144
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -14003,7 +14003,7 @@
               "seconds_since_game_start": 4447
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -14190,7 +14190,7 @@
               "seconds_since_game_start": 4590
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -14557,7 +14557,7 @@
               "seconds_since_game_start": 4706
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -14999,7 +14999,7 @@
               "seconds_since_game_start": 4827
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -15516,7 +15516,7 @@
               "seconds_since_game_start": 5005
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -15930,7 +15930,7 @@
               "seconds_since_game_start": 5215
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -16372,7 +16372,7 @@
               "seconds_since_game_start": 5357
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -16889,7 +16889,7 @@
               "seconds_since_game_start": 5515
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -17181,7 +17181,7 @@
               "seconds_since_game_start": 5600
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -17418,7 +17418,7 @@
               "seconds_since_game_start": 5799
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -17635,7 +17635,7 @@
               "seconds_since_game_start": 5877
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -17822,7 +17822,7 @@
               "seconds_since_game_start": 6018
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -18189,7 +18189,7 @@
               "seconds_since_game_start": 6097
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -18406,7 +18406,7 @@
               "seconds_since_game_start": 6158
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -18708,7 +18708,7 @@
               "seconds_since_game_start": 6291
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -18970,7 +18970,7 @@
               "seconds_since_game_start": 6460
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -19487,7 +19487,7 @@
               "seconds_since_game_start": 6596
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -20004,7 +20004,7 @@
               "seconds_since_game_start": 6745
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -20746,7 +20746,7 @@
               "seconds_since_game_start": 6968
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -21102,7 +21102,7 @@
               "seconds_since_game_start": 7177
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -21394,7 +21394,7 @@
               "seconds_since_game_start": 7243
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -21686,7 +21686,7 @@
               "seconds_since_game_start": 7315
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -21968,7 +21968,7 @@
               "seconds_since_game_start": 7493
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -22410,7 +22410,7 @@
               "seconds_since_game_start": 7614
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -22777,7 +22777,7 @@
               "seconds_since_game_start": 7711
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -23219,7 +23219,7 @@
               "seconds_since_game_start": 7845
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -23576,7 +23576,7 @@
               "seconds_since_game_start": 8045
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -23793,7 +23793,7 @@
               "seconds_since_game_start": 8107
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -23935,7 +23935,7 @@
               "seconds_since_game_start": 8147
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -24547,7 +24547,7 @@
               "seconds_since_game_start": 8442
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -25278,7 +25278,7 @@
               "seconds_since_game_start": 8774
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -25420,7 +25420,7 @@
               "seconds_since_game_start": 8808
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -25637,7 +25637,7 @@
               "seconds_since_game_start": 8874
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -26124,7 +26124,7 @@
               "seconds_since_game_start": 9077
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -26266,7 +26266,7 @@
               "seconds_since_game_start": 9110
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -26783,7 +26783,7 @@
               "seconds_since_game_start": 9249
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -27018,7 +27018,7 @@
               "seconds_since_game_start": 9303
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
@@ -27375,7 +27375,7 @@
               "seconds_since_game_start": 9698
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -27742,7 +27742,7 @@
               "seconds_since_game_start": 9797
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -28109,7 +28109,7 @@
               "seconds_since_game_start": 9901
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         },
         {
@@ -28796,7 +28796,7 @@
               "seconds_since_game_start": 10182
             }
           ],
-          "removed_pitchfx": {},
+          "removed_pitchfx": [],
           "removed_duplicate_guid": {}
         }
       ]
