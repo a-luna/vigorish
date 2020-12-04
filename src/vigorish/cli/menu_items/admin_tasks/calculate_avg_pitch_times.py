@@ -13,8 +13,8 @@ from vigorish.cli.components.util import (
     print_message,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.config.database import TimeBetweenPitches
 from vigorish.constants import EMOJI_DICT
+from vigorish.database import TimeBetweenPitches
 from vigorish.tasks.calculate_avg_pitch_times import (
     CalculateAverageTimeBetweenPitches as CalculatePitchTimesTask,
 )

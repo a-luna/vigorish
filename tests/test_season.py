@@ -1,7 +1,7 @@
 import pytest
 
 from tests.util import seed_database_with_2019_test_data
-from vigorish.config.database import Season
+from vigorish.database import Season
 from vigorish.enums import SeasonType
 
 MLB_YEAR = 2019

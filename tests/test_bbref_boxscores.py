@@ -8,7 +8,7 @@ from tests.util import (
     update_scraped_bbref_games_for_date,
     update_scraped_brooks_games_for_date,
 )
-from vigorish.config.database import GameScrapeStatus
+from vigorish.database import GameScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore

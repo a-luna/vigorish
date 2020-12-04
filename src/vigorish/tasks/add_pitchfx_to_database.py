@@ -2,7 +2,8 @@ from datetime import datetime
 
 from events import Events
 
-from vigorish.config.database import (
+from vigorish.data.all_game_data import AllGameData
+from vigorish.database import (
     GameScrapeStatus,
     PitchAppScrapeStatus,
     PitchFx,
@@ -10,7 +11,6 @@ from vigorish.config.database import (
     Season,
     Team,
 )
-from vigorish.data.all_game_data import AllGameData
 from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result

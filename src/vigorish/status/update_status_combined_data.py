@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from vigorish.config.database import PitchAppScrapeStatus
+from vigorish.database import PitchAppScrapeStatus
 from vigorish.util.result import Result
 
 

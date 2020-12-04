@@ -15,7 +15,7 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-from vigorish.config.database import GameScrapeStatus, PitchAppScrapeStatus
+from vigorish.database import GameScrapeStatus, PitchAppScrapeStatus
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask

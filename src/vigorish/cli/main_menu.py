@@ -30,7 +30,7 @@ from vigorish.cli.menus import (
     SettingsMenu,
     ViewGameDataMenu,
 )
-from vigorish.config.database import db_setup_complete
+from vigorish.database import db_setup_complete
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
 

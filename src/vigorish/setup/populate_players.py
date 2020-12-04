@@ -5,7 +5,7 @@ from datetime import datetime
 from dataclass_csv import accept_whitespaces, DataclassReader, dateformat
 from tqdm import tqdm
 
-from vigorish.config.database import Player, PlayerId
+from vigorish.database import Player, PlayerId
 from vigorish.tasks.update_player_maps import UpdatePlayerIdMap
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result

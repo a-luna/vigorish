@@ -6,7 +6,7 @@ from tests.util import (
     parse_brooks_games_for_date_from_html,
     update_scraped_bbref_games_for_date,
 )
-from vigorish.config.database import DateScrapeStatus, GameScrapeStatus, Season
+from vigorish.database import DateScrapeStatus, GameScrapeStatus, Season
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate

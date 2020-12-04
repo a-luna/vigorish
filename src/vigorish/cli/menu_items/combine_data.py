@@ -17,8 +17,8 @@ from vigorish.cli.components import (
     user_options_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.config.database import Season
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.database import Season
 from vigorish.enums import AuditError, DataSet, ScrapeCondition
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME

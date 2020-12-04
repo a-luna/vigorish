@@ -1,7 +1,7 @@
 from sqlalchemy import func, join, select
 from sqlalchemy_utils import create_view
 
-from vigorish.config.database import Base, GameScrapeStatus, Season
+from vigorish.database import Base, GameScrapeStatus, Season
 
 
 class Season_Game_View(Base):

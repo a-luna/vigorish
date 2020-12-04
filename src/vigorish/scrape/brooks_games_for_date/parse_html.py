@@ -5,7 +5,7 @@ from pathlib import Path
 import w3lib.url
 from lxml import html
 
-from vigorish.config.database import Season
+from vigorish.database import Season
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID

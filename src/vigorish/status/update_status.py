@@ -1,7 +1,7 @@
 from halo import Halo
 
-from vigorish.config.database import Season
 from vigorish.constants import JOB_SPINNER_COLORS
+from vigorish.database import Season
 from vigorish.enums import DataSet
 from vigorish.status.update_status_bbref_boxscores import update_data_set_bbref_boxscores
 from vigorish.status.update_status_bbref_games_for_date import update_data_set_bbref_games_for_date

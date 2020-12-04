@@ -4,7 +4,7 @@ from vigorish.cli.components import print_message
 from vigorish.cli.components.dict_viewer import DictListTableViewer
 from vigorish.cli.components.models import DisplayPage
 from vigorish.cli.components.page_viewer import PageViewer
-from vigorish.config.database import DateScrapeStatus, Season
+from vigorish.database import DateScrapeStatus, Season
 from vigorish.enums import StatusReport
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY

@@ -8,7 +8,7 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-from vigorish.config.database import get_total_number_of_rows, PitchFx
+from vigorish.database import get_total_number_of_rows, PitchFx
 from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 

@@ -1,4 +1,4 @@
-from vigorish.config.database import DateScrapeStatus
+from vigorish.database import DateScrapeStatus
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
 from vigorish.scrape.scrape_task import ScrapeTaskABC

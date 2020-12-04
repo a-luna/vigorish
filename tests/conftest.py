@@ -8,9 +8,9 @@ from sqlalchemy.orm import sessionmaker
 
 from vigorish.app import Vigorish
 from vigorish.config.config_file import ConfigFile
-from vigorish.config.database import initialize_database
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.data.scraped_data import ScrapedData
+from vigorish.database import initialize_database
 
 TESTS_FOLDER = Path(__file__).parent
 DOTENV_FILE = TESTS_FOLDER.joinpath(".env")

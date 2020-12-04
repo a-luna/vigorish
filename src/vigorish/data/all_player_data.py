@@ -1,13 +1,13 @@
 from collections import defaultdict
 from typing import Mapping, Union
 
-from sqlalchemy import select, and_
+from sqlalchemy import and_, select
 
-from vigorish.config.database import (
+from vigorish.database import (
     Pitch_Type_All_View,
-    Pitch_Type_Right_View,
-    Pitch_Type_Left_View,
     Pitch_Type_By_Year_View,
+    Pitch_Type_Left_View,
+    Pitch_Type_Right_View,
     Player,
     Season,
 )

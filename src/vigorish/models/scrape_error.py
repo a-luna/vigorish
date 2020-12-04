@@ -5,7 +5,7 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.types import Enum
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.enums import DataSet
 from vigorish.util.datetime_util import (
     get_local_utcoffset,

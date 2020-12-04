@@ -11,8 +11,8 @@ from vigorish.cli.components import (
     yes_no_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.config.database import ScrapeJob
 from vigorish.constants import EMOJI_DICT
+from vigorish.database import ScrapeJob
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
