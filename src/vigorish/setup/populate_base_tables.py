@@ -1,5 +1,5 @@
 """Populate reference tables with data."""
-from vigorish.config.database import TimeBetweenPitches
+from vigorish.database import TimeBetweenPitches
 from vigorish.util.result import Result
 
 

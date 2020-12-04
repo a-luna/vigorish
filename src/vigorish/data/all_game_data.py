@@ -7,8 +7,8 @@ from tabulate import tabulate
 
 from vigorish.cli.components.models import DisplayTable
 from vigorish.cli.components.table_viewer import TableViewer
-from vigorish.config.database import PlayerId, Team
 from vigorish.data.all_player_data import AllPlayerData
+from vigorish.database import PlayerId, Team
 from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.dt_format_strings import DT_AWARE, DT_AWARE_VERBOSE
 from vigorish.util.exceptions import ScrapedDataException

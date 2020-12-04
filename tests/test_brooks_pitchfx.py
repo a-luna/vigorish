@@ -9,7 +9,7 @@ from tests.util import (
     update_scraped_brooks_games_for_date,
     update_scraped_pitch_logs,
 )
-from vigorish.config.database import PitchAppScrapeStatus
+from vigorish.database import PitchAppScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records

@@ -11,7 +11,7 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-from vigorish.config.database import (
+from vigorish.database import (
     DateScrapeStatus,
     GameScrapeStatus,
     get_total_number_of_rows,

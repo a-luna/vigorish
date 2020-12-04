@@ -1,4 +1,4 @@
-from vigorish.config.database import DateScrapeStatus
+from vigorish.database import DateScrapeStatus
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from vigorish.scrape.brooks_pitch_logs.parse_html import parse_pitch_log

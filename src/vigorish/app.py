@@ -3,9 +3,9 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from vigorish.config.config_file import ConfigFile
-from vigorish.config.database import delete_sqlite_database, get_db_url
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.data.scraped_data import ScrapedData
+from vigorish.database import delete_sqlite_database, get_db_url
 from vigorish.util.result import Result
 
 

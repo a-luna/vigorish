@@ -5,7 +5,7 @@ from typing import List
 
 from dacite import from_dict
 
-from vigorish.config.database import GameScrapeStatus, PlayerId
+from vigorish.database import GameScrapeStatus, PlayerId
 from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog

@@ -1,7 +1,7 @@
 from sqlalchemy import func, join, select
 from sqlalchemy_utils import create_view
 
-from vigorish.config.database import Base, DateScrapeStatus, Season
+from vigorish.database import Base, DateScrapeStatus, Season
 
 
 class Season_Date_View(Base):

@@ -4,7 +4,7 @@ from json.decoder import JSONDecodeError
 
 from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 
-from vigorish.config.database import Player
+from vigorish.database import Player
 from vigorish.util.request_url import request_url_with_retries
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match

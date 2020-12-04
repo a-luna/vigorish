@@ -5,7 +5,7 @@ from events import Events
 from halo import Halo
 
 from vigorish.cli.components import get_random_cli_color
-from vigorish.config.database import Season
+from vigorish.database import Season
 from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore_list
 from vigorish.status.update_status_bbref_games_for_date import update_bbref_games_for_date_list

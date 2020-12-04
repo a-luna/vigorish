@@ -1,4 +1,4 @@
-from vigorish.config.database import DateScrapeStatus
+from vigorish.database import DateScrapeStatus
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.brooks_games_for_date.parse_html import parse_brooks_dashboard_page
 from vigorish.scrape.scrape_task import ScrapeTaskABC

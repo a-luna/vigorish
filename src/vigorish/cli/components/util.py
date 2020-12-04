@@ -6,8 +6,8 @@ from random import randint
 import click
 from getch import pause
 
-from vigorish.config.database import Season
 from vigorish.constants import CLI_COLORS, FIGLET_FONTS
+from vigorish.database import Season
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 

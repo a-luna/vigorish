@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from vigorish.config.database import PitchAppScrapeStatus, Season, TimeBetweenPitches
+from vigorish.database import PitchAppScrapeStatus, Season, TimeBetweenPitches
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page

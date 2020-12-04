@@ -16,8 +16,8 @@ from vigorish.cli.components.util import (
     shutdown_cli_immediately,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.config.database import prepare_database_for_restore
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.database import prepare_database_for_restore
 from vigorish.enums import DataSet
 from vigorish.tasks.restore_database import RestoreDatabaseTask
 from vigorish.util.datetime_util import format_timedelta_str, get_local_utcoffset, get_time_since

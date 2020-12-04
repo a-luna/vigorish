@@ -4,8 +4,8 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Dict, List
 
-from vigorish.config.database import GameScrapeStatus, PlayerId, TimeBetweenPitches
 from vigorish.constants import PPB_PITCH_LOG_DICT
+from vigorish.database import GameScrapeStatus, PlayerId, TimeBetweenPitches
 from vigorish.enums import DataSet, PitchType
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
 from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData

@@ -3,8 +3,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from vigorish.config.database import SQLITE_PROD_URL
 from vigorish.constants import ENV_VAR_NAMES
+from vigorish.database import SQLITE_PROD_URL
 from vigorish.util.result import Result
 
 VIG_FOLDER = Path.home() / ".vig"

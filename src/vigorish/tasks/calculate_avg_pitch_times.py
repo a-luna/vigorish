@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from events import Events
 
-from vigorish.config.database import Season_Game_PitchApp_View as Season_View
+from vigorish.database import Season_Game_PitchApp_View as Season_View
 from vigorish.tasks.base import Task
 from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
 from vigorish.util.numeric_helpers import trim_data_set

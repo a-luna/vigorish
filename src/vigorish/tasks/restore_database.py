@@ -6,7 +6,7 @@ from zipfile import ZipFile
 from dataclass_csv import DataclassReader
 from events import Events
 
-from vigorish.config.database import (
+from vigorish.database import (
     DateScrapeStatus,
     GameScrapeStatus,
     PitchAppScrapeStatus,

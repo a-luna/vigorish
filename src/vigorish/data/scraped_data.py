@@ -4,16 +4,16 @@ from pathlib import Path
 from dateutil import parser
 from sqlalchemy import select
 
-from vigorish.config.database import (
+from vigorish.data.file_helper import FileHelper
+from vigorish.data.html_storage import HtmlStorage
+from vigorish.data.json_storage import JsonStorage
+from vigorish.database import (
     DateScrapeStatus,
     PitchApp_PitchType_View,
     PitchAppScrapeStatus,
     Season,
 )
-from vigorish.config.database import Season_Game_PitchApp_View as Season_View
-from vigorish.data.file_helper import FileHelper
-from vigorish.data.html_storage import HtmlStorage
-from vigorish.data.json_storage import JsonStorage
+from vigorish.database import Season_Game_PitchApp_View as Season_View
 from vigorish.enums import DataSet, VigFile
 from vigorish.util.pitch_calcs import get_metrics_for_all_pitch_types
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX

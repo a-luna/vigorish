@@ -6,7 +6,7 @@ from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.config.database import Base
+from vigorish.database import Base
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.datetime_util import make_tzaware, TIME_ZONE_NEW_YORK
 from vigorish.util.dt_format_strings import CSV_UTC, DT_AWARE

@@ -1,7 +1,7 @@
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy_utils import create_view
 
-from vigorish.config.database import Base, PitchFx
+from vigorish.database import Base, PitchFx
 
 
 class PitchApp_PitchType_View(Base):

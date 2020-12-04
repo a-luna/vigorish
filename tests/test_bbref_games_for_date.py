@@ -1,6 +1,6 @@
 from tests.util import GAME_DATE_BR_DAILY as GAME_DATE
 from tests.util import get_bbref_url_for_date, parse_bbref_games_for_date_from_html
-from vigorish.config.database import DateScrapeStatus, Season
+from vigorish.database import DateScrapeStatus, Season
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.status.update_status_bbref_games_for_date import (
