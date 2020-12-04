@@ -18,7 +18,6 @@ from vigorish.util.sys_helpers import node_is_installed
 
 class AdminTasksMenu(Menu):
     def __init__(self, app, audit_report):
-        # TODO: Add Refresh Game Data menu option
         # TODO: Add Admin Task menu item to edit season dates and add new seasons
         super().__init__(app)
         self.audit_report = audit_report
