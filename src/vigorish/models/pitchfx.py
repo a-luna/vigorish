@@ -106,7 +106,7 @@ class PitchFx(Base):
 
     @classmethod
     def get_csv_col_names(cls):
-        return [name for name in PitchFxCsvRow.__dataclass_fields__.keys()]
+        return list(PitchFxCsvRow.__dataclass_fields__.keys())
 
     @classmethod
     def export_table_as_csv(cls, db_session):
