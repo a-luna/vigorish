@@ -2144,6 +2144,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_01_TEX_571946_ANA_594777_0",
+          "pfx_ab_id": 1,
           "inning_id": "TEX201904150_INN_TOP01",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 1,
@@ -2286,6 +2287,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_TEX_571946_ANA_545361_0",
+          "pfx_ab_id": 2,
           "inning_id": "TEX201904150_INN_TOP01",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 2,
@@ -2808,6 +2810,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_TEX_571946_ANA_592743_0",
+          "pfx_ab_id": 3,
           "inning_id": "TEX201904150_INN_TOP01",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 3,
@@ -3025,6 +3028,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_TEX_571946_ANA_405395_0",
+          "pfx_ab_id": 4,
           "inning_id": "TEX201904150_INN_TOP01",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 4,
@@ -3242,6 +3246,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_TEX_571946_ANA_571718_0",
+          "pfx_ab_id": 5,
           "inning_id": "TEX201904150_INN_TOP01",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 5,
@@ -3834,6 +3839,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_TEX_571946_ANA_607345_0",
+          "pfx_ab_id": 6,
           "inning_id": "TEX201904150_INN_TOP01",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 6,
@@ -4172,6 +4178,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_01_ANA_502239_TEX_425783_0",
+          "pfx_ab_id": 7,
           "inning_id": "TEX201904150_INN_BOT01",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 9,
@@ -4389,6 +4396,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_ANA_502239_TEX_542454_0",
+          "pfx_ab_id": 8,
           "inning_id": "TEX201904150_INN_BOT01",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 10,
@@ -4836,6 +4844,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_ANA_502239_TEX_462101_0",
+          "pfx_ab_id": 9,
           "inning_id": "TEX201904150_INN_BOT01",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 11,
@@ -5283,6 +5292,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_ANA_502239_TEX_608577_0",
+          "pfx_ab_id": 10,
           "inning_id": "TEX201904150_INN_BOT01",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 12,
@@ -5425,6 +5435,7 @@
         },
         {
           "at_bat_id": "TEX201904150_01_ANA_502239_TEX_608336_0",
+          "pfx_ab_id": 11,
           "inning_id": "TEX201904150_INN_BOT01",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 13,
@@ -5841,6 +5852,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_02_TEX_571946_ANA_600303_0",
+          "pfx_ab_id": 12,
           "inning_id": "TEX201904150_INN_TOP02",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 16,
@@ -6208,6 +6220,7 @@
         },
         {
           "at_bat_id": "TEX201904150_02_TEX_571946_ANA_446359_0",
+          "pfx_ab_id": 13,
           "inning_id": "TEX201904150_INN_TOP02",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 17,
@@ -6500,6 +6513,7 @@
         },
         {
           "at_bat_id": "TEX201904150_02_TEX_571946_ANA_664058_0",
+          "pfx_ab_id": 14,
           "inning_id": "TEX201904150_INN_TOP02",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 18,
@@ -6867,6 +6881,7 @@
         },
         {
           "at_bat_id": "TEX201904150_02_TEX_571946_ANA_594777_0",
+          "pfx_ab_id": 15,
           "inning_id": "TEX201904150_INN_TOP02",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 19,
@@ -7459,6 +7474,7 @@
         },
         {
           "at_bat_id": "TEX201904150_02_TEX_571946_ANA_545361_0",
+          "pfx_ab_id": 16,
           "inning_id": "TEX201904150_INN_TOP02",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 20,
@@ -8132,6 +8148,7 @@
         },
         {
           "at_bat_id": "TEX201904150_02_TEX_571946_ANA_592743_0",
+          "pfx_ab_id": 17,
           "inning_id": "TEX201904150_INN_TOP02",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 21,
@@ -8469,6 +8486,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_02_ANA_502239_TEX_452678_0",
+          "pfx_ab_id": 18,
           "inning_id": "TEX201904150_INN_BOT02",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 24,
@@ -8986,6 +9004,7 @@
         },
         {
           "at_bat_id": "TEX201904150_02_ANA_502239_TEX_523253_0",
+          "pfx_ab_id": 19,
           "inning_id": "TEX201904150_INN_BOT02",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 25,
@@ -9378,6 +9397,7 @@
         },
         {
           "at_bat_id": "TEX201904150_02_ANA_502239_TEX_643396_0",
+          "pfx_ab_id": 20,
           "inning_id": "TEX201904150_INN_BOT02",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 27,
@@ -9520,6 +9540,7 @@
         },
         {
           "at_bat_id": "TEX201904150_02_ANA_502239_TEX_592261_0",
+          "pfx_ab_id": 21,
           "inning_id": "TEX201904150_INN_BOT02",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 28,
@@ -9858,6 +9879,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_03_TEX_571946_ANA_405395_0",
+          "pfx_ab_id": 22,
           "inning_id": "TEX201904150_INN_TOP03",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 31,
@@ -10450,6 +10472,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_TEX_571946_ANA_571718_0",
+          "pfx_ab_id": 23,
           "inning_id": "TEX201904150_INN_TOP03",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 32,
@@ -10892,6 +10915,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_TEX_571946_ANA_607345_0",
+          "pfx_ab_id": 24,
           "inning_id": "TEX201904150_INN_TOP03",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 33,
@@ -11034,6 +11058,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_TEX_571946_ANA_600303_0",
+          "pfx_ab_id": 25,
           "inning_id": "TEX201904150_INN_TOP03",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 34,
@@ -11401,6 +11426,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_TEX_571946_ANA_446359_0",
+          "pfx_ab_id": 26,
           "inning_id": "TEX201904150_INN_TOP03",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 35,
@@ -11895,6 +11921,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_03_ANA_502239_TEX_425783_0",
+          "pfx_ab_id": 27,
           "inning_id": "TEX201904150_INN_BOT03",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 38,
@@ -12037,6 +12064,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_ANA_502239_TEX_542454_0",
+          "pfx_ab_id": 28,
           "inning_id": "TEX201904150_INN_BOT03",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 39,
@@ -12179,6 +12207,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_ANA_502239_TEX_462101_0",
+          "pfx_ab_id": 29,
           "inning_id": "TEX201904150_INN_BOT03",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 40,
@@ -12576,6 +12605,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_ANA_502239_TEX_608577_0",
+          "pfx_ab_id": 30,
           "inning_id": "TEX201904150_INN_BOT03",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 42,
@@ -13018,6 +13048,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_ANA_502239_TEX_608336_0",
+          "pfx_ab_id": 31,
           "inning_id": "TEX201904150_INN_BOT03",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 43,
@@ -13535,6 +13566,7 @@
         },
         {
           "at_bat_id": "TEX201904150_03_ANA_502239_TEX_452678_0",
+          "pfx_ab_id": 32,
           "inning_id": "TEX201904150_INN_BOT03",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 44,
@@ -13871,6 +13903,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_04_TEX_571946_ANA_664058_0",
+          "pfx_ab_id": 33,
           "inning_id": "TEX201904150_INN_TOP04",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 47,
@@ -14088,6 +14121,7 @@
         },
         {
           "at_bat_id": "TEX201904150_04_TEX_571946_ANA_594777_0",
+          "pfx_ab_id": 34,
           "inning_id": "TEX201904150_INN_TOP04",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 48,
@@ -14380,6 +14414,7 @@
         },
         {
           "at_bat_id": "TEX201904150_04_TEX_571946_ANA_545361_0",
+          "pfx_ab_id": 35,
           "inning_id": "TEX201904150_INN_TOP04",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 49,
@@ -14793,6 +14828,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_04_ANA_502239_TEX_523253_0",
+          "pfx_ab_id": 36,
           "inning_id": "TEX201904150_INN_BOT04",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 52,
@@ -15310,6 +15346,7 @@
         },
         {
           "at_bat_id": "TEX201904150_04_ANA_502239_TEX_643396_0",
+          "pfx_ab_id": 37,
           "inning_id": "TEX201904150_INN_BOT04",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 53,
@@ -15827,6 +15864,7 @@
         },
         {
           "at_bat_id": "TEX201904150_04_ANA_502239_TEX_592261_0",
+          "pfx_ab_id": 38,
           "inning_id": "TEX201904150_INN_BOT04",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 54,
@@ -16049,6 +16087,7 @@
         },
         {
           "at_bat_id": "TEX201904150_04_ANA_502239_TEX_425783_0",
+          "pfx_ab_id": 39,
           "inning_id": "TEX201904150_INN_BOT04",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 55,
@@ -16416,6 +16455,7 @@
         },
         {
           "at_bat_id": "TEX201904150_04_ANA_502239_TEX_542454_0",
+          "pfx_ab_id": 40,
           "inning_id": "TEX201904150_INN_BOT04",
           "pitch_app_id": "TEX201904150_502239",
           "pbp_table_row_number": 56,
@@ -16682,6 +16722,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_05_TEX_571946_ANA_592743_0",
+          "pfx_ab_id": 41,
           "inning_id": "TEX201904150_INN_TOP05",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 59,
@@ -17045,6 +17086,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_TEX_571946_ANA_405395_0",
+          "pfx_ab_id": 42,
           "inning_id": "TEX201904150_INN_TOP05",
           "pitch_app_id": "TEX201904150_571946",
           "pbp_table_row_number": 60,
@@ -17483,6 +17525,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_TEX_664871_ANA_571718_0",
+          "pfx_ab_id": 43,
           "inning_id": "TEX201904150_INN_TOP05",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 62,
@@ -17870,6 +17913,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_TEX_664871_ANA_607345_0",
+          "pfx_ab_id": 44,
           "inning_id": "TEX201904150_INN_TOP05",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 63,
@@ -18392,6 +18436,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_TEX_664871_ANA_600303_0",
+          "pfx_ab_id": 45,
           "inning_id": "TEX201904150_INN_TOP05",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 64,
@@ -18733,6 +18778,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_05_ANA_592135_TEX_462101_0",
+          "pfx_ab_id": 46,
           "inning_id": "TEX201904150_INN_BOT05",
           "pitch_app_id": "TEX201904150_592135",
           "pbp_table_row_number": 68,
@@ -19120,6 +19166,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_ANA_592135_TEX_608577_0",
+          "pfx_ab_id": 47,
           "inning_id": "TEX201904150_INN_BOT05",
           "pitch_app_id": "TEX201904150_592135",
           "pbp_table_row_number": 69,
@@ -19737,6 +19784,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_ANA_592135_TEX_608336_0",
+          "pfx_ab_id": 48,
           "inning_id": "TEX201904150_INN_BOT05",
           "pitch_app_id": "TEX201904150_592135",
           "pbp_table_row_number": 71,
@@ -20104,6 +20152,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_ANA_592135_TEX_452678_0",
+          "pfx_ab_id": 49,
           "inning_id": "TEX201904150_INN_BOT05",
           "pitch_app_id": "TEX201904150_592135",
           "pbp_table_row_number": 72,
@@ -20771,6 +20820,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_ANA_592135_TEX_523253_0",
+          "pfx_ab_id": 50,
           "inning_id": "TEX201904150_INN_BOT05",
           "pitch_app_id": "TEX201904150_592135",
           "pbp_table_row_number": 73,
@@ -21063,6 +21113,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_ANA_592135_TEX_643396_0",
+          "pfx_ab_id": 51,
           "inning_id": "TEX201904150_INN_BOT05",
           "pitch_app_id": "TEX201904150_592135",
           "pbp_table_row_number": 74,
@@ -21280,6 +21331,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_ANA_592135_TEX_592261_0",
+          "pfx_ab_id": 52,
           "inning_id": "TEX201904150_INN_BOT05",
           "pitch_app_id": "TEX201904150_592135",
           "pbp_table_row_number": 75,
@@ -21797,6 +21849,7 @@
         },
         {
           "at_bat_id": "TEX201904150_05_ANA_657228_TEX_425783_0",
+          "pfx_ab_id": 53,
           "inning_id": "TEX201904150_INN_BOT05",
           "pitch_app_id": "TEX201904150_657228",
           "pbp_table_row_number": 77,
@@ -22343,6 +22396,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_06_TEX_664871_ANA_446359_0",
+          "pfx_ab_id": 54,
           "inning_id": "TEX201904150_INN_TOP06",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 81,
@@ -22560,6 +22614,7 @@
         },
         {
           "at_bat_id": "TEX201904150_06_TEX_664871_ANA_664058_0",
+          "pfx_ab_id": 55,
           "inning_id": "TEX201904150_INN_TOP06",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 82,
@@ -22852,6 +22907,7 @@
         },
         {
           "at_bat_id": "TEX201904150_06_TEX_664871_ANA_594777_0",
+          "pfx_ab_id": 56,
           "inning_id": "TEX201904150_INN_TOP06",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 83,
@@ -23192,6 +23248,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_06_ANA_657228_TEX_542454_0",
+          "pfx_ab_id": 57,
           "inning_id": "TEX201904150_INN_BOT06",
           "pitch_app_id": "TEX201904150_657228",
           "pbp_table_row_number": 86,
@@ -23409,6 +23466,7 @@
         },
         {
           "at_bat_id": "TEX201904150_06_ANA_657228_TEX_462101_0",
+          "pfx_ab_id": 58,
           "inning_id": "TEX201904150_INN_BOT06",
           "pitch_app_id": "TEX201904150_657228",
           "pbp_table_row_number": 87,
@@ -24176,6 +24234,7 @@
         },
         {
           "at_bat_id": "TEX201904150_06_ANA_657228_TEX_608577_0",
+          "pfx_ab_id": 59,
           "inning_id": "TEX201904150_INN_BOT06",
           "pitch_app_id": "TEX201904150_657228",
           "pbp_table_row_number": 88,
@@ -24843,6 +24902,7 @@
         },
         {
           "at_bat_id": "TEX201904150_06_ANA_657228_TEX_608336_0",
+          "pfx_ab_id": 60,
           "inning_id": "TEX201904150_INN_BOT06",
           "pitch_app_id": "TEX201904150_657228",
           "pbp_table_row_number": 89,
@@ -25135,6 +25195,7 @@
         },
         {
           "at_bat_id": "TEX201904150_06_ANA_657228_TEX_452678_0",
+          "pfx_ab_id": 61,
           "inning_id": "TEX201904150_INN_BOT06",
           "pitch_app_id": "TEX201904150_657228",
           "pbp_table_row_number": 90,
@@ -25352,6 +25413,7 @@
         },
         {
           "at_bat_id": "TEX201904150_06_ANA_657228_TEX_523253_0",
+          "pfx_ab_id": 62,
           "inning_id": "TEX201904150_INN_BOT06",
           "pitch_app_id": "TEX201904150_657228",
           "pbp_table_row_number": 91,
@@ -25869,6 +25931,7 @@
         },
         {
           "at_bat_id": "TEX201904150_06_ANA_595928_TEX_643396_0",
+          "pfx_ab_id": 63,
           "inning_id": "TEX201904150_INN_BOT06",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 93,
@@ -26227,6 +26290,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_07_TEX_664871_ANA_545361_0",
+          "pfx_ab_id": 64,
           "inning_id": "TEX201904150_INN_TOP07",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 96,
@@ -26594,6 +26658,7 @@
         },
         {
           "at_bat_id": "TEX201904150_07_TEX_664871_ANA_592743_0",
+          "pfx_ab_id": 65,
           "inning_id": "TEX201904150_INN_TOP07",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 97,
@@ -26886,6 +26951,7 @@
         },
         {
           "at_bat_id": "TEX201904150_07_TEX_664871_ANA_405395_0",
+          "pfx_ab_id": 66,
           "inning_id": "TEX201904150_INN_TOP07",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 98,
@@ -27178,6 +27244,7 @@
         },
         {
           "at_bat_id": "TEX201904150_07_TEX_664871_ANA_571718_0",
+          "pfx_ab_id": 67,
           "inning_id": "TEX201904150_INN_TOP07",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 99,
@@ -27770,6 +27837,7 @@
         },
         {
           "at_bat_id": "TEX201904150_07_TEX_664871_ANA_607345_0",
+          "pfx_ab_id": 68,
           "inning_id": "TEX201904150_INN_TOP07",
           "pitch_app_id": "TEX201904150_664871",
           "pbp_table_row_number": 100,
@@ -27958,6 +28026,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_07_ANA_595928_TEX_592261_0",
+          "pfx_ab_id": 69,
           "inning_id": "TEX201904150_INN_BOT07",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 103,
@@ -28475,6 +28544,7 @@
         },
         {
           "at_bat_id": "TEX201904150_07_ANA_595928_TEX_425783_0",
+          "pfx_ab_id": 70,
           "inning_id": "TEX201904150_INN_BOT07",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 104,
@@ -28617,6 +28687,7 @@
         },
         {
           "at_bat_id": "TEX201904150_07_ANA_595928_TEX_542454_0",
+          "pfx_ab_id": 71,
           "inning_id": "TEX201904150_INN_BOT07",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 105,
@@ -28909,6 +28980,7 @@
         },
         {
           "at_bat_id": "TEX201904150_07_ANA_595928_TEX_462101_0",
+          "pfx_ab_id": 72,
           "inning_id": "TEX201904150_INN_BOT07",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 106,
@@ -29276,6 +29348,7 @@
         },
         {
           "at_bat_id": "TEX201904150_07_ANA_595928_TEX_608577_0",
+          "pfx_ab_id": 73,
           "inning_id": "TEX201904150_INN_BOT07",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 107,
@@ -29774,6 +29847,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_08_TEX_613317_ANA_600303_0",
+          "pfx_ab_id": 74,
           "inning_id": "TEX201904150_INN_TOP08",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 111,
@@ -29936,6 +30010,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_TEX_613317_ANA_446359_0",
+          "pfx_ab_id": 75,
           "inning_id": "TEX201904150_INN_TOP08",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 112,
@@ -30453,6 +30528,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_TEX_613317_ANA_664058_0",
+          "pfx_ab_id": 76,
           "inning_id": "TEX201904150_INN_TOP08",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 113,
@@ -30820,6 +30896,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_TEX_613317_ANA_594777_0",
+          "pfx_ab_id": 77,
           "inning_id": "TEX201904150_INN_TOP08",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 114,
@@ -31262,6 +31339,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_TEX_613317_ANA_545361_0",
+          "pfx_ab_id": 78,
           "inning_id": "TEX201904150_INN_TOP08",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 115,
@@ -31451,6 +31529,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_08_ANA_595928_TEX_608336_0",
+          "pfx_ab_id": 79,
           "inning_id": "TEX201904150_INN_BOT08",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 118,
@@ -32043,6 +32122,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_ANA_595928_TEX_452678_0",
+          "pfx_ab_id": 80,
           "inning_id": "TEX201904150_INN_BOT08",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 119,
@@ -32335,6 +32415,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_ANA_595928_TEX_523253_0",
+          "pfx_ab_id": 81,
           "inning_id": "TEX201904150_INN_BOT08",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 120,
@@ -32777,6 +32858,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_ANA_595928_TEX_643396_0",
+          "pfx_ab_id": 82,
           "inning_id": "TEX201904150_INN_BOT08",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 121,
@@ -33219,6 +33301,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_ANA_595928_TEX_592261_0",
+          "pfx_ab_id": 83,
           "inning_id": "TEX201904150_INN_BOT08",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 122,
@@ -33661,6 +33744,7 @@
         },
         {
           "at_bat_id": "TEX201904150_08_ANA_595928_TEX_425783_0",
+          "pfx_ab_id": 84,
           "inning_id": "TEX201904150_INN_BOT08",
           "pitch_app_id": "TEX201904150_595928",
           "pbp_table_row_number": 123,
@@ -33850,6 +33934,7 @@
       "inning_events": [
         {
           "at_bat_id": "TEX201904150_09_TEX_613317_ANA_592743_0",
+          "pfx_ab_id": 85,
           "inning_id": "TEX201904150_INN_TOP09",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 126,
@@ -34142,6 +34227,7 @@
         },
         {
           "at_bat_id": "TEX201904150_09_TEX_613317_ANA_405395_0",
+          "pfx_ab_id": 86,
           "inning_id": "TEX201904150_INN_TOP09",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 127,
@@ -34509,6 +34595,7 @@
         },
         {
           "at_bat_id": "TEX201904150_09_TEX_613317_ANA_571718_0",
+          "pfx_ab_id": 87,
           "inning_id": "TEX201904150_INN_TOP09",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 128,
@@ -34801,6 +34888,7 @@
         },
         {
           "at_bat_id": "TEX201904150_09_TEX_613317_ANA_607345_0",
+          "pfx_ab_id": 88,
           "inning_id": "TEX201904150_INN_TOP09",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 129,
@@ -35168,6 +35256,7 @@
         },
         {
           "at_bat_id": "TEX201904150_09_TEX_613317_ANA_600303_0",
+          "pfx_ab_id": 89,
           "inning_id": "TEX201904150_INN_TOP09",
           "pitch_app_id": "TEX201904150_613317",
           "pbp_table_row_number": 130,
@@ -35690,6 +35779,7 @@
         },
         {
           "at_bat_id": "TEX201904150_09_TEX_600917_ANA_446359_0",
+          "pfx_ab_id": 90,
           "inning_id": "TEX201904150_INN_TOP09",
           "pitch_app_id": "TEX201904150_600917",
           "pbp_table_row_number": 132,

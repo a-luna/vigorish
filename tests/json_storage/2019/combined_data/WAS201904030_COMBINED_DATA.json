@@ -2894,6 +2894,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_01_WAS_434671_PHI_457705_0",
+          "pfx_ab_id": 1,
           "inning_id": "WAS201904030_INN_TOP01",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 1,
@@ -3402,6 +3403,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_WAS_434671_PHI_516416_0",
+          "pfx_ab_id": 2,
           "inning_id": "WAS201904030_INN_TOP01",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 2,
@@ -4195,6 +4197,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_WAS_434671_PHI_547180_0",
+          "pfx_ab_id": 3,
           "inning_id": "WAS201904030_INN_TOP01",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 3,
@@ -4888,6 +4891,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_WAS_434671_PHI_656555_0",
+          "pfx_ab_id": 4,
           "inning_id": "WAS201904030_INN_TOP01",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 5,
@@ -5246,6 +5250,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_WAS_434671_PHI_592663_0",
+          "pfx_ab_id": 5,
           "inning_id": "WAS201904030_INN_TOP01",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 6,
@@ -5534,6 +5539,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_WAS_434671_PHI_546318_0",
+          "pfx_ab_id": 6,
           "inning_id": "WAS201904030_INN_TOP01",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 7,
@@ -6165,6 +6171,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_01_PHI_605400_WAS_594809_0",
+          "pfx_ab_id": 7,
           "inning_id": "WAS201904030_INN_BOT01",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 10,
@@ -6748,6 +6755,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_PHI_605400_WAS_572821_0",
+          "pfx_ab_id": 8,
           "inning_id": "WAS201904030_INN_BOT01",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 11,
@@ -6965,6 +6973,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_PHI_605400_WAS_543685_0",
+          "pfx_ab_id": 9,
           "inning_id": "WAS201904030_INN_BOT01",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 12,
@@ -7323,6 +7332,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_PHI_605400_WAS_665742_0",
+          "pfx_ab_id": 10,
           "inning_id": "WAS201904030_INN_BOT01",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 13,
@@ -8481,6 +8491,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_PHI_605400_WAS_475582_0",
+          "pfx_ab_id": 11,
           "inning_id": "WAS201904030_INN_BOT01",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 14,
@@ -8984,6 +8995,7 @@
         },
         {
           "at_bat_id": "WAS201904030_01_PHI_605400_WAS_435559_0",
+          "pfx_ab_id": 12,
           "inning_id": "WAS201904030_INN_BOT01",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 15,
@@ -9386,6 +9398,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_02_WAS_434671_PHI_514917_0",
+          "pfx_ab_id": 13,
           "inning_id": "WAS201904030_INN_TOP02",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 18,
@@ -9678,6 +9691,7 @@
         },
         {
           "at_bat_id": "WAS201904030_02_WAS_434671_PHI_596748_0",
+          "pfx_ab_id": 14,
           "inning_id": "WAS201904030_INN_TOP02",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 19,
@@ -10045,6 +10059,7 @@
         },
         {
           "at_bat_id": "WAS201904030_02_WAS_434671_PHI_605400_0",
+          "pfx_ab_id": 15,
           "inning_id": "WAS201904030_INN_TOP02",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 20,
@@ -10456,6 +10471,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_02_PHI_605400_WAS_594694_0",
+          "pfx_ab_id": 16,
           "inning_id": "WAS201904030_INN_BOT02",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 23,
@@ -10748,6 +10764,7 @@
         },
         {
           "at_bat_id": "WAS201904030_02_PHI_605400_WAS_434671_0",
+          "pfx_ab_id": 17,
           "inning_id": "WAS201904030_INN_BOT02",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 24,
@@ -11040,6 +11057,7 @@
         },
         {
           "at_bat_id": "WAS201904030_02_PHI_605400_WAS_645302_0",
+          "pfx_ab_id": 18,
           "inning_id": "WAS201904030_INN_BOT02",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 25,
@@ -11377,6 +11395,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_03_WAS_434671_PHI_457705_0",
+          "pfx_ab_id": 19,
           "inning_id": "WAS201904030_INN_TOP03",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 28,
@@ -11744,6 +11763,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_WAS_434671_PHI_516416_0",
+          "pfx_ab_id": 20,
           "inning_id": "WAS201904030_INN_TOP03",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 29,
@@ -11961,6 +11981,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_WAS_434671_PHI_547180_0",
+          "pfx_ab_id": 21,
           "inning_id": "WAS201904030_INN_TOP03",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 30,
@@ -12478,6 +12499,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_WAS_434671_PHI_656555_0",
+          "pfx_ab_id": 22,
           "inning_id": "WAS201904030_INN_TOP03",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 31,
@@ -12675,6 +12697,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_03_PHI_605400_WAS_594809_0",
+          "pfx_ab_id": 23,
           "inning_id": "WAS201904030_INN_BOT03",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 34,
@@ -12967,6 +12990,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_PHI_605400_WAS_572821_0",
+          "pfx_ab_id": 24,
           "inning_id": "WAS201904030_INN_BOT03",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 35,
@@ -13434,6 +13458,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_PHI_605400_WAS_543685_0",
+          "pfx_ab_id": 25,
           "inning_id": "WAS201904030_INN_BOT03",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 36,
@@ -13801,6 +13826,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_PHI_605400_WAS_665742_0",
+          "pfx_ab_id": 26,
           "inning_id": "WAS201904030_INN_BOT03",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 37,
@@ -14093,6 +14119,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_PHI_605400_WAS_475582_0",
+          "pfx_ab_id": 27,
           "inning_id": "WAS201904030_INN_BOT03",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 38,
@@ -14535,6 +14562,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_PHI_605400_WAS_435559_0",
+          "pfx_ab_id": 28,
           "inning_id": "WAS201904030_INN_BOT03",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 39,
@@ -14977,6 +15005,7 @@
         },
         {
           "at_bat_id": "WAS201904030_03_PHI_605400_WAS_594694_0",
+          "pfx_ab_id": 29,
           "inning_id": "WAS201904030_INN_BOT03",
           "pitch_app_id": "WAS201904030_605400",
           "pbp_table_row_number": 40,
@@ -15688,6 +15717,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_04_WAS_434671_PHI_592663_0",
+          "pfx_ab_id": 30,
           "inning_id": "WAS201904030_INN_TOP04",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 43,
@@ -16205,6 +16235,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_WAS_434671_PHI_546318_0",
+          "pfx_ab_id": 31,
           "inning_id": "WAS201904030_INN_TOP04",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 44,
@@ -16662,6 +16693,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_WAS_434671_PHI_514917_0",
+          "pfx_ab_id": 32,
           "inning_id": "WAS201904030_INN_TOP04",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 45,
@@ -17104,6 +17136,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_WAS_434671_PHI_596748_0",
+          "pfx_ab_id": 33,
           "inning_id": "WAS201904030_INN_TOP04",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 46,
@@ -17246,6 +17279,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_WAS_434671_PHI_608384_0",
+          "pfx_ab_id": 34,
           "inning_id": "WAS201904030_INN_TOP04",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 48,
@@ -17633,6 +17667,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_WAS_434671_PHI_457705_0",
+          "pfx_ab_id": 35,
           "inning_id": "WAS201904030_INN_TOP04",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 49,
@@ -18240,6 +18275,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_WAS_434671_PHI_516416_0",
+          "pfx_ab_id": 36,
           "inning_id": "WAS201904030_INN_TOP04",
           "pitch_app_id": "WAS201904030_434671",
           "pbp_table_row_number": 50,
@@ -18582,6 +18618,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_04_PHI_591693_WAS_434671_0",
+          "pfx_ab_id": 37,
           "inning_id": "WAS201904030_INN_BOT04",
           "pitch_app_id": "WAS201904030_591693",
           "pbp_table_row_number": 54,
@@ -18894,6 +18931,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_PHI_591693_WAS_645302_0",
+          "pfx_ab_id": 38,
           "inning_id": "WAS201904030_INN_BOT04",
           "pitch_app_id": "WAS201904030_591693",
           "pbp_table_row_number": 55,
@@ -19411,6 +19449,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_PHI_591693_WAS_594809_0",
+          "pfx_ab_id": 39,
           "inning_id": "WAS201904030_INN_BOT04",
           "pitch_app_id": "WAS201904030_591693",
           "pbp_table_row_number": 56,
@@ -19648,6 +19687,7 @@
         },
         {
           "at_bat_id": "WAS201904030_04_PHI_591693_WAS_572821_0",
+          "pfx_ab_id": 40,
           "inning_id": "WAS201904030_INN_BOT04",
           "pitch_app_id": "WAS201904030_591693",
           "pbp_table_row_number": 57,
@@ -20001,6 +20041,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_05_WAS_594840_PHI_547180_0",
+          "pfx_ab_id": 41,
           "inning_id": "WAS201904030_INN_TOP05",
           "pitch_app_id": "WAS201904030_594840",
           "pbp_table_row_number": 61,
@@ -20463,6 +20504,7 @@
         },
         {
           "at_bat_id": "WAS201904030_05_WAS_594840_PHI_656555_0",
+          "pfx_ab_id": 42,
           "inning_id": "WAS201904030_INN_TOP05",
           "pitch_app_id": "WAS201904030_594840",
           "pbp_table_row_number": 62,
@@ -20605,6 +20647,7 @@
         },
         {
           "at_bat_id": "WAS201904030_05_WAS_594840_PHI_592663_0",
+          "pfx_ab_id": 43,
           "inning_id": "WAS201904030_INN_TOP05",
           "pitch_app_id": "WAS201904030_594840",
           "pbp_table_row_number": 63,
@@ -20822,6 +20865,7 @@
         },
         {
           "at_bat_id": "WAS201904030_05_WAS_594840_PHI_546318_0",
+          "pfx_ab_id": 44,
           "inning_id": "WAS201904030_INN_TOP05",
           "pitch_app_id": "WAS201904030_594840",
           "pbp_table_row_number": 64,
@@ -21264,6 +21308,7 @@
         },
         {
           "at_bat_id": "WAS201904030_05_WAS_594840_PHI_514917_0",
+          "pfx_ab_id": 45,
           "inning_id": "WAS201904030_INN_TOP05",
           "pitch_app_id": "WAS201904030_594840",
           "pbp_table_row_number": 65,
@@ -21451,6 +21496,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_05_PHI_591693_WAS_543685_0",
+          "pfx_ab_id": 46,
           "inning_id": "WAS201904030_INN_BOT05",
           "pitch_app_id": "WAS201904030_591693",
           "pbp_table_row_number": 68,
@@ -21818,6 +21864,7 @@
         },
         {
           "at_bat_id": "WAS201904030_05_PHI_591693_WAS_665742_0",
+          "pfx_ab_id": 47,
           "inning_id": "WAS201904030_INN_BOT05",
           "pitch_app_id": "WAS201904030_591693",
           "pbp_table_row_number": 69,
@@ -22373,6 +22420,7 @@
         },
         {
           "at_bat_id": "WAS201904030_05_PHI_591693_WAS_475582_0",
+          "pfx_ab_id": 48,
           "inning_id": "WAS201904030_INN_BOT05",
           "pitch_app_id": "WAS201904030_591693",
           "pbp_table_row_number": 72,
@@ -22890,6 +22938,7 @@
         },
         {
           "at_bat_id": "WAS201904030_05_PHI_504379_WAS_435559_0",
+          "pfx_ab_id": 49,
           "inning_id": "WAS201904030_INN_BOT05",
           "pitch_app_id": "WAS201904030_504379",
           "pbp_table_row_number": 74,
@@ -23195,6 +23244,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_06_WAS_502522_PHI_596748_0",
+          "pfx_ab_id": 51,
           "inning_id": "WAS201904030_INN_TOP06",
           "pitch_app_id": "WAS201904030_502522",
           "pbp_table_row_number": 78,
@@ -23743,6 +23793,7 @@
         },
         {
           "at_bat_id": "WAS201904030_06_WAS_502522_PHI_664068_0",
+          "pfx_ab_id": 52,
           "inning_id": "WAS201904030_INN_TOP06",
           "pitch_app_id": "WAS201904030_502522",
           "pbp_table_row_number": 79,
@@ -24331,6 +24382,7 @@
         },
         {
           "at_bat_id": "WAS201904030_06_WAS_502522_PHI_457705_0",
+          "pfx_ab_id": 53,
           "inning_id": "WAS201904030_INN_TOP06",
           "pitch_app_id": "WAS201904030_502522",
           "pbp_table_row_number": 80,
@@ -24625,6 +24677,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_06_PHI_504379_WAS_594694_0",
+          "pfx_ab_id": 54,
           "inning_id": "WAS201904030_INN_BOT06",
           "pitch_app_id": "WAS201904030_504379",
           "pbp_table_row_number": 83,
@@ -24704,6 +24757,7 @@
         },
         {
           "at_bat_id": "WAS201904030_06_PHI_504379_WAS_543228_0",
+          "pfx_ab_id": 55,
           "inning_id": "WAS201904030_INN_BOT06",
           "pitch_app_id": "WAS201904030_504379",
           "pbp_table_row_number": 84,
@@ -24799,6 +24853,7 @@
         },
         {
           "at_bat_id": "WAS201904030_06_PHI_504379_WAS_645302_0",
+          "pfx_ab_id": 56,
           "inning_id": "WAS201904030_INN_BOT06",
           "pitch_app_id": "WAS201904030_504379",
           "pbp_table_row_number": 85,
@@ -24937,6 +24992,7 @@
         },
         {
           "at_bat_id": "WAS201904030_06_PHI_504379_WAS_594809_0",
+          "pfx_ab_id": 57,
           "inning_id": "WAS201904030_INN_BOT06",
           "pitch_app_id": "WAS201904030_504379",
           "pbp_table_row_number": 87,
@@ -25034,6 +25090,7 @@
         },
         {
           "at_bat_id": "WAS201904030_06_PHI_504379_WAS_572821_0",
+          "pfx_ab_id": 57,
           "inning_id": "WAS201904030_INN_BOT06",
           "pitch_app_id": "WAS201904030_504379",
           "pbp_table_row_number": 88,
@@ -25533,6 +25590,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_07_WAS_502522_PHI_516416_0",
+          "pfx_ab_id": 58,
           "inning_id": "WAS201904030_INN_TOP07",
           "pitch_app_id": "WAS201904030_502522",
           "pbp_table_row_number": 91,
@@ -25825,6 +25883,7 @@
         },
         {
           "at_bat_id": "WAS201904030_07_WAS_502522_PHI_547180_0",
+          "pfx_ab_id": 59,
           "inning_id": "WAS201904030_INN_TOP07",
           "pitch_app_id": "WAS201904030_502522",
           "pbp_table_row_number": 92,
@@ -25967,6 +26026,7 @@
         },
         {
           "at_bat_id": "WAS201904030_07_WAS_502522_PHI_656555_0",
+          "pfx_ab_id": 60,
           "inning_id": "WAS201904030_INN_TOP07",
           "pitch_app_id": "WAS201904030_502522",
           "pbp_table_row_number": 93,
@@ -26259,6 +26319,7 @@
         },
         {
           "at_bat_id": "WAS201904030_07_WAS_502522_PHI_592663_0",
+          "pfx_ab_id": 61,
           "inning_id": "WAS201904030_INN_TOP07",
           "pitch_app_id": "WAS201904030_502522",
           "pbp_table_row_number": 94,
@@ -26445,6 +26506,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_07_PHI_593576_WAS_543685_0",
+          "pfx_ab_id": 62,
           "inning_id": "WAS201904030_INN_BOT07",
           "pitch_app_id": "WAS201904030_593576",
           "pbp_table_row_number": 98,
@@ -26907,6 +26969,7 @@
         },
         {
           "at_bat_id": "WAS201904030_07_PHI_593576_WAS_665742_0",
+          "pfx_ab_id": 63,
           "inning_id": "WAS201904030_INN_BOT07",
           "pitch_app_id": "WAS201904030_593576",
           "pbp_table_row_number": 99,
@@ -27274,6 +27337,7 @@
         },
         {
           "at_bat_id": "WAS201904030_07_PHI_593576_WAS_475582_0",
+          "pfx_ab_id": 64,
           "inning_id": "WAS201904030_INN_BOT07",
           "pitch_app_id": "WAS201904030_593576",
           "pbp_table_row_number": 100,
@@ -27466,6 +27530,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_08_WAS_448609_PHI_546318_0",
+          "pfx_ab_id": 65,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_448609",
           "pbp_table_row_number": 104,
@@ -27778,6 +27843,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_WAS_448609_PHI_595284_0",
+          "pfx_ab_id": 66,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_448609",
           "pbp_table_row_number": 106,
@@ -28165,6 +28231,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_WAS_572096_PHI_596748_0",
+          "pfx_ab_id": 67,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_572096",
           "pbp_table_row_number": 108,
@@ -28777,6 +28844,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_WAS_572096_PHI_664068_0",
+          "pfx_ab_id": 68,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_572096",
           "pbp_table_row_number": 109,
@@ -29219,6 +29287,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_WAS_607457_PHI_457705_0",
+          "pfx_ab_id": 69,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_607457",
           "pbp_table_row_number": 111,
@@ -29756,6 +29825,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_WAS_607457_PHI_516416_0",
+          "pfx_ab_id": 70,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_607457",
           "pbp_table_row_number": 113,
@@ -30286,6 +30356,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_WAS_607457_PHI_547180_0",
+          "pfx_ab_id": 71,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_607457",
           "pbp_table_row_number": 114,
@@ -30372,6 +30443,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_WAS_607457_PHI_656555_0",
+          "pfx_ab_id": 72,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_607457",
           "pbp_table_row_number": 115,
@@ -30964,6 +31036,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_WAS_607457_PHI_592663_0",
+          "pfx_ab_id": 73,
           "inning_id": "WAS201904030_INN_TOP08",
           "pitch_app_id": "WAS201904030_607457",
           "pbp_table_row_number": 116,
@@ -31535,6 +31608,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_08_PHI_622554_WAS_664057_0",
+          "pfx_ab_id": 74,
           "inning_id": "WAS201904030_INN_BOT08",
           "pitch_app_id": "WAS201904030_622554",
           "pbp_table_row_number": 120,
@@ -31867,6 +31941,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_PHI_622554_WAS_594694_0",
+          "pfx_ab_id": 75,
           "inning_id": "WAS201904030_INN_BOT08",
           "pitch_app_id": "WAS201904030_622554",
           "pbp_table_row_number": 121,
@@ -32084,6 +32159,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_PHI_622554_WAS_543228_0",
+          "pfx_ab_id": 76,
           "inning_id": "WAS201904030_INN_BOT08",
           "pitch_app_id": "WAS201904030_622554",
           "pbp_table_row_number": 122,
@@ -32376,6 +32452,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_PHI_622554_WAS_645302_0",
+          "pfx_ab_id": 77,
           "inning_id": "WAS201904030_INN_BOT08",
           "pitch_app_id": "WAS201904030_622554",
           "pbp_table_row_number": 123,
@@ -32889,6 +32966,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_PHI_622554_WAS_594809_0",
+          "pfx_ab_id": 78,
           "inning_id": "WAS201904030_INN_BOT08",
           "pitch_app_id": "WAS201904030_622554",
           "pbp_table_row_number": 124,
@@ -33481,6 +33559,7 @@
         },
         {
           "at_bat_id": "WAS201904030_08_PHI_622554_WAS_572821_0",
+          "pfx_ab_id": 79,
           "inning_id": "WAS201904030_INN_BOT08",
           "pitch_app_id": "WAS201904030_622554",
           "pbp_table_row_number": 125,
@@ -33967,6 +34046,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_09_WAS_448281_PHI_546318_0",
+          "pfx_ab_id": 80,
           "inning_id": "WAS201904030_INN_TOP09",
           "pitch_app_id": "WAS201904030_448281",
           "pbp_table_row_number": 129,
@@ -34429,6 +34509,7 @@
         },
         {
           "at_bat_id": "WAS201904030_09_WAS_448281_PHI_571437_0",
+          "pfx_ab_id": 81,
           "inning_id": "WAS201904030_INN_TOP09",
           "pitch_app_id": "WAS201904030_448281",
           "pbp_table_row_number": 131,
@@ -34816,6 +34897,7 @@
         },
         {
           "at_bat_id": "WAS201904030_09_WAS_448281_PHI_596748_0",
+          "pfx_ab_id": 82,
           "inning_id": "WAS201904030_INN_TOP09",
           "pitch_app_id": "WAS201904030_448281",
           "pbp_table_row_number": 132,
@@ -35303,6 +35385,7 @@
       "inning_events": [
         {
           "at_bat_id": "WAS201904030_09_PHI_502085_WAS_543685_0",
+          "pfx_ab_id": 83,
           "inning_id": "WAS201904030_INN_BOT09",
           "pitch_app_id": "WAS201904030_502085",
           "pbp_table_row_number": 136,
@@ -35615,6 +35698,7 @@
         },
         {
           "at_bat_id": "WAS201904030_09_PHI_502085_WAS_665742_0",
+          "pfx_ab_id": 84,
           "inning_id": "WAS201904030_INN_BOT09",
           "pitch_app_id": "WAS201904030_502085",
           "pbp_table_row_number": 137,
@@ -36057,6 +36141,7 @@
         },
         {
           "at_bat_id": "WAS201904030_09_PHI_502085_WAS_475582_0",
+          "pfx_ab_id": 85,
           "inning_id": "WAS201904030_INN_BOT09",
           "pitch_app_id": "WAS201904030_502085",
           "pbp_table_row_number": 138,
@@ -36499,6 +36584,7 @@
         },
         {
           "at_bat_id": "WAS201904030_09_PHI_502085_WAS_669738_0",
+          "pfx_ab_id": 86,
           "inning_id": "WAS201904030_INN_BOT09",
           "pitch_app_id": "WAS201904030_502085",
           "pbp_table_row_number": 140,
@@ -39909,6 +39995,7 @@
     "WAS201904030_INN_BOT05": {
       "WAS201904030_05_PHI_504379_WAS_594694_0": {
         "at_bat_id": "WAS201904030_05_PHI_504379_WAS_594694_0",
+        "pfx_ab_id": 50,
         "inning_id": "WAS201904030_INN_BOT05",
         "pitch_app_id": "WAS201904030_504379",
         "pitcher_id_bbref": "nicasju01",
@@ -40217,6 +40304,7 @@
     "WAS201904030_INN_TOP06": {
       "WAS201904030_06_WAS_502522_PHI_516416_0": {
         "at_bat_id": "WAS201904030_06_WAS_502522_PHI_516416_0",
+        "pfx_ab_id": 54,
         "inning_id": "WAS201904030_INN_TOP06",
         "pitch_app_id": "WAS201904030_502522",
         "pitcher_id_bbref": "milleju02",
@@ -40453,6 +40541,7 @@
       },
       "WAS201904030_06_WAS_502522_PHI_547180_0": {
         "at_bat_id": "WAS201904030_06_WAS_502522_PHI_547180_0",
+        "pfx_ab_id": 55,
         "inning_id": "WAS201904030_INN_TOP06",
         "pitch_app_id": "WAS201904030_502522",
         "pitcher_id_bbref": "milleju02",
@@ -40551,6 +40640,7 @@
     "WAS201904030_INN_BOT06": {
       "WAS201904030_06_PHI_591693_WAS_645302_0": {
         "at_bat_id": "WAS201904030_06_PHI_591693_WAS_645302_0",
+        "pfx_ab_id": 55,
         "inning_id": "WAS201904030_INN_BOT06",
         "pitch_app_id": "WAS201904030_591693",
         "pitcher_id_bbref": "ramosed02",
@@ -40929,6 +41019,7 @@
       },
       "WAS201904030_06_PHI_591693_WAS_594809_0": {
         "at_bat_id": "WAS201904030_06_PHI_591693_WAS_594809_0",
+        "pfx_ab_id": 56,
         "inning_id": "WAS201904030_INN_BOT06",
         "pitch_app_id": "WAS201904030_591693",
         "pitcher_id_bbref": "ramosed02",
@@ -41305,6 +41396,7 @@
       },
       "WAS201904030_06_PHI_591693_WAS_572821_0": {
         "at_bat_id": "WAS201904030_06_PHI_591693_WAS_572821_0",
+        "pfx_ab_id": 57,
         "inning_id": "WAS201904030_INN_BOT06",
         "pitch_app_id": "WAS201904030_591693",
         "pitcher_id_bbref": "ramosed02",
