@@ -1,4 +1,5 @@
 """Menu item that allows the user to initialize/reset the database."""
+import os
 import subprocess
 
 from getch import pause
@@ -38,7 +39,14 @@ class StatusReport(MenuItem):
             result = self.single_date_report()
         if report_type == "DATE_RANGE":
             result = self.date_range_report()
-        return result if result.success else Result.Ok(self.exit_menu)
+        if result.failure:
+            if "no_report" in result.error:
+                return Result.Ok(self.exit_menu)
+            return result
+        date_report = result.value
+        if os.environ.get("ENV") != "TEST":
+            date_report.launch()
+        return Result.Ok(self.exit_menu)
 
     def report_options_prompt(self):
         choices = {
@@ -103,26 +111,18 @@ class StatusReport(MenuItem):
         result = self.get_season_report_type_from_user()
         if result.failure:
             return result
-        report = result.value
+        report_type = result.value
         subprocess.run(["clear"])
-        result = report_season_status(self.db_session, year, report)
-        if result.failure:
-            return result
-        pause(message="Press any key to continue...")
-        return Result.Ok()
+        return report_season_status(self.db_session, year, report_type)
 
     def single_date_report(self):
         game_date = single_date_prompt("Report status for date:")
         result = self.get_single_date_report_type_from_user()
         if result.failure:
             return result
-        report = result.value
+        report_type = result.value
         subprocess.run(["clear"])
-        result = report_status_single_date(self.db_session, game_date, report)
-        if result.failure:
-            return result
-        pause(message="Press any key to continue...")
-        return Result.Ok()
+        return report_status_single_date(self.db_session, game_date, report_type)
 
     def date_range_report(self):
         start_date = single_date_prompt("Report status start date: ")
@@ -130,13 +130,9 @@ class StatusReport(MenuItem):
         result = self.get_date_range_report_type_from_user()
         if result.failure:
             return result
-        report = result.value
+        report_type = result.value
         subprocess.run(["clear"])
-        result = report_date_range_status(self.db_session, start_date, end_date, report)
-        if result.failure:
-            return result
-        pause(message="Press any key to continue...")
-        return Result.Ok()
+        return report_date_range_status(self.db_session, start_date, end_date, report_type)
 
     def get_mlb_season_from_user(self):
         result = season_prompt(self.db_session, "Select the MLB Season to report:")
