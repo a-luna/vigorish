@@ -29,8 +29,8 @@ def test_season_status_report(db_session):
     assert "Pitch App Count (BBRef/Brooks)...............: 69/715" in report
     assert "Pitch App Count (PFx/data/no data)...........: 69/68/1" in report
     assert "PitchFX Data Errors (Valid AB/Invalid AB)....: NO 0/3" in report
-    assert "Pitch Count (BBRef/Brooks/PFx)...............: 2243/2254/2254" in report
-    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 2243/2173/62" in report
+    assert "Pitch Count (BBRef/Brooks/PFx)...............: 2,243/2,254/2,254" in report
+    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 2,243/2,173/62" in report
 
 
 def test_season_as_dict(db_session):

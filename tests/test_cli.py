@@ -90,8 +90,8 @@ def test_status_season_overall_summary():
     assert "Pitch App Count (BBRef/Brooks)...............: 69/715" in result.output
     assert "Pitch App Count (PFx/data/no data)...........: 69/68/1" in result.output
     assert "PitchFX Data Errors (Valid AB/Invalid AB)....: NO 0/3" in result.output
-    assert "Pitch Count (BBRef/Brooks/PFx)...............: 2243/2254/2254" in result.output
-    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 2243/2173/62" in result.output
+    assert "Pitch Count (BBRef/Brooks/PFx)...............: 2,243/2,254/2,254" in result.output
+    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 2,243/2,173/62" in result.output
 
 
 def test_status_season_date_range_summary_only_missing():

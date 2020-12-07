@@ -507,34 +507,64 @@ class Season(Base):
         total_pitchfx_removed_count = (
             self.total_duplicate_pitchfx_removed_count + self.total_extra_pitchfx_removed_count
         )
-        return (
-            f"BBref Daily Dash Scraped.....................: "
-            f"{self.total_days_scraped_bbref:,}/{self.total_days:,} days "
-            f"({self.percent_complete_bbref_games_for_date:.0%})\n"
-            f"Brooks Daily Dash Scraped....................: "
-            f"{self.total_days_scraped_brooks:,}/{self.total_days:,} days "
-            f"({self.percent_complete_brooks_games_for_date:.0%})\n"
-            f"BBref Boxscores Scraped......................: {scraped_bbref_boxscores} "
-            f"{self.total_bbref_boxscores_scraped}/{self.total_games}\n"
-            f"Brooks Games Scraped.........................: {scraped_brooks_pitch_logs} "
-            f"{self.total_brooks_pitch_logs_scraped}/{self.total_games}\n"
-            f"PitchFx Logs Scraped.........................: {scraped_all_pitchfx_logs} "
-            f"{self.total_pitch_apps_scraped_pitchfx}/{self.pitch_app_count_pitchfx} "
-            f"({self.percent_complete_pitchfx_logs_scraped:.0%})\n"
-            f"Combined BBRef/PitchFX Data (Success/Total)..: {combined_data_for_all_pitchfx_logs} "
-            f"{self.total_games_combined_success}/{self.total_games_combined}\n"
-            f"Pitch App Count (BBRef/Brooks)...............: "
-            f"{self.pitch_app_count_bbref}/{self.pitch_app_count_brooks}\n"
-            f"Pitch App Count (PFx/data/no data)...........: {self.pitch_app_count_pitchfx}/"
-            f"{self.total_pitch_apps_with_pitchfx_data}/{self.total_pitch_apps_no_pitchfx_data}\n"
-            f"PitchFX Data Errors (Valid AB/Invalid AB)....: {pitchfx_error_for_any_pitchfx_logs} "
-            f"{self.total_pitch_apps_pitchfx_error}/{self.total_pitch_apps_invalid_pitchfx}\n"
-            f"Pitch Count (BBRef/Brooks/PFx)...............: {self.total_pitch_count_bbref}/"
-            f"{self.total_pitch_count_pitch_logs}/{self.total_pitch_count_pitchfx}\n"
-            "Pitch Count Audited (BBRef/PFx/Removed)......: "
-            f"{self.total_pitch_count_bbref_audited}/{self.total_pitch_count_pitchfx_audited}/"
-            f"{total_pitchfx_removed_count}\n"
-        )
+        return [
+            (
+                f"BBref Daily Dash Scraped.....................: "
+                f"{self.total_days_scraped_bbref:,}/{self.total_days:,} days "
+                f"({self.percent_complete_bbref_games_for_date:.0%})"
+            ),
+            (
+                f"Brooks Daily Dash Scraped....................: "
+                f"{self.total_days_scraped_brooks:,}/{self.total_days:,} days "
+                f"({self.percent_complete_brooks_games_for_date:.0%})"
+            ),
+            (
+                f"BBref Boxscores Scraped......................: {scraped_bbref_boxscores} "
+                f"{self.total_bbref_boxscores_scraped:,}/{self.total_games:,}"
+            ),
+            (
+                f"Brooks Games Scraped.........................: {scraped_brooks_pitch_logs} "
+                f"{self.total_brooks_pitch_logs_scraped:,}/{self.total_games:,}"
+            ),
+            (
+                f"PitchFx Logs Scraped.........................: {scraped_all_pitchfx_logs} "
+                f"{self.total_pitch_apps_scraped_pitchfx:,}/{self.pitch_app_count_pitchfx:,} "
+                f"({self.percent_complete_pitchfx_logs_scraped:.0%})"
+            ),
+            (
+                f"Combined BBRef/PitchFX Data (Success/Total)..: "
+                f"{combined_data_for_all_pitchfx_logs} "
+                f"{self.total_games_combined_success:,}/{self.total_games_combined:,}"
+            ),
+            (
+                f"Pitch App Count (BBRef/Brooks)...............: "
+                f"{self.pitch_app_count_bbref:,}/{self.pitch_app_count_brooks:,}"
+            ),
+            (
+                f"Pitch App Count (PFx/data/no data)...........: "
+                f"{self.pitch_app_count_pitchfx:,}/"
+                f"{self.total_pitch_apps_with_pitchfx_data:,}/"
+                f"{self.total_pitch_apps_no_pitchfx_data:,}"
+            ),
+            (
+                f"PitchFX Data Errors (Valid AB/Invalid AB)....: "
+                f"{pitchfx_error_for_any_pitchfx_logs} "
+                f"{self.total_pitch_apps_pitchfx_error}/"
+                f"{self.total_pitch_apps_invalid_pitchfx:,}"
+            ),
+            (
+                f"Pitch Count (BBRef/Brooks/PFx)...............: "
+                f"{self.total_pitch_count_bbref:,}/"
+                f"{self.total_pitch_count_pitch_logs:,}/"
+                f"{self.total_pitch_count_pitchfx:,}"
+            ),
+            (
+                "Pitch Count Audited (BBRef/PFx/Removed)......: "
+                f"{self.total_pitch_count_bbref_audited:,}/"
+                f"{self.total_pitch_count_pitchfx_audited:,}/"
+                f"{total_pitchfx_removed_count:,}"
+            ),
+        ]
 
     def get_date_range(self):
         return get_date_range_util(self.start_date, self.end_date)
