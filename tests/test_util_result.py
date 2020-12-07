@@ -135,7 +135,7 @@ def test_result_on_both(capfd):
 
     result = Result.Ok(22).on_both(show_result)
     out, err = capfd.readouterr()
-    assert "[Success] value=22 (<class 'int'>)" in out
+    assert "[Success] value=22 <class 'int'>" in out
     assert not err
     assert result.success
     assert result.value == 22
