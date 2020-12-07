@@ -429,7 +429,7 @@ class CombineScrapedData(MenuItem):
         ab_plural = "at bats" if self.total_at_bats_any_pitchfx_error > 1 else "at bat"
         message = (
             f"{self.total_games_any_pfx_error} {games_plural} invalid PitchFX data for a total "
-            f"of {len(self.total_at_bats_any_pitchfx_error)} {ab_plural}, you can view details "
+            f"of {self.total_at_bats_any_pitchfx_error} {ab_plural}, you can view details "
             "of each at bat and attempt to fix these errors using the Investigate Failures menu."
         )
         print_message(message, fg="bright_cyan")
