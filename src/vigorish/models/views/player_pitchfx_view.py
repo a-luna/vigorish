@@ -11,14 +11,6 @@ class Pitch_Type_All_View(Base):
             [
                 PitchFx.pitcher_id.label("id"),
                 PitchFx.pitcher_id_mlb.label("pitcher_id_mlb"),
-                PitchFx.pitch_app_db_id.label("pitch_app_db_id"),
-                PitchFx.pitch_app_id.label("pitch_app_id"),
-                PitchFx.bbref_game_id.label("bbref_game_id"),
-                PitchFx.team_pitching_id.label("team_pitching_id"),
-                PitchFx.team_batting_id.label("team_batting_id"),
-                PitchFx.game_status_id.label("game_status_id"),
-                PitchFx.date_id.label("date_id"),
-                PitchFx.season_id.label("season_id"),
                 PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(PitchFx.id).label("total_pitches"),
                 func.avg(PitchFx.start_speed).label("avg_speed"),
@@ -40,7 +32,7 @@ class Pitch_Type_All_View(Base):
         .select_from(PitchFx)
         .group_by(PitchFx.pitcher_id)
         .group_by(PitchFx.mlbam_pitch_name)
-        .order_by(PitchFx.pitch_app_id),
+        .order_by(PitchFx.pitcher_id_mlb),
         metadata=Base.metadata,
         cascade_on_drop=False,
     )
@@ -53,14 +45,6 @@ class Pitch_Type_Right_View(Base):
             [
                 PitchFx.pitcher_id.label("id"),
                 PitchFx.pitcher_id_mlb.label("pitcher_id_mlb"),
-                PitchFx.pitch_app_db_id.label("pitch_app_db_id"),
-                PitchFx.pitch_app_id.label("pitch_app_id"),
-                PitchFx.bbref_game_id.label("bbref_game_id"),
-                PitchFx.team_pitching_id.label("team_pitching_id"),
-                PitchFx.team_batting_id.label("team_batting_id"),
-                PitchFx.game_status_id.label("game_status_id"),
-                PitchFx.date_id.label("date_id"),
-                PitchFx.season_id.label("season_id"),
                 PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(PitchFx.id).label("total_pitches"),
                 func.avg(PitchFx.start_speed).label("avg_speed"),
@@ -82,7 +66,7 @@ class Pitch_Type_Right_View(Base):
         .select_from(PitchFx)
         .group_by(PitchFx.pitcher_id)
         .group_by(PitchFx.mlbam_pitch_name)
-        .order_by(PitchFx.pitch_app_id),
+        .order_by(PitchFx.pitcher_id_mlb),
         metadata=Base.metadata,
         cascade_on_drop=False,
     )
@@ -95,14 +79,6 @@ class Pitch_Type_Left_View(Base):
             [
                 PitchFx.pitcher_id.label("id"),
                 PitchFx.pitcher_id_mlb.label("pitcher_id_mlb"),
-                PitchFx.pitch_app_db_id.label("pitch_app_db_id"),
-                PitchFx.pitch_app_id.label("pitch_app_id"),
-                PitchFx.bbref_game_id.label("bbref_game_id"),
-                PitchFx.team_pitching_id.label("team_pitching_id"),
-                PitchFx.team_batting_id.label("team_batting_id"),
-                PitchFx.game_status_id.label("game_status_id"),
-                PitchFx.date_id.label("date_id"),
-                PitchFx.season_id.label("season_id"),
                 PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(PitchFx.id).label("total_pitches"),
                 func.avg(PitchFx.start_speed).label("avg_speed"),
@@ -124,7 +100,7 @@ class Pitch_Type_Left_View(Base):
         .select_from(PitchFx)
         .group_by(PitchFx.pitcher_id)
         .group_by(PitchFx.mlbam_pitch_name)
-        .order_by(PitchFx.pitch_app_id),
+        .order_by(PitchFx.pitcher_id_mlb),
         metadata=Base.metadata,
         cascade_on_drop=False,
     )
@@ -137,13 +113,6 @@ class Pitch_Type_By_Year_View(Base):
             [
                 PitchFx.pitcher_id.label("id"),
                 PitchFx.pitcher_id_mlb.label("pitcher_id_mlb"),
-                PitchFx.pitch_app_db_id.label("pitch_app_db_id"),
-                PitchFx.pitch_app_id.label("pitch_app_id"),
-                PitchFx.bbref_game_id.label("bbref_game_id"),
-                PitchFx.team_pitching_id.label("team_pitching_id"),
-                PitchFx.team_batting_id.label("team_batting_id"),
-                PitchFx.game_status_id.label("game_status_id"),
-                PitchFx.date_id.label("date_id"),
                 PitchFx.season_id.label("season_id"),
                 PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(PitchFx.id).label("total_pitches"),
@@ -167,7 +136,7 @@ class Pitch_Type_By_Year_View(Base):
         .group_by(PitchFx.season_id)
         .group_by(PitchFx.pitcher_id)
         .group_by(PitchFx.mlbam_pitch_name)
-        .order_by(PitchFx.pitch_app_id),
+        .order_by(PitchFx.pitcher_id_mlb),
         metadata=Base.metadata,
         cascade_on_drop=False,
     )
