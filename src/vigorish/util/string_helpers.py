@@ -136,12 +136,12 @@ def get_bbref_team_id(brooks_team_id):
 
 def parse_timestamp(input):
     if string_is_null_or_blank(input):
-        return dict(hour=0, minute=0)
+        return {"hour": 0, "minute": 0}
     match = TIMESTAMP_REGEX.search(input)
     if not match:
-        return dict(hour=0, minute=0)
+        return {"hour": 0, "minute": 0}
     time_dict = match.groupdict()
-    return dict(hour=int(time_dict["hour"]), minute=int(time_dict["minute"]))
+    return {"hour": int(time_dict["hour"]), "minute": int(time_dict["minute"])}
 
 
 def string_is_null_or_blank(s):
@@ -206,13 +206,13 @@ def validate_brooks_game_id(input_str):
     away_team_id = captured["home_team"].upper()
     home_team_id = captured["away_team"].upper()
 
-    game_dict = dict(
-        game_id=input_str,
-        game_date=game_date,
-        away_team_id=away_team_id,
-        home_team_id=home_team_id,
-        game_number=game_number,
-    )
+    game_dict = {
+        "game_id": input_str,
+        "game_date": game_date,
+        "away_team_id": away_team_id,
+        "home_team_id": home_team_id,
+        "game_number": game_number,
+    }
     return Result.Ok(game_dict)
 
 
@@ -312,7 +312,3 @@ def replace_char_with_newlines(input_str, replace):
     if replace not in input_str:
         return input_str
     return "\n".join([s.strip() for s in input_str.split(replace)])
-
-
-def csv_sanitize(input):
-    return input.replace(",", "")

@@ -10,15 +10,15 @@ from sqlalchemy.orm import sessionmaker
 Base = declarative_base()
 
 from vigorish.config.project_paths import CSV_FOLDER, VIG_FOLDER
-from vigorish.models.pitchfx import PitchFx
+from vigorish.models.pitchfx import PitchFx, PitchFxCsvRow
 from vigorish.models.player import Player
 from vigorish.models.player_id import PlayerId
 from vigorish.models.scrape_error import ScrapeError
 from vigorish.models.scrape_job import ScrapeJob
 from vigorish.models.season import Season
-from vigorish.models.status_date import DateScrapeStatus
-from vigorish.models.status_game import GameScrapeStatus
-from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus
+from vigorish.models.status_date import DateScrapeStatus, DateScrapeStatusCsvRow
+from vigorish.models.status_game import GameScrapeStatus, GameScrapeStatusCsvRow
+from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus, PitchAppScrapeStatusCsvRow
 from vigorish.models.team import Team
 from vigorish.models.time_between_pitches import TimeBetweenPitches
 from vigorish.models.views.date_pitch_app_view import Date_PitchApp_View
