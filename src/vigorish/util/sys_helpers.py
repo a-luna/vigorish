@@ -3,7 +3,7 @@ import os
 import platform
 import re
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Tuple, Union
 from zipfile import ZipFile
@@ -11,7 +11,8 @@ from zipfile import ZipFile
 from Naked.toolshed.shell import execute as execute_shell_command
 from Naked.toolshed.shell import execute_js
 
-from vigorish.util.dt_format_strings import DT_AWARE
+from vigorish.util.datetime_util import dtaware_fromtimestamp
+from vigorish.util.dt_format_strings import DT_NAIVE
 from vigorish.util.result import Result
 
 ONE_KB = 1000
@@ -141,16 +142,32 @@ def get_terminal_width():  # pragma: no cover
 def zip_file_report(zip_file_path):
     report = []
     with ZipFile(zip_file_path, "r") as zip:
+        zip_original_size = 0
         for info in zip.infolist():
+            zip_original_size += info.file_size
             compression_ratio = 1 - info.compress_size / float(info.file_size)
             (compressed_str, original_str) = align_file_sizes(info.compress_size, info.file_size)
             file_info = (
-                f"Filename.......: {Path(info.filename).name}\n"
-                f"Modified.......: {datetime(*info.date_time).strftime(DT_AWARE)}\n"
-                f"Zipped Size....: {compressed_str} ({compression_ratio:.0%} Reduction)\n"
-                f"Original Size..: {original_str}\n"
+                f"\tFilename.......: {Path(info.filename).name}\n"
+                f"\tModified.......: {datetime(*info.date_time).strftime(DT_NAIVE)} UTC\n"
+                f"\tZipped Size....: {compressed_str} ({compression_ratio:.0%} Reduction)\n"
+                f"\tOriginal Size..: {original_str}\n"
             )
             report.append(file_info)
+        zip_compressed_size = zip_file_path.stat().st_size
+        compression_ratio = 1 - zip_compressed_size / float(zip_original_size)
+        (compressed_str, original_str) = align_file_sizes(zip_compressed_size, zip_original_size)
+        zip_mod_timestamp = zip_file_path.stat().st_mtime
+        zip_file_modified = dtaware_fromtimestamp(zip_mod_timestamp, use_tz=timezone.utc)
+        file_info = (
+            f"Filename.......: {Path(zip_file_path).name}\n"
+            f"Modified.......: {zip_file_modified.strftime(DT_NAIVE)} UTC\n"
+            f"Zipped Size....: {compressed_str} ({compression_ratio:.0%} Reduction)\n"
+            f"Original Size..: {original_str}\n"
+        )
+        report.insert(0, f"##### ZIP FILE REPORT: {zip_file_path.name} #####\n")
+        report.insert(1, file_info)
+        report.insert(2, "\t##### ZIP FILE CONTENTS #####\n")
     return "\n".join(report)
 
 
