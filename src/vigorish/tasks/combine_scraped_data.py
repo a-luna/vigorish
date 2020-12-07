@@ -381,15 +381,6 @@ class CombineScrapedDataTask(Task):
         self.all_pfx_data_for_game.sort(key=lambda x: (x.ab_id, x.ab_count))
         return Result.Ok()
 
-    def get_pitch_count_by_inning(self, pitchfx_log):
-        pitch_count_unordered = defaultdict(int)
-        for pfx in pitchfx_log:
-            pitch_count_unordered[pfx.inning] += 1
-        pitch_count_ordered = OrderedDict()
-        for k in sorted(pitch_count_unordered.keys()):
-            pitch_count_ordered[k] = pitch_count_unordered[k]
-        return pitch_count_ordered
-
     def get_at_bat_id_for_pfx_data(self, pfx, instance_number=0):
         game_id = pfx.bbref_game_id
         inning = f"{0}{pfx.inning}" if pfx.inning < 10 else pfx.inning
@@ -409,6 +400,7 @@ class CombineScrapedDataTask(Task):
     def combine_pbp_events_with_pfx_data(self):
         (self.at_bat_ids, at_bat_ids_invalid_pfx) = self.reconcile_at_bat_ids()
         all_removed_pfx = {}
+        all_pfx_ab_ids = []
         self.game_events_combined_data = []
         for ab_id in self.at_bat_ids:
             error = None
@@ -422,6 +414,14 @@ class CombineScrapedDataTask(Task):
                 return result
             pitch_count = result.value
             pfx_data = self.get_all_pfx_data_for_at_bat(ab_id)
+            pfx_ab_id_list = list({pfx["ab_id"] for pfx in pfx_data})
+            if not pfx_ab_id_list:
+                pfx_ab_id = all_pfx_ab_ids[-1] + 1 if all_pfx_ab_ids else 1
+            elif len(pfx_ab_id_list) == 1:
+                pfx_ab_id = pfx_ab_id_list[0]
+            else:
+                return Result.Fail(f"Error! More than one pfx_ab_id found for ab_id: {ab_id}")
+            all_pfx_ab_ids.append(pfx_ab_id)
             if pfx_data and pitch_count == 0:
                 invalid_ibb_pfx = self.update_invalid_ibb_pfx(pfx_data)
                 removed_pfx.extend(invalid_ibb_pfx)
@@ -457,6 +457,7 @@ class CombineScrapedDataTask(Task):
             }
             combined_at_bat_data = {
                 "at_bat_id": ab_id,
+                "pfx_ab_id": pfx_ab_id,
                 "inning_id": get_inning_id_from_at_bat_id(ab_id),
                 "pitch_app_id": self.get_pitch_app_id_from_at_bat_id(ab_id),
                 "pbp_table_row_number": first_pbp_event["pbp_table_row_number"],
@@ -825,6 +826,10 @@ class CombineScrapedDataTask(Task):
             inning_id = get_inning_id_from_at_bat_id(ab_id)
             id_dict = PlayerId.get_player_ids_from_at_bat_id(self.db_session, ab_id)
             pfx_data = self.get_all_pfx_data_for_at_bat(ab_id)
+            pfx_ab_id = 0
+            pfx_ab_id_list = list({pfx["ab_id"] for pfx in pfx_data})
+            if pfx_ab_id_list and len(pfx_ab_id_list) == 1:
+                pfx_ab_id = pfx_ab_id_list[0]
             pitch_count = max(pfx["ab_total"] for pfx in pfx_data)
             out_of_sequence_pfx = []
             missing_pitch_numbers = []
@@ -836,6 +841,7 @@ class CombineScrapedDataTask(Task):
                 self.prepare_pfx_data_for_json_serialization(out_of_sequence_pfx)
             at_bat_data = {
                 "at_bat_id": ab_id,
+                "pfx_ab_id": pfx_ab_id,
                 "inning_id": inning_id,
                 "pitch_app_id": self.get_pitch_app_id_from_at_bat_id(ab_id),
                 "pitcher_id_bbref": id_dict["pitcher_id_bbref"],
@@ -1090,9 +1096,10 @@ class CombineScrapedDataTask(Task):
         pitcher_ids_invalid_pfx = self.get_pitcher_ids_with_invalid_pfx()
         invalid_pitcher_ids = list(set(pitcher_ids_invalid_pfx) - set(updated_pitcher_ids))
         if invalid_pitcher_ids:
-            for pitcher_id in invalid_pitcher_ids:
-                (team_id, updated_stats) = self.generate_pitch_stats_only_invalid_pfx(pitcher_id)
-                updated_pitching_stats[team_id].append(updated_stats)
+            raise NotImplementedError(
+                "The code for this condition was removed, create a test case for "
+                f"{self.bbref_game_id}, using these pitcher_ids {invalid_pitcher_ids}."
+            )
         return (
             updated_pitching_stats[self.away_team_id_br],
             updated_pitching_stats[self.home_team_id_br],
@@ -1285,73 +1292,6 @@ class CombineScrapedDataTask(Task):
             "bbref_data": bbref_data,
         }
         return (pitch_stats.player_team_id_br, updated_stats)
-
-    def generate_pitch_stats_only_invalid_pfx(self, pitcher_id_mlb):
-        pitcher_events = flatten_list2d(
-            [
-                at_bat_data
-                for invalid_pfx_at_bat_dict in self.invalid_pitchfx.values()
-                for at_bat_data in invalid_pfx_at_bat_dict.values()
-                if at_bat_data["pitcher_id_mlb"] == pitcher_id_mlb
-            ]
-        )
-        batters_faced_pfx = len([event for event in pitcher_events if event["is_complete_at_bat"]])
-        audit_report = self.generate_audit_report_for_events(pitcher_events)
-        invalid_pfx = self.get_invalid_pfx_data_for_pitcher(pitcher_id_mlb)
-        pitch_app_pitchfx_audit = {
-            "invalid_pitchfx": invalid_pfx["invalid_pitchfx"],
-            "pitchfx_error": audit_report["pitchfx_error"],
-            "pitch_count_bbref": audit_report["pitch_count_bbref"],
-            "pitch_count_pitchfx": audit_report["pitch_count_pitchfx"],
-            "patched_pitchfx_count": audit_report["patched_pitchfx_count"],
-            "missing_pitchfx_count": audit_report["missing_pitchfx_count"],
-            "extra_pitchfx_count": audit_report["extra_pitchfx_count"],
-            "invalid_pitchfx_count": invalid_pfx["invalid_pitchfx_count"],
-            "extra_pitchfx_removed_count": audit_report["extra_pitchfx_removed_count"],
-            "duplicate_guid_removed_count": 0,
-            "batters_faced_bbref": 0,
-            "batters_faced_pitchfx": batters_faced_pfx,
-            "total_at_bats_pitchfx_complete": audit_report["total_at_bats_pitchfx_complete"],
-            "total_at_bats_extra_pitchfx": audit_report["total_at_bats_extra_pitchfx"],
-            "total_at_bats_patched_pitchfx": audit_report["total_at_bats_patched_pitchfx"],
-            "total_at_bats_missing_pitchfx": audit_report["total_at_bats_missing_pitchfx"],
-            "total_at_bats_extra_pitchfx_removed": audit_report[
-                "total_at_bats_extra_pitchfx_removed"
-            ],
-            "total_at_bats_duplicate_guid_removed": audit_report[
-                "total_at_bats_duplicate_guid_removed"
-            ],
-            "total_at_bats_pitchfx_error": audit_report["total_at_bats_pitchfx_error"],
-            "total_at_bats_invalid_pitchfx": invalid_pfx["total_at_bats_invalid_pitchfx"],
-            "at_bat_ids_pitchfx_complete": audit_report["at_bat_ids_pitchfx_complete"],
-            "at_bat_ids_patched_pitchfx": audit_report["at_bat_ids_patched_pitchfx"],
-            "at_bat_ids_missing_pitchfx": audit_report["at_bat_ids_missing_pitchfx"],
-            "at_bat_ids_extra_pitchfx": audit_report["at_bat_ids_extra_pitchfx"],
-            "at_bat_ids_extra_pitchfx_removed": audit_report["at_bat_ids_extra_pitchfx_removed"],
-            "at_bat_ids_duplicate_guid_removed": audit_report["at_bat_ids_duplicate_guid_removed"],
-            "at_bat_ids_pitchfx_error": audit_report["at_bat_ids_pitchfx_error"],
-            "at_bat_ids_invalid_pitchfx": invalid_pfx["at_bat_ids_invalid_pitchfx"],
-        }
-
-        at_bat_ids = [event["at_bat_id"] for event in pitcher_events]
-        id_dict = PlayerId.get_player_ids_from_at_bat_id(self.db_session, at_bat_ids[0])
-        all_pfx = flatten_list2d([event["pitchfx"] for event in pitcher_events])
-        updated_stats = {
-            "pitcher_name": id_dict["pitcher_name"],
-            "pitcher_id_mlb": id_dict["pitcher_id_mlb"],
-            "pitcher_id_bbref": id_dict["pitcher_id_bbref"],
-            "pitch_app_id": f"{self.bbref_game_id}_{id_dict['pitcher_id_mlb']}",
-            "pitcher_team_id_bb": get_brooks_team_id(id_dict["pitcher_team"]),
-            "pitcher_team_id_bbref": id_dict["pitcher_team"],
-            "opponent_team_id_bb": get_brooks_team_id(id_dict["batter_team"]),
-            "opponent_team_id_bbref": id_dict["batter_team"],
-            "bb_game_id": self.boxscore.bb_game_id,
-            "bbref_game_id": self.bbref_game_id,
-            "pitch_count_by_inning": self.get_pitch_count_by_inning(all_pfx),
-            "pitch_app_pitchfx_audit": pitch_app_pitchfx_audit,
-            "bbref_data": {},
-        }
-        return (id_dict["pitcher_team"], updated_stats)
 
     def update_all_bat_stats(self):
         all_bbref_bat_stats = self.boxscore.away_team_data.batting_stats
