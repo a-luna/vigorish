@@ -143,17 +143,17 @@ class EnumConfigSetting(ConfigSetting):
     def possible_values(self):
         enum_name = self.config_dict.get("ENUM_NAME")
         if enum_name == "ScrapeCondition":
-            return [member for member in ScrapeCondition]
+            return list(ScrapeCondition)
         if enum_name == "ScrapeTaskOption":
-            return [member for member in ScrapeTaskOption]
+            return list(ScrapeTaskOption)
         if enum_name == "HtmlStorageOption":
-            return [member for member in HtmlStorageOption]
+            return list(HtmlStorageOption)
         if enum_name == "JsonStorageOption":
-            return [member for member in JsonStorageOption]
+            return list(JsonStorageOption)
         if enum_name == "CombinedDataStorageOption":
-            return [member for member in CombinedDataStorageOption]
+            return list(CombinedDataStorageOption)
         if enum_name == "StatusReport":
-            return [member for member in StatusReport]
+            return list(StatusReport)
         return []
 
     def current_setting(self, data_set):

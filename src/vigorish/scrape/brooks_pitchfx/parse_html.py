@@ -44,6 +44,16 @@ def parse_pitchfx_log(scraped_html, pitch_log):
     return Result.Ok(pitchfx_log)
 
 
+def get_pitch_count_by_inning(pfx_data):
+    unordered = defaultdict(int)
+    for pfx in pfx_data:
+        unordered[pfx.inning] += 1
+    pitch_count_by_inning = OrderedDict()
+    for k in sorted(unordered.keys()):
+        pitch_count_by_inning[k] = unordered[k]
+    return pitch_count_by_inning
+
+
 def parse_pitchfx_table(page_content, pitch_log):
     pitchfx_data = []
     column_names = page_content.xpath(PITCHFX_COLUMN_NAMES)
@@ -102,46 +112,34 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     return Result.Ok(pitchfx)
 
 
-def fix_missing_des(pitchfx_data, pitch_log):
-    missing_des = any(pfx.des == "missing_des" for pfx in pitchfx_data)
+def fix_missing_des(pfx_data, pitch_log):
+    missing_des = any(pfx.des == "missing_des" for pfx in pfx_data)
     if not missing_des:
-        return Result.Ok(pitchfx_data)
-    fix_ab_ids = list(set([pfx.ab_id for pfx in pitchfx_data if pfx.des == "missing_des"]))
-    for ab_id in fix_ab_ids:
-        missing_des_this_ab = [
-            pfx for pfx in pitchfx_data if pfx.ab_id == ab_id and pfx.des == "missing_des"
-        ]
-        valid_des_this_ab = list(
-            set(
-                [
-                    pfx.des
-                    for pfx in pitchfx_data
-                    if pfx.ab_id == ab_id and not pfx.des == "missing_des"
-                ]
-            )
-        )
-        if len(valid_des_this_ab) == 0:
+        return Result.Ok(pfx_data)
+    fix_ab_ids = {pfx.ab_id for pfx in pfx_data if pfx.des == "missing_des"}
+    for ab_id in list(fix_ab_ids):
+        missing_des = [pfx for pfx in pfx_data if this_ab_and_missing_des(pfx, ab_id)]
+        valid_des = list({pfx.des for pfx in pfx_data if this_ab_and_has_des(pfx, ab_id)})
+        if len(valid_des) == 0:
             continue
-        if len(valid_des_this_ab) == 1:
-            for pfx in missing_des_this_ab:
-                pfx.des = valid_des_this_ab[0]
+        if len(valid_des) == 1:
+            for pfx in missing_des:
+                pfx.des = valid_des[0]
             continue
         error = (
             f"Unable to fix missing description for pitchfx ab_id={ab_id}\n"
             f"Game ID.......: {pitch_log.bbref_game_id}\n"
             f"Pitcher.......: {pitch_log.pitcher_name} ({pitch_log.pitcher_id_mlb})\n"
             f"PitchFX URL...: {pitch_log.pitchfx_url}\n"
-            f"des values....: {valid_des_this_ab}"
+            f"des values....: {valid_des}"
         )
         return Result.Fail(error)
-    return Result.Ok(pitchfx_data)
+    return Result.Ok(pfx_data)
 
 
-def get_pitch_count_by_inning(pitchfx_data):
-    pitch_count_unordered = defaultdict(int)
-    for pfx in pitchfx_data:
-        pitch_count_unordered[pfx.inning] += 1
-    pitch_count_ordered = OrderedDict()
-    for k in sorted(pitch_count_unordered.keys()):
-        pitch_count_ordered[k] = pitch_count_unordered[k]
-    return pitch_count_ordered
+def this_ab_and_missing_des(pfx, ab_id):
+    return pfx.ab_id == ab_id and pfx.des == "missing_des"
+
+
+def this_ab_and_has_des(pfx, ab_id):
+    return pfx.ab_id == ab_id and not pfx.des == "missing_des"

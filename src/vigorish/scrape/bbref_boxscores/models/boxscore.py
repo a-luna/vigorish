@@ -90,19 +90,19 @@ class BBRefBoxscore:
 
     def as_dict(self):
         """Convert boxscore to a dictionary."""
-        return dict(
-            __bbref_boxscore__=True,
-            boxscore_url=self.boxscore_url,
-            bbref_game_id=self.bbref_game_id,
-            game_meta_info=self.game_meta_info.as_dict(),
-            away_team_data=self.away_team_data.as_dict(),
-            home_team_data=self.home_team_data.as_dict(),
-            innings_list=as_dict_list(self.innings_list),
-            player_id_match_log=self.player_id_match_log,
-            umpires=as_dict_list(self.umpires),
-            player_team_dict=self.player_team_dict,
-            player_name_dict=self.player_name_dict,
-        )
+        return {
+            "__bbref_boxscore__": True,
+            "boxscore_url": self.boxscore_url,
+            "bbref_game_id": self.bbref_game_id,
+            "game_meta_info": self.game_meta_info.as_dict(),
+            "away_team_data": self.away_team_data.as_dict(),
+            "home_team_data": self.home_team_data.as_dict(),
+            "innings_list": as_dict_list(self.innings_list),
+            "player_id_match_log": self.player_id_match_log,
+            "umpires": as_dict_list(self.umpires),
+            "player_team_dict": self.player_team_dict,
+            "player_name_dict": self.player_name_dict,
+        }
 
     def as_json(self):
         """Convert boxscore to JSON."""

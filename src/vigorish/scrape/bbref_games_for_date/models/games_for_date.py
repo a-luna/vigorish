@@ -13,13 +13,13 @@ class BBRefGamesForDate:
 
     def as_dict(self):
         """Convert daily boxscore URL values to a dictionary."""
-        return dict(
-            __bbref_games_for_date__=True,
-            dashboard_url=self.dashboard_url,
-            game_date_str=self.game_date_str,
-            game_count=int(self.game_count),
-            boxscore_urls=self.boxscore_urls,
-        )
+        return {
+            "__bbref_games_for_date__": True,
+            "dashboard_url": self.dashboard_url,
+            "game_date_str": self.game_date_str,
+            "game_count": int(self.game_count),
+            "boxscore_urls": self.boxscore_urls,
+        }
 
     def as_json(self):
         """Convert daily game list to JSON."""

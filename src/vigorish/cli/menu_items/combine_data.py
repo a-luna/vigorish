@@ -117,7 +117,7 @@ class CombineScrapedData(MenuItem):
 
     @property
     def all_dates_with_eligible_games(self):
-        return sorted(list({game_date for game_date in self.date_game_id_map.keys()}))
+        return sorted(set(self.date_game_id_map.keys()))
 
     @property
     def total_dates(self):
@@ -125,7 +125,7 @@ class CombineScrapedData(MenuItem):
 
     @property
     def all_eligible_games_in_season(self):
-        return sorted(flatten_list2d([game_ids for game_ids in self.date_game_id_map.values()]))
+        return sorted(flatten_list2d(list(self.date_game_id_map.values())))
 
     @property
     def total_games(self):
@@ -193,7 +193,7 @@ class CombineScrapedData(MenuItem):
 
     @property
     def pitch_apps_any_pfx_error(self):
-        return sorted(list(set(self.pitch_apps_pitchfx_error + self.pitch_apps_invalid_pitchfx)))
+        return sorted(set(self.pitch_apps_pitchfx_error + self.pitch_apps_invalid_pitchfx))
 
     @property
     def total_pitch_apps_pitchfx_error(self):
@@ -244,7 +244,7 @@ class CombineScrapedData(MenuItem):
 
     @property
     def failed_game_ids(self):
-        return list(game_id for game_id in self.combine_data_fail_results.keys())
+        return list(self.combine_data_fail_results.keys())
 
     @property
     def combined_success_and_no_pfx_errors(self):

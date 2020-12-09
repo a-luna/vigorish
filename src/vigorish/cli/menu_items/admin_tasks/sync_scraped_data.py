@@ -45,7 +45,7 @@ class SyncScrapedData(MenuItem):
 
     @property
     def total_tasks(self):
-        return sum([len(data_sets) for data_sets in self.sync_tasks.values()])
+        return sum(len(data_sets) for data_sets in self.sync_tasks.values())
 
     @property
     def all_files_are_in_sync(self):
@@ -116,7 +116,7 @@ class SyncScrapedData(MenuItem):
         spinner.text = "Retrieving details of all objects stored in S3..."
         spinner.start()
         s3_obj_collection = self.scraped_data.file_helper.get_all_object_keys_in_s3_bucket()
-        s3_objects = [obj for obj in s3_obj_collection]
+        s3_objects = list(s3_obj_collection)
         self.s3_sync = SyncScrapedDataTask(self.app, cached_s3_objects=s3_objects)
         spinner.stop()
 
@@ -247,6 +247,7 @@ class SyncScrapedData(MenuItem):
         self.s3_sync.events.sync_files_progress += self.update_sync_progress
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinner.start()
+        message = None
         if self.sync_direction == SyncDirection.UP_TO_S3:
             self.s3_sync.upload_files_to_s3(new_files, old_files, file_type, data_set, self.year)
             message = (

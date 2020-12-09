@@ -22,11 +22,7 @@ class UrlTracker:
 
     @property
     def total_urls(self):
-        return (
-            len(flatten_list2d([urls_for_date for urls_for_date in self.all_urls.values()]))
-            if self.all_urls
-            else 0
-        )
+        return len(flatten_list2d(list(self.all_urls.values()))) if self.all_urls else 0
 
     @property
     def parse_urls(self):
@@ -37,12 +33,12 @@ class UrlTracker:
         return (
             [url.url_id for url in self.parse_urls]
             if self.data_set != DataSet.BROOKS_PITCH_LOGS
-            else list(set([url.url_id[:12] for url in self.parse_urls]))
+            else list({url.url_id[:12] for url in self.parse_urls})
         )
 
     @property
     def html_scraping_complete(self):
-        return all([url.file_exists_with_content for url in self.parse_urls])
+        return all(url.file_exists_with_content for url in self.parse_urls)
 
     @property
     def identify_html_report(self):

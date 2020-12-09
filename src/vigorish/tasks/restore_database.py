@@ -122,7 +122,7 @@ class RestoreDatabaseTask(Task):
         return Result.Ok()
 
     def get_most_recent_backup(self):
-        backup_zip_files = [zip_file for zip_file in Path(self.backup_folder).glob("*.zip")]
+        backup_zip_files = list(Path(self.backup_folder).glob("*.zip"))
         if not backup_zip_files:
             return Result.Fail(f"Error! No backups found in folder:\n{self.backup_folder}")
         backup_zip_files.sort(key=lambda x: x.name, reverse=True)

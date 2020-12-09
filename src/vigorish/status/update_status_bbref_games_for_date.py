@@ -12,7 +12,7 @@ def update_bbref_games_for_date_single_date(db_session, season, games_for_date):
     unscraped_bbref_dates = DateScrapeStatus.get_all_bbref_unscraped_dates_for_season(
         db_session, season.id
     )
-    update_bbref_dates = set([game_date]) & set(unscraped_bbref_dates)
+    update_bbref_dates = {game_date} & set(unscraped_bbref_dates)
     if not update_bbref_dates:
         return Result.Ok()
     result = update_status_bbref_games_for_date(db_session, games_for_date)

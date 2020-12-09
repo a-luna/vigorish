@@ -10,4 +10,4 @@ class BBRefBatStatsDetail:
 
     def as_dict(self):
         """Convert detailed batting stats to a dictionary."""
-        return dict(count=int(self.count), stat=self.stat)
+        return {"count": int(self.count), "stat": self.stat}

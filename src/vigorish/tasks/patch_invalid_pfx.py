@@ -173,9 +173,7 @@ class PatchInvalidPitchFxTask(Task):
                 "batter": self.get_batter_name_and_team(ab_dict["at_bat_data"]),
                 "pitch_count": len(ab_dict["at_bat_data"]["pitchfx"]),
                 "missing_pfx": [],
-                "invalid_pfx": sorted(
-                    [pfx["ab_count"] for pfx in ab_dict["at_bat_data"]["pitchfx"]]
-                ),
+                "invalid_pfx": sorted(pfx["ab_count"] for pfx in ab_dict["at_bat_data"]["pitchfx"]),
             }
             for pitch_app_dict in self.invalid_pfx_map.values()
             for inning_id, inning_dict in pitch_app_dict.items()
@@ -243,9 +241,9 @@ class PatchInvalidPitchFxTask(Task):
                     event["batter_id_mlb"] == pfx["batter_id"]
                     or event["pitcher_id_mlb"] == pfx["pitcher_id"]
                 )
-                # AND number of pitches missing from the game event is the same as the number of invalid pfx
+                # AND number of pitches missing is the same as the number of invalid pfx
                 and event["at_bat_pitchfx_audit"]["missing_pitchfx_count"] == pfx["pitch_count"]
-                # AND invalid pfx pitch seq. numbers are the same as the pitches missing from the game event
+                # AND invalid pfx pitch seq. numbers are the same as the missing pitches
                 and all(
                     p_num in pfx["invalid_pfx"]
                     for p_num in event["at_bat_pitchfx_audit"]["missing_pitch_numbers"]
@@ -327,35 +325,35 @@ class PatchInvalidPitchFxTask(Task):
     def create_change_pitcher_id_patch(self, patch_event, patch_pfx):
         patch_list = []
         for pfx in self.get_all_pfx_data_to_patch(patch_pfx):
-            patch = dict(
-                bbref_game_id=self.bbref_game_id,
-                park_sv_id=pfx["park_sv_id"],
-                current_at_bat_id=patch_pfx["at_bat_id"],
-                current_pitch_app_id=patch_pfx["pitch_app_id"],
-                current_pitcher_id=patch_pfx["pitcher_id_mlb"],
-                current_pitcher_name=patch_pfx["pitcher_name"],
-                new_at_bat_id=patch_event["at_bat_id"],
-                new_pitch_app_id=patch_event["pitch_app_id"],
-                new_pitcher_id=patch_event["pitcher_id_mlb"],
-                new_pitcher_name=patch_event["pitcher_name"],
-            )
+            patch = {
+                "bbref_game_id": self.bbref_game_id,
+                "park_sv_id": pfx["park_sv_id"],
+                "current_at_bat_id": patch_pfx["at_bat_id"],
+                "current_pitch_app_id": patch_pfx["pitch_app_id"],
+                "current_pitcher_id": patch_pfx["pitcher_id_mlb"],
+                "current_pitcher_name": patch_pfx["pitcher_name"],
+                "new_at_bat_id": patch_event["at_bat_id"],
+                "new_pitch_app_id": patch_event["pitch_app_id"],
+                "new_pitcher_id": patch_event["pitcher_id_mlb"],
+                "new_pitcher_name": patch_event["pitcher_name"],
+            }
             patch_list.append(from_dict(data_class=PatchBrooksPitchFxPitcherId, data=patch))
         return patch_list
 
     def create_change_batter_id_patch(self, patch_event, patch_pfx):
         patch_list = []
         for pfx in self.get_all_pfx_data_to_patch(patch_pfx):
-            patch = dict(
-                bbref_game_id=self.bbref_game_id,
-                park_sv_id=pfx["park_sv_id"],
-                pitch_app_id=patch_pfx["pitch_app_id"],
-                current_at_bat_id=patch_pfx["at_bat_id"],
-                current_batter_id=patch_pfx["batter_id_mlb"],
-                current_batter_name=patch_pfx["batter_name"],
-                new_at_bat_id=patch_event["at_bat_id"],
-                new_batter_id=patch_event["batter_id_mlb"],
-                new_batter_name=patch_event["batter_name"],
-            )
+            patch = {
+                "bbref_game_id": self.bbref_game_id,
+                "park_sv_id": pfx["park_sv_id"],
+                "pitch_app_id": patch_pfx["pitch_app_id"],
+                "current_at_bat_id": patch_pfx["at_bat_id"],
+                "current_batter_id": patch_pfx["batter_id_mlb"],
+                "current_batter_name": patch_pfx["batter_name"],
+                "new_at_bat_id": patch_event["at_bat_id"],
+                "new_batter_id": patch_event["batter_id_mlb"],
+                "new_batter_name": patch_event["batter_name"],
+            }
             patch_list.append(from_dict(data_class=PatchBrooksPitchFxBatterId, data=patch))
         return patch_list
 

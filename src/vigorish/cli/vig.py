@@ -280,7 +280,7 @@ def sync_up_to_s3(app, year, file_type, data_sets):
         file_type=file_type,
         data_sets_int=data_sets_int,
     )
-    result = Result.Combine([result for result in result_dict.values()])
+    result = Result.Combine(list(result_dict.values()))
     return exit_app(app, result)
 
 
@@ -311,7 +311,7 @@ def sync_down_to_local(app, year, file_type, data_sets):
         file_type=file_type,
         data_sets_int=data_sets_int,
     )
-    result = Result.Combine([result for result in result_dict.values()])
+    result = Result.Combine(list(result_dict.values()))
     return exit_app(app, result)
 
 

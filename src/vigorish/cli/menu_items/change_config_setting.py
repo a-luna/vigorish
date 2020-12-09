@@ -85,7 +85,7 @@ class ChangeConfigSettting(MenuItem):
     def get_enum_menu(self, data_set):
         return Bullet(
             f"Select a value for {self.setting_name_title} (Data Set = {data_set.name}): ",
-            choices=[choice for choice in self.enum_dict.keys()],
+            choices=list(self.enum_dict.keys()),
             bullet="",
             shift=1,
             indent=0,
@@ -109,7 +109,7 @@ class ChangeConfigSettting(MenuItem):
             if not yes_no_prompt(prompt):
                 return (prompt, (True, None, None, None, None))
         if yes_no_prompt(f"Use random values (Data Set = {data_set.name})? "):
-            min_max_are_valid = False
+            prompt, random_min, random_max, min_max_are_valid = None, 0, 0, False
             while not min_max_are_valid:
                 subprocess.run(["clear"])
                 prompt_min = (

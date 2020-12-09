@@ -98,6 +98,6 @@ def add_mlb_seasons(db_session):
             db_session.add(season)
         return Result.Ok()
     except Exception as e:
-        error = "Error: {error}".format(error=repr(e))
+        error = f"Error: {repr(e)}"
         db_session.rollback()
         return Result.Fail(error)

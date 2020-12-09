@@ -128,6 +128,6 @@ def import_teams_csv(db_session, csv_folder):
                     pbar.update()
         return Result.Ok()
     except Exception as e:
-        error = "Error: {error}".format(error=repr(e))
+        error = f"Error: {repr(e)}"
         db_session.rollback()
         return Result.Fail(error)

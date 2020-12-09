@@ -31,7 +31,7 @@ class ChangeEnvVarSetting(MenuItem):
         print_message(env_var_value, fg="bright_yellow", bold=True)
         if not yes_no_prompt(prompt="Change current setting?"):
             return Result.Ok(self.exit_menu)
-        user_confirmed = False
+        user_confirmed, new_value = False, None
         while not user_confirmed:
             subprocess.run(["clear"])
             prompt = f"Enter a new value for {self.setting_name}:\n"

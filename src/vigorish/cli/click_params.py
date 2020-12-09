@@ -47,8 +47,8 @@ class MlbSeason(click.ParamType):
                 "version of vig."
             )
             self.fail(error, param, ctx)
-        except Exception:
-            self.fail(error, param, ctx)
+        except Exception as ex:
+            self.fail(repr(ex), param, ctx)
 
 
 class JobName(click.ParamType):

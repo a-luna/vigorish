@@ -66,7 +66,7 @@ class RestoreDatabase(MenuItem):
         shutdown_cli_immediately()
 
     def find_db_backups(self):
-        self.backup_zip_files = [zip_file for zip_file in Path(self.backup_folder).glob("*.zip")]
+        self.backup_zip_files = list(Path(self.backup_folder).glob("*.zip"))
         if not self.backup_zip_files:
             return Result.Fail(f"Error! No backups found in folder:\n{self.backup_folder}")
         self.backup_zip_files.sort(key=lambda x: x.name, reverse=True)
@@ -148,7 +148,7 @@ class RestoreDatabase(MenuItem):
                     "data sets for all MLB seasons.\n"
                 ),
                 (
-                    "Backup files are stored in the location specified by the DB_BACKUP_FOLDER_PATH "
+                    "Backup files are stored in the folder specified by the DB_BACKUP_FOLDER_PATH "
                     "config setting."
                 ),
             ]

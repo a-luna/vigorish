@@ -12,9 +12,9 @@ class BBRefPlayerTransaction:
     details = []
 
     def as_dict(self):
-        return dict(
-            category_id=self.category_id,
-            date=self.date.strftime("%Y-%m-%d"),
-            description=self.description,
-            details=as_dict_list(self.details),
-        )
+        return {
+            "category_id": self.category_id,
+            "date": self.date.strftime("%Y-%m-%d"),
+            "description": self.description,
+            "details": as_dict_list(self.details),
+        }
