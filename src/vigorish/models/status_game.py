@@ -447,22 +447,6 @@ class GameScrapeStatus(Base):
             ),
         ]
 
-    # def as_csv_dict(self):
-    #     return dict_from_dataclass(self, GameScrapeStatusCsvRow, date_format=DATE_ONLY)
-
-    # @classmethod
-    # def get_csv_col_names(cls):
-    #     return list(GameScrapeStatusCsvRow.__dataclass_fields__.keys())
-
-    # @classmethod
-    # def export_table_as_csv(cls, db_session):
-    #     col_names = ",".join(cls.get_csv_col_names())
-    #     csv_dicts = (obj.as_csv_dict() for obj in db_session.query(cls).all())
-    #     csv_rows = (",".join(sanitize_row_dict(d, date_format=DATE_ONLY)) for d in csv_dicts)
-    #     yield col_names
-    #     for row in csv_rows:
-    #         yield row
-
     @classmethod
     def find_by_bbref_game_id(cls, db_session, bbref_game_id):
         return db_session.query(cls).filter_by(bbref_game_id=bbref_game_id).first()
