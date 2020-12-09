@@ -29,6 +29,20 @@ AT_BAT_DESC_MAX_WIDTH = 35
 
 class AllGameData:
     def __init__(self, app, bbref_game_id):
+
+        # TODO: Create views for pitch_type by handedness by year
+        # TODO: Generate pitch discipline/batted ball profile data:
+        #       If PitchFx.type == "B":
+        #           determine if pitch was in/out of strikezone using:
+        #           PitchFx.px, PitchFx.pz, PitchFx.sz_top, PitcFx.sz_bot
+        #       If PitchFx.type == "S":
+        #           determine if pitch was in/out of strikezone using PitchFx.px and PitchFx.pz
+        #           determine if strike was called or swinging
+        #           since this includes foul balls, research how swinging-strike % is calculated
+        #       If PitchFx.type == "X":
+        #           determine GB/LD/FB by parsing any of the following:
+        #           PitchFx.des, PitchFx.pdes attributes, the "outcome" of the pbp event
+
         self.app = app
         self.db_engine = app.db_engine
         self.db_session = app.db_session
@@ -281,10 +295,7 @@ class AllGameData:
         message = self.get_at_bat_details(at_bat)
         pitch_seq_desc = format_pitch_sequence_description(at_bat["pitch_sequence_description"])
         chunked_list = make_chunked_list(pitch_seq_desc, chunk_size=AT_BAT_TABLE_MAX_ROWS)
-        return [
-            DisplayTable(tabulate(chunk, tablefmt="fancy_grid"), heading, message)
-            for chunk in chunked_list
-        ]
+        return [self.create_display_table(chunk, heading, message) for chunk in chunked_list]
 
     def get_at_bat_details(self, at_bat):
         pitch_app_stats = self.get_pitch_app_stats(at_bat["pitcher_id_mlb"]).value
@@ -306,6 +317,12 @@ class AllGameData:
         mlb_id = result.value
         bat_stats = self.get_bat_stat_map().get(mlb_id)
         return Result.Ok(bat_stats["bbref_data"]) if bat_stats else Result.Ok({})
+
+    def create_display_table(self, table_rows, heading=None, message=None, table_headers=None):
+        if not table_headers:
+            table_headers = ()
+        table = tabulate(table_rows, tablefmt="fancy_grid", headers=table_headers)
+        return DisplayTable(table, heading, message)
 
     def create_table_viewer(self, table_list, table_color="bright_cyan"):
         return TableViewer(
@@ -422,7 +439,19 @@ class AllGameData:
             for at_bat in inning_dict.values()
         ]
 
-    def get_pitch_types_for_player(self, mlb_id):
+    def view_player_pitch_mix(self, mlb_id):
+        result = self.get_pitch_mix_data_for_player(mlb_id)
+        if result.failure:
+            return result
+        pitch_mix_data = result.value
+        pitch_mix_tables = [
+            self.get_player_pitch_mix_by_batter_stance(mlb_id, pitch_mix_data),
+            self.get_player_pitch_mix_by_season(mlb_id, pitch_mix_data),
+        ]
+        table_viewer = self.create_table_viewer(pitch_mix_tables)
+        return Result.Ok(table_viewer)
+
+    def get_pitch_mix_data_for_player(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
             return result
@@ -430,13 +459,65 @@ class AllGameData:
         pitch_app_id = f"{self.bbref_game_id}_{mlb_id}"
         pitch_app_metrics = self.scraped_data.get_metrics_for_pitch_app(pitch_app_id)
         pitcher_data = AllPlayerData(self.app, mlb_id)
-        return {
+        pitch_mix_data = {
             "pitch_app": pitch_app_metrics,
-            "by_year": pitcher_data.pitch_types_by_year,
-            "all": pitcher_data.pitch_types,
-            "bat_r": pitcher_data.pitch_types_right,
-            "bat_l": pitcher_data.pitch_types_left,
+            "by_year": pitcher_data.pitch_mix_by_year,
+            "all": pitcher_data.pitch_mix,
+            "bat_r": pitcher_data.pitch_mix_right,
+            "bat_l": pitcher_data.pitch_mix_left,
         }
+        return Result.Ok(pitch_mix_data)
+
+    def get_player_pitch_mix_by_batter_stance(self, mlb_id, pitch_mix_data):
+        table_rows = [
+            self.get_pitch_mix_data_for_pitch_type_by_batter_stance(pitch_mix_data, pitch_type)
+            for pitch_type in pitch_mix_data["all"][0]["pitch_types"]
+        ]
+        pitcher_name = self.get_player_id_map(mlb_id=mlb_id).mlb_name
+        heading = f"Pitch Mix for {pitcher_name} by Batter Stance"
+        return self.create_display_table(table_rows, heading, table_headers="keys")
+
+    def get_player_pitch_mix_by_season(self, mlb_id, pitch_mix_data):
+        table_rows = [
+            self.get_pitch_mix_data_for_pitch_type_by_season(pitch_mix_data, pitch_type)
+            for pitch_type in pitch_mix_data["all"][0]["pitch_types"]
+        ]
+        pitcher_name = self.get_player_id_map(mlb_id=mlb_id).mlb_name
+        heading = f"Pitch Mix for {pitcher_name} by Season"
+        return self.create_display_table(table_rows, heading, table_headers="keys")
+
+    def get_pitch_mix_data_for_pitch_type_by_batter_stance(self, pitch_mix_data, pitch_type):
+        (_, pmix_detail_all) = pitch_mix_data["all"]
+        (pmix_total_right, pmix_detail_right) = pitch_mix_data["bat_r"]
+        (pmix_total_left, pmix_detail_left) = pitch_mix_data["bat_l"]
+        return {
+            "pitch_type": pitch_type.print_name,
+            "all": f"{pmix_detail_all[pitch_type]['percent']:.0%}",
+            "bat_right": (
+                f"{pmix_detail_right[pitch_type]['percent']:.0%}"
+                if pitch_type in pmix_total_right["pitch_types"]
+                else "0.0"
+            ),
+            "bat_left": (
+                f"{pmix_detail_left[pitch_type]['percent']:.0%}"
+                if pitch_type in pmix_total_left["pitch_types"]
+                else "0.0"
+            ),
+        }
+
+    def get_pitch_mix_data_for_pitch_type_by_season(self, pitch_mix_data, pitch_type):
+        (_, pmix_detail_all) = pitch_mix_data["all"]
+        table_row = {
+            "pitch_type": pitch_type.print_name,
+            "all": f"{pmix_detail_all[pitch_type]['percent']:.0%}",
+        }
+        for year, (pmix_total, pmix_detail) in pitch_mix_data["by_year"].items():
+            table_row[str(year)] = (
+                f"{pmix_detail[pitch_type]['percent']:.0%}"
+                if pitch_type in pmix_total["pitch_types"]
+                else "0.0"
+            )
+        return table_row
 
     def get_matchup_details(self):
         away_record = get_team_record_for_linescore(self.away_team_data)

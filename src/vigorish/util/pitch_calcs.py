@@ -24,7 +24,8 @@ def get_metrics_for_all_pitch_types(pitch_type_results, threshold=0.01):
         metrics["percent"] = round(metrics["count"] / total_pitches_valid, 3)
     valid_pitch_types.sort(key=lambda x: x["percent"], reverse=True)
     pitch_mix = get_pitch_types_from_int(pitch_mix_int)
-    pitch_mix_total = {"type": pitch_mix, "percent": 1.000, "count": total_pitches_valid}
+    pitch_mix.sort(key=lambda x: all_pitch_types[x]["percent"], reverse=True)
+    pitch_mix_total = {"pitch_types": pitch_mix, "percent": 1.000, "count": total_pitches_valid}
     pitch_mix_detail = {x["pitch_type"]: x for x in valid_pitch_types}
     return (pitch_mix_total, pitch_mix_detail)
 
