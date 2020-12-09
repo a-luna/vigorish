@@ -76,7 +76,7 @@ def _no_pitch_logs(game_table, game_number, game_date, game_time, required_game_
         return result
     gameinfo = result.value
     game_is_required = any(
-        [gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data]
+        gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data
     )
     if not game_is_required:
         return Result.Fail("Game not found in bbref parsed game list.")
@@ -97,7 +97,7 @@ def _is_game_required(game_date, game_time, url, required_game_data):
     if game_date != game_date_check:
         return Result.Fail("Game did not occur on the current date.")
     game_is_required = any(
-        [gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data]
+        gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data
     )
     if not game_is_required:
         return Result.Fail("Game not found in bbref parsed game list.")

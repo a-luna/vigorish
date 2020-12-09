@@ -85,7 +85,7 @@ def import_idmap_csv(db_session, app, csv_folder):
                 pbar.update()
         return Result.Ok()
     except Exception as e:
-        error = "Error: {error}".format(error=repr(e))
+        error = f"Error: {repr(e)}"
         db_session.rollback()
         return Result.Fail(error)
 
@@ -138,6 +138,6 @@ def import_people_csv(db_session, csv_folder):
                     pbar.update()
         return Result.Ok()
     except Exception as e:
-        error = "Error: {error}".format(error=repr(e))
+        error = f"Error: {repr(e)}"
         db_session.rollback()
         return Result.Fail(error)

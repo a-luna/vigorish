@@ -25,13 +25,13 @@ class BrooksGamesForDate:
 
     def as_dict(self):
         """Convert daily boxscore URL values to a dictionary."""
-        return dict(
-            __brooks_games_for_date__=True,
-            dashboard_url=self.dashboard_url,
-            game_date_str=self.game_date_str,
-            game_count=int(self.game_count),
-            games=as_dict_list(self.games),
-        )
+        return {
+            "__brooks_games_for_date__": True,
+            "dashboard_url": self.dashboard_url,
+            "game_date_str": self.game_date_str,
+            "game_count": int(self.game_count),
+            "games": as_dict_list(self.games),
+        }
 
     def as_json(self):
         """Convert daily game list to JSON."""

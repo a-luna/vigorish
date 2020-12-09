@@ -23,7 +23,7 @@ class Menu(MenuItem, ABC):
 
     @property
     def menu_item_text_list(self):
-        return [menu_item_text for menu_item_text in self.menu_item_dict.keys()]
+        return list(self.menu_item_dict.keys())
 
     @property
     def menu_item_dict(self):

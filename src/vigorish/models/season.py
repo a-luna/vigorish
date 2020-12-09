@@ -664,8 +664,7 @@ class Season(Base):
 
     @classmethod
     def all_regular_seasons(cls, db_session):
-        matching_seasons = db_session.query(cls).filter_by(season_type=SeasonType.REGULAR_SEASON)
-        return [season for season in matching_seasons]
+        return db_session.query(cls).filter_by(season_type=SeasonType.REGULAR_SEASON).all()
 
     @classmethod
     def is_this_the_asg_date(cls, db_session, game_date):

@@ -75,65 +75,65 @@ _T_PBP_MISC_EVENT_XPATH = (
 )
 _PBP_INNING_XPATH = './tbody//tr[not(contains(@class, "thead"))]/th[@data-stat="inning"]/text()'
 
-BAT_STATS = dict(
-    at_bats="AB",
-    runs_scored="R",
-    hits="H",
-    rbis="RBI",
-    bases_on_balls="BB",
-    strikeouts="SO",
-    plate_appearances="PA",
-    avg_to_date="batting_avg",
-    obp_to_date="onbase_perc",
-    slg_to_date="slugging_perc",
-    ops_to_date="onbase_plus_slugging",
-    total_pitches="pitches",
-    total_strikes="strikes_total",
-    wpa_bat="wpa_bat",
-    avg_lvg_index="leverage_index_avg",
-    wpa_bat_pos="wpa_bat_pos",
-    wpa_bat_neg="wpa_bat_neg",
-    re24_bat="re24_bat",
-    details="details",
-)
+BAT_STATS = {
+    "at_bats": "AB",
+    "runs_scored": "R",
+    "hits": "H",
+    "rbis": "RBI",
+    "bases_on_balls": "BB",
+    "strikeouts": "SO",
+    "plate_appearances": "PA",
+    "avg_to_date": "batting_avg",
+    "obp_to_date": "onbase_perc",
+    "slg_to_date": "slugging_perc",
+    "ops_to_date": "onbase_plus_slugging",
+    "total_pitches": "pitches",
+    "total_strikes": "strikes_total",
+    "wpa_bat": "wpa_bat",
+    "avg_lvg_index": "leverage_index_avg",
+    "wpa_bat_pos": "wpa_bat_pos",
+    "wpa_bat_neg": "wpa_bat_neg",
+    "re24_bat": "re24_bat",
+    "details": "details",
+}
 
-PITCH_STATS = dict(
-    innings_pitched="IP",
-    hits="H",
-    runs="R",
-    earned_runs="ER",
-    bases_on_balls="BB",
-    strikeouts="SO",
-    homeruns="HR",
-    batters_faced="batters_faced",
-    pitch_count="pitches",
-    strikes="strikes_total",
-    strikes_contact="strikes_contact",
-    strikes_swinging="strikes_swinging",
-    strikes_looking="strikes_looking",
-    ground_balls="inplay_gb_total",
-    fly_balls="inplay_fb_total",
-    line_drives="inplay_ld",
-    unknown_type="inplay_unk",
-    game_score="game_score",
-    inherited_runners="inherited_runners",
-    inherited_scored="inherited_score",
-    wpa_pitch="wpa_def",
-    avg_lvg_index="leverage_index_avg",
-    re24_pitch="re24_def",
-)
+PITCH_STATS = {
+    "innings_pitched": "IP",
+    "hits": "H",
+    "runs": "R",
+    "earned_runs": "ER",
+    "bases_on_balls": "BB",
+    "strikeouts": "SO",
+    "homeruns": "HR",
+    "batters_faced": "batters_faced",
+    "pitch_count": "pitches",
+    "strikes": "strikes_total",
+    "strikes_contact": "strikes_contact",
+    "strikes_swinging": "strikes_swinging",
+    "strikes_looking": "strikes_looking",
+    "ground_balls": "inplay_gb_total",
+    "fly_balls": "inplay_fb_total",
+    "line_drives": "inplay_ld",
+    "unknown_type": "inplay_unk",
+    "game_score": "game_score",
+    "inherited_runners": "inherited_runners",
+    "inherited_scored": "inherited_score",
+    "wpa_pitch": "wpa_def",
+    "avg_lvg_index": "leverage_index_avg",
+    "re24_pitch": "re24_def",
+}
 
-PBP_STATS = dict(
-    pbp_table_row_number="data-row",
-    score="score_batting_team",
-    outs_before_play="outs",
-    runners_on_base="runners_on_bases_pbp",
-    team_batting_id_br="batting_team_id",
-    play_description="play_desc",
-    pitch_sequence="pitches_pbp",
-    runs_outs_result="runs_outs_result",
-    play_index_url="play_index_url",
-)
+PBP_STATS = {
+    "pbp_table_row_number": "data-row",
+    "score": "score_batting_team",
+    "outs_before_play": "outs",
+    "runners_on_base": "runners_on_bases_pbp",
+    "team_batting_id_br": "batting_team_id",
+    "play_description": "play_desc",
+    "pitch_sequence": "pitches_pbp",
+    "runs_outs_result": "runs_outs_result",
+    "play_index_url": "play_index_url",
+}
 
 _GAME_ID_PATTERN = r"[A-Z]{3,3}\d{9,9}"
 _TEAM_ID_PATTERN = r"[A-Z]{3,3}"
@@ -365,20 +365,20 @@ def _parse_team_data(
         return result
     starting_lineup = result.value
 
-    team_dict = dict(
-        team_id_br=team_id,
-        total_wins_before_game=int(team_record[0]),
-        total_losses_before_game=int(team_record[1]),
-        total_runs_scored_by_team=int(team_totals.total_runs),
-        total_runs_scored_by_opponent=int(opponent_totals.total_runs),
-        total_hits_by_team=int(team_totals.total_hits),
-        total_hits_by_opponent=int(opponent_totals.total_hits),
-        total_errors_by_team=int(team_totals.total_errors),
-        total_errors_by_opponent=int(opponent_totals.total_errors),
-        batting_stats=batting_stats,
-        pitching_stats=pitching_stats,
-        starting_lineup=starting_lineup,
-    )
+    team_dict = {
+        "team_id_br": team_id,
+        "total_wins_before_game": int(team_record[0]),
+        "total_losses_before_game": int(team_record[1]),
+        "total_runs_scored_by_team": int(team_totals.total_runs),
+        "total_runs_scored_by_opponent": int(opponent_totals.total_runs),
+        "total_hits_by_team": int(team_totals.total_hits),
+        "total_hits_by_opponent": int(opponent_totals.total_hits),
+        "total_errors_by_team": int(team_totals.total_errors),
+        "total_errors_by_opponent": int(opponent_totals.total_errors),
+        "batting_stats": batting_stats,
+        "pitching_stats": pitching_stats,
+        "starting_lineup": starting_lineup,
+    }
     return Result.Ok(team_dict)
 
 
@@ -789,11 +789,11 @@ def _parse_all_game_events(
         error = f"Error occurred constructing inning list:\n{result.error}"
         return Result.Fail(error)
     (innings_list, player_id_match_log) = result.value
-    result_dict = dict(
-        innings_list=innings_list,
-        player_id_match_log=player_id_match_log,
-        player_team_dict=player_team_dict,
-    )
+    result_dict = {
+        "innings_list": innings_list,
+        "player_id_match_log": player_id_match_log,
+        "player_team_dict": player_team_dict,
+    }
     return Result.Ok(result_dict)
 
 
@@ -875,7 +875,7 @@ def _parse_play_by_play(pbp_table, player_id_dict, away_team_id, home_team_id, g
         event = BBRefPlayByPlayEvent(**event_dict)
         play_by_play.append(event)
 
-    result = dict(play_by_play=play_by_play, player_id_match_log=player_id_match_log)
+    result = {"play_by_play": play_by_play, "player_id_match_log": player_id_match_log}
     return Result.Ok(result)
 
 
@@ -985,14 +985,14 @@ def _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict):
             )
             sub_list.append(substitution)
 
-    result = dict(sub_list=sub_list)
+    result = {"sub_list": sub_list}
     return Result.Ok(result)
 
 
 def _parse_substitution_description(sub_description):
     parsed_sub = {}
     parsed_sub["description"] = sub_description
-    split = None
+    split, split2 = None, None
     pre_split = [s.strip() for s in sub_description.split("(change occurred mid-batter)")]
     sub_description = pre_split[0]
     if "running at second base to start the extra inning" in sub_description:
@@ -1137,14 +1137,12 @@ def _parse_substitution_description(sub_description):
 
 
 def _find_missing_pbp_events(summaries_begin, summaries_end, game_events, substitutions):
-    row_ids_top_inning = [row_num for row_num in summaries_begin.keys()]
-    row_ids_bot_inning = [row_num for row_num in summaries_end.keys()]
+    row_ids_top_inning = list(summaries_begin.keys())
+    row_ids_bot_inning = list(summaries_end.keys())
     row_ids_game_events = [int(event.pbp_table_row_number) for event in game_events]
     row_ids_substitutions = [sub.pbp_table_row_number for sub in substitutions]
     all_row_ids = set(
-        sorted(
-            row_ids_top_inning + row_ids_bot_inning + row_ids_game_events + row_ids_substitutions
-        )
+        row_ids_top_inning + row_ids_bot_inning + row_ids_game_events + row_ids_substitutions
     )
     first_row_num = min(all_row_ids)
     last_row_num = max(all_row_ids) + 1
@@ -1294,9 +1292,9 @@ def _get_sub_player_ids(incoming_player_name, outgoing_player_name, player_name_
     else:
         incoming_player_id_br = "N/A"
 
-    result = dict(
-        incoming_player_id_br=incoming_player_id_br,
-        outgoing_player_id_br=outgoing_player_id_br,
-        player_id_match_log=player_id_match_log,
-    )
+    result = {
+        "incoming_player_id_br": incoming_player_id_br,
+        "outgoing_player_id_br": outgoing_player_id_br,
+        "player_id_match_log": player_id_match_log,
+    }
     return Result.Ok(result)

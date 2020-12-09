@@ -25,6 +25,6 @@ def populate_status_tables(db_session):
         db_session.commit()
         return Result.Ok()
     except Exception as e:
-        error = "Error: {error}".format(error=repr(e))
+        error = f"Error: {repr(e)}"
         db_session.rollback()
         return Result.Fail(error)

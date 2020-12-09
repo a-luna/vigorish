@@ -187,7 +187,7 @@ class InvestigateInvalidPitchFx(MenuItem):
                     ab_val = validate_at_bat_id(at_bat_id).value
                     ab_data = ab_dict["at_bat_data"]
                     pfx_audit = ab_data["at_bat_pitchfx_audit"]
-                    pitch_numbers = sorted([pfx["ab_count"] for pfx in ab_data["pitchfx"]])
+                    pitch_numbers = sorted(pfx["ab_count"] for pfx in ab_data["pitchfx"])
                     pitch_count = max(pfx["ab_total"] for pfx in ab_data["pitchfx"])
                     error_data = {
                         "inning_id": inning_id[-5:],
@@ -286,6 +286,7 @@ class InvestigateInvalidPitchFx(MenuItem):
             print_message(message, fg="bright_green")
 
     def prompt_user_create_patch(self, match_dict):
+        prompt = ""
         if match_dict["patch_type"] == PatchType.CHANGE_BATTER_ID:
             prompt = (
                 "Change batter_id on all invalid_pfx data in the table above from "
@@ -341,7 +342,7 @@ class InvestigateInvalidPitchFx(MenuItem):
             )
             print_message(error, fg="bright_yellow", bold=True)
             all_rows = [match_dict["invalid_pfx"]]
-            all_rows.extend([match for match in match_dict["missing_pfx"]])
+            all_rows.extend(list(match_dict["missing_pfx"]))
             print_message(tabulate(all_rows, headers="keys"), wrap=False)
             print()
             pause(message="Press any key to continue...")

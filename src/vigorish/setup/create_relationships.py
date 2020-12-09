@@ -36,7 +36,7 @@ def link_player_tables(db_session):
                 player_id.db_player_id = p.id
         return Result.Ok()
     except Exception as e:
-        error = "Error: {error}".format(error=repr(e))
+        error = f"Error: {repr(e)}"
         db_session.rollback()
         return Result.Fail(error)
 
@@ -62,6 +62,6 @@ def link_teams_and_seasons(db_session):
                 team.post_season_id = post_season.id
         return Result.Ok()
     except Exception as e:
-        error = "Error: {error}".format(error=repr(e))
+        error = f"Error: {repr(e)}"
         db_session.rollback()
         return Result.Fail(error)

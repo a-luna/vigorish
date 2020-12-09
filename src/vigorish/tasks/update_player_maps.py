@@ -146,7 +146,7 @@ class UpdatePlayerIdMap(Task):
         new_id_map = current_id_map - id_map
         if new_id_map:
             id_map.update(new_id_map)
-        sorted_id_map = sorted(list(id_map), key=lambda x: x.player_ID)
+        sorted_id_map = sorted(id_map, key=lambda x: x.player_ID)
         self.write_bbref_player_id_map_to_file(sorted_id_map)
         new_id_dicts = [asdict(id_map) for id_map in new_id_map] if new_id_map else None
         return Result.Ok(new_id_dicts)
@@ -176,7 +176,7 @@ class UpdatePlayerIdMap(Task):
                     if "NULL" not in stats.mlb_ID
                 }
             )
-        sorted_id_map = sorted(list(id_map), key=lambda x: x.player_ID)
+        sorted_id_map = sorted(id_map, key=lambda x: x.player_ID)
         return set(sorted_id_map)
 
     def write_bbref_player_id_map_to_file(self, new_id_map):
@@ -207,7 +207,7 @@ class UpdatePlayerTeamMap(Task):
         new_team_map = current_team_map - team_map
         if new_team_map:
             team_map.update(new_team_map)
-        sorted_team_map = sorted(list(team_map), key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
+        sorted_team_map = sorted(team_map, key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
         self.write_bbref_player_team_map_to_file(sorted_team_map)
         new_team_dicts = [asdict(team_map) for team_map in new_team_map] if new_team_map else None
         return Result.Ok(new_team_dicts)
@@ -245,7 +245,7 @@ class UpdatePlayerTeamMap(Task):
                     for stats in list(stats_list)
                 }
             )
-        sorted_team_map = sorted(list(team_map), key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
+        sorted_team_map = sorted(team_map, key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
         return set(sorted_team_map)
 
     def write_bbref_player_team_map_to_file(self, new_id_map):

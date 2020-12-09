@@ -1,10 +1,9 @@
 """Menu item that provides detailed information for a single job."""
 import subprocess
 
-from bullet import Bullet, colors
 from getch import pause
 
-from vigorish.cli.components import print_message
+from vigorish.cli.components import print_message, user_options_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import JobStatus
@@ -65,46 +64,18 @@ class JobDetails(MenuItem):
             return Result.Ok(self.exit_menu)
 
     def incomplete_job_options_prompt(self):
+        prompt = "Current options:"
         choices = {
             f"{MENU_NUMBERS.get(1)}  Execute Job": "RUN",
             f"{MENU_NUMBERS.get(2)}  Cancel Job": "CANCEL",
             f"{EMOJI_DICT.get('BACK')} Return to Incomplete Jobs": None,
         }
-        prompt = Bullet(
-            "Current options:",
-            choices=[choice for choice in choices.keys()],
-            bullet="",
-            shift=1,
-            indent=2,
-            margin=2,
-            bullet_color=colors.foreground["default"],
-            background_color=colors.foreground["default"],
-            background_on_switch=colors.foreground["default"],
-            word_color=colors.foreground["default"],
-            word_on_switch=colors.bright(colors.foreground["cyan"]),
-        )
-        choice_text = prompt.launch()
-        choice_value = choices.get(choice_text)
-        return Result.Ok(choice_value) if choice_value else Result.Fail("")
+        return user_options_prompt(choices, prompt)
 
     def failed_job_options_prompt(self):
+        prompt = "Current options:"
         choices = {
             f"{MENU_NUMBERS.get(1)}  Retry Job": "RETRY",
             f"{EMOJI_DICT.get('BACK')} Return to Failed Jobs": None,
         }
-        prompt = Bullet(
-            "Current options:",
-            choices=[choice for choice in choices.keys()],
-            bullet="",
-            shift=1,
-            indent=2,
-            margin=2,
-            bullet_color=colors.foreground["default"],
-            background_color=colors.foreground["default"],
-            background_on_switch=colors.foreground["default"],
-            word_color=colors.foreground["default"],
-            word_on_switch=colors.bright(colors.foreground["cyan"]),
-        )
-        choice_text = prompt.launch()
-        choice_value = choices.get(choice_text)
-        return Result.Ok(choice_value) if choice_value else Result.Fail("")
+        return user_options_prompt(choices, prompt)

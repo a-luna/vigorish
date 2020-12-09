@@ -9,10 +9,10 @@ class BBRefTransactionDetail:
 
     def as_dict(self):
         dict = {
-            "player_id": "{}".format(self.player_id),
-            "player_id_br": "{}".format(self.player_id_br),
-            "old_team_id_br": "{}".format(self.old_team_id_br),
-            "new_team_id_br": "{}".format(self.new_team_id_br),
+            "player_id": f"{self.player_id}",
+            "player_id_br": f"{self.player_id_br}",
+            "old_team_id_br": f"{self.old_team_id_br}",
+            "new_team_id_br": f"{self.new_team_id_br}",
         }
 
         if self.draft_year and not self.draft_year.isspace():

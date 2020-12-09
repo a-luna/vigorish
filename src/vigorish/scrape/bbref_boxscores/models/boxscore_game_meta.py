@@ -18,15 +18,15 @@ class BBRefBoxscoreMeta:
 
     def as_dict(self):
         """Convert boxscore meta info to a dictionary."""
-        return dict(
-            __bbref_boxscore_meta__=True,
-            park_name=self.park_name,
-            field_type=self.field_type,
-            day_night=self.day_night,
-            first_pitch_temperature=self.first_pitch_temperature,
-            first_pitch_precipitation=self.first_pitch_precipitation,
-            first_pitch_wind=self.first_pitch_wind,
-            first_pitch_clouds=self.first_pitch_clouds,
-            game_duration=self.game_duration,
-            attendance=self.attendance,
-        )
+        return {
+            "__bbref_boxscore_meta__": True,
+            "park_name": self.park_name,
+            "field_type": self.field_type,
+            "day_night": self.day_night,
+            "first_pitch_temperature": self.first_pitch_temperature,
+            "first_pitch_precipitation": self.first_pitch_precipitation,
+            "first_pitch_wind": self.first_pitch_wind,
+            "first_pitch_clouds": self.first_pitch_clouds,
+            "game_duration": self.game_duration,
+            "attendance": self.attendance,
+        }
