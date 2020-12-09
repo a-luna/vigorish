@@ -83,6 +83,13 @@ def report_season_status(db_session, year, report_type):
             text_color="bright_yellow",
             wrap_text=False,
         )
+        if os.environ.get("ENV") == "TEST":
+            for page in pages:
+                page.display(
+                    heading_color="bright_cyan",
+                    text_color="bright_cyan",
+                    wrap_text=False,
+                )
         return Result.Ok(date_report)
     start_date = season.start_date
     end_date = season.end_date
