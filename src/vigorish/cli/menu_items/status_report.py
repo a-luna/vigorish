@@ -2,8 +2,6 @@
 import os
 import subprocess
 
-from getch import pause
-
 from vigorish.cli.components import season_prompt, single_date_prompt, user_options_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
