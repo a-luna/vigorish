@@ -121,13 +121,15 @@ def test_all_game_data(vig_app):
     mlb_id = result.value
     assert mlb_id == bat_stats_player_id
 
-    pitch_mix = all_game_data.get_pitch_types_for_player(571882)
+    result = all_game_data.get_pitch_mix_data_for_player(571882)
+    assert result.success
+    pitch_mix = result.value
     assert "all" in pitch_mix
     (pitch_mix_total_all, pitch_mix_detail_all) = pitch_mix["all"]
     assert pitch_mix_total_all == {
         "count": 17,
         "percent": 1.0,
-        "type": [
+        "pitch_types": [
             PitchType.CHANGEUP,
             PitchType.CURVEBALL,
             PitchType.FOUR_SEAM_FASTBALL,
@@ -180,8 +182,9 @@ def test_all_game_data(vig_app):
     assert pitch_mix_total_bat_r == {
         "count": 5,
         "percent": 1.0,
-        "type": [PitchType.CURVEBALL, PitchType.FOUR_SEAM_FASTBALL],
+        "pitch_types": [PitchType.CURVEBALL, PitchType.FOUR_SEAM_FASTBALL],
     }
+
     pitch_mix_detail_bat_r[PitchType.CURVEBALL] = {
         "avg_pfx_x": 2.215,
         "avg_pfx_z": -3.9,
@@ -208,7 +211,7 @@ def test_all_game_data(vig_app):
     assert pitch_mix_total_bat_l == {
         "count": 12,
         "percent": 1.0,
-        "type": [
+        "pitch_types": [
             PitchType.CHANGEUP,
             PitchType.CURVEBALL,
             PitchType.FOUR_SEAM_FASTBALL,

@@ -76,8 +76,8 @@ class ViewGameData(MenuItem):
 
     def select_data_prompt(self):
         prompt = (
-            f"\nData for {self.bbref_game_id} can be viewed in several different ways, please choose an "
-            "option from the list below:"
+            f"\nData for {self.bbref_game_id} can be viewed in several different ways, "
+            "please choose an option from the list below:"
         )
         choices = {
             f"{MENU_NUMBERS.get(1)}  {self.bat_stats_text(False)}": (self.away_team_id, "BAT"),
@@ -126,7 +126,18 @@ class ViewGameData(MenuItem):
             if result.failure:
                 return Result.Ok()
             mlb_id = result.value
-            self.view_at_bats_for_player(player_type, mlb_id)
+            if player_type == "BAT":
+                self.view_at_bats_for_player(player_type, mlb_id)
+            else:
+                subprocess.run(["clear"])
+                result = self.select_pitcher_data_prompt(mlb_id)
+                if result.failure:
+                    return Result.Ok()
+                pitcher_data = result.value
+                if pitcher_data == "AT_BATS":
+                    self.view_at_bats_for_player(player_type, mlb_id)
+                if pitcher_data == "PITCH_MIX":
+                    self.view_pitch_mix_for_player(mlb_id)
 
     def get_boxscore(self, team_id, player_type):
         boxscore_dict = {
@@ -158,7 +169,7 @@ class ViewGameData(MenuItem):
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
         prompt = (
             "All pitchers that apppeared in the game are listed below. Select a player and "
-            "press ENTER to access information for each player's outing and career statistics:"
+            "press ENTER to access information for each player's outing and pitch repertoire:"
         )
         print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
         return user_options_prompt(choices, prompt, auto_scroll=False, clear_screen=False)
@@ -175,10 +186,30 @@ class ViewGameData(MenuItem):
             f"{box['game_results']}"
         )
 
+    def select_pitcher_data_prompt(self, mlb_id):
+        pitcher_name = self.game_data.get_player_id_map(mlb_id=mlb_id).mlb_name
+        prompt = (
+            f"\nData for {pitcher_name} can be viewed in several different ways, "
+            "please choose an option from the list below:"
+        )
+        choices = {
+            f"{MENU_NUMBERS.get(1)}  View Details of All At Bats": "AT_BATS",
+            f"{MENU_NUMBERS.get(2)}  View Pitch Mix Data by Batter Stance/Season": "PITCH_MIX",
+            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+        }
+        print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
+        return user_options_prompt(choices, prompt, clear_screen=False)
+
     def view_at_bats_for_pitcher(self, mlb_id):
         subprocess.run(["clear"])
         innings_viewer = self.game_data.view_valid_at_bats_for_pitcher(mlb_id).value
         return self.view_at_bats_by_inning(innings_viewer)
+
+    def view_pitch_mix_for_player(self, mlb_id):
+        subprocess.run(["clear"])
+        table_viewer = self.game_data.view_player_pitch_mix(mlb_id).value
+        table_viewer.launch()
+        return Result.Ok()
 
     def select_batter_prompt(self, bat_boxscore):
         max_name_length = self.get_name_max_length(bat_boxscore)
