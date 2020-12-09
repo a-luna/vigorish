@@ -18,16 +18,16 @@ from vigorish.database import (
 )
 from vigorish.enums import DataSet
 from vigorish.tasks.base import Task
-from vigorish.util.dt_format_strings import CSV_UTC, FILE_TIMESTAMP
+from vigorish.util.dt_format_strings import CSV_UTC, DATE_ONLY, DT_AWARE, FILE_TIMESTAMP
 from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.numeric_helpers import ONE_PERCENT
 from vigorish.util.result import Result
 
-DB_TABLE_CSV_DATACLASS_MAP = {
-    DateScrapeStatus: DateScrapeStatusCsvRow,
-    GameScrapeStatus: GameScrapeStatusCsvRow,
-    PitchAppScrapeStatus: PitchAppScrapeStatusCsvRow,
-    PitchFx: PitchFxCsvRow,
+DB_MODEL_TO_CSV_MAP = {
+    DateScrapeStatus: {"dataclass": DateScrapeStatusCsvRow, "date_format": DATE_ONLY},
+    GameScrapeStatus: {"dataclass": GameScrapeStatusCsvRow, "date_format": DATE_ONLY},
+    PitchAppScrapeStatus: {"dataclass": PitchAppScrapeStatusCsvRow, "date_format": DT_AWARE},
+    PitchFx: {"dataclass": PitchFxCsvRow, "date_format": CSV_UTC},
 }
 
 
@@ -80,7 +80,7 @@ class BackupDatabaseTask(Task):
         return csv_folder
 
     def export_table_to_csv(self, table, csv_file):
-        chunk_size = 1000
+        chunk_size = 10000
         total_rows = get_total_number_of_rows(self.db_session, table)
         chunk_count, row_count, last_reported = 0, 0, 0
         self.append_text_to_csv_file(csv_file, text=",".join(self.get_csv_column_names(table)))
@@ -104,12 +104,15 @@ class BackupDatabaseTask(Task):
             csv.write(f"{text}\n")
 
     def get_csv_column_names(self, table):
-        csv_dataclass = DB_TABLE_CSV_DATACLASS_MAP[table]
+        csv_dataclass = DB_MODEL_TO_CSV_MAP[table]["dataclass"]
         return list(csv_dataclass.__dataclass_fields__.keys())
 
     def convert_row_to_csv_dict(self, row, table):
-        csv_dataclass = DB_TABLE_CSV_DATACLASS_MAP[table]
-        return dict_from_dataclass(row, csv_dataclass)
+        csv_dataclass = DB_MODEL_TO_CSV_MAP[table]["dataclass"]
+        date_format = DB_MODEL_TO_CSV_MAP[table]["date_format"]
+        if isinstance(row, PitchFx):
+            row.pdes = row.pdes.replace(",", ";")
+        return dict_from_dataclass(row, csv_dataclass, date_format)
 
     def report_progress(self, count, total, last_reported):
         percent_complete = count / float(total)

@@ -98,23 +98,6 @@ class PitchFx(Base):
         thrown_utc = make_tzaware(self.time_pitch_thrown_utc, use_tz=timezone.utc, localize=False)
         return make_tzaware(thrown_utc, use_tz=TIME_ZONE_NEW_YORK, localize=True)
 
-    # def as_csv_dict(self):
-    #     self.pdes = self.pdes.replace(",", "")
-    #     return dict_from_dataclass(self, PitchFxCsvRow, date_format=CSV_UTC)
-
-    # @classmethod
-    # def get_csv_col_names(cls):
-    #     return list(PitchFxCsvRow.__dataclass_fields__.keys())
-
-    # @classmethod
-    # def export_table_as_csv(cls, db_session):
-    #     col_names = ",".join(cls.get_csv_col_names())
-    #     csv_dicts = (obj.as_csv_dict() for obj in db_session.query(cls).all())
-    #     csv_rows = (",".join(sanitize_row_dict(d, date_format=CSV_UTC)) for d in csv_dicts)
-    #     yield col_names
-    #     for row in csv_rows:
-    #         yield row
-
     @classmethod
     def from_dict(cls, pfx_dict):
         game_start_str = pfx_dict.pop("game_start_time_str")
