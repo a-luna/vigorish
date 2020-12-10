@@ -954,9 +954,9 @@
         "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
         "bbref_game_id": "WAS201904030",
         "pitch_count_by_inning": {
+          "1": 22,
           "2": 9,
-          "3": 33,
-          "1": 38
+          "3": 32
         },
         "pitch_count_by_pitch_type": {
           "FF": 25,
@@ -1056,9 +1056,8 @@
         "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
         "bbref_game_id": "WAS201904030",
         "pitch_count_by_inning": {
-          "5": 16,
-          "6": 11,
-          "4": 14
+          "4": 14,
+          "5": 16
         },
         "pitch_count_by_pitch_type": {
           "SL": 19,
@@ -1146,7 +1145,7 @@
         "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
         "bbref_game_id": "WAS201904030",
         "pitch_count_by_inning": {
-          "5": 6,
+          "5": 2,
           "6": 5
         },
         "pitch_count_by_pitch_type": {
@@ -1310,7 +1309,7 @@
         "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
         "bbref_game_id": "WAS201904030",
         "pitch_count_by_inning": {
-          "8": 26
+          "8": 25
         },
         "pitch_count_by_pitch_type": {
           "SL": 12,
@@ -2254,10 +2253,10 @@
         "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
         "bbref_game_id": "WAS201904030",
         "pitch_count_by_inning": {
-          "1": 38,
-          "4": 31,
+          "1": 21,
+          "2": 11,
           "3": 13,
-          "2": 11
+          "4": 31
         },
         "pitch_count_by_pitch_type": {
           "FC": 24,
@@ -2444,7 +2443,7 @@
         "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
         "bbref_game_id": "WAS201904030",
         "pitch_count_by_inning": {
-          "6": 19,
+          "6": 12,
           "7": 8
         },
         "pitch_count_by_pitch_type": {

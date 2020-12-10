@@ -1025,8 +1025,8 @@
         "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
         "bbref_game_id": "TOR201908170",
         "pitch_count_by_inning": {
-          "5": 18,
-          "4": 6
+          "4": 6,
+          "5": 18
         },
         "pitch_count_by_pitch_type": {
           "SL": 24
@@ -1105,8 +1105,8 @@
         "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
         "bbref_game_id": "TOR201908170",
         "pitch_count_by_inning": {
-          "6": 23,
-          "5": 4
+          "5": 4,
+          "6": 23
         },
         "pitch_count_by_pitch_type": {
           "FF": 15,
@@ -2097,10 +2097,10 @@
         "pitch_count_by_inning": {
           "1": 12,
           "2": 24,
+          "3": 12,
           "4": 12,
           "5": 16,
-          "6": 10,
-          "3": 12
+          "6": 10
         },
         "pitch_count_by_pitch_type": {
           "FF": 42,
@@ -2361,8 +2361,8 @@
         "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
         "bbref_game_id": "TOR201908170",
         "pitch_count_by_inning": {
-          "9": 14,
-          "8": 7
+          "8": 7,
+          "9": 14
         },
         "pitch_count_by_pitch_type": {
           "CU": 8,

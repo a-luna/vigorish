@@ -891,13 +891,13 @@
         "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
         "bbref_game_id": "TOR201906170",
         "pitch_count_by_inning": {
-          "5": 8,
-          "4": 11,
-          "7": 20,
-          "8": 8,
+          "2": 13,
           "3": 10,
+          "4": 11,
+          "5": 8,
           "6": 15,
-          "2": 13
+          "7": 20,
+          "8": 8
         },
         "pitch_count_by_pitch_type": {
           "FT": 36,
@@ -2125,10 +2125,10 @@
         "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
         "bbref_game_id": "TOR201906170",
         "pitch_count_by_inning": {
+          "2": 2,
+          "3": 14,
           "4": 15,
-          "3": 15,
-          "5": 8,
-          "2": 2
+          "5": 8
         },
         "pitch_count_by_pitch_type": {
           "SI": 21,

@@ -920,13 +920,13 @@
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
         "bbref_game_id": "PIT201909070",
         "pitch_count_by_inning": {
+          "1": 20,
+          "2": 11,
+          "3": 17,
           "4": 16,
           "5": 9,
-          "2": 11,
-          "1": 20,
-          "7": 6,
-          "3": 17,
-          "6": 16
+          "6": 16,
+          "7": 6
         },
         "pitch_count_by_pitch_type": {
           "CU": 44,
@@ -1828,10 +1828,10 @@
         "pitch_count_by_inning": {
           "1": 20,
           "2": 13,
+          "3": 25,
           "4": 8,
           "5": 11,
-          "6": 19,
-          "3": 25
+          "6": 19
         },
         "pitch_count_by_pitch_type": {
           "FF": 39,
@@ -1936,8 +1936,8 @@
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
         "bbref_game_id": "PIT201909070",
         "pitch_count_by_inning": {
-          "7": 23,
-          "6": 11
+          "6": 11,
+          "7": 23
         },
         "pitch_count_by_pitch_type": {
           "SI": 14,
@@ -2022,7 +2022,7 @@
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
         "bbref_game_id": "PIT201909070",
         "pitch_count_by_inning": {
-          "8": 30
+          "8": 29
         },
         "pitch_count_by_pitch_type": {
           "FF": 19,

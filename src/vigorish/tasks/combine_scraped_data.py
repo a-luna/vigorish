@@ -1117,6 +1117,7 @@ class CombineScrapedDataTask(Task):
         ]
         batters_faced_pfx = len([event for event in pitcher_events if event["is_complete_at_bat"]])
         audit_report = self.generate_audit_report_for_events(pitcher_events)
+        pitch_count_by_inning = self.get_pitch_count_by_inning(pitcher_events)
         pitch_count_by_pitch_type = self.get_pitch_count_by_pitch_type(pitcher_events)
         invalid_pfx = self.get_invalid_pfx_data_for_pitcher(pfx_log.pitcher_id_mlb)
         pitch_app_pitchfx_audit = {
@@ -1165,12 +1166,22 @@ class CombineScrapedDataTask(Task):
             "opponent_team_id_bbref": pitch_stats.opponent_team_id_br,
             "bb_game_id": pfx_log.bb_game_id,
             "bbref_game_id": pfx_log.bbref_game_id,
-            "pitch_count_by_inning": pfx_log.pitch_count_by_inning,
+            "pitch_count_by_inning": pitch_count_by_inning,
             "pitch_count_by_pitch_type": pitch_count_by_pitch_type,
             "pitch_app_pitchfx_audit": pitch_app_pitchfx_audit,
             "bbref_data": bbref_data,
         }
         return (pitch_stats.player_team_id_br, updated_stats)
+
+    def get_pitch_count_by_inning(self, pitcher_events):
+        all_pfx = flatten_list2d([event["pitchfx"] for event in pitcher_events])
+        unordered = defaultdict(int)
+        for pfx in all_pfx:
+            unordered[pfx["inning"]] += 1
+        pitch_count_by_inning = OrderedDict()
+        for k in sorted(unordered.keys()):
+            pitch_count_by_inning[k] = unordered[k]
+        return pitch_count_by_inning
 
     def get_pitch_count_by_pitch_type(self, pitcher_events):
         all_pfx = flatten_list2d([event["pitchfx"] for event in pitcher_events])
@@ -1179,7 +1190,7 @@ class CombineScrapedDataTask(Task):
             pitch_count_unordered[pfx["mlbam_pitch_name"]] += 1
         pitch_count_ordered = OrderedDict()
         ptype_tuples = [(pitch_type, count) for pitch_type, count in pitch_count_unordered.items()]
-        for t in sorted(ptype_tuples, key=lambda x: -x[1]):
+        for t in sorted(ptype_tuples, key=lambda x: x[1], reverse=True):
             pitch_count_ordered[t[0]] = t[1]
         return pitch_count_ordered
 
