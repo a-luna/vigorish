@@ -836,12 +836,12 @@
         "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
         "bbref_game_id": "NYA201906112",
         "pitch_count_by_inning": {
-          "2": 14,
-          "6": 11,
-          "5": 7,
           "1": 21,
+          "2": 14,
+          "3": 17,
           "4": 15,
-          "3": 17
+          "5": 7,
+          "6": 11
         },
         "pitch_count_by_pitch_type": {
           "CH": 39,
@@ -1758,8 +1758,8 @@
         "bbref_game_id": "NYA201906112",
         "pitch_count_by_inning": {
           "1": 20,
-          "3": 38,
-          "2": 6
+          "2": 6,
+          "3": 37
         },
         "pitch_count_by_pitch_type": {
           "FF": 38,
@@ -1854,11 +1854,11 @@
         "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
         "bbref_game_id": "NYA201906112",
         "pitch_count_by_inning": {
-          "7": 19,
+          "3": 1,
+          "4": 20,
           "5": 23,
           "6": 19,
-          "4": 20,
-          "3": 1
+          "7": 19
         },
         "pitch_count_by_pitch_type": {
           "FF": 46,

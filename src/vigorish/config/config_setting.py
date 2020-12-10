@@ -1,4 +1,7 @@
 """Functions that enable reading/writing the config file."""
+from abc import ABC
+from typing import Iterable, Mapping, Union
+
 from vigorish.config.types.batch_job_settings import BatchJobSettings
 from vigorish.config.types.batch_scrape_delay import BatchScrapeDelay
 from vigorish.config.types.folder_path_setting import LocalFolderPathSetting, S3FolderPathSetting
@@ -16,61 +19,64 @@ from vigorish.enums import (
 from vigorish.util.list_helpers import report_dict
 
 
-class ConfigSetting:
-    setting_name: str
+def same_value_for_all_data_sets_is_required(setting_name: str) -> bool:
+    return setting_name in [
+        "STATUS_REPORT",
+        "S3_BUCKET",
+        "SCRAPE_TASK_OPTION",
+        "SCRAPED_DATA_COMBINE_CONDITION",
+        "COMBINED_DATA_STORAGE",
+        "COMBINED_DATA_LOCAL_FOLDER_PATH",
+        "COMBINED_DATA_S3_FOLDER_PATH",
+        "DB_BACKUP_FOLDER_PATH",
+    ]
 
-    def __init__(self, setting_name, config_dict):
+
+EnumSetting = Union[
+    CombinedDataStorageOption,
+    HtmlStorageOption,
+    JsonStorageOption,
+    ScrapeCondition,
+    ScrapeTaskOption,
+]
+NumericSetting = Union[BatchJobSettings, BatchScrapeDelay, UrlScrapeDelay]
+PathSetting = Union[LocalFolderPathSetting, S3FolderPathSetting]
+ConfigValue = Union[None, bool, int, str, EnumSetting]
+ConfigDict = Mapping[str, Union[None, bool, int, str]]
+
+
+class ConfigSetting(ABC):
+    data_type: ConfigType
+    setting_name: str
+    config_dict: ConfigDict
+
+    def __init__(self, setting_name: str, config_dict: ConfigDict):
         self.setting_name = setting_name
         self.config_dict = config_dict
+        self.data_type = ConfigType.NONE
 
     @property
-    def setting_name_title(self):
+    def setting_name_title(self) -> str:
         return " ".join(self.setting_name.split("_")).title()
 
     @property
-    def data_type(self):
-        return ConfigType.NONE
-
-    @property
-    def description(self):
+    def description(self) -> str:
         return self.config_dict.get("DESCRIPTION", "")
 
     @property
-    def possible_values(self):
-        return None
+    def possible_values(self) -> Iterable[EnumSetting]:
+        return []
 
     @property
-    def is_same_for_all_data_sets(self):
+    def is_same_for_all_data_sets(self) -> bool:
         return (
             True
-            if self.same_value_for_all_data_sets_is_required
+            if same_value_for_all_data_sets_is_required(self.setting_name)
             else self.config_dict.get("SAME_SETTING_FOR_ALL_DATA_SETS")
         )
 
-    @is_same_for_all_data_sets.setter
-    def is_same_for_all_data_sets(self, is_same):
-        if not self.same_value_for_all_data_sets_is_required:
-            self.config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"] = is_same
-
     @property
-    def cannot_be_disabled(self):
-        return self.setting_name in ["URL_SCRAPE_DELAY"]
-
-    @property
-    def same_value_for_all_data_sets_is_required(self):
-        return self.setting_name in [
-            "STATUS_REPORT",
-            "S3_BUCKET",
-            "SCRAPE_TASK_OPTION",
-            "SCRAPED_DATA_COMBINE_CONDITION",
-            "COMBINED_DATA_STORAGE",
-            "COMBINED_DATA_LOCAL_FOLDER_PATH",
-            "COMBINED_DATA_S3_FOLDER_PATH",
-            "DB_BACKUP_FOLDER_PATH",
-        ]
-
-    @property
-    def current_settings_report(self):
+    def current_settings_report(self) -> str:
         if self.is_same_for_all_data_sets:
             settings_dict = {"ALL_DATA_SETS": self.current_setting(DataSet.ALL)}
         else:
@@ -81,7 +87,7 @@ class ConfigSetting:
             }
         return report_dict(settings_dict, title="", title_prefix="", title_suffix="")
 
-    def current_setting(self, data_set: DataSet):
+    def current_setting(self, data_set: DataSet) -> ConfigValue:
         return (
             self.config_dict.get(DataSet.ALL.name)
             if self.is_same_for_all_data_sets
@@ -90,45 +96,45 @@ class ConfigSetting:
 
 
 class StringConfigSetting(ConfigSetting):
-    def __repr__(self):
+    def __init__(self, setting_name: str, config_dict: ConfigDict):
+        super().__init__(setting_name, config_dict)
+        self.data_type = ConfigType.STRING
+
+    def __repr__(self) -> str:
         return (
             "<StringConfigSetting "
             f"setting={self.setting_name},"
             f"value={self.current_settings_report}>"
         )
 
-    @property
-    def data_type(self):
-        return ConfigType.STRING
-
 
 class PathConfigSetting(ConfigSetting):
-    def __repr__(self):
+    def __init__(self, setting_name: str, config_dict: ConfigDict):
+        super().__init__(setting_name, config_dict)
+        self.data_type = ConfigType.PATH
+
+    def __repr__(self) -> str:
         return (
             "<PathConfigSetting "
             f"setting={self.setting_name},"
             f"value={self.current_settings_report}>"
         )
 
-    @property
-    def data_type(self):
-        return ConfigType.PATH
-
-    def current_setting(self, data_set):
+    def current_setting(self, data_set: DataSet) -> PathSetting:
         current_setting = super().current_setting(data_set)
-        return self.get_object(self.config_dict.get("CLASS_NAME"), current_setting, data_set)
-
-    @staticmethod
-    def get_object(class_name, current_setting, data_set):
+        class_name = self.config_dict.get("CLASS_NAME")
         if class_name == "LocalFolderPathSetting":
             return LocalFolderPathSetting(path=current_setting, data_set=data_set)
         if class_name == "S3FolderPathSetting":
             return S3FolderPathSetting(path=current_setting, data_set=data_set)
-        return None
 
 
 class EnumConfigSetting(ConfigSetting):
-    def __repr__(self):
+    def __init__(self, setting_name: str, config_dict: ConfigDict):
+        super().__init__(setting_name, config_dict)
+        self.data_type = ConfigType.ENUM
+
+    def __repr__(self) -> str:
         return (
             "<EnumConfigSetting "
             f"setting={self.setting_name},"
@@ -136,70 +142,61 @@ class EnumConfigSetting(ConfigSetting):
         )
 
     @property
-    def data_type(self):
-        return ConfigType.ENUM
+    def enum_name(self) -> str:
+        return self.config_dict.get("ENUM_NAME")
 
     @property
-    def possible_values(self):
-        enum_name = self.config_dict.get("ENUM_NAME")
-        if enum_name == "ScrapeCondition":
+    def possible_values(self) -> Iterable[EnumSetting]:
+        if self.enum_name == "ScrapeCondition":
             return list(ScrapeCondition)
-        if enum_name == "ScrapeTaskOption":
+        if self.enum_name == "ScrapeTaskOption":
             return list(ScrapeTaskOption)
-        if enum_name == "HtmlStorageOption":
+        if self.enum_name == "HtmlStorageOption":
             return list(HtmlStorageOption)
-        if enum_name == "JsonStorageOption":
+        if self.enum_name == "JsonStorageOption":
             return list(JsonStorageOption)
-        if enum_name == "CombinedDataStorageOption":
+        if self.enum_name == "CombinedDataStorageOption":
             return list(CombinedDataStorageOption)
-        if enum_name == "StatusReport":
+        if self.enum_name == "StatusReport":
             return list(StatusReport)
         return []
 
-    def current_setting(self, data_set):
-        current_setting = super().current_setting(data_set)
-        return self.get_enum(self.config_dict.get("ENUM_NAME"), current_setting)
-
-    @staticmethod
-    def get_enum(enum_name, value):
-        value = value.upper()
-        if enum_name == "ScrapeCondition":
-            return ScrapeCondition[value]
-        if enum_name == "ScrapeTaskOption":
-            return ScrapeTaskOption[value]
-        if enum_name == "HtmlStorageOption":
-            return HtmlStorageOption[value]
-        if enum_name == "JsonStorageOption":
-            return JsonStorageOption[value]
-        if enum_name == "CombinedDataStorageOption":
-            return CombinedDataStorageOption[value]
-        if enum_name == "StatusReport":
-            return StatusReport[value]
+    def current_setting(self, data_set: DataSet) -> EnumSetting:
+        current_setting = super().current_setting(data_set).upper()
+        if self.enum_name == "ScrapeCondition":
+            return ScrapeCondition[current_setting]
+        if self.enum_name == "ScrapeTaskOption":
+            return ScrapeTaskOption[current_setting]
+        if self.enum_name == "HtmlStorageOption":
+            return HtmlStorageOption[current_setting]
+        if self.enum_name == "JsonStorageOption":
+            return JsonStorageOption[current_setting]
+        if self.enum_name == "CombinedDataStorageOption":
+            return CombinedDataStorageOption[current_setting]
+        if self.enum_name == "StatusReport":
+            return StatusReport[current_setting]
         return None
 
 
 class NumericConfigSetting(ConfigSetting):
-    def __repr__(self):
+    def __init__(self, setting_name: str, config_dict: ConfigDict):
+        super().__init__(setting_name, config_dict)
+        self.data_type = ConfigType.NUMERIC
+
+    def __repr__(self) -> str:
         return (
             "<NumericConfigSetting "
             f"setting={self.setting_name},"
             f"value={self.current_settings_report}>"
         )
 
-    @property
-    def data_type(self):
-        return ConfigType.NUMERIC
-
-    def current_setting(self, data_set):
+    def current_setting(self, data_set: DataSet) -> NumericSetting:
         current_setting = super().current_setting(data_set)
-        return self.get_object(self.config_dict.get("CLASS_NAME"), current_setting)
-
-    @staticmethod
-    def get_object(class_name, config_dict):
+        class_name = self.config_dict.get("CLASS_NAME")
         if class_name == "UrlScrapeDelay":
-            return UrlScrapeDelay.from_config(config_dict)
+            return UrlScrapeDelay.from_config(current_setting)
         if class_name == "BatchJobSettings":
-            return BatchJobSettings.from_config(config_dict)
+            return BatchJobSettings.from_config(current_setting)
         if class_name == "BatchScrapeDelay":
-            return BatchScrapeDelay.from_config(config_dict)
+            return BatchScrapeDelay.from_config(current_setting)
         return None

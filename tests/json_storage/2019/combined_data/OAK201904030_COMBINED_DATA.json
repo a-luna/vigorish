@@ -765,7 +765,7 @@
         "bb_game_id": "gid_2019_04_03_bosmlb_oakmlb_1",
         "bbref_game_id": "OAK201904030",
         "pitch_count_by_inning": {
-          "1": 29,
+          "1": 23,
           "2": 26,
           "3": 18,
           "4": 21,
@@ -875,7 +875,7 @@
         "bb_game_id": "gid_2019_04_03_bosmlb_oakmlb_1",
         "bbref_game_id": "OAK201904030",
         "pitch_count_by_inning": {
-          "6": 17,
+          "6": 16,
           "7": 8
         },
         "pitch_count_by_pitch_type": {
@@ -963,7 +963,7 @@
         "bbref_game_id": "OAK201904030",
         "pitch_count_by_inning": {
           "7": 4,
-          "8": 19
+          "8": 17
         },
         "pitch_count_by_pitch_type": {
           "CU": 11,
@@ -1823,10 +1823,10 @@
         "bb_game_id": "gid_2019_04_03_bosmlb_oakmlb_1",
         "bbref_game_id": "OAK201904030",
         "pitch_count_by_inning": {
-          "1": 19,
+          "1": 13,
           "2": 18,
           "3": 10,
-          "4": 14,
+          "4": 13,
           "5": 14,
           "6": 23
         },
@@ -2251,7 +2251,7 @@
         "bb_game_id": "gid_2019_04_03_bosmlb_oakmlb_1",
         "bbref_game_id": "OAK201904030",
         "pitch_count_by_inning": {
-          "8": 18
+          "8": 16
         },
         "pitch_count_by_pitch_type": {
           "FF": 10,

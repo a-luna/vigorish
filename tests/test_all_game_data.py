@@ -121,6 +121,17 @@ def test_all_game_data(vig_app):
     mlb_id = result.value
     assert mlb_id == bat_stats_player_id
 
+    result = all_game_data.validate_mlb_id("derek jeter")
+    assert result.failure
+    assert '"derek jeter" could not be parsed as a valid int' in result.error
+
+    result = all_game_data.validate_mlb_id(543257)
+    assert result.failure
+    assert "Error: Player MLB ID: 543257 did not appear in game TOR201906170" in result.error
+
+    pitch_mix_viewer = all_game_data.view_player_pitch_mix(571882)
+    assert pitch_mix_viewer
+
     result = all_game_data.get_pitch_mix_data_for_player(571882)
     assert result.success
     pitch_mix = result.value
