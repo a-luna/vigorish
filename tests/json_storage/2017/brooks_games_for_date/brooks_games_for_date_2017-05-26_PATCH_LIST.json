@@ -1,0 +1,17 @@
+{
+  "__brooks_games_for_date_patch_list__": true,
+  "url_id": "2017-05-26",
+  "patch_list": [
+    {
+      "__patch_brooks_games_for_date_bbref_game_id__": true,
+      "game_date": "2017-05-26",
+      "invalid_bbref_game_id": "CHA201705261",
+      "valid_bbref_game_id": "CHA201705260"
+    },
+    {
+      "__patch_brooks_games_for_date_remove_game__": true,
+      "game_date": "2017-05-26",
+      "remove_bbref_game_id": "CHA201705262"
+    }
+  ]
+}
