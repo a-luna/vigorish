@@ -33,14 +33,14 @@ const createBatchJob = (
         : makeChunkedList(allUrls, uniformBatchSize)
 
 const set_pbar_max_length = (totalBatches, totalUrls) =>
-    (PBAR_MAX_LENGTH =
-        totalBatches == 1
-            ? PBAR_MAX_LEN_SINGLE_BATCH
-            : totalUrls < 1000
+(PBAR_MAX_LENGTH =
+    totalBatches == 1
+        ? PBAR_MAX_LEN_SINGLE_BATCH
+        : totalUrls < 1000
             ? PBAR_MAX_LEN_LT_1K_URLS
             : totalUrls < 10000
-            ? PBAR_MAX_LEN_LT_10K_URLS
-            : PBAR_MAX_LEN_GT_10K_URLS)
+                ? PBAR_MAX_LEN_LT_10K_URLS
+                : PBAR_MAX_LEN_GT_10K_URLS)
 
 const pBarMessage = (input) =>
     input.length >= PBAR_MAX_LENGTH
@@ -172,7 +172,21 @@ async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams) {
 }
 
 async function scrapeUrl(nightmare, url, outputFileName, outputFolderPath, timeoutParams) {
-    const html = await fetchUrl(nightmare, url, timeoutParams)
+    let remaining = 10
+    let html = ""
+    while (remaining > 0 && html == "") {
+        try {
+            html = await fetchUrl(nightmare, url, timeoutParams)
+        } catch (error) {
+            remaining -= 1
+            if (remaining > 0) {
+                await sleep(getRandomInt(urlTimeoutMinMs, urlTimeoutMaxMs))
+            }
+        }
+    }
+    if (html == "") {
+        throw `Failed to retrieve HTML after 10 attempts. URL: ${url}`
+    }
     const filePath = joinPath(outputFolderPath, outputFileName)
     writeFileSync(filePath, html)
     return filePath
