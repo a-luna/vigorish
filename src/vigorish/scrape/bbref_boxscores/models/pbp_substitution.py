@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
 from vigorish.enums import PlayByPlayEvent
-from vigorish.util.list_helpers import display_dict
 
 
 @dataclass
@@ -42,6 +41,3 @@ class BBRefInGameSubstitution:
             "lineup_slot": int(self.lineup_slot),
         }
         return dict
-
-    def display(self):
-        display_dict(self.as_dict())
