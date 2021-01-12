@@ -25,6 +25,9 @@
     "total_hits_by_opponent": 12,
     "total_errors_by_team": 3,
     "total_errors_by_opponent": 1,
+    "team_won": false,
+    "pitcher_of_record": "roberda08",
+    "pitcher_earned_save": "",
     "starting_lineup": [
       {
         "player_id_br": "mccutan01",
@@ -708,6 +711,9 @@
     "total_hits_by_opponent": 10,
     "total_errors_by_team": 1,
     "total_errors_by_opponent": 3,
+    "team_won": true,
+    "pitcher_of_record": "doolise01",
+    "pitcher_earned_save": "",
     "starting_lineup": [
       {
         "player_id_br": "eatonad02",

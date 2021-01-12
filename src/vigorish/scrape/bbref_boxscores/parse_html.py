@@ -16,11 +16,11 @@ from vigorish.scrape.bbref_boxscores.models.pbp_other import BBRefPlayByPlayMisc
 from vigorish.scrape.bbref_boxscores.models.pbp_substitution import BBRefInGameSubstitution
 from vigorish.scrape.bbref_boxscores.models.pitch_stats import BBRefPitchStats
 from vigorish.scrape.bbref_boxscores.models.starting_lineup_slot import BBRefStartingLineupSlot
-from vigorish.scrape.bbref_boxscores.models.team_linescore_totals import BBRefTeamLinescoreTotals
 from vigorish.scrape.bbref_boxscores.models.umpire import BBRefUmpire
 from vigorish.util.numeric_helpers import is_even
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
+
 
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _AWAY_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[1]/div[3]/text()'
@@ -30,24 +30,25 @@ _FIRST_PITCH_WEATHER_XPATH = '//strong[contains(text(), "Start Time Weather")]/.
 _LINESCORE_KEYS_XPATH = '//table[contains(@class, "linescore")]//th/text()'
 _LINESCORE_AWAY_VALS_XPATH = '//table[contains(@class, "linescore")]//tbody/tr[1]//td/text()'
 _LINESCORE_HOME_VALS_XPATH = '//table[contains(@class, "linescore")]//tbody/tr[2]//td/text()'
+_LINESCORE_W_L_SV_XPATH = '//table[contains(@class, "linescore")]//tfoot/tr/td/text()'
 _UMPIRES_XPATH = '//strong[contains(text(), "Umpires")]/../text()'
 
-_BATTING_STATS_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]'
+_BAT_STATS_TABLE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]'
 _BATTER_IDS_XPATH = (
     './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]/@data-append-csv'
 )
 _BATTER_NAMES_XPATH = './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]//a/text()'
-_T_BAT_STATS_ROW = './tbody//th[@data-append-csv="${pid}"]/..'
+_T_BAT_STATS_ROW_XPATH = './tbody//th[@data-append-csv="${pid}"]/..'
 _T_BAT_STATS_XPATH = './td[@data-stat="${stat}"]/text()'
 
-_PITCHING_STATS_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]'
+_PITCH_STATS_TABLE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]'
 _PITCHER_IDS_XPATH = (
     './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]/@data-append-csv'
 )
 _PITCHER_NAMES_XPATH = (
     './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]//a/text()'
 )
-_T_PITCH_STATS_ROW = './tbody//th[@data-append-csv="${pid}"]/..'
+_T_PITCH_STATS_ROW_XPATH = './tbody//th[@data-append-csv="${pid}"]/..'
 _T_PITCH_STAT_XPATH = './td[@data-stat="${stat}"]/text()'
 
 _AWAY_LINEUP_ORDER_XPATH = '//div[@id="lineups_1"]//table//tbody//tr//td[1]/text()'
@@ -57,16 +58,16 @@ _HOME_LINEUP_ORDER_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[1]/text
 _HOME_LINEUP_PLAYER_XPATH = '//div[@id="lineups_2"]//table//tbody//a/@href'
 _HOME_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[3]/text()'
 
-_PLAY_BY_PLAY_TABLE = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]'
-_PBP_INNING_SUMMARY_TOP_XPATH = './tbody//th[@data-stat="inning_summary_12"]/text()'
-_PBP_INNING_SUMMARY_TOP_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_top"]/@data-row'
-_PBP_INNING_SUMMARY_BOTTOM_XPATH = './tbody//tr[@class="pbp_summary_bottom"]//td[last()]/text()'
-_PBP_INNING_SUMMARY_BOTTOM_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_bottom"]/@data-row'
-_PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH = (
+_PBP_TABLE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]'
+_PBP_INN_SUM_TOP_XPATH = './tbody//th[@data-stat="inning_summary_12"]/text()'
+_PBP_INN_SUM_TOP_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_top"]/@data-row'
+_PBP_INN_SUM_BOT_XPATH = './tbody//tr[@class="pbp_summary_bottom"]//td[last()]/text()'
+_PBP_INN_SUM_BOT_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_bottom"]/@data-row'
+_PBP_INN_SUM_BOT_LAST_XPATH = (
     './tbody//tr[@class="pbp_summary_bottom"]//span[@class="half_inning_summary"]/text()'
 )
-_PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
-_T_PBP_IN_GAME_SUBSTITUTION_XPATH = (
+_PBP_PLAYER_SUB_ROW_NUM_XPATH = './tbody//tr[@class="ingame_substitution"]/@data-row'
+_T_PBP_PLAYER_SUB_XPATH = (
     './tbody//tr[@class="ingame_substitution"][@data-row="${row}"]'
     '//td[@data-stat="inning_summary_3"]//div/text()'
 )
@@ -135,11 +136,15 @@ PBP_STATS = {
     "play_index_url": "play_index_url",
 }
 
-_GAME_ID_PATTERN = r"[A-Z]{3,3}\d{9,9}"
-_TEAM_ID_PATTERN = r"[A-Z]{3,3}"
-_ATTENDANCE_PATTERN = r"\d{1,2},\d{3,3}"
-_GAME_DURATION_PATTERN = r"[1-9]:[0-5][0-9]"
-_INNING_TOTALS_PATTERN = (
+_GAME_ID_REGEX = re.compile(r"[A-Z]{3,3}\d{9,9}")
+_TEAM_ID_REGEX = re.compile(r"[A-Z]{3,3}")
+_W_L_SV_NAME_REGEX = re.compile(r"[LPSVW]{2,2}: (.+) (?:\(\d{1,2}-?\d{0,2}\))")
+_ATTENDANCE_REGEX = re.compile(r"\d{1,2},\d{3,3}")
+_GAME_DURATION_REGEX = re.compile(r"[1-9]:[0-5][0-9]")
+_CHANGE_POS_REGEX = re.compile(r"from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b")
+_POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
+_NUM_REGEX = re.compile(r"[1-9]{1}")
+_INNING_TOTALS_REGEX = re.compile(
     r"(?P<runs>\d{1,2}) (run|runs), "
     r"(?P<hits>\d{1,2}) (hit|hits), "
     r"(?P<errors>\d{1,2}) (error|errors), "
@@ -149,12 +154,6 @@ _INNING_TOTALS_PATTERN = (
     r"(?P<home_team_name>\s\b\w+\b){1,2} "
     r"(?P<home_team_runs>\d{1,2})"
 )
-
-INNING_TOTALS_REGEX = re.compile(_INNING_TOTALS_PATTERN)
-CHANGE_POS_PATTERN = r"from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b"
-CHANGE_POS_REGEX = re.compile(CHANGE_POS_PATTERN)
-POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
-NUM_REGEX = re.compile(r"[1-9]{1}")
 
 
 def parse_bbref_boxscore(scraped_html, url):
@@ -188,6 +187,10 @@ def parse_bbref_boxscore(scraped_html, url):
         away_team_id,
         home_team_id,
     )
+
+    result = _parse_w_l_sv_pitchers(page_content, away_team_data, home_team_data, player_name_dict)
+    if result.failure:
+        return result
 
     result = _parse_game_meta_info(page_content)
     if result.failure:
@@ -243,21 +246,21 @@ def _parse_game_and_team_ids(page_content, url):
 
 
 def _parse_data_tables(page_content):
-    result = page_content.xpath(_BATTING_STATS_TABLE)
+    result = page_content.xpath(_BAT_STATS_TABLE_XPATH)
     if not result or len(result) != 2:
         error = "Failed to parse batting stats table"
         return Result.Fail(error)
     away_team_bat_table = result[0]
     home_team_bat_table = result[1]
 
-    result = page_content.xpath(_PITCHING_STATS_TABLE)
+    result = page_content.xpath(_PITCH_STATS_TABLE_XPATH)
     if not result or len(result) != 2:
         error = "Failed to parse pitching stats table"
         return Result.Fail(error)
     away_team_pitch_table = result[0]
     home_team_pitch_table = result[1]
 
-    result = page_content.xpath(_PLAY_BY_PLAY_TABLE)
+    result = page_content.xpath(_PBP_TABLE_XPATH)
     if not result:
         error = "Failed to parse play by play table"
         return Result.Fail(error)
@@ -273,7 +276,7 @@ def _parse_data_tables(page_content):
 
 
 def _parse_bbref_gameid_from_url(url):
-    matches = re.findall(_GAME_ID_PATTERN, url)
+    matches = _GAME_ID_REGEX.findall(url)
     return matches[0] if matches else None
 
 
@@ -281,7 +284,7 @@ def _parse_away_team_id(page_content):
     name_urls = page_content.xpath(_TEAM_ID_XPATH)
     if not name_urls:
         return None
-    matches = re.findall(_TEAM_ID_PATTERN, name_urls[0])
+    matches = _TEAM_ID_REGEX.findall(name_urls[0])
     return matches[0] if matches else None
 
 
@@ -289,7 +292,7 @@ def _parse_home_team_id(page_content):
     name_urls = page_content.xpath(_TEAM_ID_XPATH)
     if not name_urls:
         return None
-    matches = re.findall(_TEAM_ID_PATTERN, name_urls[1])
+    matches = _TEAM_ID_REGEX.findall(name_urls[1])
     return matches[0] if matches else None
 
 
@@ -369,12 +372,12 @@ def _parse_team_data(
         "team_id_br": team_id,
         "total_wins_before_game": int(team_record[0]),
         "total_losses_before_game": int(team_record[1]),
-        "total_runs_scored_by_team": int(team_totals.total_runs),
-        "total_runs_scored_by_opponent": int(opponent_totals.total_runs),
-        "total_hits_by_team": int(team_totals.total_hits),
-        "total_hits_by_opponent": int(opponent_totals.total_hits),
-        "total_errors_by_team": int(team_totals.total_errors),
-        "total_errors_by_opponent": int(opponent_totals.total_errors),
+        "total_runs_scored_by_team": int(team_totals["R"]),
+        "total_runs_scored_by_opponent": int(opponent_totals["R"]),
+        "total_hits_by_team": int(team_totals["H"]),
+        "total_hits_by_opponent": int(opponent_totals["H"]),
+        "total_errors_by_team": int(team_totals["E"]),
+        "total_errors_by_opponent": int(opponent_totals["E"]),
         "batting_stats": batting_stats,
         "pitching_stats": pitching_stats,
         "starting_lineup": starting_lineup,
@@ -416,19 +419,13 @@ def _parse_linescore_totals_for_team(page_content, team_id, is_home_team):
     del vals[:-3]
     if len(keys) != len(vals):
         return None
-    parsed_totals = dict(zip(keys, vals))
-    linescore_totals = BBRefTeamLinescoreTotals()
-    linescore_totals.team_id_br = team_id
-    linescore_totals.total_runs = parsed_totals["R"]
-    linescore_totals.total_hits = parsed_totals["H"]
-    linescore_totals.total_errors = parsed_totals["E"]
-    return linescore_totals
+    return dict(zip(keys, vals))
 
 
 def _parse_batting_stats_for_team(team_batting_table, player_team_id, opponent_team_id):
     bat_data = []
     for player_id in team_batting_table.xpath(_BATTER_IDS_XPATH):
-        player_bat_stats_xpath = Template(_T_BAT_STATS_ROW).substitute(pid=player_id)
+        player_bat_stats_xpath = Template(_T_BAT_STATS_ROW_XPATH).substitute(pid=player_id)
         results = team_batting_table.xpath(player_bat_stats_xpath)
         if not results:
             return []
@@ -478,7 +475,7 @@ def _parse_batting_details(stat_dict):
 def _parse_pitching_stats_for_team(team_pitching_table, player_team_id, opponent_team_id):
     pitch_data = []
     for player_id in team_pitching_table.xpath(_PITCHER_IDS_XPATH):
-        player_pitch_stats_xpath = Template(_T_PITCH_STATS_ROW).substitute(pid=player_id)
+        player_pitch_stats_xpath = Template(_T_PITCH_STATS_ROW_XPATH).substitute(pid=player_id)
         results = team_pitching_table.xpath(player_pitch_stats_xpath)
         if not results:
             return None
@@ -530,6 +527,52 @@ def _parse_starting_lineup_for_team(page_content, team_id, is_home_team):
         bat.def_position = def_positions[i]
         lineup.append(bat)
     return Result.Ok(lineup)
+
+
+def _parse_w_l_sv_pitchers(page_content, away_team_data, home_team_data, player_name_dict):
+    pitcher_names = _parse_w_l_sv_save_pitcher_names(page_content)
+    if not pitcher_names["wp"] or not pitcher_names["lp"]:
+        return Result.Fail("Failed to parse the names of the WP and LP")
+    winning_team_id = (
+        away_team_data.team_id_br if away_team_data.team_won else home_team_data.team_id_br
+    )
+    losing_team_id = (
+        away_team_data.team_id_br if home_team_data.team_won else home_team_data.team_id_br
+    )
+    w_pitcher_id_br = _match_player_id(pitcher_names["wp"], winning_team_id, player_name_dict)["id"]
+    l_pitcher_id_br = _match_player_id(pitcher_names["lp"], losing_team_id, player_name_dict)["id"]
+    sv_pitcher_id_br = (
+        _match_player_id(pitcher_names["sv"], winning_team_id, player_name_dict)["id"]
+        if pitcher_names["sv"]
+        else ""
+    )
+    if away_team_data.team_won:
+        away_team_data.pitcher_of_record = w_pitcher_id_br
+        away_team_data.pitcher_earned_save = sv_pitcher_id_br
+        home_team_data.pitcher_of_record = l_pitcher_id_br
+    else:
+        away_team_data.pitcher_of_record = l_pitcher_id_br
+        home_team_data.pitcher_of_record = w_pitcher_id_br
+        home_team_data.pitcher_earned_save = sv_pitcher_id_br
+    return Result.Ok()
+
+
+def _parse_w_l_sv_save_pitcher_names(page_content):
+    pitchers = page_content.xpath(_LINESCORE_W_L_SV_XPATH)
+    if not pitchers:
+        return None
+    pitchers = pitchers[0].strip().replace("\xa0", " ")
+    pitcher_list = pitchers.split(" • ")
+    if len(pitcher_list) not in [2, 3]:
+        return None
+    wp_match = _W_L_SV_NAME_REGEX.search(pitcher_list[0])
+    lp_match = _W_L_SV_NAME_REGEX.search(pitcher_list[1])
+    sv_match = _W_L_SV_NAME_REGEX.search(pitcher_list[2]) if len(pitcher_list) == 3 else None
+    return {
+        "wp": wp_match.group(1) if wp_match else "",
+        "lp": lp_match.group(1) if lp_match else "",
+        "sv": sv_match.group(1) if sv_match else "",
+    }
 
 
 def _parse_game_meta_info(page_content):
@@ -613,7 +656,7 @@ def _parse_game_meta_info(page_content):
 def _parse_attendance_from_strings(strings):
     attendance = []
     for i in range(0, len(strings)):
-        matches = re.findall(_ATTENDANCE_PATTERN, strings[i])
+        matches = _ATTENDANCE_REGEX.findall(strings[i])
         if matches:
             for m in matches:
                 d = {"match": m.replace(",", ""), "index": i}
@@ -637,7 +680,7 @@ def _parse_game_duration_from_strings(strings):
     for i in range(0, len(strings)):
         if "start time" in strings[i].lower():
             continue
-        matches = re.findall(_GAME_DURATION_PATTERN, strings[i])
+        matches = _GAME_DURATION_REGEX.findall(strings[i])
         if matches:
             for m in matches:
                 d = {"match": m, "index": i}
@@ -798,13 +841,13 @@ def _parse_all_game_events(
 
 
 def _parse_inning_summary_top(play_by_play_table):
-    summaries = play_by_play_table.xpath(_PBP_INNING_SUMMARY_TOP_XPATH)
+    summaries = play_by_play_table.xpath(_PBP_INN_SUM_TOP_XPATH)
     if summaries is None:
         return None
     inning_summaries = []
     for s in summaries:
         inning_summaries.append(s.strip().replace("\xa0", " "))
-    row_numbers = play_by_play_table.xpath(_PBP_INNING_SUMMARY_TOP_ROW_NUM_XPATH)
+    row_numbers = play_by_play_table.xpath(_PBP_INN_SUM_TOP_ROW_NUM_XPATH)
     if row_numbers is None:
         return None
     summary_row_numbers = []
@@ -816,16 +859,16 @@ def _parse_inning_summary_top(play_by_play_table):
 
 
 def _parse_inning_summary_bottom(play_by_play_table):
-    summaries = play_by_play_table.xpath(_PBP_INNING_SUMMARY_BOTTOM_XPATH)
+    summaries = play_by_play_table.xpath(_PBP_INN_SUM_BOT_XPATH)
     if summaries is None:
         return None
     inning_summaries = []
     for s in summaries:
         inning_summaries.append(s.strip())
-    last_summary = play_by_play_table.xpath(_PBP_INNING_SUMMARY_BOTTOM_LAST_XPATH)
+    last_summary = play_by_play_table.xpath(_PBP_INN_SUM_BOT_LAST_XPATH)
     for s in last_summary:
         inning_summaries.append(s.strip())
-    row_numbers = play_by_play_table.xpath(_PBP_INNING_SUMMARY_BOTTOM_ROW_NUM_XPATH)
+    row_numbers = play_by_play_table.xpath(_PBP_INN_SUM_BOT_ROW_NUM_XPATH)
     if row_numbers is None:
         return None
     summary_row_numbers = []
@@ -955,14 +998,14 @@ def _create_player_team_dict(play_by_play):
 
 
 def _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict):
-    row_numbers = play_by_play_table.xpath(_PBP_IN_GAME_SUBSTITUTION_ROW_NUM_XPATH)
+    row_numbers = play_by_play_table.xpath(_PBP_PLAYER_SUB_ROW_NUM_XPATH)
     if row_numbers is None:
         error = "No in game substitutions found in play-by-play table"
         return Result.Fail(error)
     sub_list = []
     for n in row_numbers:
         row_num = int(n)
-        subs_xpath = Template(_T_PBP_IN_GAME_SUBSTITUTION_XPATH).substitute(row=row_num)
+        subs_xpath = Template(_T_PBP_PLAYER_SUB_XPATH).substitute(row=row_num)
         sub_descriptions = play_by_play_table.xpath(subs_xpath)
         if sub_descriptions is None:
             continue
@@ -1045,7 +1088,7 @@ def _parse_substitution_description(sub_description):
     if "batting" in remaining_description:
         split2 = [s.strip() for s in remaining_description.split("batting")]
     elif "from" in remaining_description:
-        match = CHANGE_POS_REGEX.search(remaining_description)
+        match = _CHANGE_POS_REGEX.search(remaining_description)
         if match:
             match_dict = match.groupdict()
             parsed_sub["outgoing_player_name"] = parsed_sub["incoming_player_name"]
@@ -1070,14 +1113,14 @@ def _parse_substitution_description(sub_description):
     remaining_description = split2[0]
     lineup_slot_str = split2[1]
 
-    match = NUM_REGEX.search(lineup_slot_str)
+    match = _NUM_REGEX.search(lineup_slot_str)
     if not match:
         error = "Failed to parse batting order number."
         return Result.Fail(error)
     parsed_sub["lineup_slot"] = int(match.group())
 
     split3 = None
-    match = POS_REGEX.search(remaining_description)
+    match = _POS_REGEX.search(remaining_description)
     if match:
         parsed_sub["outgoing_player_pos"] = match.group()[1:-1]
         split3 = [s.strip() for s in remaining_description.split(match.group())]
@@ -1248,7 +1291,7 @@ def _create_innings_list(
         inning.substitutions = inning_substitutions
         inning.misc_events = misc
 
-        match = INNING_TOTALS_REGEX.search(summaries_end[end_row])
+        match = _INNING_TOTALS_REGEX.search(summaries_end[end_row])
         if match:
             inning_totals = match.groupdict()
             inning.inning_total_runs = inning_totals["runs"]
