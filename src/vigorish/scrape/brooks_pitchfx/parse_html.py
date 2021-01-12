@@ -5,6 +5,12 @@ from string import Template
 
 from lxml import html
 
+from vigorish.constants import (
+    PITCH_DES_DID_SWING,
+    PITCH_DES_MADE_CONTACT,
+    PITCH_DES_SWINGING_STRIKE,
+    STRIKE_ZONE_LOCATIONS,
+)
 from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.util.dt_format_strings import DT_AWARE
@@ -109,6 +115,17 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     game_start_time = pitch_log.game_start_time
     pitchfx.game_start_time_str = game_start_time.strftime(DT_AWARE) if game_start_time else ""
     pitchfx.has_zone_location = True if pitchfx_dict["zone_location"] != 99 else False
+    pitchfx.batter_did_swing = pitchfx_dict["pdes"] in PITCH_DES_DID_SWING
+    pitchfx.batter_made_contact = pitchfx_dict["pdes"] in PITCH_DES_MADE_CONTACT
+    pitchfx.called_strike = "Called Strike" in pitchfx_dict["pdes"]
+    pitchfx.swinging_strike = pitchfx_dict["pdes"] in PITCH_DES_SWINGING_STRIKE
+    if pitchfx.has_zone_location:
+        pitchfx.inside_strike_zone = pitchfx_dict["zone_location"] in STRIKE_ZONE_LOCATIONS
+        pitchfx.outside_strike_zone = not pitchfx.inside_strike_zone
+        pitchfx.swing_inside_zone = pitchfx.batter_did_swing and pitchfx.inside_strike_zone
+        pitchfx.swing_outside_zone = pitchfx.batter_did_swing and pitchfx.outside_strike_zone
+        pitchfx.contact_inside_zone = pitchfx.batter_made_contact and pitchfx.inside_strike_zone
+        pitchfx.contact_outside_zone = pitchfx.batter_made_contact and pitchfx.outside_strike_zone
     return Result.Ok(pitchfx)
 
 

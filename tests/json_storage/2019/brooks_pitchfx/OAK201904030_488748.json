@@ -60,7 +60,27 @@
       "sb": 0,
       "game_start_time_str": "04/03/2019 10:07:00 PM -0400",
       "time_pitch_thrown_str": "04/03/2019 11:55:05 PM -0400",
-      "has_zone_location": true
+      "has_zone_location": true,
+      "batter_did_swing": true,
+      "batter_made_contact": true,
+      "called_strike": false,
+      "swinging_strike": false,
+      "inside_strike_zone": true,
+      "outside_strike_zone": false,
+      "swing_inside_zone": true,
+      "swing_outside_zone": false,
+      "contact_inside_zone": true,
+      "contact_outside_zone": false,
+      "is_batted_ball": false,
+      "is_ground_ball": false,
+      "is_fly_ball": false,
+      "is_line_drive": false,
+      "is_pop_up": false,
+      "is_patched": false,
+      "is_duplicate_guid": false,
+      "is_duplicate_pitch_number": false,
+      "is_invalid_ibb": false,
+      "is_out_of_sequence": false
     }
   ],
   "pitch_count_by_inning": {

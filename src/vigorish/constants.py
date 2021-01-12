@@ -93,35 +93,185 @@ AT_BAT_RESULTS_ALL = [
 ]
 
 PPB_PITCH_LOG_DICT = {
-    "C": {"description": "Called strike", "pitch_counts": 1},
-    "S": {"description": "Swinging strike", "pitch_counts": 1},
-    "F": {"description": "Foul", "pitch_counts": 1},
-    "B": {"description": "Ball", "pitch_counts": 1},
-    "X": {"description": "Ball put into play by batter", "pitch_counts": 1},
-    "T": {"description": "Foul tip", "pitch_counts": 1},
-    "K": {"description": "Strike (unknown type)", "pitch_counts": 1},
-    "I": {"description": "Intentional ball", "pitch_counts": 1},
-    "H": {"description": "Hit batter", "pitch_counts": 1},
-    "L": {"description": "Foul bunt", "pitch_counts": 1},
-    "M": {"description": "Missed bunt attempt", "pitch_counts": 1},
-    "N": {"description": "No pitch (on balks and interference calls)", "pitch_counts": 0},
-    "O": {"description": "Foul tip on bunt", "pitch_counts": 1},
-    "P": {"description": "Pitchout", "pitch_counts": 1},
-    "Q": {"description": "Swinging on pitchout", "pitch_counts": 1},
-    "R": {"description": "Foul ball on pitchout", "pitch_counts": 1},
-    "U": {"description": "Unknown or missed pitch", "pitch_counts": 1},
-    "V": {"description": "(Called ball because pitcher went to his mouth)", "pitch_counts": 0},
-    "Y": {"description": "Ball put into play on pitchout", "pitch_counts": 1},
-    "1": {"description": "(Pickoff throw to first)", "pitch_counts": 0},
-    "2": {"description": "(Pickoff throw to second)", "pitch_counts": 0},
-    "3": {"description": "(Pickoff throw to third)", "pitch_counts": 0},
-    ">": {"description": "(Runner going on the pitch)", "pitch_counts": 0},
-    "+": {"description": "(Pickoff throw by the catcher)", "pitch_counts": 0},
-    "*": {"description": "(The following pitch was blocked by the catcher)", "pitch_counts": 0},
-    ".": {"description": "(Play not involving the batter)", "pitch_counts": 0},
+    "C": {
+        "description": "Called strike",
+        "pitch_counts": 1,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "S": {
+        "description": "Swinging strike",
+        "pitch_counts": 1,
+        "did_swing": True,
+        "made_contact": False,
+    },
+    "F": {"description": "Foul", "pitch_counts": 1, "did_swing": True, "made_contact": True},
+    "B": {"description": "Ball", "pitch_counts": 1, "did_swing": False, "made_contact": False},
+    "X": {
+        "description": "Ball put into play by batter",
+        "pitch_counts": 1,
+        "did_swing": True,
+        "made_contact": True,
+    },
+    "T": {"description": "Foul tip", "pitch_counts": 1, "did_swing": True, "made_contact": True},
+    "K": {
+        "description": "Strike (unknown type)",
+        "pitch_counts": 1,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "I": {
+        "description": "Intentional ball",
+        "pitch_counts": 1,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "H": {
+        "description": "Hit batter",
+        "pitch_counts": 1,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "L": {"description": "Foul bunt", "pitch_counts": 1, "did_swing": True, "made_contact": True},
+    "M": {
+        "description": "Missed bunt attempt",
+        "pitch_counts": 1,
+        "did_swing": True,
+        "made_contact": False,
+    },
+    "N": {
+        "description": "No pitch (on balks and interference calls)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "O": {
+        "description": "Foul tip on bunt",
+        "pitch_counts": 1,
+        "did_swing": True,
+        "made_contact": True,
+    },
+    "P": {"description": "Pitchout", "pitch_counts": 1, "did_swing": False, "made_contact": False},
+    "Q": {
+        "description": "Swinging on pitchout",
+        "pitch_counts": 1,
+        "did_swing": True,
+        "made_contact": False,
+    },
+    "R": {
+        "description": "Foul ball on pitchout",
+        "pitch_counts": 1,
+        "did_swing": True,
+        "made_contact": True,
+    },
+    "U": {
+        "description": "Unknown or missed pitch",
+        "pitch_counts": 1,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "V": {
+        "description": "(Called ball because pitcher went to his mouth)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "Y": {
+        "description": "Ball put into play on pitchout",
+        "pitch_counts": 1,
+        "did_swing": True,
+        "made_contact": True,
+    },
+    "1": {
+        "description": "(Pickoff throw to first)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "2": {
+        "description": "(Pickoff throw to second)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "3": {
+        "description": "(Pickoff throw to third)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    ">": {
+        "description": "(Runner going on the pitch)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "+": {
+        "description": "(Pickoff throw by the catcher)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    "*": {
+        "description": "(The following pitch was blocked by the catcher)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
+    ".": {
+        "description": "(Play not involving the batter)",
+        "pitch_counts": 0,
+        "did_swing": False,
+        "made_contact": False,
+    },
 }
 
 VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dome"]
+
+STRIKE_ZONE_LOCATIONS = [6, 7, 8, 11, 12, 13, 16, 17, 18]
+
+PITCH_DES_SWINGING_STRIKE = [
+    "Foul Tip",
+    "Missed Bunt",
+    "Swinging Pitchout",
+    "Swinging Strike",
+    "Swinging Strike (Blocked)",
+]
+
+PITCH_DES_DID_SWING = [
+    "Foul",
+    "Foul (Runner Going)",
+    "Foul Bunt",
+    "Foul Tip",
+    "In play, no out",
+    "In play; no out",
+    "In play, out(s)",
+    "In play; out(s)",
+    "In play, run(s)",
+    "In play; run(s)",
+    "Missed Bunt",
+    "Swinging Pitchout",
+    "Swinging Strike",
+    "Swinging Strike (Blocked)",
+]
+
+PITCH_DES_MADE_CONTACT = [
+    "Foul",
+    "Foul (Runner Going)",
+    "Foul Bunt",
+    "Foul Tip",
+    "In play, no out",
+    "In play; no out",
+    "In play, out(s)",
+    "In play; out(s)",
+    "In play, run(s)",
+    "In play; run(s)",
+]
+
+PLAY_DES_BB_TYPE_FB = ["Fly Ball", "Flyball", "Popfly"]
+PLAY_DES_BB_TYPE_GB = ["Ground Ball", "Groundout"]
+PLAY_DES_BB_TYPE_LD = ["Line Drive", "Lineout"]
+PLAY_DES_BB_TYPE_PU = ["Popfly"]
 
 JOB_SPINNER_COLORS = {
     DataSet.BBREF_GAMES_FOR_DATE: "red",
@@ -138,9 +288,6 @@ DATA_SET_NAMES_LONG = {
     "Pitch Logs for Game (brooksbaseball.net)": DataSet.BROOKS_PITCH_LOGS,
     "PitchFX Logs (brooksbaseball.net)": DataSet.BROOKS_PITCHFX,
 }
-
-# FILE_TYPE_NAME_MAP = {str(ft): ft for ft in VigFile}
-# DATA_SET_NAME_MAP = {str(ds): ds for ds in DataSet}
 
 CLI_COLORS = [
     "black",

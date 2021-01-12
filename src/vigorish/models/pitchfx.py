@@ -18,6 +18,7 @@ class PitchFx(Base):
     bb_game_id = Column(String)
     bbref_game_id = Column(String)
     pitch_app_id = Column(String)
+
     inning_id = Column(String)
     at_bat_id = Column(String)
     pitcher_id_mlb = Column(Integer)
@@ -33,6 +34,7 @@ class PitchFx(Base):
     ab_total = Column(Integer)
     ab_count = Column(Integer)
     ab_id = Column(Integer)
+    table_row_number = Column(Integer)
     des = Column(String)
     strikes = Column(Integer)
     balls = Column(Integer)
@@ -59,7 +61,23 @@ class PitchFx(Base):
     time_pitch_thrown_utc = Column(DateTime)
     seconds_since_game_start = Column(Integer)
     has_zone_location = Column(Integer)
-    table_row_number = Column(Integer)
+    batter_did_swing = Column(Integer)
+    batter_made_contact = Column(Integer)
+    called_strike = Column(Integer)
+    swinging_strike = Column(Integer)
+    inside_strike_zone = Column(Integer)
+    outside_strike_zone = Column(Integer)
+    swing_inside_zone = Column(Integer)
+    swing_outside_zone = Column(Integer)
+    contact_inside_zone = Column(Integer)
+    contact_outside_zone = Column(Integer)
+    is_batted_ball = Column(Integer)
+    is_ground_ball = Column(Integer)
+    is_fly_ball = Column(Integer)
+    is_line_drive = Column(Integer)
+    is_pop_up = Column(Integer)
+    is_sp = Column(Integer)
+    is_rp = Column(Integer)
     is_patched = Column(Integer)
     is_duplicate_guid = Column(Integer)
     is_duplicate_pitch_number = Column(Integer)
@@ -86,7 +104,10 @@ class PitchFx(Base):
 
     @hybrid_property
     def game_date(self):
-        return self.game_start_time.date()
+        year = self.game_start_time.year
+        month = self.game_start_time.month
+        day = self.game_start_time.day
+        return datetime(year, month, day)
 
     @hybrid_property
     def game_start_time(self):
@@ -112,7 +133,26 @@ class PitchFx(Base):
         pfx_dict["pitch_id"] = pfx_dict.pop("id")
         pfx_dict["pitcher_id_mlb"] = int(pfx_dict.pop("pitcher_id"))
         pfx_dict["batter_id_mlb"] = int(pfx_dict.pop("batter_id"))
+        pfx_dict["pitcher_id"] = pfx_dict.pop("pitcher_id_db")
+        pfx_dict["batter_id"] = pfx_dict.pop("batter_id_db")
         pfx_dict["zone_location"] = int(pfx_dict["zone_location"])
+        pfx_dict["batter_did_swing"] = int(pfx_dict["batter_did_swing"])
+        pfx_dict["batter_made_contact"] = int(pfx_dict["batter_made_contact"])
+        pfx_dict["called_strike"] = int(pfx_dict["called_strike"])
+        pfx_dict["swinging_strike"] = int(pfx_dict["swinging_strike"])
+        pfx_dict["inside_strike_zone"] = int(pfx_dict["inside_strike_zone"])
+        pfx_dict["outside_strike_zone"] = int(pfx_dict["outside_strike_zone"])
+        pfx_dict["swing_inside_zone"] = int(pfx_dict["swing_inside_zone"])
+        pfx_dict["swing_outside_zone"] = int(pfx_dict["swing_outside_zone"])
+        pfx_dict["contact_inside_zone"] = int(pfx_dict["contact_inside_zone"])
+        pfx_dict["contact_outside_zone"] = int(pfx_dict["contact_outside_zone"])
+        pfx_dict["is_batted_ball"] = int(pfx_dict["is_batted_ball"])
+        pfx_dict["is_ground_ball"] = int(pfx_dict["is_ground_ball"])
+        pfx_dict["is_fly_ball"] = int(pfx_dict["is_fly_ball"])
+        pfx_dict["is_line_drive"] = int(pfx_dict["is_line_drive"])
+        pfx_dict["is_pop_up"] = int(pfx_dict["is_pop_up"])
+        pfx_dict["is_sp"] = int(pfx_dict["is_sp"])
+        pfx_dict["is_rp"] = int(pfx_dict["is_rp"])
         pfx_dict["spin"] = round(pfx_dict["spin"], 1)
         pfx_dict["pfx_x"] = round(pfx_dict["pfx_x"], 2)
         pfx_dict["pfx_z"] = round(pfx_dict["pfx_z"], 2)
@@ -162,6 +202,7 @@ class PitchFxCsvRow:
     ab_total: int = None
     ab_count: int = None
     ab_id: int = None
+    table_row_number: int = 0
     des: str = None
     strikes: int = 0
     balls: int = 0
@@ -188,7 +229,23 @@ class PitchFxCsvRow:
     time_pitch_thrown_utc: datetime = None
     seconds_since_game_start: int = 0
     has_zone_location: int = 0
-    table_row_number: int = 0
+    batter_did_swing: int = 0
+    batter_made_contact: int = 0
+    called_strike: int = 0
+    swinging_strike: int = 0
+    inside_strike_zone: int = 0
+    outside_strike_zone: int = 0
+    swing_inside_zone: int = 0
+    swing_outside_zone: int = 0
+    contact_inside_zone: int = 0
+    contact_outside_zone: int = 0
+    is_batted_ball: int = 0
+    is_ground_ball: int = 0
+    is_fly_ball: int = 0
+    is_line_drive: int = 0
+    is_pop_up: int = 0
+    is_sp: int = 0
+    is_rp: int = 0
     is_patched: int = 0
     is_duplicate_guid: int = 0
     is_duplicate_pitch_number: int = 0

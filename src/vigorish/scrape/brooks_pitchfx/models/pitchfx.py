@@ -70,6 +70,21 @@ class BrooksPitchFxData:
     game_start_time_str: str = ""
     time_pitch_thrown_str: str = ""
     has_zone_location: bool = False
+    batter_did_swing: bool = False
+    batter_made_contact: bool = False
+    called_strike: bool = False
+    swinging_strike: bool = False
+    inside_strike_zone: bool = False
+    outside_strike_zone: bool = False
+    swing_inside_zone: bool = False
+    swing_outside_zone: bool = False
+    contact_inside_zone: bool = False
+    contact_outside_zone: bool = False
+    is_batted_ball: bool = False
+    is_ground_ball: bool = False
+    is_fly_ball: bool = False
+    is_line_drive: bool = False
+    is_pop_up: bool = False
     is_patched: bool = False
     is_duplicate_guid: bool = False
     is_duplicate_pitch_number: bool = False
@@ -171,6 +186,21 @@ class BrooksPitchFxData:
             "game_start_time_str": self.game_start_time_str,
             "time_pitch_thrown_str": self.get_time_pitch_thrown_str(),
             "has_zone_location": self.has_zone_location,
+            "batter_did_swing": self.batter_did_swing,
+            "batter_made_contact": self.batter_made_contact,
+            "called_strike": self.called_strike,
+            "swinging_strike": self.swinging_strike,
+            "inside_strike_zone": self.inside_strike_zone,
+            "outside_strike_zone": self.outside_strike_zone,
+            "swing_inside_zone": self.swing_inside_zone,
+            "swing_outside_zone": self.swing_outside_zone,
+            "contact_inside_zone": self.contact_inside_zone,
+            "contact_outside_zone": self.contact_outside_zone,
+            "is_batted_ball": self.is_batted_ball,
+            "is_ground_ball": self.is_ground_ball,
+            "is_fly_ball": self.is_fly_ball,
+            "is_line_drive": self.is_line_drive,
+            "is_pop_up": self.is_pop_up,
             "is_patched": self.is_patched,
             "is_duplicate_guid": self.is_duplicate_guid,
             "is_duplicate_pitch_number": self.is_duplicate_pitch_number,
