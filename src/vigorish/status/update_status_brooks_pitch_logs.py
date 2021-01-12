@@ -1,28 +1,17 @@
-from vigorish.database import DateScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, Season
+from vigorish.database import (
+    DateScrapeStatus,
+    GameScrapeStatus,
+    PitchAppScrapeStatus,
+    PlayerId,
+    Season,
+)
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
 
-def update_data_set_brooks_pitch_logs(scraped_data, db_session, season):
-    result = scraped_data.get_all_scraped_brooks_game_ids(season.year)
-    if result.failure:
-        return result
-    scraped_brooks_game_ids = result.value
-    unscraped_brooks_game_ids = GameScrapeStatus.get_all_unscraped_brooks_game_ids_for_season(
-        db_session, season.id
-    )
-    new_brooks_game_ids = set(scraped_brooks_game_ids) & set(unscraped_brooks_game_ids)
-    if not new_brooks_game_ids:
-        return Result.Ok()
-    result = update_status_brooks_pitch_logs_for_game_list(
-        scraped_data, db_session, season, new_brooks_game_ids
-    )
-    if result.failure:
-        return result
-    return Result.Ok()
-
-
-def update_status_brooks_pitch_logs_for_game_list(scraped_data, db_session, new_brooks_game_ids):
+def update_status_brooks_pitch_logs_for_game_list(
+    scraped_data, db_session, new_brooks_game_ids, apply_patch_list=False
+):
     for bb_game_id in new_brooks_game_ids:
         pitch_logs_for_game = scraped_data.get_brooks_pitch_logs_for_game(bb_game_id)
         if not pitch_logs_for_game:
@@ -42,7 +31,11 @@ def update_status_brooks_pitch_logs_for_game(db_session, pitch_logs_for_game):
     result = update_game_status_records(db_session, pitch_logs_for_game)
     if result.failure:
         return result
-    return create_pitch_appearance_status_records(db_session, pitch_logs_for_game)
+    result = create_pitch_appearance_status_records(db_session, pitch_logs_for_game)
+    if result.failure:
+        return result
+    db_session.commit()
+    return Result.Ok()
 
 
 def update_game_status_records(db_session, pitch_logs_for_game):
@@ -74,6 +67,7 @@ def create_pitch_appearance_status_records(db_session, pitch_logs_for_game):
         try:
             date_status = DateScrapeStatus.find_by_date(db_session, pitch_log.game_date)
             game_status = GameScrapeStatus.find_by_bb_game_id(db_session, pitch_log.bb_game_id)
+            player_id = PlayerId.find_by_mlb_id(db_session, pitch_log.pitcher_id_mlb)
             pitch_app_status = PitchAppScrapeStatus()
             pitch_app_status.pitcher_id_mlb = pitch_log.pitcher_id_mlb
             pitch_app_status.pitch_app_id = pitch_log.pitch_app_id
@@ -82,6 +76,7 @@ def create_pitch_appearance_status_records(db_session, pitch_logs_for_game):
             pitch_app_status.pitch_count_pitch_log = pitch_log.total_pitch_count
             pitch_app_status.scrape_status_game_id = game_status.id
             pitch_app_status.scrape_status_date_id = date_status.id
+            pitch_app_status.pitcher_id = player_id.db_player_id
             pitch_app_status.season_id = season.id
             if not pitch_log.parsed_all_info:
                 pitch_app_status.scraped_pitchfx = 1

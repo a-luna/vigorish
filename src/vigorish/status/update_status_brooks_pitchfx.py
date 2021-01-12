@@ -3,21 +3,9 @@ from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
 
-def update_data_set_brooks_pitchfx(scraped_data, db_session, season):
-    scraped_ids = scraped_data.get_all_scraped_pitchfx_pitch_app_ids(season.year)
-    unscraped_ids = PitchAppScrapeStatus.get_all_unscraped_pitch_app_ids_for_season(
-        db_session, season.id
-    )
-    new_pitch_app_ids = set(scraped_ids) & set(unscraped_ids)
-    if not new_pitch_app_ids:
-        return Result.Ok()
-    result = update_status_brooks_pitchfx_log_list(scraped_data, db_session, new_pitch_app_ids)
-    if result.failure:
-        return result
-    return Result.Ok()
-
-
-def update_status_brooks_pitchfx_log_list(scraped_data, db_session, new_pitch_app_ids):
+def update_status_brooks_pitchfx_log_list(
+    scraped_data, db_session, new_pitch_app_ids, apply_patch_list=False
+):
     for pitch_app_id in new_pitch_app_ids:
         pitchfx_log = scraped_data.get_brooks_pitchfx_log(pitch_app_id)
         if not pitchfx_log:
