@@ -322,6 +322,29 @@ class PitchType(IntFlag):
         }
         return abbrev_dict.get(abbrev, cls.UNKNOWN)
 
+    @classmethod
+    def from_name(cls, name):
+        name_dict = {
+            "CHANGEUP": cls.CHANGEUP,
+            "CURVEBALL": cls.CURVEBALL,
+            "EEPHUS": cls.EEPHUS,
+            "FASTBALL": cls.FASTBALL,
+            "CUTTER": cls.CUTTER,
+            "FOUR_SEAM_FASTBALL": cls.FOUR_SEAM_FASTBALL,
+            "SPLITTER": cls.SPLITTER,
+            "TWO_SEAM_FASTBALL": cls.TWO_SEAM_FASTBALL,
+            "FORKBALL": cls.FORKBALL,
+            "INTENT_BALL": cls.INTENT_BALL,
+            "KNUCKLE_BALL_CURVE": cls.KNUCKLE_BALL_CURVE,
+            "KNUCKLE_BALL": cls.KNUCKLE_BALL,
+            "PITCH_OUT": cls.PITCH_OUT,
+            "SCREWBALL": cls.SCREWBALL,
+            "SINKER": cls.SINKER,
+            "SLIDER": cls.SLIDER,
+            "UNKNOWN": cls.UNKNOWN,
+        }
+        return name_dict.get(name, cls.UNKNOWN)
+
 
 class SeasonType(str, Enum):
     """Identifies games, stats, etc as Spring Training, Regular, or Post-Season."""
