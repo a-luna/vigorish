@@ -19,13 +19,15 @@ class FolderPathSetting(ABC):
         return self._path_str
 
     @abstractmethod
-    def resolve(self, year=None):
+    def resolve(self, year=None):  # pragma: no cover
         pass
 
 
 class S3FolderPathSetting(FolderPathSetting):
     def resolve(self, year=None):
         path_str = self._path_str
+        if path_str[-1] == "/":
+            path_str = path_str[:-1]
         if YEAR_TOKEN in self._path_str:
             year = validate_year_value(year)
             path_str = path_str.replace(YEAR_TOKEN, str(year))
