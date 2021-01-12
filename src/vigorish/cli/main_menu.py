@@ -131,7 +131,7 @@ class MainMenu(Menu):
 
     def populate_menu_items(self):
         main_menu_items = self.get_menu_items()
-        self.menu_items = [menu_item for menu_item in main_menu_items.values()]
+        self.menu_items = list(main_menu_items.values())
         if node_modules_folder_exists():
             self.menu_items.remove(main_menu_items["npm_install"])
         if not db_setup_complete(self.db_engine, self.db_session):

@@ -891,13 +891,13 @@
         "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
         "bbref_game_id": "TOR201906170",
         "pitch_count_by_inning": {
-          "5": 8,
-          "4": 11,
-          "7": 20,
-          "8": 8,
+          "2": 13,
           "3": 10,
+          "4": 11,
+          "5": 8,
           "6": 15,
-          "2": 13
+          "7": 20,
+          "8": 8
         },
         "pitch_count_by_pitch_type": {
           "FT": 36,
@@ -2125,10 +2125,10 @@
         "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
         "bbref_game_id": "TOR201906170",
         "pitch_count_by_inning": {
+          "2": 2,
+          "3": 14,
           "4": 15,
-          "3": 15,
-          "5": 8,
-          "2": 2
+          "5": 8
         },
         "pitch_count_by_pitch_type": {
           "SI": 21,
@@ -2581,6 +2581,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_01_TOR_571882_ANA_600303_0",
+          "pfx_ab_id": 1,
           "inning_id": "TOR201906170_INN_TOP01",
           "pitch_app_id": "TOR201906170_571882",
           "pbp_table_row_number": 1,
@@ -3023,6 +3024,7 @@
         },
         {
           "at_bat_id": "TOR201906170_01_TOR_571882_ANA_545361_0",
+          "pfx_ab_id": 2,
           "inning_id": "TOR201906170_INN_TOP01",
           "pitch_app_id": "TOR201906170_571882",
           "pbp_table_row_number": 2,
@@ -3465,6 +3467,7 @@
         },
         {
           "at_bat_id": "TOR201906170_01_TOR_571882_ANA_660271_0",
+          "pfx_ab_id": 3,
           "inning_id": "TOR201906170_INN_TOP01",
           "pitch_app_id": "TOR201906170_571882",
           "pbp_table_row_number": 3,
@@ -4102,6 +4105,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_01_ANA_472610_TOR_519299_0",
+          "pfx_ab_id": 4,
           "inning_id": "TOR201906170_INN_BOT01",
           "pitch_app_id": "TOR201906170_472610",
           "pbp_table_row_number": 6,
@@ -4319,6 +4323,7 @@
         },
         {
           "at_bat_id": "TOR201906170_01_ANA_472610_TOR_624415_0",
+          "pfx_ab_id": 5,
           "inning_id": "TOR201906170_INN_BOT01",
           "pitch_app_id": "TOR201906170_472610",
           "pbp_table_row_number": 7,
@@ -4836,6 +4841,7 @@
         },
         {
           "at_bat_id": "TOR201906170_01_ANA_472610_TOR_665489_0",
+          "pfx_ab_id": 6,
           "inning_id": "TOR201906170_INN_BOT01",
           "pitch_app_id": "TOR201906170_472610",
           "pbp_table_row_number": 8,
@@ -4978,6 +4984,7 @@
         },
         {
           "at_bat_id": "TOR201906170_01_ANA_472610_TOR_642133_0",
+          "pfx_ab_id": 7,
           "inning_id": "TOR201906170_INN_BOT01",
           "pitch_app_id": "TOR201906170_472610",
           "pbp_table_row_number": 9,
@@ -5547,6 +5554,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_457708_0",
+          "pfx_ab_id": 8,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 13,
@@ -5709,6 +5717,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_594777_0",
+          "pfx_ab_id": 9,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 14,
@@ -5926,6 +5935,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_664058_0",
+          "pfx_ab_id": 10,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 15,
@@ -6368,6 +6378,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_571506_0",
+          "pfx_ab_id": 11,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 16,
@@ -6735,6 +6746,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_518960_0",
+          "pfx_ab_id": 12,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 17,
@@ -7177,6 +7189,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_541600_0",
+          "pfx_ab_id": 13,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 18,
@@ -7394,6 +7407,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_600303_0",
+          "pfx_ab_id": 14,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 19,
@@ -7761,6 +7775,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_545361_0",
+          "pfx_ab_id": 15,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 20,
@@ -8053,6 +8068,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_660271_0",
+          "pfx_ab_id": 16,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 21,
@@ -8195,6 +8211,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_429719_ANA_457708_1",
+          "pfx_ab_id": 17,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_429719",
           "pbp_table_row_number": 22,
@@ -9087,6 +9104,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_TOR_543208_ANA_594777_0",
+          "pfx_ab_id": 18,
           "inning_id": "TOR201906170_INN_TOP02",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 24,
@@ -9368,6 +9386,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_02_ANA_570240_TOR_606192_0",
+          "pfx_ab_id": 19,
           "inning_id": "TOR201906170_INN_BOT02",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 28,
@@ -9905,6 +9924,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_ANA_570240_TOR_545341_0",
+          "pfx_ab_id": 20,
           "inning_id": "TOR201906170_INN_BOT02",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 29,
@@ -10197,6 +10217,7 @@
         },
         {
           "at_bat_id": "TOR201906170_02_ANA_570240_TOR_520471_0",
+          "pfx_ab_id": 21,
           "inning_id": "TOR201906170_INN_BOT02",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 30,
@@ -10612,6 +10633,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_03_TOR_543208_ANA_664058_0",
+          "pfx_ab_id": 22,
           "inning_id": "TOR201906170_INN_TOP03",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 33,
@@ -10904,6 +10926,7 @@
         },
         {
           "at_bat_id": "TOR201906170_03_TOR_543208_ANA_571506_0",
+          "pfx_ab_id": 23,
           "inning_id": "TOR201906170_INN_TOP03",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 34,
@@ -11046,6 +11069,7 @@
         },
         {
           "at_bat_id": "TOR201906170_03_TOR_543208_ANA_518960_0",
+          "pfx_ab_id": 24,
           "inning_id": "TOR201906170_INN_TOP03",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 35,
@@ -11263,6 +11287,7 @@
         },
         {
           "at_bat_id": "TOR201906170_03_TOR_543208_ANA_541600_0",
+          "pfx_ab_id": 25,
           "inning_id": "TOR201906170_INN_TOP03",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 36,
@@ -11701,6 +11726,7 @@
         },
         {
           "at_bat_id": "TOR201906170_03_TOR_543208_ANA_600303_0",
+          "pfx_ab_id": 26,
           "inning_id": "TOR201906170_INN_TOP03",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 37,
@@ -12117,6 +12143,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_03_ANA_570240_TOR_592273_0",
+          "pfx_ab_id": 27,
           "inning_id": "TOR201906170_INN_BOT03",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 40,
@@ -12409,6 +12436,7 @@
         },
         {
           "at_bat_id": "TOR201906170_03_ANA_570240_TOR_571912_0",
+          "pfx_ab_id": 28,
           "inning_id": "TOR201906170_INN_BOT03",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 41,
@@ -12701,6 +12729,7 @@
         },
         {
           "at_bat_id": "TOR201906170_03_ANA_570240_TOR_519299_0",
+          "pfx_ab_id": 29,
           "inning_id": "TOR201906170_INN_BOT03",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 42,
@@ -13112,6 +13141,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_04_TOR_543208_ANA_545361_0",
+          "pfx_ab_id": 30,
           "inning_id": "TOR201906170_INN_TOP04",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 45,
@@ -13479,6 +13509,7 @@
         },
         {
           "at_bat_id": "TOR201906170_04_TOR_543208_ANA_660271_0",
+          "pfx_ab_id": 31,
           "inning_id": "TOR201906170_INN_TOP04",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 46,
@@ -14006,6 +14037,7 @@
         },
         {
           "at_bat_id": "TOR201906170_04_TOR_543208_ANA_457708_0",
+          "pfx_ab_id": 32,
           "inning_id": "TOR201906170_INN_TOP04",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 47,
@@ -14493,6 +14525,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_04_ANA_570240_TOR_624415_0",
+          "pfx_ab_id": 33,
           "inning_id": "TOR201906170_INN_BOT04",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 50,
@@ -14860,6 +14893,7 @@
         },
         {
           "at_bat_id": "TOR201906170_04_ANA_570240_TOR_665489_0",
+          "pfx_ab_id": 34,
           "inning_id": "TOR201906170_INN_BOT04",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 51,
@@ -15252,6 +15286,7 @@
         },
         {
           "at_bat_id": "TOR201906170_04_ANA_570240_TOR_642133_0",
+          "pfx_ab_id": 35,
           "inning_id": "TOR201906170_INN_BOT04",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 53,
@@ -15469,6 +15504,7 @@
         },
         {
           "at_bat_id": "TOR201906170_04_ANA_570240_TOR_606192_0",
+          "pfx_ab_id": 36,
           "inning_id": "TOR201906170_INN_BOT04",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 54,
@@ -15656,6 +15692,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_05_TOR_543208_ANA_594777_0",
+          "pfx_ab_id": 37,
           "inning_id": "TOR201906170_INN_TOP05",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 57,
@@ -15798,6 +15835,7 @@
         },
         {
           "at_bat_id": "TOR201906170_05_TOR_543208_ANA_664058_0",
+          "pfx_ab_id": 38,
           "inning_id": "TOR201906170_INN_TOP05",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 58,
@@ -15940,6 +15978,7 @@
         },
         {
           "at_bat_id": "TOR201906170_05_TOR_543208_ANA_571506_0",
+          "pfx_ab_id": 39,
           "inning_id": "TOR201906170_INN_TOP05",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 59,
@@ -16382,6 +16421,7 @@
         },
         {
           "at_bat_id": "TOR201906170_05_TOR_543208_ANA_518960_0",
+          "pfx_ab_id": 40,
           "inning_id": "TOR201906170_INN_TOP05",
           "pitch_app_id": "TOR201906170_543208",
           "pbp_table_row_number": 60,
@@ -16568,6 +16608,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_05_ANA_570240_TOR_545341_0",
+          "pfx_ab_id": 41,
           "inning_id": "TOR201906170_INN_BOT05",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 63,
@@ -16860,6 +16901,7 @@
         },
         {
           "at_bat_id": "TOR201906170_05_ANA_570240_TOR_520471_0",
+          "pfx_ab_id": 42,
           "inning_id": "TOR201906170_INN_BOT05",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 64,
@@ -17077,6 +17119,7 @@
         },
         {
           "at_bat_id": "TOR201906170_05_ANA_570240_TOR_592273_0",
+          "pfx_ab_id": 43,
           "inning_id": "TOR201906170_INN_BOT05",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 65,
@@ -17416,6 +17459,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_06_TOR_592468_ANA_541600_0",
+          "pfx_ab_id": 44,
           "inning_id": "TOR201906170_INN_TOP06",
           "pitch_app_id": "TOR201906170_592468",
           "pbp_table_row_number": 69,
@@ -17653,6 +17697,7 @@
         },
         {
           "at_bat_id": "TOR201906170_06_TOR_592468_ANA_600303_0",
+          "pfx_ab_id": 45,
           "inning_id": "TOR201906170_INN_TOP06",
           "pitch_app_id": "TOR201906170_592468",
           "pbp_table_row_number": 70,
@@ -17870,6 +17915,7 @@
         },
         {
           "at_bat_id": "TOR201906170_06_TOR_592468_ANA_545361_0",
+          "pfx_ab_id": 46,
           "inning_id": "TOR201906170_INN_TOP06",
           "pitch_app_id": "TOR201906170_592468",
           "pbp_table_row_number": 71,
@@ -18087,6 +18133,7 @@
         },
         {
           "at_bat_id": "TOR201906170_06_TOR_592468_ANA_660271_0",
+          "pfx_ab_id": 47,
           "inning_id": "TOR201906170_INN_TOP06",
           "pitch_app_id": "TOR201906170_592468",
           "pbp_table_row_number": 72,
@@ -18529,6 +18576,7 @@
         },
         {
           "at_bat_id": "TOR201906170_06_TOR_592468_ANA_457708_0",
+          "pfx_ab_id": 48,
           "inning_id": "TOR201906170_INN_TOP06",
           "pitch_app_id": "TOR201906170_592468",
           "pbp_table_row_number": 73,
@@ -18896,6 +18944,7 @@
         },
         {
           "at_bat_id": "TOR201906170_06_TOR_592468_ANA_594777_0",
+          "pfx_ab_id": 49,
           "inning_id": "TOR201906170_INN_TOP06",
           "pitch_app_id": "TOR201906170_592468",
           "pbp_table_row_number": 74,
@@ -19233,6 +19282,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_06_ANA_570240_TOR_571912_0",
+          "pfx_ab_id": 50,
           "inning_id": "TOR201906170_INN_BOT06",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 77,
@@ -19600,6 +19650,7 @@
         },
         {
           "at_bat_id": "TOR201906170_06_ANA_570240_TOR_519299_0",
+          "pfx_ab_id": 51,
           "inning_id": "TOR201906170_INN_BOT06",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 78,
@@ -19967,6 +20018,7 @@
         },
         {
           "at_bat_id": "TOR201906170_06_ANA_570240_TOR_624415_0",
+          "pfx_ab_id": 52,
           "inning_id": "TOR201906170_INN_BOT06",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 79,
@@ -20484,6 +20536,7 @@
         },
         {
           "at_bat_id": "TOR201906170_06_ANA_570240_TOR_665489_0",
+          "pfx_ab_id": 53,
           "inning_id": "TOR201906170_INN_BOT06",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 80,
@@ -20671,6 +20724,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_07_TOR_475479_ANA_664058_0",
+          "pfx_ab_id": 54,
           "inning_id": "TOR201906170_INN_TOP07",
           "pitch_app_id": "TOR201906170_475479",
           "pbp_table_row_number": 84,
@@ -21118,6 +21172,7 @@
         },
         {
           "at_bat_id": "TOR201906170_07_TOR_475479_ANA_571506_0",
+          "pfx_ab_id": 55,
           "inning_id": "TOR201906170_INN_TOP07",
           "pitch_app_id": "TOR201906170_475479",
           "pbp_table_row_number": 85,
@@ -21485,6 +21540,7 @@
         },
         {
           "at_bat_id": "TOR201906170_07_TOR_475479_ANA_518960_0",
+          "pfx_ab_id": 56,
           "inning_id": "TOR201906170_INN_TOP07",
           "pitch_app_id": "TOR201906170_475479",
           "pbp_table_row_number": 86,
@@ -21777,6 +21833,7 @@
         },
         {
           "at_bat_id": "TOR201906170_07_TOR_475479_ANA_541600_0",
+          "pfx_ab_id": 57,
           "inning_id": "TOR201906170_INN_TOP07",
           "pitch_app_id": "TOR201906170_475479",
           "pbp_table_row_number": 87,
@@ -22041,6 +22098,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_07_ANA_570240_TOR_642133_0",
+          "pfx_ab_id": 58,
           "inning_id": "TOR201906170_INN_BOT07",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 90,
@@ -22258,6 +22316,7 @@
         },
         {
           "at_bat_id": "TOR201906170_07_ANA_570240_TOR_666971_0",
+          "pfx_ab_id": 59,
           "inning_id": "TOR201906170_INN_BOT07",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 91,
@@ -22775,6 +22834,7 @@
         },
         {
           "at_bat_id": "TOR201906170_07_ANA_570240_TOR_545341_0",
+          "pfx_ab_id": 60,
           "inning_id": "TOR201906170_INN_BOT07",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 92,
@@ -23067,6 +23127,7 @@
         },
         {
           "at_bat_id": "TOR201906170_07_ANA_570240_TOR_520471_0",
+          "pfx_ab_id": 61,
           "inning_id": "TOR201906170_INN_BOT07",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 93,
@@ -23514,6 +23575,7 @@
         },
         {
           "at_bat_id": "TOR201906170_07_ANA_570240_TOR_592273_0",
+          "pfx_ab_id": 62,
           "inning_id": "TOR201906170_INN_BOT07",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 94,
@@ -23806,6 +23868,7 @@
         },
         {
           "at_bat_id": "TOR201906170_07_ANA_570240_TOR_571912_0",
+          "pfx_ab_id": 63,
           "inning_id": "TOR201906170_INN_BOT07",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 95,
@@ -23993,6 +24056,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_08_TOR_641835_ANA_600303_0",
+          "pfx_ab_id": 64,
           "inning_id": "TOR201906170_INN_TOP08",
           "pitch_app_id": "TOR201906170_641835",
           "pbp_table_row_number": 99,
@@ -24455,6 +24519,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_TOR_641835_ANA_545361_0",
+          "pfx_ab_id": 65,
           "inning_id": "TOR201906170_INN_TOP08",
           "pitch_app_id": "TOR201906170_641835",
           "pbp_table_row_number": 100,
@@ -24897,6 +24962,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_TOR_641835_ANA_660271_0",
+          "pfx_ab_id": 66,
           "inning_id": "TOR201906170_INN_TOP08",
           "pitch_app_id": "TOR201906170_641835",
           "pbp_table_row_number": 101,
@@ -25039,6 +25105,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_TOR_641835_ANA_457708_0",
+          "pfx_ab_id": 67,
           "inning_id": "TOR201906170_INN_TOP08",
           "pitch_app_id": "TOR201906170_641835",
           "pbp_table_row_number": 102,
@@ -25529,6 +25596,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_08_ANA_570240_TOR_519299_0",
+          "pfx_ab_id": 68,
           "inning_id": "TOR201906170_INN_BOT08",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 105,
@@ -25746,6 +25814,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_ANA_570240_TOR_624415_0",
+          "pfx_ab_id": 69,
           "inning_id": "TOR201906170_INN_BOT08",
           "pitch_app_id": "TOR201906170_570240",
           "pbp_table_row_number": 106,
@@ -26263,6 +26332,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_ANA_598287_TOR_665489_0",
+          "pfx_ab_id": 70,
           "inning_id": "TOR201906170_INN_BOT08",
           "pitch_app_id": "TOR201906170_598287",
           "pbp_table_row_number": 108,
@@ -26575,6 +26645,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_ANA_598287_TOR_642133_0",
+          "pfx_ab_id": 71,
           "inning_id": "TOR201906170_INN_BOT08",
           "pitch_app_id": "TOR201906170_598287",
           "pbp_table_row_number": 109,
@@ -27017,6 +27088,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_ANA_598287_TOR_666971_0",
+          "pfx_ab_id": 72,
           "inning_id": "TOR201906170_INN_BOT08",
           "pitch_app_id": "TOR201906170_598287",
           "pbp_table_row_number": 110,
@@ -27234,6 +27306,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_ANA_598287_TOR_545341_0",
+          "pfx_ab_id": 73,
           "inning_id": "TOR201906170_INN_BOT08",
           "pitch_app_id": "TOR201906170_598287",
           "pbp_table_row_number": 111,
@@ -27751,6 +27824,7 @@
         },
         {
           "at_bat_id": "TOR201906170_08_ANA_621142_TOR_520471_0",
+          "pfx_ab_id": 74,
           "inning_id": "TOR201906170_INN_BOT08",
           "pitch_app_id": "TOR201906170_621142",
           "pbp_table_row_number": 113,
@@ -28334,6 +28408,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_09_TOR_543339_ANA_594777_0",
+          "pfx_ab_id": 75,
           "inning_id": "TOR201906170_INN_TOP09",
           "pitch_app_id": "TOR201906170_543339",
           "pbp_table_row_number": 117,
@@ -28796,6 +28871,7 @@
         },
         {
           "at_bat_id": "TOR201906170_09_TOR_543339_ANA_664058_0",
+          "pfx_ab_id": 76,
           "inning_id": "TOR201906170_INN_TOP09",
           "pitch_app_id": "TOR201906170_543339",
           "pbp_table_row_number": 118,
@@ -29163,6 +29239,7 @@
         },
         {
           "at_bat_id": "TOR201906170_09_TOR_543339_ANA_571506_0",
+          "pfx_ab_id": 77,
           "inning_id": "TOR201906170_INN_TOP09",
           "pitch_app_id": "TOR201906170_543339",
           "pbp_table_row_number": 119,
@@ -29390,6 +29467,7 @@
         },
         {
           "at_bat_id": "TOR201906170_09_TOR_543339_ANA_518960_0",
+          "pfx_ab_id": 78,
           "inning_id": "TOR201906170_INN_TOP09",
           "pitch_app_id": "TOR201906170_543339",
           "pbp_table_row_number": 120,
@@ -29907,6 +29985,7 @@
         },
         {
           "at_bat_id": "TOR201906170_09_TOR_543339_ANA_541600_0",
+          "pfx_ab_id": 79,
           "inning_id": "TOR201906170_INN_TOP09",
           "pitch_app_id": "TOR201906170_543339",
           "pbp_table_row_number": 121,
@@ -30843,6 +30922,7 @@
       "inning_events": [
         {
           "at_bat_id": "TOR201906170_09_ANA_605121_TOR_592273_0",
+          "pfx_ab_id": 80,
           "inning_id": "TOR201906170_INN_BOT09",
           "pitch_app_id": "TOR201906170_605121",
           "pbp_table_row_number": 125,
@@ -31005,6 +31085,7 @@
         },
         {
           "at_bat_id": "TOR201906170_09_ANA_605121_TOR_571912_0",
+          "pfx_ab_id": 81,
           "inning_id": "TOR201906170_INN_BOT09",
           "pitch_app_id": "TOR201906170_605121",
           "pbp_table_row_number": 126,
@@ -31372,6 +31453,7 @@
         },
         {
           "at_bat_id": "TOR201906170_09_ANA_605121_TOR_519299_0",
+          "pfx_ab_id": 82,
           "inning_id": "TOR201906170_INN_BOT09",
           "pitch_app_id": "TOR201906170_605121",
           "pbp_table_row_number": 127,

@@ -51,13 +51,13 @@ class BrooksPitchLogsForGame:
 
     def as_dict(self):
         """Convert pitch logs for game to a dictionary."""
-        return dict(
-            __brooks_pitch_logs_for_game__=True,
-            bb_game_id=self.bb_game_id,
-            bbref_game_id=self.bbref_game_id,
-            pitch_log_count=int(self.pitch_log_count),
-            pitch_logs=as_dict_list(self.pitch_logs),
-        )
+        return {
+            "__brooks_pitch_logs_for_game__": True,
+            "bb_game_id": self.bb_game_id,
+            "bbref_game_id": self.bbref_game_id,
+            "pitch_log_count": int(self.pitch_log_count),
+            "pitch_logs": as_dict_list(self.pitch_logs),
+        }
 
     def as_json(self):
         """Convert pitch logs for game to JSON."""

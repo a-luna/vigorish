@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import lru_cache
 from typing import Mapping, Union
 
 from sqlalchemy import and_, select
@@ -27,6 +28,34 @@ class AllPlayerData:
 
     @property
     def seasons_played(self):
+        return self.get_seasons_played()
+
+    @property
+    def years_played(self):
+        return [s.year for s in self.seasons_played] if self.seasons_played else []
+
+    @property
+    def pitch_appearances(self):
+        return self.player.pitch_apps
+
+    @property
+    def pitch_mix(self):
+        return self.get_pitch_mix()
+
+    @property
+    def pitch_mix_right(self):
+        return self.get_pitch_mix_right()
+
+    @property
+    def pitch_mix_left(self):
+        return self.get_pitch_mix_left()
+
+    @property
+    def pitch_mix_by_year(self):
+        return self.get_pitch_mix_by_year()
+
+    @lru_cache(maxsize=None)
+    def get_seasons_played(self):
         s = (
             select([Pitch_Type_By_Year_View.season_id])
             .where(Pitch_Type_By_Year_View.id == self.player.id)
@@ -39,35 +68,27 @@ class AllPlayerData:
             seasons_played.append(season)
         return sorted(seasons_played, key=lambda x: x.year) if seasons_played else []
 
-    @property
-    def years_played(self):
-        return [s.year for s in self.seasons_played] if self.seasons_played else []
-
-    @property
-    def pitch_appearances(self):
-        return self.player.pitch_apps
-
-    @property
-    def pitch_types(self):
+    @lru_cache(maxsize=None)
+    def get_pitch_mix(self):
         s = select([Pitch_Type_All_View]).where(Pitch_Type_All_View.id == self.player.id)
         results = self.db_engine.execute(s).fetchall()
         return get_metrics_for_all_pitch_types(results)
 
-    @property
-    def pitch_types_right(self):
+    @lru_cache(maxsize=None)
+    def get_pitch_mix_right(self):
         s = select([Pitch_Type_Right_View]).where(Pitch_Type_Right_View.id == self.player.id)
         results = self.db_engine.execute(s).fetchall()
         return get_metrics_for_all_pitch_types(results)
 
-    @property
-    def pitch_types_left(self):
+    @lru_cache(maxsize=None)
+    def get_pitch_mix_left(self):
         s = select([Pitch_Type_Left_View]).where(Pitch_Type_Left_View.id == self.player.id)
         results = self.db_engine.execute(s).fetchall()
         return get_metrics_for_all_pitch_types(results)
 
-    @property
-    def pitch_types_by_year(self):
-        pitch_types_by_year = defaultdict(dict)
+    @lru_cache(maxsize=None)
+    def get_pitch_mix_by_year(self):
+        pitch_mix_by_year = defaultdict(dict)
         for season in self.seasons_played:
             s = select([Pitch_Type_By_Year_View]).where(
                 and_(
@@ -76,5 +97,5 @@ class AllPlayerData:
                 )
             )
             results = self.db_engine.execute(s).fetchall()
-            pitch_types_by_year[season.year] = get_metrics_for_all_pitch_types(results)
-        return pitch_types_by_year
+            pitch_mix_by_year[season.year] = get_metrics_for_all_pitch_types(results)
+        return pitch_mix_by_year

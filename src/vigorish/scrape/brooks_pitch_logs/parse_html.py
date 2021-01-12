@@ -91,7 +91,11 @@ def _parse_pitcher_details(page_content, game, pitcher_id):
     if result.failure:
         return result
     id_dict = result.value
-    pitcher_dict = dict(name=name, team_id=id_dict["team_id"], opponent_id=id_dict["opponent_id"])
+    pitcher_dict = {
+        "name": name,
+        "team_id": id_dict["team_id"],
+        "opponent_id": id_dict["opponent_id"],
+    }
     return Result.Ok(pitcher_dict)
 
 
@@ -103,9 +107,9 @@ def _parse_team_ids(game, selected_pitcher):
     match_dict = match.groupdict()
     team_id = match_dict["team_id"]
     if team_id.upper() == game.away_team_id_bb:
-        id_dict = dict(team_id=game.away_team_id_bb, opponent_id=game.home_team_id_bb)
+        id_dict = {"team_id": game.away_team_id_bb, "opponent_id": game.home_team_id_bb}
     else:
-        id_dict = dict(team_id=game.home_team_id_bb, opponent_id=game.away_team_id_bb)
+        id_dict = {"team_id": game.home_team_id_bb, "opponent_id": game.away_team_id_bb}
     return Result.Ok(id_dict)
 
 

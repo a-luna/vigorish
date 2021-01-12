@@ -118,7 +118,7 @@ class SyncScrapedDataNoPrompts(Task):
         spinner.text = "Retrieving data for all objects stored in S3..."
         spinner.start()
         s3_obj_collection = self.scraped_data.file_helper.get_all_object_keys_in_s3_bucket()
-        s3_objects = [obj for obj in s3_obj_collection]
+        s3_objects = list(s3_obj_collection)
         spinner.stop()
         return s3_objects
 

@@ -98,8 +98,8 @@ def group_and_sort_dict_list(
 
 
 def compare_lists(list1, list2):
-    check1 = not list(set(sorted(list1)) - set(sorted(list2)))
-    check2 = not list(set(sorted(list2)) - set(sorted(list1)))
+    check1 = not list(set(list1) - set(list2))
+    check2 = not list(set(list2) - set(list1))
     return check1 and check2
 
 

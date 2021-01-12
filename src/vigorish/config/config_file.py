@@ -59,7 +59,7 @@ class ConfigFile:
             raise ConfigSetingException(
                 setting_name,
                 data_set,
-                detail=f"Failed to retrieve ConfigSetting with name = {setting_name=}",
+                detail=f"Failed to retrieve ConfigSetting with name = {setting_name}",
             )
         return config.current_setting(data_set)
 

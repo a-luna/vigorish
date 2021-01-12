@@ -6,7 +6,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from vigorish.database import Base
-from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.list_helpers import display_dict
 
@@ -75,22 +74,6 @@ class PitchAppScrapeStatus(Base):
     def display(self):
         title = f"SCRAPE STATUS FOR PITCH APPEARANCE: {self.pitch_app_id}"
         display_dict(self.as_dict(), title=title)
-
-    def as_csv_dict(self):
-        return dict_from_dataclass(self, PitchAppScrapeStatusCsvRow)
-
-    @classmethod
-    def get_csv_col_names(cls):
-        return list(PitchAppScrapeStatusCsvRow.__dataclass_fields__.keys())
-
-    @classmethod
-    def export_table_as_csv(cls, db_session):
-        col_names = ",".join(cls.get_csv_col_names())
-        csv_dicts = (obj.as_csv_dict() for obj in db_session.query(cls).all())
-        csv_rows = (",".join(sanitize_row_dict(d)) for d in csv_dicts)
-        yield col_names
-        for row in csv_rows:
-            yield row
 
     @classmethod
     def find_by_pitch_app_id(cls, db_session, pitch_app_id):

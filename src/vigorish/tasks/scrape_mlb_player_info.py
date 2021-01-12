@@ -33,6 +33,7 @@ def get_search_url(name):
 
 
 def decode_json_response(response):
+    query_results = ""
     try:
         resp_json = response.json()
         query_results = resp_json["search_player_all"]["queryResults"]

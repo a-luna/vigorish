@@ -7,16 +7,28 @@ from events import Events
 
 from vigorish.database import (
     DateScrapeStatus,
+    DateScrapeStatusCsvRow,
     GameScrapeStatus,
+    GameScrapeStatusCsvRow,
     get_total_number_of_rows,
     PitchAppScrapeStatus,
+    PitchAppScrapeStatusCsvRow,
     PitchFx,
+    PitchFxCsvRow,
 )
 from vigorish.enums import DataSet
 from vigorish.tasks.base import Task
-from vigorish.util.dt_format_strings import FILE_TIMESTAMP
+from vigorish.util.dt_format_strings import CSV_UTC, DATE_ONLY, DT_AWARE, FILE_TIMESTAMP
+from vigorish.util.dataclass_helpers import dict_from_dataclass, sanitize_row_dict
 from vigorish.util.numeric_helpers import ONE_PERCENT
 from vigorish.util.result import Result
+
+DB_MODEL_TO_CSV_MAP = {
+    DateScrapeStatus: {"dataclass": DateScrapeStatusCsvRow, "date_format": DATE_ONLY},
+    GameScrapeStatus: {"dataclass": GameScrapeStatusCsvRow, "date_format": DATE_ONLY},
+    PitchAppScrapeStatus: {"dataclass": PitchAppScrapeStatusCsvRow, "date_format": DT_AWARE},
+    PitchFx: {"dataclass": PitchFxCsvRow, "date_format": CSV_UTC},
+}
 
 
 class BackupDatabaseTask(Task):
@@ -68,13 +80,39 @@ class BackupDatabaseTask(Task):
         return csv_folder
 
     def export_table_to_csv(self, table, csv_file):
-        count = last_reported = 0
-        total = get_total_number_of_rows(self.db_session, table)
+        chunk_size = 10000
+        total_rows = get_total_number_of_rows(self.db_session, table)
+        chunk_count, row_count, last_reported = 0, 0, 0
+        self.append_text_to_csv_file(csv_file, text=",".join(self.get_csv_column_names(table)))
+        while True:
+            start = chunk_size * chunk_count
+            stop = min(chunk_size * (chunk_count + 1), total_rows)
+            table_chunk = self.db_session.query(table).slice(start, stop).all()
+            if table_chunk is None:
+                break
+            csv_dicts = (self.convert_row_to_csv_dict(row, table) for row in table_chunk)
+            csv_rows = (",".join(sanitize_row_dict(d, date_format=CSV_UTC)) for d in csv_dicts)
+            self.append_text_to_csv_file(csv_file, text="\n".join(csv_rows))
+            row_count += len(table_chunk)
+            chunk_count += 1
+            last_reported = self.report_progress(row_count, total_rows, last_reported)
+            if row_count == total_rows:
+                break
+
+    def append_text_to_csv_file(self, csv_file, text):
         with csv_file.open("a") as csv:
-            for row in table.export_table_as_csv(self.db_session):
-                csv.write(f"{row}\n")
-                count += 1
-                last_reported = self.report_progress(count, total, last_reported)
+            csv.write(f"{text}\n")
+
+    def get_csv_column_names(self, table):
+        csv_dataclass = DB_MODEL_TO_CSV_MAP[table]["dataclass"]
+        return list(csv_dataclass.__dataclass_fields__.keys())
+
+    def convert_row_to_csv_dict(self, row, table):
+        csv_dataclass = DB_MODEL_TO_CSV_MAP[table]["dataclass"]
+        date_format = DB_MODEL_TO_CSV_MAP[table]["date_format"]
+        if isinstance(row, PitchFx):
+            row.pdes = row.pdes.replace(",", ";")
+        return dict_from_dataclass(row, csv_dataclass, date_format)
 
     def report_progress(self, count, total, last_reported):
         percent_complete = count / float(total)

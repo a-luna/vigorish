@@ -23,7 +23,7 @@ def yes_no_prompt(prompt, wrap=True, max_line_len=70):
     }
     prompt = Bullet(
         prompt,
-        choices=[choice for choice in choices.keys()],
+        choices=list(choices.keys()),
         bullet="",
         shift=1,
         indent=0,
@@ -49,7 +49,7 @@ def yes_no_cancel_prompt(prompt, wrap=True, max_line_len=70):
     }
     prompt = Bullet(
         prompt,
-        choices=[choice for choice in choices.keys()],
+        choices=list(choices.keys()),
         bullet="",
         shift=1,
         indent=0,
@@ -80,7 +80,7 @@ def user_options_prompt(choices, prompt, wrap=True, clear_screen=True, auto_scro
     if wrap:
         prompt = wrap_text(prompt, 70)
     if auto_scroll and len(choices) > 8:
-        scroll_choices = [choice for choice in choices.keys()]
+        scroll_choices = list(choices.keys())
         scroll_choices.insert(0, f"{EMOJI_DICT.get('BACK')} Return to Previous Menu")
         options_menu = ScrollBar(
             prompt,
@@ -97,7 +97,7 @@ def user_options_prompt(choices, prompt, wrap=True, clear_screen=True, auto_scro
             background_on_switch=colors.background["default"],
         )
     else:
-        bullet_choices = [choice for choice in choices.keys()]
+        bullet_choices = list(choices.keys())
         if not auto_scroll:
             bullet_choices.insert(0, f"{EMOJI_DICT.get('BACK')} Return to Previous Menu")
         options_menu = Bullet(
@@ -164,7 +164,7 @@ def data_sets_prompt(prompt, valid_data_sets=0, checked_data_sets=None):
         ]
     ds_prompt = DataSetCheck(
         prompt=instructions,
-        choices=[data_set for data_set in choices.keys()],
+        choices=list(choices.keys()),
         checked_data_sets=checked_data_sets,
         check=EMOJI_DICT.get("CHECK", ""),
         shift=1,
@@ -201,7 +201,7 @@ def file_types_prompt(prompt, valid_file_types=VigFile.ALL):
     instructions = "(use SPACE BAR to select each file type, ENTER to confirm your selections)"
     file_types_prompt = Check(
         prompt=instructions,
-        choices=[file_type for file_type in choices.keys()],
+        choices=list(choices.keys()),
         check=EMOJI_DICT.get("CHECK", ""),
         shift=1,
         indent=0,

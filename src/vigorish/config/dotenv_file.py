@@ -20,10 +20,20 @@ def create_default_dotenv_file(dotenv_file, config_file=None, db_url=None):
     dotenv_file.write_text("\n".join(env_var_strings))
 
 
+def create_test_dotenv_file(dotenv_file):
+    env_var_dict = {
+        "CONFIG_FILE": os.environ.get("CONFIG_FILE"),
+        "DATABASE_URL": os.environ.get("DATABASE_URL"),
+    }
+    env_var_strings = [f"{name}={value}" for name, value in env_var_dict.items()]
+    dotenv_file.write_text("\n".join(env_var_strings))
+
+
 class DotEnvFile:
     def __init__(self, dotenv_filepath=None):
         if os.environ.get("ENV") == "TEST":
             self.dotenv_filepath = Path(os.environ.get("DOTENV_FILE"))
+            create_test_dotenv_file(dotenv_file=self.dotenv_filepath)
         else:
             self.dotenv_filepath = dotenv_filepath if dotenv_filepath else DOTENV_FILE
         self.env_var_dict = self.read_dotenv_file()

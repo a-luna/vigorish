@@ -31,6 +31,10 @@ class ScrapeTaskABC(ABC):
     url_tracker: UrlTracker
 
     def __init__(self, app, db_job):
+
+        # TODO: Add new first step: apply patch list.
+        #       See saved files re: brooks_games_for_date_2017-05-26
+
         self.app = app
         self.config = app.config
         self.db_session = app.db_session

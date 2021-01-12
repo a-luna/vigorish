@@ -22,7 +22,7 @@ class CreateJob(MenuItem):
     def __init__(self, app):
         # TODO: Improve Create Job UX:
         #  - Create new input type that is initialized with a list of valid values
-        #  - Order the list of values and the selected value can be changed with <- and -> arrow keys
+        #  - Order list of values and the selected value can be changed with <- and -> arrow keys
         #  - This input type does not replace the options prompt with numbered items
         #  - This should be used for numbers and dates, like a slider element
         #  - In this menu, it will be used to select start/end dates

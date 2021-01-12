@@ -41,8 +41,8 @@ class DictListTableViewer(TableViewer):
     def get_table_data_from_dict_list(self, dict_list):
         if not dict_list:
             return ([], [])
-        col_names = [col for col in dict_list[0].keys()]
-        table_rows = [[val for val in row_dict.values()] for row_dict in dict_list]
+        col_names = list(dict_list[0].keys())
+        table_rows = [list(row_dict.values()) for row_dict in dict_list]
         for num, row in enumerate(table_rows, start=1):
             row.insert(0, num)
         col_names.insert(0, "#")

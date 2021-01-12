@@ -15,7 +15,7 @@ backup
 json_storage
 html_storage
 coverage_html
-one_offs
+custom_scripts
 release2pypi.sh
 !tests/html_storage
 !tests/json_storage
