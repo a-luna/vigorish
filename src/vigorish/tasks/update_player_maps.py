@@ -2,11 +2,14 @@
 from dataclasses import asdict, dataclass, field
 
 import requests
-from dacite import from_dict
 
 from vigorish.config.project_paths import PLAYER_ID_MAP_CSV, PLAYER_TEAM_MAP_CSV
 from vigorish.tasks.base import Task
-from vigorish.util.dataclass_helpers import sanitize_row_dict
+from vigorish.util.dataclass_helpers import (
+    serialize_data_class_to_csv,
+    deserialize_data_class_from_csv,
+)
+from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
 ALL_PITCH_STATS_URL = "https://www.baseball-reference.com/data/war_daily_pitch.txt"
@@ -143,11 +146,12 @@ class UpdatePlayerIdMap(Task):
             return
         id_map = self.read_bbref_player_id_map_from_file(PLAYER_ID_MAP_CSV)
         current_id_map = self.get_current_player_id_map()
-        new_id_map = current_id_map - id_map
-        if new_id_map:
-            id_map.update(new_id_map)
-        sorted_id_map = sorted(id_map, key=lambda x: x.player_ID)
-        self.write_bbref_player_id_map_to_file(sorted_id_map)
+        new_id_map = list(set(current_id_map) - set(id_map))
+        if not new_id_map:
+            return Result.Ok([])
+        id_map = id_map + new_id_map
+        id_map.sort(key=lambda x: x.player_ID)
+        self.write_bbref_player_id_map_to_file(id_map, PLAYER_ID_MAP_CSV)
         new_id_dicts = [asdict(id_map) for id_map in new_id_map] if new_id_map else None
         return Result.Ok(new_id_dicts)
 
@@ -155,8 +159,7 @@ class UpdatePlayerIdMap(Task):
         if PLAYER_ID_MAP_CSV.exists():
             PLAYER_ID_MAP_CSV.unlink()
         id_map = self.get_full_player_id_map()
-        sorted_id_map = sorted(id_map, key=lambda x: x.player_ID)
-        self.write_bbref_player_id_map_to_file(sorted_id_map)
+        self.write_bbref_player_id_map_to_file(id_map, PLAYER_ID_MAP_CSV)
 
     def get_full_player_id_map(self):
         (bat_stat_list, pitch_stat_list) = parse_full_pitch_and_bat_stats()
@@ -167,31 +170,27 @@ class UpdatePlayerIdMap(Task):
         return self.get_player_id_map_from_stats_lists(bat_stat_list, pitch_stat_list)
 
     def get_player_id_map_from_stats_lists(self, *stats_lists):
-        id_map = set()
-        for stats_list in stats_lists:
-            id_map.update(
-                {
-                    BBRefPlayerIdMap(stats.name_common, stats.mlb_ID, stats.player_ID)
-                    for stats in list(stats_list)
-                    if "NULL" not in stats.mlb_ID
-                }
-            )
-        sorted_id_map = sorted(id_map, key=lambda x: x.player_ID)
-        return set(sorted_id_map)
+        id_map = {
+            BBRefPlayerIdMap(stats.name_common, stats.mlb_ID, stats.player_ID)
+            for stats_list in stats_lists
+            for stats in stats_list
+            if "NULL" not in stats.mlb_ID
+        }
+        return sorted(id_map, key=lambda x: x.player_ID)
 
-    def write_bbref_player_id_map_to_file(self, new_id_map):
-        csv_text = serialize_data_class_objects(new_id_map)
-        PLAYER_ID_MAP_CSV.write_text(csv_text)
+    def write_bbref_player_id_map_to_file(self, new_id_map, player_id_csv_map):
+        csv_text = serialize_data_class_to_csv(new_id_map, date_format=DATE_ONLY)
+        player_id_csv_map.write_text(csv_text)
 
     def read_bbref_player_id_map_from_file(self, player_id_map_csv):
         if not player_id_map_csv.exists():
             player_id_map_csv.touch()
-            return set()
+            return []
         id_map_text = player_id_map_csv.read_text()
         if not id_map_text:
-            return set()
-        id_map = deserialize_data_class_objects(id_map_text, BBRefPlayerIdMap)
-        return set(id_map)
+            return []
+        id_map = deserialize_data_class_from_csv(id_map_text, BBRefPlayerIdMap)
+        return list(set(id_map))
 
 
 class UpdatePlayerTeamMap(Task):
@@ -202,13 +201,14 @@ class UpdatePlayerTeamMap(Task):
         if not PLAYER_TEAM_MAP_CSV.exists():
             self.initialize_bbref_player_team_map()
             return
-        team_map = self.read_bbref_player_team_map_from_file()
+        team_map = self.read_bbref_player_team_map_from_file(PLAYER_TEAM_MAP_CSV)
         current_team_map = self.get_current_team_id_map()
-        new_team_map = current_team_map - team_map
-        if new_team_map:
-            team_map.update(new_team_map)
-        sorted_team_map = sorted(team_map, key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
-        self.write_bbref_player_team_map_to_file(sorted_team_map)
+        new_team_map = list(set(current_team_map) - set(team_map))
+        if not new_team_map:
+            return Result.Ok([])
+        team_map = team_map + new_team_map
+        team_map.sort(key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
+        self.write_bbref_player_team_map_to_file(team_map, PLAYER_TEAM_MAP_CSV)
         new_team_dicts = [asdict(team_map) for team_map in new_team_map] if new_team_map else None
         return Result.Ok(new_team_dicts)
 
@@ -216,8 +216,7 @@ class UpdatePlayerTeamMap(Task):
         if PLAYER_TEAM_MAP_CSV.exists():
             PLAYER_TEAM_MAP_CSV.unlink()
         team_map = self.get_full_team_id_map()
-        sorted_team_map = sorted(team_map, key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
-        self.write_bbref_player_team_map_to_file(sorted_team_map)
+        self.write_bbref_player_team_map_to_file(team_map, PLAYER_TEAM_MAP_CSV)
 
     def get_full_team_id_map(self):
         (bat_stat_list, pitch_stat_list) = parse_full_pitch_and_bat_stats()
@@ -228,39 +227,35 @@ class UpdatePlayerTeamMap(Task):
         return self.get_player_team_map_from_stats_lists(bat_stat_list, pitch_stat_list)
 
     def get_player_team_map_from_stats_lists(self, *stats_lists):
-        team_map = set()
-        for stats_list in stats_lists:
-            team_map.update(
-                {
-                    BBRefPlayerTeamMap(
-                        stats.name_common,
-                        stats.age,
-                        stats.mlb_ID,
-                        stats.player_ID,
-                        stats.year_ID,
-                        stats.team_ID,
-                        stats.stint_ID,
-                        stats.lg_ID,
-                    )
-                    for stats in list(stats_list)
-                }
+        team_map = {
+            BBRefPlayerTeamMap(
+                stats.name_common,
+                stats.age,
+                stats.mlb_ID,
+                stats.player_ID,
+                stats.year_ID,
+                stats.team_ID,
+                stats.stint_ID,
+                stats.lg_ID,
             )
-        sorted_team_map = sorted(team_map, key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
-        return set(sorted_team_map)
+            for stats_list in stats_lists
+            for stats in stats_list
+        }
+        return sorted(team_map, key=lambda x: (x.player_ID, x.year_ID, x.stint_ID))
 
-    def write_bbref_player_team_map_to_file(self, new_id_map):
-        csv_text = serialize_data_class_objects(new_id_map)
-        PLAYER_TEAM_MAP_CSV.write_text(csv_text)
+    def write_bbref_player_team_map_to_file(self, new_team_map, player_team_map_csv):
+        csv_text = serialize_data_class_to_csv(new_team_map, date_format=DATE_ONLY)
+        player_team_map_csv.write_text(csv_text)
 
-    def read_bbref_player_team_map_from_file(self):
-        if not PLAYER_TEAM_MAP_CSV.exists():
-            PLAYER_TEAM_MAP_CSV.touch()
-            return set()
-        team_map_text = PLAYER_TEAM_MAP_CSV.read_text()
+    def read_bbref_player_team_map_from_file(self, player_team_map_csv):
+        if not player_team_map_csv.exists():
+            player_team_map_csv.touch()
+            return []
+        team_map_text = player_team_map_csv.read_text()
         if not team_map_text:
-            return set()
-        team_map = deserialize_data_class_objects(team_map_text, BBRefPlayerTeamMap)
-        return set(team_map)
+            return []
+        team_map = deserialize_data_class_from_csv(team_map_text, BBRefPlayerTeamMap)
+        return list(set(team_map))
 
 
 def parse_full_pitch_and_bat_stats():
@@ -278,29 +273,12 @@ def parse_current_pitch_and_bat_stats():
 def parse_pitch_stats(url):
     response = requests.get(url)
     page_text = response.text
-    pitch_stat_list = deserialize_data_class_objects(page_text, BBRefPitchStats)
-    return set(pitch_stat_list)
+    pitch_stat_list = deserialize_data_class_from_csv(page_text, BBRefPitchStats)
+    return list(set(pitch_stat_list))
 
 
 def parse_bat_stats(url):
     response = requests.get(url)
     page_text = response.text
-    bat_stat_list = deserialize_data_class_objects(page_text, BBRefBatStats)
-    return set(bat_stat_list)
-
-
-def serialize_data_class_objects(data_class_objects):
-    dataclass_dicts = [asdict(do) for do in data_class_objects]
-    if not dataclass_dicts:
-        return None
-    col_names = [",".join(list(dataclass_dicts[0].keys()))]
-    csv_rows = [",".join(sanitize_row_dict(d)) for d in dataclass_dicts]
-    return "\n".join((col_names + csv_rows))
-
-
-def deserialize_data_class_objects(csv_text, data_class):
-    csv_rows = csv_text.split("\n")
-    col_names = [col.strip() for col in csv_rows.pop(0).split(",")]
-    csv_rows = [row.split(",") for row in csv_rows]
-    csv_dict_list = [dict(zip(col_names, row)) for row in csv_rows if row != [""]]
-    return [from_dict(data_class=data_class, data=csv_dict) for csv_dict in csv_dict_list]
+    bat_stat_list = deserialize_data_class_from_csv(page_text, BBRefBatStats)
+    return list(set(bat_stat_list))
