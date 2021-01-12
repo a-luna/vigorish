@@ -9,6 +9,7 @@ from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.regex import (
     AT_BAT_ID_REGEX,
     BB_GAME_ID_REGEX,
+    BBREF_BOXSCORE_URL_REGEX,
     BBREF_GAME_ID_REGEX,
     INNING_LABEL_REGEX,
     PITCH_APP_REGEX,
@@ -147,6 +148,11 @@ def parse_timestamp(input):
 def string_is_null_or_blank(s):
     """Check if a string is null or consists entirely of whitespace."""
     return not s or s.isspace()
+
+
+def get_bbref_game_id_from_url(url):
+    match = BBREF_BOXSCORE_URL_REGEX.search(url)
+    return match.groupdict()["game_id"] if match else None
 
 
 def validate_bbref_game_id(input_str):

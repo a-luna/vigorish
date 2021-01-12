@@ -1,24 +1,88 @@
 {
   "__bbref_games_for_date__": true,
-  "boxscore_urls": [
-    "https://www.baseball-reference.com/boxes/ANA/ANA201906110.shtml",
-    "https://www.baseball-reference.com/boxes/ATL/ATL201906110.shtml",
-    "https://www.baseball-reference.com/boxes/BAL/BAL201906110.shtml",
-    "https://www.baseball-reference.com/boxes/BOS/BOS201906110.shtml",
-    "https://www.baseball-reference.com/boxes/CHA/CHA201906110.shtml",
-    "https://www.baseball-reference.com/boxes/CLE/CLE201906110.shtml",
-    "https://www.baseball-reference.com/boxes/COL/COL201906110.shtml",
-    "https://www.baseball-reference.com/boxes/HOU/HOU201906110.shtml",
-    "https://www.baseball-reference.com/boxes/KCA/KCA201906110.shtml",
-    "https://www.baseball-reference.com/boxes/MIA/MIA201906110.shtml",
-    "https://www.baseball-reference.com/boxes/MIN/MIN201906110.shtml",
-    "https://www.baseball-reference.com/boxes/NYA/NYA201906111.shtml",
-    "https://www.baseball-reference.com/boxes/NYA/NYA201906112.shtml",
-    "https://www.baseball-reference.com/boxes/PHI/PHI201906110.shtml",
-    "https://www.baseball-reference.com/boxes/SFN/SFN201906110.shtml",
-    "https://www.baseball-reference.com/boxes/TBA/TBA201906110.shtml"
-  ],
   "dashboard_url": "https://www.baseball-reference.com/boxes/?month=6&day=11&year=2019",
   "game_count": 16,
-  "game_date_str": "2019-06-11"
+  "game_date_str": "2019-06-11",
+  "games": [
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "ANA201906110",
+      "url": "https://www.baseball-reference.com/boxes/ANA/ANA201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "ATL201906110",
+      "url": "https://www.baseball-reference.com/boxes/ATL/ATL201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "BAL201906110",
+      "url": "https://www.baseball-reference.com/boxes/BAL/BAL201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "BOS201906110",
+      "url": "https://www.baseball-reference.com/boxes/BOS/BOS201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "CHA201906110",
+      "url": "https://www.baseball-reference.com/boxes/CHA/CHA201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "CLE201906110",
+      "url": "https://www.baseball-reference.com/boxes/CLE/CLE201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "COL201906110",
+      "url": "https://www.baseball-reference.com/boxes/COL/COL201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "HOU201906110",
+      "url": "https://www.baseball-reference.com/boxes/HOU/HOU201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "KCA201906110",
+      "url": "https://www.baseball-reference.com/boxes/KCA/KCA201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "MIA201906110",
+      "url": "https://www.baseball-reference.com/boxes/MIA/MIA201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "MIN201906110",
+      "url": "https://www.baseball-reference.com/boxes/MIN/MIN201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "NYA201906111",
+      "url": "https://www.baseball-reference.com/boxes/NYA/NYA201906111.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "NYA201906112",
+      "url": "https://www.baseball-reference.com/boxes/NYA/NYA201906112.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "PHI201906110",
+      "url": "https://www.baseball-reference.com/boxes/PHI/PHI201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "SFN201906110",
+      "url": "https://www.baseball-reference.com/boxes/SFN/SFN201906110.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TBA201906110",
+      "url": "https://www.baseball-reference.com/boxes/TBA/TBA201906110.shtml"
+    }
+  ]
 }
