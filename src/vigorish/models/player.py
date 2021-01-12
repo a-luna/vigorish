@@ -3,7 +3,6 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import backref, relationship
 
 from vigorish.database import Base
-from vigorish.util.list_helpers import display_dict
 
 
 class Player(Base):
@@ -34,15 +33,10 @@ class Player(Base):
 
     id_map = relationship("PlayerId", backref=backref("player", uselist=False))
     pitch_apps = relationship("PitchAppScrapeStatus", backref="player")
+    teams = relationship("Team", secondary="player_team", back_populates="players")
 
     def __repr__(self):
         return f"<Player name={self.name_first} {self.name_last}, bbref_id={self.bbref_id}>"
-
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-    def display(self):
-        display_dict(self.as_dict())
 
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):

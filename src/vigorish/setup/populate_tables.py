@@ -12,8 +12,8 @@ def populate_tables(app, csv_folder):
         populate_base_tables(db_session)
         .on_success(populate_seasons, db_session)
         .on_success(populate_status_tables, db_session)
-        .on_success(populate_players, app, csv_folder)
         .on_success(populate_teams, db_session, csv_folder)
+        .on_success(populate_players, app, csv_folder)
         .on_success(create_relationships, db_session)
     )
     if result.failure:
@@ -28,8 +28,8 @@ def populate_tables_for_restore(app, csv_folder):
     result = (
         populate_base_tables(db_session)
         .on_success(populate_seasons, db_session)
-        .on_success(populate_players, app, csv_folder)
         .on_success(populate_teams, db_session, csv_folder)
+        .on_success(populate_players, app, csv_folder)
         .on_success(create_relationships, db_session)
     )
     if result.failure:
