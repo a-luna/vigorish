@@ -138,6 +138,10 @@ class ViewGameData(MenuItem):
                     self.view_at_bats_for_player(player_type, mlb_id)
                 if pitcher_data == "PITCH_MIX":
                     self.view_pitch_mix_for_player(mlb_id)
+                if pitcher_data == "PLATE_DISCIPLINE":
+                    self.view_pd_stats_for_player(mlb_id)
+                if pitcher_data == "BATTED_BALL":
+                    self.view_bb_stats_for_player(mlb_id)
 
     def get_boxscore(self, team_id, player_type):
         boxscore_dict = {
@@ -169,7 +173,7 @@ class ViewGameData(MenuItem):
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
         prompt = (
             "All pitchers that apppeared in the game are listed below. Select a player and "
-            "press ENTER to access information for each player's outing and pitch repertoire:"
+            "press ENTER to access information for this start and various career stats:"
         )
         print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
         return user_options_prompt(choices, prompt, auto_scroll=False, clear_screen=False)
@@ -189,12 +193,14 @@ class ViewGameData(MenuItem):
     def select_pitcher_data_prompt(self, mlb_id):
         pitcher_name = self.game_data.get_player_id_map(mlb_id=mlb_id).mlb_name
         prompt = (
-            f"\nData for {pitcher_name} can be viewed in several different ways, "
+            f"Data for {pitcher_name} can be viewed in several different ways, "
             "please choose an option from the list below:"
         )
         choices = {
             f"{MENU_NUMBERS.get(1)}  View Details of All At Bats": "AT_BATS",
-            f"{MENU_NUMBERS.get(2)}  View Pitch Mix Data by Batter Stance/Season": "PITCH_MIX",
+            f"{MENU_NUMBERS.get(2)}  View Pitch Mix": "PITCH_MIX",
+            f"{MENU_NUMBERS.get(3)}  View Plate Discipline Metrics": "PLATE_DISCIPLINE",
+            f"{MENU_NUMBERS.get(4)}  View Batted Ball Metrics": "BATTED_BALL",
             f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
         }
         print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
@@ -207,7 +213,19 @@ class ViewGameData(MenuItem):
 
     def view_pitch_mix_for_player(self, mlb_id):
         subprocess.run(["clear"])
-        table_viewer = self.game_data.view_player_pitch_mix(mlb_id).value
+        table_viewer = self.game_data.view_pitch_mix_for_player(mlb_id).value
+        table_viewer.launch()
+        return Result.Ok()
+
+    def view_pd_stats_for_player(self, mlb_id):
+        subprocess.run(["clear"])
+        table_viewer = self.game_data.view_pd_stats_for_player(mlb_id).value
+        table_viewer.launch()
+        return Result.Ok()
+
+    def view_bb_stats_for_player(self, mlb_id):
+        subprocess.run(["clear"])
+        table_viewer = self.game_data.view_bb_stats_for_player(mlb_id).value
         table_viewer.launch()
         return Result.Ok()
 

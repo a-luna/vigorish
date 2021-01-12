@@ -1,6 +1,6 @@
 import pytest
 
-from tests.conftest import CSV_FOLDER, SQLITE_URL
+from tests.conftest import CSV_FOLDER
 from tests.test_task_backup_database_to_csv import remove_everything_in_backup_folder
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
@@ -19,7 +19,7 @@ from vigorish.database import (
     PitchFx,
     prepare_database_for_restore,
 )
-from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
+from vigorish.tasks.add_to_database import AddToDatabaseTask
 from vigorish.tasks.backup_database import BackupDatabaseTask
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.tasks.restore_database import RestoreDatabaseTask
@@ -33,7 +33,7 @@ APPLY_PATCH_LIST = GAME_ID_DICT["apply_patch_list"]
 
 @pytest.fixture(scope="module", autouse=True)
 def create_test_data(vig_app):
-    """Initialize DB with data to verify test functions in test_cli module."""
+    """Initialize DB with data to verify test functions in this module."""
     db_session = vig_app.db_session
     scraped_data = vig_app.scraped_data
     update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
@@ -42,8 +42,8 @@ def create_test_data(vig_app):
     update_scraped_pitch_logs(db_session, scraped_data, GAME_DATE, BBREF_GAME_ID)
     update_scraped_pitchfx_logs(db_session, scraped_data, BB_GAME_ID)
     CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPLY_PATCH_LIST)
-    add_pfx_to_db = AddPitchFxToDatabase(vig_app)
-    add_pfx_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
+    add_to_db = AddToDatabaseTask(vig_app)
+    add_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
     remove_everything_in_backup_folder()
     backup_db = BackupDatabaseTask(vig_app)
     result = backup_db.execute()
@@ -54,9 +54,7 @@ def create_test_data(vig_app):
 
 
 def test_restore_database(vig_app):
-    result = vig_app.reset_database_connection(db_url=SQLITE_URL)
-    if result.failure:
-        return result
+    vig_app.reset_database_connection()
     result = prepare_database_for_restore(vig_app, CSV_FOLDER)
     if result.failure:
         return result

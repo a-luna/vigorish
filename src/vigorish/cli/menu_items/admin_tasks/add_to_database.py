@@ -11,16 +11,16 @@ from vigorish.cli.components.util import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase as AddPitchFxToDatabaseTask
+from vigorish.tasks.add_to_database import AddToDatabaseTask
 from vigorish.util.result import Result
 
 
-class AddPitchFxToDatabase(MenuItem):
+class AddToDatabase(MenuItem):
     def __init__(self, app, audit_report):
         super().__init__(app)
         self.audit_report = audit_report
-        self.add_pfx_to_db = AddPitchFxToDatabaseTask(app)
-        self.menu_item_text = "Add PitchFx Data to Database"
+        self.add_to_db = AddToDatabaseTask(app)
+        self.menu_item_text = "Add Combined Game Data to Database"
         self.menu_item_emoji = EMOJI_DICT.get("BASEBALL")
         self.exit_menu = False
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
@@ -39,7 +39,7 @@ class AddPitchFxToDatabase(MenuItem):
         year = result.value
         self.initialize_spinner()
         self.subscribe_to_events()
-        result = self.add_pfx_to_db.execute(self.audit_report, year)
+        result = self.add_to_db.execute(self.audit_report, year)
         self.spinner.stop()
         self.unsubscribe_from_events()
         if result.failure:
@@ -54,8 +54,11 @@ class AddPitchFxToDatabase(MenuItem):
             "This task identifies all games that fulfill the two requirements below:\n",
             "1. All data sets have been scraped",
             "2. Data was successfully combined (does not need to be error free)\n",
-            "PitchFX data for all games that meet these requirements will be added to the "
-            "database.",
+            "For all games that meet these requirements, the data listed below will be added to ",
+            "the database:\n",
+            "1. Individual player batting stats",
+            "2. Individual player pitching stats",
+            "3. PitchFX data for all pitches thrown",
         ]
         subprocess.run(["clear"])
         for line in task_description:
@@ -77,24 +80,27 @@ class AddPitchFxToDatabase(MenuItem):
 
     def initialize_spinner(self):
         subprocess.run(["clear"])
-        self.spinner.text = "Preparing to import PitchFx data..."
+        self.spinner.text = "Preparing to import combined game data..."
         self.spinner.start()
 
-    def add_pitchfx_to_db_start(self, year, game_ids):
+    def add_data_to_db_start(self, year, game_ids):
         self.game_ids = game_ids
         self.spinner.text = self.get_progress_text(0, year, game_ids[0])
 
-    def add_pitchfx_to_db_progress(self, num_complete, year, game_id):
+    def add_data_to_db_progress(self, num_complete, year, game_id):
         self.spinner.text = self.get_progress_text(num_complete, year, game_id)
 
     def get_progress_text(self, num_complete, year, game_id):
         percent = num_complete / float(self.total_games)
-        return f"Adding PitchFx for MLB {year} to Database... (Game ID: {game_id}) {percent:.0%}..."
+        return (
+            f"Adding combined game data for MLB {year} to database... "
+            f"(Game ID: {game_id}) {percent:.0%}..."
+        )
 
     def subscribe_to_events(self):
-        self.add_pfx_to_db.events.add_pitchfx_to_db_start += self.add_pitchfx_to_db_start
-        self.add_pfx_to_db.events.add_pitchfx_to_db_progress += self.add_pitchfx_to_db_progress
+        self.add_to_db.events.add_data_to_db_start += self.add_data_to_db_start
+        self.add_to_db.events.add_data_to_db_progress += self.add_data_to_db_progress
 
     def unsubscribe_from_events(self):
-        self.add_pfx_to_db.events.add_pitchfx_to_db_start -= self.add_pitchfx_to_db_start
-        self.add_pfx_to_db.events.add_pitchfx_to_db_progress -= self.add_pitchfx_to_db_progress
+        self.add_to_db.events.add_data_to_db_start -= self.add_data_to_db_start
+        self.add_to_db.events.add_data_to_db_progress -= self.add_data_to_db_progress

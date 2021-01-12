@@ -4,6 +4,8 @@ from events import Events
 
 from vigorish.data.all_game_data import AllGameData
 from vigorish.database import (
+    BatStats,
+    PitchStats,
     GameScrapeStatus,
     PitchAppScrapeStatus,
     PitchFx,
@@ -17,7 +19,7 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import get_bbref_team_id, validate_bbref_game_id
 
 
-class AddPitchFxToDatabase(Task):
+class AddToDatabaseTask(Task):
     def __init__(self, app):
         super().__init__(app)
         self._season_id_map = {}
@@ -27,9 +29,9 @@ class AddPitchFxToDatabase(Task):
         self._pitch_app_id_map = {}
         self.events = Events(
             (
-                "add_pitchfx_to_db_start",
-                "add_pitchfx_to_db_progress",
-                "add_pitchfx_to_db_complete",
+                "add_data_to_db_start",
+                "add_data_to_db_progress",
+                "add_data_to_db_complete",
             )
         )
 
@@ -50,7 +52,7 @@ class AddPitchFxToDatabase(Task):
     def player_id_map(self):
         if self._player_id_map:
             return self._player_id_map
-        self._player_id_map = PlayerId.get_player_id_map(self.db_session)
+        self._player_id_map = PlayerId.get_mlb_player_id_map(self.db_session)
         return self._player_id_map
 
     @property
@@ -69,15 +71,15 @@ class AddPitchFxToDatabase(Task):
 
     def execute(self, audit_report, year=None):
         self.audit_report = audit_report
-        return self.add_pfx_for_year(year) if year else self.add_all_pfx()
+        return self.add_data_for_year(year) if year else self.add_all_data()
 
-    def add_all_pfx(self):
+    def add_all_data(self):
         valid_years = [year for year, results in self.audit_report.items() if results["successful"]]
         for year in valid_years:
-            self.add_pfx_for_year(year)
+            self.add_data_for_year(year)
         return Result.Ok()
 
-    def add_pfx_for_year(self, year):
+    def add_data_for_year(self, year):
         report_for_season = self.audit_report.get(year)
         if not report_for_season:
             return Result.Fail(f"Audit report could not be generated for MLB Season {year}")
@@ -85,19 +87,63 @@ class AddPitchFxToDatabase(Task):
         if not game_ids:
             error = f"No games for MLB Season {year} qualify to have PitchFx data imported."
             return Result.Fail(error)
-        self.events.add_pitchfx_to_db_start(year, game_ids)
+        self.events.add_data_to_db_start(year, game_ids)
         for num, game_id in enumerate(game_ids, start=1):
-            self.add_pitchfx_to_database(game_id)
-            self.events.add_pitchfx_to_db_progress(num, year, game_id)
-        self.events.add_pitchfx_to_db_complete(year)
+            all_game_data = AllGameData(self.app, game_id)
+            result = self.add_player_stats_to_database(game_id, all_game_data)
+            if result.failure:
+                return result
+            result = self.add_pitchfx_to_database(all_game_data)
+            if result.failure:
+                return result
+            self.events.add_data_to_db_progress(num, year, game_id)
+        self.events.add_data_to_db_complete(year)
         return Result.Ok()
 
-    def add_pitchfx_to_database(self, game_id):
-        all_game_data = AllGameData(self.app, game_id)
+    def add_player_stats_to_database(self, game_id, all_game_data):
+        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, game_id)
+        if not game_status:
+            error = f"Import aborted! Game status '{game_id}' not found in database"
+            return Result.Fail(error)
+        if not game_status.imported_bat_stats:
+            self.add_bat_stats_to_database(game_id, all_game_data, game_status)
+        if not game_status.imported_pitch_stats:
+            self.add_pitch_stats_to_database(game_id, all_game_data, game_status)
+        return Result.Ok()
+
+    def add_bat_stats_to_database(self, game_id, all_game_data, game_status):
+        for mlb_id in all_game_data.bat_stats_player_ids:
+            bat_stats_dict = all_game_data.get_bat_stats(mlb_id).value
+            bat_stats = BatStats.from_dict(game_id, bat_stats_dict)
+            bat_stats = self.update_player_stats_relationships(bat_stats)
+            self.db_session.add(bat_stats)
+        game_status.imported_bat_stats = 1
+        self.db_session.commit()
+
+    def add_pitch_stats_to_database(self, game_id, all_game_data, game_status):
+        for mlb_id in all_game_data.pitch_stats_player_ids:
+            pitch_stats_dict = all_game_data.get_pitch_app_stats(mlb_id).value
+            pitch_stats = PitchStats.from_dict(game_id, pitch_stats_dict)
+            pitch_stats = self.update_player_stats_relationships(pitch_stats)
+            self.db_session.add(pitch_stats)
+        game_status.imported_pitch_stats = 1
+        self.db_session.commit()
+
+    def update_player_stats_relationships(self, stats):
+        game_date = self.get_game_date_from_bbref_game_id(stats.bbref_game_id)
+        stats.player_id = self.player_id_map[stats.player_id_mlb]
+        stats.player_team_id = self.get_team_id_map(game_date.year)[stats.player_team_id_bbref]
+        stats.opponent_team_id = self.get_team_id_map(game_date.year)[stats.opponent_team_id_bbref]
+        stats.season_id = self.season_id_map[game_date.year]
+        stats.date_id = self.get_date_status_id_from_game_date(game_date)
+        stats.game_status_id = self.game_id_map[stats.bbref_game_id]
+        return stats
+
+    def add_pitchfx_to_database(self, all_game_data):
         for pitch_app_id, pfx_dict_list in all_game_data.get_all_pitchfx().items():
             pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
             if not pitch_app:
-                error = f"PitchFx import aborted! Pitch app '{pitch_app_id}' not found in database"
+                error = f"Import aborted! Pitch app '{pitch_app_id}' not found in database"
                 return Result.Fail(error)
             if pitch_app.imported_pitchfx:
                 continue
@@ -107,6 +153,7 @@ class AddPitchFxToDatabase(Task):
                 self.db_session.add(pfx)
             pitch_app.imported_pitchfx = 1
         self.db_session.commit()
+        return Result.Ok()
 
     def update_pitchfx_relationships(self, pfx):
         game_date = self.get_game_date_from_bbref_game_id(pfx.bbref_game_id)
