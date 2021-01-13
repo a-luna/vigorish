@@ -57,7 +57,8 @@ def verify_bbref_games_for_date_jul_26_2018(games_for_date):
     assert games_for_date.dashboard_url == bbref_url
     assert games_for_date.game_date_str == GAME_DATE.strftime("%Y-%m-%d")
     assert games_for_date.game_count == expected_game_count
-    assert len(games_for_date.boxscore_urls) == expected_game_count
+    assert len(games_for_date.games) == expected_game_count
+    assert len(games_for_date.all_urls) == expected_game_count
     url0 = "https://www.baseball-reference.com/boxes/ANA/ANA201807260.shtml"
     url1 = "https://www.baseball-reference.com/boxes/ATL/ATL201807260.shtml"
     url2 = "https://www.baseball-reference.com/boxes/BAL/BAL201807260.shtml"
@@ -69,15 +70,15 @@ def verify_bbref_games_for_date_jul_26_2018(games_for_date):
     url8 = "https://www.baseball-reference.com/boxes/PIT/PIT201807260.shtml"
     url9 = "https://www.baseball-reference.com/boxes/SFN/SFN201807260.shtml"
     url10 = "https://www.baseball-reference.com/boxes/TEX/TEX201807260.shtml"
-    assert games_for_date.boxscore_urls[0] == url0
-    assert games_for_date.boxscore_urls[1] == url1
-    assert games_for_date.boxscore_urls[2] == url2
-    assert games_for_date.boxscore_urls[3] == url3
-    assert games_for_date.boxscore_urls[4] == url4
-    assert games_for_date.boxscore_urls[5] == url5
-    assert games_for_date.boxscore_urls[6] == url6
-    assert games_for_date.boxscore_urls[7] == url7
-    assert games_for_date.boxscore_urls[8] == url8
-    assert games_for_date.boxscore_urls[9] == url9
-    assert games_for_date.boxscore_urls[10] == url10
+    assert games_for_date.games[0].url == url0
+    assert games_for_date.games[1].url == url1
+    assert games_for_date.games[2].url == url2
+    assert games_for_date.games[3].url == url3
+    assert games_for_date.games[4].url == url4
+    assert games_for_date.games[5].url == url5
+    assert games_for_date.games[6].url == url6
+    assert games_for_date.games[7].url == url7
+    assert games_for_date.games[8].url == url8
+    assert games_for_date.games[9].url == url9
+    assert games_for_date.games[10].url == url10
     return Result.Ok()

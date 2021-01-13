@@ -8,7 +8,7 @@ from vigorish.config.config_setting import (
     PathConfigSetting,
     StringConfigSetting,
 )
-from vigorish.config.types.folder_path_setting import S3FolderPathSetting
+from vigorish.config.types.folder_path_setting import LocalFolderPathSetting, S3FolderPathSetting
 from vigorish.config.types.url_scrape_delay import UrlScrapeDelay
 from vigorish.enums import (
     CombinedDataStorageOption,
@@ -96,4 +96,18 @@ def test_config_setting():
     check_data_set = DataSet.BROOKS_GAMES_FOR_DATE
     current_setting = path_setting.current_setting(check_data_set)
     check_setting = S3FolderPathSetting(path_config_dict.get(DataSet.ALL.name), check_data_set)
+    assert current_setting.resolve(2019) == check_setting.resolve(2019)
+
+    path_setting_name = "HTML_LOCAL_FOLDER_PATH"
+    path_config_dict = config_file.config_json.get(path_setting_name)
+    path_setting = PathConfigSetting(path_setting_name, path_config_dict)
+    assert path_setting.setting_name_title == "Html Local Folder Path"
+    assert path_setting.data_type == ConfigType.PATH
+    assert path_setting.description
+    assert not path_setting.possible_values
+    check_data_set = DataSet.BBREF_BOXSCORES
+    current_setting = path_setting.current_setting(check_data_set)
+    check_setting = LocalFolderPathSetting(path_config_dict.get(DataSet.ALL.name), check_data_set)
+    assert str(check_setting) == path_config_dict.get(DataSet.ALL.name)
+    assert check_setting.is_valid(2019)
     assert current_setting.resolve(2019) == check_setting.resolve(2019)
