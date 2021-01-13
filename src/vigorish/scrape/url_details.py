@@ -20,40 +20,36 @@ class UrlDetails:
         return Path(self.scrapedHtmlFolderpath).joinpath(self.fileName)
 
     @property
-    def scraped_file_exists_with_content(self):
+    def scraped_html_is_valid(self):
         return self.scraped_file_path.exists() and self.scraped_file_path.stat().st_size > ONE_KB
 
     @property
     def scraped_html(self):
-        if not self.scraped_file_exists_with_content:
-            return None
-        return self.scraped_file_path.read_text()
+        return self.scraped_file_path.read_text() if self.scraped_html_is_valid else None
 
     @property
     def cached_file_path(self):
         return Path(self.cachedHtmlFolderPath).joinpath(self.fileName)
 
     @property
-    def cached_file_exists_with_content(self):
+    def cached_html_is_valid(self):
         return self.cached_file_path.exists() and self.cached_file_path.stat().st_size > ONE_KB
 
     @property
     def cached_html(self):
-        if not self.cached_file_exists_with_content:
-            return None
-        return self.cached_file_path.read_text()
+        return self.cached_file_path.read_text() if self.cached_html_is_valid else None
 
     @property
-    def file_exists_with_content(self):
-        return self.cached_file_exists_with_content or self.scraped_file_exists_with_content
+    def html_was_scraped(self):
+        return self.cached_html_is_valid or self.scraped_html_is_valid
 
     @property
     def html(self):
         return (
             self.cached_html
-            if self.cached_file_exists_with_content
+            if self.cached_html
             else self.scraped_html
-            if self.scraped_file_exists_with_content
+            if self.scraped_html
             else None
         )
 

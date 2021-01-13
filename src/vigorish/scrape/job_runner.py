@@ -18,7 +18,7 @@ from vigorish.scrape.brooks_pitchfx.scrape_task import ScrapeBrooksPitchFx
 from vigorish.status.report_status import report_date_range_status, report_season_status
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_ONLY_2
-from vigorish.util.exceptions import ConfigSetingException
+from vigorish.util.exceptions import ConfigSettingException
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
 
@@ -74,7 +74,7 @@ class JobRunner:
         elif self.scrape_task_option == ScrapeTaskOption.BY_DATA_SET:
             return self.run_job_full_date_range()
         else:
-            raise ConfigSetingException(
+            raise ConfigSettingException(
                 setting_name="SCRAPE_TASK_OPTION",
                 current_value=self.scrape_task_option,
                 detail='"SCRAPE_TASK_OPTION" only has two valid values: BY_DATE and BY_DATA_SET',

@@ -22,7 +22,7 @@ from vigorish.enums import (
     ScrapeTaskOption,
     StatusReport,
 )
-from vigorish.util.exceptions import ConfigSetingException
+from vigorish.util.exceptions import ConfigSettingException
 from vigorish.util.list_helpers import dict_to_param_list
 from vigorish.util.result import Result
 
@@ -56,7 +56,7 @@ class ConfigFile:
         config_dict = self.config_json.get(setting_name)
         config = self.config_factory(setting_name, config_dict) if config_dict else None
         if not config:
-            raise ConfigSetingException(
+            raise ConfigSettingException(
                 setting_name,
                 data_set,
                 detail=f"Failed to retrieve ConfigSetting with name = {setting_name}",
@@ -183,7 +183,6 @@ class ConfigFile:
             return Result.Ok(BatchJobSettings(*new_value).to_dict())
         if class_name == "BatchScrapeDelay":
             return Result.Ok(BatchScrapeDelay(*new_value).to_dict())
-        return None
 
     def validate_new_url_delay_setting(self, new_value):
         is_enabled, is_random, delay_uniform, delay_min, delay_max = new_value
@@ -194,14 +193,12 @@ class ConfigFile:
         return Result.Ok()
 
     def get_null_object(self, class_name):
-        null_data = (None, None, None, None, None)
         if class_name == "UrlScrapeDelay":
-            return UrlScrapeDelay(*null_data).to_dict()
+            return UrlScrapeDelay.null_object()
         if class_name == "BatchJobSettings":
-            return BatchJobSettings(*null_data).to_dict()
+            return BatchJobSettings.null_object()
         if class_name == "BatchScrapeDelay":
-            return BatchScrapeDelay(*null_data).to_dict()
-        return None
+            return BatchScrapeDelay.null_object()
 
     def get_default_nodejs_script_params(self):
         return {
