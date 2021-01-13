@@ -1,5 +1,4 @@
 """Base task that defines the template method for a scrape task."""
-import subprocess
 from abc import ABC, abstractmethod
 from functools import partial
 from signal import SIGINT, signal
@@ -20,8 +19,7 @@ from vigorish.util.sys_helpers import execute_nodejs_script
 
 def user_cancelled(db_session, active_job, spinner, signal_received, frame):
     spinner.stop()
-    subprocess.run(["clear"])
-    print_message("Job cancelled by user!", fg="yellow", bold=True)
+    print_message("\nJob cancelled by user!", fg="yellow", bold=True)
     pause(message="Press any key to continue...")
     exit(0)
 
@@ -110,7 +108,7 @@ class ScrapeTaskABC(ABC):
             return Result.Fail("skip")
         for url in self.url_tracker.need_urls[:]:
             self.scraped_data.get_html(self.data_set, url.url_id)
-            if not url.file_exists_with_content:
+            if not url.html_was_scraped:
                 self.url_tracker.missing_urls.append(url)
             else:
                 self.url_tracker.cached_urls.append(url)
@@ -126,7 +124,7 @@ class ScrapeTaskABC(ABC):
             self.spinner.text = self.url_tracker.save_html_report
             self.spinner.start()
             for url in self.url_tracker.missing_urls[:]:
-                if not url.scraped_file_exists_with_content:
+                if not url.scraped_html_is_valid:
                     continue
                 result = self.scraped_data.save_html(self.data_set, url.url_id, url.html)
                 if result.failure:
@@ -146,11 +144,11 @@ class ScrapeTaskABC(ABC):
     def parse_scraped_html(self):
         parsed = 0
         self.spinner.text = self.url_tracker.parse_html_report(parsed)
-        for game_date, urls in self.url_tracker.all_urls.items():
-            for url in urls:
-                if url.url_id not in self.url_tracker.parse_url_ids:
+        for urls_for_date in self.url_tracker.all_urls.values():
+            for url_details in urls_for_date:
+                if url_details.url_id not in self.url_tracker.parse_url_ids:
                     continue
-                result = self.parse_html(url.html, url.url_id, url.url)
+                result = self.parse_html(url_details)
                 if result.failure:
                     if "Unable to parse any game data" in result.error:
                         continue
@@ -159,7 +157,7 @@ class ScrapeTaskABC(ABC):
                 result = self.scraped_data.save_json(self.data_set, parsed_data)
                 if result.failure:
                     return result
-                result = self.update_status(game_date, parsed_data)
+                result = self.update_status(parsed_data)
                 if result.failure:
                     return result
                 self.db_session.commit()
@@ -176,9 +174,9 @@ class ScrapeTaskABC(ABC):
         pass
 
     @abstractmethod
-    def parse_html(self, html, url_id, url):
+    def parse_html(self, url_details):
         pass
 
     @abstractmethod
-    def update_status(self, game_date, parsed_data):
+    def update_status(self, parsed_data):
         pass

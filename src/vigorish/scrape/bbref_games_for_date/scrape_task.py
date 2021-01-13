@@ -17,15 +17,15 @@ class ScrapeBBRefGamesForDate(ScrapeTaskABC):
         return Result.Ok()
 
     def check_current_status(self, game_date):
+        if self.scrape_condition == ScrapeCondition.ALWAYS:
+            return Result.Ok()
         bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
-        if bbref_games_for_date and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
-            return Result.Fail("skip")
-        return Result.Ok()
+        return Result.Ok() if not bbref_games_for_date else Result.Fail("skip")
 
-    def parse_html(self, html, url_id, url):
-        return parse_bbref_dashboard_page(html, url_id, url)
+    def parse_html(self, url_details):
+        return parse_bbref_dashboard_page(url_details.html, url_details.url_id, url_details.url)
 
-    def update_status(self, game_date, parsed_data):
+    def update_status(self, parsed_data):
         return update_bbref_games_for_date_single_date(self.db_session, self.season, parsed_data)
