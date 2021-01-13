@@ -10,6 +10,7 @@ from vigorish.util.result import Result
 class ScrapeBrooksPitchFx(ScrapeTaskABC):
     def __init__(self, app, db_job):
         self.data_set = DataSet.BROOKS_PITCHFX
+        self.req_data_set = DataSet.BROOKS_PITCH_LOGS
         super().__init__(app, db_job)
 
     def check_prerequisites(self, game_date):
@@ -26,12 +27,12 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
         return Result.Fail(error)
 
     def check_current_status(self, game_date):
+        if self.scrape_condition == ScrapeCondition.ALWAYS:
+            return Result.Ok()
         scraped_brooks_pitchfx = DateScrapeStatus.verify_all_brooks_pitchfx_scraped_for_date(
             self.db_session, game_date
         )
-        if scraped_brooks_pitchfx and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
-            return Result.Fail("skip")
-        return Result.Ok()
+        return Result.Ok() if not scraped_brooks_pitchfx else Result.Fail("skip")
 
     def parse_scraped_html(self):
         parsed = 0
@@ -39,7 +40,7 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
             pitch_logs_for_date = self.scraped_data.get_all_brooks_pitch_logs_for_date(game_date)
             if not pitch_logs_for_date:
                 date_str = game_date.strftime(DATE_ONLY_2)
-                error = f"Failed to retrieve {DataSet.BROOKS_PITCH_LOGS} for date: {date_str}"
+                error = f"Failed to retrieve {self.req_data_set} for date: {date_str}"
                 return Result.Fail(error)
             for pitch_logs_for_game in pitch_logs_for_date:
                 game_id = pitch_logs_for_game.bbref_game_id
@@ -57,7 +58,7 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                     result = self.scraped_data.save_json(self.data_set, pitchfx_log)
                     if result.failure:
                         return Result.Fail(f"Error! {result.error} (ID: {pitch_log.pitch_app_id})")
-                    result = self.update_status(game_date, pitchfx_log)
+                    result = self.update_status(pitchfx_log)
                     if result.failure:
                         return Result.Fail(f"Error! {result.error} (ID: {pitch_log.pitch_app_id})")
                     parsed += 1
@@ -65,8 +66,8 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
                     self.db_session.commit()
         return Result.Ok()
 
-    def parse_html(self, html, url_id, url):
+    def parse_html(self, url_details):
         pass
 
-    def update_status(self, game_date, parsed_data):
+    def update_status(self, parsed_data):
         return update_pitch_appearance_status_records(self.db_session, parsed_data)

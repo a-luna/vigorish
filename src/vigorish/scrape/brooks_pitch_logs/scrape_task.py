@@ -11,6 +11,7 @@ from vigorish.util.result import Result
 class ScrapeBrooksPitchLogs(ScrapeTaskABC):
     def __init__(self, app, db_job):
         self.data_set = DataSet.BROOKS_PITCH_LOGS
+        self.req_data_set = DataSet.BROOKS_GAMES_FOR_DATE
         super().__init__(app, db_job)
 
     def check_prerequisites(self, game_date):
@@ -27,12 +28,12 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         return Result.Fail(error)
 
     def check_current_status(self, game_date):
+        if self.scrape_condition == ScrapeCondition.ALWAYS:
+            return Result.Ok()
         scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
             self.db_session, game_date
         )
-        if scraped_brooks_pitch_logs and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
-            return Result.Fail("skip")
-        return Result.Ok()
+        return Result.Ok() if not scraped_brooks_pitch_logs else Result.Fail("skip")
 
     def parse_scraped_html(self):
         parsed = 0
@@ -40,21 +41,20 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
             brooks_games_for_date = self.scraped_data.get_brooks_games_for_date(game_date)
             if not brooks_games_for_date:
                 date_str = game_date.strftime(DATE_MONTH_NAME)
-                return Result.Fail(f"Failed to retrieve {self.data_set} (Date: {date_str})")
+                return Result.Fail(f"Failed to retrieve {self.req_data_set} (Date: {date_str})")
             for game in brooks_games_for_date.games:
-                game_id = game.bbref_game_id
-                if game_id not in self.url_tracker.parse_url_ids:
+                if game.bbref_game_id not in self.url_tracker.parse_url_ids:
                     continue
                 if game.might_be_postponed:
                     continue
-                self.spinner.text = self.url_tracker.parse_html_report(parsed, game_id)
+                self.spinner.text = self.url_tracker.parse_html_report(parsed, game.bbref_game_id)
                 pitch_logs_for_game = BrooksPitchLogsForGame()
                 pitch_logs_for_game.bb_game_id = game.bb_game_id
-                pitch_logs_for_game.bbref_game_id = game_id
+                pitch_logs_for_game.bbref_game_id = game.bbref_game_id
                 pitch_logs_for_game.pitch_log_count = game.pitcher_appearance_count
                 scraped_pitch_logs = []
                 for pitcher_id, url in game.pitcher_appearance_dict.items():
-                    pitch_app_id = f"{game_id}_{pitcher_id}"
+                    pitch_app_id = f"{game.bbref_game_id}_{pitcher_id}"
                     html = self.url_tracker.get_html(pitch_app_id)
                     result = parse_pitch_log(html, game, pitcher_id, url)
                     if result.failure:
@@ -65,16 +65,16 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
                 result = self.scraped_data.save_json(self.data_set, pitch_logs_for_game)
                 if result.failure:
                     return result
-                result = self.update_status(game_date, pitch_logs_for_game)
+                result = self.update_status(pitch_logs_for_game)
                 if result.failure:
                     return result
                 parsed += 1
-                self.spinner.text = self.url_tracker.parse_html_report(parsed, game_id)
+                self.spinner.text = self.url_tracker.parse_html_report(parsed, game.bbref_game_id)
                 self.db_session.commit()
         return Result.Ok()
 
-    def parse_html(self, html, url_id, url):
+    def parse_html(self, url_details):
         pass
 
-    def update_status(self, game_date, parsed_data):
+    def update_status(self, parsed_data):
         return update_status_brooks_pitch_logs_for_game(self.db_session, parsed_data)

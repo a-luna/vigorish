@@ -28,18 +28,24 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
         return Result.Fail(error)
 
     def check_current_status(self, game_date):
+        if self.scrape_condition == ScrapeCondition.ALWAYS:
+            return Result.Ok()
         brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
-        if brooks_games_for_date and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
-            return Result.Fail("skip")
-        return Result.Ok()
+        return Result.Ok() if not brooks_games_for_date else Result.Fail("skip")
 
-    def parse_html(self, html, url_id, url):
-        bbref_games_for_date = self.scraped_data.get_bbref_games_for_date(url_id)
+    def parse_html(self, url_details):
+        bbref_games_for_date = self.scraped_data.get_bbref_games_for_date(url_details.url_id)
         if not bbref_games_for_date:
-            return Result.Fail(f"Failed to retrieve {self.data_set} (URL ID: {url_id})")
-        return parse_brooks_dashboard_page(self.db_session, html, url_id, url, bbref_games_for_date)
+            return Result.Fail(f"Failed to retrieve {self.data_set} (URL ID: {url_details.url_id})")
+        return parse_brooks_dashboard_page(
+            self.db_session,
+            url_details.html,
+            url_details.url_id,
+            url_details.url,
+            bbref_games_for_date,
+        )
 
-    def update_status(self, game_date, parsed_data):
+    def update_status(self, parsed_data):
         return update_brooks_games_for_date_single_date(self.db_session, self.season, parsed_data)
