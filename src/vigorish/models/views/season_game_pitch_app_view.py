@@ -42,6 +42,9 @@ class Season_Game_PitchApp_View(Base):
                 func.sum(PitchAppScrapeStatus.pitch_count_pitchfx_audited).label(
                     "total_pitch_count_pitchfx_audited"
                 ),
+                func.sum(PitchAppScrapeStatus.total_at_bats_pitchfx_complete).label(
+                    "total_at_bats_pitchfx_complete"
+                ),
                 func.sum(PitchAppScrapeStatus.patched_pitchfx_count).label(
                     "total_patched_pitchfx_count"
                 ),
@@ -93,31 +96,15 @@ class Season_Game_PitchApp_View(Base):
     )
 
     @classmethod
-    def get_all_bbref_game_ids_no_pitchfx_data_for_any_pitch_apps(
-        cls, db_engine, year, season_type=SeasonType.REGULAR_SEASON
-    ):
-        s = select([Season_Game_PitchApp_View.bbref_game_id]).where(
-            and_(
-                Season_Game_PitchApp_View.year == year,
-                Season_Game_PitchApp_View.total_pitchfx
-                == Season_Game_PitchApp_View.total_pitchfx_scraped,
-                Season_Game_PitchApp_View.total_no_pitchfx_data > 0,
-            )
-        )
-        results = db_engine.execute(s).fetchall()
-        return flatten_list2d([d.values() for d in [dict(row) for row in results]])
-
-    @classmethod
     def get_all_bbref_game_ids_eligible_for_audit(
         cls, db_engine, year, season_type=SeasonType.REGULAR_SEASON
     ):
-        s = select([Season_Game_PitchApp_View.bbref_game_id]).where(
+        s = select([cls.bbref_game_id]).where(
             and_(
-                Season_Game_PitchApp_View.year == year,
-                Season_Game_PitchApp_View.total_pitchfx
-                == Season_Game_PitchApp_View.total_pitchfx_scraped,
-                Season_Game_PitchApp_View.total_pitchfx
-                != Season_Game_PitchApp_View.total_combined_pitchfx_bbref_data,
+                cls.year == year,
+                cls.season_type == season_type,
+                cls.total_pitchfx == cls.total_pitchfx_scraped,
+                cls.total_pitchfx != cls.total_combined_pitchfx_bbref_data,
             )
         )
         results = db_engine.execute(s).fetchall()
@@ -127,13 +114,13 @@ class Season_Game_PitchApp_View(Base):
     def get_all_bbref_game_ids_all_pitchfx_logs_are_valid(
         cls, db_engine, year, season_type=SeasonType.REGULAR_SEASON
     ):
-        s = select([Season_Game_PitchApp_View.bbref_game_id]).where(
+        s = select([cls.bbref_game_id]).where(
             and_(
-                Season_Game_PitchApp_View.year == year,
-                Season_Game_PitchApp_View.total_pitchfx
-                == Season_Game_PitchApp_View.total_combined_pitchfx_bbref_data,
-                Season_Game_PitchApp_View.total_pitchfx_error == 0,
-                Season_Game_PitchApp_View.total_invalid_pitchfx == 0,
+                cls.year == year,
+                cls.season_type == season_type,
+                cls.total_pitchfx == cls.total_combined_pitchfx_bbref_data,
+                cls.total_pitchfx_error == 0,
+                cls.total_invalid_pitchfx == 0,
             )
         )
         results = db_engine.execute(s).fetchall()
@@ -143,10 +130,11 @@ class Season_Game_PitchApp_View(Base):
     def get_all_bbref_game_ids_pitchfx_error(
         cls, db_engine, year, season_type=SeasonType.REGULAR_SEASON
     ):
-        s = select([Season_Game_PitchApp_View.bbref_game_id]).where(
+        s = select([cls.bbref_game_id]).where(
             and_(
-                Season_Game_PitchApp_View.year == year,
-                Season_Game_PitchApp_View.total_pitchfx_error > 0,
+                cls.year == year,
+                cls.season_type == season_type,
+                cls.total_pitchfx_error > 0,
             )
         )
         results = db_engine.execute(s).fetchall()
@@ -156,10 +144,11 @@ class Season_Game_PitchApp_View(Base):
     def get_all_bbref_game_ids_invalid_pitchfx(
         cls, db_engine, year, season_type=SeasonType.REGULAR_SEASON
     ):
-        s = select([Season_Game_PitchApp_View.bbref_game_id]).where(
+        s = select([cls.bbref_game_id]).where(
             and_(
-                Season_Game_PitchApp_View.year == year,
-                Season_Game_PitchApp_View.total_invalid_pitchfx > 0,
+                cls.year == year,
+                cls.season_type == season_type,
+                cls.total_invalid_pitchfx > 0,
             )
         )
         results = db_engine.execute(s).fetchall()
@@ -169,13 +158,13 @@ class Season_Game_PitchApp_View(Base):
     def get_all_bbref_game_ids_combined_no_missing_pfx(
         cls, db_engine, season_type=SeasonType.REGULAR_SEASON
     ):
-        s = select([Season_Game_PitchApp_View.bbref_game_id]).where(
+        s = select([cls.bbref_game_id]).where(
             and_(
-                Season_Game_PitchApp_View.total_pitchfx
-                == Season_Game_PitchApp_View.total_combined_pitchfx_bbref_data,
-                Season_Game_PitchApp_View.total_missing_pitchfx_count == 0,
-                Season_Game_PitchApp_View.total_pitchfx_error == 0,
-                Season_Game_PitchApp_View.total_invalid_pitchfx == 0,
+                cls.season_type == season_type,
+                cls.total_pitchfx == cls.total_combined_pitchfx_bbref_data,
+                cls.total_missing_pitchfx_count == 0,
+                cls.total_pitchfx_error == 0,
+                cls.total_invalid_pitchfx == 0,
             )
         )
         results = db_engine.execute(s).fetchall()

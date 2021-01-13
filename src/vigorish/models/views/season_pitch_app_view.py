@@ -37,6 +37,9 @@ class Season_PitchApp_View(Base):
                 func.sum(PitchAppScrapeStatus.pitch_count_pitchfx_audited).label(
                     "total_pitch_count_pitchfx_audited"
                 ),
+                func.sum(PitchAppScrapeStatus.total_at_bats_pitchfx_complete).label(
+                    "total_at_bats_pitchfx_complete"
+                ),
                 func.sum(PitchAppScrapeStatus.patched_pitchfx_count).label(
                     "total_patched_pitchfx_count"
                 ),
