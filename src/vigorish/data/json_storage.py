@@ -193,12 +193,22 @@ class JsonStorage:
 
     def save_patch_list_local(self, data_set, patch_list):
         save_patch_list_local_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.save_brooks_games_for_date_patch_list_local_file,
             DataSet.BROOKS_PITCHFX: self.save_brooks_pitchfx_patch_list_local_file,
             DataSet.BBREF_GAMES_FOR_DATE: self.save_bbref_games_for_date_patch_list_local_file,
             DataSet.BBREF_BOXSCORES: self.save_bbref_boxscore_patch_list_local_file,
         }
         save_patch_list_for_data_set = save_patch_list_local_dict.get(data_set, None)
         return save_patch_list_for_data_set(patch_list) if save_patch_list_for_data_set else None
+
+    def save_brooks_games_for_date_patch_list_local_file(self, patch_list):
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.WRITE_FILE,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            file_type=VigFile.PATCH_LIST,
+            game_date=patch_list.game_date,
+            scraped_data=patch_list,
+        )
 
     def save_brooks_pitchfx_patch_list_local_file(self, patch_list):
         result = validate_bbref_game_id(patch_list.url_id)
@@ -235,12 +245,22 @@ class JsonStorage:
 
     def save_patch_list_s3(self, data_set, patch_list):  # pragma: no cover
         save_patch_list_s3_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.save_brooks_games_for_date_patch_list_s3,
             DataSet.BROOKS_PITCHFX: self.save_brooks_pitchfx_patch_list_s3,
             DataSet.BBREF_GAMES_FOR_DATE: self.save_bbref_games_for_date_patch_list_s3,
             DataSet.BBREF_BOXSCORES: self.save_bbref_boxscore_patch_list_s3,
         }
         save_patch_list_for_data_set = save_patch_list_s3_dict.get(data_set, None)
         return save_patch_list_for_data_set(patch_list) if save_patch_list_for_data_set else None
+
+    def save_brooks_games_for_date_patch_list_s3(self, patch_list):  # pragma: no cover
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.UPLOAD,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            file_type=VigFile.PATCH_LIST,
+            game_date=patch_list.game_date,
+            scraped_data=patch_list,
+        )
 
     def save_brooks_pitchfx_patch_list_s3(self, patch_list):  # pragma: no cover
         result = validate_bbref_game_id(patch_list.url_id)
@@ -686,12 +706,33 @@ class JsonStorage:
 
     def get_patch_list_local(self, data_set, url_id):
         get_patch_list_local_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.decode_brooks_games_for_date_patch_list_local_file,
             DataSet.BROOKS_PITCHFX: self.decode_brooks_pitchfx_patch_list_local_file,
             DataSet.BBREF_GAMES_FOR_DATE: self.decode_bbref_games_for_date_patch_list_local_file,
             DataSet.BBREF_BOXSCORES: self.decode_bbref_boxscore_patch_list_local_file,
         }
         get_patch_list_for_data_set = get_patch_list_local_dict.get(data_set, None)
         return get_patch_list_for_data_set(url_id) if get_patch_list_for_data_set else None
+
+    def decode_brooks_games_for_date_patch_list_local_file(self, game_date):
+        result = self.get_brooks_games_for_date_patch_list_local_file(game_date)
+        if result.failure:
+            return result
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.DECODE_JSON,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            file_type=VigFile.PATCH_LIST,
+            game_date=game_date,
+            delete_file=False,
+        )
+
+    def get_brooks_games_for_date_patch_list_local_file(self, game_date):
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.READ_FILE,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            file_type=VigFile.PATCH_LIST,
+            game_date=game_date,
+        )
 
     def decode_brooks_pitchfx_patch_list_local_file(self, bbref_game_id):
         result = self.get_brooks_pitchfx_patch_list_local_file(bbref_game_id)
@@ -773,6 +814,36 @@ class JsonStorage:
             bbref_game_id=bbref_game_id,
         )
 
+    def get_patch_list_s3(self, data_set, url_id):  # pragma: no cover
+        get_patch_list_s3_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.decode_brooks_games_for_date_patch_list_s3,
+            DataSet.BROOKS_PITCHFX: self.decode_brooks_pitchfx_patch_list_s3,
+            DataSet.BBREF_GAMES_FOR_DATE: self.decode_bbref_games_for_date_patch_list_s3,
+            DataSet.BBREF_BOXSCORES: self.decode_bbref_boxscore_patch_list_s3,
+        }
+        get_patch_list_for_data_set = get_patch_list_s3_dict.get(data_set, None)
+        return get_patch_list_for_data_set(url_id) if get_patch_list_for_data_set else None
+
+    def decode_brooks_games_for_date_patch_list_s3(self, game_date):  # pragma: no cover
+        result = self.get_brooks_games_for_date_patch_list_s3(game_date)
+        if result.failure:
+            return result
+        return self.file_helper.perform_local_file_task(
+            task=LocalFileTask.DECODE_JSON,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            file_type=VigFile.PATCH_LIST,
+            game_date=game_date,
+            delete_file=True,
+        )
+
+    def get_brooks_games_for_date_patch_list_s3(self, game_date):  # pragma: no cover
+        return self.file_helper.perform_s3_task(
+            task=S3FileTask.DOWNLOAD,
+            data_set=DataSet.BROOKS_GAMES_FOR_DATE,
+            file_type=VigFile.PATCH_LIST,
+            game_date=game_date,
+        )
+
     def decode_brooks_pitchfx_patch_list_s3(self, bbref_game_id):  # pragma: no cover
         result = self.get_brooks_pitchfx_patch_list_local_file(bbref_game_id)
         if result.failure:
@@ -789,15 +860,6 @@ class JsonStorage:
             bbref_game_id=bbref_game_id,
             delete_file=True,
         )
-
-    def get_patch_list_s3(self, data_set, url_id):  # pragma: no cover
-        get_patch_list_s3_dict = {
-            DataSet.BROOKS_PITCHFX: self.decode_brooks_pitchfx_patch_list_s3,
-            DataSet.BBREF_GAMES_FOR_DATE: self.decode_bbref_games_for_date_patch_list_s3,
-            DataSet.BBREF_BOXSCORES: self.decode_bbref_boxscore_patch_list_s3,
-        }
-        get_patch_list_for_data_set = get_patch_list_s3_dict.get(data_set, None)
-        return get_patch_list_for_data_set(url_id) if get_patch_list_for_data_set else None
 
     def get_brooks_pitchfx_patch_list_s3(self, bbref_game_id):  # pragma: no cover
         result = validate_bbref_game_id(bbref_game_id)

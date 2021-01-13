@@ -24,10 +24,6 @@ class Patch(ABC):
         return json.dumps(self.as_dict(), indent=2)
 
     @abstractmethod
-    def __post_init__(self):
-        pass
-
-    @abstractmethod
     def apply(self, data):
         pass
 
@@ -36,8 +32,8 @@ class Patch(ABC):
 class PatchList(ABC):
     patch_list_id: str = field(repr=False, init=False)
     data_set: DataSet = field(repr=False, init=False)
-    patch_list: List[Patch] = field(repr=False)
     url_id: str
+    patch_list: List[Patch] = field(repr=False, default_factory=list)
 
     def as_dict(self):
         return {
@@ -49,22 +45,10 @@ class PatchList(ABC):
     def as_json(self):
         return json.dumps(self.as_dict(), indent=2)
 
-    def apply(self, data, db_session, boxscore=None):
-        data = self.pre_process_data(data)
+    def apply(self, data):
         for patch in self.patch_list:
             result = patch.apply(data)
             if result.failure:
                 return result
             data = result.value
-        data = self.post_process_data(data, db_session, boxscore)
         return Result.Ok(data)
-
-    @abstractmethod
-    def __post_init__(self):
-        pass
-
-    def pre_process_data(self, data):
-        return data
-
-    def post_process_data(self, data, db_session, boxscore=None):
-        return data
