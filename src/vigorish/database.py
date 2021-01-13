@@ -3,37 +3,49 @@
 import os
 from pathlib import Path
 
-from sqlalchemy import create_engine, func
+from sqlalchemy import func
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
 from vigorish.config.project_paths import CSV_FOLDER, VIG_FOLDER
-from vigorish.models.pitchfx import PitchFx, PitchFxCsvRow
-from vigorish.models.player import Player
-from vigorish.models.player_id import PlayerId
-from vigorish.models.scrape_error import ScrapeError
-from vigorish.models.scrape_job import ScrapeJob
-from vigorish.models.season import Season
-from vigorish.models.status_date import DateScrapeStatus, DateScrapeStatusCsvRow
-from vigorish.models.status_game import GameScrapeStatus, GameScrapeStatusCsvRow
-from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus, PitchAppScrapeStatusCsvRow
-from vigorish.models.team import Team
-from vigorish.models.time_between_pitches import TimeBetweenPitches
-from vigorish.models.views.date_pitch_app_view import Date_PitchApp_View
-from vigorish.models.views.game_pitch_app_view import Game_PitchApp_View
-from vigorish.models.views.pitch_app_pitchfx_view import PitchApp_PitchType_View
-from vigorish.models.views.player_pitchfx_view import (
+from vigorish.models import (
+    Assoc_Player_Team,
+    BatStats,
+    BatStatsCsvRow,
+    PitchStats,
+    PitchStatsCsvRow,
+    PitchFx,
+    PitchFxCsvRow,
+    Player,
+    PlayerId,
+    ScrapeError,
+    ScrapeJob,
+    Season,
+    DateScrapeStatus,
+    DateScrapeStatusCsvRow,
+    GameScrapeStatus,
+    GameScrapeStatusCsvRow,
+    PitchAppScrapeStatus,
+    PitchAppScrapeStatusCsvRow,
+    Team,
+    TimeBetweenPitches,
+)
+from vigorish.models.views import (
+    Date_PitchApp_View,
+    Game_PitchApp_View,
+    PitchApp_PitchType_All_View,
+    PitchApp_PitchType_Left_View,
+    PitchApp_PitchType_Right_View,
     Pitch_Type_All_View,
     Pitch_Type_By_Year_View,
     Pitch_Type_Left_View,
     Pitch_Type_Right_View,
+    Season_Date_View,
+    Season_Game_PitchApp_View,
+    Season_Game_View,
+    Season_PitchApp_View,
 )
-from vigorish.models.views.season_date_view import Season_Date_View
-from vigorish.models.views.season_game_pitch_app_view import Season_Game_PitchApp_View
-from vigorish.models.views.season_game_view import Season_Game_View
-from vigorish.models.views.season_pitch_app_view import Season_PitchApp_View
 from vigorish.setup.populate_tables import populate_tables, populate_tables_for_restore
 from vigorish.util.result import Result
 
@@ -42,8 +54,6 @@ SQLITE_PROD_URL = f"sqlite:///{VIG_FOLDER.joinpath('vig.db')}"
 
 
 def get_db_url():
-    if os.environ.get("ENV") == "TEST":
-        return os.environ.get("DATABASE_URL")
     db_url = os.getenv("DATABASE_URL", "")
     if db_url and db_url.startswith("/"):
         db_url = f"sqlite:///{db_url}"
@@ -62,6 +72,10 @@ def initialize_database(app, csv_folder=None):
 def prepare_database_for_restore(app, csv_folder=None):
     if not csv_folder:
         csv_folder = CSV_FOLDER
+    result = delete_sqlite_database(app.db_url)
+    if result.failure:
+        return result
+    app.reset_database_connection()
     Base.metadata.drop_all(app.db_engine)
     Base.metadata.create_all(app.db_engine)
     return populate_tables_for_restore(app, csv_folder)
@@ -69,25 +83,9 @@ def prepare_database_for_restore(app, csv_folder=None):
 
 def delete_sqlite_database(db_url):
     db_file = Path(db_url.replace("sqlite:///", ""))
-    if not db_file.exists():
-        return Result.Fail("Error occurred attempting to delete existing database file!")
-    db_file.unlink()
+    if db_file.exists():
+        db_file.unlink()
     return Result.Ok()
-
-
-def db_setup_complete(db_engine, db_session):
-    tables_missing = (
-        "player" not in db_engine.table_names()
-        or "season" not in db_engine.table_names()
-        or "team" not in db_engine.table_names()
-    )
-    if tables_missing:
-        return False
-    return (
-        len(db_session.query(Season).all()) > 0
-        and len(db_session.query(Player).all()) > 0
-        and len(db_session.query(Team).all()) > 0
-    )
 
 
 def get_total_number_of_rows(db_session, db_table):
