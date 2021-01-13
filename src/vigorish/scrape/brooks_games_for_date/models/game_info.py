@@ -1,47 +1,26 @@
 """Individual game info scraped from brooksbaseball.com."""
-from datetime import datetime
+from dataclasses import dataclass, field
+from typing import Dict
 
-from dateutil import tz
 
-
+@dataclass
 class BrooksGameInfo:
     """Individual game info scraped from brooksbaseball.com."""
 
-    might_be_postponed = None
-    game_date_year = ""
-    game_date_month = ""
-    game_date_day = ""
-    game_time_hour = ""
-    game_time_minute = ""
-    time_zone_name = ""
-    bb_game_id = ""
-    bbref_game_id = ""
-    away_team_id_bb = ""
-    home_team_id_bb = ""
-    game_number_this_day = 0
-    pitcher_appearance_count = 0
-    pitcher_appearance_dict = {}
-
-    @property
-    def game_id_dict(self):
-        return {f"{self.bbref_game_id}": f"{self.bb_game_id}"}
-
-    @property
-    def game_date(self):
-        return datetime(self.game_date_year, self.game_date_month, self.game_date_day).date()
-
-    @property
-    def game_start_time(self):
-        if not self.game_time_hour:
-            return None
-        game_start_time = datetime(
-            year=self.game_date.year,
-            month=self.game_date.month,
-            day=self.game_date.day,
-            hour=self.game_time_hour,
-            minute=self.game_time_minute,
-        )
-        return game_start_time.replace(tzinfo=tz.gettz(self.time_zone_name))
+    might_be_postponed: bool = field(repr=False, default=None)
+    game_date_year: str = field(repr=False, default="")
+    game_date_month: str = field(repr=False, default="")
+    game_date_day: str = field(repr=False, default="")
+    game_time_hour: str = field(repr=False, default="")
+    game_time_minute: str = field(repr=False, default="")
+    time_zone_name: str = field(repr=False, default="")
+    bb_game_id: str = field(repr=False, default="")
+    bbref_game_id: str = ""
+    away_team_id_bb: str = field(repr=False, default="")
+    home_team_id_bb: str = field(repr=False, default="")
+    game_number_this_day: int = field(repr=False, default=0)
+    pitcher_appearance_count: int = field(repr=False, default=0)
+    pitcher_appearance_dict: Dict[str, str] = field(repr=False, default_factory=dict)
 
     @property
     def all_pitch_app_ids(self):
@@ -51,7 +30,7 @@ class BrooksGameInfo:
         ]
 
     def as_dict(self):
-        """Convert pitcher appearance list/game log links to a dictionary."""
+        """Convert game info list to a dictionary."""
         return {
             "__brooks_game_info__": True,
             "might_be_postponed": self.might_be_postponed,

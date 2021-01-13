@@ -1,6 +1,7 @@
-from dataclasses import dataclass
-from typing import Any
+from dataclasses import dataclass, field
+from typing import List
 
+from vigorish.scrape.bbref_boxscores.models.bat_stats_detail import BBRefBatStatsDetail
 from vigorish.util.list_helpers import as_dict_list
 
 
@@ -8,17 +9,16 @@ from vigorish.util.list_helpers import as_dict_list
 class BBRefBatStats:
     """Statistics for all plate appearances that occurred for one player in a single game."""
 
-    details: Any
-    player_id_br: str = "0"
-    player_team_id_br: str = "0"
-    opponent_team_id_br: str = "0"
+    player_id_br: str = ""
+    player_team_id_br: str = ""
+    opponent_team_id_br: str = ""
+    plate_appearances: str = "0"
     at_bats: str = "0"
-    runs_scored: str = "0"
     hits: str = "0"
+    runs_scored: str = "0"
     rbis: str = "0"
     bases_on_balls: str = "0"
     strikeouts: str = "0"
-    plate_appearances: str = "0"
     avg_to_date: str = "0"
     obp_to_date: str = "0"
     slg_to_date: str = "0"
@@ -30,6 +30,7 @@ class BBRefBatStats:
     wpa_bat_pos: str = "0"
     wpa_bat_neg: str = "0"
     re24_bat: str = "0"
+    details: List[BBRefBatStatsDetail] = field(default_factory=list)
 
     def as_dict(self):
         """Convert batting statistics for one player in a single game to a dictionary."""
@@ -37,13 +38,13 @@ class BBRefBatStats:
             "player_id_br": self.player_id_br,
             "player_team_id_br": self.player_team_id_br,
             "opponent_team_id_br": self.opponent_team_id_br,
+            "plate_appearances": int(self.plate_appearances),
             "at_bats": int(self.at_bats),
-            "runs_scored": int(self.runs_scored),
             "hits": int(self.hits),
+            "runs_scored": int(self.runs_scored),
             "rbis": int(self.rbis),
             "bases_on_balls": int(self.bases_on_balls),
             "strikeouts": int(self.strikeouts),
-            "plate_appearances": int(self.plate_appearances),
             "avg_to_date": float(self.avg_to_date),
             "obp_to_date": float(self.obp_to_date),
             "slg_to_date": float(self.slg_to_date),

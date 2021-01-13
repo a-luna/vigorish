@@ -1,8 +1,12 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class BBRefUmpire:
     """Name and field location of one umpire for a single game."""
 
-    field_location = ""
-    umpire_name = ""
+    field_location: str = ""
+    umpire_name: str = ""
 
     def as_dict(self):
         """Convert umpire name and field location to a dictionary."""
