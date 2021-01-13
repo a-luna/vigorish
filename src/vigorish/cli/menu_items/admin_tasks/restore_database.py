@@ -20,7 +20,7 @@ from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.database import prepare_database_for_restore
 from vigorish.enums import DataSet
 from vigorish.tasks.restore_database import RestoreDatabaseTask
-from vigorish.util.datetime_util import format_timedelta_str, get_local_utcoffset, get_time_since
+from vigorish.util.datetime_util import format_timedelta_str, get_local_utcoffset
 from vigorish.util.dt_format_strings import DT_NAIVE, FILE_TIMESTAMP
 from vigorish.util.result import Result
 
@@ -95,16 +95,14 @@ class RestoreDatabase(MenuItem):
 
     def get_backup_time(self, timestamp):
         backup_created = datetime.strptime(timestamp, FILE_TIMESTAMP).replace(tzinfo=timezone.utc)
-        time_span = get_time_since(datetime.now(timezone.utc) - backup_created)
+        time_span = format_timedelta_str(datetime.now(timezone.utc) - backup_created, precise=False)
         backup_created_aware = backup_created.astimezone(get_local_utcoffset())
         return f"{backup_created_aware.strftime(DT_NAIVE)} ({time_span} ago)"
 
     def prepare_database(self):
         subprocess.run(["clear"])
         print_heading("Restore Database from Backup", fg="bright_yellow")
-        result = self.app.reset_database_connection()
-        if result.failure:
-            return result
+        self.app.reset_database_connection()
         return prepare_database_for_restore(self.app)
 
     def unzip_backup_file_start(self):
