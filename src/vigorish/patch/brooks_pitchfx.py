@@ -22,6 +22,19 @@ class BrooksPitchFxPatchList(PatchList):
         self.data_set = DataSet.BROOKS_PITCHFX
         self.patch_list_id = "__brooks_pitchfx_patch_list__"
 
+    def apply(self, data, db_session, boxscore):
+        data = self.pre_process_data(data)
+        for patch in self.patch_list:
+            result = patch.apply(data)
+            if result.failure:
+                return result
+            data = result.value
+        result = self.post_process_data(data, db_session, boxscore)
+        if result.failure:
+            return result
+        data = result.value
+        return Result.Ok(data)
+
     def pre_process_data(self, data):
         data_copy = deepcopy(data)
         self.original_pfx_logs = {pfx_log.pitch_app_id: pfx_log for pfx_log in data_copy}
@@ -29,19 +42,17 @@ class BrooksPitchFxPatchList(PatchList):
 
     def post_process_data(self, data, db_session, boxscore=None):
         pfx_grouped = group_and_sort_list(data, "pitch_app_id", "park_sv_id")
-        for pitch_app_id, pitchfx_log in pfx_grouped.items():
-            og_pfx_log = self.original_pfx_logs.get(pitch_app_id, None)
+        for pa_id, pfx_log in pfx_grouped.items():
+            og_pfx_log = self.original_pfx_logs.get(pa_id, None)
             if not og_pfx_log:
-                pfx_log = self.create_new_pitchfx_log(
-                    pitch_app_id, pitchfx_log, db_session, boxscore
-                )
-                self.original_pfx_logs[pitch_app_id] = pfx_log
+                new_pfx_log = self.create_new_pitchfx_log(pa_id, pfx_log, db_session, boxscore)
+                self.original_pfx_logs[pa_id] = new_pfx_log
                 continue
-            og_pfx_log.pitchfx_log = pitchfx_log
-            og_pfx_log.pitch_count_by_inning = self.get_pitch_count_by_inning(pitchfx_log)
-            og_pfx_log.total_pitch_count = len(pitchfx_log)
+            og_pfx_log.pitchfx_log = pfx_log
+            og_pfx_log.pitch_count_by_inning = self.get_pitch_count_by_inning(pfx_log)
+            og_pfx_log.total_pitch_count = len(pfx_log)
         patched_pfx_logs = list(self.original_pfx_logs.values())
-        return patched_pfx_logs
+        return Result.Ok(patched_pfx_logs)
 
     def get_pitch_count_by_inning(self, pitchfx_log):
         pitch_count_unordered = defaultdict(int)
@@ -118,7 +129,9 @@ class PatchBrooksPitchFxBatterId(Patch):
                 f"pitch_app_id: {self.pitch_app_id}, park_sv_id: {self.park_sv_id}"
             )
             return Result.Fail(error)
+        matches[0].at_bat_id = self.new_at_bat_id
         matches[0].batter_id = self.new_batter_id
+        matches[0].batter_name = self.new_batter_name
         matches[0].is_patched = True
         return Result.Ok(data)
 
@@ -154,6 +167,7 @@ class PatchBrooksPitchFxPitcherId(Patch):
                 f"pitch_app_id: {self.current_pitch_app_id}, park_sv_id: {self.park_sv_id}"
             )
             return Result.Fail(error)
+        matches[0].at_bat_id = self.new_at_bat_id
         matches[0].pitch_app_id = self.new_pitch_app_id
         matches[0].pitcher_id = self.new_pitcher_id
         matches[0].pitcher_name = self.new_pitcher_name
