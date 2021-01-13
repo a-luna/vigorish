@@ -1,17 +1,25 @@
 """Menu item that allows the user to initialize/reset the database."""
 import subprocess
 import time
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
 from getch import pause
+from halo import Halo
 
 from vigorish.cli.components.prompts import yes_no_prompt
-from vigorish.cli.components.util import print_heading, print_message, shutdown_cli_immediately
+from vigorish.cli.components.util import (
+    print_heading,
+    print_message,
+    shutdown_cli_immediately,
+    get_random_cli_color,
+    get_random_dots_spinner,
+)
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.constants import EMOJI_DICT
-from vigorish.database import db_setup_complete, initialize_database, Season
+from vigorish.database import initialize_database, Season
 from vigorish.enums import DataSet
 from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.util.result import Result
@@ -43,7 +51,8 @@ class SetupDatabase(MenuItem):
         super().__init__(app)
         self.update_id_map_task = UpdatePlayerIdMap(self.app)
         self.import_data_task = ImportScrapedDataTask(self.app)
-        self.db_initialized = db_setup_complete(self.db_engine, self.db_session)
+        self.db_initialized = self.app.db_setup_complete
+        self.spinners = {}
         self.menu_item_text = "Reset Database" if self.db_initialized else "Setup Database"
         self.menu_item_emoji = EMOJI_DICT["BOMB"] if self.db_initialized else EMOJI_DICT["DIZZY"]
 
@@ -67,17 +76,18 @@ class SetupDatabase(MenuItem):
             message = SETUP_HEADING
             message_color = None
             prompt = SETUP_MESSAGE
-        subprocess.run(["clear"])
-        print_heading(self.get_heading("Run Task?"), fg="bright_yellow")
+        self.update_heading("Run Task?")
         print_message(message, fg=message_color)
         return yes_no_prompt(prompt, wrap=False)
 
-    def get_heading(self, current_action):
-        return (
+    def update_heading(self, current_action):
+        new_heading = (
             f"Reset Database: {current_action}"
             if self.db_initialized
             else f"Setup Database: {current_action}"
         )
+        subprocess.run(["clear"])
+        print_heading(new_heading, fg="bright_yellow")
 
     def update_player_id_map(self):
         if not self.db_initialized:
@@ -89,17 +99,15 @@ class SetupDatabase(MenuItem):
         return self.update_id_map_task.launch()
 
     def update_database_connection(self):
-        if not self.db_initialized:
-            return Result.Ok()
-        return self.app.reset_database_connection()
+        if self.db_initialized:
+            self.app.reset_database_connection()
+        return Result.Ok()
 
     def create_and_populate_database_tables(self):
-        subprocess.run(["clear"])
-        print_heading(self.get_heading("In Progress"), fg="bright_yellow")
+        self.update_heading("In Progress")
         result = initialize_database(self.app)
         if result.success:
-            subprocess.run(["clear"])
-            print_heading(self.get_heading("Complete"), fg="bright_yellow")
+            self.update_heading("Complete")
             print_message(DB_INITIALIZED, fg="bright_green", bold=True)
             pause(message="Press any key to continue...")
         return result
@@ -107,12 +115,15 @@ class SetupDatabase(MenuItem):
     def import_scraped_data(self, restart_required):
         if not self.import_scraped_data_prompt():
             return self.setup_complete(restart_required)
+        subprocess.run(["clear"])
+        self.subscribe_to_events()
         result = self.import_data_task.execute(overwrite_existing=True)
         if result.error:
             print_message(result.error, fg="bright_red")
             pause(message="Press any key to continue...")
         else:
             time.sleep(2)
+        self.unsubscribe_from_events()
         return self.setup_complete(restart_required)
 
     def import_scraped_data_prompt(self):
@@ -120,8 +131,7 @@ class SetupDatabase(MenuItem):
         example_folder = local_folder_path.current_setting(data_set=DataSet.BBREF_BOXSCORES)
         root_folder = Path(example_folder.resolve(year=2019)).parent.parent
         current_setting = f"JSON_LOCAL_FOLDER_PATH: {root_folder}"
-        subprocess.run(["clear"])
-        print_heading(self.get_heading("Import Local JSON Folder?"), fg="bright_yellow")
+        self.update_heading("Import Local JSON Folder?")
         print_message(IMPORT_SCRAPED_DATA_MESSAGE)
         print_message(current_setting, wrap=False)
         return yes_no_prompt(IMPORT_SCRAPED_DATA_PROMPT, wrap=False)
@@ -130,3 +140,73 @@ class SetupDatabase(MenuItem):
         if restart_required:
             shutdown_cli_immediately()
         return Result.Ok(self.exit_menu)
+
+    def error_occurred(self, error_message, data_set, year):
+        self.update_heading("Error!")
+        self.spinner.fail(f"Error occurred while updating {data_set} for MLB {year}")
+
+    def search_local_files_start(self):
+        self.update_heading("In Progress...")
+        self.spinners["default"] = Halo(
+            spinner=get_random_dots_spinner(), color=get_random_cli_color()
+        )
+        self.spinners["default"].text = "Searching local folder for scraped data..."
+        self.spinners["default"].start()
+
+    def import_scraped_data_start(self):
+        self.spinners["default"].stop()
+        self.update_heading("In Progress...")
+
+    def import_scraped_data_complete(self):
+        self.update_heading("Complete!")
+        success = "Successfully imported all scraped data from local files"
+        print_message(success, fg="bright_yellow", bold=True)
+        pause(message="\nPress any key to continue...")
+
+    def import_scraped_data_for_year_start(self, year):
+        self.update_heading("In Progress...")
+        self.spinners[year] = defaultdict(lambda: Halo())
+
+    def import_scraped_data_set_start(self, data_set, year):
+        spinner = self.spinners[year][data_set]
+        spinner.spinner = get_random_dots_spinner()
+        spinner.color = get_random_cli_color()
+        spinner.text = f"Updating {data_set} for MLB {year}..."
+        spinner.start()
+
+    def import_scraped_data_set_complete(self, data_set, year):
+        self.spinners[year][data_set].succeed(f"Successfully updated {data_set} for MLB {year}!")
+
+    def subscribe_to_events(self):
+        self.import_data_task.events.error_occurred += self.error_occurred
+        self.import_data_task.events.search_local_files_start += self.search_local_files_start
+        self.import_data_task.events.import_scraped_data_start += self.import_scraped_data_start
+        self.import_data_task.events.import_scraped_data_complete += (
+            self.import_scraped_data_complete
+        )
+        self.import_data_task.events.import_scraped_data_for_year_start += (
+            self.import_scraped_data_for_year_start
+        )
+        self.import_data_task.events.import_scraped_data_set_start += (
+            self.import_scraped_data_set_start
+        )
+        self.import_data_task.events.import_scraped_data_set_complete += (
+            self.import_scraped_data_set_complete
+        )
+
+    def unsubscribe_from_events(self):
+        self.import_data_task.events.error_occurred -= self.error_occurred
+        self.import_data_task.events.search_local_files_start -= self.search_local_files_start
+        self.import_data_task.events.import_scraped_data_start -= self.import_scraped_data_start
+        self.import_data_task.events.import_scraped_data_complete -= (
+            self.import_scraped_data_complete
+        )
+        self.import_data_task.events.import_scraped_data_for_year_start -= (
+            self.import_scraped_data_for_year_start
+        )
+        self.import_data_task.events.import_scraped_data_set_start -= (
+            self.import_scraped_data_set_start
+        )
+        self.import_data_task.events.import_scraped_data_set_complete -= (
+            self.import_scraped_data_set_complete
+        )
