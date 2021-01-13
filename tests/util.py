@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from vigorish.database import PitchAppScrapeStatus, Season, TimeBetweenPitches
+from vigorish.database import PitchAppScrapeStatus, Season
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
@@ -38,6 +38,16 @@ GAME_ID_EXTRA_PFX_REMOVED = "TEX201904150"
 GAME_ID_PFX_OUT_OF_SEQUENCE = "WAS201904030"
 GAME_ID_PATCH_PFX = "OAK201904030"
 GAME_ID_PATCH_BOXSCORE = "TOR201908170"
+
+PATCH_BR_DAILY_GAME_DATE = datetime(2017, 9, 15)
+PATCH_BB_DAILY_GAME_DATE = datetime(2017, 5, 26)
+INVALID_BR_GAME_ID1 = "CHA201705261"
+INVALID_BR_GAME_ID2 = "CHA201705262"
+PATCHED_BR_GAME_ID1 = "CHA201705260"
+PATCHED_BR_GAME_ID2 = "CHA201705272"
+
+ALL_GD_GAME_DATE = datetime(2019, 7, 11)
+ALL_GD_GAME_ID = "TEX201907110"
 
 COMBINED_DATA_GAME_DICT = {
     "NO_ERRORS": {
@@ -88,8 +98,6 @@ COMBINED_DATA_GAME_DICT = {
 def seed_database_with_2019_test_data(vig_app):
     db_session = vig_app.db_session
     scraped_data = vig_app.scraped_data
-    result = TimeBetweenPitches.from_calc_results(db_session, get_avg_pitch_times())
-    assert result
     for game_id_dict in COMBINED_DATA_GAME_DICT.values():
         game_date = game_id_dict["game_date"]
         bbref_game_id = game_id_dict["bbref_game_id"]
@@ -109,9 +117,10 @@ def seed_database_with_2019_test_data(vig_app):
 
 def update_scraped_bbref_games_for_date(db_session, scraped_data, game_date):
     season = get_season(db_session, game_date.year)
-    games_for_date = parse_bbref_games_for_date_from_html(scraped_data, game_date)
-    result = update_status_bbref_games_for_date(db_session, season, games_for_date)
+    bbref_games_for_date = parse_bbref_games_for_date_from_html(scraped_data, game_date)
+    result = update_status_bbref_games_for_date(db_session, season, bbref_games_for_date)
     assert result.success
+    return bbref_games_for_date
 
 
 def parse_bbref_games_for_date_from_html(scraped_data, game_date):
@@ -119,8 +128,8 @@ def parse_bbref_games_for_date_from_html(scraped_data, game_date):
     html_path = scraped_data.get_html(DataSet.BBREF_GAMES_FOR_DATE, game_date)
     result = parse_bbref_dashboard_page(html_path.read_text(), game_date, bbref_url)
     assert result.success
-    games_for_date = result.value
-    return games_for_date
+    bbref_games_for_date = result.value
+    return bbref_games_for_date
 
 
 def get_bbref_url_for_date(game_date):
@@ -130,18 +139,31 @@ def get_bbref_url_for_date(game_date):
     return f"https://www.baseball-reference.com/boxes/?month={m}&day={d}&year={y}"
 
 
-def update_scraped_brooks_games_for_date(db_session, scraped_data, game_date):
+def update_scraped_brooks_games_for_date(
+    db_session, scraped_data, game_date, apply_patch_list=True
+):
     season = get_season(db_session, game_date.year)
-    games_for_date = parse_brooks_games_for_date_from_html(db_session, scraped_data, game_date)
-    result = update_status_brooks_games_for_date(db_session, season, games_for_date)
+    brooks_games_for_date = parse_brooks_games_for_date_from_html(
+        db_session, scraped_data, game_date, apply_patch_list
+    )
+    result = update_status_brooks_games_for_date(db_session, season, brooks_games_for_date)
     assert result.success
+    return brooks_games_for_date
 
 
-def parse_brooks_games_for_date_from_html(db_session, scraped_data, game_date):
+def get_season(db_session, year):
+    season = Season.find_by_year(db_session, year)
+    assert season
+    return season
+
+
+def parse_brooks_games_for_date_from_html(
+    db_session, scraped_data, game_date, apply_patch_list=True
+):
     html_path = scraped_data.get_html(DataSet.BROOKS_GAMES_FOR_DATE, game_date)
     page_content = html_path.read_text()
     url = get_brooks_url_for_date(game_date)
-    games_for_date = scraped_data.get_bbref_games_for_date(game_date)
+    games_for_date = scraped_data.get_bbref_games_for_date(game_date, apply_patch_list)
     result = parse_brooks_dashboard_page(db_session, page_content, game_date, url, games_for_date)
     assert result.success
     brooks_games_for_date = result.value
@@ -159,6 +181,7 @@ def update_scraped_boxscore(db_session, scraped_data, bbref_game_id):
     bbref_boxscore = parse_bbref_boxscore_from_html(scraped_data, bbref_game_id)
     result = update_status_bbref_boxscore(db_session, bbref_boxscore)
     assert result.success
+    return bbref_boxscore
 
 
 def parse_bbref_boxscore_from_html(scraped_data, bbref_game_id):
@@ -175,16 +198,21 @@ def get_bbref_boxscore_url(bbref_game_id):
     return f"https://www.baseball-reference.com/boxes/{team_id}/{bbref_game_id}.shtml"
 
 
-def update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id):
+def update_scraped_pitch_logs(
+    db_session, scraped_data, game_date, bbref_game_id, apply_patch_list=True
+):
     pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(
-        scraped_data, game_date, bbref_game_id
+        scraped_data, game_date, bbref_game_id, apply_patch_list
     )
     result = update_status_brooks_pitch_logs_for_game(db_session, pitch_logs_for_game)
     assert result.success
+    return pitch_logs_for_game
 
 
-def parse_brooks_pitch_logs_for_game_from_html(scraped_data, game_date, bbref_game_id):
-    games_for_date = scraped_data.get_brooks_games_for_date(game_date)
+def parse_brooks_pitch_logs_for_game_from_html(
+    scraped_data, game_date, bbref_game_id, apply_patch_list=True
+):
+    games_for_date = scraped_data.get_brooks_games_for_date(game_date, apply_patch_list)
     game_info = [game for game in games_for_date.games if game.bbref_game_id == bbref_game_id][0]
     pitch_logs_for_game = BrooksPitchLogsForGame()
     pitch_logs_for_game.bb_game_id = game_info.bb_game_id
@@ -204,7 +232,7 @@ def parse_brooks_pitch_logs_for_game_from_html(scraped_data, game_date, bbref_ga
 
 
 def revert_pitch_logs_to_state_before_combined_data(db_session, scraped_data, bbref_game_id):
-    result = scraped_data.get_all_pitchfx_logs_for_game(bbref_game_id)
+    result = scraped_data.get_all_brooks_pitchfx_logs_for_game(bbref_game_id, False)
     assert result.success
     pfx_logs = result.value
     for pfx_log in pfx_logs:
@@ -216,7 +244,7 @@ def revert_pitch_logs_to_state_before_combined_data(db_session, scraped_data, bb
         pitch_app_status.combined_pitchfx_bbref_data = 0
         pitch_app_status.pitch_count_bbref = 0
         pitch_app_status.pitch_count_pitchfx_audited = 0
-        pitch_app_status.duplicate_guid_removed_count = 0
+        pitch_app_status.extra_pitchfx_removed_count = 0
         pitch_app_status.missing_pitchfx_count = 0
         pitch_app_status.batters_faced_bbref = 0
         pitch_app_status.total_at_bats_pitchfx_complete = 0
@@ -225,61 +253,22 @@ def revert_pitch_logs_to_state_before_combined_data(db_session, scraped_data, bb
 
 
 def update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id):
-    pitch_logs = scraped_data.get_brooks_pitch_logs_for_game(bb_game_id)
-    for pitch_log in pitch_logs.pitch_logs:
+    pitchfx_logs_for_game = []
+    pitch_logs_for_game = scraped_data.get_brooks_pitch_logs_for_game(bb_game_id)
+    for pitch_log in pitch_logs_for_game.pitch_logs:
         if not pitch_log.parsed_all_info:
             continue
         html_path = scraped_data.get_html(DataSet.BROOKS_PITCHFX, pitch_log.pitch_app_id)
         result = parse_pitchfx_log(html_path.read_text(), pitch_log)
         assert result.success
-        pitchfx_log = result.value
-        result = update_pitch_appearance_status_records(db_session, pitchfx_log)
+        pfx_log = result.value
+        pitchfx_logs_for_game.append(pfx_log)
+        result = update_pitch_appearance_status_records(db_session, pfx_log)
         assert result.success
+    return pitchfx_logs_for_game
 
 
-def parse_brooks_pitchfx_from_html(scraped_data, bb_game_id, pitch_app_id):
-    pitch_logs = scraped_data.get_brooks_pitch_logs_for_game(bb_game_id)
-    pitch_log = [plog for plog in pitch_logs.pitch_logs if plog.pitch_app_id == pitch_app_id][0]
-    html_path = scraped_data.get_html(DataSet.BROOKS_PITCHFX, pitch_app_id)
-    result = parse_pitchfx_log(html_path.read_text(), pitch_log)
-    assert result.success
-    pitchfx_log = result.value
-    return pitchfx_log
-
-
-def combine_scraped_data_for_game(vig_app, game_id, apply_patch_list=False):
+def combine_scraped_data_for_game(vig_app, game_id, apply_patch_list=True):
     result = CombineScrapedDataTask(vig_app).execute(game_id, apply_patch_list, update_db=False)
-    assert "results" in result
-    return result["results"]
-
-
-def get_avg_pitch_times():
-    return {
-        "time_between_pitches": {
-            "total": 16478993,
-            "count": 692284,
-            "avg": 23.8,
-            "max": 48.0,
-            "min": 3.0,
-        },
-        "time_between_at_bats": {
-            "total": 7118617,
-            "count": 165166,
-            "avg": 43.1,
-            "max": 79.0,
-            "min": 28.0,
-        },
-        "time_between_innings": {
-            "total": 8432869,
-            "count": 52589,
-            "avg": 160.4,
-            "max": 306.0,
-            "min": 131.0,
-        },
-    }
-
-
-def get_season(db_session, year):
-    season = Season.find_by_year(db_session, year)
-    assert season
-    return season
+    assert "boxscore" in result
+    return result["boxscore"]

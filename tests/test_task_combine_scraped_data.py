@@ -22,6 +22,9 @@ from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
 from vigorish.util.exceptions import ScrapedDataException
 
+# TODO: Add test case for game CHA201705272 to cover the scenario where the start time of the
+# second game of a double-header is set using the PitchFx timestamp of the first pitch thrown.
+
 
 def create_test_data(db_session, scraped_data, test_id):
     game_date = COMBINED_DATA_GAME_DICT[test_id]["game_date"]
@@ -582,7 +585,9 @@ def test_combine_patched_pitchfx_data(vig_app):
 
     test_id = "PATCH_PFX"
     create_test_data(vig_app.db_session, vig_app.scraped_data, test_id)
-    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PATCH_PFX)
+    combined_data = combine_scraped_data_for_game(
+        vig_app, GAME_ID_PATCH_PFX, apply_patch_list=False
+    )
     assert "pitchfx_vs_bbref_audit" in combined_data
     assert combined_data["pitchfx_vs_bbref_audit"] == {
         "invalid_pitchfx": True,
@@ -858,7 +863,9 @@ def test_patch_all_invalid_pitchfx_data(vig_app):
     )
     if result.success and result.value.exists():
         result.value.unlink()
-    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PATCH_PFX)
+    combined_data = combine_scraped_data_for_game(
+        vig_app, GAME_ID_PATCH_PFX, apply_patch_list=False
+    )
     assert "pitchfx_vs_bbref_audit" in combined_data
     assert combined_data["pitchfx_vs_bbref_audit"] == {
         "invalid_pitchfx": True,
@@ -1131,7 +1138,9 @@ def test_find_pfx_out_of_sequence(vig_app):
     scraped_data = vig_app.scraped_data
     test_id = "PFX_OUT_OF_SEQUENCE"
     create_test_data(db_session, scraped_data, test_id)
-    combined_data = combine_scraped_data_for_game(vig_app, GAME_ID_PFX_OUT_OF_SEQUENCE)
+    combined_data = combine_scraped_data_for_game(
+        vig_app, GAME_ID_PFX_OUT_OF_SEQUENCE, apply_patch_list=False
+    )
     assert "pitchfx_vs_bbref_audit" in combined_data
     assert combined_data["pitchfx_vs_bbref_audit"] == {
         "invalid_pitchfx": True,
