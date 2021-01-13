@@ -1,54 +1,49 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
+from vigorish.config.project_paths import CONFIG_FILE, DOTENV_FILE
 from vigorish.constants import ENV_VAR_NAMES
 from vigorish.database import SQLITE_PROD_URL
 from vigorish.util.result import Result
 
-VIG_FOLDER = Path.home() / ".vig"
-DOTENV_FILE = VIG_FOLDER / ".env"
-DEFAULT_CONFIG = VIG_FOLDER / "vig.config.json"
-
-
-def create_default_dotenv_file(dotenv_file, config_file=None, db_url=None):
-    env_var_dict = {var_name: "" for var_name in ENV_VAR_NAMES}
-    env_var_dict["CONFIG_FILE"] = config_file if config_file else DEFAULT_CONFIG
-    env_var_dict["DATABASE_URL"] = db_url if db_url else SQLITE_PROD_URL
-    env_var_strings = [f"{name}={value}" for name, value in env_var_dict.items()]
-    dotenv_file.write_text("\n".join(env_var_strings))
-
-
-def create_test_dotenv_file(dotenv_file):
-    env_var_dict = {
-        "CONFIG_FILE": os.environ.get("CONFIG_FILE"),
-        "DATABASE_URL": os.environ.get("DATABASE_URL"),
-    }
-    env_var_strings = [f"{name}={value}" for name, value in env_var_dict.items()]
-    dotenv_file.write_text("\n".join(env_var_strings))
-
 
 class DotEnvFile:
     def __init__(self, dotenv_filepath=None):
-        if os.environ.get("ENV") == "TEST":
-            self.dotenv_filepath = Path(os.environ.get("DOTENV_FILE"))
-            create_test_dotenv_file(dotenv_file=self.dotenv_filepath)
-        else:
-            self.dotenv_filepath = dotenv_filepath if dotenv_filepath else DOTENV_FILE
-        self.env_var_dict = self.read_dotenv_file()
+        self.dotenv_filepath = dotenv_filepath
+        if not self.dotenv_filepath:
+            self.dotenv_filepath = Path(os.environ.get("DOTENV_FILE", DOTENV_FILE))
+        self.read_dotenv_file()
 
     def read_dotenv_file(self):
         """Parse .env file to a dictionary of environment variables."""
         if not self.dotenv_filepath.exists():
-            create_default_dotenv_file(dotenv_file=self.dotenv_filepath)
+            self.create_dotenv_file(
+                config_file=os.environ.get("CONFIG_FILE", CONFIG_FILE),
+                db_url=os.environ.get("DATABASE_URL", SQLITE_PROD_URL),
+            )
         if not self.dotenv_filepath.is_file():
             raise TypeError(f"Unable to open file: {self.dotenv_filepath}")
-        load_dotenv(self.dotenv_filepath)
         file_text = self.dotenv_filepath.read_text()
         env_var_split = [f for f in file_text.split("\n") if f and "=" in f]
         env_var_split = [s.split("=") for s in env_var_split]
-        return {v[0]: v[1].strip('"').strip("'").strip() for v in env_var_split if len(v) == 2}
+        self.env_var_dict = {
+            v[0]: v[1].strip('"').strip("'").strip() for v in env_var_split if len(v) == 2
+        }
+        if "CONFIG_FILE" not in self.env_var_dict:
+            self.env_var_dict["CONFIG_FILE"] = CONFIG_FILE
+        if "DATABASE_URL" not in self.env_var_dict:
+            self.env_var_dict["DATABASE_URL"] = SQLITE_PROD_URL
+        self.update_environment_variables()
+
+    def create_dotenv_file(self, config_file, db_url):
+        self.env_var_dict = {var_name: "" for var_name in ENV_VAR_NAMES}
+        self.env_var_dict["CONFIG_FILE"] = config_file
+        self.env_var_dict["DATABASE_URL"] = db_url
+        self.write_dotenv_file()
+
+    def update_environment_variables(self):
+        for var_name, value in self.env_var_dict.items():
+            os.environ[var_name] = value
 
     def get_current_value(self, env_var_name):
         if env_var_name not in ENV_VAR_NAMES:
@@ -60,7 +55,7 @@ class DotEnvFile:
             return Result.Fail(f"{env_var_name} is not a recognized environment variable.")
         self.env_var_dict[env_var_name] = new_value
         self.write_dotenv_file()
-        self.env_var_dict = self.read_dotenv_file()
+        self.read_dotenv_file()
         return Result.Ok()
 
     def restart_required_on_change(self, setting_name):

@@ -34,7 +34,6 @@ def cli(ctx):
         if not VIG_FOLDER.exists():
             VIG_FOLDER.mkdir()
     ctx.obj = Vigorish()
-    # ctx.obj = create_app(db_url="sqlite:////Users/aaronluna/.vig/vig.db")
 
 
 @cli.command()

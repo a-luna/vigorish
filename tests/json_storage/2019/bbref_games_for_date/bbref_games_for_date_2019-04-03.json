@@ -1,22 +1,78 @@
 {
   "__bbref_games_for_date__": true,
-  "boxscore_urls": [
-    "https://www.baseball-reference.com/boxes/ATL/ATL201904030.shtml",
-    "https://www.baseball-reference.com/boxes/CIN/CIN201904030.shtml",
-    "https://www.baseball-reference.com/boxes/CLE/CLE201904030.shtml",
-    "https://www.baseball-reference.com/boxes/KCA/KCA201904030.shtml",
-    "https://www.baseball-reference.com/boxes/LAN/LAN201904030.shtml",
-    "https://www.baseball-reference.com/boxes/MIA/MIA201904030.shtml",
-    "https://www.baseball-reference.com/boxes/NYA/NYA201904030.shtml",
-    "https://www.baseball-reference.com/boxes/OAK/OAK201904030.shtml",
-    "https://www.baseball-reference.com/boxes/PIT/PIT201904030.shtml",
-    "https://www.baseball-reference.com/boxes/SDN/SDN201904030.shtml",
-    "https://www.baseball-reference.com/boxes/TBA/TBA201904030.shtml",
-    "https://www.baseball-reference.com/boxes/TEX/TEX201904030.shtml",
-    "https://www.baseball-reference.com/boxes/TOR/TOR201904030.shtml",
-    "https://www.baseball-reference.com/boxes/WAS/WAS201904030.shtml"
-  ],
   "dashboard_url": "https://www.baseball-reference.com/boxes/?month=4&day=3&year=2019",
   "game_count": 14,
-  "game_date_str": "2019-04-03"
+  "game_date_str": "2019-04-03",
+  "games": [
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "ATL201904030",
+      "url": "https://www.baseball-reference.com/boxes/ATL/ATL201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "CIN201904030",
+      "url": "https://www.baseball-reference.com/boxes/CIN/CIN201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "CLE201904030",
+      "url": "https://www.baseball-reference.com/boxes/CLE/CLE201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "KCA201904030",
+      "url": "https://www.baseball-reference.com/boxes/KCA/KCA201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "LAN201904030",
+      "url": "https://www.baseball-reference.com/boxes/LAN/LAN201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "MIA201904030",
+      "url": "https://www.baseball-reference.com/boxes/MIA/MIA201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "NYA201904030",
+      "url": "https://www.baseball-reference.com/boxes/NYA/NYA201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "OAK201904030",
+      "url": "https://www.baseball-reference.com/boxes/OAK/OAK201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "PIT201904030",
+      "url": "https://www.baseball-reference.com/boxes/PIT/PIT201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "SDN201904030",
+      "url": "https://www.baseball-reference.com/boxes/SDN/SDN201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TBA201904030",
+      "url": "https://www.baseball-reference.com/boxes/TBA/TBA201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TEX201904030",
+      "url": "https://www.baseball-reference.com/boxes/TEX/TEX201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TOR201904030",
+      "url": "https://www.baseball-reference.com/boxes/TOR/TOR201904030.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "WAS201904030",
+      "url": "https://www.baseball-reference.com/boxes/WAS/WAS201904030.shtml"
+    }
+  ]
 }

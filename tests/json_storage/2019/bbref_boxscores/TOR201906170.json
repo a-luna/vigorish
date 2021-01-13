@@ -25,6 +25,9 @@
     "total_hits_by_opponent": 8,
     "total_errors_by_team": 1,
     "total_errors_by_opponent": 0,
+    "team_won": true,
+    "pitcher_of_record": "penafe01",
+    "pitcher_earned_save": "",
     "starting_lineup": [
       {
         "player_id_br": "lasteto01",
@@ -609,6 +612,9 @@
     "total_hits_by_opponent": 13,
     "total_errors_by_team": 0,
     "total_errors_by_opponent": 1,
+    "team_won": false,
+    "pitcher_of_record": "jacksed01",
+    "pitcher_earned_save": "",
     "starting_lineup": [
       {
         "player_id_br": "sogarer01",

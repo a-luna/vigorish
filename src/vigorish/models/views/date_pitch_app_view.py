@@ -38,6 +38,9 @@ class Date_PitchApp_View(Base):
                 func.sum(PitchAppScrapeStatus.patched_pitchfx_count).label(
                     "total_patched_pitchfx_count"
                 ),
+                func.sum(PitchAppScrapeStatus.total_at_bats_pitchfx_complete).label(
+                    "total_at_bats_pitchfx_complete"
+                ),
                 func.sum(PitchAppScrapeStatus.total_at_bats_patched_pitchfx).label(
                     "total_at_bats_patched_pitchfx"
                 ),

@@ -1,0 +1,88 @@
+{
+  "__bbref_games_for_date__": true,
+  "dashboard_url": "https://www.baseball-reference.com/boxes/?month=5&day=27&year=2017",
+  "game_count": 16,
+  "game_date_str": "2017-05-27",
+  "games": [
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "BOS201705270",
+      "url": "https://www.baseball-reference.com/boxes/BOS/BOS201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "CHA201705271",
+      "url": "https://www.baseball-reference.com/boxes/CHA/CHA201705271.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "CHA201705272",
+      "url": "https://www.baseball-reference.com/boxes/CHA/CHA201705272.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "CLE201705270",
+      "url": "https://www.baseball-reference.com/boxes/CLE/CLE201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "COL201705270",
+      "url": "https://www.baseball-reference.com/boxes/COL/COL201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "HOU201705270",
+      "url": "https://www.baseball-reference.com/boxes/HOU/HOU201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "LAN201705270",
+      "url": "https://www.baseball-reference.com/boxes/LAN/LAN201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "MIA201705270",
+      "url": "https://www.baseball-reference.com/boxes/MIA/MIA201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "MIL201705270",
+      "url": "https://www.baseball-reference.com/boxes/MIL/MIL201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "MIN201705270",
+      "url": "https://www.baseball-reference.com/boxes/MIN/MIN201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "NYA201705270",
+      "url": "https://www.baseball-reference.com/boxes/NYA/NYA201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "PHI201705270",
+      "url": "https://www.baseball-reference.com/boxes/PHI/PHI201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "PIT201705270",
+      "url": "https://www.baseball-reference.com/boxes/PIT/PIT201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "SFN201705270",
+      "url": "https://www.baseball-reference.com/boxes/SFN/SFN201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TOR201705270",
+      "url": "https://www.baseball-reference.com/boxes/TOR/TOR201705270.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "WAS201705270",
+      "url": "https://www.baseball-reference.com/boxes/WAS/WAS201705270.shtml"
+    }
+  ]
+}

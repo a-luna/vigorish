@@ -9,30 +9,32 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-from vigorish.tasks.add_pitchfx_to_database import AddPitchFxToDatabase
+from vigorish.tasks.add_to_database import AddToDatabaseTask
 from vigorish.tasks.backup_database import BackupDatabaseTask
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.util.sys_helpers import zip_file_report
 
+TEST_ID = "NO_ERRORS"
+GAME_DICT = COMBINED_DATA_GAME_DICT[TEST_ID]
+GAME_DATE = GAME_DICT["game_date"]
+BBREF_GAME_ID = GAME_DICT["bbref_game_id"]
+BB_GAME_ID = GAME_DICT["bb_game_id"]
+APPLY_PATCH_LIST = GAME_DICT["apply_patch_list"]
+
 
 @pytest.fixture(scope="module", autouse=True)
 def create_test_data(vig_app):
-    """Initialize DB with data to verify test functions in test_cli module."""
+    """Initialize DB with data to verify test functions in this module."""
     db_session = vig_app.db_session
     scraped_data = vig_app.scraped_data
-    game_id_dict = COMBINED_DATA_GAME_DICT["NO_ERRORS"]
-    game_date = game_id_dict["game_date"]
-    bbref_game_id = game_id_dict["bbref_game_id"]
-    bb_game_id = game_id_dict["bb_game_id"]
-    apply_patch_list = game_id_dict["apply_patch_list"]
-    update_scraped_bbref_games_for_date(db_session, scraped_data, game_date)
-    update_scraped_brooks_games_for_date(db_session, scraped_data, game_date)
-    update_scraped_boxscore(db_session, scraped_data, bbref_game_id)
-    update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id)
-    update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
-    CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
-    add_pfx_to_db = AddPitchFxToDatabase(vig_app)
-    add_pfx_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
+    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
+    update_scraped_brooks_games_for_date(db_session, scraped_data, GAME_DATE)
+    update_scraped_boxscore(db_session, scraped_data, BBREF_GAME_ID)
+    update_scraped_pitch_logs(db_session, scraped_data, GAME_DATE, BBREF_GAME_ID)
+    update_scraped_pitchfx_logs(db_session, scraped_data, BB_GAME_ID)
+    CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPLY_PATCH_LIST)
+    add_to_db = AddToDatabaseTask(vig_app)
+    add_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
     db_session.commit()
     return True
 

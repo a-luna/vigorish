@@ -26,15 +26,15 @@ class ScrapeBBRefBoxscores(ScrapeTaskABC):
         return Result.Fail(error)
 
     def check_current_status(self, game_date):
+        if self.scrape_condition == ScrapeCondition.ALWAYS:
+            return Result.Ok()
         scraped_bbref_boxscores = DateScrapeStatus.verify_all_bbref_boxscores_scraped_for_date(
             self.db_session, game_date
         )
-        if scraped_bbref_boxscores and self.scrape_condition == ScrapeCondition.ONLY_MISSING_DATA:
-            return Result.Fail("skip")
-        return Result.Ok()
+        return Result.Ok() if not scraped_bbref_boxscores else Result.Fail("skip")
 
-    def parse_html(self, html, url_id, url):
-        return parse_bbref_boxscore(html, url)
+    def parse_html(self, url_details):
+        return parse_bbref_boxscore(url_details.html, url_details.url)
 
-    def update_status(self, game_date, parsed_data):
+    def update_status(self, parsed_data):
         return update_status_bbref_boxscore(self.db_session, parsed_data)

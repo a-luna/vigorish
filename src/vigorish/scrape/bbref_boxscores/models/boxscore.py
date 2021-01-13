@@ -1,7 +1,11 @@
 import json
-from dataclasses import dataclass
-from typing import Any
+from dataclasses import dataclass, field
+from typing import List, Dict, Union
 
+from vigorish.scrape.bbref_boxscores.models.boxscore_game_meta import BBRefBoxscoreMeta
+from vigorish.scrape.bbref_boxscores.models.boxscore_team_data import BBRefBoxscoreTeamData
+from vigorish.scrape.bbref_boxscores.models.half_inning import BBRefHalfInning
+from vigorish.scrape.bbref_boxscores.models.umpire import BBRefUmpire
 from vigorish.util.list_helpers import as_dict_list
 from vigorish.util.string_helpers import get_brooks_team_id, validate_bbref_game_id
 
@@ -12,18 +16,14 @@ class BBRefBoxscore:
 
     boxscore_url: str
     bbref_game_id: str
-    game_meta_info: Any
-    away_team_data: Any
-    home_team_data: Any
-    innings_list: Any
-    umpires: Any
-    player_id_match_log: Any
-    player_team_dict: Any
-    player_name_dict: Any
-
-    @property
-    def upload_id(self):
-        return self.bbref_game_id
+    game_meta_info: BBRefBoxscoreMeta = None
+    away_team_data: BBRefBoxscoreTeamData = None
+    home_team_data: BBRefBoxscoreTeamData = None
+    player_id_match_log: Dict[str, Union[str, int, List[str]]] = field(default_factory=dict)
+    player_team_dict: Dict[str, str] = field(default_factory=dict)
+    player_name_dict: Dict[str, str] = field(default_factory=dict)
+    innings_list: List[BBRefHalfInning] = field(default_factory=list)
+    umpires: List[BBRefUmpire] = field(default_factory=list)
 
     @property
     def bb_game_id(self):
@@ -36,10 +36,6 @@ class BBRefBoxscore:
             f"gid_{game_date.year}_{game_date.month:02d}_{game_date.day:02d}_"
             f"{away_team_id}mlb_{home_team_id}mlb_{game_number}"
         )
-
-    @property
-    def game_id_dict(self):
-        return {f"{self.bbref_game_id}": f"{self.bb_game_id}"}
 
     @property
     def game_date(self):
@@ -73,17 +69,6 @@ class BBRefBoxscore:
     @property
     def pitch_count(self):
         return self.away_team_pitch_count + self.home_team_pitch_count
-
-    @property
-    def pitch_appearances(self):
-        mlb_id_name_dict = {v: k for k, v in self.player_name_dict.items()}
-        pitch_apps = self.away_team_data.pitching_stats.copy()
-        pitch_apps.extend(self.home_team_data.pitching_stats.copy())
-        pitch_apps_dicts = [pa.as_dict() for pa in pitch_apps]
-        for app_dict in pitch_apps_dicts:
-            player_id = app_dict["player_id_br"]
-            app_dict["player_name"] = mlb_id_name_dict[player_id]
-        return pitch_apps_dicts
 
     def __repr__(self):
         return f"<BBRefBoxscore bbref_game_id={self.bbref_game_id}>"

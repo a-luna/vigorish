@@ -1,24 +1,88 @@
 {
   "__bbref_games_for_date__": true,
-  "boxscore_urls": [
-    "https://www.baseball-reference.com/boxes/ANA/ANA201804170.shtml",
-    "https://www.baseball-reference.com/boxes/ARI/ARI201804170.shtml",
-    "https://www.baseball-reference.com/boxes/ATL/ATL201804170.shtml",
-    "https://www.baseball-reference.com/boxes/CHN/CHN201804170.shtml",
-    "https://www.baseball-reference.com/boxes/DET/DET201804170.shtml",
-    "https://www.baseball-reference.com/boxes/MIL/MIL201804170.shtml",
-    "https://www.baseball-reference.com/boxes/MIN/MIN201804170.shtml",
-    "https://www.baseball-reference.com/boxes/NYA/NYA201804170.shtml",
-    "https://www.baseball-reference.com/boxes/NYN/NYN201804170.shtml",
-    "https://www.baseball-reference.com/boxes/OAK/OAK201804170.shtml",
-    "https://www.baseball-reference.com/boxes/PIT/PIT201804170.shtml",
-    "https://www.baseball-reference.com/boxes/SDN/SDN201804170.shtml",
-    "https://www.baseball-reference.com/boxes/SEA/SEA201804170.shtml",
-    "https://www.baseball-reference.com/boxes/TBA/TBA201804170.shtml",
-    "https://www.baseball-reference.com/boxes/TOR/TOR201804171.shtml",
-    "https://www.baseball-reference.com/boxes/TOR/TOR201804172.shtml"
-  ],
   "dashboard_url": "https://www.baseball-reference.com/boxes/?month=4&day=17&year=2018",
   "game_count": 16,
-  "game_date_str": "2018-04-17"
+  "game_date_str": "2018-04-17",
+  "games": [
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "ANA201804170",
+      "url": "https://www.baseball-reference.com/boxes/ANA/ANA201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "ARI201804170",
+      "url": "https://www.baseball-reference.com/boxes/ARI/ARI201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "ATL201804170",
+      "url": "https://www.baseball-reference.com/boxes/ATL/ATL201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "CHN201804170",
+      "url": "https://www.baseball-reference.com/boxes/CHN/CHN201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "DET201804170",
+      "url": "https://www.baseball-reference.com/boxes/DET/DET201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "MIL201804170",
+      "url": "https://www.baseball-reference.com/boxes/MIL/MIL201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "MIN201804170",
+      "url": "https://www.baseball-reference.com/boxes/MIN/MIN201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "NYA201804170",
+      "url": "https://www.baseball-reference.com/boxes/NYA/NYA201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "NYN201804170",
+      "url": "https://www.baseball-reference.com/boxes/NYN/NYN201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "OAK201804170",
+      "url": "https://www.baseball-reference.com/boxes/OAK/OAK201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "PIT201804170",
+      "url": "https://www.baseball-reference.com/boxes/PIT/PIT201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "SDN201804170",
+      "url": "https://www.baseball-reference.com/boxes/SDN/SDN201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "SEA201804170",
+      "url": "https://www.baseball-reference.com/boxes/SEA/SEA201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TBA201804170",
+      "url": "https://www.baseball-reference.com/boxes/TBA/TBA201804170.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TOR201804171",
+      "url": "https://www.baseball-reference.com/boxes/TOR/TOR201804171.shtml"
+    },
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TOR201804172",
+      "url": "https://www.baseball-reference.com/boxes/TOR/TOR201804172.shtml"
+    }
+  ]
 }

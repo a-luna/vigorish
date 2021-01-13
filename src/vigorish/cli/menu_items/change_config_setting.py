@@ -6,6 +6,7 @@ from getch import pause
 
 from vigorish.cli.components import print_message, yes_no_cancel_prompt, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
+from vigorish.config.config_setting import same_value_for_all_data_sets_is_required
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import ConfigType, DataSet
 from vigorish.util.result import Result
@@ -63,7 +64,7 @@ class ChangeConfigSettting(MenuItem):
         return Result.Ok(self.exit_menu)
 
     def get_data_sets_setting_will_apply_to(self):
-        if self.setting.same_value_for_all_data_sets_is_required:
+        if same_value_for_all_data_sets_is_required(self.setting_name):
             return [DataSet.ALL]
         result = yes_no_cancel_prompt("Use same setting for all data sets?")
         if result.failure:

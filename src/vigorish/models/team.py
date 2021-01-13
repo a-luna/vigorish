@@ -46,6 +46,7 @@ class Team(Base):
 
     regular_season = relationship("Season", foreign_keys=[regular_season_id])
     post_season = relationship("Season", foreign_keys=[post_season_id])
+    players = relationship("Player", secondary="player_team", back_populates="teams")
 
     def __repr__(self):
         return f"<Team team_id={self.team_id}, year={self.year}>"

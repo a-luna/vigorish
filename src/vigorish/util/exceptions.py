@@ -4,7 +4,7 @@
 from vigorish.enums import DataSet
 
 
-class ConfigSetingException(Exception):
+class ConfigSettingException(Exception):
     """Exception raised when an unrecoverable error occurs due to a ConfigSetting."""
 
     def __init__(self, setting_name, data_set=DataSet.ALL, current_value=None, detail=None):
@@ -25,6 +25,6 @@ class ScrapedDataException(Exception):
     def __init__(self, file_type, data_set, url_id):
         message = (
             f"Failed to locate scraped data: URL ID: {url_id} "
-            f"(File Type, {file_type}, Data Set: {data_set})"
+            f"(File Type: {file_type}, Data Set: {data_set})"
         )
         super().__init__(message)

@@ -9,8 +9,8 @@ backcall==0.2.0
 black==20.8b1
 bleach==3.2.1
 blessed==1.17.12
-boto3==1.16.52
-botocore==1.19.52
+boto3==1.16.53
+botocore==1.19.53
 bullet==2.2.0
 certifi==2020.12.5
 cffi==1.14.4
@@ -81,7 +81,7 @@ pycparser==2.20
 pydocstyle==5.1.1
 pyfiglet==0.8.post1
 pyflakes==2.2.0
-Pygments==2.7.3
+Pygments==2.7.4
 pyparsing==2.4.7
 pytest==6.2.1
 pytest-black==0.3.12

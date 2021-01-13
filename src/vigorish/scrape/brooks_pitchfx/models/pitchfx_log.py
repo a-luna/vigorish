@@ -1,17 +1,17 @@
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import List, Mapping
 
 from dateutil import tz
 
+from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
 from vigorish.util.list_helpers import as_dict_list
 
 
 @dataclass
 class BrooksPitchFxLog:
-    pitchfx_log: Any
-    pitch_count_by_inning: Any
+    pitch_count_by_inning: Mapping
     total_pitch_count: str = "0"
     pitcher_name: str = ""
     pitcher_id_mlb: str = "0"
@@ -27,6 +27,7 @@ class BrooksPitchFxLog:
     game_time_minute: str = ""
     time_zone_name: str = ""
     pitchfx_url: str = ""
+    pitchfx_log: List[BrooksPitchFxData] = field(default_factory=list)
 
     @property
     def game_date(self):

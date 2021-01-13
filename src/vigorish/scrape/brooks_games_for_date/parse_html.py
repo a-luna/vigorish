@@ -1,6 +1,5 @@
 """Scrape brooksbaseball daily dashboard page."""
 from datetime import datetime
-from pathlib import Path
 
 import w3lib.url
 from lxml import html
@@ -36,8 +35,7 @@ def parse_brooks_dashboard_page(db_session, scraped_html, game_date, url, bbref_
     if not game_tables:
         return Result.Ok(games_for_date)
     for i, game in enumerate(game_tables):
-        game_ids = [Path(url).stem for url in bbref_games_for_date.boxscore_urls]
-        required_game_data = validate_bbref_game_id_list(game_ids)
+        required_game_data = validate_bbref_game_id_list(bbref_games_for_date.all_bbref_game_ids)
         game_info_list = game.xpath(GAME_INFO_XPATH)
         if not game_info_list or len(game_info_list) != 2:
             error = f"Game info table #{i + 1} was not in the expected format"

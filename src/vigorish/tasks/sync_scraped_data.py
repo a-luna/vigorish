@@ -283,20 +283,20 @@ class SyncScrapedDataTask(Task):
         self.events.sync_files_start(files[0]["name"], 0, len(files))
         for num, file in enumerate(files, start=1):
             self.events.sync_files_progress(file["name"], num - 1, len(files))
-            (filepath, s3_key) = self.get_local_and_s3_file_paths(file, file_type, data_set, year)
+            (filepath, s3_key) = self.get_local_path_and_s3_key(file, file_type, data_set, year)
             self.send_file(sync_direction, filepath, s3_key)
             self.events.sync_files_progress(file["name"], num, len(files))
         self.events.sync_files_complete()
 
-    def get_local_and_s3_file_paths(self, file, file_type, data_set, year):
+    def get_local_path_and_s3_key(self, file, file_type, data_set, year):
         local_folder = self.scraped_data.get_local_folderpath(file_type, data_set, year)
         s3_folder = self.s3_folderpath_dict[file_type][data_set].resolve(year=year)
-        local_path = Path(local_folder).joinpath(file["name"])
-        s3_key = f"{s3_folder}{file['name']}"
-        return (str(local_path), s3_key)
+        local_path = str(Path(local_folder).joinpath(file["name"]))
+        s3_key = f'{s3_folder}/{file["name"]}'
+        return (local_path, s3_key)
 
     def send_file(self, sync_direction, local_path, s3_key):
         if sync_direction == SyncDirection.UP_TO_S3:
-            self.file_helper.get_s3_bucket().upload_file(str(local_path), s3_key)
+            self.file_helper.get_s3_bucket().upload_file(local_path, s3_key)
         if sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            self.file_helper.get_s3_bucket().download_file(s3_key, str(local_path))
+            self.file_helper.get_s3_bucket().download_file(s3_key, local_path)

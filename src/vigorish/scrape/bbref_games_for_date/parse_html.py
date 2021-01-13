@@ -1,12 +1,12 @@
-from pathlib import Path
 from urllib.parse import urljoin
 
 from lxml import html
 
+from vigorish.scrape.bbref_games_for_date.models.game_info import BBRefGameInfo
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_2
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import validate_bbref_game_id
+from vigorish.util.string_helpers import get_bbref_game_id_from_url, validate_bbref_game_id
 
 XPATH_BOXSCORE_URL_MAIN_CONTENT = (
     '//div[@id="content"]//div[contains(@class, "game_summaries")]'
@@ -32,12 +32,15 @@ def parse_bbref_dashboard_page(scraped_html, game_date, url):
     result = verify_boxscore_date(boxscore_urls, game_date, url)
     if result.failure:
         return result
-    games_for_date.boxscore_urls = []
+    games_for_date.games = []
     for rel_url in boxscore_urls:
         if "allstar" in rel_url:
             continue
-        games_for_date.boxscore_urls.append(urljoin(url, rel_url))
-    games_for_date.game_count = len(games_for_date.boxscore_urls)
+        boxscore_url = urljoin(url, rel_url)
+        game_id = get_bbref_game_id_from_url(boxscore_url)
+        game_info = BBRefGameInfo(url=boxscore_url, bbref_game_id=game_id)
+        games_for_date.games.append(game_info)
+    games_for_date.game_count = len(games_for_date.games)
     return Result.Ok(games_for_date)
 
 
@@ -46,7 +49,9 @@ def verify_boxscore_date(boxscore_urls, game_date, url):
     if "allstar" in rel_url:
         return Result.Ok()
     box_url = urljoin(url, rel_url)
-    game_id = Path(box_url).stem
+    game_id = get_bbref_game_id_from_url(box_url)
+    if not game_id:
+        return Result.Fail(f"Failed to parse game id from url: {box_url}")
     result = validate_bbref_game_id(game_id)
     if result.failure:
         return result

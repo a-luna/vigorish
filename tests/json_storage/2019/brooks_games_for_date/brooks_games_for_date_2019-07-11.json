@@ -1,0 +1,33 @@
+{
+  "__brooks_games_for_date__": true,
+  "dashboard_url": "http://www.brooksbaseball.net/dashboard.php?dts=7/11/2019",
+  "game_date_str": "2019-07-11",
+  "game_count": 1,
+  "games": [
+    {
+      "__brooks_game_info__": true,
+      "might_be_postponed": false,
+      "game_date_year": 2019,
+      "game_date_month": 7,
+      "game_date_day": 11,
+      "game_time_hour": 20,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "bb_game_id": "gid_2019_07_11_houmlb_texmlb_1",
+      "bbref_game_id": "TEX201907110",
+      "away_team_id_bb": "HOU",
+      "home_team_id_bb": "TEX",
+      "game_number_this_day": 1,
+      "pitcher_appearance_count": 7,
+      "pitcher_appearance_dict": {
+        "664285": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=664285.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
+        "606965": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=606965.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
+        "605482": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=605482.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
+        "657624": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=657624.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
+        "458681": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=458681.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
+        "600917": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=600917.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
+        "455119": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=455119.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/"
+      }
+    }
+  ]
+}

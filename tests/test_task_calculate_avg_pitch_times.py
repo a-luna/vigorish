@@ -6,7 +6,7 @@ from vigorish.tasks.calculate_avg_pitch_times import CalculateAverageTimeBetween
 
 @pytest.fixture(scope="module", autouse=True)
 def create_test_data(vig_app):
-    """Initialize DB with data to verify test functions in test_cli module."""
+    """Initialize DB with data to verify test functions in this module."""
     seed_database_with_2019_test_data(vig_app)
     return True
 

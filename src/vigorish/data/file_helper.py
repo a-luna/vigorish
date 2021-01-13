@@ -11,6 +11,7 @@ from vigorish.data.json_decoder import (
     decode_bbref_boxscore_patch_list,
     decode_bbref_games_for_date,
     decode_bbref_games_for_date_patch_list,
+    decode_brooks_games_for_date_patch_list,
     decode_brooks_games_for_date,
     decode_brooks_pitch_logs_for_game,
     decode_brooks_pitchfx_log,
@@ -98,6 +99,7 @@ class FileHelper:
             DataSet.BBREF_BOXSCORES: self.get_file_name_json_bbref_boxscore,
         }
         patch_list_filename_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: self.get_file_name_brooks_games_for_date_patch_list,
             DataSet.BROOKS_PITCHFX: self.get_file_name_brooks_pitchfx_patch_list,
             DataSet.BBREF_GAMES_FOR_DATE: self.get_file_name_bbref_games_for_date_patch_list,
             DataSet.BBREF_BOXSCORES: self.get_file_name_bbref_boxscore_patch_list,
@@ -119,6 +121,7 @@ class FileHelper:
             DataSet.BBREF_BOXSCORES: decode_bbref_boxscore,
         }
         patch_file_dict = {
+            DataSet.BROOKS_GAMES_FOR_DATE: decode_brooks_games_for_date_patch_list,
             DataSet.BROOKS_PITCHFX: decode_brooks_pitchfx_patch_list,
             DataSet.BBREF_GAMES_FOR_DATE: decode_bbref_games_for_date_patch_list,
             DataSet.BBREF_BOXSCORES: decode_bbref_boxscore_patch_list,
@@ -262,7 +265,11 @@ class FileHelper:
             identifier = game_date
         else:
             raise ValueError("Unable to construct file name.")
-        return self.filename_dict[file_type][data_set](identifier)
+        return (
+            self.filename_dict[file_type][data_set](identifier)
+            if data_set in self.filename_dict[file_type]
+            else None
+        )
 
     def perform_s3_task(
         self,
@@ -275,7 +282,7 @@ class FileHelper:
         bb_game_id=None,
         pitch_app_id=None,
     ):  # pragma: no cover
-        s3_key = self.get_object_key(
+        s3_key = self.get_s3_object_key(
             data_set=data_set,
             file_type=file_type,
             game_date=game_date,
@@ -298,7 +305,7 @@ class FileHelper:
         if task == S3FileTask.DELETE:
             return self.delete_from_s3(s3_key)
 
-    def get_object_key(
+    def get_s3_object_key(
         self,
         data_set,
         file_type,
@@ -316,7 +323,7 @@ class FileHelper:
             bb_game_id=bb_game_id,
             pitch_app_id=pitch_app_id,
         )
-        return f"{folderpath}{filename}"
+        return f"{folderpath}/{filename}"
 
     def get_s3_folderpath(self, file_type, data_set, game_date=None, year=None):  # pragma: no cover
         if not game_date and not year:
@@ -341,9 +348,6 @@ class FileHelper:
 
     def get_file_name_json_brooks_pitch_log_for_game(self, bb_game_id):
         return f"{bb_game_id}.json"
-
-    def get_file_name_brooks_pitch_log_for_game_patch_list(self, bb_game_id):
-        return f"{bb_game_id}_PATCH_LIST.json"
 
     def get_file_name_html_brooks_pitchfx(self, pitch_app_id):
         return f"{pitch_app_id}.html"

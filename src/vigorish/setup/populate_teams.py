@@ -84,7 +84,7 @@ def import_teams_csv(db_session, csv_folder):
             reader.map("3B").to("triples")
             with tqdm(
                 total=total_rows,
-                desc="Populating team table........",
+                desc="Populating team table..........",
                 unit="row",
                 mininterval=0.12,
                 maxinterval=5,

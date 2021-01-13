@@ -20,16 +20,47 @@ BACKUP_FOLDER = TESTS_FOLDER.joinpath("backup")
 DB_FILE = TESTS_FOLDER.joinpath("vig_test.db")
 SQLITE_URL = f"sqlite:///{DB_FILE}"
 
-os.environ["ENV"] = "TEST"
-os.environ["DOTENV_FILE"] = str(DOTENV_FILE)
-os.environ["CONFIG_FILE"] = str(CONFIG_FILE)
-os.environ["DATABASE_URL"] = SQLITE_URL
+
+@pytest.fixture(scope="module", autouse=True)
+def env_vars(request):
+    """Sets environment variables to use .env and config.json files."""
+    os.environ["ENV"] = "TEST"
+    os.environ["DOTENV_FILE"] = str(DOTENV_FILE)
+    os.environ["CONFIG_FILE"] = str(CONFIG_FILE)
+    os.environ["DATABASE_URL"] = SQLITE_URL
+    return True
+
+
+@pytest.fixture(scope="module", autouse=True)
+def setup_db(vig_app):
+    """Creates all schema-defined tables and views in a SQLite database."""
+    initialize_database(vig_app, csv_folder=CSV_FOLDER)
+    assert vig_app.db_setup_complete
+    return True
+
+
+@pytest.fixture(scope="module")
+def vig_app(request):
+    """Returns a dict containing the same attributes/objects as the app object used in the CLI."""
+    app = Vigorish()
+
+    def fin():
+        app.db_session.close()
+
+    request.addfinalizer(fin)
+    return app
 
 
 @pytest.fixture(scope="module")
 def dotenv(request):
     """Returns a DotEnvFile instance using the .env file in the tests folder."""
     return DotEnvFile()
+
+
+@pytest.fixture(scope="module")
+def scraped_data(config, db_engine, db_session):
+    """Returns a ScrapedData instance using the test HTML/JSON folders and in-memory SQLite DB."""
+    return ScrapedData(db_engine=db_engine, db_session=db_session, config=config)
 
 
 @pytest.fixture(scope="module")
@@ -55,28 +86,3 @@ def db_session(request, db_engine):
 
     request.addfinalizer(fin)
     return db_session
-
-
-@pytest.fixture(scope="module")
-def scraped_data(config, db_engine, db_session):
-    """Returns a ScrapedData instance using the test HTML/JSON folders and in-memory SQLite DB."""
-    return ScrapedData(db_engine=db_engine, db_session=db_session, config=config)
-
-
-@pytest.fixture(scope="module")
-def vig_app(request):
-    """Returns a dict containing the same attributes/objects as the app object used in the CLI."""
-    app = Vigorish(db_url=SQLITE_URL)
-
-    def fin():
-        app.db_session.close()
-
-    request.addfinalizer(fin)
-    return app
-
-
-@pytest.fixture(scope="module", autouse=True)
-def setup_db(vig_app):
-    """Creates all schema-defined tables and views in a SQLite database."""
-    initialize_database(vig_app, csv_folder=CSV_FOLDER)
-    return True

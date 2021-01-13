@@ -4,14 +4,20 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Dict, List
 
-from vigorish.constants import PPB_PITCH_LOG_DICT
+from vigorish.constants import (
+    PPB_PITCH_LOG_DICT,
+    PLAY_DES_BB_TYPE_FB,
+    PLAY_DES_BB_TYPE_GB,
+    PLAY_DES_BB_TYPE_LD,
+    PLAY_DES_BB_TYPE_PU,
+)
 from vigorish.database import GameScrapeStatus, PlayerId, TimeBetweenPitches
 from vigorish.enums import DataSet, PitchType
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
 from vigorish.tasks.base import Task
-from vigorish.tasks.scrape_mlb_player_info import scrape_mlb_player_info
+from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
@@ -95,31 +101,18 @@ class CombineScrapedDataTask(Task):
         self.game_status = GameScrapeStatus.find_by_bbref_game_id(
             self.db_session, self.bbref_game_id
         )
-        self.boxscore = self.scraped_data.get_bbref_boxscore(self.bbref_game_id)
+        self.boxscore = self.scraped_data.get_bbref_boxscore(
+            self.bbref_game_id, self.apply_patch_list
+        )
         if not self.boxscore:
             error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {self.bbref_game_id})"
             Result.Ok(error)
-        if self.apply_patch_list:
-            result = self.scraped_data.apply_patch_list(
-                DataSet.BBREF_BOXSCORES, self.bbref_game_id, self.boxscore
-            )
-            if result.failure:
-                return result
-            self.boxscore = result.value
-        result = self.scraped_data.get_all_pitchfx_logs_for_game(self.bbref_game_id)
+        result = self.scraped_data.get_all_brooks_pitchfx_logs_for_game(
+            self.bbref_game_id, self.apply_patch_list
+        )
         if result.failure:
             return result
         self.pitchfx_logs_for_game = result.value
-        if self.apply_patch_list:
-            result = self.scraped_data.apply_patch_list(
-                DataSet.BROOKS_PITCHFX,
-                self.bbref_game_id,
-                self.pitchfx_logs_for_game,
-                self.boxscore,
-            )
-            if result.failure:
-                return result
-            self.pitchfx_logs_for_game = result.value
         self.avg_pitch_times = TimeBetweenPitches.get_latest_results(self.db_session)
         return Result.Ok()
 
@@ -244,8 +237,8 @@ class CombineScrapedDataTask(Task):
             team_id = split[1].strip()
             player = PlayerId.find_by_bbref_id(self.db_session, bbref_id)
             if not player:
-                result = scrape_mlb_player_info(
-                    self.db_session, name, bbref_id, self.boxscore.game_date
+                result = ScrapeMlbPlayerInfoTask(self.app).execute(
+                    name, bbref_id, self.boxscore.game_date
                 )
                 if result.failure:
                     return result
@@ -396,6 +389,8 @@ class CombineScrapedDataTask(Task):
             id_dict = PlayerId.get_player_ids_from_at_bat_id(self.db_session, pfx.at_bat_id)
             pfx.pitcher_id_bbref = id_dict["pitcher_id_bbref"]
             pfx.batter_id_bbref = id_dict["batter_id_bbref"]
+            pfx.db_pitcher_id = id_dict["pitcher_id_db"]
+            pfx.db_batter_id = id_dict["batter_id_db"]
 
     def combine_pbp_events_with_pfx_data(self):
         (self.at_bat_ids, at_bat_ids_invalid_pfx) = self.reconcile_at_bat_ids()
@@ -443,6 +438,7 @@ class CombineScrapedDataTask(Task):
                 return result
             pitch_sequence_description = result.value
             id_dict = PlayerId.get_player_ids_from_at_bat_id(self.db_session, ab_id)
+            pfx_data = self.determine_bb_type(pfx_data, final_pbp_event["play_description"])
             at_bat_pitchfx_audit = {
                 "pitch_count_bbref": pitch_count,
                 "pitch_count_pitchfx": len(pfx_data),
@@ -532,6 +528,8 @@ class CombineScrapedDataTask(Task):
             pfx_dict["inning_id"] = pfx.inning_id
             pfx_dict["pitcher_id_bbref"] = pfx.pitcher_id_bbref
             pfx_dict["batter_id_bbref"] = pfx.batter_id_bbref
+            pfx_dict["pitcher_id_db"] = pfx.db_pitcher_id
+            pfx_dict["batter_id_db"] = pfx.db_batter_id
             pfx_dict["game_start_time"] = pfx.game_start_time
             pfx_dict["time_pitch_thrown"] = pfx.time_pitch_thrown
             pfx_dict["seconds_since_game_start"] = pfx.seconds_since_game_start
@@ -819,6 +817,22 @@ class CombineScrapedDataTask(Task):
                 event_dict["processed"] = True
                 break
         return outcome.strip(".")
+
+    def determine_bb_type(self, pfx_data, play_description):
+        pfx = [pfx for pfx in pfx_data if pfx["type"] == "X"]
+        if not pfx:
+            return pfx_data
+        pfx = pfx[0]
+        pfx["is_batted_ball"] = True
+        if any(bb_type in play_description for bb_type in PLAY_DES_BB_TYPE_FB):
+            pfx["is_fly_ball"] = True
+        if any(bb_type in play_description for bb_type in PLAY_DES_BB_TYPE_GB):
+            pfx["is_ground_ball"] = True
+        if any(bb_type in play_description for bb_type in PLAY_DES_BB_TYPE_LD):
+            pfx["is_line_drive"] = True
+        if any(bb_type in play_description for bb_type in PLAY_DES_BB_TYPE_PU):
+            pfx["is_pop_up"] = True
+        return pfx_data
 
     def save_invalid_pitchfx(self, at_bat_ids_invalid_pfx):
         self.invalid_pitchfx = defaultdict(dict)
@@ -1504,7 +1518,7 @@ class CombineScrapedDataTask(Task):
             "gather_scraped_data_success": self.gather_scraped_data_success,
             "combined_data_success": self.combined_data_success,
             "save_combined_data_success": self.save_combined_data_success,
-            "results": self.combined_data,
+            "boxscore": self.combined_data,
         }
         return result
 
@@ -1516,6 +1530,7 @@ class CombineScrapedDataTask(Task):
                 "gather_scraped_data_success": self.gather_scraped_data_success,
                 "combined_data_success": self.combined_data_success,
                 "save_combined_data_success": self.save_combined_data_success,
+                "boxscore": self.combined_data,
                 "update_pitch_apps_success": False,
                 "error": "\n".join(self.error_messages),
             }
@@ -1524,6 +1539,7 @@ class CombineScrapedDataTask(Task):
             "gather_scraped_data_success": self.gather_scraped_data_success,
             "combined_data_success": self.combined_data_success,
             "save_combined_data_success": self.save_combined_data_success,
+            "boxscore": self.combined_data,
             "update_pitch_apps_success": True,
             "results": result.value,
         }

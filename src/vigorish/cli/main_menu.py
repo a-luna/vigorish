@@ -18,11 +18,10 @@ from vigorish.cli.menu_items import (
     CombineScrapedData,
     CreateJob,
     ExitProgram,
-    NpmInstallUpdate,
-    RestoreDatabase,
     SetupDatabase,
     StatusReport,
 )
+from vigorish.cli.menu_items.admin_tasks import NpmInstallUpdate, RestoreDatabase
 from vigorish.cli.menus import (
     AdminTasksMenu,
     AllJobsMenu,
@@ -30,7 +29,6 @@ from vigorish.cli.menus import (
     SettingsMenu,
     ViewGameDataMenu,
 )
-from vigorish.database import db_setup_complete
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
 
@@ -42,12 +40,12 @@ class MainMenu(Menu):
         self.audit_report = {}
 
     @property
+    def db_setup_complete(self):
+        return self.app.db_setup_complete
+
+    @property
     def initial_setup_complete(self):
-        return (
-            node_is_installed()
-            and node_modules_folder_exists()
-            and db_setup_complete(self.db_engine, self.db_session)
-        )
+        return node_is_installed() and node_modules_folder_exists() and self.db_setup_complete
 
     @property
     def needs_refresh(self):
@@ -79,7 +77,7 @@ class MainMenu(Menu):
         return Result.Ok(exit_menu)
 
     def check_app_status(self):
-        if not db_setup_complete(self.db_engine, self.db_session):
+        if not self.db_setup_complete:
             return
         color = get_random_cli_color()
         if not self.initialized:
@@ -124,7 +122,7 @@ class MainMenu(Menu):
             print_message("Electron/Nightmare Installed..: YES", fg="bright_green", bold=True)
         else:
             print_message("Electron/Nightmare Installed..: NO", fg="bright_red", bold=True)
-        if db_setup_complete(self.db_engine, self.db_session):
+        if self.db_setup_complete:
             print_message("SQLite DB Initialized.........: YES", fg="bright_green", bold=True)
         else:
             print_message("SQLite DB Initialized.........: NO", fg="bright_red", bold=True)
@@ -134,7 +132,7 @@ class MainMenu(Menu):
         self.menu_items = list(main_menu_items.values())
         if node_modules_folder_exists():
             self.menu_items.remove(main_menu_items["npm_install"])
-        if not db_setup_complete(self.db_engine, self.db_session):
+        if not self.db_setup_complete:
             self.menu_items.remove(main_menu_items["create_job"])
             self.menu_items.remove(main_menu_items["all_jobs"])
             self.menu_items.remove(main_menu_items["status_reports"])

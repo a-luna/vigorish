@@ -1,7 +1,7 @@
 aenum==2.2.6
 blessed==1.17.12
-boto3==1.16.52
-botocore==1.19.52
+boto3==1.16.53
+botocore==1.19.53
 bullet==2.2.0
 certifi==2020.12.5
 chardet==3.0.4
