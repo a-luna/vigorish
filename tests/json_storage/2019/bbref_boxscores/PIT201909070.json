@@ -25,6 +25,9 @@
     "total_hits_by_opponent": 6,
     "total_errors_by_team": 0,
     "total_errors_by_opponent": 2,
+    "team_won": true,
+    "pitcher_of_record": "wainwad01",
+    "pitcher_earned_save": "",
     "starting_lineup": [
       {
         "player_id_br": "fowlede01",
@@ -628,6 +631,9 @@
     "total_hits_by_opponent": 11,
     "total_errors_by_team": 2,
     "total_errors_by_opponent": 0,
+    "team_won": false,
+    "pitcher_of_record": "braulst01",
+    "pitcher_earned_save": "",
     "starting_lineup": [
       {
         "player_id_br": "newmake01",
