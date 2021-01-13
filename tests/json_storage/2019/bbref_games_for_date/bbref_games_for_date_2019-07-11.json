@@ -1,0 +1,13 @@
+{
+  "__bbref_games_for_date__": true,
+  "dashboard_url": "https://www.baseball-reference.com/boxes/?month=7&day=11&year=2019",
+  "game_count": 1,
+  "game_date_str": "2019-07-11",
+  "games": [
+    {
+      "__bbref_game_info__": true,
+      "bbref_game_id": "TEX201907110",
+      "url": "https://www.baseball-reference.com/boxes/TEX/TEX201907110.shtml"
+    }
+  ]
+}

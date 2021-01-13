@@ -4,7 +4,6 @@ from vigorish.enums import DataSet, VigFile
 from vigorish.scrape.url_details import UrlDetails
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
-from vigorish.util.regex import BBREF_BOXSCORE_URL_REGEX
 from vigorish.util.result import Result
 
 
@@ -111,17 +110,16 @@ def create_url_for_bbref_games_for_date(db_job, scraped_data, game_date):
 
 def create_urls_for_bbref_boxscores_for_date(db_job, scraped_data, game_date):
     data_set = DataSet.BBREF_BOXSCORES
-    req_data_set = DataSet.BBREF_BOXSCORES
-    games_for_date = scraped_data.get_bbref_games_for_date(game_date)
-    if not games_for_date:
+    req_data_set = DataSet.BBREF_GAMES_FOR_DATE
+    bbref_games_for_date = scraped_data.get_bbref_games_for_date(game_date)
+    if not bbref_games_for_date:
         return Result.Fail(get_unscraped_data_error(data_set, req_data_set, game_date))
     urls = []
-    for boxscore_url in games_for_date.boxscore_urls:
-        bbref_game_id = get_bbref_game_id_from_url(boxscore_url)
+    for game_info in bbref_games_for_date.games:
         url_data = {
-            "url": boxscore_url,
-            "url_id": bbref_game_id,
-            "fileName": get_filename(scraped_data, data_set, bbref_game_id),
+            "url": game_info.url,
+            "url_id": game_info.bbref_game_id,
+            "fileName": get_filename(scraped_data, data_set, game_info.bbref_game_id),
             "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
             "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
         }
@@ -155,19 +153,9 @@ def get_filename(scraped_data, data_set, identifier):
 
 
 def get_cached_html_folderpath(scraped_data, data_set, game_date):
-    return scraped_data.file_helper.get_local_folderpath(
-        file_type=VigFile.SCRAPED_HTML, data_set=data_set, game_date=game_date
-    )
+    return scraped_data.file_helper.get_local_folderpath(VigFile.SCRAPED_HTML, data_set, game_date)
 
 
 def get_scraped_html_folderpath(db_job, data_set):
     folderpath = db_job.scraped_html_folders[data_set]
     return str(folderpath.resolve())
-
-
-def get_bbref_game_id_from_url(url):
-    match = BBREF_BOXSCORE_URL_REGEX.search(url)
-    if not match:
-        return Result.Fail(f"Failed to parse bbref_game_id from url: {url}")
-    id_dict = match.groupdict()
-    return id_dict["game_id"]
