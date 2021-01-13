@@ -10,7 +10,6 @@ from vigorish.database import Base
 from vigorish.enums import SeasonType
 from vigorish.util.datetime_util import get_date_range as get_date_range_util
 from vigorish.util.dt_format_strings import DATE_ONLY
-from vigorish.util.list_helpers import display_dict
 from vigorish.util.result import Result
 
 
@@ -42,13 +41,6 @@ class Season(Base):
         uselist=False,
         primaryjoin="Season.id==Season_Game_View.id",
         foreign_keys="Season_Game_View.id",
-    )
-    game_pitch_app_status = relationship(
-        "Season_Game_PitchApp_View",
-        backref="original",
-        uselist=False,
-        primaryjoin="Season.id == Season_Game_PitchApp_View.id",
-        foreign_keys="Season_Game_PitchApp_View.id",
     )
     date_status = relationship(
         "Season_Date_View",
@@ -387,35 +379,37 @@ class Season(Base):
 
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
-        if not self.scraped_all_brooks_pitch_logs:
-            return False
-        if not self.pitch_apps:
-            return True
-        return self.pitch_app_count_pitchfx == self.total_pitch_apps_scraped_pitchfx
+        return (
+            True
+            if not self.pitch_apps
+            else False
+            if not self.scraped_all_brooks_pitch_logs
+            else self.pitch_app_count_pitchfx == self.total_pitch_apps_scraped_pitchfx
+        )
 
     @hybrid_property
     def combined_data_for_all_pitchfx_logs(self):
-        if not self.scraped_all_pitchfx_logs:
-            return False
-        if not self.pitch_apps:
-            return False
-        return self.pitch_app_count_pitchfx == self.total_pitch_apps_combined_data
+        return (
+            False
+            if not self.pitch_apps or not self.scraped_all_pitchfx_logs
+            else self.pitch_app_count_pitchfx == self.total_pitch_apps_combined_data
+        )
 
     @hybrid_property
     def pitchfx_error_for_any_pitchfx_logs(self):
-        if not self.scraped_all_pitchfx_logs:
-            return False
-        if not self.pitch_apps:
-            return False
-        return any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
+        return (
+            False
+            if not self.pitch_apps or not self.scraped_all_pitchfx_logs
+            else any((pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
+        )
 
     @hybrid_property
     def pitchfx_is_valid_for_all_pitchfx_logs(self):
-        if not self.scraped_all_pitchfx_logs:
-            return True
-        if not self.pitch_apps:
-            return True
-        return all(not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
+        return (
+            True
+            if not self.pitch_apps or not self.scraped_all_pitchfx_logs
+            else all(not (pfx.pitchfx_error or pfx.invalid_pitchfx) for pfx in self.pitch_apps)
+        )
 
     @hybrid_property
     def percent_complete_pitchfx_logs_scraped(self):
@@ -429,70 +423,65 @@ class Season(Base):
         return f"<Season name={self.name}, id={self.id})>"
 
     def as_dict(self):
-        d = {}
-        d["name"] = self.name
-        d["year"] = self.year
-        d["start_date_str"] = self.start_date_str
-        d["end_date_str"] = self.end_date_str
-        d["asg_date_str"] = self.asg_date_str
-        d["total_days"] = self.total_days
-        d["total_days_scraped_bbref"] = self.total_days_scraped_bbref
-        d["percent_complete_bbref_games_for_date"] = self.percent_complete_bbref_games_for_date
-        d["scraped_all_bbref_games_for_date"] = self.scraped_all_bbref_games_for_date
-        d["total_days_scraped_brooks"] = self.total_days_scraped_brooks
-        d["percent_complete_brooks_games_for_date"] = self.percent_complete_brooks_games_for_date
-        d["scraped_all_brooks_games_for_date"] = self.scraped_all_brooks_games_for_date
-        d["total_games"] = self.total_games
-        d["total_games_combined_success"] = self.total_games_combined_success
-        d["total_games_combined_fail"] = self.total_games_combined_fail
-        d["total_games_combined"] = self.total_games_combined
-        d["total_bbref_boxscores_scraped"] = self.total_bbref_boxscores_scraped
-        d[
-            "percent_complete_bbref_boxscores_scraped"
-        ] = f"{self.percent_complete_bbref_boxscores_scraped:01.0f}%"
-        d["scraped_all_bbref_boxscores"] = self.scraped_all_bbref_boxscores
-        d["total_brooks_pitch_logs_scraped"] = self.total_brooks_pitch_logs_scraped
-        d[
-            "percent_complete_brooks_pitch_logs"
-        ] = f"{self.percent_complete_brooks_pitch_logs:01.0f}%"
-        d["scraped_all_brooks_pitch_logs"] = self.scraped_all_brooks_pitch_logs
-        d["pitch_app_count_bbref"] = self.pitch_app_count_bbref
-        d["pitch_app_count_brooks"] = self.pitch_app_count_brooks
-        d["total_pitch_count_bbref"] = self.total_pitch_count_bbref
-        d["pitch_app_count_pitchfx"] = self.pitch_app_count_pitchfx
-        d["total_pitch_apps_scraped_pitchfx"] = self.total_pitch_apps_scraped_pitchfx
-        d["total_pitch_apps_no_pitchfx_data"] = self.total_pitch_apps_no_pitchfx_data
-        d["total_pitch_apps_with_pitchfx_data"] = self.total_pitch_apps_with_pitchfx_data
-        d["total_pitch_apps_combined_data"] = self.total_pitch_apps_combined_data
-        d["total_pitch_apps_pitchfx_error"] = self.total_pitch_apps_pitchfx_error
-        d["total_pitch_apps_invalid_pitchfx"] = self.total_pitch_apps_invalid_pitchfx
-        d["total_pitch_apps_pitchfx_error"] = self.total_pitch_apps_pitchfx_error
-        d["total_pitch_apps_pitchfx_is_valid"] = self.total_pitch_apps_pitchfx_is_valid
-        d["total_pitch_count_pitch_logs"] = self.total_pitch_count_pitch_logs
-        d["total_pitch_count_bbref"] = self.total_pitch_count_bbref
-        d["total_pitch_count_bbref_audited"] = self.total_pitch_count_bbref_audited
-        d["total_pitch_count_pitchfx"] = self.total_pitch_count_pitchfx
-        d["total_pitch_count_pitchfx_audited"] = self.total_pitch_count_pitchfx_audited
-        d["total_duplicate_pitchfx_removed_count"] = self.total_duplicate_pitchfx_removed_count
-        d["total_missing_pitchfx_count"] = self.total_missing_pitchfx_count
-        d["total_extra_pitchfx_count"] = self.total_extra_pitchfx_count
-        d["total_extra_pitchfx_removed_count"] = self.total_extra_pitchfx_removed_count
-        d["total_batters_faced_bbref"] = self.total_batters_faced_bbref
-        d["total_batters_faced_pitchfx"] = self.total_batters_faced_pitchfx
-        d["total_at_bats_missing_pitchfx"] = self.total_at_bats_missing_pitchfx
-        d["total_at_bats_extra_pitchfx"] = self.total_at_bats_extra_pitchfx
-        d["total_at_bats_extra_pitchfx_removed"] = self.total_at_bats_extra_pitchfx_removed
-        d["total_at_bats_pitchfx_error"] = self.total_at_bats_pitchfx_error
-        d["total_at_bats_invalid_pitchfx"] = self.total_at_bats_invalid_pitchfx
-        d["scraped_all_pitchfx_logs"] = self.scraped_all_pitchfx_logs
-        d["combined_data_for_all_pitchfx_logs"] = self.combined_data_for_all_pitchfx_logs
-        d["pitchfx_error_for_any_pitchfx_logs"] = self.pitchfx_error_for_any_pitchfx_logs
-        d["pitchfx_is_valid_for_all_pitchfx_logs"] = self.pitchfx_is_valid_for_all_pitchfx_logs
-        d["percent_complete_pitchfx_logs_scraped"] = self.percent_complete_pitchfx_logs_scraped
-        return d
-
-    def display(self):
-        display_dict(self.as_dict(), title=self.name)
+        return {
+            "name": self.name,
+            "year": self.year,
+            "start_date_str": self.start_date_str,
+            "end_date_str": self.end_date_str,
+            "asg_date_str": self.asg_date_str,
+            "total_days": self.total_days,
+            "total_days_scraped_bbref": self.total_days_scraped_bbref,
+            "percent_complete_bbref_games_for_date": self.percent_complete_bbref_games_for_date,
+            "scraped_all_bbref_games_for_date": self.scraped_all_bbref_games_for_date,
+            "total_days_scraped_brooks": self.total_days_scraped_brooks,
+            "percent_complete_brooks_games_for_date": self.percent_complete_brooks_games_for_date,
+            "scraped_all_brooks_games_for_date": self.scraped_all_brooks_games_for_date,
+            "total_games": self.total_games,
+            "total_games_combined_success": self.total_games_combined_success,
+            "total_games_combined_fail": self.total_games_combined_fail,
+            "total_games_combined": self.total_games_combined,
+            "total_bbref_boxscores_scraped": self.total_bbref_boxscores_scraped,
+            "percent_complete_bbref_boxscores_scraped": (
+                f"{self.percent_complete_bbref_boxscores_scraped:01.0f}%"
+            ),
+            "scraped_all_bbref_boxscores": self.scraped_all_bbref_boxscores,
+            "total_brooks_pitch_logs_scraped": self.total_brooks_pitch_logs_scraped,
+            "percent_complete_brooks_pitch_logs": (
+                f"{self.percent_complete_brooks_pitch_logs:01.0f}%"
+            ),
+            "scraped_all_brooks_pitch_logs": self.scraped_all_brooks_pitch_logs,
+            "pitch_app_count_bbref": self.pitch_app_count_bbref,
+            "pitch_app_count_brooks": self.pitch_app_count_brooks,
+            "pitch_app_count_pitchfx": self.pitch_app_count_pitchfx,
+            "total_pitch_apps_scraped_pitchfx": self.total_pitch_apps_scraped_pitchfx,
+            "total_pitch_apps_no_pitchfx_data": self.total_pitch_apps_no_pitchfx_data,
+            "total_pitch_apps_with_pitchfx_data": self.total_pitch_apps_with_pitchfx_data,
+            "total_pitch_apps_combined_data": self.total_pitch_apps_combined_data,
+            "total_pitch_apps_pitchfx_error": self.total_pitch_apps_pitchfx_error,
+            "total_pitch_apps_invalid_pitchfx": self.total_pitch_apps_invalid_pitchfx,
+            "total_pitch_apps_pitchfx_is_valid": self.total_pitch_apps_pitchfx_is_valid,
+            "total_pitch_count_pitch_logs": self.total_pitch_count_pitch_logs,
+            "total_pitch_count_bbref": self.total_pitch_count_bbref,
+            "total_pitch_count_bbref_audited": self.total_pitch_count_bbref_audited,
+            "total_pitch_count_pitchfx": self.total_pitch_count_pitchfx,
+            "total_pitch_count_pitchfx_audited": self.total_pitch_count_pitchfx_audited,
+            "total_duplicate_pitchfx_removed_count": self.total_duplicate_pitchfx_removed_count,
+            "total_missing_pitchfx_count": self.total_missing_pitchfx_count,
+            "total_extra_pitchfx_count": self.total_extra_pitchfx_count,
+            "total_extra_pitchfx_removed_count": self.total_extra_pitchfx_removed_count,
+            "total_batters_faced_bbref": self.total_batters_faced_bbref,
+            "total_batters_faced_pitchfx": self.total_batters_faced_pitchfx,
+            "total_at_bats_missing_pitchfx": self.total_at_bats_missing_pitchfx,
+            "total_at_bats_extra_pitchfx": self.total_at_bats_extra_pitchfx,
+            "total_at_bats_extra_pitchfx_removed": self.total_at_bats_extra_pitchfx_removed,
+            "total_at_bats_pitchfx_error": self.total_at_bats_pitchfx_error,
+            "total_at_bats_invalid_pitchfx": self.total_at_bats_invalid_pitchfx,
+            "scraped_all_pitchfx_logs": self.scraped_all_pitchfx_logs,
+            "combined_data_for_all_pitchfx_logs": self.combined_data_for_all_pitchfx_logs,
+            "pitchfx_error_for_any_pitchfx_logs": self.pitchfx_error_for_any_pitchfx_logs,
+            "pitchfx_is_valid_for_all_pitchfx_logs": self.pitchfx_is_valid_for_all_pitchfx_logs,
+            "percent_complete_pitchfx_logs_scraped": self.percent_complete_pitchfx_logs_scraped,
+        }
 
     def status_report(self):
         scraped_bbref_boxscores = "YES" if self.scraped_all_bbref_boxscores else "NO"
@@ -569,52 +558,8 @@ class Season(Base):
     def get_date_range(self):
         return get_date_range_util(self.start_date, self.end_date)
 
-    def get_all_bbref_game_ids_no_pitchfx_data_for_all_pitch_apps(self):
-        return [
-            game.bbref_game_id for game in self.games if game.no_pitchfx_data_for_all_pitch_apps
-        ]
-
-    def get_all_bbref_game_ids_no_pitchfx_data_for_any_pitch_apps(self):
-        return [
-            game.bbref_game_id for game in self.games if game.no_pitchfx_data_for_any_pitch_apps
-        ]
-
-    def get_all_bbref_game_ids_combined_data_success(self):
-        return [game.bbref_game_id for game in self.games if game.combined_data_success]
-
     def get_all_bbref_game_ids_combined_data_fail(self):
         return [game.bbref_game_id for game in self.games if game.combined_data_fail]
-
-    def get_all_bbref_game_ids_eligible_for_audit(self):
-        return [
-            game.bbref_game_id
-            for game in self.game_pitch_app_status
-            if game.total_pitchfx == game.total_pitchfx_scraped
-            and game.total_pitchfx != game.total_combined_pitchfx_bbref_data
-        ]
-
-    def get_all_bbref_game_ids_all_pitchfx_logs_are_valid(self):
-        return [
-            game.bbref_game_id
-            for game in self.game_pitch_app_status
-            if game.total_pitchfx == game.total_combined_pitchfx_bbref_data
-            and game.total_pitchfx_error == 0
-            and game.total_invalid_pitchfx == 0
-        ]
-
-    def get_all_bbref_game_ids_pitchfx_error(self):
-        return [
-            game.bbref_game_id
-            for game in self.game_pitch_app_status
-            if game.total_pitchfx_error and game.total_pitchfx_error > 0
-        ]
-
-    def get_all_bbref_game_ids_invalid_pitchfx(self):
-        return [
-            game.bbref_game_id
-            for game in self.game_pitch_app_status
-            if game.total_invalid_pitchfx and game.total_invalid_pitchfx > 0
-        ]
 
     @classmethod
     def find_by_year(cls, db_session, year, season_type=SeasonType.REGULAR_SEASON):
@@ -624,9 +569,11 @@ class Season(Base):
     def is_date_in_season(cls, db_session, check_date, season_type=SeasonType.REGULAR_SEASON):
         season = cls.find_by_year(db_session, check_date.year)
         if not season:
-            error = f"Database does not contain info for MLB {season_type} {check_date.year}"
+            error = (
+                f"Database does not contain info for the MLB {check_date.year} "
+                f'{season_type.replace("_", " ").title()}'
+            )
             return Result.Fail(error)
-
         date_str = check_date.strftime(DATE_ONLY)
         if check_date < season.start_date or check_date > season.end_date:
             error = f"{date_str} is not within the scope of the {season.name}"

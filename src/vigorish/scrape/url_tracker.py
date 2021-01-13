@@ -38,7 +38,7 @@ class UrlTracker:
 
     @property
     def html_scraping_complete(self):
-        return all(url.file_exists_with_content for url in self.parse_urls)
+        return all(url.html_was_scraped for url in self.parse_urls)
 
     @property
     def identify_html_report(self):

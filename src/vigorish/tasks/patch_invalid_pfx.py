@@ -25,7 +25,6 @@ PATCH_STAT_NAMES = [
     "total_at_bats_missing_pitchfx",
     "total_at_bats_extra_pitchfx",
     "total_at_bats_extra_pitchfx_removed",
-    "total_at_bats_duplicate_guid_removed",
     "total_at_bats_pitchfx_error",
     "total_at_bats_invalid_pitchfx",
     "pitch_count_bbref",
@@ -35,7 +34,6 @@ PATCH_STAT_NAMES = [
     "extra_pitchfx_count",
     "extra_pitchfx_removed_count",
     "total_at_bats_extra_pitchfx_removed",
-    "duplicate_guid_removed_count",
     "total_at_bats_pitchfx_error",
     "invalid_pitchfx_count",
 ]

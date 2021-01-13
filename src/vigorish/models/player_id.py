@@ -18,9 +18,6 @@ class PlayerId(Base):
     def __repr__(self):
         return f"<PlayerId bbref_id={self.bbref_id}, mlb_id={self.mlb_id}>"
 
-    def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):
         return db_session.query(cls).filter_by(bbref_id=bbref_id).first()
@@ -28,11 +25,6 @@ class PlayerId(Base):
     @classmethod
     def find_by_mlb_id(cls, db_session, mlb_id):
         return db_session.query(cls).filter_by(mlb_id=mlb_id).first()
-
-    @classmethod
-    def get_bbref_id_for_mlb_id(cls, db_session, mlb_id):
-        player_id = cls.find_by_mlb_id(db_session, mlb_id)
-        return player_id.bbref_id if player_id else None
 
     @classmethod
     def get_player_ids_from_at_bat_id(cls, db_session, at_bat_id):
@@ -44,15 +36,17 @@ class PlayerId(Base):
         return {
             "pitcher_id_bbref": pitcher_id.bbref_id,
             "pitcher_id_mlb": pitcher_id_mlb,
+            "pitcher_id_db": pitcher_id.db_player_id,
             "pitcher_name": pitcher_id.mlb_name,
             "pitcher_team": at_bat_dict["pitcher_team"],
             "batter_id_bbref": batter_id.bbref_id,
             "batter_id_mlb": batter_id_mlb,
+            "batter_id_db": batter_id.db_player_id,
             "batter_name": batter_id.mlb_name,
             "batter_team": at_bat_dict["batter_team"],
         }
 
     @classmethod
-    def get_player_id_map(cls, db_session):
+    def get_mlb_player_id_map(cls, db_session):
         all_players = db_session.query(cls).all()
         return {p.mlb_id: p.db_player_id for p in all_players}

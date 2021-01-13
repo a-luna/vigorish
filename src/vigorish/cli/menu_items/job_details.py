@@ -70,7 +70,7 @@ class JobDetails(MenuItem):
             f"{MENU_NUMBERS.get(2)}  Cancel Job": "CANCEL",
             f"{EMOJI_DICT.get('BACK')} Return to Incomplete Jobs": None,
         }
-        return user_options_prompt(choices, prompt)
+        return user_options_prompt(choices, prompt, clear_screen=False)
 
     def failed_job_options_prompt(self):
         prompt = "Current options:"
@@ -78,4 +78,4 @@ class JobDetails(MenuItem):
             f"{MENU_NUMBERS.get(1)}  Retry Job": "RETRY",
             f"{EMOJI_DICT.get('BACK')} Return to Failed Jobs": None,
         }
-        return user_options_prompt(choices, prompt)
+        return user_options_prompt(choices, prompt, clear_screen=False)

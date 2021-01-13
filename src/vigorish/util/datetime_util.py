@@ -67,36 +67,25 @@ def current_year():
     return datetime.now().year
 
 
-def format_timedelta_str(td):
+def format_timedelta_str(td, precise=True):
     """Convert timedelta to an easy-to-read string value."""
     (milliseconds, microseconds) = divmod(td.microseconds, 1000)
     (minutes, seconds) = divmod(td.seconds, 60)
     (hours, minutes) = divmod(minutes, 60)
     if td.days > 0:
-        return f"{td.days}d {hours:.0f}h {minutes:.0f}m {seconds}s"
+        return (
+            f"{td.days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{td.days} days"
+        )
     if hours > 0:
-        return f"{hours:.0f}h {minutes:.0f}m {seconds}s"
+        return (
+            f"{hours:.0f}h {minutes:.0f}m {seconds}s"
+            if precise
+            else f"{hours:.0f} hours {minutes:.0f} minutes"
+        )
     if minutes > 0:
-        return f"{minutes:.0f}m {seconds}s"
+        return f"{minutes:.0f}m {seconds}s" if precise else f"{minutes:.0f} minutes"
     if td.seconds > 0:
-        return f"{td.seconds}s {milliseconds:.0f}ms"
-    if milliseconds > 0:
-        return f"{milliseconds}ms"
-    return f"{microseconds}us"
-
-
-def get_time_since(td):
-    (milliseconds, microseconds) = divmod(td.microseconds, 1000)
-    (minutes, seconds) = divmod(td.seconds, 60)
-    (hours, minutes) = divmod(minutes, 60)
-    if td.days > 0:
-        return f"{td.days} days"
-    if hours > 0:
-        return f"{hours:.0f} hours {minutes:.0f} minutes"
-    if minutes > 0:
-        return f"{minutes:.0f} minutes"
-    if td.seconds > 0:
-        return f"{td.seconds} seconds"
+        return f"{td.seconds}s {milliseconds:.0f}ms" if precise else f"{td.seconds} seconds"
     if milliseconds > 0:
         return f"{milliseconds}ms"
     return f"{microseconds}us"
