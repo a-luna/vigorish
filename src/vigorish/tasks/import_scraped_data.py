@@ -1,10 +1,8 @@
-import subprocess
+# import subprocess
 from pathlib import Path
 
 from events import Events
-from halo import Halo
 
-from vigorish.cli.components import get_random_cli_color
 from vigorish.database import Season
 from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore_list
@@ -27,31 +25,47 @@ class ImportScrapedDataTask(Task):
             (
                 "error_occurred",
                 "no_scraped_data_found",
-                "remove_invalid_pitchfx_logs_start",
-                "remove_invalid_pitchfx_logs_complete",
+                "search_local_files_start",
+                "search_local_files_complete",
                 "import_scraped_data_start",
                 "import_scraped_data_complete",
+                "import_scraped_data_for_year_start",
+                "import_scraped_data_for_year_complete",
+                "import_scraped_data_set_start",
+                "import_scraped_data_set_complete",
             )
         )
 
     def execute(self, overwrite_existing=False):
-        all_mlb_seasons = [season.year for season in Season.all_regular_seasons(self.db_session)]
-        mlb_season_data_map = {
-            year: self.local_folder_has_parsed_data_for_season(year) for year in all_mlb_seasons
+        self.events.search_local_files_start()
+        all_mlb_seasons = Season.all_regular_seasons(self.db_session)
+        mlb_season_map = {
+            season.year: {
+                "has_data": self.local_folder_has_parsed_data_for_season(season.year),
+                "season": season,
+            }
+            for season in all_mlb_seasons
         }
-        if not any(has_data for has_data in mlb_season_data_map.values()):
+        if not any(season["has_data"] for season in mlb_season_map.values()):
             self.events.no_scraped_data_found()
             return Result.Ok()
-        for year, data_exists in mlb_season_data_map.items():
-            if not data_exists:
+        for season in mlb_season_map.values():
+            if not season["has_data"]:
                 continue
-            subprocess.run(["clear"])
-            result = self.remove_invalid_pitchfx_logs(year)
+            result = self.remove_invalid_pitchfx_logs(season["season"])
             if result.failure:
                 return result
-            result = self.update_all_data_sets(year, overwrite_existing)
+        self.events.search_local_files_complete()
+        self.events.import_scraped_data_start()
+        for season in mlb_season_map.values():
+            if not season["has_data"]:
+                continue
+            self.events.import_scraped_data_for_year_start(season["season"].year)
+            result = self.update_all_data_sets(season["season"], overwrite_existing)
             if result.failure:
                 return result
+            self.events.import_scraped_data_for_year_complete(season["season"].year)
+        self.events.import_scraped_data_complete()
         return Result.Ok()
 
     def local_folder_has_parsed_data_for_season(self, year):
@@ -65,11 +79,7 @@ class ImportScrapedDataTask(Task):
                 return True
         return False
 
-    def remove_invalid_pitchfx_logs(self, year):
-        self.events.remove_invalid_pitchfx_logs_start(year)
-        season = Season.find_by_year(self.db_session, year)
-        if not season:
-            return Result.Fail(f"No data has been scraped for the MLB {year} season.")
+    def remove_invalid_pitchfx_logs(self, season):
         valid_ids = []
         for game_date in season.get_date_range():
             games_for_date = self.scraped_data.get_brooks_games_for_date(game_date)
@@ -89,38 +99,33 @@ class ImportScrapedDataTask(Task):
             invalid_pitchfx_log = Path(pfx_folderpath).joinpath(f"{pitch_app_id}.json")
             if invalid_pitchfx_log.exists():
                 invalid_pitchfx_log.unlink()
-        self.events.remove_invalid_pitchfx_logs_complete(year)
         return Result.Ok()
 
-    def update_all_data_sets(self, year, overwrite_existing=False):
+    def update_all_data_sets(self, season, overwrite_existing=False):
         for data_set in DataSet:
             if data_set == DataSet.ALL:
                 continue
-            result = self.update_data_set(data_set, year, overwrite_existing)
+            self.events.import_scraped_data_set_start(data_set, season.year)
+            result = self.update_data_set(data_set, season, overwrite_existing)
             if result.failure:
                 return result
+            self.events.import_scraped_data_set_complete(data_set, season.year)
         return Result.Ok()
 
-    def update_data_set(self, data_set, year, overwrite_existing=False):
-        self.events.import_scraped_data_start(data_set, year)
+    def update_data_set(self, data_set, season, overwrite_existing=False):
         scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(
-            VigFile.PARSED_JSON, data_set, year
+            VigFile.PARSED_JSON, data_set, season.year
         )
         if not scraped_ids:
             return Result.Ok()
-        spinner = Halo(spinner="dots3", color=get_random_cli_color())
-        spinner.text = f"Updating {data_set} for MLB {year}..."
-        spinner.start()
         if not overwrite_existing:
-            existing_scraped_ids = self.scraped_data.get_scraped_ids_from_database(data_set, year)
+            existing_scraped_ids = self.scraped_data.get_scraped_ids_from_database(data_set, season)
             scraped_ids = list(set(scraped_ids) - set(existing_scraped_ids))
         result = self.update_status_for_data_set(data_set, scraped_ids)
-        if result.failure:
-            self.events.error_occurred(result.error, data_set, year)
+        if result.failure and "scrape_status_game does not contain an entry" not in result.error:
+            self.events.error_occurred(result.error, data_set, season.year)
             return result
         self.db_session.commit()
-        spinner.succeed(f"Successfully updated {data_set} for MLB {year}!")
-        self.events.import_scraped_data_complete(data_set, year)
         return Result.Ok()
 
     def update_status_for_data_set(self, data_set, scraped_ids):

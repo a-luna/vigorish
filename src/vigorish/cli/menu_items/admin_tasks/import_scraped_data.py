@@ -1,11 +1,14 @@
 """Update bbref_player_id_map.json file."""
 import subprocess
+from collections import defaultdict
 
+from getch import pause
 from halo import Halo
 
 from vigorish.cli.components import (
     get_random_cli_color,
     get_random_dots_spinner,
+    print_heading,
     print_message,
     user_options_prompt,
     yes_no_prompt,
@@ -37,7 +40,7 @@ class ImportScrapedData(MenuItem):
     def __init__(self, app):
         super().__init__(app)
         self.import_scraped_data = ImportScrapedDataTask(self.app)
-        self.spinner = Halo(color=get_random_cli_color(), spinner=get_random_dots_spinner())
+        self.spinners = {}
         self.menu_item_text = "Import Scraped Data from Local Folders"
         self.menu_item_emoji = EMOJI_DICT.get("HONEY_POT")
 
@@ -55,13 +58,22 @@ class ImportScrapedData(MenuItem):
             return result
         return Result.Ok(True)
 
-    def prompt_user_import_data(self):
+    def update_heading(self, current_action):
+        new_heading = (
+            f"Import Scraped Data: {current_action}"
+            if self.app.db_setup_complete
+            else f"Setup Database: {current_action}"
+        )
         subprocess.run(["clear"])
+        print_heading(new_heading, fg="bright_yellow")
+
+    def prompt_user_import_data(self):
+        self.update_heading("Run Task?")
         print_message(IMPORT_DATA_MESSAGE, fg="bright_yellow", bold=True)
         return yes_no_prompt(IMPORT_DATA_PROMPT, wrap=False)
 
     def prompt_user_overwrite_data(self):
-        subprocess.run(["clear"])
+        self.update_heading("Overwrite Existing Data?")
         print_message(OVERWRITE_DATA_MESSAGE, fg="bright_yellow", bold=True)
         choices = {
             f"{MENU_NUMBERS.get(1)}  KEEP EXISTING DATA": "KEEP",
@@ -71,10 +83,73 @@ class ImportScrapedData(MenuItem):
         return user_options_prompt(choices, OVERWRITE_DATA_PROMPT, clear_screen=False)
 
     def error_occurred(self, error_message, data_set, year):
-        self.spinner.fail(f"Error occurred while updating {data_set} for MLB {year}")
+        self.update_heading("Error!")
+        self.spinners[year][data_set].fail(
+            f"Error occurred while updating {data_set} for MLB {year}"
+        )
+
+    def search_local_files_start(self):
+        self.update_heading("In Progress...")
+        self.spinners["default"] = Halo(
+            spinner=get_random_dots_spinner(), color=get_random_cli_color()
+        )
+        self.spinners["default"].text = "Searching local folder for scraped data..."
+        self.spinners["default"].start()
+
+    def import_scraped_data_start(self):
+        self.spinners["default"].stop()
+        self.update_heading("In Progress...")
+
+    def import_scraped_data_for_year_start(self, year):
+        self.update_heading("In Progress...")
+        self.spinners[year] = defaultdict(lambda: Halo())
+
+    def import_scraped_data_set_start(self, data_set, year):
+        spinner = self.spinners[year][data_set]
+        spinner.spinner = get_random_dots_spinner()
+        spinner.color = get_random_cli_color()
+        spinner.text = f"Updating {data_set} for MLB {year}..."
+        spinner.start()
+
+    def import_scraped_data_set_complete(self, data_set, year):
+        self.spinners[year][data_set].succeed(f"Successfully updated {data_set} for MLB {year}!")
+
+    def import_scraped_data_complete(self):
+        self.update_heading("Complete!")
+        success = "Successfully imported all scraped data from local files"
+        print_message(success, fg="bright_yellow", bold=True)
+        pause(message="\nPress any key to continue...")
 
     def subscribe_to_events(self):
         self.import_scraped_data.events.error_occurred += self.error_occurred
+        self.import_scraped_data.events.search_local_files_start += self.search_local_files_start
+        self.import_scraped_data.events.import_scraped_data_start += self.import_scraped_data_start
+        self.import_scraped_data.events.import_scraped_data_complete += (
+            self.import_scraped_data_complete
+        )
+        self.import_scraped_data.events.import_scraped_data_for_year_start += (
+            self.import_scraped_data_for_year_start
+        )
+        self.import_scraped_data.events.import_scraped_data_set_start += (
+            self.import_scraped_data_set_start
+        )
+        self.import_scraped_data.events.import_scraped_data_set_complete += (
+            self.import_scraped_data_set_complete
+        )
 
     def unsubscribe_from_events(self):
         self.import_scraped_data.events.error_occurred -= self.error_occurred
+        self.import_scraped_data.events.search_local_files_start -= self.search_local_files_start
+        self.import_scraped_data.events.import_scraped_data_start -= self.import_scraped_data_start
+        self.import_scraped_data.events.import_scraped_data_complete -= (
+            self.import_scraped_data_complete
+        )
+        self.import_scraped_data.events.import_scraped_data_for_year_start -= (
+            self.import_scraped_data_for_year_start
+        )
+        self.import_scraped_data.events.import_scraped_data_set_start -= (
+            self.import_scraped_data_set_start
+        )
+        self.import_scraped_data.events.import_scraped_data_set_complete -= (
+            self.import_scraped_data_set_complete
+        )
