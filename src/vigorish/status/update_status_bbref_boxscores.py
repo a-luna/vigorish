@@ -3,37 +3,29 @@ from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
 
-def update_data_set_bbref_boxscores(scraped_data, db_session, season):
-    result = scraped_data.get_all_scraped_bbref_game_ids(season.year)
-    if result.failure:
-        return result
-    scraped_bbref_gameids = result.value
-    unscraped_bbref_gameids = GameScrapeStatus.get_all_unscraped_bbref_game_ids_for_season(
-        db_session, season.id
-    )
-    new_bbref_game_ids = set(scraped_bbref_gameids) & set(unscraped_bbref_gameids)
-    if not new_bbref_game_ids:
-        return Result.Ok([])
-    result = update_status_bbref_boxscore_list(scraped_data, db_session, new_bbref_game_ids)
-    if result.failure:
-        return result
-    return Result.Ok()
-
-
-def update_status_bbref_boxscore_list(scraped_data, db_session, new_bbref_game_ids):
+def update_status_bbref_boxscore_list(
+    scraped_data, db_session, new_bbref_game_ids, apply_patch_list=False
+):
     for bbref_game_id in new_bbref_game_ids:
-        boxscore = scraped_data.get_bbref_boxscore(bbref_game_id)
+        boxscore = scraped_data.get_bbref_boxscore(bbref_game_id, apply_patch_list)
         if not boxscore:
             error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {bbref_game_id})"
             return Result.Fail(error)
         result = update_status_bbref_boxscore(db_session, boxscore)
         if result.failure:
             return result
-        db_session.commit()
     return Result.Ok()
 
 
 def update_status_bbref_boxscore(db_session, boxscore):
+    result = update_game_status_records(db_session, boxscore)
+    if result.failure:
+        return result
+    db_session.commit()
+    return Result.Ok()
+
+
+def update_game_status_records(db_session, boxscore):
     try:
         game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, boxscore.bbref_game_id)
         if not game_status:
