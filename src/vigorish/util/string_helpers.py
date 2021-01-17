@@ -5,6 +5,7 @@ from datetime import datetime
 from rapidfuzz import process
 
 from vigorish.constants import BB_BR_TEAM_ID_MAP, BR_BB_TEAM_ID_MAP
+from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.regex import (
     AT_BAT_ID_REGEX,
@@ -25,9 +26,7 @@ WORD_REGEX = re.compile(r"(?:\s|\b)?(?P<word>[\w\S]+)(?:\s|\B)?")
 def fuzzy_match(query, mapped_choices, score_cutoff=88):
     best_matches = [
         {"match": match, "score": score, "result": result}
-        for (match, score, result) in process.extract(
-            query, mapped_choices, score_cutoff=score_cutoff
-        )
+        for (match, score, result) in process.extract(query, mapped_choices, score_cutoff=score_cutoff)
     ]
     return (
         best_matches
@@ -155,6 +154,15 @@ def get_bbref_game_id_from_url(url):
     return match.groupdict()["game_id"] if match else None
 
 
+def get_game_date_from_bbref_game_id(bbref_game_id):
+    game_date = validate_bbref_game_id(bbref_game_id).value["game_date"]
+    return datetime(game_date.year, game_date.month, game_date.day)
+
+
+def get_date_status_id_from_game_date(game_date):
+    return game_date.strftime(DATE_ONLY_TABLE_ID)
+
+
 def validate_bbref_game_id(input_str):
     match = BBREF_GAME_ID_REGEX.search(input_str)
     if not match:
@@ -188,9 +196,7 @@ def _parse_ints_from_regex_groups(match):
 
 
 def validate_bbref_game_id_list(game_ids):
-    return [
-        validate_bbref_game_id(gid).value for gid in game_ids if validate_bbref_game_id(gid).success
-    ]
+    return [validate_bbref_game_id(gid).value for gid in game_ids if validate_bbref_game_id(gid).success]
 
 
 def validate_brooks_game_id(input_str):
@@ -252,9 +258,7 @@ def validate_at_bat_id(at_bat_id):
     result = validate_bbref_game_id(at_bat_id)
     game_dict = result.value
     away_team_id = (
-        captured["batter_team"]
-        if game_dict["home_team_id"] == captured["pitcher_team"]
-        else captured["pitcher_team"]
+        captured["batter_team"] if game_dict["home_team_id"] == captured["pitcher_team"] else captured["pitcher_team"]
     )
     inning_half = "t" if game_dict["home_team_id"] == captured["pitcher_team"] else "b"
     inning_label = f"{inning_half}{captured['inning']}"
