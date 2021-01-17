@@ -1,7 +1,7 @@
 from collections import defaultdict, OrderedDict
 from copy import deepcopy
 from datetime import datetime
-from functools import lru_cache
+from functools import cached_property
 
 from tabulate import tabulate
 
@@ -31,6 +31,9 @@ class AllGameData:
     def __init__(self, app, bbref_game_id):
 
         # TODO: Create views for pitch_type by handedness by year
+        # TODO: Create views for batter/pitcher stats to date, career, etc
+        # TODO: Create view for invalid pitchfx
+        # TODO: Create view to demonstrate how removed pfx is duplicative
 
         self.app = app
         self.db_engine = app.db_engine
@@ -38,9 +41,7 @@ class AllGameData:
         self.scraped_data = app.scraped_data
         combined_data = self.scraped_data.get_combined_game_data(bbref_game_id)
         if not combined_data:
-            raise ScrapedDataException(
-                file_type=VigFile.COMBINED_GAME_DATA, data_set=DataSet.ALL, url_id=bbref_game_id
-            )
+            raise ScrapedDataException(file_type=VigFile.COMBINED_GAME_DATA, data_set=DataSet.ALL, url_id=bbref_game_id)
         self.bbref_game_id = combined_data["bbref_game_id"]
         self.pitchfx_vs_bbref_audit = combined_data["pitchfx_vs_bbref_audit"]
         self.game_meta_info = combined_data["game_meta_info"]
@@ -64,15 +65,11 @@ class AllGameData:
 
     @property
     def away_team(self):
-        return Team.find_by_team_id_and_year(
-            self.db_session, self.away_team_id, self.game_date.year
-        )
+        return Team.find_by_team_id_and_year(self.db_session, self.away_team_id, self.game_date.year)
 
     @property
     def home_team(self):
-        return Team.find_by_team_id_and_year(
-            self.db_session, self.home_team_id, self.game_date.year
-        )
+        return Team.find_by_team_id_and_year(self.db_session, self.home_team_id, self.game_date.year)
 
     @property
     def game_datetime(self):
@@ -87,23 +84,27 @@ class AllGameData:
 
     @property
     def all_at_bats(self):
-        return {at_bat["at_bat_id"]: at_bat for at_bat in self.get_all_at_bats()}
+        return self.valid_at_bats + self.invalid_at_bats
 
     @property
-    def all_pitch_stats(self):
-        return {stats["pitcher_id_mlb"]: stats for stats in self.get_all_pitch_stats()}
+    def at_bat_map(self):
+        return {at_bat["at_bat_id"]: at_bat for at_bat in self.all_at_bats}
 
     @property
-    def all_bat_stats(self):
-        return {stats["batter_id_mlb"]: stats for stats in self.get_all_bat_stats()}
+    def pitch_stats_map(self):
+        return {stats["pitcher_id_mlb"]: stats for stats in self.all_pitch_stats}
+
+    @property
+    def bat_stats_map(self):
+        return {stats["batter_id_mlb"]: stats for stats in self.all_bat_stats}
 
     @property
     def bat_stats_player_ids(self):
-        return list(self.all_bat_stats.keys())
+        return list(self.bat_stats_map.keys())
 
     @property
     def pitch_stats_player_ids(self):
-        return list(self.all_pitch_stats.keys())
+        return list(self.pitch_stats_map.keys())
 
     @property
     def winning_pitcher(self):
@@ -132,54 +133,66 @@ class AllGameData:
             if self.home_team_data["team_won"] and self.home_team_data["pitcher_earned_save"]
             else None
         )
-        return (
-            self.get_player_id_map(bbref_id=pitcher_id_bbref).mlb_id if pitcher_id_bbref else None
-        )
+        return self.get_player_id_map(bbref_id=pitcher_id_bbref).mlb_id if pitcher_id_bbref else None
 
-    @lru_cache(maxsize=None)
-    def get_valid_at_bats(self):
-        return [
-            at_bat_data
-            for inning_data in self.innings_list
-            for at_bat_data in inning_data["inning_events"]
-        ]
+    @cached_property
+    def valid_at_bats(self):
+        return [at_bat_data for inning_data in self.innings_list for at_bat_data in inning_data["inning_events"]]
 
-    @lru_cache(maxsize=None)
-    def get_invalid_at_bats(self):
-        return [
-            at_bat_data
-            for inning_dict in self.invalid_pitchfx.values()
-            for at_bat_data in inning_dict.values()
-        ]
+    @cached_property
+    def invalid_at_bats(self):
+        return [at_bat_data for inning_dict in self.invalid_pitchfx.values() for at_bat_data in inning_dict.values()]
 
-    def get_all_at_bats(self):
-        return self.get_valid_at_bats() + self.get_invalid_at_bats()
-
-    @lru_cache(maxsize=None)
-    def get_all_pitch_stats(self):
+    @cached_property
+    def all_pitch_stats(self):
         return self.away_team_data["pitching_stats"] + self.home_team_data["pitching_stats"]
 
-    @lru_cache(maxsize=None)
-    def get_all_bat_stats(self):
+    @cached_property
+    def all_bat_stats(self):
         bat_stats = self.away_team_data["batting_stats"] + self.home_team_data["batting_stats"]
         return [bat_stat for bat_stat in bat_stats if bat_stat["total_plate_appearances"]]
 
-    @property
+    @cached_property
     def bat_boxscore(self):
         return {
             self.away_team_id: self.create_bat_boxscore(self.away_team_id),
             self.home_team_id: self.create_bat_boxscore(self.home_team_id),
         }
 
-    @lru_cache(maxsize=None)
+    @cached_property
+    def pitch_boxscore(self):
+        return {
+            self.away_team_id: self.create_pitch_boxscore(self.away_team_id),
+            self.home_team_id: self.create_pitch_boxscore(self.home_team_id),
+        }
+
+    @cached_property
+    def all_pitchfx(self):
+        pfx_dict = defaultdict(list)
+        all_pitchfx = [at_bat["pitchfx"] for at_bat in self.all_at_bats]
+        all_pitchfx.extend(self.get_duplicate_guid_pfx())
+        all_pitchfx.extend(self.get_removed_pfx())
+        sp_mlb_ids = self.starting_pitcher_mlb_ids
+        for pfx in flatten_list2d(all_pitchfx):
+            pfx["is_sp"] = pfx["pitcher_id"] in sp_mlb_ids
+            pfx["is_rp"] = pfx["pitcher_id"] not in sp_mlb_ids
+            pfx_dict[pfx["pitch_app_id"]].append(pfx)
+        return pfx_dict
+
+    @cached_property
+    def starting_pitcher_mlb_ids(self):
+        return [
+            mlb_id
+            for mlb_id, pitch_stats in self.pitch_stats_map.items()
+            if check_pitch_stats_for_game_score(pitch_stats)
+        ]
+
     def create_bat_boxscore(self, team_id):
         team_data = self.team_data[team_id]
         batter_box = OrderedDict()
         for slot in team_data["starting_lineup"]:
             mlb_id = self.get_player_id_map(bbref_id=slot["player_id_br"]).mlb_id
-            batter_box[slot["bat_order"]] = self.get_bat_boxscore_for_player(
-                mlb_id, slot["def_position"], team_data
-            )
+            batter_box[slot["bat_order"]] = self.get_bat_boxscore_for_player(mlb_id, slot["def_position"], team_data)
         lineup_player_ids = [bat_boxscore["mlb_id"] for bat_boxscore in batter_box.values()]
         sub_player_ids = [
             mlb_id
@@ -221,14 +234,6 @@ class AllGameData:
             "stats_to_date": parse_bat_stats_to_date(bat_stats["bbref_data"]),
         }
 
-    @property
-    def pitch_boxscore(self):
-        return {
-            self.away_team_id: self.create_pitch_boxscore(self.away_team_id),
-            self.home_team_id: self.create_pitch_boxscore(self.home_team_id),
-        }
-
-    @lru_cache(maxsize=None)
     def create_pitch_boxscore(self, team_id):
         team_data = self.team_data[team_id]
         pitcher_box = OrderedDict()
@@ -301,12 +306,11 @@ class AllGameData:
         if result.failure:
             return result
         mlb_id = result.value
-        at_bats = [ab for ab in self.get_valid_at_bats() if ab["batter_id_mlb"] == mlb_id]
+        at_bats = [ab for ab in self.valid_at_bats if ab["batter_id_mlb"] == mlb_id]
         return Result.Ok(at_bats)
 
-    @lru_cache(maxsize=None)
     def create_at_bat_table_list(self, at_bat_id, heading=None):
-        at_bat = self.all_at_bats.get(at_bat_id)
+        at_bat = self.at_bat_map.get(at_bat_id)
         if not at_bat:
             return []
         message = self.get_at_bat_details(at_bat)
@@ -324,10 +328,10 @@ class AllGameData:
         if result.failure:
             return result
         mlb_id = result.value
-        pitch_stats = self.all_pitch_stats.get(mlb_id)
-        sp_pitch_app_ids = self.get_sp_pitch_app_ids()
-        pitch_stats["is_sp"] = pitch_stats["pitch_app_id"] in sp_pitch_app_ids
-        pitch_stats["is_rp"] = pitch_stats["pitch_app_id"] not in sp_pitch_app_ids
+        pitch_stats = self.pitch_stats_map.get(mlb_id)
+        sp_mlb_ids = self.starting_pitcher_mlb_ids
+        pitch_stats["is_sp"] = pitch_stats["pitcher_id_mlb"] in sp_mlb_ids
+        pitch_stats["is_rp"] = pitch_stats["pitcher_id_mlb"] not in sp_mlb_ids
         pitch_stats["is_wp"] = pitch_stats["pitcher_id_mlb"] == self.winning_pitcher
         pitch_stats["is_lp"] = pitch_stats["pitcher_id_mlb"] == self.losing_pitcher
         pitch_stats["is_sv"] = pitch_stats["pitcher_id_mlb"] == self.pitcher_earned_save
@@ -338,7 +342,7 @@ class AllGameData:
         if result.failure:
             return result
         mlb_id = result.value
-        bat_stats = self.all_bat_stats.get(mlb_id, {})
+        bat_stats = self.bat_stats_map.get(mlb_id, {})
         return Result.Ok(deepcopy(bat_stats))
 
     def view_valid_at_bats_for_pitcher(self, mlb_id):
@@ -371,9 +375,7 @@ class AllGameData:
         if result.failure:
             return result
         mlb_id = result.value
-        at_bats = [
-            at_bat for at_bat in self.get_valid_at_bats() if at_bat["pitcher_id_mlb"] == mlb_id
-        ]
+        at_bats = [at_bat for at_bat in self.valid_at_bats if at_bat["pitcher_id_mlb"] == mlb_id]
         return Result.Ok(at_bats)
 
     def view_at_bats_by_inning(self):
@@ -395,12 +397,9 @@ class AllGameData:
         return Result.Ok(innings_viewer)
 
     def get_innings_sorted(self):
-        at_bats_by_inning = group_and_sort_dict_list(
-            self.get_valid_at_bats(), "inning_id", "pbp_table_row_number"
-        )
+        at_bats_by_inning = group_and_sort_dict_list(self.valid_at_bats, "inning_id", "pbp_table_row_number")
         innings_unsorted = [
-            {"inning_id": inning_id, "at_bats": at_bats}
-            for inning_id, at_bats in at_bats_by_inning.items()
+            {"inning_id": inning_id, "at_bats": at_bats} for inning_id, at_bats in at_bats_by_inning.items()
         ]
         return get_innings_sorted(innings_unsorted)
 
@@ -416,46 +415,11 @@ class AllGameData:
         heading = f"Meta Information for game {self.bbref_game_id}"
         return create_table_viewer([DisplayTable(table, heading)])
 
-    def view_invalid_at_bats(self):
-        pass
-
-    def compare_removed_pitchfx(self):
-        pass
-
-    @lru_cache(maxsize=None)
-    def get_all_pitchfx(self):
-        pfx_dict = defaultdict(list)
-        all_pitchfx = [at_bat["pitchfx"] for at_bat in self.get_all_at_bats()]
-        all_pitchfx.extend(self.get_duplicate_guid_pfx())
-        all_pitchfx.extend(self.get_removed_pfx())
-        sp_pitch_app_ids = self.get_sp_pitch_app_ids()
-        for pfx in flatten_list2d(all_pitchfx):
-            pfx["is_sp"] = pfx["pitch_app_id"] in sp_pitch_app_ids
-            pfx["is_rp"] = pfx["pitch_app_id"] not in sp_pitch_app_ids
-            pfx_dict[pfx["pitch_app_id"]].append(pfx)
-        return pfx_dict
-
     def get_duplicate_guid_pfx(self):
-        return [
-            at_bat["pitchfx"]
-            for inning_dict in self.duplicate_guids.values()
-            for at_bat in inning_dict.values()
-        ]
+        return [at_bat["pitchfx"] for inning_dict in self.duplicate_guids.values() for at_bat in inning_dict.values()]
 
     def get_removed_pfx(self):
-        return [
-            at_bat["pitchfx"]
-            for inning_dict in self.removed_pitchfx.values()
-            for at_bat in inning_dict.values()
-        ]
-
-    @lru_cache(maxsize=None)
-    def get_sp_pitch_app_ids(self):
-        return [
-            f"{self.bbref_game_id}_{mlb_id}"
-            for mlb_id, pitch_stats in self.all_pitch_stats.items()
-            if check_pitch_stats_for_game_score(pitch_stats)
-        ]
+        return [at_bat["pitchfx"] for inning_dict in self.removed_pitchfx.values() for at_bat in inning_dict.values()]
 
     def view_pitch_mix_for_player(self, mlb_id):
         result = self.get_pitch_mix_data_for_player(mlb_id)
@@ -493,7 +457,6 @@ class AllGameData:
         table_viewer = create_table_viewer(pitch_mix_tables)
         return Result.Ok(table_viewer)
 
-    @lru_cache(maxsize=None)
     def get_pitch_mix_data_for_player(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
@@ -541,8 +504,7 @@ class AllGameData:
 
     def get_player_pd_stats_career(self, mlb_id, pitch_mix):
         table_rows = [
-            self.get_pd_stats_for_pitch_type(pitch_mix, ptype)
-            for ptype in pitch_mix["all"][0]["pitch_types"]
+            self.get_pd_stats_for_pitch_type(pitch_mix, ptype) for ptype in pitch_mix["all"][0]["pitch_types"]
         ]
         table_rows.insert(0, self.get_pd_stats_for_all_pitch_types(pitch_mix))
         pitcher_name = self.get_player_id_map(mlb_id=mlb_id).mlb_name
@@ -561,8 +523,7 @@ class AllGameData:
 
     def get_player_bb_stats_career(self, mlb_id, pitch_mix):
         table_rows = [
-            self.get_bb_stats_for_pitch_type(pitch_mix, ptype)
-            for ptype in pitch_mix["all"][0]["pitch_types"]
+            self.get_bb_stats_for_pitch_type(pitch_mix, ptype) for ptype in pitch_mix["all"][0]["pitch_types"]
         ]
         table_rows.insert(0, self.get_bb_stats_for_all_pitch_types(pitch_mix))
         pitcher_name = self.get_player_id_map(mlb_id=mlb_id).mlb_name
@@ -592,10 +553,7 @@ class AllGameData:
         (_, pmix_detail_all) = pitch_mix["all"]
         table_row = {
             "pitch_type": PitchType.from_name(ptype).print_name,
-            "all": (
-                f"{pmix_detail_all[ptype]['percent']:.0%} "
-                f"({pmix_detail_all[ptype]['avg_speed']:.1f})"
-            ),
+            "all": (f"{pmix_detail_all[ptype]['percent']:.0%} " f"({pmix_detail_all[ptype]['avg_speed']:.1f})"),
         }
         for year, (pmix_total, pmix_detail) in pitch_mix["by_year"].items():
             table_row[str(year)] = (
@@ -614,11 +572,7 @@ class AllGameData:
 
     def get_pd_stats_for_pitch_type(self, pitch_mix, ptype):
         (_, pmix_detail) = pitch_mix["all"]
-        table_row = {
-            "pitch_type": (
-                f"{PitchType.from_name(ptype).print_name} ({pmix_detail[ptype]['total_pitches']})"
-            )
-        }
+        table_row = {"pitch_type": (f"{PitchType.from_name(ptype).print_name} ({pmix_detail[ptype]['total_pitches']})")}
         for metric, (rate, total) in PLATE_DISCIPLINE_METRICS.items():
             table_row[metric] = f"{pmix_detail[ptype][rate]:.0%} ({pmix_detail[ptype][total]})"
         return table_row
@@ -633,10 +587,7 @@ class AllGameData:
     def get_bb_stats_for_pitch_type(self, pitch_mix, ptype):
         (_, pmix_detail) = pitch_mix["all"]
         table_row = {
-            "pitch_type": (
-                f"{PitchType.from_name(ptype).print_name} "
-                f"({pmix_detail[ptype]['total_batted_balls']})"
-            )
+            "pitch_type": (f"{PitchType.from_name(ptype).print_name} " f"({pmix_detail[ptype]['total_batted_balls']})")
         }
         for metric, (rate, total) in BATTED_BALL_METRICS.items():
             table_row[metric] = f"{pmix_detail[ptype][rate]:.0%} ({pmix_detail[ptype][total]})"
@@ -658,22 +609,15 @@ class AllGameData:
             else self.home_team_data["pitcher_of_record"]
         )
         w_pitcher_name = self.get_player_id_map(bbref_id=w_pitcher_id).mlb_name
-        w_pitcher_team_id = (
-            self.away_team_id if self.away_team_data["team_won"] else self.home_team_id
-        )
+        w_pitcher_team_id = self.away_team_id if self.away_team_data["team_won"] else self.home_team_id
         l_pitcher_id = (
             self.home_team_data["pitcher_of_record"]
             if self.away_team_data["team_won"]
             else self.away_team_data["pitcher_of_record"]
         )
         l_pitcher_name = self.get_player_id_map(bbref_id=l_pitcher_id).mlb_name
-        l_pitcher_team_id = (
-            self.home_team_id if self.away_team_data["team_won"] else self.away_team_id
-        )
-        w_l_sv_pitchers += (
-            f"WP: {w_pitcher_name} ({w_pitcher_team_id}) "
-            f"LP: {l_pitcher_name} ({l_pitcher_team_id})"
-        )
+        l_pitcher_team_id = self.home_team_id if self.away_team_data["team_won"] else self.away_team_id
+        w_l_sv_pitchers += f"WP: {w_pitcher_name} ({w_pitcher_team_id}) " f"LP: {l_pitcher_name} ({l_pitcher_team_id})"
         sv_pitcher_id = (
             self.away_team_data["pitcher_earned_save"]
             if self.away_team_data["team_won"] and self.away_team_data["pitcher_earned_save"]
@@ -972,17 +916,11 @@ def format_pitch_sequence_description(pitch_seq_desc):
 
 
 def format_event_description(event_desc):
-    if (
-        not event_desc[0]
-        and not event_desc[2]
-        and event_desc[1].startswith("(")
-        and event_desc[1].endswith(")")
-    ):
+    if not event_desc[0] and not event_desc[2] and event_desc[1].startswith("(") and event_desc[1].endswith(")"):
         event_desc[1] = event_desc[1][1:]
         event_desc[1] = event_desc[1][:-1]
     desc_lines = [wrap_text(s, max_len=AT_BAT_DESC_MAX_WIDTH) for s in event_desc[1].split("\n")]
-    event_desc[1] = "\n".join(desc_lines)
-    event_desc[1] = event_desc[1].replace("\n\n", "\n")
+    event_desc[1] = "\n".join(desc_lines).replace("\n\n", "\n")
     return event_desc
 
 
