@@ -27,14 +27,14 @@ def serialize_db_object_to_csv(db_obj, dataclass, date_format=DATE_ONLY):
     csv_dict = {}
     for name, field in dataclass.__dataclass_fields__.items():
         value = getattr(db_obj, name, None)
-        if field.type is int and not isinstance(value, int):
-            csv_dict[name] = int(value)
-        elif field.type is float and not isinstance(value, float):
-            csv_dict[name] = float(value)
-        elif field.type is bool:
+        if field.type is bool:
             csv_dict[name] = True if value else False
         elif not value:
             csv_dict[name] = None
+        elif field.type is int and not isinstance(value, int):
+            csv_dict[name] = int(value)
+        elif field.type is float and not isinstance(value, float):
+            csv_dict[name] = float(value)
         else:
             csv_dict[name] = value
     return dict_to_csv_row(csv_dict, date_format)
