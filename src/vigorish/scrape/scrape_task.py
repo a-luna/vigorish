@@ -29,10 +29,6 @@ class ScrapeTaskABC(ABC):
     url_tracker: UrlTracker
 
     def __init__(self, app, db_job):
-
-        # TODO: Add new first step: apply patch list.
-        #       See saved files re: brooks_games_for_date_2017-05-26
-
         self.app = app
         self.config = app.config
         self.db_session = app.db_session
@@ -78,13 +74,7 @@ class ScrapeTaskABC(ABC):
         self.spinner.start()
         self.url_tracker = UrlTracker(self.db_job, self.data_set, self.scraped_data)
         result = self.url_tracker.create_url_set(self.start_date, self.end_date)
-        return (
-            result
-            if result.failure
-            else Result.Ok()
-            if self.url_tracker.total_urls
-            else Result.Fail("skip")
-        )
+        return result if result.failure else Result.Ok() if self.url_tracker.total_urls else Result.Fail("skip")
 
     def identify_needed_urls(self):
         self.spinner.text = self.url_tracker.identify_html_report

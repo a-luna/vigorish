@@ -27,16 +27,14 @@ def test_patch_brooks_games_for_date(db_session, scraped_data):
     assert bbref_games_for_date_no_patch.game_count != brooks_games_for_date_no_patch.game_count
 
     game_ids_only_brooks_no_patch = list(
-        set(brooks_games_for_date_no_patch.all_bbref_game_ids)
-        - set(bbref_games_for_date_no_patch.all_bbref_game_ids)
+        set(brooks_games_for_date_no_patch.all_bbref_game_ids) - set(bbref_games_for_date_no_patch.all_bbref_game_ids)
     )
     assert len(game_ids_only_brooks_no_patch) == 2
     assert INVALID_BR_GAME_ID1 in game_ids_only_brooks_no_patch
     assert INVALID_BR_GAME_ID2 in game_ids_only_brooks_no_patch
 
     game_ids_only_bbref_no_patch = list(
-        set(bbref_games_for_date_no_patch.all_bbref_game_ids)
-        - set(brooks_games_for_date_no_patch.all_bbref_game_ids)
+        set(bbref_games_for_date_no_patch.all_bbref_game_ids) - set(brooks_games_for_date_no_patch.all_bbref_game_ids)
     )
     assert len(game_ids_only_bbref_no_patch) == 1
     assert PATCHED_BR_GAME_ID1 in game_ids_only_bbref_no_patch
@@ -57,9 +55,7 @@ def test_patch_brooks_games_for_date(db_session, scraped_data):
     )
     assert len(pitch_apps_for_game_1_no_patch) == 10
 
-    game_status_invalid_game_id = GameScrapeStatus.find_by_bbref_game_id(
-        db_session, INVALID_BR_GAME_ID1
-    )
+    game_status_invalid_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, INVALID_BR_GAME_ID1)
     assert game_status_invalid_game_id
 
     plogs_for_game_2_no_patch = update_scraped_pitch_logs(
@@ -78,9 +74,7 @@ def test_patch_brooks_games_for_date(db_session, scraped_data):
     )
     assert len(pitch_apps_for_game_2_no_patch) == 8
 
-    game_status_remove_game_id = GameScrapeStatus.find_by_bbref_game_id(
-        db_session, INVALID_BR_GAME_ID2
-    )
+    game_status_remove_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, INVALID_BR_GAME_ID2)
     assert game_status_remove_game_id
 
     patch_invalid_bbref_game_id = PatchBrooksGamesForDateBBRefGameID(
@@ -107,10 +101,7 @@ def test_patch_brooks_games_for_date(db_session, scraped_data):
     bbref_games_for_date_patched = scraped_data.get_bbref_games_for_date(PATCH_BB_DAILY_GAME_DATE)
     brooks_games_for_date_patched = scraped_data.get_bbref_games_for_date(PATCH_BB_DAILY_GAME_DATE)
     assert bbref_games_for_date_patched.game_count == brooks_games_for_date_patched.game_count
-    assert (
-        brooks_games_for_date_patched.all_bbref_game_ids
-        == bbref_games_for_date_patched.all_bbref_game_ids
-    )
+    assert brooks_games_for_date_patched.all_bbref_game_ids == bbref_games_for_date_patched.all_bbref_game_ids
 
     plogs_for_game_1_patched = update_scraped_pitch_logs(
         db_session=db_session,
@@ -136,15 +127,9 @@ def test_patch_brooks_games_for_date(db_session, scraped_data):
     assert not pitch_apps_for_game_1_invalid_id
     assert not pitch_apps_for_game_2_invalid_id
 
-    game_status_patched_game_id = GameScrapeStatus.find_by_bbref_game_id(
-        db_session, PATCHED_BR_GAME_ID1
-    )
-    game_status_invalid_game_id = GameScrapeStatus.find_by_bbref_game_id(
-        db_session, INVALID_BR_GAME_ID1
-    )
-    game_status_remove_game_id = GameScrapeStatus.find_by_bbref_game_id(
-        db_session, INVALID_BR_GAME_ID2
-    )
+    game_status_patched_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, PATCHED_BR_GAME_ID1)
+    game_status_invalid_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, INVALID_BR_GAME_ID1)
+    game_status_remove_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, INVALID_BR_GAME_ID2)
     assert game_status_patched_game_id
     assert not game_status_invalid_game_id
     assert not game_status_remove_game_id

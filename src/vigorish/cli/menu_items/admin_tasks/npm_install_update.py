@@ -16,22 +16,18 @@ from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exi
 INSTALL_ERROR = "Error! Node.js is not installed, see README for install instructions."
 INSTALL_MESSAGE = "You must install all required node packages in order to scrape any data."
 INSTALL_PROMPT = (
-    "Select YES install Nightmare, Xfvb, and other node packages\n"
-    "Select NO to return to the previous menu"
+    "\nSelect YES install Nightmare, Xfvb, and other node packages\n" "Select NO to return to the previous menu"
 )
 UPDATE_MESSAGE = "Nightmare and all node dependencies are installed."
 UPDATE_PROMPT = (
-    "Select YES to update all installed packages to the newest version.\n"
-    "Select NO to return to the previous menu."
+    "\nSelect YES to update all installed packages to the newest version.\n" "Select NO to return to the previous menu."
 )
 
 
 class NpmInstallUpdate(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.menu_heading = (
-            "Update Node Packages" if node_modules_folder_exists() else "Install Node Packages"
-        )
+        self.menu_heading = "Update Node Packages" if node_modules_folder_exists() else "Install Node Packages"
         self.menu_item_text = self.menu_heading
         self.menu_item_emoji = EMOJI_DICT.get("PACKAGE")
 
@@ -60,11 +56,7 @@ class NpmInstallUpdate(MenuItem):
         subprocess.run(["clear"])
         print_heading(self.menu_heading, fg="bright_yellow")
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        spinner.text = (
-            "Updating node packages..."
-            if node_modules_folder_exists()
-            else "Installing node packages..."
-        )
+        spinner.text = "Updating node packages..." if node_modules_folder_exists() else "Installing node packages..."
         spinner.start()
         cmd_output = []
         for line in run_command(command, cwd=str(NIGHTMAREJS_FOLDER)):

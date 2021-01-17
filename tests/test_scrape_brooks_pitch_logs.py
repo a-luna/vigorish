@@ -29,18 +29,14 @@ def create_test_data(db_session, scraped_data):
 
 
 def test_parse_brooks_pitch_logs_for_game(scraped_data):
-    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(
-        scraped_data, GAME_DATE, BBREF_GAME_ID
-    )
+    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(scraped_data, GAME_DATE, BBREF_GAME_ID)
     assert isinstance(pitch_logs_for_game, BrooksPitchLogsForGame)
     result = verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game)
     assert result.success
 
 
 def test_persist_brooks_pitch_logs_for_game(scraped_data):
-    pitch_logs_for_game_parsed = parse_brooks_pitch_logs_for_game_from_html(
-        scraped_data, GAME_DATE, BBREF_GAME_ID
-    )
+    pitch_logs_for_game_parsed = parse_brooks_pitch_logs_for_game_from_html(scraped_data, GAME_DATE, BBREF_GAME_ID)
     assert isinstance(pitch_logs_for_game_parsed, BrooksPitchLogsForGame)
     result = verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game_parsed)
     result = scraped_data.save_json(DataSet.BROOKS_PITCH_LOGS, pitch_logs_for_game_parsed)
@@ -57,9 +53,7 @@ def test_persist_brooks_pitch_logs_for_game(scraped_data):
 
 
 def test_update_database_brooks_pitch_logs_for_game(db_session, scraped_data):
-    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(
-        scraped_data, GAME_DATE, BBREF_GAME_ID
-    )
+    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(scraped_data, GAME_DATE, BBREF_GAME_ID)
     assert isinstance(pitch_logs_for_game, BrooksPitchLogsForGame)
     game_status = GameScrapeStatus.find_by_bb_game_id(db_session, BB_GAME_ID)
     assert game_status

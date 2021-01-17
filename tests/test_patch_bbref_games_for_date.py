@@ -16,9 +16,7 @@ def test_patch_bbref_games_for_date(db_session, scraped_data):
     )
     assert games_for_date_no_patch
     assert games_for_date_no_patch.game_count == 14
-    bbref_game_ids_no_patch = [
-        game_info.bbref_game_id for game_info in games_for_date_no_patch.games
-    ]
+    bbref_game_ids_no_patch = [game_info.bbref_game_id for game_info in games_for_date_no_patch.games]
     assert invalid_game_id not in bbref_game_ids_no_patch
     assert patched_game_id not in bbref_game_ids_no_patch
     invalid_game_id_status = GameScrapeStatus.find_by_bbref_game_id(db_session, invalid_game_id)

@@ -13,8 +13,6 @@ class ConfigSettingsMenu(Menu):
         self.menu_item_emoji = EMOJI_DICT.get("GEAR", "")
 
     def populate_menu_items(self):
-        self.menu_items = [
-            ConfigSetting(self.app, name) for name in self.config.all_settings.keys()
-        ]
+        self.menu_items = [ConfigSetting(self.app, name) for name in self.config.all_settings.keys()]
         self.menu_items.append(ReturnToParent(self.app, "Return to Settings/Admin "))
         self.menu_items.insert(0, ReturnToParent(self.app, "Return to Settings/Admin"))

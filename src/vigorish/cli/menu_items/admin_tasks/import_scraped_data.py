@@ -23,7 +23,7 @@ IMPORT_DATA_MESSAGE = (
     "data in the local file system from all data sets and all MLB seasons. After the search is "
     "complete, the scraped data is used to update the database."
 )
-IMPORT_DATA_PROMPT = "Select YES to run this task\nSelect NO to return to the previous menu"
+IMPORT_DATA_PROMPT = "\nSelect YES to run this task\nSelect NO to return to the previous menu"
 OVERWRITE_DATA_MESSAGE = (
     'By default, data that is already considered "scraped" within the database will not be '
     "updated with the data found in the local file system."
@@ -84,15 +84,11 @@ class ImportScrapedData(MenuItem):
 
     def error_occurred(self, error_message, data_set, year):
         self.update_heading("Error!")
-        self.spinners[year][data_set].fail(
-            f"Error occurred while updating {data_set} for MLB {year}"
-        )
+        self.spinners[year][data_set].fail(f"Error occurred while updating {data_set} for MLB {year}")
 
     def search_local_files_start(self):
         self.update_heading("In Progress...")
-        self.spinners["default"] = Halo(
-            spinner=get_random_dots_spinner(), color=get_random_cli_color()
-        )
+        self.spinners["default"] = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinners["default"].text = "Searching local folder for scraped data..."
         self.spinners["default"].start()
 
@@ -124,32 +120,16 @@ class ImportScrapedData(MenuItem):
         self.import_scraped_data.events.error_occurred += self.error_occurred
         self.import_scraped_data.events.search_local_files_start += self.search_local_files_start
         self.import_scraped_data.events.import_scraped_data_start += self.import_scraped_data_start
-        self.import_scraped_data.events.import_scraped_data_complete += (
-            self.import_scraped_data_complete
-        )
-        self.import_scraped_data.events.import_scraped_data_for_year_start += (
-            self.import_scraped_data_for_year_start
-        )
-        self.import_scraped_data.events.import_scraped_data_set_start += (
-            self.import_scraped_data_set_start
-        )
-        self.import_scraped_data.events.import_scraped_data_set_complete += (
-            self.import_scraped_data_set_complete
-        )
+        self.import_scraped_data.events.import_scraped_data_complete += self.import_scraped_data_complete
+        self.import_scraped_data.events.import_scraped_data_for_year_start += self.import_scraped_data_for_year_start
+        self.import_scraped_data.events.import_scraped_data_set_start += self.import_scraped_data_set_start
+        self.import_scraped_data.events.import_scraped_data_set_complete += self.import_scraped_data_set_complete
 
     def unsubscribe_from_events(self):
         self.import_scraped_data.events.error_occurred -= self.error_occurred
         self.import_scraped_data.events.search_local_files_start -= self.search_local_files_start
         self.import_scraped_data.events.import_scraped_data_start -= self.import_scraped_data_start
-        self.import_scraped_data.events.import_scraped_data_complete -= (
-            self.import_scraped_data_complete
-        )
-        self.import_scraped_data.events.import_scraped_data_for_year_start -= (
-            self.import_scraped_data_for_year_start
-        )
-        self.import_scraped_data.events.import_scraped_data_set_start -= (
-            self.import_scraped_data_set_start
-        )
-        self.import_scraped_data.events.import_scraped_data_set_complete -= (
-            self.import_scraped_data_set_complete
-        )
+        self.import_scraped_data.events.import_scraped_data_complete -= self.import_scraped_data_complete
+        self.import_scraped_data.events.import_scraped_data_for_year_start -= self.import_scraped_data_for_year_start
+        self.import_scraped_data.events.import_scraped_data_set_start -= self.import_scraped_data_set_start
+        self.import_scraped_data.events.import_scraped_data_set_complete -= self.import_scraped_data_set_complete

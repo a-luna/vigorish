@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from dataclass_csv import accept_whitespaces, DataclassReader
 from tqdm import tqdm
 
-from vigorish.models.team import Team
+from vigorish.database import Team
 from vigorish.util.result import Result
 
 

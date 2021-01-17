@@ -25,14 +25,12 @@ from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.util.result import Result
 
 SETUP_HEADING = (
-    "Before you can begin scraping data, you must initialize the database with initial player, "
-    "team and season data."
+    "Before you can begin scraping data, you must initialize the database with initial player, " "team and season data."
 )
-SETUP_MESSAGE = "Select YES to initialize the database\nSelect NO to return to the previous menu"
-RESET_MESSAGE = "Would you like to reset the database with initial player, team and season data?"
+SETUP_MESSAGE = "\nSelect YES to initialize the database\nSelect NO to return to the previous menu"
+RESET_MESSAGE = "\nWould you like to reset the database with initial player, team and season data?"
 WARNING = (
-    "WARNING! All existing data will be deleted if you choose to reset the database. This "
-    "action cannot be undone."
+    "WARNING! All existing data will be deleted if you choose to reset the database. This " "action cannot be undone."
 )
 IMPORT_SCRAPED_DATA_MESSAGE = (
     "Would you like to update the database using files from previous vigorish installations? "
@@ -40,8 +38,7 @@ IMPORT_SCRAPED_DATA_MESSAGE = (
     "JSON_LOCAL_FOLDER_PATH config setting will be used for this step.\n"
 )
 IMPORT_SCRAPED_DATA_PROMPT = (
-    "Select YES to import all data in the location above\n"
-    "Select NO to return to the previous menu"
+    "\nSelect YES to import all data in the location above\n" "Select NO to return to the previous menu"
 )
 DB_INITIALIZED = "Database has been successfully initialized.\n"
 
@@ -82,9 +79,7 @@ class SetupDatabase(MenuItem):
 
     def update_heading(self, current_action):
         new_heading = (
-            f"Reset Database: {current_action}"
-            if self.db_initialized
-            else f"Setup Database: {current_action}"
+            f"Reset Database: {current_action}" if self.db_initialized else f"Setup Database: {current_action}"
         )
         subprocess.run(["clear"])
         print_heading(new_heading, fg="bright_yellow")
@@ -146,10 +141,8 @@ class SetupDatabase(MenuItem):
         self.spinner.fail(f"Error occurred while updating {data_set} for MLB {year}")
 
     def search_local_files_start(self):
-        self.update_heading("In Progress...")
-        self.spinners["default"] = Halo(
-            spinner=get_random_dots_spinner(), color=get_random_cli_color()
-        )
+        self.update_heading("In Progress")
+        self.spinners["default"] = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinners["default"].text = "Searching local folder for scraped data..."
         self.spinners["default"].start()
 
@@ -181,32 +174,16 @@ class SetupDatabase(MenuItem):
         self.import_data_task.events.error_occurred += self.error_occurred
         self.import_data_task.events.search_local_files_start += self.search_local_files_start
         self.import_data_task.events.import_scraped_data_start += self.import_scraped_data_start
-        self.import_data_task.events.import_scraped_data_complete += (
-            self.import_scraped_data_complete
-        )
-        self.import_data_task.events.import_scraped_data_for_year_start += (
-            self.import_scraped_data_for_year_start
-        )
-        self.import_data_task.events.import_scraped_data_set_start += (
-            self.import_scraped_data_set_start
-        )
-        self.import_data_task.events.import_scraped_data_set_complete += (
-            self.import_scraped_data_set_complete
-        )
+        self.import_data_task.events.import_scraped_data_complete += self.import_scraped_data_complete
+        self.import_data_task.events.import_scraped_data_for_year_start += self.import_scraped_data_for_year_start
+        self.import_data_task.events.import_scraped_data_set_start += self.import_scraped_data_set_start
+        self.import_data_task.events.import_scraped_data_set_complete += self.import_scraped_data_set_complete
 
     def unsubscribe_from_events(self):
         self.import_data_task.events.error_occurred -= self.error_occurred
         self.import_data_task.events.search_local_files_start -= self.search_local_files_start
         self.import_data_task.events.import_scraped_data_start -= self.import_scraped_data_start
-        self.import_data_task.events.import_scraped_data_complete -= (
-            self.import_scraped_data_complete
-        )
-        self.import_data_task.events.import_scraped_data_for_year_start -= (
-            self.import_scraped_data_for_year_start
-        )
-        self.import_data_task.events.import_scraped_data_set_start -= (
-            self.import_scraped_data_set_start
-        )
-        self.import_data_task.events.import_scraped_data_set_complete -= (
-            self.import_scraped_data_set_complete
-        )
+        self.import_data_task.events.import_scraped_data_complete -= self.import_scraped_data_complete
+        self.import_data_task.events.import_scraped_data_for_year_start -= self.import_scraped_data_for_year_start
+        self.import_data_task.events.import_scraped_data_set_start -= self.import_scraped_data_set_start
+        self.import_data_task.events.import_scraped_data_set_complete -= self.import_scraped_data_set_complete

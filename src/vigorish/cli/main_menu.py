@@ -105,9 +105,7 @@ class MainMenu(Menu):
                 "season": f"MLB {year} ({report['total_games']} games)",
                 "scraped": len(report["scraped"]),
                 "combined": len(report["successful"]),
-                "failed": len(report["failed"])
-                + len(report["pfx_error"])
-                + len(report["invalid_pfx"]),
+                "failed": len(report["failed"]) + len(report["pfx_error"]) + len(report["invalid_pfx"]),
             }
             for year, report in self.audit_report.items()
         ]

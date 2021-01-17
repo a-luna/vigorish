@@ -228,8 +228,7 @@ class SyncScrapedDataNoPrompts(Task):
         sync_complete = None
         if self.sync_direction == SyncDirection.UP_TO_S3:
             sync_complete = (
-                f"[{self.year} {self.file_type} {self.current_data_set}] "
-                f"All changes have been synced to s3 bucket!"
+                f"[{self.year} {self.file_type} {self.current_data_set}] " f"All changes have been synced to s3 bucket!"
             )
         if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
             sync_complete = (

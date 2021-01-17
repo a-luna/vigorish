@@ -46,10 +46,7 @@ def test_status_date_status_report(db_session):
     assert status_date.game_date == GAME_DATE
     report = status_date.status_report()
     assert report == [
-        (
-            "Overall Status For Date......................: "
-            "Missing BBref boxscores and Brooks pitch logs"
-        ),
+        ("Overall Status For Date......................: " "Missing BBref boxscores and Brooks pitch logs"),
         "Scraped Daily Dashboard (BBRef/Brooks).......: YES/YES",
         "BBref Boxscores Scraped......................: NO 1/11",
         "Brooks Games Scraped.........................: NO 1/11",

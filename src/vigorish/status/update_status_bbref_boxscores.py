@@ -3,9 +3,7 @@ from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
 
-def update_status_bbref_boxscore_list(
-    scraped_data, db_session, new_bbref_game_ids, apply_patch_list=False
-):
+def update_status_bbref_boxscore_list(scraped_data, db_session, new_bbref_game_ids, apply_patch_list=False):
     for bbref_game_id in new_bbref_game_ids:
         boxscore = scraped_data.get_bbref_boxscore(bbref_game_id, apply_patch_list)
         if not boxscore:
@@ -29,10 +27,7 @@ def update_game_status_records(db_session, boxscore):
     try:
         game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, boxscore.bbref_game_id)
         if not game_status:
-            error = (
-                f"scrape_status_game does not contain an "
-                f"entry for bbref_game_id: {boxscore.bbref_game_id}"
-            )
+            error = f"scrape_status_game does not contain an " f"entry for bbref_game_id: {boxscore.bbref_game_id}"
             return Result.Fail(error)
         game_status.scraped_bbref_boxscore = 1
         game_status.pitch_app_count_bbref = boxscore.pitch_appearance_count

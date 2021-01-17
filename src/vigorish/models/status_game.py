@@ -247,12 +247,8 @@ class GameScrapeStatus(Base):
         scraped_bbref_boxscore = "YES" if self.scraped_bbref_boxscore == 1 else "NO"
         scraped_brooks_pitch_logs = "YES" if self.scraped_brooks_pitch_logs == 1 else "NO"
         scraped_all_pitchfx_logs = "YES" if self.scraped_all_pitchfx_logs else "NO"
-        combined_data_for_all_pitchfx_logs = (
-            "YES" if self.combined_data_for_all_pitchfx_logs else "NO"
-        )
-        pitchfx_error_for_any_pitchfx_logs = (
-            "YES" if self.pitchfx_error_for_any_pitchfx_logs else "NO"
-        )
+        combined_data_for_all_pitchfx_logs = "YES" if self.combined_data_for_all_pitchfx_logs else "NO"
+        pitchfx_error_for_any_pitchfx_logs = "YES" if self.pitchfx_error_for_any_pitchfx_logs else "NO"
         total_pitchfx_removed_count = (
             self.total_duplicate_pitchfx_removed_count + self.total_extra_pitchfx_removed_count
         )
@@ -266,10 +262,7 @@ class GameScrapeStatus(Base):
                 f"PitchFx Logs Scraped.........................: {scraped_all_pitchfx_logs} "
                 f"{self.total_pitch_apps_scraped_pitchfx}/{self.pitch_app_count_pitchfx}"
             ),
-            (
-                "Combined BBRef/PitchFX Data..................: "
-                f"{combined_data_for_all_pitchfx_logs}"
-            ),
+            ("Combined BBRef/PitchFX Data..................: " f"{combined_data_for_all_pitchfx_logs}"),
             (
                 f"PitchFX Data Errors (Valid AB/Invalid AB)....: "
                 f"{pitchfx_error_for_any_pitchfx_logs} "
@@ -323,10 +316,7 @@ class GameScrapeStatus(Base):
 
     @classmethod
     def get_all_bbref_game_ids(cls, db_session, season_id):
-        return [
-            game_status.bbref_game_id
-            for game_status in db_session.query(cls).filter_by(season_id=season_id).all()
-        ]
+        return [game_status.bbref_game_id for game_status in db_session.query(cls).filter_by(season_id=season_id).all()]
 
     @classmethod
     def get_all_brooks_game_ids_for_date(cls, db_session, date):

@@ -34,9 +34,7 @@ def test_parse_brooks_games_for_date(db_session, scraped_data):
 
 
 def test_persist_brooks_games_for_date(db_session, scraped_data):
-    games_for_date_parsed = parse_brooks_games_for_date_from_html(
-        db_session, scraped_data, GAME_DATE
-    )
+    games_for_date_parsed = parse_brooks_games_for_date_from_html(db_session, scraped_data, GAME_DATE)
     assert isinstance(games_for_date_parsed, BrooksGamesForDate)
     result = scraped_data.save_json(DataSet.BROOKS_GAMES_FOR_DATE, games_for_date_parsed)
     assert result.success

@@ -9,13 +9,11 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import get_bbref_game_id_from_url, validate_bbref_game_id
 
 XPATH_BOXSCORE_URL_MAIN_CONTENT = (
-    '//div[@id="content"]//div[contains(@class, "game_summaries")]'
-    '//td[contains(@class, "gamelink")]/a/@href'
+    '//div[@id="content"]//div[contains(@class, "game_summaries")]' '//td[contains(@class, "gamelink")]/a/@href'
 )
 
 XPATH_BOXSCORE_URL_HEADER_NAV = (
-    '//li[@id="header_scores"]//div[contains(@class, "game_summaries")]'
-    '//td[contains(@class, "gamelink")]/a/@href'
+    '//li[@id="header_scores"]//div[contains(@class, "game_summaries")]' '//td[contains(@class, "gamelink")]/a/@href'
 )
 
 

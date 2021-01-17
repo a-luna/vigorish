@@ -14,9 +14,7 @@ def test_config_file():
     config_file.create_default_config_file()
     assert default_config_path.exists()
 
-    config_file.change_setting(
-        "SCRAPED_DATA_COMBINE_CONDITION", DataSet.ALL, ScrapeCondition.ONLY_MISSING_DATA
-    )
+    config_file.change_setting("SCRAPED_DATA_COMBINE_CONDITION", DataSet.ALL, ScrapeCondition.ONLY_MISSING_DATA)
     config_file.change_setting("SCRAPE_CONDITION", DataSet.BROOKS_PITCHFX, ScrapeCondition.ALWAYS)
 
     config_file.change_setting("URL_SCRAPE_DELAY", DataSet.ALL, (True, True, None, 3, 6))
@@ -64,21 +62,11 @@ def test_config_file():
     url_delay_setting = config_file.get_current_setting("URL_SCRAPE_DELAY", DataSet.ALL)
     assert "Delay is random (3-6 seconds)" in str(url_delay_setting)
 
-    config_file.change_setting(
-        "BATCH_SCRAPE_DELAY", DataSet.BBREF_BOXSCORES, (True, True, None, 10, 20)
-    )
-    config_file.change_setting(
-        "BATCH_SCRAPE_DELAY", DataSet.BBREF_GAMES_FOR_DATE, (True, True, None, 10, 20)
-    )
-    config_file.change_setting(
-        "BATCH_SCRAPE_DELAY", DataSet.BROOKS_GAMES_FOR_DATE, (True, True, None, 10, 20)
-    )
-    config_file.change_setting(
-        "BATCH_SCRAPE_DELAY", DataSet.BROOKS_PITCH_LOGS, (True, False, 8, None, None)
-    )
-    config_file.change_setting(
-        "BATCH_SCRAPE_DELAY", DataSet.BROOKS_PITCHFX, (False, None, None, None, None)
-    )
+    config_file.change_setting("BATCH_SCRAPE_DELAY", DataSet.BBREF_BOXSCORES, (True, True, None, 10, 20))
+    config_file.change_setting("BATCH_SCRAPE_DELAY", DataSet.BBREF_GAMES_FOR_DATE, (True, True, None, 10, 20))
+    config_file.change_setting("BATCH_SCRAPE_DELAY", DataSet.BROOKS_GAMES_FOR_DATE, (True, True, None, 10, 20))
+    config_file.change_setting("BATCH_SCRAPE_DELAY", DataSet.BROOKS_PITCH_LOGS, (True, False, 8, None, None))
+    config_file.change_setting("BATCH_SCRAPE_DELAY", DataSet.BROOKS_PITCHFX, (False, None, None, None, None))
 
     batch_delay_1 = config_file.get_current_setting("BATCH_SCRAPE_DELAY", DataSet.BROOKS_PITCHFX)
     assert "No delay after each batch" in str(batch_delay_1)
@@ -90,39 +78,23 @@ def test_config_file():
     batch_delay_3 = config_file.get_current_setting("BATCH_SCRAPE_DELAY", DataSet.BBREF_BOXSCORES)
     assert "Delay is random (10-20 minutes)" in str(batch_delay_3)
 
-    config_file.change_setting(
-        "BATCH_JOB_SETTINGS", DataSet.BBREF_BOXSCORES, (True, False, 5, None, None)
-    )
-    config_file.change_setting(
-        "BATCH_JOB_SETTINGS", DataSet.BBREF_GAMES_FOR_DATE, (False, None, None, None, None)
-    )
-    config_file.change_setting(
-        "BATCH_JOB_SETTINGS", DataSet.BROOKS_GAMES_FOR_DATE, (True, True, None, 20, 30)
-    )
-    config_file.change_setting(
-        "BATCH_JOB_SETTINGS", DataSet.BROOKS_PITCH_LOGS, (True, True, None, 30, 40)
-    )
-    config_file.change_setting(
-        "BATCH_JOB_SETTINGS", DataSet.BROOKS_PITCHFX, (True, True, None, 40, 50)
-    )
+    config_file.change_setting("BATCH_JOB_SETTINGS", DataSet.BBREF_BOXSCORES, (True, False, 5, None, None))
+    config_file.change_setting("BATCH_JOB_SETTINGS", DataSet.BBREF_GAMES_FOR_DATE, (False, None, None, None, None))
+    config_file.change_setting("BATCH_JOB_SETTINGS", DataSet.BROOKS_GAMES_FOR_DATE, (True, True, None, 20, 30))
+    config_file.change_setting("BATCH_JOB_SETTINGS", DataSet.BROOKS_PITCH_LOGS, (True, True, None, 30, 40))
+    config_file.change_setting("BATCH_JOB_SETTINGS", DataSet.BROOKS_PITCHFX, (True, True, None, 40, 50))
 
-    batch_job_1 = config_file.get_current_setting(
-        "BATCH_JOB_SETTINGS", DataSet.BBREF_GAMES_FOR_DATE
-    )
+    batch_job_1 = config_file.get_current_setting("BATCH_JOB_SETTINGS", DataSet.BBREF_GAMES_FOR_DATE)
     assert "Batched scraping is not enabled" in str(batch_job_1)
     batch_job_2 = config_file.get_current_setting("BATCH_JOB_SETTINGS", DataSet.BBREF_BOXSCORES)
     assert "Batch size is uniform (5 URLs)" in str(batch_job_2)
-    batch_settings_3 = config_file.get_current_setting(
-        "BATCH_JOB_SETTINGS", DataSet.BROOKS_GAMES_FOR_DATE
-    )
+    batch_settings_3 = config_file.get_current_setting("BATCH_JOB_SETTINGS", DataSet.BROOKS_GAMES_FOR_DATE)
     assert "Batch size is random (20-30 URLs)" in str(batch_settings_3)
 
     config_file.change_setting("S3_BUCKET", DataSet.ALL, "test-all")
     config_file.change_setting("S3_BUCKET", DataSet.BBREF_GAMES_FOR_DATE, "test-single")
 
-    script_params = config_file.get_nodejs_script_args(
-        DataSet.BBREF_BOXSCORES, TESTS_FOLDER.joinpath("urlset.json")
-    )
+    script_params = config_file.get_nodejs_script_args(DataSet.BBREF_BOXSCORES, TESTS_FOLDER.joinpath("urlset.json"))
     assert script_params
 
     script_params = config_file.get_nodejs_script_args(

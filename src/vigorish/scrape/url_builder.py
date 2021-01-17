@@ -56,9 +56,7 @@ def create_urls_for_brooks_pitch_logs_for_date(db_job, scraped_data, game_date):
                 "url": pitch_log_url,
                 "url_id": pitch_app_id,
                 "fileName": get_filename(scraped_data, data_set, pitch_app_id),
-                "cachedHtmlFolderPath": get_cached_html_folderpath(
-                    scraped_data, data_set, game_date
-                ),
+                "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
                 "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
             }
             urls.append(from_dict(data_class=UrlDetails, data=url_data))
@@ -87,9 +85,7 @@ def create_urls_for_brooks_pitchfx_logs_for_date(db_job, scraped_data, game_date
                 "url": pitch_log.pitchfx_url,
                 "url_id": pitch_app_id,
                 "fileName": get_filename(scraped_data, data_set, pitch_app_id),
-                "cachedHtmlFolderPath": get_cached_html_folderpath(
-                    scraped_data, data_set, game_date
-                ),
+                "cachedHtmlFolderPath": get_cached_html_folderpath(scraped_data, data_set, game_date),
                 "scrapedHtmlFolderpath": get_scraped_html_folderpath(db_job, data_set),
             }
             urls.append(from_dict(data_class=UrlDetails, data=url_data))

@@ -4,7 +4,7 @@ from datetime import date
 from tqdm import tqdm
 
 from vigorish.enums import SeasonType
-from vigorish.models.season import Season
+from vigorish.database import Season
 from vigorish.util.result import Result
 
 
@@ -20,6 +20,32 @@ def populate_seasons(db_session):
 def add_mlb_seasons(db_session):
     try:
         mlb_seasons = [
+            Season(
+                year=2014,
+                start_date=date(2014, 3, 22),
+                end_date=date(2014, 9, 28),
+                asg_date=date(2014, 7, 14),
+                season_type=SeasonType.REGULAR_SEASON,
+            ),
+            Season(
+                year=2014,
+                start_date=date(2014, 9, 30),
+                end_date=date(2014, 10, 29),
+                season_type=SeasonType.POST_SEASON,
+            ),
+            Season(
+                year=2015,
+                start_date=date(2015, 4, 5),
+                end_date=date(2015, 10, 4),
+                asg_date=date(2015, 7, 14),
+                season_type=SeasonType.REGULAR_SEASON,
+            ),
+            Season(
+                year=2015,
+                start_date=date(2015, 10, 6),
+                end_date=date(2015, 11, 1),
+                season_type=SeasonType.POST_SEASON,
+            ),
             Season(
                 year=2016,
                 start_date=date(2016, 4, 3),

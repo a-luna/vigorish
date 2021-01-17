@@ -29,8 +29,7 @@ NODEJS_INSTALL_ERROR = (
     "intructions."
 )
 NPM_PACKAGES_INSTALL_ERROR = (
-    "Nightmare is not installed, you must install it and other node dependencies in "
-    "order to scrape any data."
+    "Nightmare is not installed, you must install it and other node dependencies in " "order to scrape any data."
 )
 
 
@@ -204,9 +203,7 @@ class JobRunner:
     def job_failed(self, result, data_set=DataSet.ALL):
         self.end_time = datetime.now()
         self.db_job.status = JobStatus.ERROR
-        new_error = ScrapeError(
-            error_message=result.error, data_set=data_set, job_id=self.db_job.id
-        )
+        new_error = ScrapeError(error_message=result.error, data_set=data_set, job_id=self.db_job.id)
         self.db_session.add(new_error)
         self.db_session.commit()
         return result

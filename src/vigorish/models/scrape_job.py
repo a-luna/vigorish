@@ -88,8 +88,7 @@ class ScrapeJob(Base):
     @hybrid_property
     def scraped_html_folders(self):
         folder_dict = {
-            data_set: self.scraped_html_root_folder.joinpath(data_set.name.lower())
-            for data_set in self.data_sets
+            data_set: self.scraped_html_root_folder.joinpath(data_set.name.lower()) for data_set in self.data_sets
         }
         for folderpath in folder_dict.values():
             folderpath.mkdir(parents=True, exist_ok=True)

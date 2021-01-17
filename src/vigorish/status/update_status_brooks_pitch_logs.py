@@ -54,9 +54,7 @@ def update_game_status_records(db_session, pitch_logs_for_game):
 def create_pitch_appearance_status_records(db_session, pitch_logs_for_game):
     season = None
     bbref_game_id = pitch_logs_for_game.bbref_game_id
-    all_pitch_app_ids = PitchAppScrapeStatus.get_all_pitch_app_ids_for_game(
-        db_session, bbref_game_id
-    )
+    all_pitch_app_ids = PitchAppScrapeStatus.get_all_pitch_app_ids_for_game(db_session, bbref_game_id)
     scraped_pitch_app_ids = [plog.pitch_app_id for plog in pitch_logs_for_game.pitch_logs]
     update_pitch_app_ids = set(scraped_pitch_app_ids).difference(all_pitch_app_ids)
     for pitch_log in pitch_logs_for_game.pitch_logs:

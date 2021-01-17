@@ -152,9 +152,7 @@ def import_team_map_csv(app, csv_folder):
     try:
         update_player_team_map = UpdatePlayerTeamMap(app)
         player_team_map_csv = csv_folder.joinpath(PLAYER_TEAM_MAP_CSV)
-        player_team_map = update_player_team_map.read_bbref_player_team_map_from_file(
-            player_team_map_csv
-        )
+        player_team_map = update_player_team_map.read_bbref_player_team_map_from_file(player_team_map_csv)
         with tqdm(
             total=len(player_team_map),
             desc="Populating player_team table...",
@@ -166,9 +164,7 @@ def import_team_map_csv(app, csv_folder):
         ) as pbar:
             for team_map in player_team_map:
                 player = Player.find_by_bbref_id(app.db_session, team_map.player_ID)
-                team = Team.find_by_team_id_and_year(
-                    app.db_session, team_map.team_ID, int(team_map.year_ID)
-                )
+                team = Team.find_by_team_id_and_year(app.db_session, team_map.team_ID, int(team_map.year_ID))
                 season = Season.find_by_year(app.db_session, int(team_map.year_ID))
                 player_team = Assoc_Player_Team(
                     db_player_id=player.id,

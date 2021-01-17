@@ -97,21 +97,13 @@ class CalculatePitchTimes(MenuItem):
 
     def subscribe_to_events(self):
         self.calc_pitch_times.events.find_eligible_games_start += self.find_eligible_games_start
-        self.calc_pitch_times.events.find_eligible_games_complete += (
-            self.find_eligible_games_complete
-        )
-        self.calc_pitch_times.events.calculate_pitch_metrics_progress += (
-            self.calculate_pitch_metrics_progress
-        )
+        self.calc_pitch_times.events.find_eligible_games_complete += self.find_eligible_games_complete
+        self.calc_pitch_times.events.calculate_pitch_metrics_progress += self.calculate_pitch_metrics_progress
 
     def unsubscribe_from_events(self):
         self.calc_pitch_times.events.find_eligible_games_start -= self.find_eligible_games_start
-        self.calc_pitch_times.events.find_eligible_games_complete -= (
-            self.find_eligible_games_complete
-        )
-        self.calc_pitch_times.events.calculate_pitch_metrics_progress -= (
-            self.calculate_pitch_metrics_progress
-        )
+        self.calc_pitch_times.events.find_eligible_games_complete -= self.find_eligible_games_complete
+        self.calc_pitch_times.events.calculate_pitch_metrics_progress -= self.calculate_pitch_metrics_progress
 
     def get_task_description_pages(self):
         return [

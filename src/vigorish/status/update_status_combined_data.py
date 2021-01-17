@@ -42,9 +42,7 @@ def update_pitch_app_combined_data(db_session, pitch_app_status, pitch_stats):
     pitch_app_status.duplicate_guid_removed_count = pitchfx_audit["duplicate_guid_removed_count"]
     pitch_app_status.pitch_count_bbref = pitchfx_audit["pitch_count_bbref"]
     pitch_app_status.pitch_count_pitchfx_audited = pitchfx_audit["pitch_count_pitchfx"]
-    pitch_app_status.total_at_bats_pitchfx_complete = pitchfx_audit[
-        "total_at_bats_pitchfx_complete"
-    ]
+    pitch_app_status.total_at_bats_pitchfx_complete = pitchfx_audit["total_at_bats_pitchfx_complete"]
     pitch_app_status.patched_pitchfx_count = pitchfx_audit["patched_pitchfx_count"]
     pitch_app_status.total_at_bats_patched_pitchfx = pitchfx_audit["total_at_bats_patched_pitchfx"]
     pitch_app_status.missing_pitchfx_count = pitchfx_audit["missing_pitchfx_count"]
@@ -52,9 +50,7 @@ def update_pitch_app_combined_data(db_session, pitch_app_status, pitch_stats):
     pitch_app_status.extra_pitchfx_count = pitchfx_audit["extra_pitchfx_count"]
     pitch_app_status.total_at_bats_extra_pitchfx = pitchfx_audit["total_at_bats_extra_pitchfx"]
     pitch_app_status.extra_pitchfx_removed_count = pitchfx_audit["extra_pitchfx_removed_count"]
-    pitch_app_status.total_at_bats_extra_pitchfx_removed = pitchfx_audit[
-        "total_at_bats_extra_pitchfx_removed"
-    ]
+    pitch_app_status.total_at_bats_extra_pitchfx_removed = pitchfx_audit["total_at_bats_extra_pitchfx_removed"]
     pitch_app_status.invalid_pitchfx = invalid_pitchfx
     pitch_app_status.invalid_pitchfx_count = pitchfx_audit["invalid_pitchfx_count"]
     pitch_app_status.total_at_bats_invalid_pitchfx = pitchfx_audit["total_at_bats_invalid_pitchfx"]
@@ -66,9 +62,6 @@ def update_pitch_app_combined_data(db_session, pitch_app_status, pitch_stats):
 def get_pitch_app_status(db_session, pitch_app_id):
     pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
     if not pitch_app_status:
-        error = (
-            f"scrape_status_pitch_app does not contain an "
-            f"entry for pitch_app_id: {pitch_app_id}"
-        )
+        error = f"scrape_status_pitch_app does not contain an " f"entry for pitch_app_id: {pitch_app_id}"
         return Result.Fail(error)
     return Result.Ok(pitch_app_status)

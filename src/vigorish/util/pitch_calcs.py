@@ -116,9 +116,7 @@ def calculate_pitch_metrics_for_all_pitch_types(pitch_mix, pitch_type_metrics):
     all_pitch_types = {"pitch_types": [pt.name for pt in pitch_mix], "percent": 1.000}
     for metric in INT_PITCH_METRIC_NAMES:
         all_pitch_types[metric] = sum(
-            pitch_type[metric]
-            for pitch_type in pitch_type_metrics
-            if metric in pitch_type and pitch_type[metric]
+            pitch_type[metric] for pitch_type in pitch_type_metrics if metric in pitch_type and pitch_type[metric]
         )
     calculate_pitch_discipline_metrics(all_pitch_types)
     calculate_batted_ball_metrics(all_pitch_types)
@@ -157,8 +155,7 @@ def calculate_pitch_discipline_metrics(pitch_metrics):
     )
     pitch_metrics["o_swing_rate"] = (
         round(
-            pitch_metrics["total_swings_outside_zone"]
-            / float(pitch_metrics["total_outside_strike_zone"]),
+            pitch_metrics["total_swings_outside_zone"] / float(pitch_metrics["total_outside_strike_zone"]),
             3,
         )
         if pitch_metrics["total_outside_strike_zone"]
@@ -166,8 +163,7 @@ def calculate_pitch_discipline_metrics(pitch_metrics):
     )
     pitch_metrics["z_swing_rate"] = (
         round(
-            pitch_metrics["total_swings_inside_zone"]
-            / float(pitch_metrics["total_inside_strike_zone"]),
+            pitch_metrics["total_swings_inside_zone"] / float(pitch_metrics["total_inside_strike_zone"]),
             3,
         )
         if pitch_metrics["total_inside_strike_zone"]
@@ -180,8 +176,7 @@ def calculate_pitch_discipline_metrics(pitch_metrics):
     )
     pitch_metrics["o_contact_rate"] = (
         round(
-            pitch_metrics["total_contact_outside_zone"]
-            / float(pitch_metrics["total_swings_outside_zone"]),
+            pitch_metrics["total_contact_outside_zone"] / float(pitch_metrics["total_swings_outside_zone"]),
             3,
         )
         if pitch_metrics["total_swings_outside_zone"]
@@ -189,8 +184,7 @@ def calculate_pitch_discipline_metrics(pitch_metrics):
     )
     pitch_metrics["z_contact_rate"] = (
         round(
-            pitch_metrics["total_contact_inside_zone"]
-            / float(pitch_metrics["total_swings_inside_zone"]),
+            pitch_metrics["total_contact_inside_zone"] / float(pitch_metrics["total_swings_inside_zone"]),
             3,
         )
         if pitch_metrics["total_swings_inside_zone"]
@@ -224,3 +218,12 @@ def calculate_batted_ball_metrics(pitch_metrics):
         if pitch_metrics["total_batted_balls"]
         else 0.0
     )
+
+
+def calculate_total_outs(innings_pitched):
+    split = str(innings_pitched).split(".")
+    if len(split) != 2:
+        return None
+    inn_full = split[0]
+    inn_partial = split[1]
+    return int(inn_full) * 3 + int(inn_partial)

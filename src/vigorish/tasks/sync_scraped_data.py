@@ -154,15 +154,12 @@ class SyncScrapedDataTask(Task):
         s3_objects = [
             self.get_s3_object_data(obj)
             for obj in self.cached_s3_objects
-            if html_folder in obj.key
-            and URL_ID_REGEX[VigFile.SCRAPED_HTML][data_set].search(Path(obj.key).stem)
+            if html_folder in obj.key and URL_ID_REGEX[VigFile.SCRAPED_HTML][data_set].search(Path(obj.key).stem)
         ]
         return sorted(s3_objects, key=lambda x: x["name"]) if s3_objects else []
 
     def get_all_combined_data_objects_in_s3(self, data_set, year):
-        comb_folder = self.s3_folderpath_dict[VigFile.COMBINED_GAME_DATA][DataSet.ALL].resolve(
-            year=year
-        )
+        comb_folder = self.s3_folderpath_dict[VigFile.COMBINED_GAME_DATA][DataSet.ALL].resolve(year=year)
         s3_objects = [
             self.get_s3_object_data(obj)
             for obj in self.cached_s3_objects
@@ -176,8 +173,7 @@ class SyncScrapedDataTask(Task):
         s3_objects = [
             self.get_s3_object_data(obj)
             for obj in self.cached_s3_objects
-            if json_folder in obj.key
-            and URL_ID_REGEX[VigFile.PATCH_LIST][data_set].search(Path(obj.key).stem)
+            if json_folder in obj.key and URL_ID_REGEX[VigFile.PATCH_LIST][data_set].search(Path(obj.key).stem)
         ]
         return sorted(s3_objects, key=lambda x: x["name"]) if s3_objects else []
 
@@ -237,8 +233,7 @@ class SyncScrapedDataTask(Task):
         return [
             self.update_existing_file(src_sync[i])
             for i in range(len(src_sync))
-            if self.src_file_is_newer(src_sync[i], dest_sync[i])
-            and src_sync[i]["size"] != dest_sync[i]["size"]
+            if self.src_file_is_newer(src_sync[i], dest_sync[i]) and src_sync[i]["size"] != dest_sync[i]["size"]
         ]
 
     def find_files_in_common(self, src_files, dest_files):

@@ -26,9 +26,7 @@ class DotEnvFile:
         file_text = self.dotenv_filepath.read_text()
         env_var_split = [f for f in file_text.split("\n") if f and "=" in f]
         env_var_split = [s.split("=") for s in env_var_split]
-        self.env_var_dict = {
-            v[0]: v[1].strip('"').strip("'").strip() for v in env_var_split if len(v) == 2
-        }
+        self.env_var_dict = {v[0]: v[1].strip('"').strip("'").strip() for v in env_var_split if len(v) == 2}
         if "CONFIG_FILE" not in self.env_var_dict:
             self.env_var_dict["CONFIG_FILE"] = CONFIG_FILE
         if "DATABASE_URL" not in self.env_var_dict:

@@ -82,9 +82,7 @@ def test_config_setting():
     assert num_setting.data_type == ConfigType.NUMERIC
     assert num_setting.description
     assert not num_setting.possible_values
-    assert num_setting.current_setting(DataSet.BBREF_GAMES_FOR_DATE) == UrlScrapeDelay(
-        True, True, None, 3, 6
-    )
+    assert num_setting.current_setting(DataSet.BBREF_GAMES_FOR_DATE) == UrlScrapeDelay(True, True, None, 3, 6)
 
     path_setting_name = "JSON_S3_FOLDER_PATH"
     path_config_dict = config_file.config_json.get(path_setting_name)

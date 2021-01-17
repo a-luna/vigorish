@@ -182,8 +182,7 @@ class SyncScrapedData(MenuItem):
 
     def in_sync_text(self, file_type, data_set):
         in_sync = (
-            f"All files in sync: {self.year} {data_set} {file_type} "
-            f"(Task {self.task_number}/{self.total_tasks})"
+            f"All files in sync: {self.year} {data_set} {file_type} " f"(Task {self.task_number}/{self.total_tasks})"
         )
         return (in_sync, SYNC_STATUS_TEXT_COLOR["in_sync"])
 
@@ -206,9 +205,7 @@ class SyncScrapedData(MenuItem):
                 if old_files:
                     all_sync_files.extend(old_files)
                     old_count = len(old_files)
-                table_viewer = self.create_table_viewer(
-                    all_sync_files, data_set, file_type, new_count, old_count
-                )
+                table_viewer = self.create_table_viewer(all_sync_files, data_set, file_type, new_count, old_count)
                 apply_changes = table_viewer.launch()
                 if apply_changes:
                     self.apply_pending_changes(file_type, data_set, new_files, old_files)
@@ -255,9 +252,7 @@ class SyncScrapedData(MenuItem):
                 "in local folder have been synced to s3 bucket!"
             )
         if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            self.s3_sync.download_files_to_local_folder(
-                new_files, old_files, file_type, data_set, self.year
-            )
+            self.s3_sync.download_files_to_local_folder(new_files, old_files, file_type, data_set, self.year)
             message = (
                 f"All changes have been applied, MLB {self.year} {data_set} {file_type} files "
                 "in s3 bucket have been synced to local folder!"

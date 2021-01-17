@@ -16,9 +16,7 @@ def update_brooks_games_for_date_single_date(db_session, season, games_for_date)
     return Result.Ok()
 
 
-def update_status_brooks_games_for_date_list(
-    scraped_data, db_session, scraped_brooks_dates, apply_patch_list=False
-):
+def update_status_brooks_games_for_date_list(scraped_data, db_session, scraped_brooks_dates, apply_patch_list=False):
     season = None
     for game_date in scraped_brooks_dates:
         if not season:
