@@ -32,14 +32,16 @@ class BBRefGamesForDatePatchList(PatchList):
 
     def post_process_data(self, data, db_session):
         for patch in self.patch_list:
-            game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, patch.old_game_id)
-            if not game_status:
+            game_status_old = GameScrapeStatus.find_by_bbref_game_id(db_session, patch.old_game_id)
+            game_status_new = GameScrapeStatus.find_by_bbref_game_id(db_session, patch.new_game_id)
+            if not game_status_old:
+                if game_status_new:
+                    return Result.Ok(data)
                 error = (
-                    "Unable to apply patch, database does not contain any records for game id "
-                    f'"{patch.old_game_id}"'
+                    "Unable to apply patch, database does not contain any records for game id " f'"{patch.old_game_id}"'
                 )
                 return Result.Fail(error)
-            game_status.bbref_game_id = patch.new_game_id
+            game_status_old.bbref_game_id = patch.new_game_id
         db_session.commit()
         return Result.Ok(data)
 
