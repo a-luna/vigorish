@@ -1,4 +1,4 @@
-from sqlalchemy import case, cast, Float, func, Integer, String
+from sqlalchemy import case, cast, Float, func
 
 from vigorish.database import BatStats
 
