@@ -70,9 +70,7 @@ class ScrapeMlbPlayerInfoTask(Task):
         return Result.Ok(player_data)
 
     def find_best_match(self, player_list, name, game_date):
-        player_id_name_map = {
-            player["player_id"]: player["name_display_first_last"] for player in player_list
-        }
+        player_id_name_map = {player["player_id"]: player["name_display_first_last"] for player in player_list}
         player_info_dict = {player["player_id"]: player for player in player_list}
         possible_matches = fuzzy_match(name, player_id_name_map)
         if len(possible_matches) == 1:
@@ -80,9 +78,7 @@ class ScrapeMlbPlayerInfoTask(Task):
         return self.compare_mlb_debut(possible_matches, player_info_dict, game_date)
 
     def compare_mlb_debut(self, possible_matches, player_info_dict, game_date):
-        info_dict_list = [
-            player_info_dict[possible_match["result"]] for possible_match in possible_matches
-        ]
+        info_dict_list = [player_info_dict[possible_match["result"]] for possible_match in possible_matches]
         for player_info in info_dict_list:
             if not player_info["pro_debut_date"]:  # pragma: no cover
                 player_info["since_debut"] = timedelta.max.days

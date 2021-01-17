@@ -59,10 +59,7 @@ o_swing_rate = case(
     [
         (
             func.sum(PitchFx.outside_strike_zone) > 0,
-            (
-                func.sum(PitchFx.swing_outside_zone)
-                / cast(func.sum(PitchFx.outside_strike_zone), Float)
-            ),
+            (func.sum(PitchFx.swing_outside_zone) / cast(func.sum(PitchFx.outside_strike_zone), Float)),
         ),
     ],
     else_=0.0,
@@ -72,10 +69,7 @@ z_swing_rate = case(
     [
         (
             func.sum(PitchFx.inside_strike_zone) > 0,
-            (
-                func.sum(PitchFx.swing_inside_zone)
-                / cast(func.sum(PitchFx.inside_strike_zone), Float)
-            ),
+            (func.sum(PitchFx.swing_inside_zone) / cast(func.sum(PitchFx.inside_strike_zone), Float)),
         ),
     ],
     else_=0.0,
@@ -95,10 +89,7 @@ o_contact_rate = case(
     [
         (
             func.sum(PitchFx.swing_outside_zone) > 0,
-            (
-                func.sum(PitchFx.contact_outside_zone)
-                / cast(func.sum(PitchFx.swing_outside_zone), Float)
-            ),
+            (func.sum(PitchFx.contact_outside_zone) / cast(func.sum(PitchFx.swing_outside_zone), Float)),
         ),
     ],
     else_=0.0,
@@ -108,10 +99,7 @@ z_contact_rate = case(
     [
         (
             func.sum(PitchFx.swing_inside_zone) > 0,
-            (
-                func.sum(PitchFx.contact_inside_zone)
-                / cast(func.sum(PitchFx.swing_inside_zone), Float)
-            ),
+            (func.sum(PitchFx.contact_inside_zone) / cast(func.sum(PitchFx.swing_inside_zone), Float)),
         ),
     ],
     else_=0.0,
@@ -134,10 +122,7 @@ custom_score = case(
             (
                 (func.sum(PitchFx.inside_strike_zone) / cast(func.count(PitchFx.id), Float))
                 + (func.sum(PitchFx.swinging_strike) / cast(func.count(PitchFx.id), Float))
-                + (
-                    func.sum(PitchFx.swing_outside_zone)
-                    / cast(func.sum(PitchFx.outside_strike_zone), Float)
-                )
+                + (func.sum(PitchFx.swing_outside_zone) / cast(func.sum(PitchFx.outside_strike_zone), Float))
             ),
         ),
     ],
@@ -150,15 +135,9 @@ money_pitch = case(
             and_(func.count(PitchFx.id) > 0, func.sum(PitchFx.outside_strike_zone) > 0),
             (
                 and_(
-                    (func.sum(PitchFx.inside_strike_zone) / cast(func.count(PitchFx.id), Float))
-                    > 0.4,
-                    (
-                        func.sum(PitchFx.swing_outside_zone)
-                        / cast(func.sum(PitchFx.outside_strike_zone), Float)
-                    )
-                    > 0.4,
-                    (func.sum(PitchFx.swinging_strike) / cast(func.count(PitchFx.id), Float))
-                    > 0.15,
+                    (func.sum(PitchFx.inside_strike_zone) / cast(func.count(PitchFx.id), Float)) > 0.4,
+                    (func.sum(PitchFx.swing_outside_zone) / cast(func.sum(PitchFx.outside_strike_zone), Float)) > 0.4,
+                    (func.sum(PitchFx.swinging_strike) / cast(func.count(PitchFx.id), Float)) > 0.15,
                 )
             ),
         ),

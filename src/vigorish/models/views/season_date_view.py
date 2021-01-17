@@ -11,12 +11,8 @@ class Season_Date_View(Base):
             [
                 Season.id.label("id"),
                 func.count(DateScrapeStatus.id).label("total_days"),
-                func.sum(DateScrapeStatus.scraped_daily_dash_bbref).label(
-                    "total_scraped_daily_dash_bbref"
-                ),
-                func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label(
-                    "total_scraped_daily_dash_brooks"
-                ),
+                func.sum(DateScrapeStatus.scraped_daily_dash_bbref).label("total_scraped_daily_dash_bbref"),
+                func.sum(DateScrapeStatus.scraped_daily_dash_brooks).label("total_scraped_daily_dash_brooks"),
                 func.sum(DateScrapeStatus.game_count_bbref).label("total_game_count_bbref"),
                 func.sum(DateScrapeStatus.game_count_brooks).label("total_game_count_brooks"),
             ]

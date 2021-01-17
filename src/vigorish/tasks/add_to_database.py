@@ -140,7 +140,7 @@ class AddToDatabaseTask(Task):
         return stats
 
     def add_pitchfx_to_database(self, all_game_data):
-        for pitch_app_id, pfx_dict_list in all_game_data.get_all_pitchfx().items():
+        for pitch_app_id, pfx_dict_list in all_game_data.all_pitchfx.items():
             pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
             if not pitch_app:
                 error = f"Import aborted! Pitch app '{pitch_app_id}' not found in database"

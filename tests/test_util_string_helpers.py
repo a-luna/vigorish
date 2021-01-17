@@ -11,10 +11,7 @@ def test_ellipsize():
     s1 = "This is a string that does not need to be ellipsized"
     assert ellipsize(s1, max_len) == s1
     s2 = "This string is slightly longer than 70 chars, and therefore, must be ellipsized"
-    assert (
-        ellipsize(s2, max_len)
-        == "This string is slightly longer than 70 chars, and therefore, must be …"
-    )
+    assert ellipsize(s2, max_len) == "This string is slightly longer than 70 chars, and therefore, must be …"
 
 
 def test_wrap_text(vig_app):

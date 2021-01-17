@@ -139,13 +139,9 @@ def get_bbref_url_for_date(game_date):
     return f"https://www.baseball-reference.com/boxes/?month={m}&day={d}&year={y}"
 
 
-def update_scraped_brooks_games_for_date(
-    db_session, scraped_data, game_date, apply_patch_list=True
-):
+def update_scraped_brooks_games_for_date(db_session, scraped_data, game_date, apply_patch_list=True):
     season = get_season(db_session, game_date.year)
-    brooks_games_for_date = parse_brooks_games_for_date_from_html(
-        db_session, scraped_data, game_date, apply_patch_list
-    )
+    brooks_games_for_date = parse_brooks_games_for_date_from_html(db_session, scraped_data, game_date, apply_patch_list)
     result = update_status_brooks_games_for_date(db_session, season, brooks_games_for_date)
     assert result.success
     return brooks_games_for_date
@@ -157,9 +153,7 @@ def get_season(db_session, year):
     return season
 
 
-def parse_brooks_games_for_date_from_html(
-    db_session, scraped_data, game_date, apply_patch_list=True
-):
+def parse_brooks_games_for_date_from_html(db_session, scraped_data, game_date, apply_patch_list=True):
     html_path = scraped_data.get_html(DataSet.BROOKS_GAMES_FOR_DATE, game_date)
     page_content = html_path.read_text()
     url = get_brooks_url_for_date(game_date)
@@ -187,7 +181,7 @@ def update_scraped_boxscore(db_session, scraped_data, bbref_game_id):
 def parse_bbref_boxscore_from_html(scraped_data, bbref_game_id):
     url = get_bbref_boxscore_url(bbref_game_id)
     html_path = scraped_data.get_html(DataSet.BBREF_BOXSCORES, bbref_game_id)
-    result = parse_bbref_boxscore(html_path.read_text(), url)
+    result = parse_bbref_boxscore(html_path.read_text(), url, bbref_game_id)
     assert result.success
     bbref_boxscore = result.value
     return bbref_boxscore
@@ -198,9 +192,7 @@ def get_bbref_boxscore_url(bbref_game_id):
     return f"https://www.baseball-reference.com/boxes/{team_id}/{bbref_game_id}.shtml"
 
 
-def update_scraped_pitch_logs(
-    db_session, scraped_data, game_date, bbref_game_id, apply_patch_list=True
-):
+def update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id, apply_patch_list=True):
     pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(
         scraped_data, game_date, bbref_game_id, apply_patch_list
     )
@@ -209,9 +201,7 @@ def update_scraped_pitch_logs(
     return pitch_logs_for_game
 
 
-def parse_brooks_pitch_logs_for_game_from_html(
-    scraped_data, game_date, bbref_game_id, apply_patch_list=True
-):
+def parse_brooks_pitch_logs_for_game_from_html(scraped_data, game_date, bbref_game_id, apply_patch_list=True):
     games_for_date = scraped_data.get_brooks_games_for_date(game_date, apply_patch_list)
     game_info = [game for game in games_for_date.games if game.bbref_game_id == bbref_game_id][0]
     pitch_logs_for_game = BrooksPitchLogsForGame()

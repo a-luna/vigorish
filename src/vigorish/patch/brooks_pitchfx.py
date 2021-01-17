@@ -112,11 +112,7 @@ class PatchBrooksPitchFxBatterId(Patch):
         self.patch_id = "__patch_brooks_pitchfx_batter_id__"
 
     def apply(self, data):
-        matches = [
-            pfx
-            for pfx in data
-            if pfx.park_sv_id == self.park_sv_id and pfx.pitch_app_id == self.pitch_app_id
-        ]
+        matches = [pfx for pfx in data if pfx.park_sv_id == self.park_sv_id and pfx.pitch_app_id == self.pitch_app_id]
         if not matches:
             error = (
                 "Unable to locate the PitchFX reading identified in this patch: "

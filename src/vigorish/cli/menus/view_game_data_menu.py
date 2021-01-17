@@ -111,8 +111,7 @@ class ViewGameDataMenu(MenuItem):
                 while True:
                     subprocess.run(["clear"])
                     heading = (
-                        "Scraped Data Viewer - Select Game "
-                        f"(MLB Season: {self.mlb_season}, Team: {self.team_id})"
+                        "Scraped Data Viewer - Select Game " f"(MLB Season: {self.mlb_season}, Team: {self.team_id})"
                     )
                     print_heading(heading, fg="bright_yellow")
                     result = select_game_prompt(game_ids, use_numbers=False, clear_screen=False)
@@ -136,8 +135,7 @@ class ViewGameDataMenu(MenuItem):
 
     def select_team_prompt(self):
         team_choices_dict = {
-            t.team_id_br: t.name
-            for t in Team.get_all_teams_for_season(self.db_session, year=self.mlb_season)
+            t.team_id_br: t.name for t in Team.get_all_teams_for_season(self.db_session, year=self.mlb_season)
         }
         subprocess.run(["clear"])
         heading = f"Scraped Data Viewer - Select Team (MLB Season: {self.mlb_season})"
@@ -156,9 +154,7 @@ class ViewGameDataMenu(MenuItem):
 
     def get_team_game_ids(self):
         all_valid_game_ids = self.audit_report[self.mlb_season]["successful"]
-        team_game_ids = GameScrapeStatus.get_all_bbref_game_ids_for_team(
-            self.db_session, self.team_id, self.mlb_season
-        )
+        team_game_ids = GameScrapeStatus.get_all_bbref_game_ids_for_team(self.db_session, self.team_id, self.mlb_season)
         valid_team_game_ids = list(set(team_game_ids).intersection(set(all_valid_game_ids)))
         game_id_weights = self.get_game_id_weights(valid_team_game_ids)
         valid_team_game_ids.sort(key=lambda x: game_id_weights[x])

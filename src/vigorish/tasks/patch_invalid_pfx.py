@@ -190,8 +190,7 @@ class PatchInvalidPitchFxTask(Task):
         return [
             self.get_event_dict(event)
             for event in self.game_events
-            if event["at_bat_pitchfx_audit"]["missing_pitchfx_count"] > 0
-            and self.event_matches_pfx(event, pfx)
+            if event["at_bat_pitchfx_audit"]["missing_pitchfx_count"] > 0 and self.event_matches_pfx(event, pfx)
         ]
 
     def get_event_dict(self, event):
@@ -212,15 +211,9 @@ class PatchInvalidPitchFxTask(Task):
     def event_matches_pfx(self, event, pfx):
         return (
             event["inning_id"][-5:] == pfx["inning_id"]
-            and (
-                event["batter_id_mlb"] == pfx["batter_id"]
-                or event["pitcher_id_mlb"] == pfx["pitcher_id"]
-            )
+            and (event["batter_id_mlb"] == pfx["batter_id"] or event["pitcher_id_mlb"] == pfx["pitcher_id"])
             and event["at_bat_pitchfx_audit"]["missing_pitchfx_count"] <= pfx["pitch_count"]
-            and all(
-                p_num in pfx["invalid_pfx"]
-                for p_num in event["at_bat_pitchfx_audit"]["missing_pitch_numbers"]
-            )
+            and all(p_num in pfx["invalid_pfx"] for p_num in event["at_bat_pitchfx_audit"]["missing_pitch_numbers"])
         )
 
     def check_for_exact_match(self, pfx):
@@ -242,10 +235,7 @@ class PatchInvalidPitchFxTask(Task):
                 # AND number of pitches missing is the same as the number of invalid pfx
                 and event["at_bat_pitchfx_audit"]["missing_pitchfx_count"] == pfx["pitch_count"]
                 # AND invalid pfx pitch seq. numbers are the same as the missing pitches
-                and all(
-                    p_num in pfx["invalid_pfx"]
-                    for p_num in event["at_bat_pitchfx_audit"]["missing_pitch_numbers"]
-                )
+                and all(p_num in pfx["invalid_pfx"] for p_num in event["at_bat_pitchfx_audit"]["missing_pitch_numbers"])
             )
         ]
         if not exact_match:
@@ -315,9 +305,7 @@ class PatchInvalidPitchFxTask(Task):
         return (
             Result.Ok(patch_pfx)
             if patch_pfx
-            else Result.Fail(
-                f"Error! Failed to retrieve invalid pfx data for at_bat_id: {at_bat_id}"
-            )
+            else Result.Fail(f"Error! Failed to retrieve invalid pfx data for at_bat_id: {at_bat_id}")
         )
 
     def create_change_pitcher_id_patch(self, patch_event, patch_pfx):
@@ -357,11 +345,7 @@ class PatchInvalidPitchFxTask(Task):
 
     def get_all_pfx_data_to_patch(self, invalid_pfx):
         removed_pfx_count = invalid_pfx["at_bat_pitchfx_audit"]["extra_pitchfx_removed_count"]
-        return (
-            invalid_pfx["pitchfx"] + invalid_pfx["removed_pitchfx"]
-            if removed_pfx_count
-            else invalid_pfx["pitchfx"]
-        )
+        return invalid_pfx["pitchfx"] + invalid_pfx["removed_pitchfx"] if removed_pfx_count else invalid_pfx["pitchfx"]
 
     def combine_patch_lists(self, new_patch_list, old_patch_list):
         new_ids = [p.park_sv_id for p in new_patch_list]

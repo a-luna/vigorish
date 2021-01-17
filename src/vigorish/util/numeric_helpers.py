@@ -37,11 +37,7 @@ def trim_data_set(samples, st_dev_limit=2):
         raise ValueError("Input list is either empty or invalid")
     mean = sum(samples) / len(samples)
     st_dev = get_standard_deviation(samples)
-    return [
-        x
-        for x in samples
-        if x > (mean - st_dev_limit * st_dev) and x < (mean + st_dev_limit * st_dev)
-    ]
+    return [x for x in samples if x > (mean - st_dev_limit * st_dev) and x < (mean + st_dev_limit * st_dev)]
 
 
 def get_standard_deviation(samples):

@@ -93,11 +93,7 @@ class BrooksPitchFxData:
 
     @property
     def game_start_time(self):
-        return (
-            datetime.strptime(self.game_start_time_str, DT_AWARE)
-            if self.game_start_time_str
-            else None
-        )
+        return datetime.strptime(self.game_start_time_str, DT_AWARE) if self.game_start_time_str else None
 
     @property
     def time_pitch_thrown(self):

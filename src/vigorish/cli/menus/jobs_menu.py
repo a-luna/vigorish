@@ -16,8 +16,7 @@ class JobsMenu(Menu):
 
     def populate_menu_items(self):
         self.menu_items = [
-            JobDetails(self.app, job, menu_item_number)
-            for menu_item_number, job in enumerate(self.jobs, start=1)
+            JobDetails(self.app, job, menu_item_number) for menu_item_number, job in enumerate(self.jobs, start=1)
         ]
         self.menu_items.append(ReturnToParent(self.app, "Return to All Jobs Menu "))
         if len(self.jobs) > 8:

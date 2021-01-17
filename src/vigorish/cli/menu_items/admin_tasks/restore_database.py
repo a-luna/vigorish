@@ -77,9 +77,7 @@ class RestoreDatabase(MenuItem):
         heading = "Restore Database from Backup"
         prompt = "Would you like to run this task and restore the database?"
         pages = [DisplayPage(page, heading) for page in self.get_task_description_pages()]
-        page_viewer = PageViewer(
-            pages, prompt=prompt, text_color="bright_yellow", heading_color="bright_yellow"
-        )
+        page_viewer = PageViewer(pages, prompt=prompt, text_color="bright_yellow", heading_color="bright_yellow")
         return page_viewer.launch()
 
     def prompt_user_select_backup_to_restore(self):
@@ -145,9 +143,6 @@ class RestoreDatabase(MenuItem):
                     "This task restores database tables that track the progress made scraping all "
                     "data sets for all MLB seasons.\n"
                 ),
-                (
-                    "Backup files are stored in the folder specified by the DB_BACKUP_FOLDER_PATH "
-                    "config setting."
-                ),
+                ("Backup files are stored in the folder specified by the DB_BACKUP_FOLDER_PATH " "config setting."),
             ]
         ]

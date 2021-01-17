@@ -22,13 +22,7 @@ class Result(Generic[T]):
 
     def __repr__(self) -> str:
         """Official string representation of a result."""
-        detail = (
-            f', error="{self.error}"'
-            if self.failure
-            else f", value={self.value}"
-            if self.value
-            else ""
-        )
+        detail = f', error="{self.error}"' if self.failure else f", value={self.value}" if self.value else ""
         return f"<Result success={self.success}{detail}>"
 
     @property
@@ -38,13 +32,7 @@ class Result(Generic[T]):
 
     def on_success(self, func: Callable, *args, **kwargs) -> Result:
         """Pass result of successful operation (if any) to subsequent function."""
-        return (
-            self
-            if self.failure
-            else func(self.value, *args, **kwargs)
-            if self.value
-            else func(*args, **kwargs)
-        )
+        return self if self.failure else func(self.value, *args, **kwargs) if self.value else func(*args, **kwargs)
 
     def on_failure(self, func: Callable, *args, **kwargs) -> Result:
         """Pass error message from failed operation to subsequent function."""

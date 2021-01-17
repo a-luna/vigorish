@@ -25,11 +25,9 @@ class ChangeEnvVarSetting(MenuItem):
 
     def launch(self):
         subprocess.run(["clear"])
-        env_var_name = f"Environment Variable: {self.setting_name}\n"
-        env_var_value = f"Current Value: {self.current_setting}\n"
-        print_message(env_var_name, fg="bright_magenta", bold=True)
-        print_message(env_var_value, fg="bright_yellow", bold=True)
-        if not yes_no_prompt(prompt="Change current setting?"):
+        print_message(f"Variable Name: {self.setting_name}\n", fg="bright_magenta", bold=True)
+        print_message(f"Current Value: {self.current_setting}\n", fg="bright_yellow", bold=True)
+        if not yes_no_prompt(prompt="\nChange current setting?"):
             return Result.Ok(self.exit_menu)
         user_confirmed, new_value = False, None
         while not user_confirmed:

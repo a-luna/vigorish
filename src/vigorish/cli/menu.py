@@ -37,9 +37,7 @@ class Menu(MenuItem, ABC):
     def selected_menu_item_pos(self):
         if not self.selected_menu_item_text:
             return 0
-        menu_item_pos_dict = {
-            ellipsize(item.menu_item_text, 70): i for i, item in enumerate(self.menu_items)
-        }
+        menu_item_pos_dict = {ellipsize(item.menu_item_text, 70): i for i, item in enumerate(self.menu_items)}
         return menu_item_pos_dict.get(self.selected_menu_item_text, 0)
 
     @property

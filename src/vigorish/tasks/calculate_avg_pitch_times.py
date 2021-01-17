@@ -46,15 +46,9 @@ class CalculateAverageTimeBetweenPitches(Task):
             self.events.calculate_pitch_metrics_progress(num)
         self.events.calculate_pitch_metrics_complete()
         metrics = {
-            "time_between_pitches": self.process_data_set(
-                pitch_samples, trim=trim_data_sets, st_dev=0.2
-            ),
-            "time_between_at_bats": self.process_data_set(
-                at_bat_samples, trim=trim_data_sets, st_dev=0.25
-            ),
-            "time_between_innings": self.process_data_set(
-                inning_samples, trim=trim_data_sets, st_dev=0.007
-            ),
+            "time_between_pitches": self.process_data_set(pitch_samples, trim=trim_data_sets, st_dev=0.2),
+            "time_between_at_bats": self.process_data_set(at_bat_samples, trim=trim_data_sets, st_dev=0.25),
+            "time_between_innings": self.process_data_set(inning_samples, trim=trim_data_sets, st_dev=0.007),
         }
         return Result.Ok(metrics)
 
@@ -88,9 +82,7 @@ class CalculateAverageTimeBetweenPitches(Task):
                         else:
                             prev_ab_pfx = pfx
                         continue
-                    between_pitches = self.get_seconds_between_pitches(
-                        pfx, at_bat["pitchfx"][count]
-                    )
+                    between_pitches = self.get_seconds_between_pitches(pfx, at_bat["pitchfx"][count])
                     if between_pitches > 0:
                         pitch_samples.append(between_pitches)
         return (

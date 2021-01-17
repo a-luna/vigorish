@@ -106,10 +106,10 @@ class ChangeConfigSettting(MenuItem):
 
     def get_numeric_menu(self, data_set):
         if not self.setting.cannot_be_disabled:
-            prompt = f"Enable {self.setting_name_title} (Data Set = {data_set.name})? "
+            prompt = f"\nEnable {self.setting_name_title} (Data Set = {data_set.name})? "
             if not yes_no_prompt(prompt):
                 return (prompt, (True, None, None, None, None))
-        if yes_no_prompt(f"Use random values (Data Set = {data_set.name})? "):
+        if yes_no_prompt(f"\nUse random values (Data Set = {data_set.name})? "):
             prompt, random_min, random_max, min_max_are_valid = None, 0, 0, False
             while not min_max_are_valid:
                 subprocess.run(["clear"])
@@ -128,10 +128,7 @@ class ChangeConfigSettting(MenuItem):
                 if random_max > random_min:
                     min_max_are_valid = True
                     continue
-                error = (
-                    f"Error: maximum value ({random_max}) must be greater than minimum "
-                    f"value ({random_min})"
-                )
+                error = f"Error: maximum value ({random_max}) must be greater than minimum " f"value ({random_min})"
                 print_message(error, fg="bright_red", bold=True)
                 pause(message="Press any key to continue...")
             return (prompt, (True, True, None, int(random_min), int(random_max)))

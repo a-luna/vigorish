@@ -24,10 +24,7 @@ class BrooksGameInfo:
 
     @property
     def all_pitch_app_ids(self):
-        return [
-            f"{self.bbref_game_id}_{pitch_app_id}"
-            for pitch_app_id in self.pitcher_appearance_dict.keys()
-        ]
+        return [f"{self.bbref_game_id}_{pitch_app_id}" for pitch_app_id in self.pitcher_appearance_dict.keys()]
 
     def as_dict(self):
         """Convert game info list to a dictionary."""

@@ -63,7 +63,7 @@ class AddToDatabase(MenuItem):
         subprocess.run(["clear"])
         for line in task_description:
             print_message(line, fg="bright_yellow")
-        return yes_no_prompt("Would you like to run this task?", wrap=False)
+        return yes_no_prompt("\nWould you like to run this task?", wrap=False)
 
     def select_season_prompt(self):
         prompt = "Select an MLB season from the list below:"
@@ -92,10 +92,7 @@ class AddToDatabase(MenuItem):
 
     def get_progress_text(self, num_complete, year, game_id):
         percent = num_complete / float(self.total_games)
-        return (
-            f"Adding combined game data for MLB {year} to database... "
-            f"(Game ID: {game_id}) {percent:.0%}..."
-        )
+        return f"Adding combined game data for MLB {year} to database... " f"(Game ID: {game_id}) {percent:.0%}..."
 
     def subscribe_to_events(self):
         self.add_to_db.events.add_data_to_db_start += self.add_data_to_db_start

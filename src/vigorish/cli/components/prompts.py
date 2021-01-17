@@ -34,7 +34,6 @@ def yes_no_prompt(prompt, wrap=True, max_line_len=70):
         background_color=colors.background["default"],
         background_on_switch=colors.background["default"],
     )
-    print()
     choice_text = prompt.launch()
     return choices.get(choice_text)
 
@@ -135,10 +134,7 @@ def season_prompt(db_session, prompt=None):
 def audit_report_season_prompt(audit_report, prompt=None):
     if not prompt:
         prompt = "Select an MLB season from the list below:"
-    choices = {
-        f"{MENU_NUMBERS.get(num)}  {year}": year
-        for num, year in enumerate(audit_report.keys(), start=1)
-    }
+    choices = {f"{MENU_NUMBERS.get(num)}  {year}": year for num, year in enumerate(audit_report.keys(), start=1)}
     choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
     return user_options_prompt(choices, prompt)
 
@@ -150,17 +146,11 @@ def data_sets_prompt(prompt, valid_data_sets=0, checked_data_sets=None):
     if not valid_data_sets:
         valid_data_sets = int(DataSet.ALL)
     instructions = "(use SPACE BAR to select each data set, ENTER to confirm your selections)"
-    choices = {
-        f"{data_set_name_map[ds]}": ds
-        for ds in DataSet
-        if ds != DataSet.ALL and valid_data_sets & ds == ds
-    }
+    choices = {f"{data_set_name_map[ds]}": ds for ds in DataSet if ds != DataSet.ALL and valid_data_sets & ds == ds}
     if checked_data_sets:
         checked_int = sum(int(ds) for ds in checked_data_sets.keys())
         checked_data_sets = [
-            f"{data_set_name_map[ds]}"
-            for ds in DataSet
-            if ds != DataSet.ALL and checked_int & ds == ds
+            f"{data_set_name_map[ds]}" for ds in DataSet if ds != DataSet.ALL and checked_int & ds == ds
         ]
     ds_prompt = DataSetCheck(
         prompt=instructions,
@@ -230,8 +220,7 @@ def select_game_prompt(game_ids, prompt=None, use_numbers=True, clear_screen=Tru
     if not prompt:
         prompt = "Select a game from the list below:"
     choices = {
-        f"{_get_menu_item_emoji(use_numbers, num)}  {game_id}": game_id
-        for num, game_id in enumerate(game_ids, start=1)
+        f"{_get_menu_item_emoji(use_numbers, num)}  {game_id}": game_id for num, game_id in enumerate(game_ids, start=1)
     }
     choices[f"{EMOJI_DICT.get('BACK')} Return to Main Menu"] = None
     return user_options_prompt(choices, prompt, clear_screen=clear_screen)

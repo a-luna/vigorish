@@ -51,9 +51,7 @@ class CombineScrapedData(MenuItem):
         self.menu_item_text = "Combine Game Data"
         self.menu_item_emoji = EMOJI_DICT.get("BANG", "")
         self.exit_menu = False
-        self.combine_condition = self.config.get_current_setting(
-            "SCRAPED_DATA_COMBINE_CONDITION", DataSet.ALL
-        )
+        self.combine_condition = self.config.get_current_setting("SCRAPED_DATA_COMBINE_CONDITION", DataSet.ALL)
         self.audit_type = None
         self.scrape_year = None
         self.current_game_date = None
@@ -109,11 +107,7 @@ class CombineScrapedData(MenuItem):
 
     @property
     def all_dates_in_season(self):
-        return (
-            [game_date.date() for game_date in self.season.get_date_range()]
-            if self.season
-            else None
-        )
+        return [game_date.date() for game_date in self.season.get_date_range()] if self.season else None
 
     @property
     def all_dates_with_eligible_games(self):
@@ -174,22 +168,16 @@ class CombineScrapedData(MenuItem):
 
     @property
     def game_ids_any_pitchfx_error(self):
-        unique_game_ids = {
-            game_id for error_dict in self.all_pfx_errors.values() for game_id in error_dict.keys()
-        }
+        unique_game_ids = {game_id for error_dict in self.all_pfx_errors.values() for game_id in error_dict.keys()}
         return list(unique_game_ids)
 
     @property
     def pitch_apps_pitchfx_error(self):
-        return flatten_list2d(
-            list(pitch_app_dict.keys()) for pitch_app_dict in self.pfx_errors.values()
-        )
+        return flatten_list2d(list(pitch_app_dict.keys()) for pitch_app_dict in self.pfx_errors.values())
 
     @property
     def pitch_apps_invalid_pitchfx(self):
-        return flatten_list2d(
-            list(pitch_app_dict.keys()) for pitch_app_dict in self.invalid_pfx.values()
-        )
+        return flatten_list2d(list(pitch_app_dict.keys()) for pitch_app_dict in self.invalid_pfx.values())
 
     @property
     def pitch_apps_any_pfx_error(self):
@@ -220,15 +208,11 @@ class CombineScrapedData(MenuItem):
 
     @property
     def at_bats_pitchfx_error(self):
-        return flatten_list2d(
-            pitch_app_dict.values() for pitch_app_dict in self.all_pfx_errors.values()
-        )
+        return flatten_list2d(pitch_app_dict.values() for pitch_app_dict in self.all_pfx_errors.values())
 
     @property
     def at_bats_invalid_pitchfx(self):
-        return flatten_list2d(
-            pitch_app_dict.values() for pitch_app_dict in self.invalid_pfx.values()
-        )
+        return flatten_list2d(pitch_app_dict.values() for pitch_app_dict in self.invalid_pfx.values())
 
     @property
     def total_at_bats_pitchfx_error(self):
@@ -391,8 +375,7 @@ class CombineScrapedData(MenuItem):
         at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
         LOGGER.info(f"PitchFX data could not be reconciled for game: {bbref_game_id}")
         LOGGER.info(
-            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} "
-            f"total {at_bats_plural})\n"
+            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} " f"total {at_bats_plural})\n"
         )
 
     def close_progress_bars(self):
@@ -414,12 +397,9 @@ class CombineScrapedData(MenuItem):
         pause(message="Press any key to continue...")
 
     def display_games_failed_to_combine(self):
-        error_message = (
-            f"Error prevented scraped data being combined for {len(self.failed_game_ids)} " "games:"
-        )
+        error_message = f"Error prevented scraped data being combined for {len(self.failed_game_ids)} " "games:"
         error_details = [
-            {"bbref_game_id": game_id, "error": error}
-            for game_id, error in self.combine_data_fail_results
+            {"bbref_game_id": game_id, "error": error} for game_id, error in self.combine_data_fail_results
         ]
         print_message(error_message, wrap=False, fg="bright_red", bold=True)
         print_message(tabulate(error_details, headers="keys"), wrap=False, fg="bright_red")
@@ -492,9 +472,7 @@ class CombineScrapedData(MenuItem):
             self.invalid_pfx[combine_game_id] = pfx_errors["invalid_pitchfx"]
         if self.total_pitch_apps_any_pitchfx_error > 0:
             pitch_apps_plural = (
-                "pitch appearances"
-                if self.total_pitch_apps_any_pitchfx_error > 1
-                else "pitch appearance"
+                "pitch appearances" if self.total_pitch_apps_any_pitchfx_error > 1 else "pitch appearance"
             )
             at_bats_plural = "at bats" if self.total_at_bats_any_pitchfx_error > 1 else "at bat"
             message = (
@@ -533,10 +511,7 @@ class CombineScrapedData(MenuItem):
         return user_options_prompt(choices, prompt)
 
     def game_id_prompt(self):
-        choices = {
-            f"{EMOJI_DICT.get('BOLT')} {game_id}": game_id
-            for game_id in self.all_eligible_games_in_season
-        }
+        choices = {f"{EMOJI_DICT.get('BOLT')} {game_id}": game_id for game_id in self.all_eligible_games_in_season}
         choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
         prompt = "Select the BBRef.com Game ID to combine scraped data:"
         return user_options_prompt(choices, prompt)

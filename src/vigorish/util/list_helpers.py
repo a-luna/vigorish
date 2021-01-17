@@ -71,9 +71,7 @@ def flatten_list2d(list2d):
     return list(itertools.chain(*list2d))
 
 
-def group_and_sort_list(
-    unsorted, group_attr, sort_attr, sort_groups_desc=False, sort_all_desc=False
-):
+def group_and_sort_list(unsorted, group_attr, sort_attr, sort_groups_desc=False, sort_all_desc=False):
     list_sorted = sorted(unsorted, key=lambda x: getattr(x, sort_attr), reverse=sort_all_desc)
     list_grouped = defaultdict(list)
     for item in list_sorted:
@@ -84,9 +82,7 @@ def group_and_sort_list(
     return grouped_sorted
 
 
-def group_and_sort_dict_list(
-    unsorted, group_key, sort_key, sort_groups_desc=False, sort_all_desc=False
-):
+def group_and_sort_dict_list(unsorted, group_key, sort_key, sort_groups_desc=False, sort_all_desc=False):
     list_sorted = sorted(unsorted, key=lambda x: x[sort_key], reverse=sort_all_desc)
     list_grouped = defaultdict(list)
     for item in list_sorted:

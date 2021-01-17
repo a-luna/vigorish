@@ -75,20 +75,14 @@ def setup(app):
     type=DateString(),
     default=today_str,
     prompt=True,
-    help=(
-        "Date to start scraping data, string can be in any format that is recognized by "
-        "dateutil.parser."
-    ),
+    help=("Date to start scraping data, string can be in any format that is recognized by " "dateutil.parser."),
 )
 @click.option(
     "--end",
     type=DateString(),
     default=today_str,
     prompt=True,
-    help=(
-        "Date to stop scraping data, string can be in any format that is recognized by "
-        "dateutil.parser."
-    ),
+    help=("Date to stop scraping data, string can be in any format that is recognized by " "dateutil.parser."),
 )
 @click.option(
     "--name",

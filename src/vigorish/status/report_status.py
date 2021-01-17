@@ -103,9 +103,7 @@ def report_date_range_status(db_session, start_date, end_date, report_type):
     if result.failure:
         return result
     status_date_range = result.value
-    return display_date_range_status(
-        db_session, start_date, end_date, status_date_range, report_type
-    )
+    return display_date_range_status(db_session, start_date, end_date, status_date_range, report_type)
 
 
 def construct_date_range_status(db_session, start_date, end_date, report_type):
@@ -120,10 +118,7 @@ def construct_date_range_status(db_session, start_date, end_date, report_type):
     for game_date in get_date_range(start_date, end_date):
         date_status = DateScrapeStatus.find_by_date(db_session, game_date)
         if not date_status:
-            error = (
-                "scrape_status_date does not contain an entry for date: "
-                f"{game_date.strftime(DATE_ONLY)}"
-            )
+            error = "scrape_status_date does not contain an entry for date: " f"{game_date.strftime(DATE_ONLY)}"
             return Result.Fail(error)
         if not show_all and date_status.scraped_all_game_data:
             continue
@@ -132,10 +127,7 @@ def construct_date_range_status(db_session, start_date, end_date, report_type):
 
 
 def display_date_range_status(db_session, start_date, end_date, status_date_range, report_type):
-    if (
-        report_type == StatusReport.DATE_DETAIL_MISSING_DATA
-        or report_type == StatusReport.DATE_DETAIL_ALL_DATES
-    ):
+    if report_type == StatusReport.DATE_DETAIL_MISSING_DATA or report_type == StatusReport.DATE_DETAIL_ALL_DATES:
         return display_detailed_report_for_date_range(db_session, status_date_range, False)
     if report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX:
         return display_detailed_report_for_date_range(db_session, status_date_range, True)
@@ -175,18 +167,12 @@ def _get_missing_pfx_ids_for_date(db_session, date_status):
     if date_status.scraped_all_pitchfx_logs:
         return ["All PitchFX logs have been scraped"]
     elif date_status.scraped_all_brooks_pitch_logs:
-        missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
-            db_session, date_status.game_date
-        )
+        missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(db_session, date_status.game_date)
         missing_ids_str = [
             [f"GAME ID: {game_id}", f'{", ".join(pitch_app_id_list)}\n']
             for game_id, pitch_app_id_list in missing_pitch_app_ids.items()
         ]
-        return (
-            flatten_list2d(missing_ids_str)
-            if missing_ids_str
-            else ["All PitchFX logs have been scraped"]
-        )
+        return flatten_list2d(missing_ids_str) if missing_ids_str else ["All PitchFX logs have been scraped"]
     else:
         return ["Missing IDs cannot be reported until all pitch logs have been scraped."]
 
