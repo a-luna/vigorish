@@ -6,6 +6,24 @@ from vigorish.models.views.pitch_app_pitchfx_view import (
     PitchApp_PitchType_Left_View,
     PitchApp_PitchType_Right_View,
 )
+from vigorish.models.views.player_bat_stats_view import (
+    Player_BatStats_All_View,
+    Player_BatStats_By_Opp_Team_View,
+    Player_BatStats_By_Opp_Team_Year_View,
+    Player_BatStats_By_Team_View,
+    Player_BatStats_By_Team_Year_View,
+    Player_BatStats_By_Year_View,
+)
+from vigorish.models.views.player_pitch_stats_view import (
+    Player_PitchStats_All_View,
+    Player_PitchStats_By_Opp_Team_View,
+    Player_PitchStats_By_Opp_Team_Year_View,
+    Player_PitchStats_By_Team_View,
+    Player_PitchStats_By_Team_Year_View,
+    Player_PitchStats_By_Year_View,
+    Player_PitchStats_RP_View,
+    Player_PitchStats_SP_View,
+)
 from vigorish.models.views.player_pitchfx_view import (
     Pitch_Type_All_View,
     Pitch_Type_By_Year_View,
