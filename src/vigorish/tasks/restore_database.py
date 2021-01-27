@@ -63,8 +63,8 @@ class RestoreDatabaseTask(Task):
         self.csv_map = {}
         self.events = Events(
             (
-                "unzip_backup_file_start",
-                "unzip_backup_file_complete",
+                "unzip_backup_files_start",
+                "unzip_backup_files_complete",
                 "restore_database_start",
                 "restore_table_start",
                 "batch_insert_performed",
@@ -78,8 +78,8 @@ class RestoreDatabaseTask(Task):
         return Season.regular_season_map(self.db_session)
 
     @cached_property
-    def mlb_player_id_map(self):
-        return PlayerId.get_mlb_player_id_map(self.db_session)
+    def player_id_map(self):
+        return PlayerId.get_player_id_map(self.db_session)
 
     @cached_property
     def game_id_map(self):
@@ -100,11 +100,12 @@ class RestoreDatabaseTask(Task):
             PitchFxCsvRow: self.update_pitchfx_relationships,
         }
 
-    def get_team_id_map(self, year):
-        if year in self._team_id_map:
-            return self._team_id_map[year]
-        self._team_id_map[year] = Team.get_team_id_map_for_year(self.db_session, year)
-        return self._team_id_map[year]
+    def get_team_id_map_for_year(self, year):
+        team_id_map_for_year = self._team_id_map.get(year)
+        if not team_id_map_for_year:
+            team_id_map_for_year = Team.get_team_id_map_for_year(self.db_session, year)
+            self._team_id_map[year] = team_id_map_for_year
+        return team_id_map_for_year
 
     def update_date_status_relationships(self, dataclass):
         date_status_dict = asdict(dataclass)
@@ -122,7 +123,7 @@ class RestoreDatabaseTask(Task):
     def update_pitch_app_status_relationships(self, dataclass):
         pitch_app_dict = asdict(dataclass)
         game_date = get_game_date_from_bbref_game_id(pitch_app_dict["bbref_game_id"])
-        pitch_app_dict["pitcher_id"] = self.mlb_player_id_map[pitch_app_dict["pitcher_id_mlb"]]
+        pitch_app_dict["pitcher_id"] = self.player_id_map[pitch_app_dict["pitcher_id_mlb"]]
         pitch_app_dict["season_id"] = self.season_id_map[game_date.year]
         pitch_app_dict["scrape_status_date_id"] = get_date_status_id_from_game_date(game_date)
         pitch_app_dict["scrape_status_game_id"] = self.game_id_map[pitch_app_dict["bbref_game_id"]]
@@ -131,11 +132,11 @@ class RestoreDatabaseTask(Task):
     def update_player_stats_relationships(self, dataclass):
         player_stats_dict = asdict(dataclass)
         game_date = get_game_date_from_bbref_game_id(player_stats_dict["bbref_game_id"])
-        player_stats_dict["player_id"] = self.mlb_player_id_map[player_stats_dict["player_id_mlb"]]
-        player_stats_dict["player_team_id"] = self.get_team_id_map(game_date.year)[
+        player_stats_dict["player_id"] = self.player_id_map[player_stats_dict["player_id_mlb"]]
+        player_stats_dict["player_team_id"] = self.get_team_id_map_for_year(game_date.year)[
             player_stats_dict["player_team_id_bbref"]
         ]
-        player_stats_dict["opponent_team_id"] = self.get_team_id_map(game_date.year)[
+        player_stats_dict["opponent_team_id"] = self.get_team_id_map_for_year(game_date.year)[
             player_stats_dict["opponent_team_id_bbref"]
         ]
         player_stats_dict["season_id"] = self.season_id_map[game_date.year]
@@ -148,26 +149,29 @@ class RestoreDatabaseTask(Task):
         game_date = get_game_date_from_bbref_game_id(pfx_dict["bbref_game_id"])
         pitcher_team_id_br = get_bbref_team_id(pfx_dict["pitcher_team_id_bb"])
         opponent_team_id_br = get_bbref_team_id(pfx_dict["opponent_team_id_bb"])
-        pfx_dict["pitcher_id"] = self.mlb_player_id_map[pfx_dict["pitcher_id_mlb"]]
-        pfx_dict["batter_id"] = self.mlb_player_id_map[pfx_dict["batter_id_mlb"]]
-        pfx_dict["team_pitching_id"] = self.get_team_id_map(game_date.year)[pitcher_team_id_br]
-        pfx_dict["team_batting_id"] = self.get_team_id_map(game_date.year)[opponent_team_id_br]
+        pfx_dict["pitcher_id"] = self.player_id_map[pfx_dict["pitcher_id_mlb"]]
+        pfx_dict["batter_id"] = self.player_id_map[pfx_dict["batter_id_mlb"]]
+        pfx_dict["team_pitching_id"] = self.get_team_id_map_for_year(game_date.year)[pitcher_team_id_br]
+        pfx_dict["team_batting_id"] = self.get_team_id_map_for_year(game_date.year)[opponent_team_id_br]
         pfx_dict["season_id"] = self.season_id_map[game_date.year]
         pfx_dict["date_id"] = get_date_status_id_from_game_date(game_date)
         pfx_dict["game_status_id"] = self.game_id_map[pfx_dict["bbref_game_id"]]
         pfx_dict["pitch_app_db_id"] = self.pitch_app_id_map[pfx_dict["pitch_app_id"]]
         return pfx_dict
 
-    def execute(self, zip_file=None):
+    def execute(self, zip_file=None, csv_folder=None):
         if not zip_file:
             result = self.get_most_recent_backup()
             if result.failure:
                 return result
             zip_file = result.value
-        self.events.unzip_backup_file_start()
+        self.events.unzip_backup_files_start()
         self.csv_map = self.unzip_csv_files(zip_file)
-        self.events.unzip_backup_file_complete()
+        self.events.unzip_backup_files_complete()
         self.events.restore_database_start()
+        result = self.app.prepare_database_for_restore(csv_folder)
+        if result.failure:
+            return result
         self.restore_database()
         self.remove_csv_files()
         self.events.restore_database_complete()
