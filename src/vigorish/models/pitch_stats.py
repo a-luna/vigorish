@@ -5,7 +5,6 @@ from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from vigorish.database import Base
-from vigorish.util.pitch_calcs import calculate_total_outs
 
 
 class PitchStats(Base):
@@ -76,6 +75,15 @@ class PitchStats(Base):
         bbref_data["is_sv"] = int(pitch_stats_dict["is_sv"])
         bbref_data["total_outs"] = calculate_total_outs(bbref_data["innings_pitched"])
         return cls(**bbref_data)
+
+
+def calculate_total_outs(innings_pitched):
+    split = str(innings_pitched).split(".")
+    if len(split) != 2:
+        return 0
+    inn_full = split[0]
+    inn_partial = split[1]
+    return int(inn_full) * 3 + int(inn_partial)
 
 
 @accept_whitespaces

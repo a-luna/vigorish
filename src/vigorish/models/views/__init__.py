@@ -26,6 +26,9 @@ from vigorish.models.views.player_pitch_stats_view import (
 )
 from vigorish.models.views.player_pitchfx_view import (
     Pitch_Type_All_View,
+    Pitch_Type_Averages_All_View,
+    Pitch_Type_Averages_Left_View,
+    Pitch_Type_Averages_Right_View,
     Pitch_Type_By_Year_View,
     Pitch_Type_Left_View,
     Pitch_Type_Right_View,
