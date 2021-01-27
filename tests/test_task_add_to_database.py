@@ -8,8 +8,8 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-from vigorish.database import get_total_number_of_rows, PitchFx
-from vigorish.tasks.add_to_database import AddToDatabaseTask
+from vigorish.database import PitchFx
+from vigorish.tasks import AddToDatabaseTask
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
 TEST_ID = "NO_ERRORS"
@@ -36,16 +36,14 @@ def create_test_data(vig_app):
 
 
 def test_add_data_to_database(vig_app):
-    db_session = vig_app.db_session
-    total_rows = get_total_number_of_rows(db_session, PitchFx)
+    total_rows = vig_app.get_total_number_of_rows(PitchFx)
     assert total_rows == 0
-    audit_report = vig_app.scraped_data.get_audit_report()
     add_to_db = AddToDatabaseTask(vig_app)
-    result = add_to_db.execute(audit_report, 2019)
+    result = add_to_db.execute(2019)
     assert result.success
-    total_rows = get_total_number_of_rows(db_session, PitchFx)
+    total_rows = vig_app.get_total_number_of_rows(PitchFx)
     assert total_rows == 299
-    result = add_to_db.execute(audit_report)
+    result = add_to_db.execute()
     assert result.success
-    total_rows = get_total_number_of_rows(db_session, PitchFx)
+    total_rows = vig_app.get_total_number_of_rows(PitchFx)
     assert total_rows == 299

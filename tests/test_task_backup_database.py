@@ -9,9 +9,7 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-from vigorish.tasks.add_to_database import AddToDatabaseTask
-from vigorish.tasks.backup_database import BackupDatabaseTask
-from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
+from vigorish.tasks import AddToDatabaseTask, BackupDatabaseTask, CombineScrapedDataTask
 from vigorish.util.sys_helpers import zip_file_report
 
 TEST_ID = "NO_ERRORS"
@@ -34,7 +32,7 @@ def create_test_data(vig_app):
     update_scraped_pitchfx_logs(db_session, scraped_data, BB_GAME_ID)
     CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPLY_PATCH_LIST)
     add_to_db = AddToDatabaseTask(vig_app)
-    add_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
+    add_to_db.execute(2019)
     db_session.commit()
     return True
 

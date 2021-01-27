@@ -10,7 +10,6 @@ from vigorish.app import Vigorish
 from vigorish.config.config_file import ConfigFile
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.data.scraped_data import ScrapedData
-from vigorish.database import initialize_database
 
 TESTS_FOLDER = Path(__file__).parent
 DOTENV_FILE = TESTS_FOLDER.joinpath(".env")
@@ -34,14 +33,14 @@ def env_vars(request):
 @pytest.fixture(scope="module", autouse=True)
 def setup_db(vig_app):
     """Creates all schema-defined tables and views in a SQLite database."""
-    initialize_database(vig_app, csv_folder=CSV_FOLDER)
+    vig_app.initialize_database(csv_folder=CSV_FOLDER)
     assert vig_app.db_setup_complete
     return True
 
 
 @pytest.fixture(scope="module")
 def vig_app(request):
-    """Returns a dict containing the same attributes/objects as the app object used in the CLI."""
+    """Returns an instance of the application configured to use the test DB and test config file."""
     app = Vigorish()
 
     def fin():
@@ -59,7 +58,7 @@ def dotenv(request):
 
 @pytest.fixture(scope="module")
 def scraped_data(config, db_engine, db_session):
-    """Returns a ScrapedData instance using the test HTML/JSON folders and in-memory SQLite DB."""
+    """Returns a ScrapedData instance using the test HTML/JSON folders and test SQLite DB."""
     return ScrapedData(db_engine=db_engine, db_session=db_session, config=config)
 
 
