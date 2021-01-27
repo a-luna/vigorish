@@ -17,15 +17,12 @@ from vigorish.cli.components import (
     user_options_prompt,
     yes_no_prompt,
 )
-from vigorish.cli.components.dict_viewer import DictListTableViewer
-from vigorish.cli.components.models import DisplayTable
-from vigorish.cli.components.table_viewer import TableViewer
+from vigorish.cli.components.viewers import DictListTableViewer, DisplayTable, TableViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType
-from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
-from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
-from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
+from vigorish.tasks import CombineScrapedDataTask, PatchAllInvalidPitchFxTask
+from vigorish.tasks.patch_all_invalid_pfx import PatchInvalidPitchFxTask
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import inning_number_to_string, validate_at_bat_id
 
@@ -156,13 +153,13 @@ class InvestigateInvalidPitchFx(MenuItem):
         self.patch_results = result.value
         print()
         if self.patch_results["fixed_all_errors"]:
-            patch_result = f"PitchFX data for {self.game_id} is now completely reconciled (no errors of " "any type)!\n"
+            patch_result = f"PitchFX data for {self.game_id} is now completely reconciled (no errors of any type)!\n"
             print_success(patch_result)
         if self.patch_results["invalid_pfx"]:
-            patch_result = f"{self.game_id} still contains invalid PitchFX data after applying the patch " "list.\n"
+            patch_result = f"{self.game_id} still contains invalid PitchFX data after applying the patch list.\n"
             print_error(patch_result)
         if self.patch_results["pfx_errors"]:
-            patch_result = f"{self.game_id} still contains PitchFX data errors associated with valid at " "bats.\n"
+            patch_result = f"{self.game_id} still contains PitchFX data errors associated with valid at bats.\n"
             print_error(patch_result)
         pause(message="Press any key to continue...")
         subprocess.run(["clear"])
@@ -196,8 +193,8 @@ class InvestigateInvalidPitchFx(MenuItem):
     def summarize_pfx_errors(self, pfx_error_map):
         at_bat_ids = [
             at_bat_id
-            for pa_id, pitch_app_dict in pfx_error_map.items()
-            for inning_id, inning_dict in pitch_app_dict.items()
+            for pitch_app_dict in pfx_error_map.values()
+            for inning_dict in pitch_app_dict.values()
             for at_bat_id in inning_dict.keys()
         ]
         pitch_app_ids = list(pfx_error_map.keys())
@@ -323,7 +320,7 @@ class InvestigateInvalidPitchFx(MenuItem):
                 match.pop("pitcher_id")
                 match.pop("batter_id")
             subprocess.run(["clear"])
-            error = "Multiple at bats were found for the invalid PitchFX data below (only one match " "is expected):\n"
+            error = "Multiple at bats were found for the invalid PitchFX data below (only one match is expected):\n"
             print_message(error, fg="bright_yellow", bold=True)
             all_rows = [match_dict["invalid_pfx"]]
             all_rows.extend(list(match_dict["missing_pfx"]))
@@ -370,7 +367,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
         error_header = f"PitchFX data could not be reconciled for game: {self.game_id}\n"
         error_message = (
-            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} " f"total {at_bats_plural})\n"
+            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} total {at_bats_plural})\n"
         )
         print_message(error_header, wrap=False, fg="bright_red", bold=True, underline=True)
         print_message(error_message, fg="bright_red")
@@ -388,7 +385,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         return yes_no_prompt(prompt)
 
     def prompt_user_view_patched_data(self):
-        prompt = "\nWould you like to see a report detailing the changes that were made by applying the " "patch list?"
+        prompt = "\nWould you like to see a report detailing the changes that were made by applying the patch list?"
         return yes_no_prompt(prompt)
 
     def display_patched_data_tables(self, boxscore_changes, pitch_stat_changes_dict, pitch_stats_after):

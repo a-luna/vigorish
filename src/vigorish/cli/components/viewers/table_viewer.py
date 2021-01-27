@@ -1,9 +1,10 @@
+import os
 import subprocess
 
 from bullet.cursor import hide as cursor_hidden
 from bullet.utils import moveCursorUp
 
-from vigorish.cli.components.page_viewer import PageViewer
+from vigorish.cli.components.viewers.page_viewer import PageViewer
 
 
 class TableViewer(PageViewer):
@@ -30,6 +31,9 @@ class TableViewer(PageViewer):
         self.table_color = table_color
 
     def launch(self):
+        return self.interactive_mode() if os.environ.get("INTERACTIVE_MODE") == "YES" else self.script_mode()
+
+    def interactive_mode(self):
         while True:
             subprocess.run(["clear"])
             self.current_page.display(
@@ -50,3 +54,12 @@ class TableViewer(PageViewer):
                         break
                     if user_selection is not None:
                         return self.choices_dict.get(user_selection)
+
+    def script_mode(self):
+        subprocess.run(["clear"])
+        for page in self.pages:
+            page.display(
+                heading_color=self.heading_color,
+                message_color=self.text_color,
+                table_color=self.table_color,
+            )
