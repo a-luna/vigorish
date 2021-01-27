@@ -9,7 +9,7 @@ from vigorish.cli.click_params import DateString, JobName, MlbSeason
 from vigorish.cli.components import print_message, validate_scrape_dates
 from vigorish.cli.main_menu import MainMenu
 from vigorish.config.project_paths import VIG_FOLDER
-from vigorish.database import initialize_database, ScrapeJob
+from vigorish.database import ScrapeJob
 from vigorish.enums import DataSet, StatusReport, SyncDirection, VigFile
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.status.report_status import (
@@ -17,7 +17,7 @@ from vigorish.status.report_status import (
     report_season_status,
     report_status_single_date,
 )
-from vigorish.tasks.sync_data_no_prompts import SyncScrapedDataNoPrompts
+from vigorish.tasks import SyncDataNoPromptsTask
 from vigorish.util.datetime_util import current_year, today_str
 from vigorish.util.result import Result
 
@@ -53,50 +53,48 @@ def ui(app):
 def setup(app):
     """Populate database with initial player, team and season data.
 
-    WARNING! Before the setup process begins, all existing data will be
-    deleted. This cannot be undone.
+    WARNING! Before the setup process begins, all existing data will be deleted. This cannot be undone.
     """
     print()  # place an empty line between the command and the progress bars
-    result = initialize_database(app)
+    result = app.initialize_database()
     return exit_app(app, result, "Successfully populated database with initial data.")
 
 
 @cli.command()
 @click.option(
-    "--data-set",
-    type=click.Choice(list(DataSet)),
+    "--data-sets",
+    type=click.Choice([str(ds) for ds in DataSet]),
     multiple=True,
-    default=[DataSet.ALL],
+    default=[str(DataSet.ALL)],
     show_default=True,
-    help="Data set to scrape, multiple values can be provided.",
+    help="Data set(s) to scrape, multiple values can be provided.",
 )
 @click.option(
     "--start",
     type=DateString(),
     default=today_str,
     prompt=True,
-    help=("Date to start scraping data, string can be in any format that is recognized by " "dateutil.parser."),
+    help=("Date to start scraping data, string can be in any format that is recognized by dateutil.parser."),
 )
 @click.option(
     "--end",
     type=DateString(),
     default=today_str,
     prompt=True,
-    help=("Date to stop scraping data, string can be in any format that is recognized by " "dateutil.parser."),
+    help=("Date to stop scraping data, string can be in any format that is recognized by dateutil.parser."),
 )
 @click.option(
     "--name",
     type=JobName(),
     help="A name to help identify this job.",
     prompt=(
-        "Enter a name to help you identify this job (must consist of ONLY "
-        "letters, numbers, underscore, and/or hyphen characters)"
+        "(Optional) Enter a name for this job (ONLY letters, numbers, underscore, and/or hyphen characters)"
     ),
 )
 @click.pass_obj
-def scrape(app, data_set, start, end, name):
+def scrape(app, data_sets, start, end, name):
     """Scrape MLB data from websites."""
-    data_sets_int = sum(list(data_set))
+    data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
     result = validate_scrape_dates(app.db_session, start, end)
     if result.failure:
         return exit_app(app, result)
@@ -126,27 +124,39 @@ def status(app):
 @status.command("date")
 @click.argument("game_date", type=DateString(), default=today_str)
 @click.option(
-    "--missing-ids/--no-missing-ids",
-    default=False,
-    show_default=True,
-    help="Report includes pitch_app_ids that have not been scraped.",
-)
-@click.option(
-    "--with-games/--without-games",
-    default=False,
-    show_default=True,
-    help="Report includes scrape statistics for all games on the specified date.",
+    "-v",
+    "verbosity",
+    count=True,
+    default=1,
+    help=(
+        "Specify the level of detail to report:\n"
+        "    -v: report the combined scrape progress for all games on the specified date.\n"
+        "   -vv: report combined and individual scrape progress for each game on the specified date\n"
+        "  -vvv: report combined/individual game scrape progress and pitch appearance scrape progress\n"
+    ),
 )
 @click.pass_obj
-def status_date(app, game_date, missing_ids, with_games):
-    """Report status for a single date."""
-    if missing_ids and with_games:
-        report_type = StatusReport.SINGLE_DATE_WITH_GAME_STATUS
-    elif missing_ids:
+def status_date(app, game_date, verbosity):
+    """Report status for a single date.
+
+    Dates can be provided in any format that is recognized by dateutil.parser.
+    For example, all of the following strings are valid ways to represent the same date:
+    "2018-5-13" -or- "05/13/2018" -or- "May 13 2018"
+    """
+    report_type = StatusReport.NONE
+    if verbosity <= 0:
+        error = f"Invalid value for verbosity: {verbosity}. Value must be greater than zero."
+        return exit_app(app, Result.Fail(error))
+    elif verbosity == 1:
+        report_type = StatusReport.DATE_DETAIL_ALL_DATES
+    elif verbosity == 2:
         report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
-        report_type = StatusReport.DATE_DETAIL_ALL_DATES
+        report_type = StatusReport.SINGLE_DATE_WITH_GAME_STATUS
     result = report_status_single_date(app.db_session, game_date, report_type)
+    if result.success:
+        report_viewer = result.value
+        report_viewer.launch()
     return exit_app(app, result)
 
 
@@ -187,12 +197,12 @@ def status_date_range(app, start, end, verbosity):
         report_type = StatusReport.DATE_DETAIL_MISSING_DATA
     elif verbosity == 4:
         report_type = StatusReport.DATE_DETAIL_ALL_DATES
-    elif verbosity > 4:
-        report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
-        error = "Unknown error occurred, unable to display status report."
-        return exit_app(app, Result.Fail(error))
+        report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     result = report_date_range_status(app.db_session, start, end, report_type)
+    if result.success:
+        report_viewer = result.value
+        report_viewer.launch()
     return exit_app(app, result)
 
 
@@ -230,12 +240,12 @@ def status_season(app, year, verbosity):
         report_type = StatusReport.DATE_DETAIL_MISSING_DATA
     elif verbosity == 5:
         report_type = StatusReport.DATE_DETAIL_ALL_DATES
-    elif verbosity > 5:
-        report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     else:
-        error = "Unknown error occurred, unable to display status report."
-        return exit_app(app, Result.Fail(error))
+        report_type = StatusReport.DATE_DETAIL_MISSING_PITCHFX
     result = report_season_status(app.db_session, year, report_type)
+    if result.success:
+        report_viewer = result.value
+        report_viewer.launch()
     return exit_app(app, result)
 
 
@@ -267,7 +277,7 @@ def sync_up_to_s3(app, year, file_type, data_sets):
     """Sync files from local folder to S3 bucket."""
     file_type = VigFile.from_str(file_type)
     data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
-    result_dict = SyncScrapedDataNoPrompts(app).execute(
+    result_dict = SyncDataNoPromptsTask(app).execute(
         sync_direction=SyncDirection.UP_TO_S3,
         year=year,
         file_type=file_type,
@@ -298,7 +308,7 @@ def sync_down_to_local(app, year, file_type, data_sets):
     """Sync files from S3 bucket to local folder."""
     file_type = VigFile.from_str(file_type)
     data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
-    result_dict = SyncScrapedDataNoPrompts(app).execute(
+    result_dict = SyncDataNoPromptsTask(app).execute(
         sync_direction=SyncDirection.DOWN_TO_LOCAL,
         year=year,
         file_type=file_type,

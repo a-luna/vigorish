@@ -1,5 +1,4 @@
 """Menu item that allows the user to initialize/reset the database."""
-import os
 import subprocess
 
 from vigorish.cli.components import season_prompt, single_date_prompt, user_options_prompt
@@ -38,12 +37,11 @@ class StatusReport(MenuItem):
         if report_type == "DATE_RANGE":
             result = self.date_range_report()
         if result.failure:
-            if "no_report" in result.error:
+            if "no report" in result.error:
                 return Result.Ok(self.exit_menu)
             return result
-        date_report = result.value
-        if os.environ.get("ENV") != "TEST":
-            date_report.launch()
+        report_viewer = result.value
+        report_viewer.launch()
         return Result.Ok(self.exit_menu)
 
     def report_options_prompt(self):
