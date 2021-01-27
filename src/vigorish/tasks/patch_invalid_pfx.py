@@ -437,7 +437,7 @@ class PatchInvalidPitchFxTask(Task):
             for stat_name in PATCH_STAT_NAMES
             if stat_name in audit_before
             and stat_name in audit_after
-            and (audit_after[stat_name] - audit_before[stat_name]) > 0
+            and abs(audit_after[stat_name] - audit_before[stat_name]) > 0
         ]
         return tabulate(table_rows, headers="keys")
 

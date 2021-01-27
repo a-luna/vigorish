@@ -2,7 +2,7 @@ from datetime import datetime
 
 from vigorish.database import Season
 from vigorish.enums import DataSet
-from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
+from vigorish.tasks import ImportScrapedDataTask
 
 
 def test_import_with_empty_database(vig_app, mocker):

@@ -5,22 +5,13 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from events import Events
 
-from vigorish.database import (
-    BatStats,
-    BatStatsCsvRow,
-    DateScrapeStatus,
-    DateScrapeStatusCsvRow,
-    GameScrapeStatus,
-    GameScrapeStatusCsvRow,
-    get_total_number_of_rows,
-    PitchAppScrapeStatus,
-    PitchAppScrapeStatusCsvRow,
-    PitchStats,
-    PitchStatsCsvRow,
-    PitchFx,
-    PitchFxCsvRow,
-)
 from vigorish.enums import DataSet
+from vigorish.models.bat_stats import BatStats, BatStatsCsvRow
+from vigorish.models.status_date import DateScrapeStatus, DateScrapeStatusCsvRow
+from vigorish.models.status_game import GameScrapeStatus, GameScrapeStatusCsvRow
+from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus, PitchAppScrapeStatusCsvRow
+from vigorish.models.pitch_stats import PitchStats, PitchStatsCsvRow
+from vigorish.models.pitchfx import PitchFx, PitchFxCsvRow
 from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import CSV_UTC, DATE_ONLY, DT_AWARE, FILE_TIMESTAMP
 from vigorish.util.dataclass_helpers import serialize_db_object_to_csv
@@ -90,7 +81,7 @@ class BackupDatabaseTask(Task):
 
     def export_table_to_csv(self, table, csv_file):
         self.append_to_csv(csv_file, text=self.get_csv_column_names(table))
-        total_rows = get_total_number_of_rows(self.db_session, table)
+        total_rows = self.app.get_total_number_of_rows(table)
         chunk_size, chunk_count, row_count, last_reported = 10000, 0, 0, 0
         while True:
             start = chunk_size * chunk_count

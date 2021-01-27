@@ -11,8 +11,8 @@ from vigorish.cli.components import (
     print_message,
 )
 from vigorish.enums import DataSet, SyncDirection, VigFile
-from vigorish.tasks.base import Task
 from vigorish.tasks.sync_scraped_data import SyncScrapedDataTask
+from vigorish.tasks.base import Task
 from vigorish.util.result import Result
 
 SYNC_STATUS_TEXT_COLOR = {
@@ -23,7 +23,7 @@ SYNC_STATUS_TEXT_COLOR = {
 }
 
 
-class SyncScrapedDataNoPrompts(Task):
+class SyncDataNoPromptsTask(Task):
     def __init__(self, app):
         super().__init__(app)
         self.sync_direction = None
@@ -228,7 +228,7 @@ class SyncScrapedDataNoPrompts(Task):
         sync_complete = None
         if self.sync_direction == SyncDirection.UP_TO_S3:
             sync_complete = (
-                f"[{self.year} {self.file_type} {self.current_data_set}] " f"All changes have been synced to s3 bucket!"
+                f"[{self.year} {self.file_type} {self.current_data_set}] All changes have been synced to s3 bucket!"
             )
         if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
             sync_complete = (

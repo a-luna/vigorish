@@ -1,7 +1,7 @@
 import pytest
 
 from tests.util import seed_database_with_2019_test_data
-from vigorish.tasks.calculate_avg_pitch_times import CalculateAverageTimeBetweenPitches
+from vigorish.tasks import CalculateAvgPitchTimesTask
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -12,7 +12,7 @@ def create_test_data(vig_app):
 
 
 def test_task_calculate_avg_pitch_times(vig_app):
-    calc_pitch_times = CalculateAverageTimeBetweenPitches(vig_app)
+    calc_pitch_times = CalculateAvgPitchTimesTask(vig_app)
     result = calc_pitch_times.execute(trim_data_sets=False)
     assert result.success
     pitch_metrics = result.value

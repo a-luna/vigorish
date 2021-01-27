@@ -20,7 +20,7 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.database import Season
 from vigorish.enums import AuditError, DataSet, ScrapeCondition
-from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
+from vigorish.tasks import CombineScrapedDataTask
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
@@ -375,7 +375,7 @@ class CombineScrapedData(MenuItem):
         at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
         LOGGER.info(f"PitchFX data could not be reconciled for game: {bbref_game_id}")
         LOGGER.info(
-            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} " f"total {at_bats_plural})\n"
+            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} total {at_bats_plural})\n"
         )
 
     def close_progress_bars(self):
@@ -397,7 +397,7 @@ class CombineScrapedData(MenuItem):
         pause(message="Press any key to continue...")
 
     def display_games_failed_to_combine(self):
-        error_message = f"Error prevented scraped data being combined for {len(self.failed_game_ids)} " "games:"
+        error_message = f"Error prevented scraped data being combined for {len(self.failed_game_ids)} games:"
         error_details = [
             {"bbref_game_id": game_id, "error": error} for game_id, error in self.combine_data_fail_results
         ]

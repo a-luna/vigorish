@@ -12,7 +12,7 @@ from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id
 
 
-class CalculateAverageTimeBetweenPitches(Task):
+class CalculateAvgPitchTimesTask(Task):
     def __init__(self, app):
         super().__init__(app)
         self.events = Events(

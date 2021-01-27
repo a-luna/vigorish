@@ -1,4 +1,5 @@
 from datetime import datetime
+from functools import cached_property
 
 from events import Events
 
@@ -22,55 +23,46 @@ from vigorish.util.string_helpers import get_bbref_team_id, validate_bbref_game_
 class AddToDatabaseTask(Task):
     def __init__(self, app):
         super().__init__(app)
-        self._season_id_map = {}
         self._team_id_map = {}
-        self._player_id_map = {}
-        self._game_id_map = {}
-        self._pitch_app_id_map = {}
+        self.audit_report = None
         self.events = Events(
             (
+                "find_all_games_eligible_for_import_start",
+                "find_all_games_eligible_for_import_complete",
                 "add_data_to_db_start",
                 "add_data_to_db_progress",
                 "add_data_to_db_complete",
             )
         )
 
-    @property
+    @cached_property
     def season_id_map(self):
-        if self._season_id_map:
-            return self._season_id_map
-        self._season_id_map = Season.regular_season_map(self.db_session)
-        return self._season_id_map
+        return Season.regular_season_map(self.db_session)
 
-    def get_team_id_map(self, year):
-        if year in self._team_id_map:
-            return self._team_id_map[year]
-        self._team_id_map[year] = Team.get_team_id_map_for_year(self.db_session, year)
-        return self._team_id_map[year]
-
-    @property
+    @cached_property
     def player_id_map(self):
-        if self._player_id_map:
-            return self._player_id_map
-        self._player_id_map = PlayerId.get_mlb_player_id_map(self.db_session)
-        return self._player_id_map
+        return PlayerId.get_player_id_map(self.db_session)
 
-    @property
+    @cached_property
     def game_id_map(self):
-        if self._game_id_map:
-            return self._game_id_map
-        self._game_id_map = GameScrapeStatus.get_game_id_map(self.db_session)
-        return self._game_id_map
+        return GameScrapeStatus.get_game_id_map(self.db_session)
 
-    @property
+    @cached_property
     def pitch_app_id_map(self):
-        if self._pitch_app_id_map:
-            return self._pitch_app_id_map
-        self._pitch_app_id_map = PitchAppScrapeStatus.get_pitch_app_id_map(self.db_session)
-        return self._pitch_app_id_map
+        return PitchAppScrapeStatus.get_pitch_app_id_map(self.db_session)
 
-    def execute(self, audit_report, year=None):
-        self.audit_report = audit_report
+    def get_team_id_map_for_year(self, year):
+        team_id_map_for_year = self._team_id_map.get(year)
+        if not team_id_map_for_year:
+            team_id_map_for_year = Team.get_team_id_map_for_year(self.db_session, year)
+            self._team_id_map[year] = team_id_map_for_year
+        return team_id_map_for_year
+
+    def execute(self, year=None):
+        self.events.find_all_games_eligible_for_import_start()
+        if not self.audit_report:
+            self.audit_report = self.scraped_data.get_audit_report()
+        self.events.find_all_games_eligible_for_import_complete()
         return self.add_data_for_year(year) if year else self.add_all_data()
 
     def add_all_data(self):
@@ -132,8 +124,8 @@ class AddToDatabaseTask(Task):
     def update_player_stats_relationships(self, stats):
         game_date = self.get_game_date_from_bbref_game_id(stats.bbref_game_id)
         stats.player_id = self.player_id_map[stats.player_id_mlb]
-        stats.player_team_id = self.get_team_id_map(game_date.year)[stats.player_team_id_bbref]
-        stats.opponent_team_id = self.get_team_id_map(game_date.year)[stats.opponent_team_id_bbref]
+        stats.player_team_id = self.get_team_id_map_for_year(game_date.year)[stats.player_team_id_bbref]
+        stats.opponent_team_id = self.get_team_id_map_for_year(game_date.year)[stats.opponent_team_id_bbref]
         stats.season_id = self.season_id_map[game_date.year]
         stats.date_id = self.get_date_status_id_from_game_date(game_date)
         stats.game_status_id = self.game_id_map[stats.bbref_game_id]
@@ -161,8 +153,8 @@ class AddToDatabaseTask(Task):
         opponent_team_id_br = get_bbref_team_id(pfx.opponent_team_id_bb)
         pfx.pitcher_id = self.player_id_map[pfx.pitcher_id_mlb]
         pfx.batter_id = self.player_id_map[pfx.batter_id_mlb]
-        pfx.team_pitching_id = self.get_team_id_map(game_date.year)[pitcher_team_id_br]
-        pfx.team_batting_id = self.get_team_id_map(game_date.year)[opponent_team_id_br]
+        pfx.team_pitching_id = self.get_team_id_map_for_year(game_date.year)[pitcher_team_id_br]
+        pfx.team_batting_id = self.get_team_id_map_for_year(game_date.year)[opponent_team_id_br]
         pfx.season_id = self.season_id_map[game_date.year]
         pfx.date_id = self.get_date_status_id_from_game_date(game_date)
         pfx.game_status_id = self.game_id_map[pfx.bbref_game_id]

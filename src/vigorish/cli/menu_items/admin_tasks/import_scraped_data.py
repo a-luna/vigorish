@@ -15,7 +15,7 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
+from vigorish.tasks import ImportScrapedDataTask
 from vigorish.util.result import Result
 
 IMPORT_DATA_MESSAGE = (
@@ -58,7 +58,7 @@ class ImportScrapedData(MenuItem):
             return result
         return Result.Ok(True)
 
-    def update_heading(self, current_action):
+    def update_menu_heading(self, current_action):
         new_heading = (
             f"Import Scraped Data: {current_action}"
             if self.app.db_setup_complete
@@ -68,12 +68,12 @@ class ImportScrapedData(MenuItem):
         print_heading(new_heading, fg="bright_yellow")
 
     def prompt_user_import_data(self):
-        self.update_heading("Run Task?")
+        self.update_menu_heading("Run Task?")
         print_message(IMPORT_DATA_MESSAGE, fg="bright_yellow", bold=True)
         return yes_no_prompt(IMPORT_DATA_PROMPT, wrap=False)
 
     def prompt_user_overwrite_data(self):
-        self.update_heading("Overwrite Existing Data?")
+        self.update_menu_heading("Overwrite Existing Data?")
         print_message(OVERWRITE_DATA_MESSAGE, fg="bright_yellow", bold=True)
         choices = {
             f"{MENU_NUMBERS.get(1)}  KEEP EXISTING DATA": "KEEP",
@@ -83,21 +83,21 @@ class ImportScrapedData(MenuItem):
         return user_options_prompt(choices, OVERWRITE_DATA_PROMPT, clear_screen=False)
 
     def error_occurred(self, error_message, data_set, year):
-        self.update_heading("Error!")
+        self.update_menu_heading("Error!")
         self.spinners[year][data_set].fail(f"Error occurred while updating {data_set} for MLB {year}")
 
     def search_local_files_start(self):
-        self.update_heading("In Progress...")
+        self.update_menu_heading("In Progress...")
         self.spinners["default"] = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinners["default"].text = "Searching local folder for scraped data..."
         self.spinners["default"].start()
 
     def import_scraped_data_start(self):
         self.spinners["default"].stop()
-        self.update_heading("In Progress...")
+        self.update_menu_heading("In Progress...")
 
     def import_scraped_data_for_year_start(self, year):
-        self.update_heading("In Progress...")
+        self.update_menu_heading("In Progress...")
         self.spinners[year] = defaultdict(lambda: Halo())
 
     def import_scraped_data_set_start(self, data_set, year):
@@ -111,7 +111,7 @@ class ImportScrapedData(MenuItem):
         self.spinners[year][data_set].succeed(f"Successfully updated {data_set} for MLB {year}!")
 
     def import_scraped_data_complete(self):
-        self.update_heading("Complete!")
+        self.update_menu_heading("Complete!")
         success = "Successfully imported all scraped data from local files"
         print_message(success, fg="bright_yellow", bold=True)
         pause(message="\nPress any key to continue...")
