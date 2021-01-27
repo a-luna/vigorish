@@ -11,14 +11,13 @@ from vigorish.cli.components.util import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.tasks.add_to_database import AddToDatabaseTask
+from vigorish.tasks import AddToDatabaseTask
 from vigorish.util.result import Result
 
 
 class AddToDatabase(MenuItem):
-    def __init__(self, app, audit_report):
+    def __init__(self, app):
         super().__init__(app)
-        self.audit_report = audit_report
         self.add_to_db = AddToDatabaseTask(app)
         self.menu_item_text = "Add Combined Game Data to Database"
         self.menu_item_emoji = EMOJI_DICT.get("BASEBALL")
@@ -37,9 +36,8 @@ class AddToDatabase(MenuItem):
         if result.failure:
             return Result.Ok()
         year = result.value
-        self.initialize_spinner()
         self.subscribe_to_events()
-        result = self.add_to_db.execute(self.audit_report, year)
+        result = self.add_to_db.execute(year)
         self.spinner.stop()
         self.unsubscribe_from_events()
         if result.failure:
@@ -78,9 +76,9 @@ class AddToDatabase(MenuItem):
         year = result.value if isinstance(result.value, int) else None
         return Result.Ok(year)
 
-    def initialize_spinner(self):
+    def find_all_games_eligible_for_import_start(self):
         subprocess.run(["clear"])
-        self.spinner.text = "Preparing to import combined game data..."
+        self.spinner.text = "Finding all games that are eligible for import..."
         self.spinner.start()
 
     def add_data_to_db_start(self, year, game_ids):
@@ -92,12 +90,14 @@ class AddToDatabase(MenuItem):
 
     def get_progress_text(self, num_complete, year, game_id):
         percent = num_complete / float(self.total_games)
-        return f"Adding combined game data for MLB {year} to database... " f"(Game ID: {game_id}) {percent:.0%}..."
+        return f"Adding combined game data for MLB {year} to database... (Game ID: {game_id}) {percent:.0%}..."
 
     def subscribe_to_events(self):
+        self.add_to_db.events.find_all_games_eligible_for_import_start += self.find_all_games_eligible_for_import_start
         self.add_to_db.events.add_data_to_db_start += self.add_data_to_db_start
         self.add_to_db.events.add_data_to_db_progress += self.add_data_to_db_progress
 
     def unsubscribe_from_events(self):
+        self.add_to_db.events.find_all_games_eligible_for_import_start -= self.find_all_games_eligible_for_import_start
         self.add_to_db.events.add_data_to_db_start -= self.add_data_to_db_start
         self.add_to_db.events.add_data_to_db_progress -= self.add_data_to_db_progress

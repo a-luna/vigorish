@@ -15,9 +15,9 @@ from vigorish.database import GameScrapeStatus, PlayerId, TimeBetweenPitches
 from vigorish.enums import DataSet, PitchType
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
-from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
-from vigorish.tasks.base import Task
+from vigorish.status.update_status_combined_data import update_pitch_apps_with_combined_data
 from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
+from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
@@ -160,16 +160,18 @@ class CombineScrapedDataTask(Task):
         if not self.game_status.game_start_time:
             self.update_game_start_time()
         for pitchfx_log in self.pitchfx_logs_for_game:
-            if pitchfx_log.game_start_time:
+            if not pitchfx_log.game_start_time:
+                pitchfx_log.game_date_year = self.game_start_time.year
+                pitchfx_log.game_date_month = self.game_start_time.month
+                pitchfx_log.game_date_day = self.game_start_time.day
+                pitchfx_log.game_time_hour = self.game_start_time.hour
+                pitchfx_log.game_time_minute = self.game_start_time.minute
+                pitchfx_log.time_zone_name = "America/New_York"
+            if all(pfx.game_start_time_str for pfx in pitchfx_log.pitchfx_log):
                 continue
-            pitchfx_log.game_date_year = self.game_start_time.year
-            pitchfx_log.game_date_month = self.game_start_time.month
-            pitchfx_log.game_date_day = self.game_start_time.day
-            pitchfx_log.game_time_hour = self.game_start_time.hour
-            pitchfx_log.game_time_minute = self.game_start_time.minute
-            pitchfx_log.time_zone_name = "America/New_York"
             for pfx in pitchfx_log.pitchfx_log:
-                pfx.game_start_time_str = self.game_start_time_str
+                if not pfx.game_start_time_str:
+                    pfx.game_start_time_str = self.game_start_time_str
         return Result.Ok()
 
     def update_game_start_time(self):
@@ -597,6 +599,8 @@ class CombineScrapedDataTask(Task):
         if not self.pitchfx_data_is_complete(at_bat):
             return Result.Ok(self.game_start_time)
         last_pitch_thrown_str = at_bat["pitchfx"][-1]["time_pitch_thrown_str"]
+        if not last_pitch_thrown_str:
+            return Result.Ok(self.game_start_time)
         last_pitch_in_at_bat_thrown = datetime.strptime(last_pitch_thrown_str, DT_AWARE)
         return Result.Ok(last_pitch_in_at_bat_thrown)
 
@@ -953,7 +957,8 @@ class CombineScrapedDataTask(Task):
             {
                 event["at_bat_id"]
                 for event in game_events
-                if event["at_bat_pitchfx_audit"]["missing_pitchfx_count"] == 0
+                if event["is_complete_at_bat"]
+                and event["at_bat_pitchfx_audit"]["missing_pitchfx_count"] == 0
                 and event["at_bat_pitchfx_audit"]["extra_pitchfx_count"] == 0
                 and not event["at_bat_pitchfx_audit"]["pitchfx_error"]
             }
@@ -1434,7 +1439,7 @@ class CombineScrapedDataTask(Task):
         return result
 
     def update_pitch_app_status(self):
-        result = update_pitch_apps_for_game_combined_data(self.db_session, self.combined_data)
+        result = update_pitch_apps_with_combined_data(self.db_session, self.combined_data)
         if result.failure:
             self.error_messages.append(result.error)
             result.value = {

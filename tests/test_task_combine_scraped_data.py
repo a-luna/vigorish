@@ -16,10 +16,10 @@ from tests.util import (
     update_scraped_pitchfx_logs,
 )
 from vigorish.database import GameScrapeStatus, PitchAppScrapeStatus
-from vigorish.status.update_status_combined_data import update_pitch_apps_for_game_combined_data
-from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
-from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
-from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
+from vigorish.status.update_status_combined_data import update_pitch_apps_with_combined_data
+from vigorish.tasks import CombineScrapedDataTask, PatchAllInvalidPitchFxTask
+from vigorish.tasks.patch_all_invalid_pfx import PatchInvalidPitchFxTask
+
 from vigorish.util.exceptions import ScrapedDataException
 
 # TODO: Add test case for game CHA201705272 to cover the scenario where the start time of the
@@ -173,7 +173,7 @@ def test_combine_data_no_errors(vig_app):
     assert pitch_app_status.total_at_bats_pitchfx_complete == 0
     assert pitch_app_status.total_at_bats_missing_pitchfx == 0
 
-    result = update_pitch_apps_for_game_combined_data(db_session, combined_data)
+    result = update_pitch_apps_with_combined_data(db_session, combined_data)
     assert result.success
 
     assert pitch_app_status.combined_pitchfx_bbref_data == 1
@@ -991,7 +991,7 @@ def test_patch_all_invalid_pitchfx_data(vig_app):
     game_status.combined_data_success = 1
     game_status.combined_data_fail = 0
     vig_app.db_session.commit()
-    result = update_pitch_apps_for_game_combined_data(vig_app.db_session, combined_data)
+    result = update_pitch_apps_with_combined_data(vig_app.db_session, combined_data)
     assert result.success
 
     patch_all_invalid_pfx = PatchAllInvalidPitchFxTask(vig_app)
@@ -1029,7 +1029,7 @@ def test_combine_patched_boxscore_data(vig_app):
         "duplicate_guid_removed_count": 0,
         "batters_faced_bbref": 72,
         "batters_faced_pitchfx": 72,
-        "total_at_bats_pitchfx_complete": 74,
+        "total_at_bats_pitchfx_complete": 72,
         "total_at_bats_extra_pitchfx": 0,
         "total_at_bats_patched_pitchfx": 0,
         "total_at_bats_missing_pitchfx": 0,
@@ -1085,7 +1085,6 @@ def test_combine_patched_boxscore_data(vig_app):
             "TOR201908170_06_TOR_663423_SEA_543592_0",
             "TOR201908170_06_TOR_663423_SEA_596129_0",
             "TOR201908170_06_TOR_663423_SEA_543829_0",
-            "TOR201908170_06_TOR_663423_SEA_542979_0",
             "TOR201908170_06_SEA_665093_TOR_545341_0",
             "TOR201908170_06_SEA_665093_TOR_475253_0",
             "TOR201908170_06_SEA_665093_TOR_605233_0",
@@ -1107,7 +1106,6 @@ def test_combine_patched_boxscore_data(vig_app):
             "TOR201908170_09_TOR_571882_SEA_596129_0",
             "TOR201908170_09_TOR_571882_SEA_543829_0",
             "TOR201908170_09_TOR_571882_SEA_542979_0",
-            "TOR201908170_09_TOR_571882_SEA_664238_0",
             "TOR201908170_09_SEA_543483_TOR_605233_0",
             "TOR201908170_09_SEA_543483_TOR_641856_0",
             "TOR201908170_09_SEA_543483_TOR_624512_0",
