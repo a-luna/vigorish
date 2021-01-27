@@ -11,12 +11,12 @@ from vigorish.cli.components import (
     file_types_prompt,
     get_random_cli_color,
     get_random_dots_spinner,
+    print_heading,
     print_message,
     season_prompt,
     user_options_prompt,
 )
-from vigorish.cli.components.dict_viewer import DictListTableViewer
-from vigorish.cli.components.util import print_heading
+from vigorish.cli.components.viewers import DictListTableViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 from vigorish.enums import DataSet, SyncDirection, VigFile
@@ -41,6 +41,7 @@ class SyncScrapedData(MenuItem):
         self.spinners = defaultdict(dict)
         self.menu_item_text = " Synchronize Scraped Data"
         self.menu_item_emoji = EMOJI_DICT.get("CLOUD", "")
+        self.menu_heading = self.menu_item_text
         self.exit_menu = False
 
     @property
@@ -83,14 +84,20 @@ class SyncScrapedData(MenuItem):
         return Result.Ok()
 
     def get_data_sets_to_sync(self, file_type):
-        prompt = f"Select Data Sets to Synchronize for File Type: {file_type}"
+        heading = self.get_menu_heading(f"Select Data Sets to Sync for {file_type}")
+        prompt = f"Select all data sets to synchronize for {file_type} files"
         if file_type == VigFile.COMBINED_GAME_DATA:
             return [DataSet.ALL]
         if file_type == VigFile.PATCH_LIST:
-            valid_data_sets = DataSet.BBREF_BOXSCORES | DataSet.BROOKS_PITCHFX
+            valid_data_sets = (
+                DataSet.BBREF_GAMES_FOR_DATE
+                | DataSet.BBREF_BOXSCORES
+                | DataSet.BROOKS_GAMES_FOR_DATE
+                | DataSet.BROOKS_PITCHFX
+            )
         else:
             valid_data_sets = DataSet.ALL
-        return data_sets_prompt(prompt, valid_data_sets=int(valid_data_sets))
+        return data_sets_prompt(heading, prompt, valid_data_sets=int(valid_data_sets))
 
     def sync_direction_prompt(self):
         prompt = (
@@ -181,9 +188,7 @@ class SyncScrapedData(MenuItem):
         return (out_of_sync, SYNC_STATUS_TEXT_COLOR["out_of_sync"])
 
     def in_sync_text(self, file_type, data_set):
-        in_sync = (
-            f"All files in sync: {self.year} {data_set} {file_type} " f"(Task {self.task_number}/{self.total_tasks})"
-        )
+        in_sync = f"All files in sync: {self.year} {data_set} {file_type} (Task {self.task_number}/{self.total_tasks})"
         return (in_sync, SYNC_STATUS_TEXT_COLOR["in_sync"])
 
     def synchronize_files(self):

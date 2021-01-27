@@ -4,7 +4,7 @@ import subprocess
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components.dict_viewer import DictListTableViewer
+from vigorish.cli.components.viewers import DictListTableViewer
 from vigorish.cli.components.util import (
     get_random_cli_color,
     get_random_dots_spinner,
@@ -12,14 +12,14 @@ from vigorish.cli.components.util import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT
-from vigorish.tasks.update_player_maps import UpdatePlayerIdMap as UpdatePlayerIdMapTask
+from vigorish.tasks import UpdatePlayerIdMapTask
 from vigorish.util.result import Result
 
 
 class UpdatePlayerIdMap(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.update_player_id_map = UpdatePlayerIdMapTask(self.app)
+        self.id_map_task = UpdatePlayerIdMapTask(self.app)
         self.menu_item_text = " Update Player ID Map"
         self.menu_item_emoji = EMOJI_DICT.get("TABBED_FILES")
 
@@ -29,7 +29,7 @@ class UpdatePlayerIdMap(MenuItem):
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = "Checking BBRef player data..."
         spinner.start()
-        result = self.update_player_id_map.execute()
+        result = self.id_map_task.execute()
         if result.failure:
             spinner.stop()
             return result

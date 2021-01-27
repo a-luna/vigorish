@@ -1,10 +1,13 @@
+import os
 import subprocess
+from typing import List
 
 from bullet import Bullet, colors, keyhandler
 from bullet.charDef import ARROW_LEFT_KEY, ARROW_RIGHT_KEY
 from bullet.cursor import hide as cursor_hidden
 from bullet.utils import moveCursorUp
 
+from vigorish.cli.components.viewers.display_page import DisplayPage
 from vigorish.cli.components.util import print_message
 from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
 
@@ -18,15 +21,15 @@ NAV_NEXT_LEN = len(NAV_NEXT)
 class PageViewer(Bullet):
     def __init__(
         self,
-        pages,
-        prompt,
-        confirm_only=False,
-        yes_choice="YES",
-        no_choice="NO",
-        heading_color=None,
-        text_color=None,
-        wrap_text=True,
-    ):
+        pages: List[DisplayPage],
+        prompt: str,
+        confirm_only: bool = False,
+        yes_choice: str = "YES",
+        no_choice: str = "NO",
+        heading_color: str = None,
+        text_color: str = None,
+        wrap_text: bool = True,
+    ) -> None:
         self.choices_dict = self.get_prompt_choices(confirm_only, yes_choice, no_choice)
         super(PageViewer, self).__init__(
             prompt=prompt,
@@ -88,6 +91,9 @@ class PageViewer(Bullet):
         return confirm_choice if confirm_only else yes_no_choices
 
     def launch(self):
+        return self.interactive_mode() if os.environ.get("INTERACTIVE_MODE") == "YES" else self.script_mode()
+
+    def interactive_mode(self):
         while True:
             subprocess.run(["clear"])
             self.current_page.display(
@@ -108,6 +114,16 @@ class PageViewer(Bullet):
                         break
                     if user_selection is not None:
                         return self.choices_dict.get(user_selection)
+
+    def script_mode(self):
+        subprocess.run(["clear"])
+        for page in self.pages:
+            page.display(
+                text_color=self.text_color,
+                heading_color=self.heading_color,
+                wrap_text=self.wrap_text,
+            )
+        return True
 
     def print_prompt(self):
         prompt = f'\n{" " * self.indent}{self.prompt}\n'

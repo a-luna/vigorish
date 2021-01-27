@@ -4,8 +4,7 @@ from getch import pause
 from halo import Halo
 from tabulate import tabulate
 
-from vigorish.cli.components.models import DisplayPage
-from vigorish.cli.components.page_viewer import PageViewer
+from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.components.util import (
     get_random_cli_color,
     get_random_dots_spinner,
@@ -15,9 +14,7 @@ from vigorish.cli.components.util import (
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJI_DICT
 from vigorish.database import TimeBetweenPitches
-from vigorish.tasks.calculate_avg_pitch_times import (
-    CalculateAverageTimeBetweenPitches as CalculatePitchTimesTask,
-)
+from vigorish.tasks import CalculateAvgPitchTimesTask
 from vigorish.util.result import Result
 
 STAT_NAMES = ["avg", "min", "max"]
@@ -26,7 +23,7 @@ STAT_NAMES = ["avg", "min", "max"]
 class CalculatePitchTimes(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.calc_pitch_times = CalculatePitchTimesTask(app)
+        self.calc_pitch_times = CalculateAvgPitchTimesTask(app)
         self.menu_item_text = "Calculate Avg. Time Between Pitches"
         self.menu_item_emoji = EMOJI_DICT.get("CLOCK")
         self.exit_menu = False
