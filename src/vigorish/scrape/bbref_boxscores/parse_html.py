@@ -33,13 +33,13 @@ _LINESCORE_HOME_VALS_XPATH = '//table[contains(@class, "linescore")]//tbody/tr[2
 _LINESCORE_W_L_SV_XPATH = '//table[contains(@class, "linescore")]//tfoot/tr/td/text()'
 _UMPIRES_XPATH = '//strong[contains(text(), "Umpires")]/../text()'
 
-_BAT_STATS_TABLE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "batting")]'
+_BAT_STATS_TABLE_XPATH = '//table[contains(@id, "batting")][not(contains(@id, "clone"))]'
 _BATTER_IDS_XPATH = './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]/@data-append-csv'
 _BATTER_NAMES_XPATH = './tbody//td[@data-stat="batting_avg"]/../th[@data-stat="player"]//a/text()'
 _T_BAT_STATS_ROW_XPATH = './tbody//th[@data-append-csv="${pid}"]/..'
 _T_BAT_STATS_XPATH = './td[@data-stat="${stat}"]/text()'
 
-_PITCH_STATS_TABLE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "pitching")]'
+_PITCH_STATS_TABLE_XPATH = '//table[contains(@id, "pitching")][not(contains(@id, "clone"))]'
 _PITCHER_IDS_XPATH = './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]/@data-append-csv'
 _PITCHER_NAMES_XPATH = './tbody//td[@data-stat="earned_run_avg"]/../th[@data-stat="player"]//a/text()'
 _T_PITCH_STATS_ROW_XPATH = './tbody//th[@data-append-csv="${pid}"]/..'
@@ -52,7 +52,7 @@ _HOME_LINEUP_ORDER_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[1]/text
 _HOME_LINEUP_PLAYER_XPATH = '//div[@id="lineups_2"]//table//tbody//a/@href'
 _HOME_LINEUP_DEF_POS_XPATH = '//div[@id="lineups_2"]//table//tbody//tr//td[3]/text()'
 
-_PBP_TABLE_XPATH = '//div[contains(@class, "overthrow")]//table[contains(@id, "play_by_play")]'
+_PBP_TABLE_XPATH = '//table[contains(@id, "play_by_play")][not(contains(@id, "clone"))]'
 _PBP_INN_SUM_TOP_XPATH = './tbody//th[@data-stat="inning_summary_12"]/text()'
 _PBP_INN_SUM_TOP_ROW_NUM_XPATH = './tbody//tr[@class="pbp_summary_top"]/@data-row'
 _PBP_INN_SUM_BOT_XPATH = './tbody//tr[@class="pbp_summary_bottom"]//td[last()]/text()'
@@ -256,11 +256,6 @@ def _parse_data_tables(page_content):
     )
 
 
-def _parse_bbref_gameid_from_url(url):
-    matches = _GAME_ID_REGEX.findall(url)
-    return matches[0] if matches else None
-
-
 def _parse_away_team_id(page_content):
     name_urls = page_content.xpath(_TEAM_ID_XPATH)
     if not name_urls:
@@ -322,11 +317,11 @@ def _parse_team_data(page_content, team_batting_table, team_pitching_table, team
         return Result.Fail(error)
     team_totals = _parse_linescore_totals_for_team(page_content, team_id, is_home_team)
     if not team_totals:
-        error = "Failed to parse team linescore totals " f"(team_id={team_id}, is_home_team={is_home_team})"
+        error = "Failed to parse team linescore totals (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
     opponent_totals = _parse_linescore_totals_for_team(page_content, opponent_id, not is_home_team)
     if not opponent_totals:
-        error = "Failed to parse opponent linescore totals " f"(team_id={opponent_id}, is_home_team={not is_home_team})"
+        error = "Failed to parse opponent linescore totals (team_id={opponent_id}, is_home_team={not is_home_team})"
         return Result.Fail(error)
     batting_stats = _parse_batting_stats_for_team(team_batting_table, team_id, opponent_id)
     if not batting_stats:
@@ -420,7 +415,7 @@ def _get_bat_stat_value(player_bat_data_html, stat_name):
     result = player_bat_data_html.xpath(bat_stat_xpath)
     if result and len(result) > 0:
         bat_stat_value = result[0]
-    return bat_stat_value
+    return bat_stat_value if isinstance(bat_stat_value, list) else bat_stat_value.rstrip("%")
 
 
 def _parse_batting_details(stat_dict):
@@ -464,7 +459,7 @@ def _get_pitch_stat_value(player_pitch_data_html, stat_name):
     result = player_pitch_data_html.xpath(pitch_stat_xpath)
     if result and len(result) > 0:
         pitch_stat_value = result[0]
-    return pitch_stat_value
+    return pitch_stat_value if isinstance(pitch_stat_value, list) else pitch_stat_value.rstrip("%")
 
 
 def _parse_starting_lineup_for_team(page_content, team_id, is_home_team):
