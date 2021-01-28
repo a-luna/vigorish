@@ -164,7 +164,7 @@ class MainMenu(Menu):
             "scraped_game_data": ViewGameDataMenu(self.app, self.audit_report),
             "status_reports": StatusReport(self.app),
             "settings": SettingsMenu(self.app),
-            "admin_tasks": AdminTasksMenu(self.app, self.audit_report),
+            "admin_tasks": AdminTasksMenu(self.app),
             "exit_program": ExitProgram(self.app),
         }
 
