@@ -1,18 +1,7 @@
-import os
 import pytest
 
-from tests.conftest import CONFIG_FILE, CSV_FOLDER, DOTENV_FILE, SQLITE_URL
+from tests.conftest import CSV_FOLDER
 from vigorish.app import Vigorish
-
-
-@pytest.fixture(autouse=True)
-def env_vars(request):
-    """Sets environment variables to use .env and config.json files."""
-    os.environ["ENV"] = "TEST"
-    os.environ["DOTENV_FILE"] = str(DOTENV_FILE)
-    os.environ["CONFIG_FILE"] = str(CONFIG_FILE)
-    os.environ["DATABASE_URL"] = SQLITE_URL
-    return True
 
 
 @pytest.fixture(scope="package")
