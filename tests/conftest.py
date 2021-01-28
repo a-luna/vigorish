@@ -13,7 +13,7 @@ DB_FILE = TESTS_FOLDER.joinpath("vig_test.db")
 SQLITE_URL = f"sqlite:///{DB_FILE}"
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(scope="module", autouse=True)
 def env_vars(request):
     """Sets environment variables to use .env and config.json files."""
     os.environ["ENV"] = "TEST"
