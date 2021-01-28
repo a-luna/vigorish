@@ -15,7 +15,7 @@
     "duplicate_guid_removed_count": 0,
     "batters_faced_bbref": 72,
     "batters_faced_pitchfx": 72,
-    "total_at_bats_pitchfx_complete": 74,
+    "total_at_bats_pitchfx_complete": 72,
     "total_at_bats_extra_pitchfx": 0,
     "total_at_bats_patched_pitchfx": 0,
     "total_at_bats_missing_pitchfx": 0,
@@ -71,7 +71,6 @@
       "TOR201908170_06_TOR_663423_SEA_543592_0",
       "TOR201908170_06_TOR_663423_SEA_596129_0",
       "TOR201908170_06_TOR_663423_SEA_543829_0",
-      "TOR201908170_06_TOR_663423_SEA_542979_0",
       "TOR201908170_06_SEA_665093_TOR_545341_0",
       "TOR201908170_06_SEA_665093_TOR_475253_0",
       "TOR201908170_06_SEA_665093_TOR_605233_0",
@@ -93,7 +92,6 @@
       "TOR201908170_09_TOR_571882_SEA_596129_0",
       "TOR201908170_09_TOR_571882_SEA_543829_0",
       "TOR201908170_09_TOR_571882_SEA_542979_0",
-      "TOR201908170_09_TOR_571882_SEA_664238_0",
       "TOR201908170_09_SEA_543483_TOR_605233_0",
       "TOR201908170_09_SEA_543483_TOR_641856_0",
       "TOR201908170_09_SEA_543483_TOR_624512_0",
@@ -2128,7 +2126,7 @@
           "duplicate_guid_removed_count": 0,
           "batters_faced_bbref": 25,
           "batters_faced_pitchfx": 25,
-          "total_at_bats_pitchfx_complete": 26,
+          "total_at_bats_pitchfx_complete": 25,
           "total_at_bats_extra_pitchfx": 0,
           "total_at_bats_patched_pitchfx": 0,
           "total_at_bats_missing_pitchfx": 0,
@@ -2161,8 +2159,7 @@
             "TOR201908170_05_TOR_663423_SEA_572122_0",
             "TOR201908170_06_TOR_663423_SEA_543592_0",
             "TOR201908170_06_TOR_663423_SEA_596129_0",
-            "TOR201908170_06_TOR_663423_SEA_543829_0",
-            "TOR201908170_06_TOR_663423_SEA_542979_0"
+            "TOR201908170_06_TOR_663423_SEA_543829_0"
           ],
           "at_bat_ids_patched_pitchfx": [],
           "at_bat_ids_missing_pitchfx": [],
@@ -2389,7 +2386,7 @@
           "duplicate_guid_removed_count": 0,
           "batters_faced_bbref": 4,
           "batters_faced_pitchfx": 4,
-          "total_at_bats_pitchfx_complete": 5,
+          "total_at_bats_pitchfx_complete": 4,
           "total_at_bats_extra_pitchfx": 0,
           "total_at_bats_patched_pitchfx": 0,
           "total_at_bats_missing_pitchfx": 0,
@@ -2401,8 +2398,7 @@
             "TOR201908170_08_TOR_571882_SEA_543592_0",
             "TOR201908170_09_TOR_571882_SEA_596129_0",
             "TOR201908170_09_TOR_571882_SEA_543829_0",
-            "TOR201908170_09_TOR_571882_SEA_542979_0",
-            "TOR201908170_09_TOR_571882_SEA_664238_0"
+            "TOR201908170_09_TOR_571882_SEA_542979_0"
           ],
           "at_bat_ids_patched_pitchfx": [],
           "at_bat_ids_missing_pitchfx": [],
@@ -20347,7 +20343,7 @@
         "extra_pitchfx_count": 0,
         "duplicate_guid_removed_count": 0,
         "extra_pitchfx_removed_count": 0,
-        "total_at_bats_pitchfx_complete": 4,
+        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_patched_pitchfx": 0,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
@@ -20357,8 +20353,7 @@
         "at_bat_ids_pitchfx_complete": [
           "TOR201908170_06_TOR_663423_SEA_543592_0",
           "TOR201908170_06_TOR_663423_SEA_596129_0",
-          "TOR201908170_06_TOR_663423_SEA_543829_0",
-          "TOR201908170_06_TOR_663423_SEA_542979_0"
+          "TOR201908170_06_TOR_663423_SEA_543829_0"
         ],
         "at_bat_ids_patched_pitchfx": [],
         "at_bat_ids_missing_pitchfx": [],
@@ -29765,7 +29760,7 @@
         "extra_pitchfx_count": 0,
         "duplicate_guid_removed_count": 0,
         "extra_pitchfx_removed_count": 0,
-        "total_at_bats_pitchfx_complete": 4,
+        "total_at_bats_pitchfx_complete": 3,
         "total_at_bats_patched_pitchfx": 0,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_extra_pitchfx": 0,
@@ -29775,8 +29770,7 @@
         "at_bat_ids_pitchfx_complete": [
           "TOR201908170_09_TOR_571882_SEA_596129_0",
           "TOR201908170_09_TOR_571882_SEA_543829_0",
-          "TOR201908170_09_TOR_571882_SEA_542979_0",
-          "TOR201908170_09_TOR_571882_SEA_664238_0"
+          "TOR201908170_09_TOR_571882_SEA_542979_0"
         ],
         "at_bat_ids_patched_pitchfx": [],
         "at_bat_ids_missing_pitchfx": [],

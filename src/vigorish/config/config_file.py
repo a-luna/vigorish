@@ -421,7 +421,7 @@ class ConfigFile:
             "JSON_S3_FOLDER_PATH": {
                 "CONFIG_TYPE": "Path",
                 "CLASS_NAME": "S3FolderPathSetting",
-                "DESCRIPTION": ("Path to a folder within an S3 bucket where parsed JSON data should be " "stored."),
+                "DESCRIPTION": ("Path to a folder within an S3 bucket where parsed JSON data should be stored."),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
             "SCRAPED_DATA_COMBINE_CONDITION": {
@@ -463,9 +463,7 @@ class ConfigFile:
             "DB_BACKUP_FOLDER_PATH": {
                 "CONFIG_TYPE": "Path",
                 "CLASS_NAME": "LocalFolderPathSetting",
-                "DESCRIPTION": (
-                    "Local folder path where csv files containing exported table data should be " "stored."
-                ),
+                "DESCRIPTION": ("Local folder path where csv files containing exported table data should be stored."),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
         }

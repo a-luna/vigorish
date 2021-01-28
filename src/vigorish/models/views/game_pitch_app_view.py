@@ -47,7 +47,6 @@ class Game_PitchApp_View(Base):
                 GameScrapeStatus,
                 PitchAppScrapeStatus,
                 GameScrapeStatus.id == PitchAppScrapeStatus.scrape_status_game_id,
-                isouter=True,
             )
         )
         .group_by(GameScrapeStatus.id),

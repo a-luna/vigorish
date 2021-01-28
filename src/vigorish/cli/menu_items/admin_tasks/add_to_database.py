@@ -10,7 +10,7 @@ from vigorish.cli.components.util import (
     print_message,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.tasks import AddToDatabaseTask
 from vigorish.util.result import Result
 
@@ -20,7 +20,7 @@ class AddToDatabase(MenuItem):
         super().__init__(app)
         self.add_to_db = AddToDatabaseTask(app)
         self.menu_item_text = "Add Combined Game Data to Database"
-        self.menu_item_emoji = EMOJI_DICT.get("BASEBALL")
+        self.menu_item_emoji = EMOJIS.get("BASEBALL")
         self.exit_menu = False
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.game_ids = []
@@ -69,7 +69,7 @@ class AddToDatabase(MenuItem):
         for num, (year, results) in enumerate(self.audit_report.items(), start=2):
             if results["successful"]:
                 choices[f"{MENU_NUMBERS.get(num, str(num))}  {year}"] = year
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         result = user_options_prompt(choices, prompt)
         if result.failure:
             return result

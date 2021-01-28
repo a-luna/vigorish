@@ -12,7 +12,7 @@ from vigorish.cli.components.util import (
     print_message,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.database import TimeBetweenPitches
 from vigorish.tasks import CalculateAvgPitchTimesTask
 from vigorish.util.result import Result
@@ -25,7 +25,7 @@ class CalculatePitchTimes(MenuItem):
         super().__init__(app)
         self.calc_pitch_times = CalculateAvgPitchTimesTask(app)
         self.menu_item_text = "Calculate Avg. Time Between Pitches"
-        self.menu_item_emoji = EMOJI_DICT.get("CLOCK")
+        self.menu_item_emoji = EMOJIS.get("CLOCK")
         self.exit_menu = False
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.game_ids = []

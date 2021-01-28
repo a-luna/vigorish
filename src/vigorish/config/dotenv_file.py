@@ -1,9 +1,8 @@
 import os
 from pathlib import Path
 
-from vigorish.config.project_paths import CONFIG_FILE, DOTENV_FILE
+from vigorish.config.project_paths import CONFIG_FILE, DOTENV_FILE, SQLITE_PROD_URL
 from vigorish.constants import ENV_VAR_NAMES
-from vigorish.database import SQLITE_PROD_URL
 from vigorish.util.result import Result
 
 

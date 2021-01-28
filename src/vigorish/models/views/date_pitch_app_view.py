@@ -46,7 +46,6 @@ class Date_PitchApp_View(Base):
                 DateScrapeStatus,
                 PitchAppScrapeStatus,
                 DateScrapeStatus.id == PitchAppScrapeStatus.scrape_status_date_id,
-                isouter=True,
             )
         )
         .group_by(DateScrapeStatus.id),

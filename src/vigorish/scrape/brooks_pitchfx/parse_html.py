@@ -9,7 +9,7 @@ from vigorish.constants import (
     PITCH_DES_DID_SWING,
     PITCH_DES_MADE_CONTACT,
     PITCH_DES_SWINGING_STRIKE,
-    STRIKE_ZONE_LOCATIONS,
+    ZONE_LOCATIONS_INSIDE_SZ,
 )
 from vigorish.scrape.brooks_pitchfx.models.pitchfx import BrooksPitchFxData
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
@@ -120,7 +120,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     pitchfx.called_strike = "Called Strike" in pitchfx_dict["pdes"]
     pitchfx.swinging_strike = pitchfx_dict["pdes"] in PITCH_DES_SWINGING_STRIKE
     if pitchfx.has_zone_location:
-        pitchfx.inside_strike_zone = pitchfx_dict["zone_location"] in STRIKE_ZONE_LOCATIONS
+        pitchfx.inside_strike_zone = pitchfx_dict["zone_location"] in ZONE_LOCATIONS_INSIDE_SZ
         pitchfx.outside_strike_zone = not pitchfx.inside_strike_zone
         pitchfx.swing_inside_zone = pitchfx.batter_did_swing and pitchfx.inside_strike_zone
         pitchfx.swing_outside_zone = pitchfx.batter_did_swing and pitchfx.outside_strike_zone

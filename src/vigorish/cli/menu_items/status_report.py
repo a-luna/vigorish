@@ -3,7 +3,7 @@ import subprocess
 
 from vigorish.cli.components import season_prompt, single_date_prompt, user_options_prompt
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import StatusReport as Report
 from vigorish.status.report_status import (
     report_date_range_status,
@@ -21,7 +21,7 @@ class StatusReport(MenuItem):
         # TODO: Another Status Report option - Pitch Appearance. Simply call .display() method
         super().__init__(app)
         self.menu_item_text = "Status Reports"
-        self.menu_item_emoji = EMOJI_DICT.get("CHART")
+        self.menu_item_emoji = EMOJIS.get("CHART")
         self.exit_menu = False
 
     def launch(self):
@@ -49,7 +49,7 @@ class StatusReport(MenuItem):
             f"{MENU_NUMBERS.get(1)}  Season": "SEASON",
             f"{MENU_NUMBERS.get(2)}  Single Date": "SINGLE_DATE",
             f"{MENU_NUMBERS.get(3)}  Date Range": "DATE_RANGE",
-            f"{EMOJI_DICT.get('BACK')} Return to Main Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Main Menu": None,
         }
         return user_options_prompt(choices, PROMPT_TEXT)
 
@@ -67,7 +67,7 @@ class StatusReport(MenuItem):
             choice_text4: Report.DATE_DETAIL_MISSING_DATA,
             choice_text5: Report.DATE_DETAIL_ALL_DATES,
             choice_text6: Report.DATE_DETAIL_MISSING_PITCHFX,
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, PROMPT_TEXT)
 
@@ -79,7 +79,7 @@ class StatusReport(MenuItem):
             choice_text1: Report.DATE_DETAIL_ALL_DATES,
             choice_text2: Report.DATE_DETAIL_MISSING_PITCHFX,
             choice_text3: Report.SINGLE_DATE_WITH_GAME_STATUS,
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, PROMPT_TEXT)
 
@@ -95,7 +95,7 @@ class StatusReport(MenuItem):
             choice_text3: Report.DATE_DETAIL_MISSING_DATA,
             choice_text4: Report.DATE_DETAIL_ALL_DATES,
             choice_text5: Report.DATE_DETAIL_MISSING_PITCHFX,
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, PROMPT_TEXT)
 

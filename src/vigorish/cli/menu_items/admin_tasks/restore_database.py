@@ -15,7 +15,7 @@ from vigorish.cli.components.util import (
     shutdown_cli_immediately,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import DataSet
 from vigorish.tasks import RestoreDatabaseTask
 from vigorish.util.datetime_util import format_timedelta_str, get_local_utcoffset
@@ -27,7 +27,7 @@ class RestoreDatabase(MenuItem):
     def __init__(self, app):
         super().__init__(app)
         self.menu_item_text = "Restore Database from Backup"
-        self.menu_item_emoji = EMOJI_DICT.get("SPIRAL")
+        self.menu_item_emoji = EMOJIS.get("SPIRAL")
         self.exit_menu = False
         self.restore_db = RestoreDatabaseTask(self.app)
         self.backup_start_time = None
@@ -82,7 +82,7 @@ class RestoreDatabase(MenuItem):
             f"{MENU_NUMBERS.get(num,num)}  {self.get_backup_time(zip_file.stem)}": zip_file
             for num, zip_file in enumerate(self.backup_zip_files, start=1)
         }
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         prompt = "Select a backup to restore (time shown is when the backup process was started):"
         return user_options_prompt(choices, prompt, clear_screen=False)
 

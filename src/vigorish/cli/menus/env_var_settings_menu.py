@@ -2,7 +2,7 @@
 from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.change_env_var_setting import ChangeEnvVarSetting
 from vigorish.cli.menu_items.return_to_parent import ReturnToParent
-from vigorish.constants import EMOJI_DICT, ENV_VAR_NAMES
+from vigorish.constants import EMOJIS, ENV_VAR_NAMES
 
 
 class EnvVarSettingsMenu(Menu):
@@ -10,7 +10,7 @@ class EnvVarSettingsMenu(Menu):
         super().__init__(app)
         self.menu_text = "You can modify any setting in the list below:"
         self.menu_item_text = "Environment Variables"
-        self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
+        self.menu_item_emoji = EMOJIS.get("SPIRAL", "")
 
     def populate_menu_items(self):
         self.menu_items = [ChangeEnvVarSetting(self.app, name) for name in ENV_VAR_NAMES]

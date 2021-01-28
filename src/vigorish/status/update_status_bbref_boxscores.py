@@ -27,7 +27,7 @@ def update_game_status_records(db_session, boxscore):
     try:
         game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, boxscore.bbref_game_id)
         if not game_status:
-            error = f"scrape_status_game does not contain an " f"entry for bbref_game_id: {boxscore.bbref_game_id}"
+            error = f"scrape_status_game does not contain an entry for bbref_game_id: {boxscore.bbref_game_id}"
             return Result.Fail(error)
         game_status.scraped_bbref_boxscore = 1
         game_status.pitch_app_count_bbref = boxscore.pitch_appearance_count

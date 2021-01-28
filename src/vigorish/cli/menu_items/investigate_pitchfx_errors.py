@@ -5,7 +5,7 @@ from getch import pause
 
 from vigorish.cli.components import print_heading, print_message
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.enums import AuditError
 from vigorish.util.result import Result
 
@@ -16,7 +16,7 @@ class InvestigatePitchFxErrors(MenuItem):
         self.year = year
         self.bbref_game_ids = bbref_game_ids
         self.menu_item_text = f"{AuditError.PITCHFX_ERROR} ({self.game_count} Games)"
-        self.menu_item_emoji = EMOJI_DICT.get("CRYING")
+        self.menu_item_emoji = EMOJIS.get("CRYING")
 
     @property
     def game_count(self):

@@ -11,7 +11,7 @@ from tests.util import (
     update_scraped_pitchfx_logs,
 )
 from vigorish.database import DateScrapeStatus
-from vigorish.tasks.add_to_database import AddToDatabaseTask
+from vigorish.tasks import AddToDatabaseTask
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
 TEST_ID = "NO_ERRORS"
@@ -35,7 +35,7 @@ def create_test_data(vig_app):
     update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
     CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
     add_to_db = AddToDatabaseTask(vig_app)
-    add_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
+    add_to_db.execute(2019)
     db_session.commit()
     return True
 
@@ -46,7 +46,7 @@ def test_status_date_status_report(db_session):
     assert status_date.game_date == GAME_DATE
     report = status_date.status_report()
     assert report == [
-        ("Overall Status For Date......................: " "Missing BBref boxscores and Brooks pitch logs"),
+        ("Overall Status For Date......................: Missing BBref boxscores and Brooks pitch logs"),
         "Scraped Daily Dashboard (BBRef/Brooks).......: YES/YES",
         "BBref Boxscores Scraped......................: NO 1/11",
         "Brooks Games Scraped.........................: NO 1/11",
@@ -95,7 +95,7 @@ def test_status_date_as_dict(db_session):
         "scraped_only_both_daily_dash": True,
         "scraped_only_brooks_daily_dash": False,
         "scraped_only_brooks_pitch_logs": False,
-        "season_id": 7,
+        "season_id": 11,
         "total_at_bats_extra_pitchfx": 0,
         "total_at_bats_extra_pitchfx_removed": 0,
         "total_at_bats_invalid_pitchfx": 0,

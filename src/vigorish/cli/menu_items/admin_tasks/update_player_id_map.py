@@ -11,7 +11,7 @@ from vigorish.cli.components.util import (
     print_heading,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.tasks import UpdatePlayerIdMapTask
 from vigorish.util.result import Result
 
@@ -21,7 +21,7 @@ class UpdatePlayerIdMap(MenuItem):
         super().__init__(app)
         self.id_map_task = UpdatePlayerIdMapTask(self.app)
         self.menu_item_text = " Update Player ID Map"
-        self.menu_item_emoji = EMOJI_DICT.get("TABBED_FILES")
+        self.menu_item_emoji = EMOJIS.get("TABBED_FILES")
 
     def launch(self):
         subprocess.run(["clear"])

@@ -3,7 +3,7 @@ from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.return_to_parent import ReturnToParent
 from vigorish.cli.menus.config_settings_menu import ConfigSettingsMenu
 from vigorish.cli.menus.env_var_settings_menu import EnvVarSettingsMenu
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 
 
 class SettingsMenu(Menu):
@@ -11,7 +11,7 @@ class SettingsMenu(Menu):
         super().__init__(app)
         self.menu_text = "You can view/edit Config File settings or Env. Variable settings:"
         self.menu_item_text = "Settings"
-        self.menu_item_emoji = EMOJI_DICT.get("TOOLS", "")
+        self.menu_item_emoji = EMOJIS.get("TOOLS", "")
 
     def populate_menu_items(self):
         self.menu_items = []

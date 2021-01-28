@@ -259,6 +259,6 @@ def update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id):
 
 
 def combine_scraped_data_for_game(vig_app, game_id, apply_patch_list=True):
-    result = CombineScrapedDataTask(vig_app).execute(game_id, apply_patch_list, update_db=False)
-    assert "boxscore" in result
-    return result["boxscore"]
+    result_dict = CombineScrapedDataTask(vig_app).execute(game_id, apply_patch_list, update_db=False)
+    assert result_dict["combined_data_success"] and "boxscore" in result_dict
+    return result_dict["boxscore"]
