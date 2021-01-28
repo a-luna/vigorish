@@ -1,45 +1,9 @@
-import pytest
-
-from tests.util import (
-    COMBINED_DATA_GAME_DICT,
-    update_scraped_bbref_games_for_date,
-    update_scraped_boxscore,
-    update_scraped_brooks_games_for_date,
-    update_scraped_pitch_logs,
-    update_scraped_pitchfx_logs,
-)
+from tests.test_with_single_game.conftest import BBREF_GAME_ID
 from vigorish.database import GameScrapeStatus
-from vigorish.tasks import AddToDatabaseTask
-from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
-
-TEST_ID = "NO_ERRORS"
-GAME_DICT = COMBINED_DATA_GAME_DICT[TEST_ID]
-BBREF_GAME_ID = GAME_DICT["bbref_game_id"]
 
 
-@pytest.fixture(scope="module", autouse=True)
-def create_test_data(vig_app):
-    """Initialize DB with data to verify test functions in test_all_game_data module."""
-    db_session = vig_app.db_session
-    scraped_data = vig_app.scraped_data
-    game_date = GAME_DICT["game_date"]
-    bbref_game_id = GAME_DICT["bbref_game_id"]
-    bb_game_id = GAME_DICT["bb_game_id"]
-    apply_patch_list = GAME_DICT["apply_patch_list"]
-    update_scraped_bbref_games_for_date(db_session, scraped_data, game_date)
-    update_scraped_brooks_games_for_date(db_session, scraped_data, game_date)
-    update_scraped_boxscore(db_session, scraped_data, bbref_game_id)
-    update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id)
-    update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
-    CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
-    add_to_db = AddToDatabaseTask(vig_app)
-    add_to_db.execute(2019)
-    db_session.commit()
-    return True
-
-
-def test_status_game_status_report(db_session):
-    status_game = GameScrapeStatus.find_by_bbref_game_id(db_session, BBREF_GAME_ID)
+def test_status_game_status_report(vig_app):
+    status_game = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, BBREF_GAME_ID)
     assert status_game
     assert status_game.bbref_game_id == BBREF_GAME_ID
     report = status_game.status_report()
@@ -59,8 +23,8 @@ def test_status_game_status_report(db_session):
     ]
 
 
-def test_status_game_as_dict(db_session):
-    status_game = GameScrapeStatus.find_by_bbref_game_id(db_session, BBREF_GAME_ID)
+def test_status_game_as_dict(vig_app):
+    status_game = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, BBREF_GAME_ID)
     assert status_game
     assert status_game.bbref_game_id == BBREF_GAME_ID
     game_dict = status_game.as_dict()

@@ -1,8 +1,26 @@
 from datetime import datetime
 
+import pytest
+
+from tests.conftest import CSV_FOLDER
+from vigorish.app import Vigorish
 from vigorish.database import Season
 from vigorish.enums import DataSet
 from vigorish.tasks import ImportScrapedDataTask
+
+
+@pytest.fixture()
+def vig_app(request):
+    """Returns an instance of the application configured to use the test DB and test config file."""
+    app = Vigorish()
+    app.initialize_database(csv_folder=CSV_FOLDER)
+    assert app.db_setup_complete
+
+    def fin():
+        app.db_session.close()
+
+    request.addfinalizer(fin)
+    return app
 
 
 def test_import_with_empty_database(vig_app, mocker):

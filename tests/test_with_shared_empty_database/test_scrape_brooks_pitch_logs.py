@@ -20,31 +20,31 @@ PITCH_APP_ID = "TOR201806170_461325"
 
 
 @pytest.fixture(scope="module", autouse=True)
-def create_test_data(db_session, scraped_data):
+def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_brooks_pitch_logs module."""
-    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_brooks_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_boxscore(db_session, scraped_data, BBREF_GAME_ID)
+    update_scraped_bbref_games_for_date(vig_app, GAME_DATE)
+    update_scraped_brooks_games_for_date(vig_app, GAME_DATE)
+    update_scraped_boxscore(vig_app, BBREF_GAME_ID)
     return True
 
 
-def test_parse_brooks_pitch_logs_for_game(scraped_data):
-    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(scraped_data, GAME_DATE, BBREF_GAME_ID)
+def test_parse_brooks_pitch_logs_for_game(vig_app):
+    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(vig_app, GAME_DATE, BBREF_GAME_ID)
     assert isinstance(pitch_logs_for_game, BrooksPitchLogsForGame)
     result = verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game)
     assert result.success
 
 
-def test_persist_brooks_pitch_logs_for_game(scraped_data):
-    pitch_logs_for_game_parsed = parse_brooks_pitch_logs_for_game_from_html(scraped_data, GAME_DATE, BBREF_GAME_ID)
+def test_persist_brooks_pitch_logs_for_game(vig_app):
+    pitch_logs_for_game_parsed = parse_brooks_pitch_logs_for_game_from_html(vig_app, GAME_DATE, BBREF_GAME_ID)
     assert isinstance(pitch_logs_for_game_parsed, BrooksPitchLogsForGame)
     result = verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game_parsed)
-    result = scraped_data.save_json(DataSet.BROOKS_PITCH_LOGS, pitch_logs_for_game_parsed)
+    result = vig_app.scraped_data.save_json(DataSet.BROOKS_PITCH_LOGS, pitch_logs_for_game_parsed)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "gid_2018_06_17_wasmlb_tormlb_1.json"
-    pitch_logs_for_game_decoded = scraped_data.get_brooks_pitch_logs_for_game(BB_GAME_ID)
+    pitch_logs_for_game_decoded = vig_app.scraped_data.get_brooks_pitch_logs_for_game(BB_GAME_ID)
     assert isinstance(pitch_logs_for_game_decoded, BrooksPitchLogsForGame)
     result = verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game_decoded)
     assert result.success
@@ -52,21 +52,21 @@ def test_persist_brooks_pitch_logs_for_game(scraped_data):
     assert not json_filepath.exists()
 
 
-def test_update_database_brooks_pitch_logs_for_game(db_session, scraped_data):
-    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(scraped_data, GAME_DATE, BBREF_GAME_ID)
+def test_update_database_brooks_pitch_logs_for_game(vig_app):
+    pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(vig_app, GAME_DATE, BBREF_GAME_ID)
     assert isinstance(pitch_logs_for_game, BrooksPitchLogsForGame)
-    game_status = GameScrapeStatus.find_by_bb_game_id(db_session, BB_GAME_ID)
+    game_status = GameScrapeStatus.find_by_bb_game_id(vig_app.db_session, BB_GAME_ID)
     assert game_status
     assert game_status.scraped_brooks_pitch_logs == 0
-    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, PITCH_APP_ID)
+    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(vig_app.db_session, PITCH_APP_ID)
     assert not pitch_app_status
-    result = update_status_brooks_pitch_logs_for_game(db_session, pitch_logs_for_game)
+    result = update_status_brooks_pitch_logs_for_game(vig_app.db_session, pitch_logs_for_game)
     assert result.success
     assert game_status.scraped_brooks_pitch_logs == 1
-    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, PITCH_APP_ID)
+    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(vig_app.db_session, PITCH_APP_ID)
     assert pitch_app_status
     assert pitch_app_status.pitch_count_pitch_log == 25
-    db_session.commit()
+    vig_app.db_session.commit()
 
 
 def verify_brooks_pitch_logs_for_game_TOR201806170(pitch_logs_for_game):

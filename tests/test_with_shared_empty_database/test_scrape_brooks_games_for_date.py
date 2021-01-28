@@ -20,28 +20,28 @@ GAME_ID = "gid_2018_04_17_lanmlb_sdnmlb_1"
 
 
 @pytest.fixture(scope="module", autouse=True)
-def create_test_data(db_session, scraped_data):
+def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_brooks_games_for_date module."""
-    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
+    update_scraped_bbref_games_for_date(vig_app, GAME_DATE)
     return True
 
 
-def test_parse_brooks_games_for_date(db_session, scraped_data):
-    games_for_date = parse_brooks_games_for_date_from_html(db_session, scraped_data, GAME_DATE)
+def test_parse_brooks_games_for_date(vig_app):
+    games_for_date = parse_brooks_games_for_date_from_html(vig_app, GAME_DATE)
     assert isinstance(games_for_date, BrooksGamesForDate)
     result = verify_brooks_games_for_date_apr_17_2018(games_for_date)
     assert result.success
 
 
-def test_persist_brooks_games_for_date(db_session, scraped_data):
-    games_for_date_parsed = parse_brooks_games_for_date_from_html(db_session, scraped_data, GAME_DATE)
+def test_persist_brooks_games_for_date(vig_app):
+    games_for_date_parsed = parse_brooks_games_for_date_from_html(vig_app, GAME_DATE)
     assert isinstance(games_for_date_parsed, BrooksGamesForDate)
-    result = scraped_data.save_json(DataSet.BROOKS_GAMES_FOR_DATE, games_for_date_parsed)
+    result = vig_app.scraped_data.save_json(DataSet.BROOKS_GAMES_FOR_DATE, games_for_date_parsed)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "brooks_games_for_date_2018-04-17.json"
-    games_for_date_decoded = scraped_data.get_brooks_games_for_date(GAME_DATE)
+    games_for_date_decoded = vig_app.scraped_data.get_brooks_games_for_date(GAME_DATE)
     assert isinstance(games_for_date_decoded, BrooksGamesForDate)
     result = verify_brooks_games_for_date_apr_17_2018(games_for_date_decoded)
     assert result.success
@@ -49,29 +49,29 @@ def test_persist_brooks_games_for_date(db_session, scraped_data):
     assert not json_filepath.exists()
 
 
-def test_update_database_brooks_games_for_date(db_session, scraped_data):
-    games_for_date = parse_brooks_games_for_date_from_html(db_session, scraped_data, GAME_DATE)
+def test_update_database_brooks_games_for_date(vig_app):
+    games_for_date = parse_brooks_games_for_date_from_html(vig_app, GAME_DATE)
     assert isinstance(games_for_date, BrooksGamesForDate)
-    date_status = db_session.query(DateScrapeStatus).get(GAME_DATE.strftime(DATE_ONLY_TABLE_ID))
+    date_status = vig_app.db_session.query(DateScrapeStatus).get(GAME_DATE.strftime(DATE_ONLY_TABLE_ID))
     assert date_status
     assert date_status.scraped_daily_dash_brooks == 0
     assert date_status.game_count_brooks == 0
-    game_status = GameScrapeStatus.find_by_bb_game_id(db_session, GAME_ID)
+    game_status = GameScrapeStatus.find_by_bb_game_id(vig_app.db_session, GAME_ID)
     assert not game_status
-    result = Season.is_date_in_season(db_session, GAME_DATE)
+    result = Season.is_date_in_season(vig_app.db_session, GAME_DATE)
     assert result.success
     season = result.value
-    result = update_brooks_games_for_date_single_date(db_session, season, games_for_date)
+    result = update_brooks_games_for_date_single_date(vig_app.db_session, season, games_for_date)
     assert result.success
     assert date_status.scraped_daily_dash_brooks == 1
     assert date_status.game_count_brooks == 16
-    game_status = GameScrapeStatus.find_by_bb_game_id(db_session, GAME_ID)
+    game_status = GameScrapeStatus.find_by_bb_game_id(vig_app.db_session, GAME_ID)
     assert game_status
     assert game_status.game_time_hour == 22
     assert game_status.game_time_minute == 10
     assert game_status.game_time_zone == "America/New_York"
     assert game_status.pitch_app_count_brooks == 15
-    db_session.commit()
+    vig_app.db_session.commit()
 
 
 def verify_brooks_games_for_date_apr_17_2018(games_for_date):

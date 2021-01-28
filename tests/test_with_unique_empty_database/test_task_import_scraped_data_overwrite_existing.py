@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 
+from tests.conftest import CSV_FOLDER
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,
@@ -10,6 +11,7 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
+from vigorish.app import Vigorish
 from vigorish.database import Season
 from vigorish.enums import DataSet
 from vigorish.tasks import ImportScrapedDataTask, CombineScrapedDataTask
@@ -22,21 +24,28 @@ BB_GAME_ID = GAME_DICT["bb_game_id"]
 APPLY_PATCH_LIST = GAME_DICT["apply_patch_list"]
 
 
-@pytest.fixture(scope="module", autouse=True)
-def create_test_data(vig_app):
-    """Initialize DB with data to verify test functions in this module."""
-    db_session = vig_app.db_session
-    scraped_data = vig_app.scraped_data
-    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_brooks_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_boxscore(db_session, scraped_data, BBREF_GAME_ID)
-    update_scraped_pitch_logs(db_session, scraped_data, GAME_DATE, BBREF_GAME_ID)
-    update_scraped_pitchfx_logs(db_session, scraped_data, BB_GAME_ID)
-    CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPLY_PATCH_LIST)
-    db_session.commit()
+@pytest.fixture()
+def vig_app(request):
+    """Returns an instance of the application configured to use the test DB and test config file."""
+    app = Vigorish()
+    app.initialize_database(csv_folder=CSV_FOLDER)
+    assert app.db_setup_complete
+    update_scraped_bbref_games_for_date(app, GAME_DATE)
+    update_scraped_brooks_games_for_date(app, GAME_DATE)
+    update_scraped_boxscore(app, BBREF_GAME_ID)
+    update_scraped_pitch_logs(app, GAME_DATE, BBREF_GAME_ID)
+    update_scraped_pitchfx_logs(app, BB_GAME_ID)
+    CombineScrapedDataTask(app).execute(BBREF_GAME_ID, APPLY_PATCH_LIST)
+    app.db_session.commit()
+
+    def fin():
+        app.db_session.close()
+
+    request.addfinalizer(fin)
+    return app
 
 
-def test_import_and_keep_existing(vig_app, mocker):
+def test_import_data_and_overwrite_existing(vig_app, mocker):
     def get_2018_2019_seasons(db_session):
         s2018 = Season.find_by_year(db_session, 2018)
         s2019 = Season.find_by_year(db_session, 2019)
@@ -93,7 +102,7 @@ def test_import_and_keep_existing(vig_app, mocker):
     )
 
     import_task = ImportScrapedDataTask(vig_app)
-    result = import_task.execute(overwrite_existing=True)
+    result = import_task.execute(overwrite_existing=False)
     assert result.success
 
     scraped_ids_2018_after = {}

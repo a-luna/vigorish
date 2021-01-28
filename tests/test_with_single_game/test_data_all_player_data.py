@@ -1,44 +1,8 @@
 from dacite.core import from_dict
-import pytest
 
-from tests.util import (
-    COMBINED_DATA_GAME_DICT,
-    update_scraped_bbref_games_for_date,
-    update_scraped_boxscore,
-    update_scraped_brooks_games_for_date,
-    update_scraped_pitch_logs,
-    update_scraped_pitchfx_logs,
-)
 from vigorish.data.all_player_data import AllPlayerData
 from vigorish.data.metrics import PitchFxMetricsCollection
 from vigorish.enums import PitchType
-from vigorish.tasks import AddToDatabaseTask
-from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
-
-TEST_ID = "NO_ERRORS"
-GAME_DICT = COMBINED_DATA_GAME_DICT[TEST_ID]
-GAME_DATE = GAME_DICT["game_date"]
-
-
-@pytest.fixture(scope="module", autouse=True)
-def create_test_data(vig_app):
-    """Initialize DB with data to verify test functions in test_all_player_data module."""
-    db_session = vig_app.db_session
-    scraped_data = vig_app.scraped_data
-    game_date = GAME_DICT["game_date"]
-    bbref_game_id = GAME_DICT["bbref_game_id"]
-    bb_game_id = GAME_DICT["bb_game_id"]
-    apply_patch_list = GAME_DICT["apply_patch_list"]
-    update_scraped_bbref_games_for_date(db_session, scraped_data, game_date)
-    update_scraped_brooks_games_for_date(db_session, scraped_data, game_date)
-    update_scraped_boxscore(db_session, scraped_data, bbref_game_id)
-    update_scraped_pitch_logs(db_session, scraped_data, game_date, bbref_game_id)
-    update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
-    CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
-    add_to_db = AddToDatabaseTask(vig_app)
-    add_to_db.execute(2019)
-    db_session.commit()
-    return True
 
 
 def test_all_player_data(vig_app):

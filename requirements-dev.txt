@@ -95,7 +95,7 @@ pytest-cov==2.11.1
 pytest-dotenv==0.5.2
 pytest-flake8==1.0.7
 pytest-mock==3.5.1
-pytest-randomly==3.5.0
+pytest-random-order==1.0.4
 pytest-sugar==0.9.4
 pytest-verbose-parametrize==1.7.0
 python-dateutil==2.8.1
