@@ -10,7 +10,7 @@ from halo import Halo
 
 from vigorish.cli.components.prompts import yes_no_prompt
 from vigorish.cli.components.util import (
-    print_heading,
+    print_error,
     print_message,
     shutdown_cli_immediately,
     get_random_cli_color,
@@ -19,18 +19,18 @@ from vigorish.cli.components.util import (
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.constants import EMOJI_DICT
-from vigorish.database import initialize_database, Season
+from vigorish.database import Season
 from vigorish.enums import DataSet
-from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
+from vigorish.tasks import ImportScrapedDataTask
 from vigorish.util.result import Result
 
 SETUP_HEADING = (
-    "Before you can begin scraping data, you must initialize the database with initial player, " "team and season data."
+    "Before you can begin scraping data, you must initialize the database with initial player, team and season data."
 )
 SETUP_MESSAGE = "\nSelect YES to initialize the database\nSelect NO to return to the previous menu"
 RESET_MESSAGE = "\nWould you like to reset the database with initial player, team and season data?"
 WARNING = (
-    "WARNING! All existing data will be deleted if you choose to reset the database. This " "action cannot be undone."
+    "WARNING! All existing data will be deleted if you choose to reset the database. This action cannot be undone."
 )
 IMPORT_SCRAPED_DATA_MESSAGE = (
     "Would you like to update the database using files from previous vigorish installations? "
@@ -52,6 +52,7 @@ class SetupDatabase(MenuItem):
         self.spinners = {}
         self.menu_item_text = "Reset Database" if self.db_initialized else "Setup Database"
         self.menu_item_emoji = EMOJI_DICT["BOMB"] if self.db_initialized else EMOJI_DICT["DIZZY"]
+        self.menu_heading = self._menu_item_text
 
     def launch(self):
         restart_required = self.db_initialized
@@ -73,16 +74,9 @@ class SetupDatabase(MenuItem):
             message = SETUP_HEADING
             message_color = None
             prompt = SETUP_MESSAGE
-        self.update_heading("Run Task?")
+        self.update_menu_heading("Run Task?")
         print_message(message, fg=message_color)
         return yes_no_prompt(prompt, wrap=False)
-
-    def update_heading(self, current_action):
-        new_heading = (
-            f"Reset Database: {current_action}" if self.db_initialized else f"Setup Database: {current_action}"
-        )
-        subprocess.run(["clear"])
-        print_heading(new_heading, fg="bright_yellow")
 
     def update_player_id_map(self):
         if not self.db_initialized:
@@ -99,10 +93,10 @@ class SetupDatabase(MenuItem):
         return Result.Ok()
 
     def create_and_populate_database_tables(self):
-        self.update_heading("In Progress")
-        result = initialize_database(self.app)
+        self.update_menu_heading("In Progress")
+        result = self.app.initialize_database()
         if result.success:
-            self.update_heading("Complete")
+            self.update_menu_heading("Complete!", heading_color="bright_green")
             print_message(DB_INITIALIZED, fg="bright_green", bold=True)
             pause(message="Press any key to continue...")
         return result
@@ -126,7 +120,7 @@ class SetupDatabase(MenuItem):
         example_folder = local_folder_path.current_setting(data_set=DataSet.BBREF_BOXSCORES)
         root_folder = Path(example_folder.resolve(year=2019)).parent.parent
         current_setting = f"JSON_LOCAL_FOLDER_PATH: {root_folder}"
-        self.update_heading("Import Local JSON Folder?")
+        self.update_menu_heading("Import Local JSON Folder?")
         print_message(IMPORT_SCRAPED_DATA_MESSAGE)
         print_message(current_setting, wrap=False)
         return yes_no_prompt(IMPORT_SCRAPED_DATA_PROMPT, wrap=False)
@@ -137,27 +131,28 @@ class SetupDatabase(MenuItem):
         return Result.Ok(self.exit_menu)
 
     def error_occurred(self, error_message, data_set, year):
-        self.update_heading("Error!")
+        self.update_menu_heading("Error!", heading_color="bright_red")
         self.spinner.fail(f"Error occurred while updating {data_set} for MLB {year}")
+        print_error(f"\nError: {error_message}")
 
     def search_local_files_start(self):
-        self.update_heading("In Progress")
+        self.update_menu_heading("In Progress")
         self.spinners["default"] = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinners["default"].text = "Searching local folder for scraped data..."
         self.spinners["default"].start()
 
     def import_scraped_data_start(self):
         self.spinners["default"].stop()
-        self.update_heading("In Progress...")
+        self.update_menu_heading("In Progress...")
 
     def import_scraped_data_complete(self):
-        self.update_heading("Complete!")
+        self.update_menu_heading("Complete!", heading_color="bright_green")
         success = "Successfully imported all scraped data from local files"
         print_message(success, fg="bright_yellow", bold=True)
         pause(message="\nPress any key to continue...")
 
     def import_scraped_data_for_year_start(self, year):
-        self.update_heading("In Progress...")
+        self.update_menu_heading("In Progress...")
         self.spinners[year] = defaultdict(lambda: Halo())
 
     def import_scraped_data_set_start(self, data_set, year):

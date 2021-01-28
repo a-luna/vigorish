@@ -30,6 +30,7 @@ class CreateJob(MenuItem):
         super().__init__(app)
         self.menu_item_text = "Create New Job"
         self.menu_item_emoji = EMOJI_DICT.get("KNIFE", "")
+        self.menu_heading = self._menu_item_text
 
     def launch(self):
         job_confirmed = False
@@ -39,8 +40,9 @@ class CreateJob(MenuItem):
         job_name = None
         season = None
         while not job_confirmed:
+            heading = self.get_menu_heading("Select Data Sets")
             prompt = "Select all data sets to scrape:"
-            data_sets = data_sets_prompt(prompt, checked_data_sets=data_sets)
+            data_sets = data_sets_prompt(heading, prompt, checked_data_sets=data_sets)
             dates_validated = False
             while not dates_validated:
                 start_date = self.prompt_user_scrape_start_date(start_date)
