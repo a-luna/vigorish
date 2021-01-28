@@ -17,10 +17,9 @@ from vigorish.util.sys_helpers import node_is_installed
 
 
 class AdminTasksMenu(Menu):
-    def __init__(self, app, audit_report):
+    def __init__(self, app):
         # TODO: Add Admin Task menu item to edit season dates and add new seasons
         super().__init__(app)
-        self.audit_report = audit_report
         self.menu_text = "Select a task from the list:"
         self.menu_item_text = "Tasks/Admin"
         self.menu_item_emoji = EMOJIS.get("PAGER", "")
@@ -33,7 +32,7 @@ class AdminTasksMenu(Menu):
         self.menu_items.append(SyncScrapedData(self.app))
         if self.app.db_setup_complete:
             self.menu_items.append(ImportScrapedData(self.app))
-            self.menu_items.append(AddToDatabase(self.app, self.audit_report))
+            self.menu_items.append(AddToDatabase(self.app))
             self.menu_items.append(BackupDatabase(self.app))
             self.menu_items.append(RestoreDatabase(self.app))
             self.menu_items.append(CalculatePitchTimes(self.app))
