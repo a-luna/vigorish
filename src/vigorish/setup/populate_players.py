@@ -6,7 +6,7 @@ from dataclass_csv import accept_whitespaces, DataclassReader, dateformat
 from tqdm import tqdm
 
 from vigorish.database import Assoc_Player_Team, Player, PlayerId, Season, Team
-from vigorish.tasks.update_player_maps import UpdatePlayerIdMap, UpdatePlayerTeamMap
+from vigorish.tasks import UpdatePlayerIdMapTask, UpdatePlayerTeamMapTask
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
@@ -65,9 +65,8 @@ def populate_players(app, csv_folder):
 
 def import_id_map_csv(app, csv_folder):
     try:
-        update_player_id_map = UpdatePlayerIdMap(app)
-        player_id_map_csv = csv_folder.joinpath(PLAYER_ID_MAP_CSV)
-        player_id_map = update_player_id_map.read_bbref_player_id_map_from_file(player_id_map_csv)
+        id_map_task = UpdatePlayerIdMapTask(app, csv_folder.joinpath(PLAYER_ID_MAP_CSV))
+        player_id_map = id_map_task.read_bbref_player_id_map_from_file()
         with tqdm(
             total=len(player_id_map),
             desc="Populating player_id table.....",
@@ -150,9 +149,8 @@ def import_people_csv(db_session, csv_folder):
 
 def import_team_map_csv(app, csv_folder):
     try:
-        update_player_team_map = UpdatePlayerTeamMap(app)
-        player_team_map_csv = csv_folder.joinpath(PLAYER_TEAM_MAP_CSV)
-        player_team_map = update_player_team_map.read_bbref_player_team_map_from_file(player_team_map_csv)
+        team_map_task = UpdatePlayerTeamMapTask(app, csv_folder.joinpath(PLAYER_TEAM_MAP_CSV))
+        player_team_map = team_map_task.read_bbref_player_team_map_from_file()
         with tqdm(
             total=len(player_team_map),
             desc="Populating player_team table...",

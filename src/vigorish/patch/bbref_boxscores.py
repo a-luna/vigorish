@@ -36,9 +36,7 @@ class PatchBBRefBoxscorePitchSequence(Patch):
             error = f"Unable to locate the inning identified in this patch: {self.inning_id}"
             return Result.Fail(error)
         if len(inning_matches) > 1:
-            error = (
-                "More than one inning was found that matches the inning identified in this " f"patch: {self.inning_id}"
-            )
+            error = "More than one inning was found that matches the inning identified in this patch: {self.inning_id}"
             return Result.Fail(error)
         inning = inning_matches[0]
         event_matches = [

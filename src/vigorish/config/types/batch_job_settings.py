@@ -14,7 +14,7 @@ class BatchJobSettings:
             return "Batched scraping is not enabled"
         if not self.batch_size_is_random:
             return f"Batch size is uniform ({self.batch_size_uniform} URLs)"
-        return "Batch size is random " f"({self.batch_size_random_min}-{self.batch_size_random_max} URLs)"
+        return f"Batch size is random ({self.batch_size_random_min}-{self.batch_size_random_max} URLs)"
 
     def to_dict(self):
         return {

@@ -2,7 +2,7 @@
 from vigorish.cli.menu import Menu
 from vigorish.cli.menu_items.return_to_parent import ReturnToParent
 from vigorish.cli.menus.jobs_menu import JobsMenu
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.database import ScrapeJob
 
 
@@ -11,7 +11,7 @@ class AllJobsMenu(Menu):
         super().__init__(app)
         self.menu_text = "Jobs are grouped according to their current status:"
         self.menu_item_text = "View All Jobs"
-        self.menu_item_emoji = EMOJI_DICT.get("ROBOT", "")
+        self.menu_item_emoji = EMOJIS.get("ROBOT", "")
 
     def populate_menu_items(self):
         jobs_grouped = ScrapeJob.get_all_jobs_grouped_sorted(self.db_session)

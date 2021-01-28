@@ -25,7 +25,6 @@ class Season_Game_View(Base):
                 Season,
                 GameScrapeStatus,
                 Season.id == GameScrapeStatus.season_id,
-                isouter=True,
             )
         )
         .group_by(Season.id),

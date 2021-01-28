@@ -53,7 +53,6 @@ class Season_Game_PitchApp_View(Base):
                 Season,
                 PitchAppScrapeStatus,
                 Season.id == PitchAppScrapeStatus.season_id,
-                isouter=True,
             )
         )
         .group_by(PitchAppScrapeStatus.scrape_status_game_id),

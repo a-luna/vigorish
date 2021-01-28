@@ -148,7 +148,7 @@ def test_validate_date_range(db_session):
     result = Season.validate_date_range(db_session, start_date_2018, end_date_2019)
     assert result.failure
     assert (
-        "Start and end dates must both be in the same year and within the scope of that " "year's MLB Regular Season."
+        "Start and end dates must both be in the same year and within the scope of that year's MLB Regular Season."
     ) in result.error
 
     result = Season.validate_date_range(db_session, end_date_2019, start_date_2019)

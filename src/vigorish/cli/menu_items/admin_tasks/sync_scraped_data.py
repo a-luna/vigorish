@@ -18,7 +18,7 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.components.viewers import DictListTableViewer
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import DataSet, SyncDirection, VigFile
 from vigorish.tasks.sync_scraped_data import SyncScrapedDataTask
 from vigorish.util.dt_format_strings import DT_NAIVE_LESS
@@ -40,7 +40,7 @@ class SyncScrapedData(MenuItem):
         self.task_number = 0
         self.spinners = defaultdict(dict)
         self.menu_item_text = " Synchronize Scraped Data"
-        self.menu_item_emoji = EMOJI_DICT.get("CLOUD", "")
+        self.menu_item_emoji = EMOJIS.get("CLOUD", "")
         self.menu_heading = self.menu_item_text
         self.exit_menu = False
 
@@ -113,7 +113,7 @@ class SyncScrapedData(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  {SYNC_UP_MENU_CHOICE}": SyncDirection.UP_TO_S3,
             f"{MENU_NUMBERS.get(2)}  {SYNC_DOWN_MENU_CHOICE}": SyncDirection.DOWN_TO_LOCAL,
-            f"{EMOJI_DICT.get('BACK')} Return to Main Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Main Menu": None,
         }
         return user_options_prompt(choices, prompt)
 

@@ -4,7 +4,7 @@ import subprocess
 from vigorish.cli.components import print_heading, print_message, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.change_config_setting import ChangeConfigSettting
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.util.result import Result
 
 
@@ -16,7 +16,7 @@ class ConfigSetting(MenuItem):
         self.setting_name_title = self.setting.setting_name_title
         self.current_settings = self.setting.current_settings_report
         self.menu_item_text = self.setting.setting_name_title
-        self.menu_item_emoji = EMOJI_DICT.get("GEAR")
+        self.menu_item_emoji = EMOJIS.get("GEAR")
         self.data_type = self.setting.data_type
 
     def launch(self):

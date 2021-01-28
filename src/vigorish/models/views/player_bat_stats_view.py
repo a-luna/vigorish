@@ -1,7 +1,7 @@
-from sqlalchemy import func, select
+from sqlalchemy import and_, func, join, select
 from sqlalchemy_utils.view import create_view
 
-from vigorish.database import Base, BatStats
+from vigorish.database import Assoc_Player_Team, Base, BatStats
 from vigorish.models.views.bat_stats_col_expressions import avg, bb_rate, iso, k_rate, obp, ops, slg
 
 
@@ -167,6 +167,7 @@ class Player_BatStats_By_Team_Year_View(Base):
                 BatStats.season_id.label("season_id"),
                 BatStats.player_team_id.label("player_team_id"),
                 BatStats.player_team_id_bbref.label("player_team_id_bbref"),
+                Assoc_Player_Team.stint_number.label("stint_number"),
                 func.count(BatStats.id).label("total_games"),
                 avg,
                 obp,
@@ -200,11 +201,22 @@ class Player_BatStats_By_Team_Year_View(Base):
                 func.sum(BatStats.re24_bat).label("re24_bat"),
             ]
         )
-        .select_from(BatStats)
+        .select_from(
+            join(
+                BatStats,
+                Assoc_Player_Team,
+                and_(
+                    BatStats.player_id == Assoc_Player_Team.db_player_id,
+                    BatStats.player_team_id == Assoc_Player_Team.db_team_id,
+                ),
+            )
+        )
         .group_by(BatStats.season_id)
         .group_by(BatStats.player_id)
         .group_by(BatStats.player_team_id)
-        .order_by(BatStats.player_id_mlb),
+        .order_by(BatStats.player_id_mlb)
+        .order_by(BatStats.season_id)
+        .order_by(Assoc_Player_Team.stint_number),
         metadata=Base.metadata,
         cascade_on_drop=False,
     )

@@ -9,7 +9,7 @@ from tests.util import (
     update_scraped_pitchfx_logs,
 )
 from vigorish.database import GameScrapeStatus
-from vigorish.tasks.add_to_database import AddToDatabaseTask
+from vigorish.tasks import AddToDatabaseTask
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
 TEST_ID = "NO_ERRORS"
@@ -33,7 +33,7 @@ def create_test_data(vig_app):
     update_scraped_pitchfx_logs(db_session, scraped_data, bb_game_id)
     CombineScrapedDataTask(vig_app).execute(bbref_game_id, apply_patch_list)
     add_to_db = AddToDatabaseTask(vig_app)
-    add_to_db.execute(vig_app.scraped_data.get_audit_report(), 2019)
+    add_to_db.execute(2019)
     db_session.commit()
     return True
 

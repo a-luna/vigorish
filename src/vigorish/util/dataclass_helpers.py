@@ -6,7 +6,7 @@ from dacite import from_dict
 from vigorish.util.dt_format_strings import DATE_ONLY
 
 
-def serialize_data_class_to_csv(data_class_objects, date_format):
+def serialize_dataclass_list_to_csv(data_class_objects, date_format):
     dataclass_dicts = [asdict(do) for do in data_class_objects]
     if not dataclass_dicts:
         return None
@@ -15,7 +15,16 @@ def serialize_data_class_to_csv(data_class_objects, date_format):
     return "\n".join((col_names + csv_rows))
 
 
-def deserialize_data_class_from_csv(csv_text, data_class):
+def get_dataclass_list_from_csv(csv_filepath, data_class):
+    if not csv_filepath.exists():
+        return []
+    csv_text = csv_filepath.read_text()
+    if not csv_text:
+        return []
+    return deserialize_dataclass_list_from_csv(csv_text, data_class)
+
+
+def deserialize_dataclass_list_from_csv(csv_text, data_class):
     csv_rows = csv_text.split("\n")
     col_names = [col.strip() for col in csv_rows.pop(0).split(",")]
     csv_rows = [row.split(",") for row in csv_rows]

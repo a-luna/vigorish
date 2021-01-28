@@ -14,7 +14,7 @@ from vigorish.cli.components import (
     yes_no_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.tasks import ImportScrapedDataTask
 from vigorish.util.result import Result
 
@@ -42,7 +42,7 @@ class ImportScrapedData(MenuItem):
         self.import_scraped_data = ImportScrapedDataTask(self.app)
         self.spinners = {}
         self.menu_item_text = "Import Scraped Data from Local Folders"
-        self.menu_item_emoji = EMOJI_DICT.get("HONEY_POT")
+        self.menu_item_emoji = EMOJIS.get("HONEY_POT")
 
     def launch(self):
         if not self.prompt_user_import_data():
@@ -78,7 +78,7 @@ class ImportScrapedData(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  KEEP EXISTING DATA": "KEEP",
             f"{MENU_NUMBERS.get(2)}  OVERWRITE EXISTING DATA": "OVERWRITE",
-            f"{EMOJI_DICT.get('BACK')} Return to Admin/Tasks Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Admin/Tasks Menu": None,
         }
         return user_options_prompt(choices, OVERWRITE_DATA_PROMPT, clear_screen=False)
 

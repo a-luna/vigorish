@@ -75,7 +75,7 @@ class UrlTracker:
     def save_html_report(self):
         total_urls = len(self.missing_urls) + len(self.completed_urls)
         percent_complete = len(self.completed_urls) / float(total_urls)
-        return f"Saving scraped HTML... {percent_complete:.0%} " f"({len(self.completed_urls)}/{total_urls}) URLs"
+        return f"Saving scraped HTML... {percent_complete:.0%} ({len(self.completed_urls)}/{total_urls}) URLs"
 
     def create_url_set(self, start_date, end_date):
         result = get_url_set(start_date, end_date, self.db_job, self.data_set, self.scraped_data)
@@ -98,7 +98,7 @@ class UrlTracker:
                 f"Parsing {data_set_str} for {game_id}... {percent_complete:.0%} "
                 f"({parsed_count}/{len(self.parse_url_ids)}) {unit}"
             )
-        return f"Parsing scraped HTML... {percent_complete:.0%} " f"({parsed_count}/{len(self.parse_url_ids)}) URLs"
+        return f"Parsing scraped HTML... {percent_complete:.0%} ({parsed_count}/{len(self.parse_url_ids)}) URLs"
 
     def create_missing_urls_json_file(self):
         urls_dict = [url.as_dict() for url in self.missing_urls]

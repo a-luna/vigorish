@@ -18,7 +18,7 @@ from vigorish.cli.components.util import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.database import Season
 from vigorish.enums import DataSet
 from vigorish.tasks import ImportScrapedDataTask
@@ -51,7 +51,7 @@ class SetupDatabase(MenuItem):
         self.db_initialized = self.app.db_setup_complete
         self.spinners = {}
         self.menu_item_text = "Reset Database" if self.db_initialized else "Setup Database"
-        self.menu_item_emoji = EMOJI_DICT["BOMB"] if self.db_initialized else EMOJI_DICT["DIZZY"]
+        self.menu_item_emoji = EMOJIS["BOMB"] if self.db_initialized else EMOJIS["DIZZY"]
         self.menu_heading = self._menu_item_text
 
     def launch(self):

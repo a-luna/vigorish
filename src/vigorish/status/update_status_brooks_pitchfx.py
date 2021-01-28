@@ -20,9 +20,7 @@ def update_pitch_appearance_status_records(db_session, pitchfx_log):
     try:
         pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitchfx_log.pitch_app_id)
         if not pitch_app_status:
-            error = (
-                f"scrape_status_pitch_app does not contain an " f"entry for pitch_app_id: {pitchfx_log.pitch_app_id}"
-            )
+            error = f"scrape_status_pitch_app does not contain an entry for pitch_app_id: {pitchfx_log.pitch_app_id}"
             return Result.Fail(error)
         pitch_app_status.scraped_pitchfx = 1
         pitch_app_status.pitch_count_pitchfx = pitchfx_log.total_pitch_count

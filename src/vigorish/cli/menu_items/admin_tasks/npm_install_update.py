@@ -9,7 +9,7 @@ from vigorish.cli.components import print_heading, print_message, yes_no_prompt
 from vigorish.cli.components.util import get_random_cli_color, get_random_dots_spinner
 from vigorish.cli.menu_item import MenuItem
 from vigorish.config.project_paths import NIGHTMAREJS_FOLDER, NODEJS_INBOX
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists, run_command
 
@@ -29,7 +29,7 @@ class NpmInstallUpdate(MenuItem):
         super().__init__(app)
         self.menu_heading = "Update Node Packages" if node_modules_folder_exists() else "Install Node Packages"
         self.menu_item_text = self.menu_heading
-        self.menu_item_emoji = EMOJI_DICT.get("PACKAGE")
+        self.menu_item_emoji = EMOJIS.get("PACKAGE")
 
     def launch(self):
         subprocess.run(["clear"])
