@@ -2,7 +2,6 @@ from sqlalchemy import case, cast, Float, func, Integer, String
 
 from vigorish.database import PitchStats
 
-
 innings_pitched = cast(
     cast(cast(func.sum(PitchStats.total_outs) / 3, Integer), String)
     + "."

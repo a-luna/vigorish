@@ -5,7 +5,6 @@ from pathlib import Path
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.components.prompts import user_options_prompt
 from vigorish.cli.components.util import (
     get_random_cli_color,
@@ -14,6 +13,7 @@ from vigorish.cli.components.util import (
     print_heading,
     shutdown_cli_immediately,
 )
+from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import DataSet

@@ -1,6 +1,6 @@
 """ABC for menu items that execute a command."""
-from abc import ABC, abstractmethod
 import subprocess
+from abc import ABC, abstractmethod
 
 from bullet import colors
 

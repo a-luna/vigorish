@@ -3,8 +3,8 @@ from datetime import date
 
 from tqdm import tqdm
 
-from vigorish.enums import SeasonType
 from vigorish.database import Season
+from vigorish.enums import SeasonType
 from vigorish.util.result import Result
 
 

@@ -1,12 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from vigorish.database import (
-    DateScrapeStatus,
-    GameScrapeStatus,
-    PitchAppScrapeStatus,
-    PitchFx,
-)
+from vigorish.database import DateScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PitchFx
 from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList
 from vigorish.util.dt_format_strings import DATE_ONLY

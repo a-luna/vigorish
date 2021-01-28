@@ -1,7 +1,7 @@
 from tqdm import tqdm
 
-from vigorish.enums import SeasonType
 from vigorish.database import Season, Team
+from vigorish.enums import SeasonType
 from vigorish.util.result import Result
 
 

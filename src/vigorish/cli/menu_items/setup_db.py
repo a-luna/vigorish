@@ -10,11 +10,11 @@ from halo import Halo
 
 from vigorish.cli.components.prompts import yes_no_prompt
 from vigorish.cli.components.util import (
+    get_random_cli_color,
+    get_random_dots_spinner,
     print_error,
     print_message,
     shutdown_cli_immediately,
-    get_random_cli_color,
-    get_random_dots_spinner,
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap

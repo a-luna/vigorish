@@ -19,7 +19,6 @@ from vigorish.database import GameScrapeStatus, PitchAppScrapeStatus
 from vigorish.status.update_status_combined_data import update_pitch_apps_with_combined_data
 from vigorish.tasks import CombineScrapedDataTask, PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_all_invalid_pfx import PatchInvalidPitchFxTask
-
 from vigorish.util.exceptions import ScrapedDataException
 
 # TODO: Add test case for game CHA201705272 to cover the scenario where the start time of the

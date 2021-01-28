@@ -1,7 +1,8 @@
 import os
+
 import pytest
 
-from tests.conftest import CSV_FOLDER, DOTENV_FILE, CONFIG_FILE, SQLITE_URL
+from tests.conftest import CONFIG_FILE, CSV_FOLDER, DOTENV_FILE, SQLITE_URL
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,

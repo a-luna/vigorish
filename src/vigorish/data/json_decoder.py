@@ -1,6 +1,5 @@
 """Decode json dicts of scraped data to custom objects."""
 from dacite import from_dict
-
 from dateutil import parser
 
 from vigorish.patch.bbref_boxscores import BBRefBoxscorePatchList, PatchBBRefBoxscorePitchSequence

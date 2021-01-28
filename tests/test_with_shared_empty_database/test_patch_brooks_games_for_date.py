@@ -9,12 +9,12 @@ from tests.util import (
 )
 from vigorish.database import GameScrapeStatus, PitchAppScrapeStatus
 from vigorish.enums import DataSet
-from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.patch.brooks_games_for_date import (
     BrooksGamesForDatePatchList,
     PatchBrooksGamesForDateBBRefGameID,
     PatchBrooksGamesForDateRemoveGame,
 )
+from vigorish.util.dt_format_strings import DATE_ONLY
 
 
 def test_patch_brooks_games_for_date(vig_app):

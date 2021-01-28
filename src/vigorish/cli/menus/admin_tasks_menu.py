@@ -1,5 +1,6 @@
 """Menu that allows the user to view and modify all settings in vig.config.json."""
 from vigorish.cli.menu import Menu
+from vigorish.cli.menu_items import ReturnToParent, SetupDatabase
 from vigorish.cli.menu_items.admin_tasks import (
     AddToDatabase,
     BackupDatabase,
@@ -10,7 +11,6 @@ from vigorish.cli.menu_items.admin_tasks import (
     SyncScrapedData,
     UpdatePlayerIdMap,
 )
-from vigorish.cli.menu_items import ReturnToParent, SetupDatabase
 from vigorish.constants import EMOJIS
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed

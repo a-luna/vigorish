@@ -1,7 +1,7 @@
 from sqlalchemy import and_, func, join, select
 from sqlalchemy_utils.view import create_view
 
-from vigorish.database import Base, PitchStats, Assoc_Player_Team
+from vigorish.database import Assoc_Player_Team, Base, PitchStats
 from vigorish.models.views.pitch_stats_col_expressions import (
     bb_per_nine,
     bb_rate,

@@ -7,7 +7,6 @@ from typing import Dict, List, Union
 from dacite import from_dict
 from sqlalchemy.engine import RowProxy
 
-from vigorish.enums import PitchType
 from vigorish.data.metrics.constants import (
     BATTED_BALL_METRICS,
     BOOL_PITCH_METRIC_NAMES,
@@ -15,6 +14,7 @@ from vigorish.data.metrics.constants import (
     INT_PITCH_METRIC_NAMES,
     PLATE_DISCIPLINE_METRICS,
 )
+from vigorish.enums import PitchType
 
 
 @dataclass

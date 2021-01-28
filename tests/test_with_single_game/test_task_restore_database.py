@@ -1,12 +1,6 @@
-from tests.conftest import CSV_FOLDER, BACKUP_FOLDER
+from tests.conftest import BACKUP_FOLDER, CSV_FOLDER
 from tests.util import COMBINED_DATA_GAME_DICT, NO_ERRORS_PITCH_APP
-
-from vigorish.database import (
-    DateScrapeStatus,
-    GameScrapeStatus,
-    PitchAppScrapeStatus,
-    PitchFx,
-)
+from vigorish.database import DateScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PitchFx
 from vigorish.tasks import AddToDatabaseTask, BackupDatabaseTask, RestoreDatabaseTask
 from vigorish.util.sys_helpers import zip_file_report
 

@@ -3,13 +3,13 @@ import subprocess
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.components.util import (
     get_random_cli_color,
     get_random_dots_spinner,
     print_heading,
     print_message,
 )
+from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS
 from vigorish.tasks import BackupDatabaseTask

@@ -11,8 +11,8 @@ from vigorish.cli.components import (
     print_message,
 )
 from vigorish.enums import DataSet, SyncDirection, VigFile
-from vigorish.tasks.sync_scraped_data import SyncScrapedDataTask
 from vigorish.tasks.base import Task
+from vigorish.tasks.sync_scraped_data import SyncScrapedDataTask
 from vigorish.util.result import Result
 
 SYNC_STATUS_TEXT_COLOR = {

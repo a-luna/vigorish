@@ -1,6 +1,6 @@
 import json
 from dataclasses import dataclass, field
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 
 from vigorish.scrape.bbref_boxscores.models.boxscore_game_meta import BBRefBoxscoreMeta
 from vigorish.scrape.bbref_boxscores.models.boxscore_team_data import BBRefBoxscoreTeamData

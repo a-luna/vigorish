@@ -21,7 +21,6 @@ from vigorish.util.numeric_helpers import is_even
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
 
-
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _AWAY_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[1]/div[3]/text()'
 _HOME_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[2]/div[3]/text()'

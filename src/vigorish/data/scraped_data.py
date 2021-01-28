@@ -4,12 +4,7 @@ from pathlib import Path
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
-from vigorish.database import (
-    DateScrapeStatus,
-    GameScrapeStatus,
-    PitchAppScrapeStatus,
-    Season,
-)
+from vigorish.database import DateScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, Season
 from vigorish.database import Season_Game_PitchApp_View as Season_View
 from vigorish.enums import DataSet
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX

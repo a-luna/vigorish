@@ -1,6 +1,6 @@
 import os
 
-from tests.conftest import TESTS_FOLDER, SQLITE_URL, CONFIG_FILE
+from tests.conftest import CONFIG_FILE, SQLITE_URL, TESTS_FOLDER
 from vigorish.config.dotenv_file import DotEnvFile
 
 

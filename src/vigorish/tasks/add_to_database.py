@@ -6,10 +6,10 @@ from events import Events
 from vigorish.data.all_game_data import AllGameData
 from vigorish.database import (
     BatStats,
-    PitchStats,
     GameScrapeStatus,
     PitchAppScrapeStatus,
     PitchFx,
+    PitchStats,
     PlayerId,
     Season,
     Team,

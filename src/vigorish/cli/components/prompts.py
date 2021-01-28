@@ -6,8 +6,8 @@ from getch import pause
 
 from vigorish.cli.components.data_set_check import DataSetCheck
 from vigorish.cli.components.date_input import DateInput
-from vigorish.cli.components.util import print_message, print_heading
-from vigorish.constants import DATA_SET_TO_NAME_MAP, DATA_SET_FROM_NAME_MAP, EMOJIS, MENU_NUMBERS
+from vigorish.cli.components.util import print_heading, print_message
+from vigorish.constants import DATA_SET_FROM_NAME_MAP, DATA_SET_TO_NAME_MAP, EMOJIS, MENU_NUMBERS
 from vigorish.database import Season
 from vigorish.enums import DataSet, VigFile
 from vigorish.util.result import Result

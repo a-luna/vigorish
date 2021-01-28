@@ -87,9 +87,7 @@ def setup(app):
     "--name",
     type=JobName(),
     help="A name to help identify this job.",
-    prompt=(
-        "(Optional) Enter a name for this job (ONLY letters, numbers, underscore, and/or hyphen characters)"
-    ),
+    prompt=("(Optional) Enter a name for this job (ONLY letters, numbers, underscore, and/or hyphen characters)"),
 )
 @click.pass_obj
 def scrape(app, data_sets, start, end, name):

@@ -6,8 +6,8 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from vigorish.config.config_file import ConfigFile
-from vigorish.config.project_paths import CSV_FOLDER, SQLITE_DEV_URL, SQLITE_PROD_URL
 from vigorish.config.dotenv_file import DotEnvFile
+from vigorish.config.project_paths import CSV_FOLDER, SQLITE_DEV_URL, SQLITE_PROD_URL
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.database import Base, Player, Season, Team
 from vigorish.setup.populate_tables import populate_tables, populate_tables_for_restore

@@ -5,19 +5,19 @@ from datetime import datetime
 from typing import Dict, List
 
 from vigorish.constants import (
-    PPB_PITCH_LOG_DICT,
     PLAY_DES_BB_TYPE_FB,
     PLAY_DES_BB_TYPE_GB,
     PLAY_DES_BB_TYPE_LD,
     PLAY_DES_BB_TYPE_PU,
+    PPB_PITCH_LOG_DICT,
 )
 from vigorish.database import GameScrapeStatus, PlayerId, TimeBetweenPitches
 from vigorish.enums import DataSet, PitchType
 from vigorish.scrape.bbref_boxscores.models.boxscore import BBRefBoxscore
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
 from vigorish.status.update_status_combined_data import update_pitch_apps_with_combined_data
-from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 from vigorish.tasks.base import Task
+from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
