@@ -11,7 +11,7 @@ from vigorish.cli.components.util import (
     print_message,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.tasks import BackupDatabaseTask
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import zip_file_report
@@ -22,7 +22,7 @@ class BackupDatabase(MenuItem):
         super().__init__(app)
         self.backup_db = BackupDatabaseTask(self.app)
         self.menu_item_text = " Export Database to CSV"
-        self.menu_item_emoji = EMOJI_DICT.get("TABBED_FILES")
+        self.menu_item_emoji = EMOJIS.get("TABBED_FILES")
         self.exit_menu = False
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.table_count = 0

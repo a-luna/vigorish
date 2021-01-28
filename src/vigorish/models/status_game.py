@@ -15,7 +15,7 @@ from vigorish.util.dt_format_strings import (
     DATE_ONLY_TABLE_ID,
     DT_STR_FORMAT,
 )
-from vigorish.util.string_helpers import get_brooks_team_id
+from vigorish.util.string_helpers import get_brooks_team_id, validate_brooks_game_id
 
 
 class GameScrapeStatus(Base):
@@ -65,6 +65,16 @@ class GameScrapeStatus(Base):
             if self.game_date
             else None
         )
+
+    @hybrid_property
+    def away_team_id_bb(self):
+        game_dict = validate_brooks_game_id(self.bb_game_id).value
+        return game_dict["away_team_id"]
+
+    @hybrid_property
+    def home_team_id_bb(self):
+        game_dict = validate_brooks_game_id(self.bb_game_id).value
+        return game_dict["home_team_id"]
 
     @hybrid_property
     def pitch_app_count_pitchfx(self):
@@ -262,7 +272,7 @@ class GameScrapeStatus(Base):
                 f"PitchFx Logs Scraped.........................: {scraped_all_pitchfx_logs} "
                 f"{self.total_pitch_apps_scraped_pitchfx}/{self.pitch_app_count_pitchfx}"
             ),
-            ("Combined BBRef/PitchFX Data..................: " f"{combined_data_for_all_pitchfx_logs}"),
+            f"Combined BBRef/PitchFX Data..................: {combined_data_for_all_pitchfx_logs}",
             (
                 f"PitchFX Data Errors (Valid AB/Invalid AB)....: "
                 f"{pitchfx_error_for_any_pitchfx_logs} "

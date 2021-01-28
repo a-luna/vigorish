@@ -1,6 +1,4 @@
 """Constant values that are referenced from multiple places."""
-from bullet import colors
-
 from vigorish.enums import DataSet
 
 ENV_VAR_NAMES = [
@@ -228,7 +226,7 @@ PPB_PITCH_LOG_DICT = {
 
 VENUE_TERMS = ["stadium", "park", "field", "coliseum", "centre", "estadio", "dome"]
 
-STRIKE_ZONE_LOCATIONS = [6, 7, 8, 11, 12, 13, 16, 17, 18]
+ZONE_LOCATIONS_INSIDE_SZ = [6, 7, 8, 11, 12, 13, 16, 17, 18]
 
 PITCH_DES_SWINGING_STRIKE = [
     "Foul Tip",
@@ -281,13 +279,15 @@ JOB_SPINNER_COLORS = {
     DataSet.BROOKS_PITCHFX: "magenta",
 }
 
-DATA_SET_NAMES_LONG = {
+DATA_SET_FROM_NAME_MAP = {
     "Games for Date (bbref.com)": DataSet.BBREF_GAMES_FOR_DATE,
     "Games for Date (brooksbaseball.net)": DataSet.BROOKS_GAMES_FOR_DATE,
     "Boxscores (bbref.com)": DataSet.BBREF_BOXSCORES,
     "Pitch Logs for Game (brooksbaseball.net)": DataSet.BROOKS_PITCH_LOGS,
     "PitchFX Logs (brooksbaseball.net)": DataSet.BROOKS_PITCHFX,
 }
+
+DATA_SET_TO_NAME_MAP = {data_set: name for name, data_set in DATA_SET_FROM_NAME_MAP.items()}
 
 CLI_COLORS = [
     "black",
@@ -308,26 +308,7 @@ CLI_COLORS = [
     "bright_white",
 ]
 
-BULLET_COLORS = {
-    "black": colors.foreground["black"],
-    "red": colors.foreground["red"],
-    "green": colors.foreground["green"],
-    "yellow": colors.foreground["yellow"],
-    "blue": colors.foreground["blue"],
-    "magenta": colors.foreground["magenta"],
-    "cyan": colors.foreground["cyan"],
-    "white": colors.foreground["white"],
-    "bright_black": colors.bright(colors.foreground["black"]),
-    "bright_red": colors.bright(colors.foreground["red"]),
-    "bright_green": colors.bright(colors.foreground["green"]),
-    "bright_yellow": colors.bright(colors.foreground["yellow"]),
-    "bright_blue": colors.bright(colors.foreground["blue"]),
-    "bright_magenta": colors.bright(colors.foreground["magenta"]),
-    "bright_cyan": colors.bright(colors.foreground["cyan"]),
-    "bright_white": colors.bright(colors.foreground["white"]),
-}
-
-EMOJI_DICT = {
+EMOJIS = {
     "HAND_POINTER": "👉",
     "BOOKMARK": "🔖",
     "FOLDER": "📁",

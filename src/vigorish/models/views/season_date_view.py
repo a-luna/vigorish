@@ -22,7 +22,6 @@ class Season_Date_View(Base):
                 Season,
                 DateScrapeStatus,
                 Season.id == DateScrapeStatus.season_id,
-                isouter=True,
             )
         )
         .group_by(Season.id),

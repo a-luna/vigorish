@@ -11,7 +11,7 @@ from vigorish.cli.components.util import (
     print_message,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.data.all_game_data import AllGameData
 from vigorish.util.result import Result
 
@@ -21,7 +21,7 @@ class ViewGameData(MenuItem):
         super().__init__(app)
         self.bbref_game_id = bbref_game_id
         self.menu_item_text = bbref_game_id
-        self.menu_item_emoji = EMOJI_DICT.get("NEWSPAPER")
+        self.menu_item_emoji = EMOJIS.get("NEWSPAPER")
 
     @property
     def away_team_id(self):
@@ -86,7 +86,7 @@ class ViewGameData(MenuItem):
             f"{MENU_NUMBERS.get(4)}  {self.pitch_stats_text(True)}": (self.home_team_id, "PITCH"),
             f"{MENU_NUMBERS.get(5)}  All At Bats By Inning": (None, "ALL"),
             f"{MENU_NUMBERS.get(6)}  Game Meta Information": (None, "META_INFO"),
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, prompt, clear_screen=False)
 
@@ -109,12 +109,12 @@ class ViewGameData(MenuItem):
         return Result.Ok()
 
     def innings_viewer_prompt(self, innings_viewer):
-        choices = {f"{EMOJI_DICT.get('ASTERISK')}  All Innings": innings_viewer["ALL"]}
+        choices = {f"{EMOJIS.get('ASTERISK')}  All Innings": innings_viewer["ALL"]}
         for inning, table_viewer in innings_viewer.items():
             if inning == "ALL":
                 continue
             choices[f"{MENU_NUMBERS.get(int(inning[-2:]), inning[-2:])}  {inning}"] = table_viewer
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         prompt = "Select an inning to view:"
         return user_options_prompt(choices, prompt)
 
@@ -136,12 +136,14 @@ class ViewGameData(MenuItem):
                 pitcher_data = result.value
                 if pitcher_data == "AT_BATS":
                     self.view_at_bats_for_player(player_type, mlb_id)
-                if pitcher_data == "PITCH_MIX":
-                    self.view_pitch_mix_for_player(mlb_id)
+                if pitcher_data == "PITCH_MIX_BY_STANCE":
+                    self.view_pitch_mix_batter_stance_splits(mlb_id)
+                if pitcher_data == "PITCH_MIX_BY_SEASON":
+                    self.view_pitch_mix_season_splits(mlb_id)
                 if pitcher_data == "PLATE_DISCIPLINE":
-                    self.view_pd_stats_for_player(mlb_id)
+                    self.view_pd_pitch_type_splits_for_pitcher(mlb_id)
                 if pitcher_data == "BATTED_BALL":
-                    self.view_bb_stats_for_player(mlb_id)
+                    self.view_bb_pitch_type_splits_for_pitcher(mlb_id)
 
     def get_boxscore(self, team_id, player_type):
         boxscore_dict = {
@@ -170,7 +172,7 @@ class ViewGameData(MenuItem):
             f"{self.select_pitcher_text(num, box, max_name_length)}": box["mlb_id"]
             for num, box in enumerate(pitch_boxscore.values(), start=1)
         }
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         prompt = (
             "All pitchers that apppeared in the game are listed below. Select a player and "
             "press ENTER to access information for this start and various career stats:"
@@ -197,11 +199,12 @@ class ViewGameData(MenuItem):
             "please choose an option from the list below:"
         )
         choices = {
-            f"{MENU_NUMBERS.get(1)}  View Details of All At Bats": "AT_BATS",
-            f"{MENU_NUMBERS.get(2)}  View Pitch Mix": "PITCH_MIX",
-            f"{MENU_NUMBERS.get(3)}  View Plate Discipline Metrics": "PLATE_DISCIPLINE",
-            f"{MENU_NUMBERS.get(4)}  View Batted Ball Metrics": "BATTED_BALL",
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{MENU_NUMBERS.get(1)}  Play-by-Play Data for All At Bats": "AT_BATS",
+            f"{MENU_NUMBERS.get(2)}  Pitch Mix Split by Batter Stance": "PITCH_MIX_BY_STANCE",
+            f"{MENU_NUMBERS.get(3)}  Pitch Mix Split by Season": "PITCH_MIX_BY_SEASON",
+            f"{MENU_NUMBERS.get(4)}  Plate Discipline Metrics Split by Pitch Type": "PLATE_DISCIPLINE",
+            f"{MENU_NUMBERS.get(5)}  Batted Ball Metrics Split by Pitch Type": "BATTED_BALL",
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
         return user_options_prompt(choices, prompt, clear_screen=False)
@@ -211,21 +214,27 @@ class ViewGameData(MenuItem):
         innings_viewer = self.game_data.view_valid_at_bats_for_pitcher(mlb_id).value
         return self.view_at_bats_by_inning(innings_viewer)
 
-    def view_pitch_mix_for_player(self, mlb_id):
+    def view_pitch_mix_batter_stance_splits(self, mlb_id):
         subprocess.run(["clear"])
-        table_viewer = self.game_data.view_pitch_mix_for_player(mlb_id).value
+        table_viewer = self.game_data.view_pitch_mix_batter_stance_splits(mlb_id).value
         table_viewer.launch()
         return Result.Ok()
 
-    def view_pd_stats_for_player(self, mlb_id):
+    def view_pitch_mix_season_splits(self, mlb_id):
         subprocess.run(["clear"])
-        table_viewer = self.game_data.view_pd_stats_for_player(mlb_id).value
+        table_viewer = self.game_data.view_pitch_mix_season_splits(mlb_id).value
         table_viewer.launch()
         return Result.Ok()
 
-    def view_bb_stats_for_player(self, mlb_id):
+    def view_pd_pitch_type_splits_for_pitcher(self, mlb_id):
         subprocess.run(["clear"])
-        table_viewer = self.game_data.view_bb_stats_for_player(mlb_id).value
+        table_viewer = self.game_data.view_pd_pitch_type_splits_for_pitcher(mlb_id).value
+        table_viewer.launch()
+        return Result.Ok()
+
+    def view_bb_pitch_type_splits_for_pitcher(self, mlb_id):
+        subprocess.run(["clear"])
+        table_viewer = self.game_data.view_bb_pitch_type_splits_for_pitcher(mlb_id).value
         table_viewer.launch()
         return Result.Ok()
 
@@ -235,7 +244,7 @@ class ViewGameData(MenuItem):
             f"{self.select_batter_text(order_num, box, max_name_length)}": box["mlb_id"]
             for order_num, box in bat_boxscore.items()
         }
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         prompt = (
             "Starting lineup and all substitutes who made at least one plate appearance are "
             "listed below. Select a player and press ENTER to view details of each at bat:"
@@ -257,7 +266,7 @@ class ViewGameData(MenuItem):
         emoji_num = MENU_NUMBERS.get(lineup_slot)
         if emoji_num:
             return f"{emoji_num} "
-        return EMOJI_DICT.get("CAP")
+        return EMOJIS.get("CAP")
 
     def view_at_bats_for_batter(self, mlb_id):
         subprocess.run(["clear"])

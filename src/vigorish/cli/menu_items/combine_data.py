@@ -17,7 +17,7 @@ from vigorish.cli.components import (
     user_options_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.database import Season
 from vigorish.enums import AuditError, DataSet, ScrapeCondition
 from vigorish.tasks import CombineScrapedDataTask
@@ -49,7 +49,7 @@ class CombineScrapedData(MenuItem):
         self.pbar_manager = enlighten.get_manager()
         self.audit_report = audit_report
         self.menu_item_text = "Combine Game Data"
-        self.menu_item_emoji = EMOJI_DICT.get("BANG", "")
+        self.menu_item_emoji = EMOJIS.get("BANG", "")
         self.exit_menu = False
         self.combine_condition = self.config.get_current_setting("SCRAPED_DATA_COMBINE_CONDITION", DataSet.ALL)
         self.audit_type = None
@@ -71,9 +71,9 @@ class CombineScrapedData(MenuItem):
 
     @property
     def game_bar_format(self):
-        SUCCESS = EMOJI_DICT.get("PASSED", "")
-        FAIL = EMOJI_DICT.get("FAILED", "")
-        ERROR = EMOJI_DICT.get("CONFUSED", "")
+        SUCCESS = EMOJIS.get("PASSED", "")
+        FAIL = EMOJIS.get("FAILED", "")
+        ERROR = EMOJIS.get("CONFUSED", "")
         return (
             "{desc}{desc_pad}{percentage:3.0f}% |{bar}| "
             + self.terminal.green3(f"{SUCCESS}" + " {count_0:{len_total}d}")
@@ -497,22 +497,22 @@ class CombineScrapedData(MenuItem):
             f"{MENU_NUMBERS.get(1)}  By Season": "SEASON",
             f"{MENU_NUMBERS.get(2)}  By Date": "DATE",
             f"{MENU_NUMBERS.get(3)}  By Game": "GAME",
-            f"{EMOJI_DICT.get('BACK')} Return to Main Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Main Menu": None,
         }
         return user_options_prompt(choices, prompt)
 
     def game_date_prompt(self):
         choices = {
-            f"{EMOJI_DICT.get('BOLT')} {game_date.strftime(DATE_MONTH_NAME)}": game_date
+            f"{EMOJIS.get('BOLT')} {game_date.strftime(DATE_MONTH_NAME)}": game_date
             for game_date in self.all_dates_with_eligible_games
         }
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         prompt = "Select a date to combine scraped data for all games that took place on that date"
         return user_options_prompt(choices, prompt)
 
     def game_id_prompt(self):
-        choices = {f"{EMOJI_DICT.get('BOLT')} {game_id}": game_id for game_id in self.all_eligible_games_in_season}
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices = {f"{EMOJIS.get('BOLT')} {game_id}": game_id for game_id in self.all_eligible_games_in_season}
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         prompt = "Select the BBRef.com Game ID to combine scraped data:"
         return user_options_prompt(choices, prompt)
 

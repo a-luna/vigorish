@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from vigorish.database import Player
 from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 from vigorish.util.result import Result
 
@@ -250,6 +251,7 @@ def test_scrape_mlb_player_info(vig_app, mocker):
     result = scrape_player_info_task.execute(PLAYER_NAME, BBREF_ID, GAME_DATE)
     assert result.success
     new_player = result.value
+    assert new_player and isinstance(new_player, Player)
     assert new_player.name_first == "Bryse"
     assert new_player.name_last == "Wilson"
     assert new_player.throws == "R"

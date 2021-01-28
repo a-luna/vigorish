@@ -6,6 +6,9 @@ VIG_FOLDER = Path.home().joinpath(".vig")
 DOTENV_FILE = VIG_FOLDER.joinpath(".env")
 CONFIG_FILE = VIG_FOLDER.joinpath("vig.config.json")
 
+SQLITE_DEV_URL = f"sqlite:///{VIG_FOLDER.joinpath('vig_dev.db')}"
+SQLITE_PROD_URL = f"sqlite:///{VIG_FOLDER.joinpath('vig.db')}"
+
 NIGHTMAREJS_FOLDER = APP_FOLDER.joinpath("nightmarejs")
 NODEJS_INBOX = NIGHTMAREJS_FOLDER.joinpath("inbox")
 NODEJS_OUTBOX = NIGHTMAREJS_FOLDER.joinpath("outbox")

@@ -11,7 +11,7 @@ from vigorish.cli.components import (
     yes_no_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.database import ScrapeJob
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
@@ -29,7 +29,7 @@ class CreateJob(MenuItem):
         #    - Separate inputs for month and day (user will select year first before data sets)
         super().__init__(app)
         self.menu_item_text = "Create New Job"
-        self.menu_item_emoji = EMOJI_DICT.get("KNIFE", "")
+        self.menu_item_emoji = EMOJIS.get("KNIFE", "")
         self.menu_heading = self._menu_item_text
 
     def launch(self):

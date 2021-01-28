@@ -19,7 +19,7 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.components.viewers import DictListTableViewer, DisplayTable, TableViewer
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType
 from vigorish.tasks import CombineScrapedDataTask, PatchAllInvalidPitchFxTask
 from vigorish.tasks.patch_all_invalid_pfx import PatchInvalidPitchFxTask
@@ -36,7 +36,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         self.year = year
         self.bbref_game_ids = bbref_game_ids
         self.menu_item_text = f"{AuditError.INVALID_PITCHFX_DATA} ({self.game_count} Games)"
-        self.menu_item_emoji = EMOJI_DICT.get("UPSIDE_DOWN")
+        self.menu_item_emoji = EMOJIS.get("UPSIDE_DOWN")
 
     @property
     def game_count(self):
@@ -92,7 +92,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  Patch all Games": "ALL",
             f"{MENU_NUMBERS.get(2)}  Patch a Single Game": "ONE",
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, prompt)
 
@@ -101,7 +101,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  Analyze Pitching Data": "INVESTIGATE",
             f"{MENU_NUMBERS.get(2)}  Attempt to Combine Data (Again)": "RETRY",
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, prompt)
 

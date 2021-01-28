@@ -36,8 +36,7 @@ class BrooksPitchFxPatchList(PatchList):
         return Result.Ok(data)
 
     def pre_process_data(self, data):
-        data_copy = deepcopy(data)
-        self.original_pfx_logs = {pfx_log.pitch_app_id: pfx_log for pfx_log in data_copy}
+        self.original_pfx_logs = {pfx_log.pitch_app_id: pfx_log for pfx_log in deepcopy(data)}
         return [pfx for pitchfx_log in data for pfx in pitchfx_log.pitchfx_log]
 
     def post_process_data(self, data, db_session, boxscore=None):
