@@ -56,6 +56,7 @@ class RestoreDatabase(MenuItem):
         result = self.restore_db.execute(zip_file=zip_file)
         self.unsubscribe_from_events()
         if result.failure:
+            self.spinner.stop()
             return result
         pause(message="\nPress any key to continue...")
         shutdown_cli_immediately()
@@ -104,6 +105,13 @@ class RestoreDatabase(MenuItem):
         self.spinner.start()
         self.spinner.text = "Unzipping backup CSV files..."
 
+    def unzip_backup_files_complete(self):
+        self.spinner.stop()
+        self.spinner = None
+
+    def restore_database_start(self):
+        self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
+
     def restore_table_start(self, table):
         self.current_table = table
         self.spinner.text = self.get_spinner_text(0)
@@ -120,6 +128,8 @@ class RestoreDatabase(MenuItem):
 
     def subscribe_to_events(self):
         self.restore_db.events.unzip_backup_files_start += self.unzip_backup_files_start
+        self.restore_db.events.unzip_backup_files_complete += self.unzip_backup_files_complete
+        self.restore_db.events.restore_database_start += self.restore_database_start
         self.restore_db.events.restore_table_start += self.restore_table_start
         self.restore_db.events.batch_insert_performed += self.batch_insert_performed
         self.restore_db.events.restore_database_complete += self.restore_database_complete
