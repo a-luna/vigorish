@@ -1,12 +1,18 @@
 """ABC for menu items that execute a command."""
 from abc import ABC, abstractmethod
+import subprocess
 
 from bullet import colors
 
+from vigorish.cli.components.util import print_heading
+
 
 class MenuItem(ABC):
+    # TODO: Update all menu items to use the menu_heading value
+
     _menu_item_text = ""
     menu_item_emoji = ""
+    menu_heading = "Menu"
     background_color = colors.background["default"]
     background_on_switch = colors.background["default"]
     word_color = colors.foreground["default"]
@@ -28,6 +34,13 @@ class MenuItem(ABC):
     @menu_item_text.setter
     def menu_item_text(self, menu_item_text):
         self._menu_item_text = menu_item_text
+
+    def get_menu_heading(self, status):
+        return f"{self.menu_heading}: {status}"
+
+    def update_menu_heading(self, status, heading_color="bright_yellow"):
+        subprocess.run(["clear"])
+        print_heading(self.get_menu_heading(status), fg=heading_color)
 
     @abstractmethod
     def launch(self):
