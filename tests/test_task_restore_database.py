@@ -1,7 +1,7 @@
 import pytest
 
 from tests.conftest import CSV_FOLDER
-from tests.test_task_backup_database_to_csv import remove_everything_in_backup_folder
+from tests.test_task_backup_database import remove_everything_in_backup_folder
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     NO_ERRORS_PITCH_APP,
