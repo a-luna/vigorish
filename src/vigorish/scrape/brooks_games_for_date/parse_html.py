@@ -73,9 +73,7 @@ def _no_pitch_logs(game_table, game_number, game_date, game_time, required_game_
     if result.failure:
         return result
     gameinfo = result.value
-    game_is_required = any(
-        gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data
-    )
+    game_is_required = any(gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data)
     if not game_is_required:
         return Result.Fail("Game not found in bbref parsed game list.")
     gameinfo.might_be_postponed = True
@@ -94,9 +92,7 @@ def _is_game_required(game_date, game_time, url, required_game_data):
     game_date_check = result.value["game_date"]
     if game_date != game_date_check:
         return Result.Fail("Game did not occur on the current date.")
-    game_is_required = any(
-        gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data
-    )
+    game_is_required = any(gameinfo.home_team_id_bb == req["home_team_id"] for req in required_game_data)
     if not game_is_required:
         return Result.Fail("Game not found in bbref parsed game list.")
     gameinfo.might_be_postponed = False
@@ -125,10 +121,7 @@ def _parse_gameinfo(game_date, game_time, url):
 def _parse_gameinfo_from_url(gameinfo, url):
     gameid = _parse_gameid_from_url(url)
     if not gameid:
-        error = (
-            "URL not in expected format, unable to retrieve value of "
-            f'query parameter "game":\n{url}'
-        )
+        error = "URL not in expected format, unable to retrieve value of " f'query parameter "game":\n{url}'
         return Result.Fail(error)
     gameinfo.bb_game_id = gameid
     gameinfo.away_team_id_bb = _parse_away_team_from_gameid(gameid)

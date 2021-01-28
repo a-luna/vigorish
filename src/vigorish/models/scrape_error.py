@@ -32,12 +32,7 @@ class ScrapeError(Base):
         return localized_dt_string(occurred_at_utc, use_tz=get_local_utcoffset())
 
     def __repr__(self):
-        return (
-            "<ScrapeError "
-            f"job_name={self.job.name}, "
-            f"job_id={self.job_id}, "
-            f"message={self.error_message}>"
-        )
+        return f"<ScrapeError job_name={self.job.name}, job_id={self.job_id}, message={self.error_message}>"
 
     def __str__(self):
         return f"{self.occurred_at_str} | {self.error_message}"

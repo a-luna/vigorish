@@ -1,5 +1,6 @@
 """Menu that allows the user to view and modify all settings in vig.config.json."""
 from vigorish.cli.menu import Menu
+from vigorish.cli.menu_items import ReturnToParent, SetupDatabase
 from vigorish.cli.menu_items.admin_tasks import (
     AddToDatabase,
     BackupDatabase,
@@ -10,8 +11,7 @@ from vigorish.cli.menu_items.admin_tasks import (
     SyncScrapedData,
     UpdatePlayerIdMap,
 )
-from vigorish.cli.menu_items import ReturnToParent, SetupDatabase
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed
 
@@ -23,7 +23,7 @@ class AdminTasksMenu(Menu):
         self.audit_report = audit_report
         self.menu_text = "Select a task from the list:"
         self.menu_item_text = "Tasks/Admin"
-        self.menu_item_emoji = EMOJI_DICT.get("PAGER", "")
+        self.menu_item_emoji = EMOJIS.get("PAGER", "")
 
     def populate_menu_items(self):
         self.menu_items.clear()

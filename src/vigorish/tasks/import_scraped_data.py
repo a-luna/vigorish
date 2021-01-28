@@ -72,9 +72,7 @@ class ImportScrapedDataTask(Task):
         for data_set in DataSet:
             if data_set == DataSet.ALL:
                 continue
-            scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(
-                VigFile.PARSED_JSON, data_set, year
-            )
+            scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(VigFile.PARSED_JSON, data_set, year)
             if scraped_ids:
                 return True
         return False
@@ -113,9 +111,7 @@ class ImportScrapedDataTask(Task):
         return Result.Ok()
 
     def update_data_set(self, data_set, season, overwrite_existing=False):
-        scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(
-            VigFile.PARSED_JSON, data_set, season.year
-        )
+        scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(VigFile.PARSED_JSON, data_set, season.year)
         if not scraped_ids:
             return Result.Ok()
         if not overwrite_existing:

@@ -11,8 +11,8 @@ from vigorish.data.json_decoder import (
     decode_bbref_boxscore_patch_list,
     decode_bbref_games_for_date,
     decode_bbref_games_for_date_patch_list,
-    decode_brooks_games_for_date_patch_list,
     decode_brooks_games_for_date,
+    decode_brooks_games_for_date_patch_list,
     decode_brooks_pitch_logs_for_game,
     decode_brooks_pitchfx_log,
     decode_brooks_pitchfx_patch_list,
@@ -53,9 +53,7 @@ class FileHelper:
             VigFile.SCRAPED_HTML: html_folderpath_dict,
             VigFile.PARSED_JSON: json_folderpath_dict,
             VigFile.PATCH_LIST: json_folderpath_dict,
-            VigFile.COMBINED_GAME_DATA: {
-                DataSet.ALL: combined_local_folder.current_setting(data_set=DataSet.ALL)
-            },
+            VigFile.COMBINED_GAME_DATA: {DataSet.ALL: combined_local_folder.current_setting(data_set=DataSet.ALL)},
         }
 
     @property
@@ -77,9 +75,7 @@ class FileHelper:
             VigFile.SCRAPED_HTML: html_folderpath_dict,
             VigFile.PARSED_JSON: json_folderpath_dict,
             VigFile.PATCH_LIST: json_folderpath_dict,
-            VigFile.COMBINED_GAME_DATA: {
-                DataSet.ALL: combined_s3_folder.current_setting(data_set=DataSet.ALL)
-            },
+            VigFile.COMBINED_GAME_DATA: {DataSet.ALL: combined_s3_folder.current_setting(data_set=DataSet.ALL)},
         }
 
     @property
@@ -137,22 +133,16 @@ class FileHelper:
         json_storage = self.config.all_settings.get("JSON_STORAGE")
         combined_storage = self.config.all_settings.get("COMBINED_DATA_STORAGE")
         html_storage_dict = {
-            data_set: html_storage.current_setting(data_set=data_set)
-            for data_set in DataSet
-            if data_set != DataSet.ALL
+            data_set: html_storage.current_setting(data_set=data_set) for data_set in DataSet if data_set != DataSet.ALL
         }
         json_storage_dict = {
-            data_set: json_storage.current_setting(data_set=data_set)
-            for data_set in DataSet
-            if data_set != DataSet.ALL
+            data_set: json_storage.current_setting(data_set=data_set) for data_set in DataSet if data_set != DataSet.ALL
         }
         return {
             VigFile.SCRAPED_HTML: html_storage_dict,
             VigFile.PARSED_JSON: json_storage_dict,
             VigFile.PATCH_LIST: json_storage_dict,
-            VigFile.COMBINED_GAME_DATA: {
-                DataSet.ALL: combined_storage.current_setting(data_set=DataSet.ALL)
-            },
+            VigFile.COMBINED_GAME_DATA: {DataSet.ALL: combined_storage.current_setting(data_set=DataSet.ALL)},
         }
 
     def create_all_folderpaths(self, year):
@@ -239,9 +229,7 @@ class FileHelper:
 
     def get_local_folderpath(self, file_type, data_set, game_date=None, year=None):
         if not game_date and not year:
-            error = (
-                "You must provide either the game_date or year argument to construct a folderpath"
-            )
+            error = "You must provide either the game_date or year argument to construct a folderpath"
             raise ValueError(error)
         year = year if year else game_date.year
         return self.local_folderpath_dict[file_type][data_set].resolve(year=year)
@@ -266,9 +254,7 @@ class FileHelper:
         else:
             raise ValueError("Unable to construct file name.")
         return (
-            self.filename_dict[file_type][data_set](identifier)
-            if data_set in self.filename_dict[file_type]
-            else None
+            self.filename_dict[file_type][data_set](identifier) if data_set in self.filename_dict[file_type] else None
         )
 
     def perform_s3_task(
@@ -327,9 +313,7 @@ class FileHelper:
 
     def get_s3_folderpath(self, file_type, data_set, game_date=None, year=None):  # pragma: no cover
         if not game_date and not year:
-            error = (
-                "You must provide either the game_date or year argument to construct a folderpath"
-            )
+            error = "You must provide either the game_date or year argument to construct a folderpath"
             raise ValueError(error)
         year = year if year else game_date.year
         return self.s3_folderpath_dict[file_type][data_set].resolve(year=year)
@@ -380,11 +364,7 @@ class FileHelper:
         return f"{bbref_game_id}_COMBINED_DATA.json"
 
     def read_local_file(self, filepath):
-        return (
-            Result.Ok(filepath)
-            if filepath.exists()
-            else Result.Fail(f"File not found: {filepath.resolve()}.")
-        )
+        return Result.Ok(filepath) if filepath.exists() else Result.Fail(f"File not found: {filepath.resolve()}.")
 
     def write_to_file(self, file_type, data, filepath):
         """Write object in json format to file."""
@@ -457,9 +437,7 @@ class FileHelper:
 
     def rename_s3_object(self, old_key, new_key):  # pragma: no cover
         try:
-            self.s3_resource.Object(self.bucket_name, new_key).copy_from(
-                CopySource=f"{self.bucket_name}/{old_key}"
-            )
+            self.s3_resource.Object(self.bucket_name, new_key).copy_from(CopySource=f"{self.bucket_name}/{old_key}")
             self.s3_resource.Object(self.bucket_name, old_key).delete()
             return Result.Ok()
         except botocore.exceptions.ClientError as ex:

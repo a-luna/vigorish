@@ -7,7 +7,7 @@ from vigorish.cli.menu_items.investigate_data_failures import InvestigateScraped
 from vigorish.cli.menu_items.investigate_invalid_pfx import InvestigateInvalidPitchFx
 from vigorish.cli.menu_items.investigate_pitchfx_errors import InvestigatePitchFxErrors
 from vigorish.cli.menu_items.return_to_parent import ReturnToParent
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.util.result import Result
 
 
@@ -17,7 +17,7 @@ class ScrapedDataErrorsMenu(Menu):
         self.audit_report = audit_report
         self.menu_text = "Select the type of error to investigate:"
         self.menu_item_text = "Investigate Failures"
-        self.menu_item_emoji = EMOJI_DICT.get("FLASHLIGHT")
+        self.menu_item_emoji = EMOJIS.get("FLASHLIGHT")
 
     def launch(self):
         exit_menu = False
@@ -59,9 +59,6 @@ class ScrapedDataErrorsMenu(Menu):
             or audit_report[year].get("pfx_error", [])
             or audit_report[year].get("failed", [])
         ]
-        choices = {
-            f"{MENU_NUMBERS.get(num)}  {year}": year
-            for num, year in enumerate(years_with_errors, start=1)
-        }
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices = {f"{MENU_NUMBERS.get(num)}  {year}": year for num, year in enumerate(years_with_errors, start=1)}
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         return user_options_prompt(choices, prompt)

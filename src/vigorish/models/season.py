@@ -77,15 +77,13 @@ class Season(Base):
     def total_days_scraped_bbref(self):
         return (
             self.date_status.total_scraped_daily_dash_bbref
-            if self.date_status.total_scraped_daily_dash_bbref
+            if self.date_status and self.date_status.total_scraped_daily_dash_bbref
             else 0
         )
 
     @hybrid_property
     def percent_complete_bbref_games_for_date(self):
-        return (
-            self.total_days_scraped_bbref / float(self.total_days) if self.total_days > 0 else 0.0
-        )
+        return self.total_days_scraped_bbref / float(self.total_days) if self.total_days > 0 else 0.0
 
     @hybrid_property
     def scraped_all_bbref_games_for_date(self):
@@ -95,15 +93,13 @@ class Season(Base):
     def total_days_scraped_brooks(self):
         return (
             self.date_status.total_scraped_daily_dash_brooks
-            if self.date_status.total_scraped_daily_dash_brooks
+            if self.date_status and self.date_status.total_scraped_daily_dash_brooks
             else 0
         )
 
     @hybrid_property
     def percent_complete_brooks_games_for_date(self):
-        return (
-            self.total_days_scraped_brooks / float(self.total_days) if self.total_days > 0 else 0.0
-        )
+        return self.total_days_scraped_brooks / float(self.total_days) if self.total_days > 0 else 0.0
 
     @hybrid_property
     def scraped_all_brooks_games_for_date(self):
@@ -111,13 +107,13 @@ class Season(Base):
 
     @hybrid_property
     def total_games(self):
-        return self.game_status.total_games if self.game_status.total_games else 0
+        return self.game_status.total_games if (self.game_status and self.game_status.total_games) else 0
 
     @hybrid_property
     def total_games_combined_success(self):
         return (
             self.game_status.total_combined_data_success
-            if self.game_status.total_combined_data_success
+            if self.game_status and self.game_status.total_combined_data_success
             else 0
         )
 
@@ -125,7 +121,7 @@ class Season(Base):
     def total_games_combined_fail(self):
         return (
             self.game_status.total_combined_data_fail
-            if self.game_status.total_combined_data_fail
+            if self.game_status and self.game_status.total_combined_data_fail
             else 0
         )
 
@@ -137,55 +133,39 @@ class Season(Base):
     def total_bbref_boxscores_scraped(self):
         return (
             self.game_status.total_scraped_bbref_boxscore
-            if self.game_status.total_scraped_bbref_boxscore
+            if self.game_status and self.game_status.total_scraped_bbref_boxscore
             else 0
         )
 
     @hybrid_property
     def percent_complete_bbref_boxscores_scraped(self):
-        return (
-            self.total_bbref_boxscores_scraped / float(self.total_games)
-            if self.total_games > 0
-            else 0.0
-        )
+        return self.total_bbref_boxscores_scraped / float(self.total_games) if self.total_games > 0 else 0.0
 
     @hybrid_property
     def scraped_all_bbref_boxscores(self):
-        return (
-            self.total_games == self.total_bbref_boxscores_scraped
-            if self.total_games > 0
-            else False
-        )
+        return self.total_games == self.total_bbref_boxscores_scraped if self.total_games > 0 else False
 
     @hybrid_property
     def total_brooks_pitch_logs_scraped(self):
         return (
             self.game_status.total_scraped_brooks_pitch_logs
-            if self.game_status.total_scraped_brooks_pitch_logs
+            if self.game_status and self.game_status.total_scraped_brooks_pitch_logs
             else 0
         )
 
     @hybrid_property
     def percent_complete_brooks_pitch_logs(self):
-        return (
-            self.total_brooks_pitch_logs_scraped / float(self.total_games)
-            if self.total_games > 0
-            else 0.0
-        )
+        return self.total_brooks_pitch_logs_scraped / float(self.total_games) if self.total_games > 0 else 0.0
 
     @hybrid_property
     def scraped_all_brooks_pitch_logs(self):
-        return (
-            self.total_games == self.total_brooks_pitch_logs_scraped
-            if self.total_games > 0
-            else False
-        )
+        return self.total_games == self.total_brooks_pitch_logs_scraped if self.total_games > 0 else False
 
     @hybrid_property
     def pitch_app_count_bbref(self):
         return (
             self.game_status.total_pitch_app_count_bbref
-            if self.game_status.total_pitch_app_count_bbref
+            if self.game_status and self.game_status.total_pitch_app_count_bbref
             else 0
         )
 
@@ -193,7 +173,7 @@ class Season(Base):
     def pitch_app_count_brooks(self):
         return (
             self.game_status.total_pitch_app_count_brooks
-            if self.game_status.total_pitch_app_count_brooks
+            if self.game_status and self.game_status.total_pitch_app_count_brooks
             else 0
         )
 
@@ -201,19 +181,21 @@ class Season(Base):
     def total_pitch_count_bbref(self):
         return (
             self.game_status.total_pitch_count_bbref
-            if self.game_status.total_pitch_count_bbref
+            if self.game_status and self.game_status.total_pitch_count_bbref
             else 0
         )
 
     @hybrid_property
     def pitch_app_count_pitchfx(self):
-        return self.pitch_app_status.total_pitchfx if self.pitch_app_status.total_pitchfx else 0
+        return (
+            self.pitch_app_status.total_pitchfx if self.pitch_app_status and self.pitch_app_status.total_pitchfx else 0
+        )
 
     @hybrid_property
     def total_pitch_apps_scraped_pitchfx(self):
         return (
             self.pitch_app_status.total_pitchfx_scraped
-            if self.pitch_app_status.total_pitchfx_scraped
+            if self.pitch_app_status and self.pitch_app_status.total_pitchfx_scraped
             else 0
         )
 
@@ -221,7 +203,7 @@ class Season(Base):
     def total_pitch_apps_no_pitchfx_data(self):
         return (
             self.pitch_app_status.total_no_pitchfx_data
-            if self.pitch_app_status.total_no_pitchfx_data
+            if self.pitch_app_status and self.pitch_app_status.total_no_pitchfx_data
             else 0
         )
 
@@ -233,7 +215,7 @@ class Season(Base):
     def total_pitch_apps_combined_data(self):
         return (
             self.pitch_app_status.total_combined_pitchfx_bbref_data
-            if self.pitch_app_status.total_combined_pitchfx_bbref_data
+            if self.pitch_app_status and self.pitch_app_status.total_combined_pitchfx_bbref_data
             else 0
         )
 
@@ -241,7 +223,7 @@ class Season(Base):
     def total_pitch_apps_pitchfx_error(self):
         return (
             self.pitch_app_status.total_pitchfx_error
-            if self.pitch_app_status.total_pitchfx_error
+            if self.pitch_app_status and self.pitch_app_status.total_pitchfx_error
             else 0
         )
 
@@ -249,7 +231,7 @@ class Season(Base):
     def total_pitch_apps_invalid_pitchfx(self):
         return (
             self.pitch_app_status.total_invalid_pitchfx
-            if self.pitch_app_status.total_invalid_pitchfx
+            if self.pitch_app_status and self.pitch_app_status.total_invalid_pitchfx
             else 0
         )
 
@@ -261,7 +243,7 @@ class Season(Base):
     def total_pitch_count_pitch_logs(self):
         return (
             self.pitch_app_status.total_pitch_count_pitch_log
-            if self.pitch_app_status.total_pitch_count_pitch_log
+            if self.pitch_app_status and self.pitch_app_status.total_pitch_count_pitch_log
             else 0
         )
 
@@ -269,7 +251,7 @@ class Season(Base):
     def total_pitch_count_bbref_audited(self):
         return (
             self.pitch_app_status.total_pitch_count_bbref
-            if self.pitch_app_status.total_pitch_count_bbref
+            if self.pitch_app_status and self.pitch_app_status.total_pitch_count_bbref
             else 0
         )
 
@@ -277,7 +259,7 @@ class Season(Base):
     def total_pitch_count_pitchfx(self):
         return (
             self.pitch_app_status.total_pitch_count_pitchfx
-            if self.pitch_app_status.total_pitch_count_pitchfx
+            if self.pitch_app_status and self.pitch_app_status.total_pitch_count_pitchfx
             else 0
         )
 
@@ -285,7 +267,7 @@ class Season(Base):
     def total_pitch_count_pitchfx_audited(self):
         return (
             self.pitch_app_status.total_pitch_count_pitchfx_audited
-            if self.pitch_app_status.total_pitch_count_pitchfx_audited
+            if self.pitch_app_status and self.pitch_app_status.total_pitch_count_pitchfx_audited
             else 0
         )
 
@@ -293,7 +275,7 @@ class Season(Base):
     def total_duplicate_pitchfx_removed_count(self):
         return (
             self.pitch_app_status.total_duplicate_pitchfx_removed_count
-            if self.pitch_app_status.total_duplicate_pitchfx_removed_count
+            if self.pitch_app_status and self.pitch_app_status.total_duplicate_pitchfx_removed_count
             else 0
         )
 
@@ -301,7 +283,7 @@ class Season(Base):
     def total_missing_pitchfx_count(self):
         return (
             self.pitch_app_status.total_missing_pitchfx_count
-            if self.pitch_app_status.total_missing_pitchfx_count
+            if self.pitch_app_status and self.pitch_app_status.total_missing_pitchfx_count
             else 0
         )
 
@@ -309,7 +291,7 @@ class Season(Base):
     def total_extra_pitchfx_count(self):
         return (
             self.pitch_app_status.total_extra_pitchfx_count
-            if self.pitch_app_status.total_extra_pitchfx_count
+            if self.pitch_app_status and self.pitch_app_status.total_extra_pitchfx_count
             else 0
         )
 
@@ -317,7 +299,7 @@ class Season(Base):
     def total_extra_pitchfx_removed_count(self):
         return (
             self.pitch_app_status.total_extra_pitchfx_removed_count
-            if self.pitch_app_status.total_extra_pitchfx_removed_count
+            if self.pitch_app_status and self.pitch_app_status.total_extra_pitchfx_removed_count
             else 0
         )
 
@@ -325,7 +307,7 @@ class Season(Base):
     def total_batters_faced_bbref(self):
         return (
             self.pitch_app_status.total_batters_faced_bbref
-            if self.pitch_app_status.total_batters_faced_bbref
+            if self.pitch_app_status and self.pitch_app_status.total_batters_faced_bbref
             else 0
         )
 
@@ -333,7 +315,7 @@ class Season(Base):
     def total_batters_faced_pitchfx(self):
         return (
             self.pitch_app_status.total_batters_faced_pitchfx
-            if self.pitch_app_status.total_batters_faced_pitchfx
+            if self.pitch_app_status and self.pitch_app_status.total_batters_faced_pitchfx
             else 0
         )
 
@@ -341,7 +323,7 @@ class Season(Base):
     def total_at_bats_missing_pitchfx(self):
         return (
             self.pitch_app_status.total_at_bats_missing_pitchfx
-            if self.pitch_app_status.total_at_bats_missing_pitchfx
+            if self.pitch_app_status and self.pitch_app_status.total_at_bats_missing_pitchfx
             else 0
         )
 
@@ -349,7 +331,7 @@ class Season(Base):
     def total_at_bats_extra_pitchfx(self):
         return (
             self.pitch_app_status.total_at_bats_extra_pitchfx
-            if self.pitch_app_status.total_at_bats_extra_pitchfx
+            if self.pitch_app_status and self.pitch_app_status.total_at_bats_extra_pitchfx
             else 0
         )
 
@@ -357,7 +339,7 @@ class Season(Base):
     def total_at_bats_extra_pitchfx_removed(self):
         return (
             self.pitch_app_status.total_at_bats_extra_pitchfx_removed
-            if self.pitch_app_status.total_at_bats_extra_pitchfx_removed
+            if self.pitch_app_status and self.pitch_app_status.total_at_bats_extra_pitchfx_removed
             else 0
         )
 
@@ -365,7 +347,7 @@ class Season(Base):
     def total_at_bats_pitchfx_error(self):
         return (
             self.pitch_app_status.total_at_bats_pitchfx_error
-            if self.pitch_app_status.total_at_bats_pitchfx_error
+            if self.pitch_app_status and self.pitch_app_status.total_at_bats_pitchfx_error
             else 0
         )
 
@@ -373,7 +355,7 @@ class Season(Base):
     def total_at_bats_invalid_pitchfx(self):
         return (
             self.pitch_app_status.total_at_bats_invalid_pitchfx
-            if self.pitch_app_status.total_at_bats_invalid_pitchfx
+            if self.pitch_app_status and self.pitch_app_status.total_at_bats_invalid_pitchfx
             else 0
         )
 
@@ -441,14 +423,10 @@ class Season(Base):
             "total_games_combined_fail": self.total_games_combined_fail,
             "total_games_combined": self.total_games_combined,
             "total_bbref_boxscores_scraped": self.total_bbref_boxscores_scraped,
-            "percent_complete_bbref_boxscores_scraped": (
-                f"{self.percent_complete_bbref_boxscores_scraped:01.0f}%"
-            ),
+            "percent_complete_bbref_boxscores_scraped": (f"{self.percent_complete_bbref_boxscores_scraped:01.0f}%"),
             "scraped_all_bbref_boxscores": self.scraped_all_bbref_boxscores,
             "total_brooks_pitch_logs_scraped": self.total_brooks_pitch_logs_scraped,
-            "percent_complete_brooks_pitch_logs": (
-                f"{self.percent_complete_brooks_pitch_logs:01.0f}%"
-            ),
+            "percent_complete_brooks_pitch_logs": (f"{self.percent_complete_brooks_pitch_logs:01.0f}%"),
             "scraped_all_brooks_pitch_logs": self.scraped_all_brooks_pitch_logs,
             "pitch_app_count_bbref": self.pitch_app_count_bbref,
             "pitch_app_count_brooks": self.pitch_app_count_brooks,
@@ -487,12 +465,8 @@ class Season(Base):
         scraped_bbref_boxscores = "YES" if self.scraped_all_bbref_boxscores else "NO"
         scraped_brooks_pitch_logs = "YES" if self.scraped_all_brooks_pitch_logs else "NO"
         scraped_all_pitchfx_logs = "YES" if self.scraped_all_pitchfx_logs else "NO"
-        combined_data_for_all_pitchfx_logs = (
-            "YES" if self.combined_data_for_all_pitchfx_logs else "NO"
-        )
-        pitchfx_error_for_any_pitchfx_logs = (
-            "YES" if self.pitchfx_error_for_any_pitchfx_logs else "NO"
-        )
+        combined_data_for_all_pitchfx_logs = "YES" if self.combined_data_for_all_pitchfx_logs else "NO"
+        pitchfx_error_for_any_pitchfx_logs = "YES" if self.pitchfx_error_for_any_pitchfx_logs else "NO"
         total_pitchfx_removed_count = (
             self.total_duplicate_pitchfx_removed_count + self.total_extra_pitchfx_removed_count
         )

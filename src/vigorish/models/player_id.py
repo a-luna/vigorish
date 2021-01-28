@@ -47,6 +47,6 @@ class PlayerId(Base):
         }
 
     @classmethod
-    def get_mlb_player_id_map(cls, db_session):
+    def get_player_id_map(cls, db_session):
         all_players = db_session.query(cls).all()
         return {p.mlb_id: p.db_player_id for p in all_players}

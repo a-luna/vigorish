@@ -6,7 +6,7 @@ from dacite import from_dict
 from vigorish.util.dt_format_strings import DATE_ONLY
 
 
-def serialize_data_class_to_csv(data_class_objects, date_format):
+def serialize_dataclass_list_to_csv(data_class_objects, date_format):
     dataclass_dicts = [asdict(do) for do in data_class_objects]
     if not dataclass_dicts:
         return None
@@ -15,7 +15,16 @@ def serialize_data_class_to_csv(data_class_objects, date_format):
     return "\n".join((col_names + csv_rows))
 
 
-def deserialize_data_class_from_csv(csv_text, data_class):
+def get_dataclass_list_from_csv(csv_filepath, data_class):
+    if not csv_filepath.exists():
+        return []
+    csv_text = csv_filepath.read_text()
+    if not csv_text:
+        return []
+    return deserialize_dataclass_list_from_csv(csv_text, data_class)
+
+
+def deserialize_dataclass_list_from_csv(csv_text, data_class):
     csv_rows = csv_text.split("\n")
     col_names = [col.strip() for col in csv_rows.pop(0).split(",")]
     csv_rows = [row.split(",") for row in csv_rows]
@@ -27,14 +36,14 @@ def serialize_db_object_to_csv(db_obj, dataclass, date_format=DATE_ONLY):
     csv_dict = {}
     for name, field in dataclass.__dataclass_fields__.items():
         value = getattr(db_obj, name, None)
-        if field.type is int and not isinstance(value, int):
-            csv_dict[name] = int(value)
-        elif field.type is float and not isinstance(value, float):
-            csv_dict[name] = float(value)
-        elif field.type is bool:
+        if field.type is bool:
             csv_dict[name] = True if value else False
         elif not value:
             csv_dict[name] = None
+        elif field.type is int and not isinstance(value, int):
+            csv_dict[name] = int(value)
+        elif field.type is float and not isinstance(value, float):
+            csv_dict[name] = float(value)
         else:
             csv_dict[name] = value
     return dict_to_csv_row(csv_dict, date_format)

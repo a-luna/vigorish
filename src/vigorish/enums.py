@@ -32,13 +32,7 @@ class DataSet(IntFlag):
     BBREF_BOXSCORES = auto()
     BROOKS_PITCH_LOGS = auto()
     BROOKS_PITCHFX = auto()
-    ALL = (
-        BBREF_GAMES_FOR_DATE
-        | BROOKS_GAMES_FOR_DATE
-        | BBREF_BOXSCORES
-        | BROOKS_PITCH_LOGS
-        | BROOKS_PITCHFX
-    )
+    ALL = BBREF_GAMES_FOR_DATE | BROOKS_GAMES_FOR_DATE | BBREF_BOXSCORES | BROOKS_PITCH_LOGS | BROOKS_PITCHFX
 
     def __str__(self):
         return self.name

@@ -1,13 +1,14 @@
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy_utils import create_view
 
+from vigorish.data.metrics import PitchFxMetricsCollection
 from vigorish.database import Base, PitchFx
 from vigorish.models.views.pfx_col_expressions import (
     called_strike_rate,
     contact_rate,
     csw_rate,
-    ground_ball_rate,
     fly_ball_rate,
+    ground_ball_rate,
     line_drive_rate,
     o_contact_rate,
     o_swing_rate,
@@ -92,6 +93,12 @@ class PitchApp_PitchType_All_View(Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_pitchfx_metrics_for_pitch_app(cls, db_engine, pitch_app_id):
+        s = select([cls]).where(cls.id == pitch_app_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+
 
 class PitchApp_PitchType_Right_View(Base):
     __table__ = create_view(
@@ -164,6 +171,12 @@ class PitchApp_PitchType_Right_View(Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_pitchfx_metrics_vs_rhb_for_pitch_app(cls, db_engine, pitch_app_id):
+        s = select([cls]).where(cls.id == pitch_app_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+
 
 class PitchApp_PitchType_Left_View(Base):
     __table__ = create_view(
@@ -235,3 +248,9 @@ class PitchApp_PitchType_Left_View(Base):
         metadata=Base.metadata,
         cascade_on_drop=False,
     )
+
+    @classmethod
+    def get_pitchfx_metrics_vs_lhb_for_pitch_app(cls, db_engine, pitch_app_id):
+        s = select([cls]).where(cls.id == pitch_app_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchFxMetricsCollection.from_pitchfx_view_results(results)

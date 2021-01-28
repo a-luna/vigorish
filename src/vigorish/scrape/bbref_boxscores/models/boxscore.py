@@ -1,6 +1,6 @@
 import json
 from dataclasses import dataclass, field
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 
 from vigorish.scrape.bbref_boxscores.models.boxscore_game_meta import BBRefBoxscoreMeta
 from vigorish.scrape.bbref_boxscores.models.boxscore_team_data import BBRefBoxscoreTeamData
@@ -56,15 +56,11 @@ class BBRefBoxscore:
 
     @property
     def away_team_pitch_count(self):
-        return sum(
-            int(pitch_stats.pitch_count) for pitch_stats in self.away_team_data.pitching_stats
-        )
+        return sum(int(pitch_stats.pitch_count) for pitch_stats in self.away_team_data.pitching_stats)
 
     @property
     def home_team_pitch_count(self):
-        return sum(
-            int(pitch_stats.pitch_count) for pitch_stats in self.home_team_data.pitching_stats
-        )
+        return sum(int(pitch_stats.pitch_count) for pitch_stats in self.home_team_data.pitching_stats)
 
     @property
     def pitch_count(self):

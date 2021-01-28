@@ -124,8 +124,12 @@ class PitchFx(Base):
         game_start_str = pfx_dict.pop("game_start_time_str")
         pitch_thrown_str = pfx_dict.pop("time_pitch_thrown_str")
         game_start_time = datetime.strptime(game_start_str, DT_AWARE).astimezone(timezone.utc)
-        time_pitch_thrown = datetime.strptime(pitch_thrown_str, DT_AWARE).astimezone(timezone.utc)
-        seconds_since_game_start = int((time_pitch_thrown - game_start_time).total_seconds())
+        time_pitch_thrown = (
+            datetime.strptime(pitch_thrown_str, DT_AWARE).astimezone(timezone.utc) if pitch_thrown_str else None
+        )
+        seconds_since_game_start = (
+            int((time_pitch_thrown - game_start_time).total_seconds()) if time_pitch_thrown else 0
+        )
         pfx_dict["game_start_time_utc"] = game_start_time
         pfx_dict["time_pitch_thrown_utc"] = time_pitch_thrown
         pfx_dict["seconds_since_game_start"] = seconds_since_game_start

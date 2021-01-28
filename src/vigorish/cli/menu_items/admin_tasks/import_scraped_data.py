@@ -14,8 +14,8 @@ from vigorish.cli.components import (
     yes_no_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
+from vigorish.constants import EMOJIS, MENU_NUMBERS
+from vigorish.tasks import ImportScrapedDataTask
 from vigorish.util.result import Result
 
 IMPORT_DATA_MESSAGE = (
@@ -23,7 +23,7 @@ IMPORT_DATA_MESSAGE = (
     "data in the local file system from all data sets and all MLB seasons. After the search is "
     "complete, the scraped data is used to update the database."
 )
-IMPORT_DATA_PROMPT = "Select YES to run this task\nSelect NO to return to the previous menu"
+IMPORT_DATA_PROMPT = "\nSelect YES to run this task\nSelect NO to return to the previous menu"
 OVERWRITE_DATA_MESSAGE = (
     'By default, data that is already considered "scraped" within the database will not be '
     "updated with the data found in the local file system."
@@ -42,7 +42,7 @@ class ImportScrapedData(MenuItem):
         self.import_scraped_data = ImportScrapedDataTask(self.app)
         self.spinners = {}
         self.menu_item_text = "Import Scraped Data from Local Folders"
-        self.menu_item_emoji = EMOJI_DICT.get("HONEY_POT")
+        self.menu_item_emoji = EMOJIS.get("HONEY_POT")
 
     def launch(self):
         if not self.prompt_user_import_data():
@@ -58,7 +58,7 @@ class ImportScrapedData(MenuItem):
             return result
         return Result.Ok(True)
 
-    def update_heading(self, current_action):
+    def update_menu_heading(self, current_action):
         new_heading = (
             f"Import Scraped Data: {current_action}"
             if self.app.db_setup_complete
@@ -68,40 +68,36 @@ class ImportScrapedData(MenuItem):
         print_heading(new_heading, fg="bright_yellow")
 
     def prompt_user_import_data(self):
-        self.update_heading("Run Task?")
+        self.update_menu_heading("Run Task?")
         print_message(IMPORT_DATA_MESSAGE, fg="bright_yellow", bold=True)
         return yes_no_prompt(IMPORT_DATA_PROMPT, wrap=False)
 
     def prompt_user_overwrite_data(self):
-        self.update_heading("Overwrite Existing Data?")
+        self.update_menu_heading("Overwrite Existing Data?")
         print_message(OVERWRITE_DATA_MESSAGE, fg="bright_yellow", bold=True)
         choices = {
             f"{MENU_NUMBERS.get(1)}  KEEP EXISTING DATA": "KEEP",
             f"{MENU_NUMBERS.get(2)}  OVERWRITE EXISTING DATA": "OVERWRITE",
-            f"{EMOJI_DICT.get('BACK')} Return to Admin/Tasks Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Admin/Tasks Menu": None,
         }
         return user_options_prompt(choices, OVERWRITE_DATA_PROMPT, clear_screen=False)
 
     def error_occurred(self, error_message, data_set, year):
-        self.update_heading("Error!")
-        self.spinners[year][data_set].fail(
-            f"Error occurred while updating {data_set} for MLB {year}"
-        )
+        self.update_menu_heading("Error!")
+        self.spinners[year][data_set].fail(f"Error occurred while updating {data_set} for MLB {year}")
 
     def search_local_files_start(self):
-        self.update_heading("In Progress...")
-        self.spinners["default"] = Halo(
-            spinner=get_random_dots_spinner(), color=get_random_cli_color()
-        )
+        self.update_menu_heading("In Progress...")
+        self.spinners["default"] = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinners["default"].text = "Searching local folder for scraped data..."
         self.spinners["default"].start()
 
     def import_scraped_data_start(self):
         self.spinners["default"].stop()
-        self.update_heading("In Progress...")
+        self.update_menu_heading("In Progress...")
 
     def import_scraped_data_for_year_start(self, year):
-        self.update_heading("In Progress...")
+        self.update_menu_heading("In Progress...")
         self.spinners[year] = defaultdict(lambda: Halo())
 
     def import_scraped_data_set_start(self, data_set, year):
@@ -115,7 +111,7 @@ class ImportScrapedData(MenuItem):
         self.spinners[year][data_set].succeed(f"Successfully updated {data_set} for MLB {year}!")
 
     def import_scraped_data_complete(self):
-        self.update_heading("Complete!")
+        self.update_menu_heading("Complete!")
         success = "Successfully imported all scraped data from local files"
         print_message(success, fg="bright_yellow", bold=True)
         pause(message="\nPress any key to continue...")
@@ -124,32 +120,16 @@ class ImportScrapedData(MenuItem):
         self.import_scraped_data.events.error_occurred += self.error_occurred
         self.import_scraped_data.events.search_local_files_start += self.search_local_files_start
         self.import_scraped_data.events.import_scraped_data_start += self.import_scraped_data_start
-        self.import_scraped_data.events.import_scraped_data_complete += (
-            self.import_scraped_data_complete
-        )
-        self.import_scraped_data.events.import_scraped_data_for_year_start += (
-            self.import_scraped_data_for_year_start
-        )
-        self.import_scraped_data.events.import_scraped_data_set_start += (
-            self.import_scraped_data_set_start
-        )
-        self.import_scraped_data.events.import_scraped_data_set_complete += (
-            self.import_scraped_data_set_complete
-        )
+        self.import_scraped_data.events.import_scraped_data_complete += self.import_scraped_data_complete
+        self.import_scraped_data.events.import_scraped_data_for_year_start += self.import_scraped_data_for_year_start
+        self.import_scraped_data.events.import_scraped_data_set_start += self.import_scraped_data_set_start
+        self.import_scraped_data.events.import_scraped_data_set_complete += self.import_scraped_data_set_complete
 
     def unsubscribe_from_events(self):
         self.import_scraped_data.events.error_occurred -= self.error_occurred
         self.import_scraped_data.events.search_local_files_start -= self.search_local_files_start
         self.import_scraped_data.events.import_scraped_data_start -= self.import_scraped_data_start
-        self.import_scraped_data.events.import_scraped_data_complete -= (
-            self.import_scraped_data_complete
-        )
-        self.import_scraped_data.events.import_scraped_data_for_year_start -= (
-            self.import_scraped_data_for_year_start
-        )
-        self.import_scraped_data.events.import_scraped_data_set_start -= (
-            self.import_scraped_data_set_start
-        )
-        self.import_scraped_data.events.import_scraped_data_set_complete -= (
-            self.import_scraped_data_set_complete
-        )
+        self.import_scraped_data.events.import_scraped_data_complete -= self.import_scraped_data_complete
+        self.import_scraped_data.events.import_scraped_data_for_year_start -= self.import_scraped_data_for_year_start
+        self.import_scraped_data.events.import_scraped_data_set_start -= self.import_scraped_data_set_start
+        self.import_scraped_data.events.import_scraped_data_set_complete -= self.import_scraped_data_set_complete

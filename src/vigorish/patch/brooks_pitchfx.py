@@ -36,8 +36,7 @@ class BrooksPitchFxPatchList(PatchList):
         return Result.Ok(data)
 
     def pre_process_data(self, data):
-        data_copy = deepcopy(data)
-        self.original_pfx_logs = {pfx_log.pitch_app_id: pfx_log for pfx_log in data_copy}
+        self.original_pfx_logs = {pfx_log.pitch_app_id: pfx_log for pfx_log in deepcopy(data)}
         return [pfx for pitchfx_log in data for pfx in pitchfx_log.pitchfx_log]
 
     def post_process_data(self, data, db_session, boxscore=None):
@@ -112,11 +111,7 @@ class PatchBrooksPitchFxBatterId(Patch):
         self.patch_id = "__patch_brooks_pitchfx_batter_id__"
 
     def apply(self, data):
-        matches = [
-            pfx
-            for pfx in data
-            if pfx.park_sv_id == self.park_sv_id and pfx.pitch_app_id == self.pitch_app_id
-        ]
+        matches = [pfx for pfx in data if pfx.park_sv_id == self.park_sv_id and pfx.pitch_app_id == self.pitch_app_id]
         if not matches:
             error = (
                 "Unable to locate the PitchFX reading identified in this patch: "

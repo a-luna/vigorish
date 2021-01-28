@@ -81,9 +81,7 @@ class ConfigSetting(ABC):
             settings_dict = {"ALL_DATA_SETS": self.current_setting(DataSet.ALL)}
         else:
             settings_dict = {
-                data_set.name: self.current_setting(data_set)
-                for data_set in DataSet
-                if data_set != DataSet.ALL
+                data_set.name: self.current_setting(data_set) for data_set in DataSet if data_set != DataSet.ALL
             }
         return report_dict(settings_dict, title="", title_prefix="", title_suffix="")
 
@@ -101,11 +99,7 @@ class StringConfigSetting(ConfigSetting):
         self.data_type = ConfigType.STRING
 
     def __repr__(self) -> str:
-        return (
-            "<StringConfigSetting "
-            f"setting={self.setting_name},"
-            f"value={self.current_settings_report}>"
-        )
+        return f"<StringConfigSetting setting={self.setting_name}, value={self.current_settings_report}>"
 
 
 class PathConfigSetting(ConfigSetting):
@@ -114,11 +108,7 @@ class PathConfigSetting(ConfigSetting):
         self.data_type = ConfigType.PATH
 
     def __repr__(self) -> str:
-        return (
-            "<PathConfigSetting "
-            f"setting={self.setting_name},"
-            f"value={self.current_settings_report}>"
-        )
+        return f"<PathConfigSetting setting={self.setting_name}, value={self.current_settings_report}>"
 
     def current_setting(self, data_set: DataSet) -> PathSetting:
         current_setting = super().current_setting(data_set)
@@ -135,11 +125,7 @@ class EnumConfigSetting(ConfigSetting):
         self.data_type = ConfigType.ENUM
 
     def __repr__(self) -> str:
-        return (
-            "<EnumConfigSetting "
-            f"setting={self.setting_name},"
-            f"value={self.current_settings_report}>"
-        )
+        return f"<EnumConfigSetting setting={self.setting_name}, value={self.current_settings_report}>"
 
     @property
     def enum_name(self) -> str:
@@ -184,11 +170,7 @@ class NumericConfigSetting(ConfigSetting):
         self.data_type = ConfigType.NUMERIC
 
     def __repr__(self) -> str:
-        return (
-            "<NumericConfigSetting "
-            f"setting={self.setting_name},"
-            f"value={self.current_settings_report}>"
-        )
+        return f"<NumericConfigSetting setting={self.setting_name}, value={self.current_settings_report}>"
 
     def current_setting(self, data_set: DataSet) -> NumericSetting:
         current_setting = super().current_setting(data_set)

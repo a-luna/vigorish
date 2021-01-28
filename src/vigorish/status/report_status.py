@@ -1,8 +1,4 @@
-import os
-
-from vigorish.cli.components.dict_viewer import DictListTableViewer
-from vigorish.cli.components.models import DisplayPage
-from vigorish.cli.components.page_viewer import PageViewer
+from vigorish.cli.components.viewers import DictListTableViewer, DisplayPage, PageViewer
 from vigorish.database import DateScrapeStatus, Season
 from vigorish.enums import StatusReport
 from vigorish.util.datetime_util import get_date_range
@@ -32,22 +28,7 @@ def report_status_single_date(db_session, game_date, report_type):
         heading = f"### MISSING PITCHFX DATA FOR {date_str} ###"
         missing_ids_str = _get_missing_pfx_ids_for_date(db_session, date_status)
         pages.append(DisplayPage(missing_ids_str, heading))
-    date_report = PageViewer(
-        pages,
-        prompt="Press Enter to return to the Main Menu",
-        confirm_only=True,
-        heading_color="bright_magenta",
-        text_color="bright_magenta",
-        wrap_text=False,
-    )
-    if os.environ.get("ENV") == "TEST":
-        for page in pages:
-            page.display(
-                heading_color="bright_magenta",
-                text_color="bright_magenta",
-                wrap_text=False,
-            )
-    return Result.Ok(date_report)
+    return Result.Ok(create_report_viewer(pages, text_color="bright_magenta"))
 
 
 def validate_single_date(db_session, game_date):
@@ -70,42 +51,23 @@ def validate_single_date(db_session, game_date):
 
 def report_season_status(db_session, year, report_type):
     if report_type == StatusReport.NONE:
-        return Result.Fail("No_report")
+        return Result.Fail("no report")
     season = Season.find_by_year(db_session, year)
     if report_type == StatusReport.SEASON_SUMMARY:
         heading = f"### STATUS REPORT FOR {season.name} ###"
         pages = [DisplayPage(season.status_report(), heading)]
-        date_report = PageViewer(
-            pages,
-            prompt="Press Enter to return to the Main Menu",
-            confirm_only=True,
-            heading_color="bright_yellow",
-            text_color="bright_yellow",
-            wrap_text=False,
-        )
-        if os.environ.get("ENV") == "TEST":
-            for page in pages:
-                page.display(
-                    heading_color="bright_cyan",
-                    text_color="bright_cyan",
-                    wrap_text=False,
-                )
-        return Result.Ok(date_report)
-    start_date = season.start_date
-    end_date = season.end_date
-    return report_date_range_status(db_session, start_date, end_date, report_type)
+        return Result.Ok(create_report_viewer(pages, text_color="bright_yellow"))
+    return report_date_range_status(db_session, season.start_date, season.end_date, report_type)
 
 
 def report_date_range_status(db_session, start_date, end_date, report_type):
     if report_type == StatusReport.NONE:
-        return Result.Fail("No_report")
+        return Result.Fail("no report")
     result = construct_date_range_status(db_session, start_date, end_date, report_type)
     if result.failure:
         return result
     status_date_range = result.value
-    return display_date_range_status(
-        db_session, start_date, end_date, status_date_range, report_type
-    )
+    return get_report_for_date_range(db_session, start_date, end_date, status_date_range, report_type)
 
 
 def construct_date_range_status(db_session, start_date, end_date, report_type):
@@ -120,10 +82,7 @@ def construct_date_range_status(db_session, start_date, end_date, report_type):
     for game_date in get_date_range(start_date, end_date):
         date_status = DateScrapeStatus.find_by_date(db_session, game_date)
         if not date_status:
-            error = (
-                "scrape_status_date does not contain an entry for date: "
-                f"{game_date.strftime(DATE_ONLY)}"
-            )
+            error = "scrape_status_date does not contain an entry for date: {game_date.strftime(DATE_ONLY)}"
             return Result.Fail(error)
         if not show_all and date_status.scraped_all_game_data:
             continue
@@ -131,18 +90,15 @@ def construct_date_range_status(db_session, start_date, end_date, report_type):
     return Result.Ok(status_date_range)
 
 
-def display_date_range_status(db_session, start_date, end_date, status_date_range, report_type):
-    if (
-        report_type == StatusReport.DATE_DETAIL_MISSING_DATA
-        or report_type == StatusReport.DATE_DETAIL_ALL_DATES
-    ):
-        return display_detailed_report_for_date_range(db_session, status_date_range, False)
+def get_report_for_date_range(db_session, start_date, end_date, status_date_range, report_type):
+    if report_type == StatusReport.DATE_DETAIL_MISSING_DATA or report_type == StatusReport.DATE_DETAIL_ALL_DATES:
+        return get_detailed_report_for_date_range(db_session, status_date_range, False)
     if report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX:
-        return display_detailed_report_for_date_range(db_session, status_date_range, True)
-    return display_summary_report_for_date_range(start_date, end_date, status_date_range)
+        return get_detailed_report_for_date_range(db_session, status_date_range, True)
+    return get_summary_report_for_date_range(start_date, end_date, status_date_range)
 
 
-def display_detailed_report_for_date_range(db_session, status_date_range, missing_pitchfx):
+def get_detailed_report_for_date_range(db_session, status_date_range, missing_pitchfx):
     pages = []
     for date_status in status_date_range:
         game_date_str = date_status.game_date.strftime(DATE_MONTH_NAME)
@@ -150,72 +106,36 @@ def display_detailed_report_for_date_range(db_session, status_date_range, missin
         pages.append(DisplayPage(date_status.status_report(), heading))
         missing_ids_str = ""
         if missing_pitchfx:
-            heading = f"### %MISSING PITCHFX DATA FOR {game_date_str} ###"
+            heading = f"### MISSING PITCHFX DATA FOR {game_date_str} ###"
             missing_ids_str = _get_missing_pfx_ids_for_date(db_session, date_status)
             pages.append(DisplayPage(missing_ids_str, heading))
-    date_report = PageViewer(
-        pages,
-        prompt="Press Enter to return to the Main Menu",
-        confirm_only=True,
-        heading_color="bright_cyan",
-        text_color="bright_cyan",
-        wrap_text=False,
-    )
-    if os.environ.get("ENV") == "TEST":
-        for page in pages:
-            page.display(
-                heading_color="bright_cyan",
-                text_color="bright_cyan",
-                wrap_text=False,
-            )
-    return Result.Ok(date_report)
+    return Result.Ok(create_report_viewer(pages, text_color="bright_cyan"))
 
 
 def _get_missing_pfx_ids_for_date(db_session, date_status):
     if date_status.scraped_all_pitchfx_logs:
         return ["All PitchFX logs have been scraped"]
     elif date_status.scraped_all_brooks_pitch_logs:
-        missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
-            db_session, date_status.game_date
-        )
+        missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(db_session, date_status.game_date)
         missing_ids_str = [
             [f"GAME ID: {game_id}", f'{", ".join(pitch_app_id_list)}\n']
             for game_id, pitch_app_id_list in missing_pitch_app_ids.items()
         ]
-        return (
-            flatten_list2d(missing_ids_str)
-            if missing_ids_str
-            else ["All PitchFX logs have been scraped"]
-        )
+        return flatten_list2d(missing_ids_str) if missing_ids_str else ["All PitchFX logs have been scraped"]
     else:
         return ["Missing IDs cannot be reported until all pitch logs have been scraped."]
 
 
-def display_summary_report_for_date_range(start_date, end_date, status_date_range):
+def get_summary_report_for_date_range(start_date, end_date, status_date_range):
     start_str = start_date.strftime(DATE_MONTH_NAME)
     end_str = end_date.strftime(DATE_MONTH_NAME)
     heading = f"### STATUS REPORT FOR {start_str} - {end_str} ###"
     if not status_date_range:
-        all_data_scraped = "All data has been scraped for all dates in the requested range"
-        pages = [DisplayPage([all_data_scraped], heading)]
-        date_report = PageViewer(
-            pages,
-            prompt="Press Enter to return to the Main Menu",
-            confirm_only=True,
-            heading_color="bright_magenta",
-            text_color="bright_magenta",
-            wrap_text=False,
-        )
-        return Result.Ok(date_report)
-    row_data = [
-        {
-            "game_date": date_status.game_date_str,
-            "status": date_status.scrape_status_description,
-        }
-        for date_status in status_date_range
-    ]
+        pages = [DisplayPage(["All data has been scraped for all dates in the requested range"], heading)]
+        return Result.Ok(create_report_viewer(pages, text_color="bright_magenta"))
+    dict_list = [{"game_date": ds.game_date_str, "status": ds.scrape_status_description} for ds in status_date_range]
     date_report = DictListTableViewer(
-        row_data,
+        dict_list,
         prompt="Press Enter to return to the Main Menu",
         confirm_only=True,
         heading=heading,
@@ -224,3 +144,14 @@ def display_summary_report_for_date_range(start_date, end_date, status_date_rang
         table_color="bright_magenta",
     )
     return Result.Ok(date_report)
+
+
+def create_report_viewer(pages, text_color):
+    return PageViewer(
+        pages,
+        prompt="Press Enter to return to the Main Menu",
+        confirm_only=True,
+        heading_color=text_color,
+        text_color=text_color,
+        wrap_text=False,
+    )

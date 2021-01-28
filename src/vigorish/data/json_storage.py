@@ -1034,9 +1034,7 @@ class JsonStorage:
             bbref_game_id=bbref_game_id,
         )
 
-    def rename_brooks_pitchfx_log(
-        self, old_pitch_app_id, new_pitch_app_id, year
-    ):  # pragma: no cover
+    def rename_brooks_pitchfx_log(self, old_pitch_app_id, new_pitch_app_id, year):  # pragma: no cover
         result = validate_pitch_app_id(old_pitch_app_id)
         if result.failure:
             return result

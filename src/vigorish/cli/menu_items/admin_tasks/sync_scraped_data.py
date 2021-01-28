@@ -11,14 +11,14 @@ from vigorish.cli.components import (
     file_types_prompt,
     get_random_cli_color,
     get_random_dots_spinner,
+    print_heading,
     print_message,
     season_prompt,
     user_options_prompt,
 )
-from vigorish.cli.components.dict_viewer import DictListTableViewer
-from vigorish.cli.components.util import print_heading
+from vigorish.cli.components.viewers import DictListTableViewer
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import DataSet, SyncDirection, VigFile
 from vigorish.tasks.sync_scraped_data import SyncScrapedDataTask
 from vigorish.util.dt_format_strings import DT_NAIVE_LESS
@@ -40,7 +40,8 @@ class SyncScrapedData(MenuItem):
         self.task_number = 0
         self.spinners = defaultdict(dict)
         self.menu_item_text = " Synchronize Scraped Data"
-        self.menu_item_emoji = EMOJI_DICT.get("CLOUD", "")
+        self.menu_item_emoji = EMOJIS.get("CLOUD", "")
+        self.menu_heading = self.menu_item_text
         self.exit_menu = False
 
     @property
@@ -83,14 +84,20 @@ class SyncScrapedData(MenuItem):
         return Result.Ok()
 
     def get_data_sets_to_sync(self, file_type):
-        prompt = f"Select Data Sets to Synchronize for File Type: {file_type}"
+        heading = self.get_menu_heading(f"Select Data Sets to Sync for {file_type}")
+        prompt = f"Select all data sets to synchronize for {file_type} files"
         if file_type == VigFile.COMBINED_GAME_DATA:
             return [DataSet.ALL]
         if file_type == VigFile.PATCH_LIST:
-            valid_data_sets = DataSet.BBREF_BOXSCORES | DataSet.BROOKS_PITCHFX
+            valid_data_sets = (
+                DataSet.BBREF_GAMES_FOR_DATE
+                | DataSet.BBREF_BOXSCORES
+                | DataSet.BROOKS_GAMES_FOR_DATE
+                | DataSet.BROOKS_PITCHFX
+            )
         else:
             valid_data_sets = DataSet.ALL
-        return data_sets_prompt(prompt, valid_data_sets=int(valid_data_sets))
+        return data_sets_prompt(heading, prompt, valid_data_sets=int(valid_data_sets))
 
     def sync_direction_prompt(self):
         prompt = (
@@ -106,7 +113,7 @@ class SyncScrapedData(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  {SYNC_UP_MENU_CHOICE}": SyncDirection.UP_TO_S3,
             f"{MENU_NUMBERS.get(2)}  {SYNC_DOWN_MENU_CHOICE}": SyncDirection.DOWN_TO_LOCAL,
-            f"{EMOJI_DICT.get('BACK')} Return to Main Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Main Menu": None,
         }
         return user_options_prompt(choices, prompt)
 
@@ -181,10 +188,7 @@ class SyncScrapedData(MenuItem):
         return (out_of_sync, SYNC_STATUS_TEXT_COLOR["out_of_sync"])
 
     def in_sync_text(self, file_type, data_set):
-        in_sync = (
-            f"All files in sync: {self.year} {data_set} {file_type} "
-            f"(Task {self.task_number}/{self.total_tasks})"
-        )
+        in_sync = f"All files in sync: {self.year} {data_set} {file_type} (Task {self.task_number}/{self.total_tasks})"
         return (in_sync, SYNC_STATUS_TEXT_COLOR["in_sync"])
 
     def synchronize_files(self):
@@ -206,9 +210,7 @@ class SyncScrapedData(MenuItem):
                 if old_files:
                     all_sync_files.extend(old_files)
                     old_count = len(old_files)
-                table_viewer = self.create_table_viewer(
-                    all_sync_files, data_set, file_type, new_count, old_count
-                )
+                table_viewer = self.create_table_viewer(all_sync_files, data_set, file_type, new_count, old_count)
                 apply_changes = table_viewer.launch()
                 if apply_changes:
                     self.apply_pending_changes(file_type, data_set, new_files, old_files)
@@ -255,9 +257,7 @@ class SyncScrapedData(MenuItem):
                 "in local folder have been synced to s3 bucket!"
             )
         if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            self.s3_sync.download_files_to_local_folder(
-                new_files, old_files, file_type, data_set, self.year
-            )
+            self.s3_sync.download_files_to_local_folder(new_files, old_files, file_type, data_set, self.year)
             message = (
                 f"All changes have been applied, MLB {self.year} {data_set} {file_type} files "
                 "in s3 bucket have been synced to local folder!"

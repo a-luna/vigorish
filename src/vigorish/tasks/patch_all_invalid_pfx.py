@@ -113,42 +113,22 @@ class PatchAllInvalidPitchFxTask(Task):
 
     def subscribe_to_events(self):
         self.patch_invalid_pfx.events.error_occurred += self.handle_error_occurred
-        self.patch_invalid_pfx.events.create_invalid_pfx_map_start += (
-            self.create_invalid_pfx_map_start
-        )
-        self.patch_invalid_pfx.events.create_invalid_pfx_map_complete += (
-            self.create_invalid_pfx_map_complete
-        )
-        self.patch_invalid_pfx.events.match_missing_pfx_data_start += (
-            self.match_missing_pfx_data_start
-        )
-        self.patch_invalid_pfx.events.match_missing_pfx_data_complete += (
-            self.match_missing_pfx_data_complete
-        )
+        self.patch_invalid_pfx.events.create_invalid_pfx_map_start += self.create_invalid_pfx_map_start
+        self.patch_invalid_pfx.events.create_invalid_pfx_map_complete += self.create_invalid_pfx_map_complete
+        self.patch_invalid_pfx.events.match_missing_pfx_data_start += self.match_missing_pfx_data_start
+        self.patch_invalid_pfx.events.match_missing_pfx_data_complete += self.match_missing_pfx_data_complete
         self.patch_invalid_pfx.events.create_patch_list_start += self.create_patch_list_start
         self.patch_invalid_pfx.events.create_patch_list_complete += self.create_patch_list_complete
         self.patch_invalid_pfx.events.combine_scraped_data_start += self.combine_scraped_data_start
-        self.patch_invalid_pfx.events.combine_scraped_data_complete += (
-            self.combine_scraped_data_complete
-        )
+        self.patch_invalid_pfx.events.combine_scraped_data_complete += self.combine_scraped_data_complete
 
     def unsubscribe_from_events(self):
         self.patch_invalid_pfx.events.error_occurred -= self.handle_error_occurred
-        self.patch_invalid_pfx.events.create_invalid_pfx_map_start -= (
-            self.create_invalid_pfx_map_start
-        )
-        self.patch_invalid_pfx.events.create_invalid_pfx_map_complete -= (
-            self.create_invalid_pfx_map_complete
-        )
-        self.patch_invalid_pfx.events.match_missing_pfx_data_start -= (
-            self.match_missing_pfx_data_start
-        )
-        self.patch_invalid_pfx.events.match_missing_pfx_data_complete -= (
-            self.match_missing_pfx_data_complete
-        )
+        self.patch_invalid_pfx.events.create_invalid_pfx_map_start -= self.create_invalid_pfx_map_start
+        self.patch_invalid_pfx.events.create_invalid_pfx_map_complete -= self.create_invalid_pfx_map_complete
+        self.patch_invalid_pfx.events.match_missing_pfx_data_start -= self.match_missing_pfx_data_start
+        self.patch_invalid_pfx.events.match_missing_pfx_data_complete -= self.match_missing_pfx_data_complete
         self.patch_invalid_pfx.events.create_patch_list_start -= self.create_patch_list_start
         self.patch_invalid_pfx.events.create_patch_list_complete -= self.create_patch_list_complete
         self.patch_invalid_pfx.events.combine_scraped_data_start -= self.combine_scraped_data_start
-        self.patch_invalid_pfx.events.combine_scraped_data_complete -= (
-            self.combine_scraped_data_complete
-        )
+        self.patch_invalid_pfx.events.combine_scraped_data_complete -= self.combine_scraped_data_complete

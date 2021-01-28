@@ -1,7 +1,6 @@
 from tqdm import tqdm
 
-from vigorish.models.season import Season
-from vigorish.models.status_date import DateScrapeStatus
+from vigorish.database import DateScrapeStatus, Season
 from vigorish.util.result import Result
 
 

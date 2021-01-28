@@ -32,12 +32,55 @@ BBREF_DAILY_JSON_FILENAME_REGEX = re.compile(
 """,
     re.VERBOSE,
 )
+BBREF_DAILY_JSON_FILENAME_REGEX_STRICT = re.compile(
+    r"""
+    ^
+    bbref_games_for_date_
+    (?P<year>\d{4,4})-
+    (?P<month>\d{2,2})-
+    (?P<day>\d{2,2})
+    $
+""",
+    re.VERBOSE,
+)
+BBREF_DAILY_PATCH_LIST_FILENAME_REGEX = re.compile(
+    r"""
+    bbref_games_for_date_
+    (?P<year>\d{4,4})-
+    (?P<month>\d{2,2})-
+    (?P<day>\d{2,2})
+    _PATCH_LIST
+""",
+    re.VERBOSE,
+)
+
 BB_DAILY_JSON_FILENAME_REGEX = re.compile(
     r"""
     brooks_games_for_date_
     (?P<year>\d{4,4})-
     (?P<month>\d{2,2})-
     (?P<day>\d{2,2})
+""",
+    re.VERBOSE,
+)
+BB_DAILY_JSON_FILENAME_REGEX_STRICT = re.compile(
+    r"""
+    ^
+    brooks_games_for_date_
+    (?P<year>\d{4,4})-
+    (?P<month>\d{2,2})-
+    (?P<day>\d{2,2})
+    $
+""",
+    re.VERBOSE,
+)
+BB_DAILY_PATCH_LIST_FILENAME_REGEX = re.compile(
+    r"""
+    brooks_games_for_date_
+    (?P<year>\d{4,4})-
+    (?P<month>\d{2,2})-
+    (?P<day>\d{2,2})
+    _PATCH_LIST
 """,
     re.VERBOSE,
 )
@@ -166,14 +209,16 @@ URL_ID_REGEX = {
         DataSet.BBREF_BOXSCORES: BBREF_GAME_ID_REGEX_STRICT,
     },
     VigFile.PARSED_JSON: {
-        DataSet.BROOKS_GAMES_FOR_DATE: BB_DAILY_JSON_FILENAME_REGEX,
+        DataSet.BROOKS_GAMES_FOR_DATE: BB_DAILY_JSON_FILENAME_REGEX_STRICT,
         DataSet.BROOKS_PITCH_LOGS: BB_GAME_ID_REGEX,
         DataSet.BROOKS_PITCHFX: PITCH_APP_REGEX,
-        DataSet.BBREF_GAMES_FOR_DATE: BBREF_DAILY_JSON_FILENAME_REGEX,
+        DataSet.BBREF_GAMES_FOR_DATE: BBREF_DAILY_JSON_FILENAME_REGEX_STRICT,
         DataSet.BBREF_BOXSCORES: BBREF_GAME_ID_REGEX_STRICT,
     },
     VigFile.PATCH_LIST: {
+        DataSet.BROOKS_GAMES_FOR_DATE: BB_DAILY_PATCH_LIST_FILENAME_REGEX,
         DataSet.BROOKS_PITCHFX: PITCHFX_LOG_PATCH_LIST_FILENAME_REGEX,
+        DataSet.BBREF_GAMES_FOR_DATE: BBREF_DAILY_PATCH_LIST_FILENAME_REGEX,
         DataSet.BBREF_BOXSCORES: BBREF_BOXSCORE_PATCH_LIST_FILENAME_REGEX,
     },
     VigFile.COMBINED_GAME_DATA: {DataSet.ALL: COMBINED_DATA_FILENAME_REGEX},

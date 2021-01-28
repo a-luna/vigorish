@@ -7,7 +7,7 @@ from getch import pause
 from halo import Halo
 
 from vigorish.cli.components import print_heading, print_message
-from vigorish.constants import FAKE_SPINNER, JOB_SPINNER_COLORS
+from vigorish.constants import DATA_SET_TO_NAME_MAP, FAKE_SPINNER, JOB_SPINNER_COLORS
 from vigorish.database import ScrapeError
 from vigorish.enums import DataSet, JobStatus, ScrapeTaskOption, StatusReport
 from vigorish.scrape.bbref_boxscores.scrape_task import ScrapeBBRefBoxscores
@@ -29,8 +29,7 @@ NODEJS_INSTALL_ERROR = (
     "intructions."
 )
 NPM_PACKAGES_INSTALL_ERROR = (
-    "Nightmare is not installed, you must install it and other node dependencies in "
-    "order to scrape any data."
+    "Nightmare is not installed, you must install it and other node dependencies in order to scrape any data."
 )
 
 
@@ -127,27 +126,21 @@ class JobRunner:
         return scrape_task.execute(start_date, end_date)
 
     def update_spinner(self, data_set, task_number):
-        self.spinners[data_set].text = self.scrape_task_started_text(data_set, task_number)
+        set_name = DATA_SET_TO_NAME_MAP[data_set]
+        self.spinners[data_set].text = f"Scraping data set: {set_name} (Task {task_number}/{len(self.data_sets)})"
         self.spinners[data_set].color = JOB_SPINNER_COLORS[data_set]
         self.spinners[data_set].start()
         self.spinners[data_set].stop_and_persist(self.spinners[data_set].frame(), "")
 
     def log_result_data_set_scraped(self, data_set, task_number):
-        self.task_results.append(self.scrape_task_complete_text(data_set, task_number))
+        set_name = DATA_SET_TO_NAME_MAP[data_set]
+        scraped = f"Scraped data set: {set_name} (Task {task_number}/{len(self.data_sets)})"
+        self.task_results.append((scraped, JOB_STATUS_TEXT_COLOR["scraped"]))
 
     def log_result_data_set_skipped(self, data_set, task_number):
-        self.task_results.append(self.scrape_task_skipped_text(data_set, task_number))
-
-    def scrape_task_complete_text(self, data_set, task_number):
-        scraped = f"Scraped data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})"
-        return (scraped, JOB_STATUS_TEXT_COLOR["scraped"])
-
-    def scrape_task_skipped_text(self, data_set, task_number):
-        skipped = f"Skipped data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})"
-        return (skipped, JOB_STATUS_TEXT_COLOR["skipped"])
-
-    def scrape_task_started_text(self, data_set, task_number):
-        return f"Scraping data set: {data_set.name} (Task {task_number}/{len(self.data_sets)})"
+        set_name = DATA_SET_TO_NAME_MAP[data_set]
+        skipped = f"Skipped data set: {set_name} (Task {task_number}/{len(self.data_sets)})"
+        self.task_results.append((skipped, JOB_STATUS_TEXT_COLOR["skipped"]))
 
     def report_task_results(self):
         subprocess.run(["clear"])
@@ -164,8 +157,8 @@ class JobRunner:
         print_heading(job_heading, fg="bright_yellow")
         if not self.task_results:
             return
-        for task_result in self.task_results:
-            print_message(task_result[0], fg=task_result[1])
+        for (message, text_color) in self.task_results:
+            print_message(message, fg=text_color)
 
     def initialize(self):
         errors = []
@@ -188,25 +181,25 @@ class JobRunner:
         return Result.Fail("\n".join(errors))
 
     def show_status_report(self):
-        if self.status_report == StatusReport.SEASON_SUMMARY:
-            return report_season_status(
+        result = (
+            report_season_status(db_session=self.db_session, year=self.season.year, report_type=self.status_report)
+            if self.status_report == StatusReport.SEASON_SUMMARY
+            else report_date_range_status(
                 db_session=self.db_session,
-                year=self.season.year,
+                start_date=self.db_job.start_date,
+                end_date=self.db_job.end_date,
                 report_type=self.status_report,
             )
-        return report_date_range_status(
-            db_session=self.db_session,
-            start_date=self.db_job.start_date,
-            end_date=self.db_job.end_date,
-            report_type=self.status_report,
         )
+        if result.failure:
+            return result
+        report_viewer = result.value
+        return report_viewer.launch()
 
     def job_failed(self, result, data_set=DataSet.ALL):
         self.end_time = datetime.now()
         self.db_job.status = JobStatus.ERROR
-        new_error = ScrapeError(
-            error_message=result.error, data_set=data_set, job_id=self.db_job.id
-        )
+        new_error = ScrapeError(error_message=result.error, data_set=data_set, job_id=self.db_job.id)
         self.db_session.add(new_error)
         self.db_session.commit()
         return result

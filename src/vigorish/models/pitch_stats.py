@@ -22,6 +22,7 @@ class PitchStats(Base):
     is_lp = Column(Integer, default=0)
     is_sv = Column(Integer, default=0)
     innings_pitched = Column(Float)
+    total_outs = Column(Integer)
     hits = Column(Integer)
     runs = Column(Integer)
     earned_runs = Column(Integer)
@@ -53,8 +54,8 @@ class PitchStats(Base):
     season_id = Column(Integer, ForeignKey("season.id"))
 
     player = relationship("Player", foreign_keys=[player_id], backref="pitch_stats")
-    player_team = relationship("Team", foreign_keys=[player_team_id])
-    opponent_team = relationship("Team", foreign_keys=[opponent_team_id])
+    player_team = relationship("Team", foreign_keys=[player_team_id], backref="team_pitch_stats")
+    opponent_team = relationship("Team", foreign_keys=[opponent_team_id], backref="opp_pitch_stats")
     game = relationship("GameScrapeStatus", foreign_keys=[game_status_id])
     date = relationship("DateScrapeStatus", foreign_keys=[date_id])
     season = relationship("Season", foreign_keys=[season_id])
@@ -72,7 +73,17 @@ class PitchStats(Base):
         bbref_data["is_wp"] = int(pitch_stats_dict["is_wp"])
         bbref_data["is_lp"] = int(pitch_stats_dict["is_lp"])
         bbref_data["is_sv"] = int(pitch_stats_dict["is_sv"])
+        bbref_data["total_outs"] = calculate_total_outs(bbref_data["innings_pitched"])
         return cls(**bbref_data)
+
+
+def calculate_total_outs(innings_pitched):
+    split = str(innings_pitched).split(".")
+    if len(split) != 2:
+        return 0
+    inn_full = split[0]
+    inn_partial = split[1]
+    return int(inn_full) * 3 + int(inn_partial)
 
 
 @accept_whitespaces
@@ -90,6 +101,7 @@ class PitchStatsCsvRow:
     is_lp: int = 0
     is_sv: int = 0
     innings_pitched: float = 0.0
+    total_outs: int = 0
     hits: int = 0
     runs: int = 0
     earned_runs: int = 0

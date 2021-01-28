@@ -5,7 +5,7 @@ from getch import pause
 
 from vigorish.cli.components import print_message, user_options_prompt
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import JobStatus
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.list_helpers import report_dict
@@ -64,18 +64,18 @@ class JobDetails(MenuItem):
             return Result.Ok(self.exit_menu)
 
     def incomplete_job_options_prompt(self):
-        prompt = "Current options:"
+        prompt = "\nCurrent options:"
         choices = {
             f"{MENU_NUMBERS.get(1)}  Execute Job": "RUN",
             f"{MENU_NUMBERS.get(2)}  Cancel Job": "CANCEL",
-            f"{EMOJI_DICT.get('BACK')} Return to Incomplete Jobs": None,
+            f"{EMOJIS.get('BACK')} Return to Incomplete Jobs": None,
         }
         return user_options_prompt(choices, prompt, clear_screen=False)
 
     def failed_job_options_prompt(self):
-        prompt = "Current options:"
+        prompt = "\nCurrent options:"
         choices = {
             f"{MENU_NUMBERS.get(1)}  Retry Job": "RETRY",
-            f"{EMOJI_DICT.get('BACK')} Return to Failed Jobs": None,
+            f"{EMOJIS.get('BACK')} Return to Failed Jobs": None,
         }
         return user_options_prompt(choices, prompt, clear_screen=False)

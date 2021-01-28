@@ -1,7 +1,7 @@
 from tqdm import tqdm
 
-from vigorish.enums import SeasonType
 from vigorish.database import Season, Team
+from vigorish.enums import SeasonType
 from vigorish.util.result import Result
 
 
@@ -26,9 +26,7 @@ def link_teams_and_seasons(db_session):
             ncols=90,
         ):
             reg_season = Season.find_by_year(db_session, team.year)
-            post_season = Season.find_by_year(
-                db_session, team.year, season_type=SeasonType.POST_SEASON
-            )
+            post_season = Season.find_by_year(db_session, team.year, season_type=SeasonType.POST_SEASON)
             if reg_season:
                 team.regular_season_id = reg_season.id
             if post_season:

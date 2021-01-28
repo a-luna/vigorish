@@ -59,9 +59,7 @@ def validate_scrape_dates(db_session, start_date, end_date):
     if result.success:
         season = result.value
         return Result.Ok(season)
-    error_heading = "Error! Invalid value for start and/or end dates"
-    print()
-    print_heading(error_heading, fg="bright_red")
+    print_heading("\nError! Invalid value for start and/or end dates", fg="bright_red")
     for s in result.error:
         print_message(s, fg="bright_red")
     print()

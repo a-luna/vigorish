@@ -29,6 +29,9 @@ from vigorish.util.result import Result
 VIG_FOLDER = Path.home() / ".vig"
 DEFAULT_CONFIG = VIG_FOLDER / "vig.config.json"
 
+# TODO: Create new config setting: DB_TABLE_BATCH_SIZE
+#       Used with add_to_database and restore_database tasks
+
 
 class ConfigFile:
     config_filepath: str
@@ -48,9 +51,7 @@ class ConfigFile:
 
     @property
     def all_settings(self):
-        return {
-            name: self.config_factory(name, config) for name, config in self.config_json.items()
-        }
+        return {name: self.config_factory(name, config) for name, config in self.config_json.items()}
 
     def get_current_setting(self, setting_name, data_set):
         config_dict = self.config_json.get(setting_name)
@@ -97,21 +98,15 @@ class ConfigFile:
         return dict_to_param_list(script_params)
 
     def check_url_delay_settings(self, data_sets):
-        url_delay_settings = [
-            self.get_current_setting("URL_SCRAPE_DELAY", data_set) for data_set in data_sets
-        ]
+        url_delay_settings = [self.get_current_setting("URL_SCRAPE_DELAY", data_set) for data_set in data_sets]
         if all(url_delay.is_valid for url_delay in url_delay_settings):
             return Result.Ok()
         error = "URL delay cannot be disabled and must be at least 3 seconds"
         return Result.Fail(error)
 
     def s3_bucket_required(self, data_sets):
-        html_storage_settings = [
-            self.get_current_setting("HTML_STORAGE", data_set) for data_set in data_sets
-        ]
-        json_storage_settings = [
-            self.get_current_setting("JSON_STORAGE", data_set) for data_set in data_sets
-        ]
+        html_storage_settings = [self.get_current_setting("HTML_STORAGE", data_set) for data_set in data_sets]
+        json_storage_settings = [self.get_current_setting("JSON_STORAGE", data_set) for data_set in data_sets]
         html_local_storage = all(
             html_storage == HtmlStorageOption.NONE or html_storage == HtmlStorageOption.LOCAL_FOLDER
             for html_storage in html_storage_settings
@@ -123,9 +118,7 @@ class ConfigFile:
 
     def read_config_file(self):
         if not self.config_filepath.exists():
-            raise FileNotFoundError(
-                errno.ENOENT, os.strerror(errno.ENOENT), str(self.config_filepath)
-            )
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), str(self.config_filepath))
         if not self.config_filepath.is_file():
             raise TypeError(f"Unable to open config file: {self.config_filepath}")
         self.config_json = json.loads(self.config_filepath.read_text())
@@ -213,9 +206,7 @@ class ConfigFile:
             "maxBatchSize": 80,
         }
 
-    def get_nodejs_script_params_from_objects(
-        self, url_delay_settings, batch_job_settings, batch_delay_settings
-    ):
+    def get_nodejs_script_params_from_objects(self, url_delay_settings, batch_job_settings, batch_delay_settings):
         script_params = {}
         if url_delay_settings.delay_is_required:
             script_params["urlTimeoutRequired"] = True
@@ -301,9 +292,7 @@ class ConfigFile:
             },
             "S3_BUCKET": {
                 "CONFIG_TYPE": "str",
-                "DESCRIPTION": (
-                    "The name of the S3 bucket to use for storing HTML and/or JSON files"
-                ),
+                "DESCRIPTION": ("The name of the S3 bucket to use for storing HTML and/or JSON files"),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
             "SCRAPE_CONDITION": {
@@ -432,10 +421,7 @@ class ConfigFile:
             "JSON_S3_FOLDER_PATH": {
                 "CONFIG_TYPE": "Path",
                 "CLASS_NAME": "S3FolderPathSetting",
-                "DESCRIPTION": (
-                    "Path to a folder within an S3 bucket where parsed JSON data should be "
-                    "stored."
-                ),
+                "DESCRIPTION": ("Path to a folder within an S3 bucket where parsed JSON data should be stored."),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
             "SCRAPED_DATA_COMBINE_CONDITION": {
@@ -462,9 +448,7 @@ class ConfigFile:
             "COMBINED_DATA_LOCAL_FOLDER_PATH": {
                 "CONFIG_TYPE": "Path",
                 "CLASS_NAME": "LocalFolderPathSetting",
-                "DESCRIPTION": (
-                    "Local folder path where files containing combined game data should be stored."
-                ),
+                "DESCRIPTION": ("Local folder path where files containing combined game data should be stored."),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
             "COMBINED_DATA_S3_FOLDER_PATH": {
@@ -479,10 +463,7 @@ class ConfigFile:
             "DB_BACKUP_FOLDER_PATH": {
                 "CONFIG_TYPE": "Path",
                 "CLASS_NAME": "LocalFolderPathSetting",
-                "DESCRIPTION": (
-                    "Local folder path where csv files containing exported table data should be "
-                    "stored."
-                ),
+                "DESCRIPTION": ("Local folder path where csv files containing exported table data should be stored."),
                 "SAME_SETTING_FOR_ALL_DATA_SETS": True,
             },
         }

@@ -7,7 +7,7 @@ from getch import pause
 from vigorish.cli.components import print_message, yes_no_cancel_prompt, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
 from vigorish.config.config_setting import same_value_for_all_data_sets_is_required
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import ConfigType, DataSet
 from vigorish.util.result import Result
 
@@ -22,8 +22,8 @@ class ChangeConfigSettting(MenuItem):
     def __init__(self, app, setting_name):
         super().__init__(app)
         self.menu_item_text = "Change Setting"
-        self.menu_item_emoji = EMOJI_DICT.get("SPIRAL", "")
-        self.pointer = EMOJI_DICT.get("HAND_POINTER", "")
+        self.menu_item_emoji = EMOJIS.get("SPIRAL", "")
+        self.pointer = EMOJIS.get("HAND_POINTER", "")
         self.setting = self.config.all_settings.get(setting_name)
         self.setting_name_title = self.setting.setting_name_title
         self.setting_name = self.setting.setting_name
@@ -106,10 +106,10 @@ class ChangeConfigSettting(MenuItem):
 
     def get_numeric_menu(self, data_set):
         if not self.setting.cannot_be_disabled:
-            prompt = f"Enable {self.setting_name_title} (Data Set = {data_set.name})? "
+            prompt = f"\nEnable {self.setting_name_title} (Data Set = {data_set.name})? "
             if not yes_no_prompt(prompt):
                 return (prompt, (True, None, None, None, None))
-        if yes_no_prompt(f"Use random values (Data Set = {data_set.name})? "):
+        if yes_no_prompt(f"\nUse random values (Data Set = {data_set.name})? "):
             prompt, random_min, random_max, min_max_are_valid = None, 0, 0, False
             while not min_max_are_valid:
                 subprocess.run(["clear"])
@@ -128,10 +128,7 @@ class ChangeConfigSettting(MenuItem):
                 if random_max > random_min:
                     min_max_are_valid = True
                     continue
-                error = (
-                    f"Error: maximum value ({random_max}) must be greater than minimum "
-                    f"value ({random_min})"
-                )
+                error = f"Error: maximum value ({random_max}) must be greater than minimum value ({random_min})"
                 print_message(error, fg="bright_red", bold=True)
                 pause(message="Press any key to continue...")
             return (prompt, (True, True, None, int(random_min), int(random_max)))

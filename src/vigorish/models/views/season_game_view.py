@@ -11,22 +11,12 @@ class Season_Game_View(Base):
             [
                 Season.id.label("id"),
                 func.count(GameScrapeStatus.id).label("total_games"),
-                func.sum(GameScrapeStatus.scraped_bbref_boxscore).label(
-                    "total_scraped_bbref_boxscore"
-                ),
-                func.sum(GameScrapeStatus.scraped_brooks_pitch_logs).label(
-                    "total_scraped_brooks_pitch_logs"
-                ),
-                func.sum(GameScrapeStatus.combined_data_success).label(
-                    "total_combined_data_success"
-                ),
+                func.sum(GameScrapeStatus.scraped_bbref_boxscore).label("total_scraped_bbref_boxscore"),
+                func.sum(GameScrapeStatus.scraped_brooks_pitch_logs).label("total_scraped_brooks_pitch_logs"),
+                func.sum(GameScrapeStatus.combined_data_success).label("total_combined_data_success"),
                 func.sum(GameScrapeStatus.combined_data_fail).label("total_combined_data_fail"),
-                func.sum(GameScrapeStatus.pitch_app_count_bbref).label(
-                    "total_pitch_app_count_bbref"
-                ),
-                func.sum(GameScrapeStatus.pitch_app_count_brooks).label(
-                    "total_pitch_app_count_brooks"
-                ),
+                func.sum(GameScrapeStatus.pitch_app_count_bbref).label("total_pitch_app_count_bbref"),
+                func.sum(GameScrapeStatus.pitch_app_count_brooks).label("total_pitch_app_count_brooks"),
                 func.sum(GameScrapeStatus.total_pitch_count_bbref).label("total_pitch_count_bbref"),
             ]
         )
@@ -35,7 +25,6 @@ class Season_Game_View(Base):
                 Season,
                 GameScrapeStatus,
                 Season.id == GameScrapeStatus.season_id,
-                isouter=True,
             )
         )
         .group_by(Season.id),

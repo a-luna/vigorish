@@ -7,7 +7,7 @@ from getch import pause
 
 from vigorish.cli.components import print_message, yes_no_cancel_prompt, yes_no_prompt
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.util.result import Result
 
 RESTART_WARNING = "\nApplication must be restarted for these changes to take effect!"
@@ -17,7 +17,7 @@ class ChangeEnvVarSetting(MenuItem):
     def __init__(self, app, setting_name):
         super().__init__(app)
         self.menu_item_text = setting_name
-        self.menu_item_emoji = EMOJI_DICT.get("SPIRAL")
+        self.menu_item_emoji = EMOJIS.get("SPIRAL")
         self.setting_name = setting_name
         self.current_setting = self.dotenv.get_current_value(setting_name)
         self.restart_required = self.dotenv.restart_required_on_change(setting_name)
@@ -25,11 +25,9 @@ class ChangeEnvVarSetting(MenuItem):
 
     def launch(self):
         subprocess.run(["clear"])
-        env_var_name = f"Environment Variable: {self.setting_name}\n"
-        env_var_value = f"Current Value: {self.current_setting}\n"
-        print_message(env_var_name, fg="bright_magenta", bold=True)
-        print_message(env_var_value, fg="bright_yellow", bold=True)
-        if not yes_no_prompt(prompt="Change current setting?"):
+        print_message(f"Variable Name: {self.setting_name}\n", fg="bright_magenta", bold=True)
+        print_message(f"Current Value: {self.current_setting}\n", fg="bright_yellow", bold=True)
+        if not yes_no_prompt(prompt="\nChange current setting?"):
             return Result.Ok(self.exit_menu)
         user_confirmed, new_value = False, None
         while not user_confirmed:

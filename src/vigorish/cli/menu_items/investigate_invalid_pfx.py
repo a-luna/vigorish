@@ -17,15 +17,12 @@ from vigorish.cli.components import (
     user_options_prompt,
     yes_no_prompt,
 )
-from vigorish.cli.components.dict_viewer import DictListTableViewer
-from vigorish.cli.components.models import DisplayTable
-from vigorish.cli.components.table_viewer import TableViewer
+from vigorish.cli.components.viewers import DictListTableViewer, DisplayTable, TableViewer
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType
-from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
-from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask
-from vigorish.tasks.patch_invalid_pfx import PatchInvalidPitchFxTask
+from vigorish.tasks import CombineScrapedDataTask, PatchAllInvalidPitchFxTask
+from vigorish.tasks.patch_all_invalid_pfx import PatchInvalidPitchFxTask
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import inning_number_to_string, validate_at_bat_id
 
@@ -39,7 +36,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         self.year = year
         self.bbref_game_ids = bbref_game_ids
         self.menu_item_text = f"{AuditError.INVALID_PITCHFX_DATA} ({self.game_count} Games)"
-        self.menu_item_emoji = EMOJI_DICT.get("UPSIDE_DOWN")
+        self.menu_item_emoji = EMOJIS.get("UPSIDE_DOWN")
 
     @property
     def game_count(self):
@@ -95,7 +92,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  Patch all Games": "ALL",
             f"{MENU_NUMBERS.get(2)}  Patch a Single Game": "ONE",
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, prompt)
 
@@ -104,7 +101,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         choices = {
             f"{MENU_NUMBERS.get(1)}  Analyze Pitching Data": "INVESTIGATE",
             f"{MENU_NUMBERS.get(2)}  Attempt to Combine Data (Again)": "RETRY",
-            f"{EMOJI_DICT.get('BACK')} Return to Previous Menu": None,
+            f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         return user_options_prompt(choices, prompt)
 
@@ -156,22 +153,13 @@ class InvestigateInvalidPitchFx(MenuItem):
         self.patch_results = result.value
         print()
         if self.patch_results["fixed_all_errors"]:
-            patch_result = (
-                f"PitchFX data for {self.game_id} is now completely reconciled (no errors of "
-                "any type)!\n"
-            )
+            patch_result = f"PitchFX data for {self.game_id} is now completely reconciled (no errors of any type)!\n"
             print_success(patch_result)
         if self.patch_results["invalid_pfx"]:
-            patch_result = (
-                f"{self.game_id} still contains invalid PitchFX data after applying the patch "
-                "list.\n"
-            )
+            patch_result = f"{self.game_id} still contains invalid PitchFX data after applying the patch list.\n"
             print_error(patch_result)
         if self.patch_results["pfx_errors"]:
-            patch_result = (
-                f"{self.game_id} still contains PitchFX data errors associated with valid at "
-                "bats.\n"
-            )
+            patch_result = f"{self.game_id} still contains PitchFX data errors associated with valid at bats.\n"
             print_error(patch_result)
         pause(message="Press any key to continue...")
         subprocess.run(["clear"])
@@ -205,15 +193,13 @@ class InvestigateInvalidPitchFx(MenuItem):
     def summarize_pfx_errors(self, pfx_error_map):
         at_bat_ids = [
             at_bat_id
-            for pa_id, pitch_app_dict in pfx_error_map.items()
-            for inning_id, inning_dict in pitch_app_dict.items()
+            for pitch_app_dict in pfx_error_map.values()
+            for inning_dict in pitch_app_dict.values()
             for at_bat_id in inning_dict.keys()
         ]
         pitch_app_ids = list(pfx_error_map.keys())
         at_bats_plural = "at bats" if len(at_bat_ids) > 1 else "at bat"
-        pitch_apps_plural = (
-            "pitching appearances" if len(pitch_app_ids) > 1 else "pitching appearance"
-        )
+        pitch_apps_plural = "pitching appearances" if len(pitch_app_ids) > 1 else "pitching appearance"
         header = f"Invalid PitchFX Data for {self.game_id}\n"
         message = (
             f"{self.game_id} contains PitchFX data that does not belong to any at bat "
@@ -227,7 +213,7 @@ class InvestigateInvalidPitchFx(MenuItem):
     def prompt_user_create_patch_list(self):
         print()
         prompt = (
-            "Invalid PitchFX data is sometimes valid data where the pitcher or batter ID value "
+            "\nInvalid PitchFX data is sometimes valid data where the pitcher or batter ID value "
             "is incorrect, while the inning, pitch count, and pitch numbers are correct. Would "
             "you like to check for at bats that match these criteria?"
         )
@@ -251,9 +237,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         missing_pfx = match_dict["missing_pfx"]
         at_bat_id = missing_pfx["at_bat_id"]
         inning_str = inning_number_to_string(invalid_pfx["inning_id"])
-        pitcher_or_batter = (
-            "pitcher" if match_dict["patch_type"] == PatchType.CHANGE_BATTER_ID else "batter"
-        )
+        pitcher_or_batter = "pitcher" if match_dict["patch_type"] == PatchType.CHANGE_BATTER_ID else "batter"
         match_heading = f"Match {num}/{total} (Patch Type: {match_dict['patch_type']}):"
         match_summary = []
         match_summary = (
@@ -336,10 +320,7 @@ class InvestigateInvalidPitchFx(MenuItem):
                 match.pop("pitcher_id")
                 match.pop("batter_id")
             subprocess.run(["clear"])
-            error = (
-                "Multiple at bats were found for the invalid PitchFX data below (only one match "
-                "is expected):\n"
-            )
+            error = "Multiple at bats were found for the invalid PitchFX data below (only one match is expected):\n"
             print_message(error, fg="bright_yellow", bold=True)
             all_rows = [match_dict["invalid_pfx"]]
             all_rows.extend(list(match_dict["missing_pfx"]))
@@ -350,7 +331,7 @@ class InvestigateInvalidPitchFx(MenuItem):
     def prompt_user_apply_patch_list(self):
         subprocess.run(["clear"])
         prompt = (
-            f"A patch list for {self.game_id} was successfully created! Would you like to apply "
+            f"\nA patch list for {self.game_id} was successfully created! Would you like to apply "
             "these changes and attempt to combine the scraped data after doing so?"
         )
         return yes_no_prompt(prompt)
@@ -386,8 +367,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         at_bats_plural = "at bats" if total_at_bats > 1 else "at bat"
         error_header = f"PitchFX data could not be reconciled for game: {self.game_id}\n"
         error_message = (
-            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} "
-            f"total {at_bats_plural})\n"
+            f"{total_pitch_apps} {pitch_apps_plural} with data errors ({total_at_bats} total {at_bats_plural})\n"
         )
         print_message(error_header, wrap=False, fg="bright_red", bold=True, underline=True)
         print_message(error_message, fg="bright_red")
@@ -399,29 +379,22 @@ class InvestigateInvalidPitchFx(MenuItem):
 
     def prompt_user_investigate_failures(self):
         prompt = (
-            "Would you like to analyze these results? In many cases, the batter/pitcher ID is "
+            "\nWould you like to analyze these results? In many cases, the batter/pitcher ID is "
             "incorrect and can be easily fixed by applying a patch file."
         )
         return yes_no_prompt(prompt)
 
     def prompt_user_view_patched_data(self):
-        prompt = (
-            "Would you like to see a report detailing the changes that were made by applying the "
-            "patch list?"
-        )
+        prompt = "\nWould you like to see a report detailing the changes that were made by applying the patch list?"
         return yes_no_prompt(prompt)
 
-    def display_patched_data_tables(
-        self, boxscore_changes, pitch_stat_changes_dict, pitch_stats_after
-    ):
+    def display_patched_data_tables(self, boxscore_changes, pitch_stat_changes_dict, pitch_stats_after):
         table_list = []
         total_tables = len(pitch_stat_changes_dict) + 1
         boxscore_heading = f"Table 1/{total_tables}: All Pitch Data for {self.game_id}\n"
         boxscore_table = DisplayTable(boxscore_changes, boxscore_heading)
         table_list.append(boxscore_table)
-        for num, (pitch_app_id, pitch_stat_changes) in enumerate(
-            pitch_stat_changes_dict.items(), start=2
-        ):
+        for num, (pitch_app_id, pitch_stat_changes) in enumerate(pitch_stat_changes_dict.items(), start=2):
             pitch_app_header = f"Table {num}/{total_tables}: Pitch Appearance {pitch_app_id}\n"
             pitch_app_message = self.get_pitch_app_stat_line(pitch_stats_after[pitch_app_id])
             pitch_app_table = DisplayTable(pitch_stat_changes, pitch_app_header, pitch_app_message)
@@ -453,8 +426,7 @@ class InvestigateInvalidPitchFx(MenuItem):
     def display_all_patch_results(self, all_patch_results, successful_change, invalid_pfx_change):
         col_headers = ["BBRef Game ID", "Status"]
         game_results = [
-            [game_id, self.get_scrape_status(patch_results)]
-            for game_id, patch_results in all_patch_results.items()
+            [game_id, self.get_scrape_status(patch_results)] for game_id, patch_results in all_patch_results.items()
         ]
         game_results.sort(key=lambda x: (x[1], x[0]))
         row_data = [dict(zip(col_headers, row)) for row in game_results]
@@ -490,9 +462,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         remaining_errors = self.get_remaining_error_count(all_patch_results)
         messages = [f"Processed {len(game_results)} total games"]
         if patch_list_failed_count:
-            messages.append(
-                f"  - Failed to create a patch list for {patch_list_failed_count} games"
-            )
+            messages.append(f"  - Failed to create a patch list for {patch_list_failed_count} games")
         if patch_list_created_count:
             messages.append(f"  - Created a patch list for {patch_list_created_count} games")
         if fixed_all_count:
@@ -502,36 +472,16 @@ class InvestigateInvalidPitchFx(MenuItem):
         return "\n".join(messages)
 
     def get_patch_list_created_count(self, all_patch_results):
-        return len(
-            [
-                r
-                for r in all_patch_results.values()
-                if "created_patch_list" in r and r["created_patch_list"]
-            ]
-        )
+        return len([r for r in all_patch_results.values() if "created_patch_list" in r and r["created_patch_list"]])
 
     def get_patch_list_failed_count(self, all_patch_results):
-        return len(
-            [
-                r
-                for r in all_patch_results.values()
-                if "created_patch_list" in r and not r["created_patch_list"]
-            ]
-        )
+        return len([r for r in all_patch_results.values() if "created_patch_list" in r and not r["created_patch_list"]])
 
     def get_fixed_all_count(self, all_patch_results):
-        return len(
-            [
-                r
-                for r in all_patch_results.values()
-                if "fixed_all_errors" in r and r["fixed_all_errors"]
-            ]
-        )
+        return len([r for r in all_patch_results.values() if "fixed_all_errors" in r and r["fixed_all_errors"]])
 
     def get_invalid_pfx_count(self, all_patch_results):
-        return len(
-            [r for r in all_patch_results.values() if "invalid_pfx" in r and r["invalid_pfx"]]
-        )
+        return len([r for r in all_patch_results.values() if "invalid_pfx" in r and r["invalid_pfx"]])
 
     def get_pfx_error_count(self, all_patch_results):
         return len([r for r in all_patch_results.values() if "pfx_errors" in r and r["pfx_errors"]])
@@ -577,63 +527,27 @@ class InvestigateInvalidPitchFx(MenuItem):
         self.patch_results = patch_results
 
     def subscribe_to_events(self):
-        self.patch_all_invalid_pfx.events.patch_all_invalid_pitchfx_started += (
-            self.patch_all_invalid_pitchfx_started
-        )
-        self.patch_all_invalid_pfx.events.patch_all_invalid_pitchfx_complete += (
-            self.patch_all_invalid_pitchfx_complete
-        )
-        self.patch_all_invalid_pfx.events.create_invalid_pfx_map_start += (
-            self.create_invalid_pfx_map_start
-        )
-        self.patch_all_invalid_pfx.events.create_invalid_pfx_map_complete += (
-            self.create_invalid_pfx_map_complete
-        )
+        self.patch_all_invalid_pfx.events.patch_all_invalid_pitchfx_started += self.patch_all_invalid_pitchfx_started
+        self.patch_all_invalid_pfx.events.patch_all_invalid_pitchfx_complete += self.patch_all_invalid_pitchfx_complete
+        self.patch_all_invalid_pfx.events.create_invalid_pfx_map_start += self.create_invalid_pfx_map_start
+        self.patch_all_invalid_pfx.events.create_invalid_pfx_map_complete += self.create_invalid_pfx_map_complete
         self.patch_all_invalid_pfx.events.error_occurred += self.error_occurred
-        self.patch_all_invalid_pfx.events.match_missing_pfx_data_start += (
-            self.match_missing_pfx_data_start
-        )
-        self.patch_all_invalid_pfx.events.match_missing_pfx_data_complete += (
-            self.match_missing_pfx_data_complete
-        )
+        self.patch_all_invalid_pfx.events.match_missing_pfx_data_start += self.match_missing_pfx_data_start
+        self.patch_all_invalid_pfx.events.match_missing_pfx_data_complete += self.match_missing_pfx_data_complete
         self.patch_all_invalid_pfx.events.create_patch_list_start += self.create_patch_list_start
-        self.patch_all_invalid_pfx.events.create_patch_list_complete += (
-            self.create_patch_list_complete
-        )
-        self.patch_all_invalid_pfx.events.combine_scraped_data_start += (
-            self.combine_scraped_data_start
-        )
-        self.patch_all_invalid_pfx.events.combine_scraped_data_complete += (
-            self.combine_scraped_data_complete
-        )
+        self.patch_all_invalid_pfx.events.create_patch_list_complete += self.create_patch_list_complete
+        self.patch_all_invalid_pfx.events.combine_scraped_data_start += self.combine_scraped_data_start
+        self.patch_all_invalid_pfx.events.combine_scraped_data_complete += self.combine_scraped_data_complete
 
     def unsubscribe_from_events(self):
-        self.patch_all_invalid_pfx.events.create_invalid_pfx_map_start -= (
-            self.create_invalid_pfx_map_start
-        )
-        self.patch_all_invalid_pfx.events.create_invalid_pfx_map_complete -= (
-            self.create_invalid_pfx_map_complete
-        )
-        self.patch_all_invalid_pfx.events.patch_all_invalid_pitchfx_started -= (
-            self.patch_all_invalid_pitchfx_started
-        )
-        self.patch_all_invalid_pfx.events.patch_all_invalid_pitchfx_complete -= (
-            self.patch_all_invalid_pitchfx_complete
-        )
+        self.patch_all_invalid_pfx.events.create_invalid_pfx_map_start -= self.create_invalid_pfx_map_start
+        self.patch_all_invalid_pfx.events.create_invalid_pfx_map_complete -= self.create_invalid_pfx_map_complete
+        self.patch_all_invalid_pfx.events.patch_all_invalid_pitchfx_started -= self.patch_all_invalid_pitchfx_started
+        self.patch_all_invalid_pfx.events.patch_all_invalid_pitchfx_complete -= self.patch_all_invalid_pitchfx_complete
         self.patch_all_invalid_pfx.events.error_occurred -= self.error_occurred
-        self.patch_all_invalid_pfx.events.match_missing_pfx_data_start -= (
-            self.match_missing_pfx_data_start
-        )
-        self.patch_all_invalid_pfx.events.match_missing_pfx_data_complete -= (
-            self.match_missing_pfx_data_complete
-        )
+        self.patch_all_invalid_pfx.events.match_missing_pfx_data_start -= self.match_missing_pfx_data_start
+        self.patch_all_invalid_pfx.events.match_missing_pfx_data_complete -= self.match_missing_pfx_data_complete
         self.patch_all_invalid_pfx.events.create_patch_list_start -= self.create_patch_list_start
-        self.patch_all_invalid_pfx.events.create_patch_list_complete -= (
-            self.create_patch_list_complete
-        )
-        self.patch_all_invalid_pfx.events.combine_scraped_data_start -= (
-            self.combine_scraped_data_start
-        )
-        self.patch_all_invalid_pfx.events.combine_scraped_data_complete -= (
-            self.combine_scraped_data_complete
-        )
+        self.patch_all_invalid_pfx.events.create_patch_list_complete -= self.create_patch_list_complete
+        self.patch_all_invalid_pfx.events.combine_scraped_data_start -= self.combine_scraped_data_start
+        self.patch_all_invalid_pfx.events.combine_scraped_data_complete -= self.combine_scraped_data_complete

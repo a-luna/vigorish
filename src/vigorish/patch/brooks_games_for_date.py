@@ -1,12 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from vigorish.database import (
-    DateScrapeStatus,
-    GameScrapeStatus,
-    PitchAppScrapeStatus,
-    PitchFx,
-)
+from vigorish.database import DateScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PitchFx
 from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList
 from vigorish.util.dt_format_strings import DATE_ONLY
@@ -94,9 +89,7 @@ class PatchBrooksGamesForDateRemoveGame(Patch):
                 f"brooks_games_for_date {self.game_date}"
             )
             return Result.Fail(error)
-        data.games = list(
-            filter(lambda x: x.bbref_game_id != self.remove_bbref_game_id, data.games)
-        )
+        data.games = list(filter(lambda x: x.bbref_game_id != self.remove_bbref_game_id, data.games))
         data.game_count = len(data.games)
         return Result.Ok(data)
 
@@ -118,9 +111,7 @@ def delete_pitchfx_with_invalid_id(db_session, bbref_game_id):
 
 
 def delete_pitch_apps_with_invalid_id(db_session, bbref_game_id):
-    all_pitch_apps_with_invalid_id = (
-        db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=bbref_game_id).all()
-    )
+    all_pitch_apps_with_invalid_id = db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=bbref_game_id).all()
     for pitch_app in all_pitch_apps_with_invalid_id:
         db_session.delete(pitch_app)
 
@@ -135,10 +126,7 @@ def delete_game_status(db_session, bbref_game_id):
 def update_game_status(db_session, data, bbref_game_id):
     game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
     if not game_status:
-        error = (
-            "Unable to apply patch, database does not contain any records for game id "
-            f'"{bbref_game_id}"'
-        )
+        error = "Unable to apply patch, database does not contain any records for game id " f'"{bbref_game_id}"'
         return Result.Fail(error)
     for game_info in data.games:
         if game_info.bbref_game_id == bbref_game_id:

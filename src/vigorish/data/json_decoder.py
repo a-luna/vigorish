@@ -1,6 +1,5 @@
 """Decode json dicts of scraped data to custom objects."""
 from dacite import from_dict
-
 from dateutil import parser
 
 from vigorish.patch.bbref_boxscores import BBRefBoxscorePatchList, PatchBBRefBoxscorePitchSequence
@@ -174,9 +173,7 @@ def decode_bbref_games_for_date_patch_list(json_dict):
     json_dict.pop("__bbref_games_for_date_patch_list__")
     patch_dict_list = json_dict.pop("patch_list")
     bbref_games_for_date_patch_list = BBRefGamesForDatePatchList(**json_dict)
-    bbref_games_for_date_patch_list.patch_list = [
-        decode_patch_bbref_games_for_date_game_id(p) for p in patch_dict_list
-    ]
+    bbref_games_for_date_patch_list.patch_list = [decode_patch_bbref_games_for_date_game_id(p) for p in patch_dict_list]
     return Result.Ok(bbref_games_for_date_patch_list)
 
 
@@ -189,9 +186,7 @@ def decode_bbref_boxscore_patch_list(json_dict):
     json_dict.pop("__bbref_boxscore_patch_list__")
     patch_dict_list = json_dict.pop("patch_list")
     boxscore_patch_list = BBRefBoxscorePatchList(**json_dict)
-    boxscore_patch_list.patch_list = [
-        decode_patch_bbref_boxscore_pitch_sequence(p) for p in patch_dict_list
-    ]
+    boxscore_patch_list.patch_list = [decode_patch_bbref_boxscore_pitch_sequence(p) for p in patch_dict_list]
     return Result.Ok(boxscore_patch_list)
 
 

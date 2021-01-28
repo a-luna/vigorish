@@ -31,23 +31,16 @@ class PatchBBRefBoxscorePitchSequence(Patch):
         self.patch_id = "__patch_bbref_boxscore_pitch_sequence__"
 
     def apply(self, data):
-        inning_matches = [
-            inning for inning in data.innings_list if inning.inning_id == self.inning_id
-        ]
+        inning_matches = [inning for inning in data.innings_list if inning.inning_id == self.inning_id]
         if not inning_matches:
             error = f"Unable to locate the inning identified in this patch: {self.inning_id}"
             return Result.Fail(error)
         if len(inning_matches) > 1:
-            error = (
-                "More than one inning was found that matches the inning identified in this "
-                f"patch: {self.inning_id}"
-            )
+            error = "More than one inning was found that matches the inning identified in this patch: {self.inning_id}"
             return Result.Fail(error)
         inning = inning_matches[0]
         event_matches = [
-            event
-            for event in inning.game_events
-            if event.pbp_table_row_number == self.pbp_table_row_number
+            event for event in inning.game_events if event.pbp_table_row_number == self.pbp_table_row_number
         ]
         if not event_matches:
             error = (

@@ -10,18 +10,17 @@ from vigorish.cli.components.util import (
     print_message,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.tasks.add_to_database import AddToDatabaseTask
+from vigorish.constants import EMOJIS, MENU_NUMBERS
+from vigorish.tasks import AddToDatabaseTask
 from vigorish.util.result import Result
 
 
 class AddToDatabase(MenuItem):
-    def __init__(self, app, audit_report):
+    def __init__(self, app):
         super().__init__(app)
-        self.audit_report = audit_report
         self.add_to_db = AddToDatabaseTask(app)
         self.menu_item_text = "Add Combined Game Data to Database"
-        self.menu_item_emoji = EMOJI_DICT.get("BASEBALL")
+        self.menu_item_emoji = EMOJIS.get("BASEBALL")
         self.exit_menu = False
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.game_ids = []
@@ -37,9 +36,8 @@ class AddToDatabase(MenuItem):
         if result.failure:
             return Result.Ok()
         year = result.value
-        self.initialize_spinner()
         self.subscribe_to_events()
-        result = self.add_to_db.execute(self.audit_report, year)
+        result = self.add_to_db.execute(year)
         self.spinner.stop()
         self.unsubscribe_from_events()
         if result.failure:
@@ -63,7 +61,7 @@ class AddToDatabase(MenuItem):
         subprocess.run(["clear"])
         for line in task_description:
             print_message(line, fg="bright_yellow")
-        return yes_no_prompt("Would you like to run this task?", wrap=False)
+        return yes_no_prompt("\nWould you like to run this task?", wrap=False)
 
     def select_season_prompt(self):
         prompt = "Select an MLB season from the list below:"
@@ -71,16 +69,16 @@ class AddToDatabase(MenuItem):
         for num, (year, results) in enumerate(self.audit_report.items(), start=2):
             if results["successful"]:
                 choices[f"{MENU_NUMBERS.get(num, str(num))}  {year}"] = year
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         result = user_options_prompt(choices, prompt)
         if result.failure:
             return result
         year = result.value if isinstance(result.value, int) else None
         return Result.Ok(year)
 
-    def initialize_spinner(self):
+    def find_all_games_eligible_for_import_start(self):
         subprocess.run(["clear"])
-        self.spinner.text = "Preparing to import combined game data..."
+        self.spinner.text = "Finding all games that are eligible for import..."
         self.spinner.start()
 
     def add_data_to_db_start(self, year, game_ids):
@@ -92,15 +90,14 @@ class AddToDatabase(MenuItem):
 
     def get_progress_text(self, num_complete, year, game_id):
         percent = num_complete / float(self.total_games)
-        return (
-            f"Adding combined game data for MLB {year} to database... "
-            f"(Game ID: {game_id}) {percent:.0%}..."
-        )
+        return f"Adding combined game data for MLB {year} to database... (Game ID: {game_id}) {percent:.0%}..."
 
     def subscribe_to_events(self):
+        self.add_to_db.events.find_all_games_eligible_for_import_start += self.find_all_games_eligible_for_import_start
         self.add_to_db.events.add_data_to_db_start += self.add_data_to_db_start
         self.add_to_db.events.add_data_to_db_progress += self.add_data_to_db_progress
 
     def unsubscribe_from_events(self):
+        self.add_to_db.events.find_all_games_eligible_for_import_start -= self.find_all_games_eligible_for_import_start
         self.add_to_db.events.add_data_to_db_start -= self.add_data_to_db_start
         self.add_to_db.events.add_data_to_db_progress -= self.add_data_to_db_progress

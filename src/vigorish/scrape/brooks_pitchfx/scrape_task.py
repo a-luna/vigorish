@@ -14,9 +14,7 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
         super().__init__(app, db_job)
 
     def check_prerequisites(self, game_date):
-        brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
-            self.db_session, game_date
-        )
+        brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(self.db_session, game_date)
         if brooks_pitch_logs:
             return Result.Ok()
         date_str = game_date.strftime(DATE_ONLY_2)
@@ -29,9 +27,7 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
     def check_current_status(self, game_date):
         if self.scrape_condition == ScrapeCondition.ALWAYS:
             return Result.Ok()
-        scraped_brooks_pitchfx = DateScrapeStatus.verify_all_brooks_pitchfx_scraped_for_date(
-            self.db_session, game_date
-        )
+        scraped_brooks_pitchfx = DateScrapeStatus.verify_all_brooks_pitchfx_scraped_for_date(self.db_session, game_date)
         return Result.Ok() if not scraped_brooks_pitchfx else Result.Fail("skip")
 
     def parse_scraped_html(self):

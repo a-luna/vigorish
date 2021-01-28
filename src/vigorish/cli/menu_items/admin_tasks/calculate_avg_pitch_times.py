@@ -4,20 +4,17 @@ from getch import pause
 from halo import Halo
 from tabulate import tabulate
 
-from vigorish.cli.components.models import DisplayPage
-from vigorish.cli.components.page_viewer import PageViewer
 from vigorish.cli.components.util import (
     get_random_cli_color,
     get_random_dots_spinner,
     print_heading,
     print_message,
 )
+from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.database import TimeBetweenPitches
-from vigorish.tasks.calculate_avg_pitch_times import (
-    CalculateAverageTimeBetweenPitches as CalculatePitchTimesTask,
-)
+from vigorish.tasks import CalculateAvgPitchTimesTask
 from vigorish.util.result import Result
 
 STAT_NAMES = ["avg", "min", "max"]
@@ -26,9 +23,9 @@ STAT_NAMES = ["avg", "min", "max"]
 class CalculatePitchTimes(MenuItem):
     def __init__(self, app):
         super().__init__(app)
-        self.calc_pitch_times = CalculatePitchTimesTask(app)
+        self.calc_pitch_times = CalculateAvgPitchTimesTask(app)
         self.menu_item_text = "Calculate Avg. Time Between Pitches"
-        self.menu_item_emoji = EMOJI_DICT.get("CLOCK")
+        self.menu_item_emoji = EMOJIS.get("CLOCK")
         self.exit_menu = False
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.game_ids = []
@@ -97,21 +94,13 @@ class CalculatePitchTimes(MenuItem):
 
     def subscribe_to_events(self):
         self.calc_pitch_times.events.find_eligible_games_start += self.find_eligible_games_start
-        self.calc_pitch_times.events.find_eligible_games_complete += (
-            self.find_eligible_games_complete
-        )
-        self.calc_pitch_times.events.calculate_pitch_metrics_progress += (
-            self.calculate_pitch_metrics_progress
-        )
+        self.calc_pitch_times.events.find_eligible_games_complete += self.find_eligible_games_complete
+        self.calc_pitch_times.events.calculate_pitch_metrics_progress += self.calculate_pitch_metrics_progress
 
     def unsubscribe_from_events(self):
         self.calc_pitch_times.events.find_eligible_games_start -= self.find_eligible_games_start
-        self.calc_pitch_times.events.find_eligible_games_complete -= (
-            self.find_eligible_games_complete
-        )
-        self.calc_pitch_times.events.calculate_pitch_metrics_progress -= (
-            self.calculate_pitch_metrics_progress
-        )
+        self.calc_pitch_times.events.find_eligible_games_complete -= self.find_eligible_games_complete
+        self.calc_pitch_times.events.calculate_pitch_metrics_progress -= self.calculate_pitch_metrics_progress
 
     def get_task_description_pages(self):
         return [

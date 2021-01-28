@@ -5,8 +5,6 @@ from pathlib import Path
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components.models import DisplayPage
-from vigorish.cli.components.page_viewer import PageViewer
 from vigorish.cli.components.prompts import user_options_prompt
 from vigorish.cli.components.util import (
     get_random_cli_color,
@@ -15,11 +13,11 @@ from vigorish.cli.components.util import (
     print_heading,
     shutdown_cli_immediately,
 )
+from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT, MENU_NUMBERS
-from vigorish.database import prepare_database_for_restore
+from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import DataSet
-from vigorish.tasks.restore_database import RestoreDatabaseTask
+from vigorish.tasks import RestoreDatabaseTask
 from vigorish.util.datetime_util import format_timedelta_str, get_local_utcoffset
 from vigorish.util.dt_format_strings import DT_NAIVE, FILE_TIMESTAMP
 from vigorish.util.result import Result
@@ -29,8 +27,9 @@ class RestoreDatabase(MenuItem):
     def __init__(self, app):
         super().__init__(app)
         self.menu_item_text = "Restore Database from Backup"
-        self.menu_item_emoji = EMOJI_DICT.get("SPIRAL")
+        self.menu_item_emoji = EMOJIS.get("SPIRAL")
         self.exit_menu = False
+        self.restore_db = RestoreDatabaseTask(self.app)
         self.backup_start_time = None
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         backup_folder_setting = self.config.all_settings.get("DB_BACKUP_FOLDER_PATH")
@@ -53,12 +52,8 @@ class RestoreDatabase(MenuItem):
         if result.failure:
             return Result.Ok(True)
         zip_file = result.value
-        result = self.prepare_database()
-        if result.failure:
-            return result
-        self.restore_db = RestoreDatabaseTask(self.app)
         self.subscribe_to_events()
-        result = self.restore_db.execute(zip_file)
+        result = self.restore_db.execute(zip_file=zip_file)
         self.unsubscribe_from_events()
         if result.failure:
             return result
@@ -77,9 +72,7 @@ class RestoreDatabase(MenuItem):
         heading = "Restore Database from Backup"
         prompt = "Would you like to run this task and restore the database?"
         pages = [DisplayPage(page, heading) for page in self.get_task_description_pages()]
-        page_viewer = PageViewer(
-            pages, prompt=prompt, text_color="bright_yellow", heading_color="bright_yellow"
-        )
+        page_viewer = PageViewer(pages, prompt=prompt, text_color="bright_yellow", heading_color="bright_yellow")
         return page_viewer.launch()
 
     def prompt_user_select_backup_to_restore(self):
@@ -89,7 +82,7 @@ class RestoreDatabase(MenuItem):
             f"{MENU_NUMBERS.get(num,num)}  {self.get_backup_time(zip_file.stem)}": zip_file
             for num, zip_file in enumerate(self.backup_zip_files, start=1)
         }
-        choices[f"{EMOJI_DICT.get('BACK')} Return to Previous Menu"] = None
+        choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
         prompt = "Select a backup to restore (time shown is when the backup process was started):"
         return user_options_prompt(choices, prompt, clear_screen=False)
 
@@ -102,10 +95,9 @@ class RestoreDatabase(MenuItem):
     def prepare_database(self):
         subprocess.run(["clear"])
         print_heading("Restore Database from Backup", fg="bright_yellow")
-        self.app.reset_database_connection()
-        return prepare_database_for_restore(self.app)
+        return self.app.prepare_database_for_restore()
 
-    def unzip_backup_file_start(self):
+    def unzip_backup_files_start(self):
         subprocess.run(["clear"])
         print_heading("Restore Database from Backup", fg="bright_yellow")
         self.backup_start_time = datetime.now()
@@ -127,13 +119,13 @@ class RestoreDatabase(MenuItem):
         self.spinner.succeed(f"Successfully restored database from backup! (elapsed: {elapsed})")
 
     def subscribe_to_events(self):
-        self.restore_db.events.unzip_backup_file_start += self.unzip_backup_file_start
+        self.restore_db.events.unzip_backup_files_start += self.unzip_backup_files_start
         self.restore_db.events.restore_table_start += self.restore_table_start
         self.restore_db.events.batch_insert_performed += self.batch_insert_performed
         self.restore_db.events.restore_database_complete += self.restore_database_complete
 
     def unsubscribe_from_events(self):
-        self.restore_db.events.unzip_backup_file_start -= self.unzip_backup_file_start
+        self.restore_db.events.unzip_backup_files_start -= self.unzip_backup_files_start
         self.restore_db.events.restore_table_start -= self.restore_table_start
         self.restore_db.events.batch_insert_performed -= self.batch_insert_performed
         self.restore_db.events.restore_database_complete -= self.restore_database_complete
@@ -145,9 +137,6 @@ class RestoreDatabase(MenuItem):
                     "This task restores database tables that track the progress made scraping all "
                     "data sets for all MLB seasons.\n"
                 ),
-                (
-                    "Backup files are stored in the folder specified by the DB_BACKUP_FOLDER_PATH "
-                    "config setting."
-                ),
+                ("Backup files are stored in the folder specified by the DB_BACKUP_FOLDER_PATH config setting."),
             ]
         ]

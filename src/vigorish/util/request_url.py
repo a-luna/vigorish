@@ -7,9 +7,7 @@ from vigorish.util.result import Result
 
 
 def request_url_with_retries(url):
-    @retry(
-        max_attempts=5, delay=5, exceptions=(ConnectionError, HTTPError, Timeout, RequestException)
-    )
+    @retry(max_attempts=5, delay=5, exceptions=(ConnectionError, HTTPError, Timeout, RequestException))
     def request_url(url):
         response = requests_get(url)
         response.raise_for_status()

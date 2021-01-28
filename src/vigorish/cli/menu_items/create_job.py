@@ -11,7 +11,7 @@ from vigorish.cli.components import (
     yes_no_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJI_DICT
+from vigorish.constants import EMOJIS
 from vigorish.database import ScrapeJob
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
@@ -29,7 +29,8 @@ class CreateJob(MenuItem):
         #    - Separate inputs for month and day (user will select year first before data sets)
         super().__init__(app)
         self.menu_item_text = "Create New Job"
-        self.menu_item_emoji = EMOJI_DICT.get("KNIFE", "")
+        self.menu_item_emoji = EMOJIS.get("KNIFE", "")
+        self.menu_heading = self._menu_item_text
 
     def launch(self):
         job_confirmed = False
@@ -39,8 +40,9 @@ class CreateJob(MenuItem):
         job_name = None
         season = None
         while not job_confirmed:
+            heading = self.get_menu_heading("Select Data Sets")
             prompt = "Select all data sets to scrape:"
-            data_sets = data_sets_prompt(prompt, checked_data_sets=data_sets)
+            data_sets = data_sets_prompt(heading, prompt, checked_data_sets=data_sets)
             dates_validated = False
             while not dates_validated:
                 start_date = self.prompt_user_scrape_start_date(start_date)
@@ -55,7 +57,7 @@ class CreateJob(MenuItem):
 
         new_job = self.create_new_scrape_job(data_sets, start_date, end_date, season, job_name)
         subprocess.run(["clear"])
-        if yes_no_prompt(prompt="Would you like to begin executing this job?"):
+        if yes_no_prompt(prompt="\nWould you like to begin executing this job?"):
             job_runner = JobRunner(app=self.app, db_job=new_job)
             result = job_runner.execute()
             if result.failure:
@@ -105,7 +107,7 @@ class CreateJob(MenuItem):
         )
         print_heading(heading, fg="bright_yellow")
         print_message(job_details, wrap=False, fg="bright_yellow")
-        return yes_no_prompt(prompt="Are the details above correct?")
+        return yes_no_prompt(prompt="\nAre the details above correct?")
 
     def create_new_scrape_job(self, data_sets, start_date, end_date, season, job_name):
         new_job_dict = {

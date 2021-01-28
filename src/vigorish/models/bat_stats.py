@@ -53,8 +53,8 @@ class BatStats(Base):
     season_id = Column(Integer, ForeignKey("season.id"))
 
     player = relationship("Player", foreign_keys=[player_id], backref="bat_stats")
-    player_team = relationship("Team", foreign_keys=[player_team_id])
-    opponent_team = relationship("Team", foreign_keys=[opponent_team_id])
+    player_team = relationship("Team", foreign_keys=[player_team_id], backref="team_bat_stats")
+    opponent_team = relationship("Team", foreign_keys=[opponent_team_id], backref="oppp_bat_stats")
     game = relationship("GameScrapeStatus", foreign_keys=[game_status_id])
     date = relationship("DateScrapeStatus", foreign_keys=[date_id])
     season = relationship("Season", foreign_keys=[season_id])

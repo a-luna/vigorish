@@ -73,15 +73,9 @@ def format_timedelta_str(td, precise=True):
     (minutes, seconds) = divmod(td.seconds, 60)
     (hours, minutes) = divmod(minutes, 60)
     if td.days > 0:
-        return (
-            f"{td.days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{td.days} days"
-        )
+        return f"{td.days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{td.days} days"
     if hours > 0:
-        return (
-            f"{hours:.0f}h {minutes:.0f}m {seconds}s"
-            if precise
-            else f"{hours:.0f} hours {minutes:.0f} minutes"
-        )
+        return f"{hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{hours:.0f} hours {minutes:.0f} minutes"
     if minutes > 0:
         return f"{minutes:.0f}m {seconds}s" if precise else f"{minutes:.0f} minutes"
     if td.seconds > 0:

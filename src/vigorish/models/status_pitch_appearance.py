@@ -54,9 +54,7 @@ class PitchAppScrapeStatus(Base):
 
     @hybrid_property
     def contains_only_patched_data(self):
-        return self.patched_pitchfx_count > 0 and (
-            self.pitch_count_pitchfx_audited == self.patched_pitchfx_count
-        )
+        return self.patched_pitchfx_count > 0 and (self.pitch_count_pitchfx_audited == self.patched_pitchfx_count)
 
     def __repr__(self):
         return f'<PitchAppScrapeStatus pitch_app_id="{self.pitch_app_id}">'
@@ -77,9 +75,7 @@ class PitchAppScrapeStatus(Base):
     def get_all_pitch_app_ids_for_game(cls, db_session, bbref_game_id):
         return [
             pitch_app_status.pitch_app_id
-            for pitch_app_status in db_session.query(cls)
-            .filter_by(bbref_game_id=bbref_game_id)
-            .all()
+            for pitch_app_status in db_session.query(cls).filter_by(bbref_game_id=bbref_game_id).all()
         ]
 
     @classmethod
