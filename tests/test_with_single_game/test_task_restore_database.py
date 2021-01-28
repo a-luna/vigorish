@@ -1,54 +1,39 @@
-import pytest
+from tests.conftest import CSV_FOLDER, BACKUP_FOLDER
+from tests.util import COMBINED_DATA_GAME_DICT, NO_ERRORS_PITCH_APP
 
-from tests.conftest import CSV_FOLDER
-from tests.test_task_backup_database import remove_everything_in_backup_folder
-from tests.util import (
-    COMBINED_DATA_GAME_DICT,
-    NO_ERRORS_PITCH_APP,
-    update_scraped_bbref_games_for_date,
-    update_scraped_boxscore,
-    update_scraped_brooks_games_for_date,
-    update_scraped_pitch_logs,
-    update_scraped_pitchfx_logs,
-)
 from vigorish.database import (
     DateScrapeStatus,
     GameScrapeStatus,
     PitchAppScrapeStatus,
     PitchFx,
 )
-from vigorish.tasks import AddToDatabaseTask, BackupDatabaseTask, CombineScrapedDataTask, RestoreDatabaseTask
+from vigorish.tasks import AddToDatabaseTask, BackupDatabaseTask, RestoreDatabaseTask
+from vigorish.util.sys_helpers import zip_file_report
 
 GAME_ID_DICT = COMBINED_DATA_GAME_DICT["NO_ERRORS"]
 GAME_DATE = GAME_ID_DICT["game_date"]
 BBREF_GAME_ID = GAME_ID_DICT["bbref_game_id"]
-BB_GAME_ID = GAME_ID_DICT["bb_game_id"]
-APPLY_PATCH_LIST = GAME_ID_DICT["apply_patch_list"]
-
-
-@pytest.fixture(scope="module", autouse=True)
-def create_test_data(vig_app):
-    """Initialize DB with data to verify test functions in this module."""
-    db_session = vig_app.db_session
-    scraped_data = vig_app.scraped_data
-    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_brooks_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_boxscore(db_session, scraped_data, BBREF_GAME_ID)
-    update_scraped_pitch_logs(db_session, scraped_data, GAME_DATE, BBREF_GAME_ID)
-    update_scraped_pitchfx_logs(db_session, scraped_data, BB_GAME_ID)
-    CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPLY_PATCH_LIST)
-    add_to_db = AddToDatabaseTask(vig_app)
-    add_to_db.execute(2019)
-    remove_everything_in_backup_folder()
-    backup_db = BackupDatabaseTask(vig_app)
-    result = backup_db.execute()
-    assert result.success
-    zip_file = result.value
-    assert zip_file.exists()
-    return True
 
 
 def test_restore_database(vig_app):
+    total_rows = vig_app.get_total_number_of_rows(PitchFx)
+    assert total_rows == 299
+    result = AddToDatabaseTask(vig_app).execute()
+    assert result.success
+    total_rows = vig_app.get_total_number_of_rows(PitchFx)
+    assert total_rows == 299
+
+    remove_everything_in_backup_folder()
+    result = BackupDatabaseTask(vig_app).execute()
+    assert result.success
+    zip_file = result.value
+    assert zip_file.exists()
+    report = zip_file_report(zip_file)
+    assert "Filename.......: scrape_status_date.csv" in report
+    assert "Filename.......: scrape_status_game.csv" in report
+    assert "Filename.......: scrape_status_pitch_app.csv" in report
+    assert "Filename.......: pitchfx.csv" in report
+
     result = RestoreDatabaseTask(vig_app).execute(csv_folder=CSV_FOLDER)
     assert result.success
     status_date = DateScrapeStatus.find_by_date(vig_app.db_session, GAME_DATE)
@@ -72,3 +57,16 @@ def test_restore_database(vig_app):
     row_count = vig_app.get_total_number_of_rows(PitchFx)
     assert row_count == 299
     vig_app.db_session.close()
+
+
+def remove_everything_in_backup_folder():
+    search_results = list(BACKUP_FOLDER.glob("*.zip"))
+    if search_results:
+        zip_file = search_results[0]
+        zip_file.unlink()
+    csv_folder = BACKUP_FOLDER.joinpath("__timestamp__")
+    if not csv_folder.exists():
+        return
+    for csv_file in csv_folder.glob("*.csv"):
+        csv_file.unlink()
+    csv_folder.rmdir()

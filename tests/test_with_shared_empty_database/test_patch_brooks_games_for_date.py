@@ -17,13 +17,9 @@ from vigorish.patch.brooks_games_for_date import (
 )
 
 
-def test_patch_brooks_games_for_date(db_session, scraped_data):
-    bbref_games_for_date_no_patch = update_scraped_bbref_games_for_date(
-        db_session, scraped_data, PATCH_BB_DAILY_GAME_DATE
-    )
-    brooks_games_for_date_no_patch = update_scraped_brooks_games_for_date(
-        db_session, scraped_data, PATCH_BB_DAILY_GAME_DATE
-    )
+def test_patch_brooks_games_for_date(vig_app):
+    bbref_games_for_date_no_patch = update_scraped_bbref_games_for_date(vig_app, PATCH_BB_DAILY_GAME_DATE)
+    brooks_games_for_date_no_patch = update_scraped_brooks_games_for_date(vig_app, PATCH_BB_DAILY_GAME_DATE)
     assert bbref_games_for_date_no_patch.game_count != brooks_games_for_date_no_patch.game_count
 
     game_ids_only_brooks_no_patch = list(
@@ -40,41 +36,33 @@ def test_patch_brooks_games_for_date(db_session, scraped_data):
     assert PATCHED_BR_GAME_ID1 in game_ids_only_bbref_no_patch
 
     plogs_for_game_1_no_patch = update_scraped_pitch_logs(
-        db_session=db_session,
-        scraped_data=scraped_data,
-        game_date=PATCH_BB_DAILY_GAME_DATE,
-        bbref_game_id=INVALID_BR_GAME_ID1,
-        apply_patch_list=False,
+        vig_app, PATCH_BB_DAILY_GAME_DATE, INVALID_BR_GAME_ID1, apply_patch_list=False
     )
     assert plogs_for_game_1_no_patch.bbref_game_id == INVALID_BR_GAME_ID1
     assert plogs_for_game_1_no_patch.pitch_log_count == 10
     assert all(plog.parsed_all_info for plog in plogs_for_game_1_no_patch.pitch_logs)
 
     pitch_apps_for_game_1_no_patch = (
-        db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=INVALID_BR_GAME_ID1).all()
+        vig_app.db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=INVALID_BR_GAME_ID1).all()
     )
     assert len(pitch_apps_for_game_1_no_patch) == 10
 
-    game_status_invalid_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, INVALID_BR_GAME_ID1)
+    game_status_invalid_game_id = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, INVALID_BR_GAME_ID1)
     assert game_status_invalid_game_id
 
     plogs_for_game_2_no_patch = update_scraped_pitch_logs(
-        db_session=db_session,
-        scraped_data=scraped_data,
-        game_date=PATCH_BB_DAILY_GAME_DATE,
-        bbref_game_id=INVALID_BR_GAME_ID2,
-        apply_patch_list=False,
+        vig_app, PATCH_BB_DAILY_GAME_DATE, INVALID_BR_GAME_ID2, apply_patch_list=False
     )
     assert plogs_for_game_2_no_patch.bbref_game_id == INVALID_BR_GAME_ID2
     assert plogs_for_game_2_no_patch.pitch_log_count == 8
     assert all(not plog.parsed_all_info for plog in plogs_for_game_2_no_patch.pitch_logs)
 
     pitch_apps_for_game_2_no_patch = (
-        db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=INVALID_BR_GAME_ID2).all()
+        vig_app.db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=INVALID_BR_GAME_ID2).all()
     )
     assert len(pitch_apps_for_game_2_no_patch) == 8
 
-    game_status_remove_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, INVALID_BR_GAME_ID2)
+    game_status_remove_game_id = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, INVALID_BR_GAME_ID2)
     assert game_status_remove_game_id
 
     patch_invalid_bbref_game_id = PatchBrooksGamesForDateBBRefGameID(
@@ -91,45 +79,41 @@ def test_patch_brooks_games_for_date(db_session, scraped_data):
         url_id=PATCH_BB_DAILY_GAME_DATE.strftime(DATE_ONLY),
     )
 
-    result = scraped_data.save_patch_list(DataSet.BROOKS_GAMES_FOR_DATE, patch_list)
+    result = vig_app.scraped_data.save_patch_list(DataSet.BROOKS_GAMES_FOR_DATE, patch_list)
     assert result.success
     saved_file_dict = result.value
     patch_list_filepath = saved_file_dict["local_filepath"]
     assert patch_list_filepath.exists()
     assert patch_list_filepath.name == "brooks_games_for_date_2017-05-26_PATCH_LIST.json"
 
-    bbref_games_for_date_patched = scraped_data.get_bbref_games_for_date(PATCH_BB_DAILY_GAME_DATE)
-    brooks_games_for_date_patched = scraped_data.get_bbref_games_for_date(PATCH_BB_DAILY_GAME_DATE)
+    bbref_games_for_date_patched = vig_app.scraped_data.get_bbref_games_for_date(PATCH_BB_DAILY_GAME_DATE)
+    brooks_games_for_date_patched = vig_app.scraped_data.get_bbref_games_for_date(PATCH_BB_DAILY_GAME_DATE)
     assert bbref_games_for_date_patched.game_count == brooks_games_for_date_patched.game_count
     assert brooks_games_for_date_patched.all_bbref_game_ids == bbref_games_for_date_patched.all_bbref_game_ids
 
     plogs_for_game_1_patched = update_scraped_pitch_logs(
-        db_session=db_session,
-        scraped_data=scraped_data,
-        game_date=PATCH_BB_DAILY_GAME_DATE,
-        bbref_game_id=PATCHED_BR_GAME_ID1,
-        apply_patch_list=True,
+        vig_app, PATCH_BB_DAILY_GAME_DATE, PATCHED_BR_GAME_ID1, apply_patch_list=True
     )
     assert plogs_for_game_1_patched.bbref_game_id == PATCHED_BR_GAME_ID1
     assert plogs_for_game_1_patched.pitch_log_count == 10
     assert all(plog.parsed_all_info for plog in plogs_for_game_1_patched.pitch_logs)
 
     pitch_apps_for_game_1_patched = (
-        db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=PATCHED_BR_GAME_ID1).all()
+        vig_app.db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=PATCHED_BR_GAME_ID1).all()
     )
     pitch_apps_for_game_1_invalid_id = (
-        db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=INVALID_BR_GAME_ID1).all()
+        vig_app.db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=INVALID_BR_GAME_ID1).all()
     )
     pitch_apps_for_game_2_invalid_id = (
-        db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=INVALID_BR_GAME_ID2).all()
+        vig_app.db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=INVALID_BR_GAME_ID2).all()
     )
     assert len(pitch_apps_for_game_1_patched) == 10
     assert not pitch_apps_for_game_1_invalid_id
     assert not pitch_apps_for_game_2_invalid_id
 
-    game_status_patched_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, PATCHED_BR_GAME_ID1)
-    game_status_invalid_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, INVALID_BR_GAME_ID1)
-    game_status_remove_game_id = GameScrapeStatus.find_by_bbref_game_id(db_session, INVALID_BR_GAME_ID2)
+    game_status_patched_game_id = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, PATCHED_BR_GAME_ID1)
+    game_status_invalid_game_id = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, INVALID_BR_GAME_ID1)
+    game_status_remove_game_id = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, INVALID_BR_GAME_ID2)
     assert game_status_patched_game_id
     assert not game_status_invalid_game_id
     assert not game_status_remove_game_id

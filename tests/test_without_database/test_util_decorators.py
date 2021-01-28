@@ -56,7 +56,7 @@ def rand_time(min=1, max=3, add_random=False):
 def test_default_logger(caplog):
     save_values("Aaron", "Charlie", "Ollie")
     logger, level, message = caplog.record_tuples[-1]
-    assert logger == "tests.test_util_decorators"
+    assert logger == "tests.test_without_database.test_util_decorators"
     assert level == logging.INFO
     assert "save_values(a=Aaron, b=Charlie, c=Ollie)" in message
 

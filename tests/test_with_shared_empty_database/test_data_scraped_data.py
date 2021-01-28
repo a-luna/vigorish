@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import pytest
-
 from tests.util import (
     update_scraped_bbref_games_for_date,
     update_scraped_boxscore,
@@ -12,16 +10,10 @@ GAME_DATE = datetime(2019, 7, 11)
 BBREF_GAME_ID = "TEX201907110"
 
 
-@pytest.fixture(scope="module", autouse=True)
-def create_test_data(db_session, scraped_data):
-    """Initialize DB with data to verify test functions in test_brooks_pitch_logs module."""
-    update_scraped_bbref_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_brooks_games_for_date(db_session, scraped_data, GAME_DATE)
-    update_scraped_boxscore(db_session, scraped_data, BBREF_GAME_ID)
-    return True
-
-
 def test_get_all_brooks_pitch_logs_for_date(vig_app):
+    update_scraped_bbref_games_for_date(vig_app, GAME_DATE)
+    update_scraped_brooks_games_for_date(vig_app, GAME_DATE)
+    update_scraped_boxscore(vig_app, BBREF_GAME_ID)
     pitch_logs_for_date = vig_app.scraped_data.get_all_brooks_pitch_logs_for_date(GAME_DATE)
     assert len(pitch_logs_for_date) == 1
     pitch_logs_for_game = pitch_logs_for_date[0]

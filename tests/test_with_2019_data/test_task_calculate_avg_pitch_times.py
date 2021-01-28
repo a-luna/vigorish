@@ -1,14 +1,4 @@
-import pytest
-
-from tests.util import seed_database_with_2019_test_data
 from vigorish.tasks import CalculateAvgPitchTimesTask
-
-
-@pytest.fixture(scope="module", autouse=True)
-def create_test_data(vig_app):
-    """Initialize DB with data to verify test functions in this module."""
-    seed_database_with_2019_test_data(vig_app)
-    return True
 
 
 def test_task_calculate_avg_pitch_times(vig_app):

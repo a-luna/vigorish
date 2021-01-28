@@ -10,22 +10,22 @@ from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
 
 
-def test_parse_bbref_games_for_date(scraped_data):
-    games_for_date = parse_bbref_games_for_date_from_html(scraped_data, GAME_DATE)
+def test_parse_bbref_games_for_date(vig_app):
+    games_for_date = parse_bbref_games_for_date_from_html(vig_app, GAME_DATE)
     assert isinstance(games_for_date, BBRefGamesForDate)
     result = verify_bbref_games_for_date_jul_26_2018(games_for_date)
     assert result.success
 
 
-def test_persist_bbref_games_for_date(scraped_data):
-    games_for_date_parsed = parse_bbref_games_for_date_from_html(scraped_data, GAME_DATE)
+def test_persist_bbref_games_for_date(vig_app):
+    games_for_date_parsed = parse_bbref_games_for_date_from_html(vig_app, GAME_DATE)
     assert isinstance(games_for_date_parsed, BBRefGamesForDate)
-    result = scraped_data.save_json(DataSet.BBREF_GAMES_FOR_DATE, games_for_date_parsed)
+    result = vig_app.scraped_data.save_json(DataSet.BBREF_GAMES_FOR_DATE, games_for_date_parsed)
     assert result.success
     saved_file_dict = result.value
     json_filepath = saved_file_dict["local_filepath"]
     assert json_filepath.name == "bbref_games_for_date_2018-07-26.json"
-    games_for_date_decoded = scraped_data.get_bbref_games_for_date(GAME_DATE)
+    games_for_date_decoded = vig_app.scraped_data.get_bbref_games_for_date(GAME_DATE)
     assert isinstance(games_for_date_decoded, BBRefGamesForDate)
     result = verify_bbref_games_for_date_jul_26_2018(games_for_date_decoded)
     assert result.success
@@ -33,21 +33,21 @@ def test_persist_bbref_games_for_date(scraped_data):
     assert not json_filepath.exists()
 
 
-def test_update_database_bbref_games_for_date(db_session, scraped_data):
-    games_for_date = parse_bbref_games_for_date_from_html(scraped_data, GAME_DATE)
+def test_update_database_bbref_games_for_date(vig_app):
+    games_for_date = parse_bbref_games_for_date_from_html(vig_app, GAME_DATE)
     assert isinstance(games_for_date, BBRefGamesForDate)
-    date_status = db_session.query(DateScrapeStatus).get(GAME_DATE.strftime(DATE_ONLY_TABLE_ID))
+    date_status = vig_app.db_session.query(DateScrapeStatus).get(GAME_DATE.strftime(DATE_ONLY_TABLE_ID))
     assert date_status
     assert date_status.scraped_daily_dash_bbref == 0
     assert date_status.game_count_bbref == 0
-    result = Season.is_date_in_season(db_session, GAME_DATE)
+    result = Season.is_date_in_season(vig_app.db_session, GAME_DATE)
     assert result.success
     season = result.value
-    result = update_bbref_games_for_date_single_date(db_session, season, games_for_date)
+    result = update_bbref_games_for_date_single_date(vig_app.db_session, season, games_for_date)
     assert result.success
     assert date_status.scraped_daily_dash_bbref == 1
     assert date_status.game_count_bbref == 11
-    db_session.commit()
+    vig_app.db_session.commit()
 
 
 def verify_bbref_games_for_date_jul_26_2018(games_for_date):
