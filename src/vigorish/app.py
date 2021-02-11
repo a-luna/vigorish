@@ -1,15 +1,17 @@
 import os
+from functools import cached_property
 from pathlib import Path
+from typing import Union
 
 from sqlalchemy import create_engine, func
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
+import vigorish.database as db
 from vigorish.config.config_file import ConfigFile
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.config.project_paths import CSV_FOLDER, SQLITE_DEV_URL, SQLITE_PROD_URL
 from vigorish.data.scraped_data import ScrapedData
-from vigorish.database import Base, Player, Season, Team
 from vigorish.setup.populate_tables import populate_tables, populate_tables_for_restore
 from vigorish.util.result import Result
 
@@ -23,14 +25,14 @@ class Vigorish:
 
     def __init__(self, dotenv_file: str = None) -> None:
         self.initialize_app(dotenv_file)
-        os.environ["INTERACTIVE_MODE"] = "YES" if os.environ.get("ENV") != "TEST" else "NO"
+        os.environ["INTERACTIVE_MODE"] = "NO" if "TEST" in os.environ.get("ENV", "DEV") else "YES"
 
     @property
-    def dotenv_filepath(self):
+    def dotenv_filepath(self) -> Union[Path, None]:
         return self.dotenv.dotenv_filepath if self.dotenv else None
 
     @property
-    def db_setup_complete(self):
+    def db_setup_complete(self) -> bool:
         tables_missing = (
             "player" not in self.db_engine.table_names()
             or "season" not in self.db_engine.table_names()
@@ -39,12 +41,16 @@ class Vigorish:
         if tables_missing:
             return False
         return (
-            self.get_total_number_of_rows(Season) > 0
-            and self.get_total_number_of_rows(Player) > 0
-            and self.get_total_number_of_rows(Team) > 0
+            self.get_total_number_of_rows(db.Season) > 0
+            and self.get_total_number_of_rows(db.Player) > 0
+            and self.get_total_number_of_rows(db.Team) > 0
         )
 
-    def initialize_app(self, dotenv_file: str):
+    @cached_property
+    def audit_report(self) -> dict:
+        return self.scraped_data.get_audit_report()
+
+    def initialize_app(self, dotenv_file: str) -> None:
         self.dotenv = DotEnvFile(dotenv_filepath=dotenv_file)
         self.db_url = get_db_url()
         self.config = ConfigFile()
@@ -61,8 +67,8 @@ class Vigorish:
     def initialize_database(self, csv_folder=None):
         if not csv_folder:
             csv_folder = CSV_FOLDER
-        Base.metadata.drop_all(self.db_engine)
-        Base.metadata.create_all(self.db_engine)
+        db.Base.metadata.drop_all(self.db_engine)
+        db.Base.metadata.create_all(self.db_engine)
         return populate_tables(self, csv_folder)
 
     def prepare_database_for_restore(self, csv_folder=None):
@@ -72,8 +78,8 @@ class Vigorish:
         if result.failure:
             return result
         self.reset_database_connection()
-        Base.metadata.drop_all(self.db_engine)
-        Base.metadata.create_all(self.db_engine)
+        db.Base.metadata.drop_all(self.db_engine)
+        db.Base.metadata.create_all(self.db_engine)
         return populate_tables_for_restore(self, csv_folder)
 
     def reset_database_connection(self):

@@ -7,9 +7,9 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
+import vigorish.database as db
 from vigorish.config.project_paths import NODEJS_INBOX, NODEJS_OUTBOX
 from vigorish.constants import DATA_SET_TO_NAME_MAP
-import vigorish.database as db
 from vigorish.enums import DataSet, JobStatus
 from vigorish.util.datetime_util import (
     get_date_range,

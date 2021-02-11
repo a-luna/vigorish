@@ -37,7 +37,6 @@ class MainMenu(Menu):
     def __init__(self, app):
         super().__init__(app)
         self.initialized = False
-        self.audit_report = {}
 
     @property
     def db_setup_complete(self):
@@ -86,7 +85,9 @@ class MainMenu(Menu):
         spinner = Halo(spinner=get_random_dots_spinner(), color=color)
         spinner.text = "Updating metrics..." if self.initialized else "Loading..."
         spinner.start()
-        self.audit_report = self.scraped_data.get_audit_report()
+        if self.initialized:
+            del self.app.audit_report
+        self.audit_report = self.app.audit_report
         spinner.stop()
 
     def display_menu_text(self):
@@ -139,9 +140,9 @@ class MainMenu(Menu):
             self.menu_items.remove(main_menu_items["restore_db"])
         if not self.audit_report:
             self.menu_items.remove(main_menu_items["combine_data"])
-        if not self.data_failures_exist():
+        if self.audit_report and not self.data_failures_exist():
             self.menu_items.remove(main_menu_items["scraped_data_errors"])
-        if not self.games_combined_exist():
+        if self.audit_report and not self.games_combined_exist():
             self.menu_items.remove(main_menu_items["scraped_game_data"])
 
     def prompt_user_for_menu_selection(self):
@@ -159,9 +160,9 @@ class MainMenu(Menu):
             "restore_db": RestoreDatabase(self.app),
             "create_job": CreateJob(self.app),
             "all_jobs": AllJobsMenu(self.app),
-            "combine_data": CombineScrapedData(self.app, self.audit_report),
-            "scraped_data_errors": ScrapedDataErrorsMenu(self.app, self.audit_report),
-            "scraped_game_data": ViewGameDataMenu(self.app, self.audit_report),
+            "combine_data": CombineScrapedData(self.app),
+            "scraped_data_errors": ScrapedDataErrorsMenu(self.app),
+            "scraped_game_data": ViewGameDataMenu(self.app),
             "status_reports": StatusReport(self.app),
             "settings": SettingsMenu(self.app),
             "admin_tasks": AdminTasksMenu(self.app),
@@ -169,26 +170,10 @@ class MainMenu(Menu):
         }
 
     def data_failures_exist(self):
-        audit_failures_exist = (
-            any(len(audit_report["failed"]) > 0 for audit_report in self.audit_report.values())
-            if self.audit_report
-            else False
-        )
-        pfx_errors_exist = (
-            any(len(audit_report["pfx_error"]) > 0 for audit_report in self.audit_report.values())
-            if self.audit_report
-            else False
-        )
-        invalid_pfx_errors_exist = (
-            any(len(audit_report["invalid_pfx"]) > 0 for audit_report in self.audit_report.values())
-            if self.audit_report
-            else False
-        )
+        audit_failures_exist = any(audit["failed"] for audit in self.audit_report.values())
+        pfx_errors_exist = any(audit["pfx_error"] for audit in self.audit_report.values())
+        invalid_pfx_errors_exist = any(audit["invalid_pfx"] for audit in self.audit_report.values())
         return audit_failures_exist or pfx_errors_exist or invalid_pfx_errors_exist
 
     def games_combined_exist(self):
-        return (
-            any(len(audit_report["successful"]) > 0 for audit_report in self.audit_report.values())
-            if self.audit_report
-            else False
-        )
+        return any(audit["successful"] for audit in self.audit_report.values())
