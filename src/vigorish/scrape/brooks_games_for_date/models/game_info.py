@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import Dict
 
 
-@dataclass
+@dataclass(eq=True)
 class BrooksGameInfo:
     """Individual game info scraped from brooksbaseball.com."""
 
