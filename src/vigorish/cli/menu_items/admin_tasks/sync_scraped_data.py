@@ -31,6 +31,7 @@ SYNC_STATUS_TEXT_COLOR = {"out_of_sync": "bright_green", "in_sync": "blue"}
 class SyncScrapedData(MenuItem):
     def __init__(self, app):
         super().__init__(app)
+        self.s3_sync = SyncScrapedDataTask(self.app)
         self.year = None
         self.sync_direction = ""
         self.file_types = []
@@ -60,10 +61,10 @@ class SyncScrapedData(MenuItem):
         result = self.get_sync_parameters()
         if result.failure:
             return Result.Ok(False)
-        self.initialize_s3_sync_task()
+        self.get_all_s3_objects()
         for file_type, data_sets in self.sync_tasks.items():
             for data_set in data_sets:
-                result = self.get_files_to_sync(file_type, data_set)
+                result = self.find_out_of_sync_files(file_type, data_set)
                 if result.failure:
                     return result
         self.report_sync_results()
@@ -117,17 +118,15 @@ class SyncScrapedData(MenuItem):
         }
         return user_options_prompt(choices, prompt)
 
-    def initialize_s3_sync_task(self):
+    def get_all_s3_objects(self):
         subprocess.run(["clear"])
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = "Retrieving details of all objects stored in S3..."
         spinner.start()
-        s3_obj_collection = self.scraped_data.file_helper.get_all_object_keys_in_s3_bucket()
-        s3_objects = list(s3_obj_collection)
-        self.s3_sync = SyncScrapedDataTask(self.app, cached_s3_objects=s3_objects)
+        self.s3_sync.get_all_s3_objects()
         spinner.stop()
 
-    def get_files_to_sync(self, file_type, data_set):
+    def find_out_of_sync_files(self, file_type, data_set):
         self.task_number += 1
         self.report_sync_results()
         self.update_spinner(file_type, data_set)
@@ -139,46 +138,33 @@ class SyncScrapedData(MenuItem):
         if result.failure:
             self.spinners[file_type][data_set].stop()
             return result
-        (out_of_sync, new_files, update_files) = result.value
-        self.sync_files[file_type][data_set] = (out_of_sync, new_files, update_files)
+        (out_of_sync, missing_files, update_files) = result.value
+        self.sync_files[file_type][data_set] = (out_of_sync, missing_files, update_files)
         if out_of_sync:
-            sync_count = len(new_files) + len(update_files)
-            self.log_data_set_out_of_sync(file_type, data_set, sync_count)
+            self.sync_results.append(self.out_of_sync_text(file_type, data_set, len(missing_files) + len(update_files)))
         else:
-            self.log_data_set_in_sync(file_type, data_set)
+            self.sync_results.append(self.in_sync_text(file_type, data_set))
         self.spinners[file_type][data_set].stop()
         return Result.Ok()
 
     def report_sync_results(self):
         subprocess.run(["clear"])
-        heading = ""
-        if self.sync_direction == SyncDirection.UP_TO_S3:
-            heading = "Syncing data from local folder to S3 bucket"
-        if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            heading = "Syncing data from S3 bucket to local folder"
-        print_heading(heading, fg="bright_yellow")
-        if not self.sync_results:
-            return
-        for task_result in self.sync_results:
-            print_message(task_result[0], fg=task_result[1])
+        src_folder = "S3 bucket" if self.sync_direction == SyncDirection.DOWN_TO_LOCAL else "local folder"
+        dest_folder = "local folder" if self.sync_direction == SyncDirection.DOWN_TO_LOCAL else "S3 bucket"
+        print_heading(f"Syncing data from {src_folder} to {dest_folder}", fg="bright_yellow")
+        for (result, text_color) in self.sync_results:
+            print_message(result, fg=text_color)
 
     def update_spinner(self, file_type, data_set):
-        self.spinners[file_type][data_set] = Halo(spinner=get_random_dots_spinner())
-        self.spinners[file_type][data_set].text = self.sync_started_text(file_type, data_set)
-        self.spinners[file_type][data_set].color = get_random_cli_color()
-        self.spinners[file_type][data_set].start()
-
-    def log_data_set_out_of_sync(self, file_type, data_set, sync_count):
-        self.sync_results.append(self.out_of_sync_text(file_type, data_set, sync_count))
-
-    def log_data_set_in_sync(self, file_type, data_set):
-        self.sync_results.append(self.in_sync_text(file_type, data_set))
-
-    def sync_started_text(self, file_type, data_set):
-        return (
-            f"Analyzing MLB {self.year} {data_set} {file_type} files "
-            f"(Task {self.task_number}/{self.total_tasks})..."
+        self.spinners[file_type][data_set] = Halo(
+            spinner=get_random_dots_spinner(),
+            color=get_random_cli_color(),
+            text=(
+                f"Analyzing MLB {self.year} {data_set} {file_type} files "
+                f"(Task {self.task_number}/{self.total_tasks})..."
+            ),
         )
+        self.spinners[file_type][data_set].start()
 
     def out_of_sync_text(self, file_type, data_set, sync_count):
         out_of_sync = (
@@ -198,25 +184,27 @@ class SyncScrapedData(MenuItem):
             pause(message="Press any key to continue...")
             return Result.Ok()
         for file_type, file_type_dict in self.sync_files.items():
-            for data_set, (out_of_sync, new_files, old_files) in file_type_dict.items():
+            for data_set, (out_of_sync, missing_files, outdated_files) in file_type_dict.items():
                 if not out_of_sync:
                     continue
                 all_sync_files = []
-                new_count = 0
-                old_count = 0
-                if new_files:
-                    all_sync_files.extend(new_files)
-                    new_count = len(new_files)
-                if old_files:
-                    all_sync_files.extend(old_files)
-                    old_count = len(old_files)
-                table_viewer = self.create_table_viewer(all_sync_files, data_set, file_type, new_count, old_count)
+                missing_count = 0
+                outdated_count = 0
+                if missing_files:
+                    all_sync_files.extend(missing_files)
+                    missing_count = len(missing_files)
+                if outdated_files:
+                    all_sync_files.extend(outdated_files)
+                    outdated_count = len(outdated_files)
+                table_viewer = self.create_table_viewer(
+                    all_sync_files, data_set, file_type, missing_count, outdated_count
+                )
                 apply_changes = table_viewer.launch()
                 if apply_changes:
-                    self.apply_pending_changes(file_type, data_set, new_files, old_files)
+                    self.apply_pending_changes(file_type, data_set, missing_files, outdated_files)
         return Result.Ok()
 
-    def create_table_viewer(self, sync_files, data_set, file_type, new_count, old_count):
+    def create_table_viewer(self, sync_files, data_set, file_type, missing_count, outdated_count):
         dict_list = [
             {
                 "filename": f["name"],
@@ -226,15 +214,15 @@ class SyncScrapedData(MenuItem):
             }
             for f in sync_files
         ]
-        new_plural = "files below do" if new_count > 1 else "file below does"
-        old_plural = "files have" if old_count > 1 else "file has"
+        missing_plural = "files below do" if missing_count > 1 else "file below does"
+        outdated_plural = "files have" if outdated_count > 1 else "file has"
         file_dest = "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
         file_src = "local folder" if self.sync_direction == SyncDirection.UP_TO_S3 else "S3 bucket"
         m = []
-        if new_count:
-            m.append(f"{new_count} {new_plural} not exist in the {file_dest}")
-        if old_count:
-            m.append(f"{old_count} {old_plural} a more recent version in the {file_src}")
+        if missing_count:
+            m.append(f"{missing_count} {missing_plural} not exist in the {file_dest}")
+        if outdated_count:
+            m.append(f"{outdated_count} {outdated_plural} a more recent version in the {file_src}")
         return DictListTableViewer(
             dict_list,
             prompt="Would you like to apply the changes to the files listed above?",
@@ -244,37 +232,31 @@ class SyncScrapedData(MenuItem):
             table_color="bright_cyan",
         )
 
-    def apply_pending_changes(self, file_type, data_set, new_files, old_files):
+    def apply_pending_changes(self, file_type, data_set, missing_files, outdated_files):
         subprocess.run(["clear"])
-        self.s3_sync.events.sync_files_progress += self.update_sync_progress
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         self.spinner.start()
-        message = None
-        if self.sync_direction == SyncDirection.UP_TO_S3:
-            self.s3_sync.upload_files_to_s3(new_files, old_files, file_type, data_set, self.year)
-            message = (
-                f"All changes have been applied, MLB {self.year} {data_set} {file_type} files "
-                "in local folder have been synced to s3 bucket!"
-            )
-        if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            self.s3_sync.download_files_to_local_folder(new_files, old_files, file_type, data_set, self.year)
-            message = (
-                f"All changes have been applied, MLB {self.year} {data_set} {file_type} files "
-                "in s3 bucket have been synced to local folder!"
-            )
+        self.s3_sync.events.sync_files_progress += self.update_sync_progress
+        self.s3_sync.sync_files(self.sync_direction, missing_files, outdated_files, file_type, data_set, self.year)
         self.s3_sync.events.sync_files_progress -= self.update_sync_progress
         self.spinner.stop()
+        src_folder = "S3 bucket" if self.sync_direction == SyncDirection.DOWN_TO_LOCAL else "local folder"
+        dest_folder = "local folder" if self.sync_direction == SyncDirection.DOWN_TO_LOCAL else "S3 bucket"
+        message = (
+            f"All changes have been applied, MLB {self.year} {data_set} {file_type} files in {src_folder} "
+            f"have been synced to {dest_folder}!"
+        )
         print_message(message, fg="bright_green", bold=True)
         pause(message="Press any key to continue...")
 
-    def get_sync_files(self, new_files, update_files):
+    def get_sync_files(self, missing_files, outdated_files):
         sync_files = []
-        if not new_files and not update_files:
+        if not missing_files and not outdated_files:
             return sync_files
-        if new_files:
-            sync_files = deepcopy(new_files)
-        if update_files:
-            sync_files.extend(deepcopy(update_files))
+        if missing_files:
+            sync_files = deepcopy(missing_files)
+        if outdated_files:
+            sync_files.extend(deepcopy(outdated_files))
         return sync_files
 
     def update_sync_progress(self, name, complete, total):

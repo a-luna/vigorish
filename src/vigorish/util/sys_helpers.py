@@ -123,14 +123,13 @@ def validate_file_path(input_path: Union[Path, str]):
 
 
 def get_terminal_size(fallback: Tuple[int, int] = (80, 24)):  # pragma: no cover
+    columns, rows = fallback
     for i in range(0, 3):
         try:
             columns, rows = os.get_terminal_size(i)
         except OSError:
             continue
         break
-    else:  # use fallback dimensions if loop completes without finding a terminal
-        columns, rows = fallback
     return columns, rows
 
 
