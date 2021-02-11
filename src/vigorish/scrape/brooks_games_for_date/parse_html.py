@@ -4,7 +4,7 @@ from datetime import datetime
 import w3lib.url
 from lxml import html
 
-from vigorish.database import Season
+import vigorish.database as db
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
@@ -28,8 +28,8 @@ def parse_brooks_dashboard_page(db_session, scraped_html, game_date, url, bbref_
     games_for_date.game_date_str = game_date.strftime(DATE_ONLY)
     games_for_date.dashboard_url = url
     games_for_date.game_count = 0
-    games_for_date.games = []
-    if Season.is_this_the_asg_date(db_session, game_date):
+    games = []
+    if db.Season.is_this_the_asg_date(db_session, game_date):
         return Result.Ok(games_for_date)
     game_tables = page_content.xpath(GAME_TABLE_XPATH)
     if not game_tables:
@@ -47,7 +47,7 @@ def parse_brooks_dashboard_page(db_session, scraped_html, game_date, url, bbref_
             if result.failure:
                 continue
             gameinfo = result.value
-            games_for_date.games.append(gameinfo)
+            games.append(gameinfo)
             continue
         result = _is_game_required(game_date, game_time, pitchlog_urls[0], required_game_data)
         if result.failure:
@@ -57,8 +57,10 @@ def parse_brooks_dashboard_page(db_session, scraped_html, game_date, url, bbref_
         if result.failure:
             return result
         gameinfo = result.value
-        games_for_date.games.append(gameinfo)
+        if all(gameinfo != g for g in games):
+            games.append(gameinfo)
 
+    games_for_date.games = games
     games_for_date.game_count = len(games_for_date.games)
     _update_game_ids(games_for_date)
     return Result.Ok(games_for_date)
