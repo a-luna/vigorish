@@ -7,6 +7,7 @@ from aenum import auto, IntFlag
 class VigFile(IntFlag):
     """File types that are scraped, created and stored by vigorish."""
 
+    NONE = 0
     SCRAPED_HTML = auto()
     PARSED_JSON = auto()
     COMBINED_GAME_DATA = auto()
@@ -17,16 +18,19 @@ class VigFile(IntFlag):
         return self.name
 
     @classmethod
-    def from_str(cls, file_type_name):
-        for file_type in cls:
-            if file_type_name.upper() not in file_type.name:
-                continue
-            return file_type
+    def from_str(cls, name):
+        if name.upper() == "ALL":
+            return cls.ALL
+        for enum_item in cls:
+            if name.upper() == enum_item.name:
+                return enum_item
+        return cls.NONE
 
 
 class DataSet(IntFlag):
     """MLB data sets."""
 
+    NONE = 0
     BBREF_GAMES_FOR_DATE = auto()
     BROOKS_GAMES_FOR_DATE = auto()
     BBREF_BOXSCORES = auto()
@@ -38,11 +42,13 @@ class DataSet(IntFlag):
         return self.name
 
     @classmethod
-    def from_str(cls, data_set_name):
-        for data_set in cls:
-            if data_set_name.upper() not in data_set.name:
-                continue
-            return data_set
+    def from_str(cls, name):
+        if name.upper() == "ALL":
+            return cls.ALL
+        for enum_item in cls:
+            if name.upper() == enum_item.name:
+                return enum_item
+        return cls.NONE
 
 
 class ConfigType(str, Enum):
@@ -207,22 +213,21 @@ class DefensePosition(IntEnum):
 
     @classmethod
     def from_abbrev(cls, abbrev):
-        abbrev_dict = {
-            "P": cls.PITCHER,
-            "C": cls.CATCHER,
-            "1B": cls.FIRST_BASE,
-            "2B": cls.SECOND_BASE,
-            "3B": cls.THIRD_BASE,
-            "SS": cls.SHORT_STOP,
-            "LF": cls.LEFT_FIELD,
-            "CF": cls.CENTER_FIELD,
-            "RF": cls.RIGHT_FIELD,
-            "DH": cls.DH,
-        }
-        return abbrev_dict.get(abbrev, cls.NONE)
+        for enum_item in cls:
+            if abbrev.upper() == str(enum_item):
+                return enum_item
+        return cls.NONE
+
+    @classmethod
+    def from_name(cls, name):
+        for enum_item in cls:
+            if name.upper() == enum_item.name:
+                return enum_item
+        return cls.NONE
 
 
 class PitchType(IntFlag):
+    NONE = 0
     CHANGEUP = auto()
     CURVEBALL = auto()
     EEPHUS = auto()
@@ -262,6 +267,7 @@ class PitchType(IntFlag):
 
     def __str__(self):
         abbrev_dict = {
+            "NONE": "N/A",
             "CHANGEUP": "CH",
             "CURVEBALL": "CU",
             "EEPHUS": "EP",
@@ -285,6 +291,7 @@ class PitchType(IntFlag):
     @property
     def print_name(self):
         name_dict = {
+            "N/A": "N/A",
             "FF": "Four-seam Fastball",
             "FT": "Two-seam Fastball",
             "IN": "Intent ball",
@@ -295,49 +302,21 @@ class PitchType(IntFlag):
 
     @classmethod
     def from_abbrev(cls, abbrev):
-        abbrev_dict = {
-            "CH": cls.CHANGEUP,
-            "CU": cls.CURVEBALL,
-            "EP": cls.EEPHUS,
-            "FA": cls.FASTBALL,
-            "FC": cls.CUTTER,
-            "FF": cls.FOUR_SEAM_FASTBALL,
-            "FS": cls.SPLITTER,
-            "FT": cls.TWO_SEAM_FASTBALL,
-            "FO": cls.FORKBALL,
-            "IN": cls.INTENT_BALL,
-            "KC": cls.KNUCKLE_BALL_CURVE,
-            "KN": cls.KNUCKLE_BALL,
-            "PO": cls.PITCH_OUT,
-            "SC": cls.SCREWBALL,
-            "SI": cls.SINKER,
-            "SL": cls.SLIDER,
-            "UN": cls.UNKNOWN,
-        }
-        return abbrev_dict.get(abbrev, cls.UNKNOWN)
+        if abbrev.upper() == "ALL":
+            return cls.ALL
+        for enum_item in cls:
+            if abbrev.upper() == str(enum_item):
+                return enum_item
+        return cls.NONE
 
     @classmethod
     def from_name(cls, name):
-        name_dict = {
-            "CHANGEUP": cls.CHANGEUP,
-            "CURVEBALL": cls.CURVEBALL,
-            "EEPHUS": cls.EEPHUS,
-            "FASTBALL": cls.FASTBALL,
-            "CUTTER": cls.CUTTER,
-            "FOUR_SEAM_FASTBALL": cls.FOUR_SEAM_FASTBALL,
-            "SPLITTER": cls.SPLITTER,
-            "TWO_SEAM_FASTBALL": cls.TWO_SEAM_FASTBALL,
-            "FORKBALL": cls.FORKBALL,
-            "INTENT_BALL": cls.INTENT_BALL,
-            "KNUCKLE_BALL_CURVE": cls.KNUCKLE_BALL_CURVE,
-            "KNUCKLE_BALL": cls.KNUCKLE_BALL,
-            "PITCH_OUT": cls.PITCH_OUT,
-            "SCREWBALL": cls.SCREWBALL,
-            "SINKER": cls.SINKER,
-            "SLIDER": cls.SLIDER,
-            "UNKNOWN": cls.UNKNOWN,
-        }
-        return name_dict.get(name, cls.UNKNOWN)
+        if name.upper() == "ALL":
+            return cls.ALL
+        for enum_item in cls:
+            if name.upper() == enum_item.name:
+                return enum_item
+        return cls.NONE
 
 
 class SeasonType(str, Enum):

@@ -4,11 +4,11 @@ import subprocess
 from bullet import Bullet, Check, colors, ScrollBar
 from getch import pause
 
+import vigorish.database as db
 from vigorish.cli.components.data_set_check import DataSetCheck
 from vigorish.cli.components.date_input import DateInput
 from vigorish.cli.components.util import print_heading, print_message
 from vigorish.constants import DATA_SET_FROM_NAME_MAP, DATA_SET_TO_NAME_MAP, EMOJIS, MENU_NUMBERS
-from vigorish.database import Season
 from vigorish.enums import DataSet, VigFile
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
@@ -125,7 +125,7 @@ def season_prompt(db_session, prompt=None, clear_screen=True):
         prompt = "Please select a MLB Season from the list below:"
     choices = {
         f"{MENU_NUMBERS.get(num)}  {season.year}": season
-        for num, season in enumerate(Season.all_regular_seasons(db_session), start=1)
+        for num, season in enumerate(db.Season.all_regular_seasons(db_session), start=1)
     }
     choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
     return user_options_prompt(choices, prompt=prompt, clear_screen=clear_screen)
@@ -145,12 +145,10 @@ def data_sets_prompt(heading=None, prompt=None, valid_data_sets=0, checked_data_
     if not valid_data_sets:
         valid_data_sets = int(DataSet.ALL)
     instructions = "(use SPACE BAR to select each data set, ENTER to confirm your selections)"
-    choices = {f"{DATA_SET_TO_NAME_MAP[ds]}": ds for ds in DataSet if ds != DataSet.ALL and valid_data_sets & ds == ds}
+    choices = {f"{DATA_SET_TO_NAME_MAP[ds]}": ds for ds in DataSet if valid_data_sets & ds == ds}
     if checked_data_sets:
         checked_int = sum(int(ds) for ds in checked_data_sets.keys())
-        checked_data_sets = [
-            f"{DATA_SET_TO_NAME_MAP[ds]}" for ds in DataSet if ds != DataSet.ALL and checked_int & ds == ds
-        ]
+        checked_data_sets = [f"{DATA_SET_TO_NAME_MAP[ds]}" for ds in DataSet if checked_int & ds == ds]
     ds_prompt = DataSetCheck(
         prompt=instructions,
         choices=list(choices.keys()),
@@ -184,11 +182,7 @@ def data_sets_prompt(heading=None, prompt=None, valid_data_sets=0, checked_data_
 def file_types_prompt(prompt, valid_file_types=VigFile.ALL):
     if not prompt:
         prompt = "Select one or multiple file types from the list below:"
-    choices = {
-        f"{file_type}": file_type
-        for file_type in VigFile
-        if file_type != VigFile.ALL and int(file_type) & valid_file_types == file_type
-    }
+    choices = {f"{f}": f for f in VigFile if int(f) & valid_file_types == f}
     instructions = "(use SPACE BAR to select each file type, ENTER to confirm your selections)"
     file_types_prompt = Check(
         prompt=instructions,
@@ -220,9 +214,7 @@ def file_types_prompt(prompt, valid_file_types=VigFile.ALL):
 def select_game_prompt(game_ids, prompt=None, use_numbers=True, clear_screen=True):
     if not prompt:
         prompt = "Select a game from the list below:"
-    choices = {
-        f"{_get_menu_item_emoji(use_numbers, num)}  {game_id}": game_id for num, game_id in enumerate(game_ids, start=1)
-    }
+    choices = {f"{_get_menu_item_emoji(use_numbers, n)}  {gid}": gid for n, gid in enumerate(game_ids, start=1)}
     choices[f"{EMOJIS.get('BACK')} Return to Main Menu"] = None
     return user_options_prompt(choices, prompt, clear_screen=clear_screen)
 
