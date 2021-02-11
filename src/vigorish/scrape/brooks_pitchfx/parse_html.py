@@ -78,6 +78,10 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     for i, name in enumerate(column_names):
         if name.lower() in FILTER_NAMES:
             continue
+        field_type = str
+        dataclass_field = get_dataclass_field(name.lower())
+        if dataclass_field:
+            field_type = dataclass_field.type
         query = Template(T_PITCHFX_MEASUREMENT).substitute(i=(i + 1))
         results = table_row.xpath(query)
         if not results:
@@ -102,7 +106,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
                 f"Partial Data..: {pitchfx_dict}"
             )
             return Result.Fail(error)
-        pitchfx_dict[name.lower()] = results[0]
+        pitchfx_dict[name.lower()] = convert_type_for_dataclass(field_type, results[0])
     pitchfx_dict["pitcher_name"] = pitch_log.pitcher_name
     pitchfx_dict["pitch_app_id"] = pitch_log.pitch_app_id
     pitchfx_dict["pitcher_team_id_bb"] = pitch_log.pitcher_team_id_bb
@@ -114,19 +118,37 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
 
     game_start_time = pitch_log.game_start_time
     pitchfx.game_start_time_str = game_start_time.strftime(DT_AWARE) if game_start_time else ""
-    pitchfx.has_zone_location = True if pitchfx_dict["zone_location"] != 99 else False
+    pitchfx.has_zone_location = True if pitchfx.zone_location != 99 else False
     pitchfx.batter_did_swing = pitchfx_dict["pdes"] in PITCH_DES_DID_SWING
     pitchfx.batter_made_contact = pitchfx_dict["pdes"] in PITCH_DES_MADE_CONTACT
     pitchfx.called_strike = "Called Strike" in pitchfx_dict["pdes"]
     pitchfx.swinging_strike = pitchfx_dict["pdes"] in PITCH_DES_SWINGING_STRIKE
     if pitchfx.has_zone_location:
-        pitchfx.inside_strike_zone = pitchfx_dict["zone_location"] in ZONE_LOCATIONS_INSIDE_SZ
+        pitchfx.inside_strike_zone = pitchfx.zone_location in ZONE_LOCATIONS_INSIDE_SZ
         pitchfx.outside_strike_zone = not pitchfx.inside_strike_zone
         pitchfx.swing_inside_zone = pitchfx.batter_did_swing and pitchfx.inside_strike_zone
         pitchfx.swing_outside_zone = pitchfx.batter_did_swing and pitchfx.outside_strike_zone
         pitchfx.contact_inside_zone = pitchfx.batter_made_contact and pitchfx.inside_strike_zone
         pitchfx.contact_outside_zone = pitchfx.batter_made_contact and pitchfx.outside_strike_zone
     return Result.Ok(pitchfx)
+
+
+def get_dataclass_field(name):
+    return BrooksPitchFxData.__dataclass_fields__.get(name)
+
+
+def convert_type_for_dataclass(field_type, value):
+    if field_type is bool:
+        field_value = True if value else False
+    elif not value:
+        field_value = None
+    elif field_type is int and not isinstance(value, int):
+        field_value = int(value)
+    elif field_type is float and not isinstance(value, float):
+        field_value = float(value)
+    else:
+        field_value = value
+    return field_value
 
 
 def fix_missing_des(pfx_data, pitch_log):
