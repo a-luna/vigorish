@@ -54,7 +54,7 @@ def test_restore_database(vig_app):
 
 
 def remove_everything_in_backup_folder():
-    search_results = list(BACKUP_FOLDER.glob("*.zip"))
+    search_results = list(BACKUP_FOLDER.glob("__timestamp__.zip"))
     if search_results:
         zip_file = search_results[0]
         zip_file.unlink()
