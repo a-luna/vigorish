@@ -1,6 +1,6 @@
 import os
 
-from tests.conftest import CONFIG_FILE, SQLITE_URL, TESTS_FOLDER
+from tests.conftest import CONFIG_FILE, DOTENV_FILE, SQLITE_URL, TESTS_FOLDER
 from vigorish.config.dotenv_file import DotEnvFile
 
 
@@ -20,6 +20,11 @@ def test_dotenv_file():
     assert config_file_before == str(CONFIG_FILE)
     assert config_file_after == str(new_config_file)
 
+    result = dotenv.change_value("CONFIG_FILE", CONFIG_FILE)
+    assert result.success
+    config_file_reset = dotenv.get_current_value("CONFIG_FILE")
+    assert config_file_reset == str(CONFIG_FILE)
+
     invalid_var_name = dotenv.get_current_value("SERVER_IP")
     assert not invalid_var_name
     result = dotenv.change_value("SERVER_IP", "192.168.1.1")
@@ -28,4 +33,8 @@ def test_dotenv_file():
 
     assert not dotenv.restart_required_on_change("AWS_DEFAULT_REGION")
     assert dotenv.restart_required_on_change("DATABASE_URL")
+
+    os.environ["DOTENV_FILE"] = str(DOTENV_FILE)
     default_dotenv.unlink()
+    if DOTENV_FILE.exists():
+        DOTENV_FILE.unlink()

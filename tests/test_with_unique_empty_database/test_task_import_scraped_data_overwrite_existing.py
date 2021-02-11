@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from tests.conftest import CSV_FOLDER
+from tests.conftest import CSV_FOLDER, DOTENV_FILE
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,
@@ -40,6 +40,8 @@ def vig_app(request):
 
     def fin():
         app.db_session.close()
+        if DOTENV_FILE.exists():
+            DOTENV_FILE.unlink()
 
     request.addfinalizer(fin)
     return app
@@ -51,7 +53,7 @@ def test_import_data_and_overwrite_existing(vig_app, mocker):
         s2019 = Season.find_by_year(db_session, 2019)
         return [s2018, s2019]
 
-    mocker.patch("vigorish.tasks.import_scraped_data.Season.all_regular_seasons", get_2018_2019_seasons)
+    mocker.patch("vigorish.tasks.import_scraped_data.db.Season.all_regular_seasons", get_2018_2019_seasons)
 
     season_18 = Season.find_by_year(vig_app.db_session, 2018)
     season_19 = Season.find_by_year(vig_app.db_session, 2019)

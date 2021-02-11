@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from tests.conftest import TESTS_FOLDER
+from tests.conftest import DOTENV_FILE, TESTS_FOLDER
 from vigorish.config.config_file import ConfigFile
 from vigorish.config.config_setting import (
     EnumConfigSetting,
@@ -42,19 +42,10 @@ def test_config_setting():
     assert "ALL_DATA_SETS..: SEASON_SUMMARY" in enum_setting.current_settings_report
 
     default_enum_settings = {
-        "SCRAPE_CONDITION": {
-            "enum_type": ScrapeCondition,
-            "default_value": ScrapeCondition.ONLY_MISSING_DATA,
-        },
-        "SCRAPE_TASK_OPTION": {
-            "enum_type": ScrapeTaskOption,
-            "default_value": ScrapeTaskOption.BY_DATE,
-        },
+        "SCRAPE_CONDITION": {"enum_type": ScrapeCondition, "default_value": ScrapeCondition.ONLY_MISSING_DATA},
+        "SCRAPE_TASK_OPTION": {"enum_type": ScrapeTaskOption, "default_value": ScrapeTaskOption.BY_DATE},
         "HTML_STORAGE": {"enum_type": HtmlStorageOption, "default_value": HtmlStorageOption.NONE},
-        "JSON_STORAGE": {
-            "enum_type": JsonStorageOption,
-            "default_value": JsonStorageOption.LOCAL_FOLDER,
-        },
+        "JSON_STORAGE": {"enum_type": JsonStorageOption, "default_value": JsonStorageOption.LOCAL_FOLDER},
         "COMBINED_DATA_STORAGE": {
             "enum_type": CombinedDataStorageOption,
             "default_value": CombinedDataStorageOption.LOCAL_FOLDER,
@@ -109,3 +100,7 @@ def test_config_setting():
     assert str(check_setting) == path_config_dict.get(DataSet.ALL.name)
     assert check_setting.is_valid(2019)
     assert current_setting.resolve(2019) == check_setting.resolve(2019)
+
+    default_config_path.unlink()
+    if DOTENV_FILE.exists():
+        DOTENV_FILE.unlink()
