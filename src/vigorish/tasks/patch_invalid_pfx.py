@@ -94,7 +94,9 @@ class PatchInvalidPitchFxTask(Task):
 
     def verify_scraped_data_can_be_combined(self, apply_patch_list):
         results = self.combine_data.investigate(self.bbref_game_id, apply_patch_list)
-        if not results["get_all_pbp_events_success"]:
+        if not results["gather_scraped_data_success"]:
+            error_message = "Failed to gather all required scaped data for game!"
+        elif not results["get_all_pbp_events_success"]:
             error_message = "Failed to process play-by-play events and identify at_bat_ids"
         elif not results["get_all_pfx_data_success"]:
             error_message = "Failed to process PitchFX logs and group by at_bat_id"
