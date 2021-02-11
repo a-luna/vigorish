@@ -1,5 +1,5 @@
 """Pitchfx measurements for a single pitch scraped from brooksbaseball.com."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
 from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
@@ -12,84 +12,84 @@ from vigorish.util.string_helpers import validate_bbref_game_id
 class BrooksPitchFxData:
     """Pitchfx measurements for a single pitch scraped from brooksbaseball.com."""
 
-    pitcher_name: str = ""
-    pitch_app_id: str = ""
-    pitcher_id: str = "0"
-    batter_id: str = "0"
-    pitcher_team_id_bb: str = ""
-    opponent_team_id_bb: str = ""
-    bb_game_id: str = ""
-    bbref_game_id: str = ""
-    table_row_number: str = "0"
-    park_sv_id: str = ""
-    play_guid: str = ""
-    ab_total: str = "0"
-    ab_count: str = "0"
-    ab_id: str = "0"
-    des: str = ""
-    type: str = ""
-    id: str = "0"
-    sz_top: str = "0"
-    sz_bot: str = "0"
-    pfx_xdatafile: str = "0"
-    pfx_zdatafile: str = "0"
-    mlbam_pitch_name: str = ""
-    zone_location: str = "0"
-    pitch_con: str = "0"
-    stand: str = ""
-    strikes: str = "0"
-    balls: str = "0"
-    p_throws: str = ""
-    pdes: str = ""
-    spin: str = "0"
-    norm_ht: str = "0"
-    inning: str = "0"
-    tstart: str = "0"
-    vystart: str = "0"
-    ftime: str = "0"
-    pfx_x: str = "0"
-    pfx_z: str = "0"
-    uncorrected_pfx_x: str = "0"
-    uncorrected_pfx_z: str = "0"
-    x0: str = "0"
-    y0: str = "0"
-    z0: str = "0"
-    vx0: str = "0"
-    vy0: str = "0"
-    vz0: str = "0"
-    ax: str = "0"
-    ay: str = "0"
-    az: str = "0"
-    start_speed: str = "0"
-    px: str = "0"
-    pz: str = "0"
-    pxold: str = "0"
-    pzold: str = "0"
-    tm_spin: str = "0"
-    sb: str = "0"
-    game_start_time_str: str = ""
-    time_pitch_thrown_str: str = ""
-    has_zone_location: bool = False
-    batter_did_swing: bool = False
-    batter_made_contact: bool = False
-    called_strike: bool = False
-    swinging_strike: bool = False
-    inside_strike_zone: bool = False
-    outside_strike_zone: bool = False
-    swing_inside_zone: bool = False
-    swing_outside_zone: bool = False
-    contact_inside_zone: bool = False
-    contact_outside_zone: bool = False
-    is_batted_ball: bool = False
-    is_ground_ball: bool = False
-    is_fly_ball: bool = False
-    is_line_drive: bool = False
-    is_pop_up: bool = False
-    is_patched: bool = False
-    is_duplicate_guid: bool = False
-    is_duplicate_pitch_number: bool = False
-    is_invalid_ibb: bool = False
-    is_out_of_sequence: bool = False
+    pitcher_name: str = field(repr=False, default=None)
+    pitch_app_id: str = None
+    pitcher_id: int = field(repr=False, default=0)
+    batter_id: int = field(repr=False, default=0)
+    pitcher_team_id_bb: str = field(repr=False, default=None)
+    opponent_team_id_bb: str = field(repr=False, default=None)
+    bb_game_id: str = field(repr=False, default=None)
+    bbref_game_id: str = field(repr=False, default=None)
+    table_row_number: int = field(repr=False, default=0)
+    park_sv_id: str = field(repr=False, default=None)
+    play_guid: str = field(repr=False, default=None)
+    ab_total: int = field(repr=False, default=0)
+    ab_count: int = field(repr=False, default=0)
+    ab_id: int = field(repr=False, default=0)
+    des: str = field(repr=False, default=None)
+    type: str = field(repr=False, default=None)
+    id: int = 0
+    sz_top: float = field(repr=False, default=0.0)
+    sz_bot: float = field(repr=False, default=0.0)
+    pfx_xdatafile: float = field(repr=False, default=0.0)
+    pfx_zdatafile: float = field(repr=False, default=0.0)
+    mlbam_pitch_name: str = None
+    zone_location: int = field(repr=False, default=0)
+    pitch_con: float = field(repr=False, default=0.0)
+    stand: str = field(repr=False, default=None)
+    strikes: int = field(repr=False, default=0)
+    balls: int = field(repr=False, default=0)
+    p_throws: str = field(repr=False, default=None)
+    pdes: str = field(repr=False, default=None)
+    spin: float = field(repr=False, default=0.0)
+    norm_ht: float = field(repr=False, default=0.0)
+    inning: float = field(repr=False, default=0.0)
+    tstart: float = field(repr=False, default=0.0)
+    vystart: float = field(repr=False, default=0.0)
+    ftime: float = field(repr=False, default=0.0)
+    pfx_x: float = field(repr=False, default=0.0)
+    pfx_z: float = field(repr=False, default=0.0)
+    uncorrected_pfx_x: float = field(repr=False, default=0.0)
+    uncorrected_pfx_z: float = field(repr=False, default=0.0)
+    x0: float = field(repr=False, default=0.0)
+    y0: float = field(repr=False, default=0.0)
+    z0: float = field(repr=False, default=0.0)
+    vx0: float = field(repr=False, default=0.0)
+    vy0: float = field(repr=False, default=0.0)
+    vz0: float = field(repr=False, default=0.0)
+    ax: float = field(repr=False, default=0.0)
+    ay: float = field(repr=False, default=0.0)
+    az: float = field(repr=False, default=0.0)
+    start_speed: float = field(repr=False, default=0.0)
+    px: float = field(repr=False, default=0.0)
+    pz: float = field(repr=False, default=0.0)
+    pxold: float = field(repr=False, default=0.0)
+    pzold: float = field(repr=False, default=0.0)
+    tm_spin: int = field(repr=False, default=0)
+    sb: int = field(repr=False, default=0)
+    game_start_time_str: str = field(repr=False, default=None)
+    time_pitch_thrown_str: str = field(repr=False, default=None)
+    has_zone_location: bool = field(repr=False, default=False)
+    batter_did_swing: bool = field(repr=False, default=False)
+    batter_made_contact: bool = field(repr=False, default=False)
+    called_strike: bool = field(repr=False, default=False)
+    swinging_strike: bool = field(repr=False, default=False)
+    inside_strike_zone: bool = field(repr=False, default=False)
+    outside_strike_zone: bool = field(repr=False, default=False)
+    swing_inside_zone: bool = field(repr=False, default=False)
+    swing_outside_zone: bool = field(repr=False, default=False)
+    contact_inside_zone: bool = field(repr=False, default=False)
+    contact_outside_zone: bool = field(repr=False, default=False)
+    is_batted_ball: bool = field(repr=False, default=False)
+    is_ground_ball: bool = field(repr=False, default=False)
+    is_fly_ball: bool = field(repr=False, default=False)
+    is_line_drive: bool = field(repr=False, default=False)
+    is_pop_up: bool = field(repr=False, default=False)
+    is_patched: bool = field(repr=False, default=False)
+    is_duplicate_guid: bool = field(repr=False, default=False)
+    is_duplicate_pitch_number: bool = field(repr=False, default=False)
+    is_invalid_ibb: bool = field(repr=False, default=False)
+    is_out_of_sequence: bool = field(repr=False, default=False)
 
     @property
     def game_start_time(self):
@@ -112,7 +112,15 @@ class BrooksPitchFxData:
             int(group_dict["minute"]),
             int(group_dict["second"]),
         )
-        return timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
+        thrown_as_tz = timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
+        thrown_replace_tz = timestamp.replace(tzinfo=TIME_ZONE_NEW_YORK)
+        return (
+            thrown_as_tz
+            if self.game_start_time and self.game_start_time < thrown_as_tz
+            else thrown_replace_tz
+            if self.game_start_time and self.game_start_time < thrown_replace_tz
+            else None
+        )
 
     @property
     def seconds_since_game_start(self):
@@ -132,53 +140,53 @@ class BrooksPitchFxData:
             "opponent_team_id_bb": self.opponent_team_id_bb,
             "bb_game_id": self.bb_game_id,
             "bbref_game_id": self.bbref_game_id,
-            "table_row_number": int(self.table_row_number),
+            "table_row_number": self.table_row_number,
             "park_sv_id": self.park_sv_id,
             "play_guid": self.play_guid,
-            "ab_total": int(self.ab_total),
-            "ab_count": int(self.ab_count),
-            "ab_id": int(self.ab_id),
+            "ab_total": self.ab_total,
+            "ab_count": self.ab_count,
+            "ab_id": self.ab_id,
             "des": self.des,
             "type": self.type,
-            "id": int(self.id),
-            "sz_top": float(self.sz_top),
-            "sz_bot": float(self.sz_bot),
-            "pfx_xdatafile": float(self.pfx_xdatafile),
-            "pfx_zdatafile": float(self.pfx_zdatafile),
+            "id": self.id,
+            "sz_top": self.sz_top,
+            "sz_bot": self.sz_bot,
+            "pfx_xdatafile": self.pfx_xdatafile,
+            "pfx_zdatafile": self.pfx_zdatafile,
             "mlbam_pitch_name": self.mlbam_pitch_name,
             "zone_location": self.zone_location,
-            "pitch_con": float(self.pitch_con),
+            "pitch_con": self.pitch_con,
             "stand": self.stand,
-            "strikes": int(self.strikes),
-            "balls": int(self.balls),
+            "strikes": self.strikes,
+            "balls": self.balls,
             "p_throws": self.p_throws,
             "pdes": self.pdes,
-            "spin": float(self.spin),
-            "norm_ht": float(self.norm_ht),
-            "inning": int(self.inning),
-            "tstart": float(self.tstart),
-            "vystart": float(self.vystart),
-            "ftime": float(self.ftime),
-            "pfx_x": float(self.pfx_x),
-            "pfx_z": float(self.pfx_z),
-            "uncorrected_pfx_x": float(self.uncorrected_pfx_x),
-            "uncorrected_pfx_z": float(self.uncorrected_pfx_z),
-            "x0": float(self.x0),
-            "y0": float(self.y0),
-            "z0": float(self.z0),
-            "vx0": float(self.vx0),
-            "vy0": float(self.vy0),
-            "vz0": float(self.vz0),
-            "ax": float(self.ax),
-            "ay": float(self.ay),
-            "az": float(self.az),
-            "start_speed": float(self.start_speed),
-            "px": float(self.px),
-            "pz": float(self.pz),
-            "pxold": float(self.pxold),
-            "pzold": float(self.pzold),
-            "tm_spin": int(self.tm_spin),
-            "sb": int(self.sb),
+            "spin": self.spin,
+            "norm_ht": self.norm_ht,
+            "inning": self.inning,
+            "tstart": self.tstart,
+            "vystart": self.vystart,
+            "ftime": self.ftime,
+            "pfx_x": self.pfx_x,
+            "pfx_z": self.pfx_z,
+            "uncorrected_pfx_x": self.uncorrected_pfx_x,
+            "uncorrected_pfx_z": self.uncorrected_pfx_z,
+            "x0": self.x0,
+            "y0": self.y0,
+            "z0": self.z0,
+            "vx0": self.vx0,
+            "vy0": self.vy0,
+            "vz0": self.vz0,
+            "ax": self.ax,
+            "ay": self.ay,
+            "az": self.az,
+            "start_speed": self.start_speed,
+            "px": self.px,
+            "pz": self.pz,
+            "pxold": self.pxold,
+            "pzold": self.pzold,
+            "tm_spin": self.tm_spin,
+            "sb": self.sb,
             "game_start_time_str": self.game_start_time_str,
             "time_pitch_thrown_str": self.get_time_pitch_thrown_str(),
             "has_zone_location": self.has_zone_location,

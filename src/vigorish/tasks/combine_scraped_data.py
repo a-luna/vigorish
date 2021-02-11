@@ -362,7 +362,7 @@ class CombineScrapedDataTask(Task):
 
     def get_at_bat_id_for_pfx_data(self, pfx, instance_number=0):
         game_id = pfx.bbref_game_id
-        inning = f"{0}{pfx.inning}" if pfx.inning < 10 else pfx.inning
+        inning = f"{0}{int(pfx.inning)}" if pfx.inning < 10 else int(pfx.inning)
         pteam = pfx.pitcher_team_id_bb
         pid = pfx.pitcher_id
         bteam = pfx.opponent_team_id_bb
