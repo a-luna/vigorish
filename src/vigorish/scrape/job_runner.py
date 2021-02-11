@@ -3,12 +3,11 @@ import subprocess
 from collections import defaultdict
 from datetime import datetime
 
-from getch import pause
 from halo import Halo
 
+import vigorish.database as db
 from vigorish.cli.components import print_heading, print_message
 from vigorish.constants import DATA_SET_TO_NAME_MAP, FAKE_SPINNER, JOB_SPINNER_COLORS
-from vigorish.database import ScrapeError
 from vigorish.enums import DataSet, JobStatus, ScrapeTaskOption, StatusReport
 from vigorish.scrape.bbref_boxscores.scrape_task import ScrapeBBRefBoxscores
 from vigorish.scrape.bbref_games_for_date.scrape_task import ScrapeBBRefGamesForDate
@@ -61,8 +60,8 @@ class JobRunner:
         result = self.run_job()
         if result.failure:
             return self.job_failed(result, self.data_set)
+        self.report_task_results()
         result = self.show_status_report()
-        pause(message="Press any key to continue...")
         if result.failure:
             return self.job_failed(result)
         return self.job_succeeded()
@@ -71,7 +70,7 @@ class JobRunner:
         if self.scrape_task_option == ScrapeTaskOption.BY_DATE:
             return self.run_job_day_by_day()
         elif self.scrape_task_option == ScrapeTaskOption.BY_DATA_SET:
-            return self.run_job_full_date_range()
+            return self.scrape_date_range(self.start_date, self.end_date)
         else:
             raise ConfigSettingException(
                 setting_name="SCRAPE_TASK_OPTION",
@@ -82,36 +81,26 @@ class JobRunner:
     def run_job_day_by_day(self):
         for scrape_date in get_date_range(self.start_date, self.end_date):
             self.scrape_date = scrape_date
-            for task_number, data_set in enumerate(self.data_sets, start=1):
-                self.data_set = data_set
-                result = self.scrape_date_range(task_number, data_set, scrape_date, scrape_date)
-                if result.failure:
-                    return result
-            self.task_results.clear()
-        self.report_task_results()
-        return Result.Ok()
-
-    def run_job_full_date_range(self):
-        for task_number, data_set in enumerate(self.data_sets, start=1):
-            self.data_set = data_set
-            result = self.scrape_date_range(task_number, data_set, self.start_date, self.end_date)
+            result = self.scrape_date_range(scrape_date, scrape_date)
             if result.failure:
                 return result
-        self.report_task_results()
+            self.task_results.clear()
         return Result.Ok()
 
-    def scrape_date_range(self, task_number, data_set, start_date, end_date):
-        self.report_task_results()
-        self.update_spinner(data_set, task_number)
-        result = self.scrape_data_set(data_set, start_date, end_date)
-        if result.failure:
-            if "skip" in result.error:
-                self.log_result_data_set_skipped(data_set, task_number)
-                self.spinners[data_set].stop()
-                return Result.Ok()
-            return result
-        self.log_result_data_set_scraped(data_set, task_number)
-        self.spinners[data_set].stop()
+    def scrape_date_range(self, start_date, end_date):
+        for task_number, data_set in enumerate(self.data_sets, start=1):
+            self.data_set = data_set
+            self.report_task_results()
+            self.update_spinner(data_set, task_number)
+            result = self.scrape_data_set(data_set, start_date, end_date)
+            if result.failure:
+                if "skip" in result.error:
+                    self.log_result_data_set_skipped(data_set, task_number)
+                    self.spinners[data_set].stop()
+                    continue
+                return result
+            self.log_result_data_set_scraped(data_set, task_number)
+            self.spinners[data_set].stop()
         return Result.Ok()
 
     def scrape_data_set(self, data_set, start_date, end_date):
@@ -194,12 +183,13 @@ class JobRunner:
         if result.failure:
             return result
         report_viewer = result.value
-        return report_viewer.launch()
+        report_viewer.launch()
+        return Result.Ok()
 
     def job_failed(self, result, data_set=DataSet.ALL):
         self.end_time = datetime.now()
         self.db_job.status = JobStatus.ERROR
-        new_error = ScrapeError(error_message=result.error, data_set=data_set, job_id=self.db_job.id)
+        new_error = db.ScrapeError(error_message=result.error, data_set=data_set, job_id=self.db_job.id)
         self.db_session.add(new_error)
         self.db_session.commit()
         return result
