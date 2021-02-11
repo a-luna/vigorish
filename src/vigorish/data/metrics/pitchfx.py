@@ -8,11 +8,11 @@ from dacite import from_dict
 from sqlalchemy.engine import RowProxy
 
 from vigorish.data.metrics.constants import (
-    BATTED_BALL_METRICS,
-    BOOL_PITCH_METRIC_NAMES,
-    FLOAT_PITCH_METRIC_NAMES,
-    INT_PITCH_METRIC_NAMES,
-    PLATE_DISCIPLINE_METRICS,
+    PFX_BATTED_BALL_METRICS,
+    PFX_BOOL_METRIC_NAMES,
+    PFX_FLOAT_METRIC_NAMES,
+    PFX_INT_METRIC_NAMES,
+    PFX_PLATE_DISCIPLINE_METRICS,
 )
 from vigorish.enums import PitchType
 
@@ -64,7 +64,7 @@ class PitchFxMetrics:
         money_pitch = "$ " if self.money_pitch else ""
         total_pitches = f" ({self.total_pitches})" if include_pitch_count else ""
         pd_stats = {"pitch_type": f"{money_pitch}{self.pitch_type.print_name}{total_pitches}"}
-        for metric, (rate, total) in PLATE_DISCIPLINE_METRICS.items():
+        for metric, (rate, total) in PFX_PLATE_DISCIPLINE_METRICS.items():
             pitch_count = f" ({getattr(self, total)})" if include_pitch_count else ""
             pd_stats[metric] = f"{getattr(self, rate):.0%}{pitch_count}"
         return pd_stats
@@ -72,7 +72,7 @@ class PitchFxMetrics:
     def get_batted_ball_stats(self, include_bip_count: bool = False) -> Dict[str, str]:
         total_bip = f" ({self.total_batted_balls})" if include_bip_count else ""
         bb_stats = {"pitch_type": f"{self.pitch_type.print_name}{total_bip}"}
-        for metric, (rate, total) in BATTED_BALL_METRICS.items():
+        for metric, (rate, total) in PFX_BATTED_BALL_METRICS.items():
             bip_count = f" ({getattr(self, total)})" if include_bip_count else ""
             bb_stats[metric] = f"{getattr(self, rate):.0%}{bip_count}"
         return bb_stats
@@ -133,7 +133,7 @@ class PitchFxMetricsCollection:
     def get_plate_discipline_stats_for_all_pitches(self, include_pitch_count: bool = False) -> Dict[str, str]:
         total_pitches = f" ({self.total_pitches})" if include_pitch_count else ""
         pd_stats = {"pitch_type": f"ALL{total_pitches}"}
-        for metric, (rate, total) in PLATE_DISCIPLINE_METRICS.items():
+        for metric, (rate, total) in PFX_PLATE_DISCIPLINE_METRICS.items():
             pitch_count = f" ({getattr(self, total)})" if include_pitch_count else ""
             pd_stats[metric] = f"{getattr(self, rate):.0%}{pitch_count}"
         return pd_stats
@@ -141,7 +141,7 @@ class PitchFxMetricsCollection:
     def get_batted_ball_stats_for_all_pitches(self, include_bip_count: bool = False) -> Dict[str, str]:
         total_bip = f" ({self.total_batted_balls})" if include_bip_count else ""
         bb_stats = {"pitch_type": f"ALL{total_bip}"}
-        for metric, (rate, total) in BATTED_BALL_METRICS.items():
+        for metric, (rate, total) in PFX_BATTED_BALL_METRICS.items():
             bip_count = f" ({getattr(self, total)})" if include_bip_count else ""
             bb_stats[metric] = f"{getattr(self, rate):.0%}{bip_count}"
         return bb_stats
@@ -199,13 +199,13 @@ def _filter_pitch_types_above_threshold(row_dicts: List[RowDict], threshold: flo
 def _get_pitchfx_metrics_for_single_pitch_type(pitch_type_dict: RowDict) -> PitchFxMetricsDict:
     pitch_metrics = {}
     pitch_metrics["pitch_type"] = PitchType.from_abbrev(pitch_type_dict["pitch_type"])
-    for metric in FLOAT_PITCH_METRIC_NAMES:
+    for metric in PFX_FLOAT_METRIC_NAMES:
         if metric in pitch_type_dict:
             pitch_metrics[metric] = round(pitch_type_dict[metric], 3)
-    for metric in INT_PITCH_METRIC_NAMES:
+    for metric in PFX_INT_METRIC_NAMES:
         if metric in pitch_type_dict:
             pitch_metrics[metric] = pitch_type_dict[metric]
-    for metric in BOOL_PITCH_METRIC_NAMES:
+    for metric in PFX_BOOL_METRIC_NAMES:
         if metric in pitch_type_dict:
             pitch_metrics[metric] = bool(pitch_type_dict[metric])
     return pitch_metrics
@@ -223,7 +223,7 @@ def _get_pitchfx_metrics_for_all_pitch_types(
         "pitcher_id_mlb": pitcher_id_mlb,
         "pitch_types": list(metrics_detail.keys()),
     }
-    for metric_name in INT_PITCH_METRIC_NAMES:
+    for metric_name in PFX_INT_METRIC_NAMES:
         metrics_collection[metric_name] = sum(
             pitch_metrics[metric_name]
             for pitch_metrics in metrics_detail.values()
