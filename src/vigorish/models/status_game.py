@@ -7,7 +7,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.database import Base
+import vigorish.database as db
 from vigorish.models.season import Season
 from vigorish.util.dt_format_strings import (
     DATE_ONLY,
@@ -18,7 +18,7 @@ from vigorish.util.dt_format_strings import (
 from vigorish.util.string_helpers import get_brooks_team_id, validate_brooks_game_id
 
 
-class GameScrapeStatus(Base):
+class GameScrapeStatus(db.Base):
     __tablename__ = "scrape_status_game"
     id = Column(Integer, primary_key=True)
     game_date = Column(DateTime)

@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from vigorish.database import PitchAppScrapeStatus
+import vigorish.database as db
 from vigorish.util.result import Result
 
 
@@ -60,7 +60,7 @@ def update_pitch_appearance_status_records(db_session, pitch_stats):
 
 
 def get_pitch_app_status(db_session, pitch_app_id):
-    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
+    pitch_app_status = db.PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
     if not pitch_app_status:
         error = f"scrape_status_pitch_app does not contain an entry for pitch_app_id: {pitch_app_id}"
         return Result.Fail(error)
@@ -69,7 +69,7 @@ def get_pitch_app_status(db_session, pitch_app_id):
 
 def check_for_remaining_pitch_apps_no_pfx_data(db_session, bbref_game_id):
     pitch_apps_no_pfx_data = (
-        db_session.query(PitchAppScrapeStatus)
+        db_session.query(db.PitchAppScrapeStatus)
         .filter_by(bbref_game_id=bbref_game_id)
         .filter_by(scraped_pitchfx=1)
         .filter_by(no_pitchfx_data=1)

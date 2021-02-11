@@ -5,7 +5,7 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.types import Enum
 
-from vigorish.database import Base
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.util.datetime_util import (
     get_local_utcoffset,
@@ -15,7 +15,7 @@ from vigorish.util.datetime_util import (
 )
 
 
-class ScrapeError(Base):
+class ScrapeError(db.Base):
     """Errors encountered while executing scrape jobs."""
 
     __tablename__ = "scrape_error"

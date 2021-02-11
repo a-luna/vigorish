@@ -6,14 +6,14 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 
-from vigorish.database import Base
+import vigorish.database as db
 from vigorish.enums import SeasonType
 from vigorish.util.datetime_util import get_date_range as get_date_range_util
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
 
-class Season(Base):
+class Season(db.Base):
     """Database model that describes a MLB season and tracks data scraping progress."""
 
     __tablename__ = "season"

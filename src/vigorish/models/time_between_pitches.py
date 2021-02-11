@@ -1,10 +1,10 @@
 from sqlalchemy import Column, DateTime, Float, Integer
 
-from vigorish.database import Base
+import vigorish.database as db
 from vigorish.util.datetime_util import utc_now
 
 
-class TimeBetweenPitches(Base):
+class TimeBetweenPitches(db.Base):
 
     __tablename__ = "time_between_pitches"
     id = Column(Integer, primary_key=True)

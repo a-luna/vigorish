@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from vigorish.database import GameScrapeStatus
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList
 from vigorish.util.dt_format_strings import DATE_ONLY
@@ -32,8 +32,8 @@ class BBRefGamesForDatePatchList(PatchList):
 
     def post_process_data(self, data, db_session):
         for patch in self.patch_list:
-            game_status_old = GameScrapeStatus.find_by_bbref_game_id(db_session, patch.old_game_id)
-            game_status_new = GameScrapeStatus.find_by_bbref_game_id(db_session, patch.new_game_id)
+            game_status_old = db.GameScrapeStatus.find_by_bbref_game_id(db_session, patch.old_game_id)
+            game_status_new = db.GameScrapeStatus.find_by_bbref_game_id(db_session, patch.new_game_id)
             if not game_status_old:
                 if game_status_new:
                     return Result.Ok(data)

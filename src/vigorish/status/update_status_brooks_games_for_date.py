@@ -1,4 +1,4 @@
-from vigorish.database import DateScrapeStatus, GameScrapeStatus, Season
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
@@ -20,7 +20,7 @@ def update_status_brooks_games_for_date_list(scraped_data, db_session, scraped_b
     season = None
     for game_date in scraped_brooks_dates:
         if not season:
-            season = Season.find_by_year(db_session, game_date.year)
+            season = db.Season.find_by_year(db_session, game_date.year)
         games_for_date = scraped_data.get_brooks_games_for_date(game_date, apply_patch_list)
         if not games_for_date:
             date_str = game_date.strftime(DATE_ONLY_TABLE_ID)
@@ -39,7 +39,7 @@ def update_status_brooks_games_for_date_list(scraped_data, db_session, scraped_b
 def update_date_status_records(db_session, games_for_date, game_date):
     try:
         date_id = game_date.strftime(DATE_ONLY_TABLE_ID)
-        date_status = db_session.query(DateScrapeStatus).get(date_id)
+        date_status = db_session.query(db.DateScrapeStatus).get(date_id)
         if not date_status:
             date_str = games_for_date.game_date.strftime(DATE_ONLY)
             error = f"scrape_status_date does not contain an entry for date: {date_str}"
@@ -57,7 +57,7 @@ def update_game_status_records(db_session, games_for_date):
             continue
         try:
             bbref_game_id = game_info.bbref_game_id
-            game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
+            game_status = db.GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
             if not game_status:
                 game_status = create_game_status_record(db_session, games_for_date, bbref_game_id)
             game_status.bb_game_id = game_info.bb_game_id
@@ -72,10 +72,10 @@ def update_game_status_records(db_session, games_for_date):
 
 def create_game_status_record(db_session, games_for_date, bbref_game_id):
     game_date = games_for_date.game_date
-    date_status = DateScrapeStatus.find_by_date(db_session, game_date)
+    date_status = db.DateScrapeStatus.find_by_date(db_session, game_date)
     date_status.scraped_daily_dash_brooks = 1
     date_status.game_count_brooks = games_for_date.game_count
-    game_status = GameScrapeStatus()
+    game_status = db.GameScrapeStatus()
     game_status.game_date = game_date
     game_status.bbref_game_id = bbref_game_id
     game_status.scrape_status_date_id = date_status.id

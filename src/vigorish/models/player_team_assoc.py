@@ -1,10 +1,10 @@
 """Association table linking Players to Teams."""
 from sqlalchemy import Column, ForeignKey, Integer, String
 
-from vigorish.database import Base
+import vigorish.database as db
 
 
-class Assoc_Player_Team(Base):
+class Assoc_Player_Team(db.Base):
     __tablename__ = "player_team"
 
     db_player_id = Column(Integer, ForeignKey("player.id"), primary_key=True)

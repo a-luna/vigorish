@@ -6,12 +6,12 @@ from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.database import Base
+import vigorish.database as db
 from vigorish.util.datetime_util import make_tzaware, TIME_ZONE_NEW_YORK
 from vigorish.util.dt_format_strings import CSV_UTC, DT_AWARE
 
 
-class PitchFx(Base):
+class PitchFx(db.Base):
 
     __tablename__ = "pitchfx"
     id = Column(Integer, primary_key=True)

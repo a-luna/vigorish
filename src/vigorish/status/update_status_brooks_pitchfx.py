@@ -1,4 +1,4 @@
-from vigorish.database import PitchAppScrapeStatus
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
@@ -18,7 +18,7 @@ def update_status_brooks_pitchfx_log_list(scraped_data, db_session, new_pitch_ap
 
 def update_pitch_appearance_status_records(db_session, pitchfx_log):
     try:
-        pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitchfx_log.pitch_app_id)
+        pitch_app_status = db.PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitchfx_log.pitch_app_id)
         if not pitch_app_status:
             error = f"scrape_status_pitch_app does not contain an entry for pitch_app_id: {pitchfx_log.pitch_app_id}"
             return Result.Fail(error)

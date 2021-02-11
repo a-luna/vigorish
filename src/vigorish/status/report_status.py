@@ -1,5 +1,5 @@
 from vigorish.cli.components.viewers import DictListTableViewer, DisplayPage, PageViewer
-from vigorish.database import DateScrapeStatus, Season
+import vigorish.database as db
 from vigorish.enums import StatusReport
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY
@@ -32,8 +32,8 @@ def report_status_single_date(db_session, game_date, report_type):
 
 
 def validate_single_date(db_session, game_date):
-    season = Season.find_by_year(db_session, game_date.year)
-    date_is_valid = Season.is_date_in_season(db_session, game_date).success
+    season = db.Season.find_by_year(db_session, game_date.year)
+    date_is_valid = db.Season.is_date_in_season(db_session, game_date).success
     date_str = game_date.strftime(DATE_ONLY)
     if not date_is_valid:
         error = (
@@ -42,7 +42,7 @@ def validate_single_date(db_session, game_date):
             f"season_end_date: {season.end_date_str}"
         )
         return Result.Fail(error)
-    date_status = DateScrapeStatus.find_by_date(db_session, game_date)
+    date_status = db.DateScrapeStatus.find_by_date(db_session, game_date)
     if not date_status:
         error = f"scrape_status_date does not contain an entry for date: {date_str}"
         return Result.Fail(error)
@@ -52,7 +52,7 @@ def validate_single_date(db_session, game_date):
 def report_season_status(db_session, year, report_type):
     if report_type == StatusReport.NONE:
         return Result.Fail("no report")
-    season = Season.find_by_year(db_session, year)
+    season = db.Season.find_by_year(db_session, year)
     if report_type == StatusReport.SEASON_SUMMARY:
         heading = f"### STATUS REPORT FOR {season.name} ###"
         pages = [DisplayPage(season.status_report(), heading)]
@@ -80,7 +80,7 @@ def construct_date_range_status(db_session, start_date, end_date, report_type):
         show_all = True
     status_date_range = []
     for game_date in get_date_range(start_date, end_date):
-        date_status = DateScrapeStatus.find_by_date(db_session, game_date)
+        date_status = db.DateScrapeStatus.find_by_date(db_session, game_date)
         if not date_status:
             error = "scrape_status_date does not contain an entry for date: {game_date.strftime(DATE_ONLY)}"
             return Result.Fail(error)
@@ -116,7 +116,9 @@ def _get_missing_pfx_ids_for_date(db_session, date_status):
     if date_status.scraped_all_pitchfx_logs:
         return ["All PitchFX logs have been scraped"]
     elif date_status.scraped_all_brooks_pitch_logs:
-        missing_pitch_app_ids = DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(db_session, date_status.game_date)
+        missing_pitch_app_ids = db.DateScrapeStatus.get_unscraped_pitch_app_ids_for_date(
+            db_session, date_status.game_date
+        )
         missing_ids_str = [
             [f"GAME ID: {game_id}", f'{", ".join(pitch_app_id_list)}\n']
             for game_id, pitch_app_id_list in missing_pitch_app_ids.items()

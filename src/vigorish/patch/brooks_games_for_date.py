@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from vigorish.database import DateScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PitchFx
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList
 from vigorish.util.dt_format_strings import DATE_ONLY
@@ -105,26 +105,28 @@ class PatchBrooksGamesForDateRemoveGame(Patch):
 
 
 def delete_pitchfx_with_invalid_id(db_session, bbref_game_id):
-    all_pfx_with_invalid_id = db_session.query(PitchFx).filter_by(bbref_game_id=bbref_game_id).all()
+    all_pfx_with_invalid_id = db_session.query(db.PitchFx).filter_by(bbref_game_id=bbref_game_id).all()
     for pfx in all_pfx_with_invalid_id:
         db_session.delete(pfx)
 
 
 def delete_pitch_apps_with_invalid_id(db_session, bbref_game_id):
-    all_pitch_apps_with_invalid_id = db_session.query(PitchAppScrapeStatus).filter_by(bbref_game_id=bbref_game_id).all()
+    all_pitch_apps_with_invalid_id = (
+        db_session.query(db.PitchAppScrapeStatus).filter_by(bbref_game_id=bbref_game_id).all()
+    )
     for pitch_app in all_pitch_apps_with_invalid_id:
         db_session.delete(pitch_app)
 
 
 def delete_game_status(db_session, bbref_game_id):
-    game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
+    game_status = db.GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
     if game_status:
         db_session.delete(game_status)
     return Result.Ok()
 
 
 def update_game_status(db_session, data, bbref_game_id):
-    game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
+    game_status = db.GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
     if not game_status:
         error = "Unable to apply patch, database does not contain any records for game id " f'"{bbref_game_id}"'
         return Result.Fail(error)
@@ -140,5 +142,5 @@ def update_game_status(db_session, data, bbref_game_id):
 
 
 def update_date_status(db_session, data):
-    date_status = DateScrapeStatus.find_by_date(db_session, data.game_date)
+    date_status = db.DateScrapeStatus.find_by_date(db_session, data.game_date)
     date_status.game_count_brooks = data.game_count

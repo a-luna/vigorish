@@ -6,23 +6,7 @@ from zipfile import ZipFile
 from dataclass_csv import DataclassReader
 from events import Events
 
-from vigorish.database import (
-    BatStats,
-    BatStatsCsvRow,
-    DateScrapeStatus,
-    DateScrapeStatusCsvRow,
-    GameScrapeStatus,
-    GameScrapeStatusCsvRow,
-    PitchAppScrapeStatus,
-    PitchAppScrapeStatusCsvRow,
-    PitchFx,
-    PitchFxCsvRow,
-    PitchStats,
-    PitchStatsCsvRow,
-    PlayerId,
-    Season,
-    Team,
-)
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.tasks.base import Task
 from vigorish.util.result import Result
@@ -33,21 +17,21 @@ from vigorish.util.string_helpers import (
 )
 
 DATACLASS_CSV_MAP = {
-    DateScrapeStatusCsvRow: "scrape_status_date.csv",
-    GameScrapeStatusCsvRow: "scrape_status_game.csv",
-    PitchAppScrapeStatusCsvRow: "scrape_status_pitch_app.csv",
-    BatStatsCsvRow: "bat_stats.csv",
-    PitchStatsCsvRow: "pitch_stats.csv",
-    PitchFxCsvRow: "pitchfx.csv",
+    db.DateScrapeStatusCsvRow: "scrape_status_date.csv",
+    db.GameScrapeStatusCsvRow: "scrape_status_game.csv",
+    db.PitchAppScrapeStatusCsvRow: "scrape_status_pitch_app.csv",
+    db.BatStatsCsvRow: "bat_stats.csv",
+    db.PitchStatsCsvRow: "pitch_stats.csv",
+    db.PitchFxCsvRow: "pitchfx.csv",
 }
 
 RESTORE_TABLE_ORDER = {
-    1: (DateScrapeStatusCsvRow, DateScrapeStatus),
-    2: (GameScrapeStatusCsvRow, GameScrapeStatus),
-    3: (PitchAppScrapeStatusCsvRow, PitchAppScrapeStatus),
-    4: (BatStatsCsvRow, BatStats),
-    5: (PitchStatsCsvRow, PitchStats),
-    6: (PitchFxCsvRow, PitchFx),
+    1: (db.DateScrapeStatusCsvRow, db.DateScrapeStatus),
+    2: (db.GameScrapeStatusCsvRow, db.GameScrapeStatus),
+    3: (db.PitchAppScrapeStatusCsvRow, db.PitchAppScrapeStatus),
+    4: (db.BatStatsCsvRow, db.BatStats),
+    5: (db.PitchStatsCsvRow, db.PitchStats),
+    6: (db.PitchFxCsvRow, db.PitchFx),
 }
 
 BATCH_SIZE = 20000
@@ -75,35 +59,35 @@ class RestoreDatabaseTask(Task):
 
     @cached_property
     def season_id_map(self):
-        return Season.regular_season_map(self.db_session)
+        return db.Season.regular_season_map(self.db_session)
 
     @cached_property
     def player_id_map(self):
-        return PlayerId.get_player_id_map(self.db_session)
+        return db.PlayerId.get_player_id_map(self.db_session)
 
     @cached_property
     def game_id_map(self):
-        return GameScrapeStatus.get_game_id_map(self.db_session)
+        return db.GameScrapeStatus.get_game_id_map(self.db_session)
 
     @cached_property
     def pitch_app_id_map(self):
-        return PitchAppScrapeStatus.get_pitch_app_id_map(self.db_session)
+        return db.PitchAppScrapeStatus.get_pitch_app_id_map(self.db_session)
 
     @property
     def update_relationships_map(self):
         return {
-            DateScrapeStatusCsvRow: self.update_date_status_relationships,
-            GameScrapeStatusCsvRow: self.update_game_status_relationships,
-            PitchAppScrapeStatusCsvRow: self.update_pitch_app_status_relationships,
-            BatStatsCsvRow: self.update_player_stats_relationships,
-            PitchStatsCsvRow: self.update_player_stats_relationships,
-            PitchFxCsvRow: self.update_pitchfx_relationships,
+            db.DateScrapeStatusCsvRow: self.update_date_status_relationships,
+            db.GameScrapeStatusCsvRow: self.update_game_status_relationships,
+            db.PitchAppScrapeStatusCsvRow: self.update_pitch_app_status_relationships,
+            db.BatStatsCsvRow: self.update_player_stats_relationships,
+            db.PitchStatsCsvRow: self.update_player_stats_relationships,
+            db.PitchFxCsvRow: self.update_pitchfx_relationships,
         }
 
     def get_team_id_map_for_year(self, year):
         team_id_map_for_year = self._team_id_map.get(year)
         if not team_id_map_for_year:
-            team_id_map_for_year = Team.get_team_id_map_for_year(self.db_session, year)
+            team_id_map_for_year = db.Team.get_team_id_map_for_year(self.db_session, year)
             self._team_id_map[year] = team_id_map_for_year
         return team_id_map_for_year
 
@@ -168,10 +152,10 @@ class RestoreDatabaseTask(Task):
         self.events.unzip_backup_files_start()
         self.csv_map = self.unzip_csv_files(zip_file)
         self.events.unzip_backup_files_complete()
-        self.events.restore_database_start()
         result = self.app.prepare_database_for_restore(csv_folder)
         if result.failure:
             return result
+        self.events.restore_database_start()
         self.restore_database()
         self.remove_csv_files()
         self.events.restore_database_complete()

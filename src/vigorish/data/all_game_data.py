@@ -5,9 +5,9 @@ from functools import cached_property
 
 from tabulate import tabulate
 
+import vigorish.database as db
 from vigorish.cli.components.viewers import create_display_table, create_table_viewer, DisplayTable
 from vigorish.data.all_player_data import AllPlayerData
-from vigorish.database import PlayerId, Team
 from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.dt_format_strings import DT_AWARE, DT_AWARE_VERBOSE
 from vigorish.util.exceptions import ScrapedDataException
@@ -64,11 +64,11 @@ class AllGameData:
 
     @property
     def away_team(self):
-        return Team.find_by_team_id_and_year(self.db_session, self.away_team_id, self.game_date.year)
+        return db.Team.find_by_team_id_and_year(self.db_session, self.away_team_id, self.game_date.year)
 
     @property
     def home_team(self):
-        return Team.find_by_team_id_and_year(self.db_session, self.home_team_id, self.game_date.year)
+        return db.Team.find_by_team_id_and_year(self.db_session, self.home_team_id, self.game_date.year)
 
     @property
     def game_datetime(self):
@@ -213,9 +213,9 @@ class AllGameData:
         if not mlb_id and not bbref_id:
             return None
         return (
-            PlayerId.find_by_mlb_id(self.db_session, mlb_id)
+            db.PlayerId.find_by_mlb_id(self.db_session, mlb_id)
             if mlb_id
-            else PlayerId.find_by_bbref_id(self.db_session, bbref_id)
+            else db.PlayerId.find_by_bbref_id(self.db_session, bbref_id)
         )
 
     def get_all_player_ids_by_team(self, team_id):

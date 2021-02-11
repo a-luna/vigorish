@@ -1,12 +1,12 @@
 from tqdm import tqdm
 
-from vigorish.database import DateScrapeStatus, Season
+import vigorish.database as db
 from vigorish.util.result import Result
 
 
 def populate_status_tables(db_session):
     try:
-        mlb_seasons = Season.all_regular_seasons(db_session)
+        mlb_seasons = db.Season.all_regular_seasons(db_session)
         with tqdm(
             total=len(mlb_seasons),
             unit="season",
@@ -18,7 +18,7 @@ def populate_status_tables(db_session):
             for season in mlb_seasons:
                 pbar.set_description("Populating status_date table...")
                 for game_date in season.get_date_range():
-                    scrape_status = DateScrapeStatus(game_date=game_date, season_id=season.id)
+                    scrape_status = db.DateScrapeStatus(game_date=game_date, season_id=season.id)
                     db_session.add(scrape_status)
                 pbar.update()
         db_session.commit()

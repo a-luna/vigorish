@@ -6,8 +6,8 @@ from random import randint
 import click
 from getch import pause
 
+import vigorish.database as db
 from vigorish.constants import CLI_COLORS, FIGLET_FONTS
-from vigorish.database import Season
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
 
@@ -55,7 +55,7 @@ print_success = partial(print_message, fg="bright_green", bg=None, bold=True, un
 
 
 def validate_scrape_dates(db_session, start_date, end_date):
-    result = Season.validate_date_range(db_session, start_date, end_date)
+    result = db.Season.validate_date_range(db_session, start_date, end_date)
     if result.success:
         season = result.value
         return Result.Ok(season)

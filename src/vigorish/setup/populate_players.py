@@ -5,7 +5,7 @@ from datetime import datetime
 from dataclass_csv import accept_whitespaces, DataclassReader, dateformat
 from tqdm import tqdm
 
-from vigorish.database import Assoc_Player_Team, Player, PlayerId, Season, Team
+import vigorish.database as db
 from vigorish.tasks import UpdatePlayerIdMapTask, UpdatePlayerTeamMapTask
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
@@ -78,7 +78,7 @@ def import_id_map_csv(app, csv_folder):
         ) as pbar:
             for id_map in player_id_map:
                 app.db_session.add(
-                    PlayerId(
+                    db.PlayerId(
                         mlb_id=int(id_map.mlb_ID),
                         mlb_name=id_map.name_common,
                         bbref_id=id_map.player_ID,
@@ -113,11 +113,11 @@ def import_people_csv(db_session, csv_folder):
                     if not (row.birthYear or row.birthMonth or row.birthDay or row.debut):
                         pbar.update()
                         continue
-                    player_id = PlayerId.find_by_bbref_id(db_session, row.bbrefID)
+                    player_id = db.PlayerId.find_by_bbref_id(db_session, row.bbrefID)
                     if not player_id:
                         pbar.update()
                         continue
-                    p = Player(
+                    p = db.Player(
                         mlb_id=player_id.mlb_id,
                         bbref_id=row.bbrefID,
                         name_first=row.nameFirst,
@@ -161,10 +161,10 @@ def import_team_map_csv(app, csv_folder):
             ncols=90,
         ) as pbar:
             for team_map in player_team_map:
-                player = Player.find_by_bbref_id(app.db_session, team_map.player_ID)
-                team = Team.find_by_team_id_and_year(app.db_session, team_map.team_ID, int(team_map.year_ID))
-                season = Season.find_by_year(app.db_session, int(team_map.year_ID))
-                player_team = Assoc_Player_Team(
+                player = db.Player.find_by_bbref_id(app.db_session, team_map.player_ID)
+                team = db.Team.find_by_team_id_and_year(app.db_session, team_map.team_ID, int(team_map.year_ID))
+                season = db.Season.find_by_year(app.db_session, int(team_map.year_ID))
+                player_team = db.Assoc_Player_Team(
                     db_player_id=player.id,
                     db_team_id=team.id,
                     mlb_id=int(team_map.mlb_ID),

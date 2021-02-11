@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from dataclass_csv import accept_whitespaces, DataclassReader
 from tqdm import tqdm
 
-from vigorish.database import Team
+import vigorish.database as db
 from vigorish.util.result import Result
 
 
@@ -92,7 +92,7 @@ def import_teams_csv(db_session, csv_folder):
                 ncols=90,
             ) as pbar:
                 for row in reader:
-                    t = Team(
+                    t = db.Team(
                         year=row.yearID,
                         league=row.lgID,
                         team_id=row.teamID,
