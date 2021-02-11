@@ -37,6 +37,7 @@ class MainMenu(Menu):
     def __init__(self, app):
         super().__init__(app)
         self.initialized = False
+        self.audit_report = None
 
     @property
     def db_setup_complete(self):
