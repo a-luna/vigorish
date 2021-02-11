@@ -131,10 +131,7 @@ class SyncScrapedData(MenuItem):
         self.report_sync_results()
         self.update_spinner(file_type, data_set)
         result = Result.Fail("Failed to sync files")
-        if self.sync_direction == SyncDirection.UP_TO_S3:
-            result = self.s3_sync.get_files_to_sync_to_s3(file_type, data_set, self.year)
-        if self.sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            result = self.s3_sync.get_files_to_sync_to_local(file_type, data_set, self.year)
+        result = self.s3_sync.find_out_of_sync_files(self.sync_direction, file_type, data_set, self.year)
         if result.failure:
             self.spinners[file_type][data_set].stop()
             return result
