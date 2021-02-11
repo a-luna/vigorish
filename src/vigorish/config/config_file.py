@@ -236,11 +236,11 @@ class ConfigFile:
         for setting, config_dict in self.config_json.items():
             if config_dict["SAME_SETTING_FOR_ALL_DATA_SETS"]:
                 config_dict[DataSet.ALL.name] = self.get_default_value(setting, DataSet.ALL)
-                for data_set in [data_set for data_set in DataSet if data_set != DataSet.ALL]:
+                for data_set in DataSet:
                     config_dict[data_set.name] = None
             else:
-                config_dict["ALL"] = None
-                for data_set in [data_set for data_set in DataSet if data_set != DataSet.ALL]:
+                config_dict[DataSet.ALL.name] = None
+                for data_set in DataSet:
                     config_dict[data_set.name] = self.get_default_value(setting, data_set)
         self.write_config_file()
 

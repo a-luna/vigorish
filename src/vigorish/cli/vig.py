@@ -3,14 +3,15 @@ import os
 import subprocess
 
 import click
+from getch import pause
 
+import vigorish.database as db
 from vigorish.app import Vigorish
-from vigorish.cli.click_params import DateString, JobName, MlbSeason
+from vigorish.cli.click_params import DataSetName, DateString, FileTypeName, JobName, MlbSeason
 from vigorish.cli.components import print_message, validate_scrape_dates
 from vigorish.cli.main_menu import MainMenu
 from vigorish.config.project_paths import VIG_FOLDER
-from vigorish.database import ScrapeJob
-from vigorish.enums import DataSet, StatusReport, SyncDirection, VigFile
+from vigorish.enums import DataSet, StatusReport, SyncDirection
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.status.report_status import (
     report_date_range_status,
@@ -20,9 +21,10 @@ from vigorish.status.report_status import (
 from vigorish.tasks import SyncDataNoPromptsTask
 from vigorish.util.datetime_util import current_year, today_str
 from vigorish.util.result import Result
+from vigorish.util.string_helpers import flatten_list2d
 
 
-@click.group()
+@click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.pass_context
 def cli(ctx):
     """
@@ -30,15 +32,15 @@ def cli(ctx):
 
     Please visit https://aaronluna.dev/projects/vigorish for user guides and project documentation.
     """
-    if os.environ.get("ENV") != "TEST":
+    if os.environ.get("ENV") != "TEST":  # pragma: no cover
         if not VIG_FOLDER.exists():
             VIG_FOLDER.mkdir()
     ctx.obj = Vigorish()
 
 
-@cli.command()
+@cli.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.pass_obj
-def ui(app):
+def ui(app):  # pragma: no cover
     """Menu-driven UI powered by Bullet."""
     try:
         result = MainMenu(app).launch()
@@ -47,10 +49,10 @@ def ui(app):
         return exit_app(app, Result.Fail(f"Error: {repr(e)}"))
 
 
-@cli.command()
+@cli.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.confirmation_option(prompt="Are you sure you want to delete all existing data?")
 @click.pass_obj
-def setup(app):
+def setup(app):  # pragma: no cover
     """Populate database with initial player, team and season data.
 
     WARNING! Before the setup process begins, all existing data will be deleted. This cannot be undone.
@@ -60,10 +62,10 @@ def setup(app):
     return exit_app(app, result, "Successfully populated database with initial data.")
 
 
-@cli.command()
+@cli.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
     "--data-sets",
-    type=click.Choice([str(ds) for ds in DataSet]),
+    type=DataSetName(),
     multiple=True,
     default=[str(DataSet.ALL)],
     show_default=True,
@@ -90,9 +92,9 @@ def setup(app):
     prompt=("(Optional) Enter a name for this job (ONLY letters, numbers, underscore, and/or hyphen characters)"),
 )
 @click.pass_obj
-def scrape(app, data_sets, start, end, name):
+def scrape(app, data_set, start, end, name):
     """Scrape MLB data from websites."""
-    data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
+    data_sets_int = sum(int(ds) for ds in flatten_list2d(data_set))
     result = validate_scrape_dates(app.db_session, start, end)
     if result.failure:
         return exit_app(app, result)
@@ -104,7 +106,7 @@ def scrape(app, data_sets, start, end, name):
         "name": name,
         "season_id": season.id,
     }
-    new_scrape_job = ScrapeJob(**scrape_job_dict)
+    new_scrape_job = db.ScrapeJob(**scrape_job_dict)
     app.db_session.add(new_scrape_job)
     app.db_session.commit()
     job_runner = JobRunner(app=app, db_job=new_scrape_job)
@@ -112,14 +114,14 @@ def scrape(app, data_sets, start, end, name):
     return exit_app(app, result)
 
 
-@cli.group()
+@cli.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.pass_obj
 def status(app):
     """Report progress of scraped data, by date or MLB season."""
     pass
 
 
-@status.command("date")
+@status.command("date", context_settings={"help_option_names": ["-h", "--help"]})
 @click.argument("game_date", type=DateString(), default=today_str)
 @click.option(
     "-v",
@@ -158,7 +160,7 @@ def status_date(app, game_date, verbosity):
     return exit_app(app, result)
 
 
-@status.command("range")
+@status.command("range", context_settings={"help_option_names": ["-h", "--help"]})
 @click.option("--start", type=DateString(), prompt=True, help="First date to report status.")
 @click.option("--end", type=DateString(), prompt=True, help="Last date to report status.")
 @click.option(
@@ -204,7 +206,7 @@ def status_date_range(app, start, end, verbosity):
     return exit_app(app, result)
 
 
-@status.command("season")
+@status.command("season", context_settings={"help_option_names": ["-h", "--help"]})
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "-v",
@@ -247,34 +249,33 @@ def status_season(app, year, verbosity):
     return exit_app(app, result)
 
 
-@cli.group()
+@cli.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.pass_obj
 def sync(app):
     """Synchronize scraped data to/from S3 bucket."""
     pass
 
 
-@sync.command("up")
+@sync.command("up", context_settings={"help_option_names": ["-h", "--help"]})
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "--file-type",
-    type=click.Choice([str(ft) for ft in VigFile if ft != VigFile.ALL]),
+    type=FileTypeName(),
     help="Type of file to sync, must provide only one value.",
     prompt=True,
 )
 @click.option(
-    "--data-sets",
-    type=click.Choice([str(ds) for ds in DataSet]),
+    "--data-set",
+    type=DataSetName(),
     multiple=True,
     default=[str(DataSet.ALL)],
     show_default=True,
     help="Data set(s) to sync, multiple values can be provided.",
 )
 @click.pass_obj
-def sync_up_to_s3(app, year, file_type, data_sets):
+def sync_up_to_s3(app, year, file_type, data_set):
     """Sync files from local folder to S3 bucket."""
-    file_type = VigFile.from_str(file_type)
-    data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
+    data_sets_int = sum(int(ds) for ds in flatten_list2d(data_set))
     result_dict = SyncDataNoPromptsTask(app).execute(
         sync_direction=SyncDirection.UP_TO_S3,
         year=year,
@@ -282,30 +283,31 @@ def sync_up_to_s3(app, year, file_type, data_sets):
         data_sets_int=data_sets_int,
     )
     result = Result.Combine(list(result_dict.values()))
+    if os.environ.get("ENV") != "TEST":  # pragma: no cover
+        pause(message="\nPress any key to continue...")
     return exit_app(app, result)
 
 
-@sync.command("down")
+@sync.command("down", context_settings={"help_option_names": ["-h", "--help"]})
 @click.argument("year", type=MlbSeason(), default=current_year)
 @click.option(
     "--file-type",
-    type=click.Choice([str(ft) for ft in VigFile if ft != VigFile.ALL]),
+    type=FileTypeName(),
     help="Type of file to sync, must provide only one value.",
     prompt=True,
 )
 @click.option(
-    "--data-sets",
-    type=click.Choice([str(ds) for ds in DataSet]),
+    "--data-set",
+    type=DataSetName(),
     multiple=True,
     default=[str(DataSet.ALL)],
     show_default=True,
     help="Data set(s) to sync, multiple values can be provided.",
 )
 @click.pass_obj
-def sync_down_to_local(app, year, file_type, data_sets):
+def sync_down_to_local(app, year, file_type, data_set):
     """Sync files from S3 bucket to local folder."""
-    file_type = VigFile.from_str(file_type)
-    data_sets_int = sum(int(DataSet.from_str(ds)) for ds in data_sets)
+    data_sets_int = sum(int(ds) for ds in flatten_list2d(data_set))
     result_dict = SyncDataNoPromptsTask(app).execute(
         sync_direction=SyncDirection.DOWN_TO_LOCAL,
         year=year,
@@ -313,6 +315,8 @@ def sync_down_to_local(app, year, file_type, data_sets):
         data_sets_int=data_sets_int,
     )
     result = Result.Combine(list(result_dict.values()))
+    if os.environ.get("ENV") != "TEST":  # pragma: no cover
+        pause(message="\nPress any key to continue...")
     return exit_app(app, result)
 
 
