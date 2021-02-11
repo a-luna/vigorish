@@ -1,6 +1,7 @@
 """Menu item that allows the user to create a record of a new scrape job."""
 import subprocess
 
+import vigorish.database as db
 from vigorish.cli.components import (
     data_sets_prompt,
     DateInput,
@@ -12,7 +13,6 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS
-from vigorish.database import ScrapeJob
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
@@ -116,7 +116,7 @@ class CreateJob(MenuItem):
             "end_date": end_date,
             "season_id": season.id,
         }
-        new_scrape_job = ScrapeJob(**new_job_dict)
+        new_scrape_job = db.ScrapeJob(**new_job_dict)
         self.db_session.add(new_scrape_job)
         self.db_session.commit()
         if job_name:

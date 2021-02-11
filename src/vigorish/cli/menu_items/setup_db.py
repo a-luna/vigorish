@@ -8,6 +8,7 @@ from pathlib import Path
 from getch import pause
 from halo import Halo
 
+import vigorish.database as db
 from vigorish.cli.components.prompts import yes_no_prompt
 from vigorish.cli.components.util import (
     get_random_cli_color,
@@ -19,7 +20,6 @@ from vigorish.cli.components.util import (
 from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.constants import EMOJIS
-from vigorish.database import Season
 from vigorish.enums import DataSet
 from vigorish.tasks import ImportScrapedDataTask
 from vigorish.util.result import Result
@@ -81,7 +81,7 @@ class SetupDatabase(MenuItem):
     def update_player_id_map(self):
         if not self.db_initialized:
             return Result.Ok()
-        result = Season.is_date_in_season(self.db_session, datetime.now())
+        result = db.Season.is_date_in_season(self.db_session, datetime.now())
         if result.failure:
             return Result.Ok()
         subprocess.run(["clear"])

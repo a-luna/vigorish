@@ -2,10 +2,10 @@
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import backref, relationship
 
-from vigorish.database import Base
+import vigorish.database as db
 
 
-class Player(Base):
+class Player(db.Base):
     """Biographical information for a single player."""
 
     __tablename__ = "player"

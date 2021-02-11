@@ -9,7 +9,7 @@ from sqlalchemy.types import Enum
 
 from vigorish.config.project_paths import NODEJS_INBOX, NODEJS_OUTBOX
 from vigorish.constants import DATA_SET_TO_NAME_MAP
-from vigorish.database import Base
+import vigorish.database as db
 from vigorish.enums import DataSet, JobStatus
 from vigorish.util.datetime_util import (
     get_date_range,
@@ -22,7 +22,7 @@ from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.list_helpers import group_and_sort_list
 
 
-class ScrapeJob(Base):
+class ScrapeJob(db.Base):
     """Record of a job to scrape data for a specified date range."""
 
     __tablename__ = "scrape_job"

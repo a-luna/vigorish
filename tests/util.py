@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from vigorish.database import PitchAppScrapeStatus, Season
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_boxscores.parse_html import parse_bbref_boxscore
 from vigorish.scrape.bbref_games_for_date.parse_html import parse_bbref_dashboard_page
@@ -146,7 +146,7 @@ def update_scraped_brooks_games_for_date(vig_app, game_date, apply_patch_list=Tr
 
 
 def get_season(vig_app, year):
-    season = Season.find_by_year(vig_app.db_session, year)
+    season = db.Season.find_by_year(vig_app.db_session, year)
     assert season
     return season
 
@@ -225,7 +225,7 @@ def revert_pitch_logs_to_state_before_combined_data(vig_app, bbref_game_id):
     pfx_logs = result.value
     for pfx_log in pfx_logs:
         pitch_app_id = pfx_log.pitch_app_id
-        pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(vig_app.db_session, pitch_app_id)
+        pitch_app_status = db.PitchAppScrapeStatus.find_by_pitch_app_id(vig_app.db_session, pitch_app_id)
         assert pitch_app_status
         if not pitch_app_status.combined_pitchfx_bbref_data:
             continue

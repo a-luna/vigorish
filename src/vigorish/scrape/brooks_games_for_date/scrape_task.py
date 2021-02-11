@@ -1,4 +1,4 @@
-from vigorish.database import DateScrapeStatus
+import vigorish.database as db
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.brooks_games_for_date.parse_html import parse_brooks_dashboard_page
 from vigorish.scrape.scrape_task import ScrapeTaskABC
@@ -15,7 +15,7 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
         super().__init__(app, db_job)
 
     def check_prerequisites(self, game_date):
-        bbref_games_for_date = DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
+        bbref_games_for_date = db.DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
         if bbref_games_for_date:
@@ -30,7 +30,7 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
     def check_current_status(self, game_date):
         if self.scrape_condition == ScrapeCondition.ALWAYS:
             return Result.Ok()
-        brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
+        brooks_games_for_date = db.DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
         return Result.Ok() if not brooks_games_for_date else Result.Fail("skip")

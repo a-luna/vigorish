@@ -4,6 +4,7 @@ from getch import pause
 from halo import Halo
 from tabulate import tabulate
 
+import vigorish.database as db
 from vigorish.cli.components.util import (
     get_random_cli_color,
     get_random_dots_spinner,
@@ -13,7 +14,6 @@ from vigorish.cli.components.util import (
 from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS
-from vigorish.database import TimeBetweenPitches
 from vigorish.tasks import CalculateAvgPitchTimesTask
 from vigorish.util.result import Result
 
@@ -45,7 +45,7 @@ class CalculatePitchTimes(MenuItem):
             return result
         subprocess.run(["clear"])
         results = result.value
-        time_between_pitches = TimeBetweenPitches.from_calc_results(self.db_session, results)
+        time_between_pitches = db.TimeBetweenPitches.from_calc_results(self.db_session, results)
         self.display_pitch_metrics(time_between_pitches.as_dict())
         pause(message="\nPress any key to continue...")
         return Result.Ok()

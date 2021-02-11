@@ -3,7 +3,7 @@ from pathlib import Path
 
 from events import Events
 
-from vigorish.database import Season
+import vigorish.database as db
 from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore_list
 from vigorish.status.update_status_bbref_games_for_date import update_bbref_games_for_date_list
@@ -38,7 +38,7 @@ class ImportScrapedDataTask(Task):
 
     def execute(self, overwrite_existing=False):
         self.events.search_local_files_start()
-        all_mlb_seasons = Season.all_regular_seasons(self.db_session)
+        all_mlb_seasons = db.Season.all_regular_seasons(self.db_session)
         mlb_season_map = {
             season.year: {
                 "has_data": self.local_folder_has_parsed_data_for_season(season.year),
@@ -70,8 +70,6 @@ class ImportScrapedDataTask(Task):
 
     def local_folder_has_parsed_data_for_season(self, year):
         for data_set in DataSet:
-            if data_set == DataSet.ALL:
-                continue
             scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(VigFile.PARSED_JSON, data_set, year)
             if scraped_ids:
                 return True
@@ -101,8 +99,6 @@ class ImportScrapedDataTask(Task):
 
     def update_all_data_sets(self, season, overwrite_existing=False):
         for data_set in DataSet:
-            if data_set == DataSet.ALL:
-                continue
             self.events.import_scraped_data_set_start(data_set, season.year)
             result = self.update_data_set(data_set, season, overwrite_existing)
             if result.failure:
