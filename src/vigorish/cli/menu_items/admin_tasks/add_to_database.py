@@ -66,7 +66,7 @@ class AddToDatabase(MenuItem):
     def select_season_prompt(self):
         prompt = "Select an MLB season from the list below:"
         choices = {f"{MENU_NUMBERS.get(1)}  ALL": "ALL"}
-        for num, (year, results) in enumerate(self.audit_report.items(), start=2):
+        for num, (year, results) in enumerate(self.app.audit_report.items(), start=2):
             if results["successful"]:
                 choices[f"{MENU_NUMBERS.get(num, str(num))}  {year}"] = year
         choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
@@ -76,14 +76,11 @@ class AddToDatabase(MenuItem):
         year = result.value if isinstance(result.value, int) else None
         return Result.Ok(year)
 
-    def find_all_games_eligible_for_import_start(self):
-        subprocess.run(["clear"])
-        self.spinner.text = "Finding all games that are eligible for import..."
-        self.spinner.start()
-
     def add_data_to_db_start(self, year, game_ids):
+        subprocess.run(["clear"])
         self.game_ids = game_ids
         self.spinner.text = self.get_progress_text(0, year, game_ids[0])
+        self.spinner.start()
 
     def add_data_to_db_progress(self, num_complete, year, game_id):
         self.spinner.text = self.get_progress_text(num_complete, year, game_id)
@@ -93,11 +90,9 @@ class AddToDatabase(MenuItem):
         return f"Adding combined game data for MLB {year} to database... (Game ID: {game_id}) {percent:.0%}..."
 
     def subscribe_to_events(self):
-        self.add_to_db.events.find_all_games_eligible_for_import_start += self.find_all_games_eligible_for_import_start
         self.add_to_db.events.add_data_to_db_start += self.add_data_to_db_start
         self.add_to_db.events.add_data_to_db_progress += self.add_data_to_db_progress
 
     def unsubscribe_from_events(self):
-        self.add_to_db.events.find_all_games_eligible_for_import_start -= self.find_all_games_eligible_for_import_start
         self.add_to_db.events.add_data_to_db_start -= self.add_data_to_db_start
         self.add_to_db.events.add_data_to_db_progress -= self.add_data_to_db_progress

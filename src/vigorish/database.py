@@ -27,7 +27,7 @@ from vigorish.models import (
     Team,
     TimeBetweenPitches,
 )
-from vigorish.models.views import (
+from vigorish.views import (
     Date_PitchApp_View,
     Game_PitchApp_View,
     Pitch_Type_All_View,

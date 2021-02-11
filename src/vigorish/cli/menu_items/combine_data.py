@@ -9,6 +9,7 @@ from getch import pause
 from halo import Halo
 from tabulate import tabulate
 
+import vigorish.database as db
 from vigorish.cli.components import (
     audit_report_season_prompt,
     get_random_cli_color,
@@ -18,7 +19,6 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
-from vigorish.database import Season
 from vigorish.enums import AuditError, DataSet, ScrapeCondition
 from vigorish.tasks import CombineScrapedDataTask
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
@@ -41,13 +41,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CombineScrapedData(MenuItem):
-    def __init__(self, app, audit_report):
+    def __init__(self, app):
         super().__init__(app)
         self.combine_data = CombineScrapedDataTask(app)
         self._season = None
         self._date_game_id_map = {}
         self.pbar_manager = enlighten.get_manager()
-        self.audit_report = audit_report
         self.menu_item_text = "Combine Game Data"
         self.menu_item_emoji = EMOJIS.get("BANG", "")
         self.exit_menu = False
@@ -90,7 +89,7 @@ class CombineScrapedData(MenuItem):
             return None
         if self._season:
             return self._season
-        self._season = Season.find_by_year(self.db_session, self.scrape_year)
+        self._season = db.Season.find_by_year(self.db_session, self.scrape_year)
         return self._season
 
     @property
@@ -258,7 +257,7 @@ class CombineScrapedData(MenuItem):
         return Result.Ok(self.exit_menu)
 
     def combine_games_for_season(self):
-        result = audit_report_season_prompt(self.audit_report)
+        result = audit_report_season_prompt(self.app.audit_report)
         if result.failure:
             return result
         self.scrape_year = result.value
@@ -416,7 +415,7 @@ class CombineScrapedData(MenuItem):
         print()
 
     def combine_games_for_date(self):
-        result = audit_report_season_prompt(self.audit_report)
+        result = audit_report_season_prompt(self.app.audit_report)
         if result.failure:
             return result
         self.scrape_year = result.value
@@ -440,7 +439,7 @@ class CombineScrapedData(MenuItem):
         return result
 
     def combine_single_game(self):
-        result = audit_report_season_prompt(self.audit_report)
+        result = audit_report_season_prompt(self.app.audit_report)
         if result.failure:
             return result
         self.scrape_year = result.value
@@ -526,24 +525,24 @@ class CombineScrapedData(MenuItem):
         )
 
     def get_never_audited_game_date_map(self, year):
-        return [self.get_game_id_date_map(gid) for gid in self.audit_report[year]["scraped"]]
+        return [self.get_game_id_date_map(gid) for gid in self.app.audit_report[year]["scraped"]]
 
     def get_successful_game_date_map(self, year):
-        return [self.get_game_id_date_map(gid) for gid in self.audit_report[year]["successful"]]
+        return [self.get_game_id_date_map(gid) for gid in self.app.audit_report[year]["successful"]]
 
     def get_failed_game_date_map(self, year):
-        return [self.get_game_id_date_map(gid) for gid in self.audit_report[year]["failed"]]
+        return [self.get_game_id_date_map(gid) for gid in self.app.audit_report[year]["failed"]]
 
     def get_all_eligible_game_date_map(self, year):
         return [self.get_game_id_date_map(gid) for gid in self.get_all_eligible_game_ids(year)]
 
     def get_all_eligible_game_ids(self, year):
         return (
-            self.audit_report[year]["scraped"]
-            + self.audit_report[year]["successful"]
-            + self.audit_report[year]["failed"]
-            + self.audit_report[year]["pfx_error"]
-            + self.audit_report[year]["invalid_pfx"]
+            self.app.audit_report[year]["scraped"]
+            + self.app.audit_report[year]["successful"]
+            + self.app.audit_report[year]["failed"]
+            + self.app.audit_report[year]["pfx_error"]
+            + self.app.audit_report[year]["invalid_pfx"]
         )
 
     def get_game_id_date_map(self, bbref_game_id):

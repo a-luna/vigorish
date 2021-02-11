@@ -12,9 +12,8 @@ from vigorish.util.result import Result
 
 
 class ScrapedDataErrorsMenu(Menu):
-    def __init__(self, app, audit_report):
+    def __init__(self, app):
         super().__init__(app)
-        self.audit_report = audit_report
         self.menu_text = "Select the type of error to investigate:"
         self.menu_item_text = "Investigate Failures"
         self.menu_item_emoji = EMOJIS.get("FLASHLIGHT")
@@ -23,12 +22,12 @@ class ScrapedDataErrorsMenu(Menu):
         exit_menu = False
         while not exit_menu:
             subprocess.run(["clear"])
-            result = self.audit_report_season_prompt(self.audit_report)
+            result = self.audit_report_season_prompt()
             subprocess.run(["clear"])
             if result.failure:
                 return Result.Ok(exit_menu)
             self.year = result.value
-            self.season_report = self.audit_report[self.year]
+            self.season_report = self.app.audit_report[self.year]
             self.populate_menu_items()
             result = self.prompt_user_for_menu_selection()
             if result.failure:
@@ -50,14 +49,14 @@ class ScrapedDataErrorsMenu(Menu):
             self.menu_items.append(InvestigateInvalidPitchFx(self.app, self.year, invalid_pfx_gids))
         self.menu_items.append(ReturnToParent(self.app, "Return to Main Menu"))
 
-    def audit_report_season_prompt(self, audit_report):
+    def audit_report_season_prompt(self):
         prompt = "Select an MLB season from the list below:"
         years_with_errors = [
             year
-            for year in audit_report.keys()
-            if audit_report[year].get("invalid_pfx", [])
-            or audit_report[year].get("pfx_error", [])
-            or audit_report[year].get("failed", [])
+            for year in self.app.audit_report.keys()
+            if self.app.audit_report[year].get("invalid_pfx", [])
+            or self.app.audit_report[year].get("pfx_error", [])
+            or self.app.audit_report[year].get("failed", [])
         ]
         choices = {f"{MENU_NUMBERS.get(num)}  {year}": year for num, year in enumerate(years_with_errors, start=1)}
         choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None

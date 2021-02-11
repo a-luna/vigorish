@@ -3,17 +3,8 @@ from functools import cached_property
 
 from events import Events
 
+import vigorish.database as db
 from vigorish.data.all_game_data import AllGameData
-from vigorish.database import (
-    BatStats,
-    GameScrapeStatus,
-    PitchAppScrapeStatus,
-    PitchFx,
-    PitchStats,
-    PlayerId,
-    Season,
-    Team,
-)
 from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
@@ -24,7 +15,6 @@ class AddToDatabaseTask(Task):
     def __init__(self, app):
         super().__init__(app)
         self._team_id_map = {}
-        self.audit_report = None
         self.events = Events(
             (
                 "find_all_games_eligible_for_import_start",
@@ -37,42 +27,38 @@ class AddToDatabaseTask(Task):
 
     @cached_property
     def season_id_map(self):
-        return Season.regular_season_map(self.db_session)
+        return db.Season.regular_season_map(self.db_session)
 
     @cached_property
     def player_id_map(self):
-        return PlayerId.get_player_id_map(self.db_session)
+        return db.PlayerId.get_player_id_map(self.db_session)
 
     @cached_property
     def game_id_map(self):
-        return GameScrapeStatus.get_game_id_map(self.db_session)
+        return db.GameScrapeStatus.get_game_id_map(self.db_session)
 
     @cached_property
     def pitch_app_id_map(self):
-        return PitchAppScrapeStatus.get_pitch_app_id_map(self.db_session)
+        return db.PitchAppScrapeStatus.get_pitch_app_id_map(self.db_session)
 
     def get_team_id_map_for_year(self, year):
         team_id_map_for_year = self._team_id_map.get(year)
         if not team_id_map_for_year:
-            team_id_map_for_year = Team.get_team_id_map_for_year(self.db_session, year)
+            team_id_map_for_year = db.Team.get_team_id_map_for_year(self.db_session, year)
             self._team_id_map[year] = team_id_map_for_year
         return team_id_map_for_year
 
     def execute(self, year=None):
-        self.events.find_all_games_eligible_for_import_start()
-        if not self.audit_report:
-            self.audit_report = self.scraped_data.get_audit_report()
-        self.events.find_all_games_eligible_for_import_complete()
         return self.add_data_for_year(year) if year else self.add_all_data()
 
     def add_all_data(self):
-        valid_years = [year for year, results in self.audit_report.items() if results["successful"]]
+        valid_years = [year for year, results in self.app.audit_report.items() if results["successful"]]
         for year in valid_years:
             self.add_data_for_year(year)
         return Result.Ok()
 
     def add_data_for_year(self, year):
-        report_for_season = self.audit_report.get(year)
+        report_for_season = self.app.audit_report.get(year)
         if not report_for_season:
             return Result.Fail(f"Audit report could not be generated for MLB Season {year}")
         game_ids = report_for_season.get("successful")
@@ -93,7 +79,7 @@ class AddToDatabaseTask(Task):
         return Result.Ok()
 
     def add_player_stats_to_database(self, game_id, all_game_data):
-        game_status = GameScrapeStatus.find_by_bbref_game_id(self.db_session, game_id)
+        game_status = db.GameScrapeStatus.find_by_bbref_game_id(self.db_session, game_id)
         if not game_status:
             error = f"Import aborted! Game status '{game_id}' not found in database"
             return Result.Fail(error)
@@ -106,7 +92,7 @@ class AddToDatabaseTask(Task):
     def add_bat_stats_to_database(self, game_id, all_game_data, game_status):
         for mlb_id in all_game_data.bat_stats_player_ids:
             bat_stats_dict = all_game_data.get_bat_stats(mlb_id).value
-            bat_stats = BatStats.from_dict(game_id, bat_stats_dict)
+            bat_stats = db.BatStats.from_dict(game_id, bat_stats_dict)
             bat_stats = self.update_player_stats_relationships(bat_stats)
             self.db_session.add(bat_stats)
         game_status.imported_bat_stats = 1
@@ -115,7 +101,7 @@ class AddToDatabaseTask(Task):
     def add_pitch_stats_to_database(self, game_id, all_game_data, game_status):
         for mlb_id in all_game_data.pitch_stats_player_ids:
             pitch_stats_dict = all_game_data.get_pitch_app_stats(mlb_id).value
-            pitch_stats = PitchStats.from_dict(game_id, pitch_stats_dict)
+            pitch_stats = db.PitchStats.from_dict(game_id, pitch_stats_dict)
             pitch_stats = self.update_player_stats_relationships(pitch_stats)
             self.db_session.add(pitch_stats)
         game_status.imported_pitch_stats = 1
@@ -133,14 +119,14 @@ class AddToDatabaseTask(Task):
 
     def add_pitchfx_to_database(self, all_game_data):
         for pitch_app_id, pfx_dict_list in all_game_data.all_pitchfx.items():
-            pitch_app = PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
+            pitch_app = db.PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
             if not pitch_app:
                 error = f"Import aborted! Pitch app '{pitch_app_id}' not found in database"
                 return Result.Fail(error)
             if pitch_app.imported_pitchfx:
                 continue
             for pfx_dict in pfx_dict_list:
-                pfx = PitchFx.from_dict(pfx_dict)
+                pfx = db.PitchFx.from_dict(pfx_dict)
                 pfx = self.update_pitchfx_relationships(pfx)
                 self.db_session.add(pfx)
             pitch_app.imported_pitchfx = 1

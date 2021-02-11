@@ -1,5 +1,5 @@
-from vigorish.cli.components.viewers import DictListTableViewer, DisplayPage, PageViewer
 import vigorish.database as db
+from vigorish.cli.components.viewers import DictListTableViewer, DisplayPage, PageViewer
 from vigorish.enums import StatusReport
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME, DATE_ONLY
