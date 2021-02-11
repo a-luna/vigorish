@@ -1,7 +1,5 @@
 from functools import cached_property
 
-from sqlalchemy import select
-
 import vigorish.database as db
 from vigorish.cli.components.viewers import create_display_table, create_table_viewer
 from vigorish.util.string_helpers import validate_pitch_app_id
@@ -31,17 +29,45 @@ class AllPlayerData:
 
     @cached_property
     def seasons_played(self):
-        s = (
-            select([db.Pitch_Type_By_Year_View.season_id])
-            .where(db.Pitch_Type_By_Year_View.id == self.player.id)
-            .distinct()
+        return db.Pitch_Type_By_Year_View.get_all_seasons_with_player_data(
+            self.db_engine, self.db_session, self.player.id
         )
-        results = self.db_engine.execute(s).fetchall()
-        seasons_played = []
-        for d in [dict(row) for row in results]:
-            season = self.db_session.query(db.Season).get(d["season_id"])
-            seasons_played.append(season)
-        return sorted(seasons_played, key=lambda x: x.year) if seasons_played else []
+
+    @cached_property
+    def pitch_stats_for_career(self):
+        return db.Player_PitchStats_All_View.get_pitch_stats_for_career_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def pitch_stats_as_sp(self):
+        return db.Player_PitchStats_SP_View.get_pitch_stats_as_sp_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def pitch_stats_as_rp(self):
+        return db.Player_PitchStats_RP_View.get_pitch_stats_as_rp_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def pitch_stats_by_year(self):
+        return db.Player_PitchStats_By_Year_View.get_pitch_stats_by_year_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def pitch_stats_by_team(self):
+        return db.Player_PitchStats_By_Team_View.get_pitch_stats_by_team_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def pitch_stats_by_team_by_year(self):
+        return db.Player_PitchStats_By_Team_Year_View.get_pitch_stats_by_team_by_year_for_player(
+            self.db_engine, self.player.id
+        )
+
+    @cached_property
+    def pitch_stats_by_opp_team(self):
+        return db.Player_PitchStats_By_Opp_Team_View.get_pitch_stats_by_opp_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def pitch_stats_by_opp_team_by_year(self):
+        return db.Player_PitchStats_By_Opp_Team_Year_View.get_pitch_stats_by_opp_by_year_for_player(
+            self.db_engine, self.player.id
+        )
 
     @cached_property
     def pitchfx_metrics_career(self):
@@ -56,7 +82,7 @@ class AllPlayerData:
         return db.Pitch_Type_Left_View.get_pitchfx_metrics_vs_lhb_for_player(self.db_engine, self.player.id)
 
     @cached_property
-    def pitch_metrics_by_year(self):
+    def pitchfx_metrics_by_year(self):
         return {
             season.year: db.Pitch_Type_By_Year_View.get_pitch_metrics_for_year_for_player(
                 self.db_engine, self.player.id, season.id
@@ -128,7 +154,7 @@ class AllPlayerData:
             "game": pitch_metrics_for_game["all"].get_usage_stats_for_pitch_type(pitch_type),
             "all": self.pitchfx_metrics_career.get_usage_stats_for_pitch_type(pitch_type),
         }
-        for year, pitch_metrics_for_year in self.pitch_metrics_by_year.items():
+        for year, pitch_metrics_for_year in self.pitchfx_metrics_by_year.items():
             table_row[str(year)] = pitch_metrics_for_year.get_usage_stats_for_pitch_type(pitch_type)
         return table_row
 
@@ -199,6 +225,6 @@ class AllPlayerData:
     def get_pitch_app(self, bbref_game_id, pitch_app_id):
         if not pitch_app_id and not bbref_game_id:
             return None
-        if pitch_app_id and not bbref_game_id:
+        if not bbref_game_id:
             bbref_game_id = validate_pitch_app_id(pitch_app_id).value["game_id"]
         return self.pitch_app_map.get(bbref_game_id)

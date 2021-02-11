@@ -2,6 +2,7 @@ from sqlalchemy import and_, func, join, select
 from sqlalchemy_utils.view import create_view
 
 import vigorish.database as db
+from vigorish.data.metrics import PitchStatsMetrics
 from vigorish.views.pitch_stats_col_expressions import (
     bb_per_nine,
     bb_rate,
@@ -72,6 +73,12 @@ class Player_PitchStats_All_View(db.Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_pitch_stats_for_career_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchStatsMetrics.from_pitch_stats_view_results(results)[0]
+
 
 class Player_PitchStats_SP_View(db.Base):
     __table__ = create_view(
@@ -130,6 +137,12 @@ class Player_PitchStats_SP_View(db.Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_pitch_stats_as_sp_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchStatsMetrics.from_pitch_stats_view_results(results)[0]
+
 
 class Player_PitchStats_RP_View(db.Base):
     __table__ = create_view(
@@ -187,6 +200,12 @@ class Player_PitchStats_RP_View(db.Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_pitch_stats_as_rp_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchStatsMetrics.from_pitch_stats_view_results(results)[0]
+
 
 class Player_PitchStats_By_Year_View(db.Base):
     __table__ = create_view(
@@ -197,6 +216,7 @@ class Player_PitchStats_By_Year_View(db.Base):
                 db.PitchStats.player_id_mlb.label("mlb_id"),
                 db.PitchStats.player_id_bbref.label("bbref_id"),
                 db.PitchStats.season_id.label("season_id"),
+                db.Season.year.label("year"),
                 func.count(db.PitchStats.id).label("total_games"),
                 func.sum(db.PitchStats.is_sp).label("games_as_sp"),
                 func.sum(db.PitchStats.is_rp).label("games_as_rp"),
@@ -237,13 +257,19 @@ class Player_PitchStats_By_Year_View(db.Base):
                 func.sum(db.PitchStats.re24_pitch).label("re24_pitch"),
             ]
         )
-        .select_from(db.PitchStats)
+        .select_from(join(db.PitchStats, db.Season, db.PitchStats.season_id == db.Season.id))
         .group_by(db.PitchStats.season_id)
         .group_by(db.PitchStats.player_id)
         .order_by(db.PitchStats.player_id_mlb),
         metadata=db.Base.metadata,
         cascade_on_drop=False,
     )
+
+    @classmethod
+    def get_pitch_stats_by_year_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchStatsMetrics.from_pitch_stats_view_results(results)
 
 
 class Player_PitchStats_By_Team_View(db.Base):
@@ -303,6 +329,12 @@ class Player_PitchStats_By_Team_View(db.Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_pitch_stats_by_team_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchStatsMetrics.from_pitch_stats_view_results(results)
+
 
 class Player_PitchStats_By_Team_Year_View(db.Base):
     __table__ = create_view(
@@ -313,6 +345,7 @@ class Player_PitchStats_By_Team_Year_View(db.Base):
                 db.PitchStats.player_id_mlb.label("mlb_id"),
                 db.PitchStats.player_id_bbref.label("bbref_id"),
                 db.PitchStats.season_id.label("season_id"),
+                db.Season.year.label("year"),
                 db.PitchStats.player_team_id.label("player_team_id"),
                 db.PitchStats.player_team_id_bbref.label("player_team_id_bbref"),
                 db.Assoc_Player_Team.stint_number.label("stint_number"),
@@ -358,7 +391,7 @@ class Player_PitchStats_By_Team_Year_View(db.Base):
         )
         .select_from(
             join(
-                db.PitchStats,
+                join(db.PitchStats, db.Season, db.PitchStats.season_id == db.Season.id),
                 db.Assoc_Player_Team,
                 and_(
                     db.PitchStats.player_id == db.Assoc_Player_Team.db_player_id,
@@ -375,6 +408,12 @@ class Player_PitchStats_By_Team_Year_View(db.Base):
         metadata=db.Base.metadata,
         cascade_on_drop=False,
     )
+
+    @classmethod
+    def get_pitch_stats_by_team_by_year_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchStatsMetrics.from_pitch_stats_view_results(results)
 
 
 class Player_PitchStats_By_Opp_Team_View(db.Base):
@@ -434,6 +473,12 @@ class Player_PitchStats_By_Opp_Team_View(db.Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_pitch_stats_by_opp_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchStatsMetrics.from_pitch_stats_view_results(results)
+
 
 class Player_PitchStats_By_Opp_Team_Year_View(db.Base):
     __table__ = create_view(
@@ -444,6 +489,7 @@ class Player_PitchStats_By_Opp_Team_Year_View(db.Base):
                 db.PitchStats.player_id_mlb.label("mlb_id"),
                 db.PitchStats.player_id_bbref.label("bbref_id"),
                 db.PitchStats.season_id.label("season_id"),
+                db.Season.year.label("year"),
                 db.PitchStats.opponent_team_id.label("opponent_team_id"),
                 db.PitchStats.opponent_team_id_bbref.label("opponent_team_id_bbref"),
                 func.count(db.PitchStats.id).label("total_games"),
@@ -486,7 +532,7 @@ class Player_PitchStats_By_Opp_Team_Year_View(db.Base):
                 func.sum(db.PitchStats.re24_pitch).label("re24_pitch"),
             ]
         )
-        .select_from(db.PitchStats)
+        .select_from(join(db.PitchStats, db.Season, db.PitchStats.season_id == db.Season.id))
         .group_by(db.PitchStats.season_id)
         .group_by(db.PitchStats.player_id)
         .group_by(db.PitchStats.opponent_team_id)
@@ -494,3 +540,9 @@ class Player_PitchStats_By_Opp_Team_Year_View(db.Base):
         metadata=db.Base.metadata,
         cascade_on_drop=False,
     )
+
+    @classmethod
+    def get_pitch_stats_by_opp_by_year_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return PitchStatsMetrics.from_pitch_stats_view_results(results)

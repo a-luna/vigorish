@@ -312,6 +312,13 @@ class Pitch_Type_By_Year_View(db.Base):
         results = db_engine.execute(s).fetchall()
         return PitchFxMetricsCollection.from_pitchfx_view_results(results)
 
+    @classmethod
+    def get_all_seasons_with_player_data(cls, db_engine, db_session, player_id):
+        s = select([cls.season_id]).where(cls.id == player_id).distinct()
+        results = db_engine.execute(s).fetchall()
+        seasons_played = [db_session.query(db.Season).get(d["season_id"]) for d in [dict(row) for row in results]]
+        return sorted(seasons_played, key=lambda x: x.year) if seasons_played else []
+
 
 class Pitch_Type_Averages_All_View(db.Base):
     __table__ = create_view(

@@ -63,6 +63,7 @@ class Player_BatStats_By_Year_View(db.Base):
                 db.BatStats.player_id_mlb.label("mlb_id"),
                 db.BatStats.player_id_bbref.label("bbref_id"),
                 db.BatStats.season_id.label("season_id"),
+                db.Season.year.label("year"),
                 func.count(db.BatStats.id).label("total_games"),
                 avg,
                 obp,
@@ -96,7 +97,7 @@ class Player_BatStats_By_Year_View(db.Base):
                 func.sum(db.BatStats.re24_bat).label("re24_bat"),
             ]
         )
-        .select_from(db.BatStats)
+        .select_from(join(db.BatStats, db.Season, db.BatStats.season_id == db.Season.id))
         .group_by(db.BatStats.season_id)
         .group_by(db.BatStats.player_id)
         .order_by(db.BatStats.player_id_mlb),
@@ -165,6 +166,7 @@ class Player_BatStats_By_Team_Year_View(db.Base):
                 db.BatStats.player_id_mlb.label("mlb_id"),
                 db.BatStats.player_id_bbref.label("bbref_id"),
                 db.BatStats.season_id.label("season_id"),
+                db.Season.year.label("year"),
                 db.BatStats.player_team_id.label("player_team_id"),
                 db.BatStats.player_team_id_bbref.label("player_team_id_bbref"),
                 db.Assoc_Player_Team.stint_number.label("stint_number"),
@@ -203,7 +205,7 @@ class Player_BatStats_By_Team_Year_View(db.Base):
         )
         .select_from(
             join(
-                db.BatStats,
+                join(db.BatStats, db.Season, db.BatStats.season_id == db.Season.id),
                 db.Assoc_Player_Team,
                 and_(
                     db.BatStats.player_id == db.Assoc_Player_Team.db_player_id,
@@ -282,6 +284,7 @@ class Player_BatStats_By_Opp_Team_Year_View(db.Base):
                 db.BatStats.player_id_mlb.label("mlb_id"),
                 db.BatStats.player_id_bbref.label("bbref_id"),
                 db.BatStats.season_id.label("season_id"),
+                db.Season.year.label("year"),
                 db.BatStats.opponent_team_id.label("opponent_team_id"),
                 db.BatStats.opponent_team_id_bbref.label("opponent_team_id_bbref"),
                 func.count(db.BatStats.id).label("total_games"),
@@ -317,7 +320,7 @@ class Player_BatStats_By_Opp_Team_Year_View(db.Base):
                 func.sum(db.BatStats.re24_bat).label("re24_bat"),
             ]
         )
-        .select_from(db.BatStats)
+        .select_from(join(db.BatStats, db.Season, db.BatStats.season_id == db.Season.id))
         .group_by(db.BatStats.season_id)
         .group_by(db.BatStats.player_id)
         .group_by(db.BatStats.opponent_team_id)
