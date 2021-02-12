@@ -5,8 +5,8 @@
       "__brooks_pitchfx_data__": true,
       "pitcher_name": "Ryan Buchter",
       "pitch_app_id": "OAK201904030_488748",
-      "pitcher_id": "488748",
-      "batter_id": "519048",
+      "pitcher_id": 488748,
+      "batter_id": 519048,
       "pitcher_team_id_bb": "OAK",
       "opponent_team_id_bb": "BOS",
       "bb_game_id": "gid_2019_04_03_bosmlb_oakmlb_1",
@@ -25,7 +25,7 @@
       "pfx_xdatafile": 6.04,
       "pfx_zdatafile": 11.85,
       "mlbam_pitch_name": "FF",
-      "zone_location": "7",
+      "zone_location": 7,
       "pitch_con": 0.0,
       "stand": "L",
       "strikes": 0,
@@ -34,7 +34,7 @@
       "pdes": "In play, run(s)",
       "spin": 153.033,
       "norm_ht": 0.723404,
-      "inning": 6,
+      "inning": 6.0,
       "tstart": 0.07492802852205964,
       "vystart": -132.22981349751058,
       "ftime": 0.3032189042056989,
@@ -84,7 +84,7 @@
     }
   ],
   "pitch_count_by_inning": {
-    "6": 1
+    "6.0": 1
   },
   "pitcher_name": "Ryan Buchter",
   "pitcher_id_mlb": 488748,
