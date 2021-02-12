@@ -45,7 +45,6 @@ def create_test_data(vig_app):
     update_scraped_pitchfx_logs(vig_app, BB_GAME_ID)
     combine_data_result_dict = CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPPLY_PATCH_LIST)
     assert combine_data_result_dict["gather_scraped_data_success"]
-    assert combine_data_result_dict["combine_data_success"]
     add_to_db_result = AddToDatabaseTask(vig_app).execute(2019)
     assert add_to_db_result.success
     return True
