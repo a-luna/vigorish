@@ -5,8 +5,8 @@
     {
       "__patch_bbref_games_for_date_game_id__": true,
       "game_date": "2017-09-15",
-      "old_game_id": "MIL201709150",
-      "new_game_id": "MIA201709150"
+      "invalid_bbref_game_id": "MIL201709150",
+      "valid_bbref_game_id": "MIA201709150"
     }
   ]
 }
