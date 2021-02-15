@@ -44,15 +44,16 @@ class GameScrapeStatus(db.Base):
 
     @hybrid_property
     def game_start_time(self):
+        game_start = datetime(
+            year=self.game_date.year,
+            month=self.game_date.month,
+            day=self.game_date.day,
+            hour=self.game_time_hour,
+            minute=self.game_time_minute,
+        )
         return (
-            datetime(
-                year=self.game_date.year,
-                month=self.game_date.month,
-                day=self.game_date.day,
-                hour=self.game_time_hour,
-                minute=self.game_time_minute,
-            ).replace(tzinfo=tz.gettz(self.game_time_zone))
-            if self.game_time_hour
+            game_start.replace(tzinfo=tz.gettz(self.game_time_zone))
+            if not (self.game_time_hour == 0 and self.game_time_minute == 0)
             else None
         )
 

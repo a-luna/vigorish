@@ -134,7 +134,7 @@ def get_url_for_brooks_games_for_date(game_date):
     month = game_date.month
     day = game_date.day
     year = game_date.year
-    return f"http://www.brooksbaseball.net/dashboard.php?dts={month}/{day}/{year}"
+    return f"https://www.brooksbaseball.net/dashboard.php?dts={month}/{day}/{year}"
 
 
 def get_url_for_bbref_games_for_date(game_date):
