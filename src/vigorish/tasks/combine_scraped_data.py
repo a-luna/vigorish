@@ -1,7 +1,7 @@
 """Aggregate pitchfx data and play-by-play data into a single object."""
 from collections import defaultdict, OrderedDict
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List
 
 import vigorish.database as db
@@ -97,19 +97,6 @@ class CombineScrapedDataTask(Task):
         )
         return result.value
 
-    def gather_scraped_data(self):
-        self.game_status = db.GameScrapeStatus.find_by_bbref_game_id(self.db_session, self.bbref_game_id)
-        self.boxscore = self.scraped_data.get_bbref_boxscore(self.bbref_game_id, self.apply_patch_list)
-        if not self.boxscore:
-            error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {self.bbref_game_id})"
-            Result.Ok(error)
-        result = self.scraped_data.get_all_brooks_pitchfx_logs_for_game(self.bbref_game_id, self.apply_patch_list)
-        if result.failure:
-            return result
-        self.pitchfx_logs_for_game = result.value
-        self.avg_pitch_times = db.TimeBetweenPitches.get_latest_results(self.db_session)
-        return Result.Ok()
-
     def investigate(self, bbref_game_id, apply_patch_list=False):
         self.bbref_game_id = bbref_game_id
         self.apply_patch_list = apply_patch_list
@@ -155,6 +142,19 @@ class CombineScrapedDataTask(Task):
         audit_results["boxscore"] = result.value
         return audit_results
 
+    def gather_scraped_data(self):
+        self.game_status = db.GameScrapeStatus.find_by_bbref_game_id(self.db_session, self.bbref_game_id)
+        self.boxscore = self.scraped_data.get_bbref_boxscore(self.bbref_game_id, self.apply_patch_list)
+        if not self.boxscore:
+            error = f"Failed to retrieve {DataSet.BBREF_BOXSCORES} (URL ID: {self.bbref_game_id})"
+            Result.Ok(error)
+        result = self.scraped_data.get_all_brooks_pitchfx_logs_for_game(self.bbref_game_id, self.apply_patch_list)
+        if result.failure:
+            return result
+        self.pitchfx_logs_for_game = result.value
+        self.avg_pitch_times = db.TimeBetweenPitches.get_latest_results(self.db_session)
+        return Result.Ok()
+
     def check_pfx_game_start_time(self):
         self.gather_scraped_data_success = True
         if not self.game_status.game_start_time:
@@ -178,7 +178,11 @@ class CombineScrapedDataTask(Task):
         all_pfx = [pfx for pfx_log in self.pitchfx_logs_for_game for pfx in pfx_log.pitchfx_log]
         all_pfx.sort(key=lambda x: x.park_sv_id)
         first_pitch_thrown = all_pfx[0].time_pitch_thrown
-        game_start_time = first_pitch_thrown.replace(second=0)
+        game_start_time = (
+            first_pitch_thrown.replace(second=0)
+            if first_pitch_thrown.seconds
+            else first_pitch_thrown - timedelta(minutes=1)
+        )
         self.game_status.game_time_hour = game_start_time.hour
         self.game_status.game_time_minute = game_start_time.minute
         self.game_status.game_time_zone = "America/New_York"
@@ -327,13 +331,12 @@ class CombineScrapedDataTask(Task):
         return event_dict
 
     def get_at_bat_id_for_pbp_event(self, game_event, instance_number=0):
-        inning = int(game_event.inning_label[1:])
-        inning_str = f"{0}{inning}" if inning < 10 else inning
+        inning = f"{int(game_event.inning_label[1:]):02}"
         pteam = get_brooks_team_id(game_event.team_pitching_id_br)
         pid = self.player_id_dict[game_event.pitcher_id_br]["mlb_id"]
         bteam = get_brooks_team_id(game_event.team_batting_id_br)
         bid = self.player_id_dict[game_event.batter_id_br]["mlb_id"]
-        return f"{self.bbref_game_id}_{inning_str}_{pteam}_{pid}_{bteam}_{bid}_{instance_number}"
+        return f"{self.bbref_game_id}_{inning}_{pteam}_{pid}_{bteam}_{bid}_{instance_number}"
 
     def get_all_pfx_data_for_game(self):
         self.all_pfx_data_for_game = []
@@ -361,13 +364,12 @@ class CombineScrapedDataTask(Task):
         return Result.Ok()
 
     def get_at_bat_id_for_pfx_data(self, pfx, instance_number=0):
-        game_id = pfx.bbref_game_id
-        inning = f"{0}{int(pfx.inning)}" if pfx.inning < 10 else int(pfx.inning)
+        inning = f"{pfx.inning:02}"
         pteam = pfx.pitcher_team_id_bb
         pid = pfx.pitcher_id
         bteam = pfx.opponent_team_id_bb
         bid = pfx.batter_id
-        return f"{game_id}_{inning}_{pteam}_{pid}_{bteam}_{bid}_{instance_number}"
+        return f"{pfx.bbref_game_id}_{inning}_{pteam}_{pid}_{bteam}_{bid}_{instance_number}"
 
     def update_pfx_attributes(self):
         for pfx in self.all_pfx_data_for_game:

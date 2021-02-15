@@ -12,38 +12,38 @@ from vigorish.util.string_helpers import validate_bbref_game_id
 class BrooksPitchFxData:
     """Pitchfx measurements for a single pitch scraped from brooksbaseball.com."""
 
-    pitcher_name: str = field(repr=False, default=None)
-    pitch_app_id: str = None
+    pitcher_name: str = field(repr=False, default="")
+    pitch_app_id: str = ""
     pitcher_id: int = field(repr=False, default=0)
     batter_id: int = field(repr=False, default=0)
-    pitcher_team_id_bb: str = field(repr=False, default=None)
-    opponent_team_id_bb: str = field(repr=False, default=None)
-    bb_game_id: str = field(repr=False, default=None)
-    bbref_game_id: str = field(repr=False, default=None)
+    pitcher_team_id_bb: str = field(repr=False, default="")
+    opponent_team_id_bb: str = field(repr=False, default="")
+    bb_game_id: str = field(repr=False, default="")
+    bbref_game_id: str = field(repr=False, default="")
     table_row_number: int = field(repr=False, default=0)
-    park_sv_id: str = field(repr=False, default=None)
-    play_guid: str = field(repr=False, default=None)
+    park_sv_id: str = field(repr=False, default="")
+    play_guid: str = field(repr=False, default="")
     ab_total: int = field(repr=False, default=0)
     ab_count: int = field(repr=False, default=0)
     ab_id: int = field(repr=False, default=0)
-    des: str = field(repr=False, default=None)
-    type: str = field(repr=False, default=None)
+    des: str = field(repr=False, default="")
+    type: str = field(repr=False, default="")
     id: int = 0
     sz_top: float = field(repr=False, default=0.0)
     sz_bot: float = field(repr=False, default=0.0)
     pfx_xdatafile: float = field(repr=False, default=0.0)
     pfx_zdatafile: float = field(repr=False, default=0.0)
-    mlbam_pitch_name: str = None
+    mlbam_pitch_name: str = ""
     zone_location: int = field(repr=False, default=0)
     pitch_con: float = field(repr=False, default=0.0)
-    stand: str = field(repr=False, default=None)
+    stand: str = field(repr=False, default="")
     strikes: int = field(repr=False, default=0)
     balls: int = field(repr=False, default=0)
-    p_throws: str = field(repr=False, default=None)
-    pdes: str = field(repr=False, default=None)
+    p_throws: str = field(repr=False, default="")
+    pdes: str = field(repr=False, default="")
     spin: float = field(repr=False, default=0.0)
     norm_ht: float = field(repr=False, default=0.0)
-    inning: float = field(repr=False, default=0.0)
+    inning: int = field(repr=False, default=0)
     tstart: float = field(repr=False, default=0.0)
     vystart: float = field(repr=False, default=0.0)
     ftime: float = field(repr=False, default=0.0)
@@ -67,8 +67,8 @@ class BrooksPitchFxData:
     pzold: float = field(repr=False, default=0.0)
     tm_spin: int = field(repr=False, default=0)
     sb: int = field(repr=False, default=0)
-    game_start_time_str: str = field(repr=False, default=None)
-    time_pitch_thrown_str: str = field(repr=False, default=None)
+    game_start_time_str: str = field(repr=False, default="")
+    time_pitch_thrown_str: str = field(repr=False, default="")
     has_zone_location: bool = field(repr=False, default=False)
     batter_did_swing: bool = field(repr=False, default=False)
     batter_made_contact: bool = field(repr=False, default=False)
@@ -213,4 +213,4 @@ class BrooksPitchFxData:
         }
 
     def get_time_pitch_thrown_str(self):
-        return self.time_pitch_thrown.strftime(DT_AWARE) if self.time_pitch_thrown else None
+        return self.time_pitch_thrown.strftime(DT_AWARE) if self.time_pitch_thrown else ""
