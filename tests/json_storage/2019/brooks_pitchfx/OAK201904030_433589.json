@@ -34,7 +34,7 @@
       "pdes": "In play, run(s)",
       "spin": 206.907,
       "norm_ht": 0.8,
-      "inning": 9.0,
+      "inning": 9,
       "tstart": 0.07910015899033956,
       "vystart": -125.30098875568719,
       "ftime": 0.31946859001313094,
@@ -115,7 +115,7 @@
       "pdes": "Ball",
       "spin": 108.236,
       "norm_ht": -0.836957,
-      "inning": 9.0,
+      "inning": 9,
       "tstart": 0.09057711950453694,
       "vystart": -109.443311851602,
       "ftime": 0.36547501166411633,
@@ -196,7 +196,7 @@
       "pdes": "Ball",
       "spin": 213.815,
       "norm_ht": -1.27174,
-      "inning": 9.0,
+      "inning": 9,
       "tstart": 0.07791093369771465,
       "vystart": -127.35037853338402,
       "ftime": 0.3128471378004786,
@@ -277,7 +277,7 @@
       "pdes": "In play, out(s)",
       "spin": 223.472,
       "norm_ht": 0.597826,
-      "inning": 9.0,
+      "inning": 9,
       "tstart": 0.08472973602392864,
       "vystart": -117.13164078327233,
       "ftime": 0.33976144857111973,
@@ -327,7 +327,7 @@
     }
   ],
   "pitch_count_by_inning": {
-    "9.0": 4
+    "9": 4
   },
   "pitcher_name": "Yusmeiro Petit",
   "pitcher_id_mlb": 433589,

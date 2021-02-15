@@ -34,7 +34,7 @@
       "pdes": "In play, run(s)",
       "spin": 153.033,
       "norm_ht": 0.723404,
-      "inning": 6.0,
+      "inning": 6,
       "tstart": 0.07492802852205964,
       "vystart": -132.22981349751058,
       "ftime": 0.3032189042056989,
@@ -84,7 +84,7 @@
     }
   ],
   "pitch_count_by_inning": {
-    "6.0": 1
+    "6": 1
   },
   "pitcher_name": "Ryan Buchter",
   "pitcher_id_mlb": 488748,
