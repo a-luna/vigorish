@@ -5,7 +5,6 @@ import subprocess
 import click
 from getch import pause
 
-import vigorish.database as db
 from vigorish.app import Vigorish
 from vigorish.cli.click_params import DataSetName, DateString, FileTypeName, JobName, MlbSeason
 from vigorish.cli.components import print_message, validate_scrape_dates
@@ -64,7 +63,7 @@ def setup(app):  # pragma: no cover
 
 @cli.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.option(
-    "--data-sets",
+    "--data-set",
     type=DataSetName(),
     multiple=True,
     default=[str(DataSet.ALL)],
@@ -74,41 +73,29 @@ def setup(app):  # pragma: no cover
 @click.option(
     "--start",
     type=DateString(),
-    default=today_str,
     prompt=True,
     help=("Date to start scraping data, string can be in any format that is recognized by dateutil.parser."),
 )
 @click.option(
     "--end",
     type=DateString(),
-    default=today_str,
     prompt=True,
     help=("Date to stop scraping data, string can be in any format that is recognized by dateutil.parser."),
 )
 @click.option(
-    "--name",
+    "--job-name",
     type=JobName(),
+    default="",
     help="A name to help identify this job.",
     prompt=("(Optional) Enter a name for this job (ONLY letters, numbers, underscore, and/or hyphen characters)"),
 )
 @click.pass_obj
-def scrape(app, data_set, start, end, name):
+def scrape(app, data_set, start, end, job_name):
     """Scrape MLB data from websites."""
-    data_sets_int = sum(int(ds) for ds in flatten_list2d(data_set))
     result = validate_scrape_dates(app.db_session, start, end)
     if result.failure:
         return exit_app(app, result)
-    season = result.value
-    scrape_job_dict = {
-        "data_sets_int": data_sets_int,
-        "start_date": start,
-        "end_date": end,
-        "name": name,
-        "season_id": season.id,
-    }
-    new_scrape_job = db.ScrapeJob(**scrape_job_dict)
-    app.db_session.add(new_scrape_job)
-    app.db_session.commit()
+    new_scrape_job = app.create_scrape_job(data_set, start, end, job_name).value
     job_runner = JobRunner(app=app, db_job=new_scrape_job)
     result = job_runner.execute()
     return exit_app(app, result)
@@ -323,15 +310,22 @@ def sync_down_to_local(app, year, file_type, data_set):
 def exit_app(app, result, message=None):
     app.db_session.close()
     subprocess.run(["clear"])
-    return exit_app_success(message) if result.success else exit_app_error(result.error)
+    print()
+    exit_code = exit_app_success(message) if result.success else exit_app_error(result.error)
+    print()
+    return exit_code
 
 
 def exit_app_success(message=None):
     if message:
-        print_message(f"\n{message}\n", fg="bright_green", bold=True)
+        print_message(message, fg="bright_green", bold=True)
     return 0
 
 
 def exit_app_error(message):
-    print_message(f"\n{message}\n", fg="bright_red", bold=True)
+    if message and isinstance(message, list):
+        for m in message:
+            print_message(m, fg="bright_red", bold=True)
+    elif message:
+        print_message(message, fg="bright_red", bold=True)
     return 1

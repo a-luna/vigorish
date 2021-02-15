@@ -20,6 +20,7 @@ from vigorish.util.datetime_util import (
 )
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.list_helpers import group_and_sort_list
+from vigorish.util.string_helpers import string_is_null_or_blank
 
 
 class ScrapeJob(db.Base):
@@ -124,6 +125,21 @@ class ScrapeJob(db.Base):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    @classmethod
+    def from_user_params(cls, db_session, data_sets, start_date, end_date, season, job_name):
+        new_job_dict = {
+            "data_sets_int": sum(int(ds) for ds in data_sets),
+            "start_date": start_date,
+            "end_date": end_date,
+            "season_id": season.id,
+        }
+        new_scrape_job = cls(**new_job_dict)
+        db_session.add(new_scrape_job)
+        db_session.commit()
+        new_scrape_job.name = job_name if not string_is_null_or_blank(job_name) else str(new_scrape_job.id)
+        db_session.commit()
+        return new_scrape_job
 
     @classmethod
     def find_by_id(cls, db_session, job_id):
