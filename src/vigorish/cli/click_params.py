@@ -124,6 +124,8 @@ class JobName(click.ParamType):
     name = "job-name"
 
     def convert(self, value, param, ctx):
+        if not value:
+            return value
         if JOB_NAME_REGEX.match(value):
             return value
         error = (
