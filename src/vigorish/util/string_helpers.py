@@ -297,8 +297,7 @@ def get_inning_id_from_at_bat_id(at_bat_id):
 
 
 def inning_number_to_string(inning_str):
-    match = INNING_LABEL_REGEX.search(inning_str)
-    if not match:
+    if not (match := INNING_LABEL_REGEX.search(inning_str)):
         return Result.Fail(f"inning_str: {inning_str} is invalid")
     inn_half = match[1]
     inn_number = match[2]

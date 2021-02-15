@@ -1,5 +1,5 @@
 """Populate reference tables with data."""
-from vigorish.database import TimeBetweenPitches
+import vigorish.database as db
 from vigorish.util.result import Result
 
 
@@ -13,7 +13,7 @@ def populate_base_tables(db_session):
 
 
 def add_time_between_pitches(db_session):
-    result = TimeBetweenPitches.from_calc_results(db_session, get_avg_pitch_times())
+    result = db.TimeBetweenPitches.from_calc_results(db_session, get_avg_pitch_times())
     return Result.Ok() if result else Result.Fail("failed to populate time_between_pitches")
 
 

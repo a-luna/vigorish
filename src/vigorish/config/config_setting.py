@@ -80,9 +80,7 @@ class ConfigSetting(ABC):
         if self.is_same_for_all_data_sets:
             settings_dict = {"ALL_DATA_SETS": self.current_setting(DataSet.ALL)}
         else:
-            settings_dict = {
-                data_set.name: self.current_setting(data_set) for data_set in DataSet if data_set != DataSet.ALL
-            }
+            settings_dict = {ds.name: self.current_setting(ds) for ds in DataSet}
         return report_dict(settings_dict, title="", title_prefix="", title_suffix="")
 
     def current_setting(self, data_set: DataSet) -> ConfigValue:

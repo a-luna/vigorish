@@ -7,7 +7,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.database import Base
+import vigorish.database as db
 from vigorish.models.season import Season
 from vigorish.util.dt_format_strings import (
     DATE_ONLY,
@@ -18,7 +18,7 @@ from vigorish.util.dt_format_strings import (
 from vigorish.util.string_helpers import get_brooks_team_id, validate_brooks_game_id
 
 
-class GameScrapeStatus(Base):
+class GameScrapeStatus(db.Base):
     __tablename__ = "scrape_status_game"
     id = Column(Integer, primary_key=True)
     game_date = Column(DateTime)
@@ -44,15 +44,16 @@ class GameScrapeStatus(Base):
 
     @hybrid_property
     def game_start_time(self):
+        game_start = datetime(
+            year=self.game_date.year,
+            month=self.game_date.month,
+            day=self.game_date.day,
+            hour=self.game_time_hour,
+            minute=self.game_time_minute,
+        )
         return (
-            datetime(
-                year=self.game_date.year,
-                month=self.game_date.month,
-                day=self.game_date.day,
-                hour=self.game_time_hour,
-                minute=self.game_time_minute,
-            ).replace(tzinfo=tz.gettz(self.game_time_zone))
-            if self.game_time_hour
+            game_start.replace(tzinfo=tz.gettz(self.game_time_zone))
+            if not (self.game_time_hour == 0 and self.game_time_minute == 0)
             else None
         )
 

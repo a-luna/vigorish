@@ -12,7 +12,6 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS
-from vigorish.database import ScrapeJob
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
@@ -35,27 +34,25 @@ class CreateJob(MenuItem):
     def launch(self):
         job_confirmed = False
         data_sets = {}
-        start_date = None
-        end_date = None
+        start = None
+        end = None
         job_name = None
-        season = None
         while not job_confirmed:
             heading = self.get_menu_heading("Select Data Sets")
             prompt = "Select all data sets to scrape:"
             data_sets = data_sets_prompt(heading, prompt, checked_data_sets=data_sets)
             dates_validated = False
             while not dates_validated:
-                start_date = self.prompt_user_scrape_start_date(start_date)
-                end_date = self.prompt_user_scrape_stop_date(end_date)
-                result = validate_scrape_dates(self.db_session, start_date, end_date)
+                start = self.prompt_user_scrape_start_date(start)
+                end = self.prompt_user_scrape_stop_date(end)
+                result = validate_scrape_dates(self.db_session, start, end)
                 if result.failure:
                     continue
-                season = result.value
                 dates_validated = True
             job_name = self.prompt_user_job_name(job_name)
-            job_confirmed = self.confirm_job_details(data_sets, start_date, end_date, job_name)
+            job_confirmed = self.confirm_job_details(data_sets, start, end, job_name)
 
-        new_job = self.create_new_scrape_job(data_sets, start_date, end_date, season, job_name)
+        new_job = self.app.create_scrape_job(data_sets.keys(), start, end, job_name).value
         subprocess.run(["clear"])
         if yes_no_prompt(prompt="\nWould you like to begin executing this job?"):
             job_runner = JobRunner(app=self.app, db_job=new_job)
@@ -108,20 +105,3 @@ class CreateJob(MenuItem):
         print_heading(heading, fg="bright_yellow")
         print_message(job_details, wrap=False, fg="bright_yellow")
         return yes_no_prompt(prompt="\nAre the details above correct?")
-
-    def create_new_scrape_job(self, data_sets, start_date, end_date, season, job_name):
-        new_job_dict = {
-            "data_sets_int": sum(int(ds) for ds in data_sets.keys()),
-            "start_date": start_date,
-            "end_date": end_date,
-            "season_id": season.id,
-        }
-        new_scrape_job = ScrapeJob(**new_job_dict)
-        self.db_session.add(new_scrape_job)
-        self.db_session.commit()
-        if job_name:
-            new_scrape_job.name = job_name
-        else:
-            new_scrape_job.name = str(new_scrape_job.id)
-        self.db_session.commit()
-        return new_scrape_job

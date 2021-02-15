@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from events import Events
 
-from vigorish.database import Season_Game_PitchApp_View as Season_View
+import vigorish.database as db
 from vigorish.tasks.base import Task
 from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
 from vigorish.util.numeric_helpers import trim_data_set
@@ -27,7 +27,7 @@ class CalculateAvgPitchTimesTask(Task):
 
     def execute(self, trim_data_sets=True):
         self.events.find_eligible_games_start()
-        game_ids = Season_View.get_all_bbref_game_ids_combined_no_missing_pfx(self.db_engine)
+        game_ids = db.Season_Game_PitchApp_View.get_all_bbref_game_ids_combined_no_missing_pfx(self.db_engine)
         if not game_ids:
             return Result.Fail("No games meet the requirements for this process.")
         self.events.find_eligible_games_complete(game_ids)

@@ -1,13 +1,13 @@
-import subprocess
 from copy import deepcopy
 from datetime import timezone
+from functools import cached_property
 from pathlib import Path
 
 from events import Events
 from halo import Halo
 
 from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner
-from vigorish.enums import DataSet, SyncDirection, VigFile
+from vigorish.enums import SyncDirection, VigFile
 from vigorish.tasks.base import Task
 from vigorish.util.datetime_util import dtaware_fromtimestamp
 from vigorish.util.regex import URL_ID_REGEX
@@ -17,9 +17,8 @@ TIME_DIFFERENCE_SECONDS = 60
 
 
 class SyncScrapedDataTask(Task):
-    def __init__(self, app, cached_s3_objects=None):
+    def __init__(self, app):
         super().__init__(app)
-        self._cached_s3_objects = cached_s3_objects
         self.sync_direction = None
         self.file_type = None
         self.data_set = None
@@ -28,8 +27,10 @@ class SyncScrapedDataTask(Task):
         self.events = Events(
             (
                 "error_occurred",
-                "get_sync_files_start",
-                "get_sync_files_complete",
+                "get_s3_objects_start",
+                "get_s3_objects_complete",
+                "find_out_of_sync_files_start",
+                "find_out_of_sync_files_complete",
                 "sync_files_start",
                 "sync_files_progress",
                 "sync_files_complete",
@@ -40,148 +41,73 @@ class SyncScrapedDataTask(Task):
     def file_helper(self):
         return self.scraped_data.file_helper
 
-    @property
-    def cached_s3_objects(self):
-        if self._cached_s3_objects:
-            return self._cached_s3_objects
-        self._cached_s3_objects = list(self.file_helper.get_all_object_keys_in_s3_bucket())
-        return self._cached_s3_objects
+    @cached_property
+    def all_s3_objects(self):  # pragma: no cover
+        return self.file_helper.get_all_object_keys_in_s3_bucket()
 
     def execute(self, sync_direction, file_type, data_set, year):
-        if sync_direction == SyncDirection.UP_TO_S3:
-            return self.sync_up_to_s3_bucket(file_type, data_set, year)
-        if sync_direction == SyncDirection.DOWN_TO_LOCAL:
-            return self.sync_down_to_local_folder(file_type, data_set, year)
-        error_message = f"Invalid value for sync_direction: {sync_direction}"
-        self.events.error_occurred(error_message)
-        return Result.Fail(error_message)
-
-    def sync_up_to_s3_bucket(self, file_type, data_set, year):
-        result = self.get_files_to_sync_to_s3(file_type, data_set, year)
+        self.get_all_s3_objects()
+        result = self.find_out_of_sync_files(sync_direction, file_type, data_set, year)
         if result.failure:
             self.events.error_occurred("Error occurred analyzing which files need to be synced.")
             return result
         (out_of_sync, missing_files, outdated_files) = result.value
         if not out_of_sync:
             return Result.Ok()
-        subprocess.run(["clear"])
-        self.upload_files_to_s3(missing_files, outdated_files, file_type, data_set, year)
+        self.sync_files(sync_direction, missing_files, outdated_files, file_type, data_set, year)
         return Result.Ok()
 
-    def sync_down_to_local_folder(self, file_type, data_set, year):
-        result = self.get_files_to_sync_to_local(file_type, data_set, year)
-        if result.failure:
-            self.events.error_occurred("Error occurred analyzing which files need to be synced.")
-            return result
-        (out_of_sync, missing_files, outdated_files) = result.value
-        if not out_of_sync:
-            return Result.Ok()
-        subprocess.run(["clear"])
-        self.download_files_to_local_folder(missing_files, outdated_files, file_type, data_set, year)
-        return Result.Ok()
+    def get_all_s3_objects(self):
+        self.events.get_s3_objects_start()
+        self.all_s3_objects
+        self.events.get_s3_objects_complete()
 
-    def get_files_to_sync_to_local(self, file_type, data_set, year):
-        self.events.get_sync_files_start()
-        (s3_objects, local_files) = self.get_all_files_stored_locally_and_in_s3(file_type, data_set, year)
-        if not s3_objects:
+    def find_out_of_sync_files(self, sync_direction, file_type, data_set, year):
+        self.events.find_out_of_sync_files_start()
+        (s3_objects, local_files) = self.get_all_files_in_src_and_dest(file_type, data_set, year)
+        if (sync_direction == SyncDirection.UP_TO_S3 and not local_files) or (
+            sync_direction == SyncDirection.DOWN_TO_LOCAL and not s3_objects
+        ):
             sync_results = (False, [], [])
-            self.events.get_sync_files_complete(sync_results)
+            self.events.find_out_of_sync_files_complete(sync_results)
             return Result.Ok(sync_results)
-        sync_results = get_files_to_sync(s3_objects, local_files)
-        self.events.get_sync_files_complete(sync_results)
+        src_files = local_files if sync_direction == SyncDirection.UP_TO_S3 else s3_objects
+        dest_files = s3_objects if sync_direction == SyncDirection.UP_TO_S3 else local_files
+        sync_results = get_files_to_sync(src_files, dest_files)
+        self.events.find_out_of_sync_files_complete(sync_results)
         return Result.Ok(sync_results)
 
-    def get_files_to_sync_to_s3(self, file_type, data_set, year):
-        self.events.get_sync_files_start()
-        (s3_objects, local_files) = self.get_all_files_stored_locally_and_in_s3(file_type, data_set, year)
-        if not local_files:
-            sync_results = (False, [], [])
-            self.events.get_sync_files_complete(sync_results)
-            return Result.Ok(sync_results)
-        sync_results = get_files_to_sync(local_files, s3_objects)
-        self.events.get_sync_files_complete(sync_results)
-        return Result.Ok(sync_results)
-
-    def get_all_files_stored_locally_and_in_s3(self, file_type, data_set, year):
-        local_files = self.get_all_objects_in_local_folder(file_type, data_set, year)
-        s3_objects = self.get_all_objects_in_s3(file_type, data_set, year)
+    def get_all_files_in_src_and_dest(self, file_type, data_set, year):
+        local_files = self.get_local_files(file_type, data_set, year)
+        s3_objects = self.get_s3_objects(file_type, data_set, year)
         return (s3_objects, local_files)
 
-    def get_all_objects_in_local_folder(self, file_type, data_set, year):
+    def get_local_files(self, file_type, data_set, year):
         folderpath = self.scraped_data.get_local_folderpath(file_type, data_set, year)
-        local_files = [
-            get_local_file_data(file)
-            for file in Path(folderpath).glob("*.*")
-            if URL_ID_REGEX[file_type][data_set].search(file.stem)
-        ]
-        return sorted(local_files, key=lambda x: x["name"]) if local_files else []
+        id_regex = URL_ID_REGEX[file_type][data_set]
+        local_files = filter(lambda x: id_regex.search(x.stem), Path(folderpath).glob("*.*"))
+        return sorted(map(get_local_file_data, local_files), key=lambda x: x["name"])
 
-    def get_all_objects_in_s3(self, file_type, data_set, year):
-        s3_objects_dict = {
-            VigFile.SCRAPED_HTML: self.get_all_html_objects_in_s3,
-            VigFile.PARSED_JSON: self.get_all_json_objects_in_s3,
-            VigFile.COMBINED_GAME_DATA: self.get_all_combined_data_objects_in_s3,
-            VigFile.PATCH_LIST: self.get_all_patch_list_objects_in_s3,
-        }
-        return s3_objects_dict[file_type](data_set, year) if file_type in s3_objects_dict else []
+    def get_s3_objects(self, file_type, data_set, year):
+        folderpath = self.scraped_data.get_s3_folderpath(file_type, data_set, year)
+        id_regex = URL_ID_REGEX[file_type][data_set]
+        file_suffix = ".html" if file_type == VigFile.SCRAPED_HTML else ".json"
+        s3_objects = filter(
+            lambda x: folderpath in x.key and id_regex.search(Path(x.key).stem) and Path(x.key).suffix == file_suffix,
+            self.all_s3_objects,
+        )
+        return sorted(map(get_s3_object_data, s3_objects), key=lambda x: x["name"])
 
-    def get_all_html_objects_in_s3(self, data_set, year):
-        html_folder = self.scraped_data.get_s3_folderpath(VigFile.SCRAPED_HTML, data_set, year)
-        s3_objects = [
-            get_s3_object_data(obj)
-            for obj in self.cached_s3_objects
-            if html_folder in obj.key and URL_ID_REGEX[VigFile.SCRAPED_HTML][data_set].search(Path(obj.key).stem)
-        ]
-        return sorted(s3_objects, key=lambda x: x["name"]) if s3_objects else []
-
-    def get_all_json_objects_in_s3(self, data_set, year):
-        json_folder = self.scraped_data.get_s3_folderpath(VigFile.PARSED_JSON, data_set, year)
-        html_folder = self.scraped_data.get_s3_folderpath(VigFile.SCRAPED_HTML, data_set, year)
-        s3_objects = [
-            get_s3_object_data(obj)
-            for obj in self.cached_s3_objects
-            if json_folder in obj.key
-            and html_folder not in obj.key
-            and URL_ID_REGEX[VigFile.PARSED_JSON][data_set].search(Path(obj.key).stem)
-        ]
-        return sorted(s3_objects, key=lambda x: x["name"]) if s3_objects else []
-
-    def get_all_combined_data_objects_in_s3(self, data_set, year):
-        comb_folder = self.scraped_data.get_s3_folderpath(VigFile.COMBINED_GAME_DATA, DataSet.ALL, year)
-        s3_objects = [
-            get_s3_object_data(obj)
-            for obj in self.cached_s3_objects
-            if comb_folder in obj.key
-            and URL_ID_REGEX[VigFile.COMBINED_GAME_DATA][DataSet.ALL].search(Path(obj.key).stem)
-        ]
-        return sorted(s3_objects, key=lambda x: x["name"]) if s3_objects else []
-
-    def get_all_patch_list_objects_in_s3(self, data_set, year):
-        json_folder = self.scraped_data.get_s3_folderpath(VigFile.PARSED_JSON, data_set, year)
-        s3_objects = [
-            get_s3_object_data(obj)
-            for obj in self.cached_s3_objects
-            if json_folder in obj.key and URL_ID_REGEX[VigFile.PATCH_LIST][data_set].search(Path(obj.key).stem)
-        ]
-        return sorted(s3_objects, key=lambda x: x["name"]) if s3_objects else []
-
-    def upload_files_to_s3(self, missing_files, outdated_files, file_type, data_set, year):
-        sync_files = get_sync_files(missing_files, outdated_files)
-        self.sync_files(SyncDirection.UP_TO_S3, sync_files, file_type, data_set, year)
-
-    def download_files_to_local_folder(self, missing_files, outdated_files, file_type, data_set, year):
-        sync_files = get_sync_files(missing_files, outdated_files)
-        self.sync_files(SyncDirection.DOWN_TO_LOCAL, sync_files, file_type, data_set, year)
-
-    def sync_files(self, sync_direction, files, file_type, data_set, year):
+    def sync_files(self, sync_direction, missing_files, outdated_files, file_type, data_set, year):
         self.file_helper.create_all_folderpaths(year)
         self.bucket_name = self.config.get_current_setting("S3_BUCKET", data_set)
-        self.events.sync_files_start(files[0]["name"], 0, len(files))
-        for num, file in enumerate(files, start=1):
-            self.events.sync_files_progress(file["name"], num - 1, len(files))
+        sync_files = get_sync_files(missing_files, outdated_files)
+        self.events.sync_files_start(sync_files[0]["name"], 0, len(sync_files))
+        for num, file in enumerate(sync_files, start=1):
+            self.events.sync_files_progress(file["name"], num - 1, len(sync_files))
             (filepath, s3_key) = self.get_local_path_and_s3_key(file, file_type, data_set, year)
             self.send_file(sync_direction, filepath, s3_key)
-            self.events.sync_files_progress(file["name"], num, len(files))
+            self.events.sync_files_progress(file["name"], num, len(sync_files))
         self.events.sync_files_complete()
 
     def get_local_path_and_s3_key(self, file, file_type, data_set, year):
@@ -191,7 +117,7 @@ class SyncScrapedDataTask(Task):
         s3_key = f'{s3_folder}/{file["name"]}'
         return (local_path, s3_key)
 
-    def send_file(self, sync_direction, local_path, s3_key):
+    def send_file(self, sync_direction, local_path, s3_key):  # pragma: no cover
         if sync_direction == SyncDirection.UP_TO_S3:
             self.file_helper.get_s3_bucket().upload_file(local_path, s3_key)
         if sync_direction == SyncDirection.DOWN_TO_LOCAL:

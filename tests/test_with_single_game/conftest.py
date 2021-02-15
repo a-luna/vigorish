@@ -1,8 +1,6 @@
-import os
-
 import pytest
 
-from tests.conftest import CONFIG_FILE, CSV_FOLDER, DOTENV_FILE, SQLITE_URL
+from tests.conftest import CSV_FOLDER, DOTENV_FILE
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,
@@ -21,16 +19,6 @@ BB_GAME_ID = COMBINED_DATA_GAME_DICT[TEST_ID]["bb_game_id"]
 APPPLY_PATCH_LIST = COMBINED_DATA_GAME_DICT[TEST_ID]["apply_patch_list"]
 
 
-@pytest.fixture(autouse=True)
-def env_vars(request):
-    """Sets environment variables to use .env and config.json files."""
-    os.environ["ENV"] = "TEST"
-    os.environ["DOTENV_FILE"] = str(DOTENV_FILE)
-    os.environ["CONFIG_FILE"] = str(CONFIG_FILE)
-    os.environ["DATABASE_URL"] = SQLITE_URL
-    return True
-
-
 @pytest.fixture(scope="package")
 def vig_app(request):
     """Returns an instance of the application configured to use the test DB and test config file."""
@@ -38,6 +26,8 @@ def vig_app(request):
 
     def fin():
         app.db_session.close()
+        if DOTENV_FILE.exists():
+            DOTENV_FILE.unlink()
 
     request.addfinalizer(fin)
     return app
@@ -53,7 +43,8 @@ def create_test_data(vig_app):
     update_scraped_boxscore(vig_app, BBREF_GAME_ID)
     update_scraped_pitch_logs(vig_app, GAME_DATE, BBREF_GAME_ID)
     update_scraped_pitchfx_logs(vig_app, BB_GAME_ID)
-    CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPPLY_PATCH_LIST)
-    result = AddToDatabaseTask(vig_app).execute(2019)
-    assert result.success
+    combine_data_result_dict = CombineScrapedDataTask(vig_app).execute(BBREF_GAME_ID, APPPLY_PATCH_LIST)
+    assert combine_data_result_dict["gather_scraped_data_success"]
+    add_to_db_result = AddToDatabaseTask(vig_app).execute(2019)
+    assert add_to_db_result.success
     return True

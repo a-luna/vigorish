@@ -166,7 +166,7 @@ def decode_brooks_pitchfx_log(json_dict):
 
 def decode_brooks_pitchfx_data(json_dict):
     json_dict.pop("__brooks_pitchfx_data__")
-    return BrooksPitchFxData(**json_dict)
+    return from_dict(data_class=BrooksPitchFxData, data=json_dict)
 
 
 def decode_bbref_games_for_date_patch_list(json_dict):

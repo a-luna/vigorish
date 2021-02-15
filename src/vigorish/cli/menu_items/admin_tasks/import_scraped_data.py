@@ -14,7 +14,7 @@ from vigorish.cli.components import (
     yes_no_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJIS, MENU_NUMBERS
+from vigorish.constants import DATA_SET_TO_NAME_MAP, EMOJIS, MENU_NUMBERS
 from vigorish.tasks import ImportScrapedDataTask
 from vigorish.util.result import Result
 
@@ -84,7 +84,8 @@ class ImportScrapedData(MenuItem):
 
     def error_occurred(self, error_message, data_set, year):
         self.update_menu_heading("Error!")
-        self.spinners[year][data_set].fail(f"Error occurred while updating {data_set} for MLB {year}")
+        error_message = f"Error occurred while updating {DATA_SET_TO_NAME_MAP[data_set]} for MLB {year}"
+        self.spinners[year][data_set].fail(error_message)
 
     def search_local_files_start(self):
         self.update_menu_heading("In Progress...")
@@ -104,11 +105,12 @@ class ImportScrapedData(MenuItem):
         spinner = self.spinners[year][data_set]
         spinner.spinner = get_random_dots_spinner()
         spinner.color = get_random_cli_color()
-        spinner.text = f"Updating {data_set} for MLB {year}..."
+        spinner.text = f"Updating {DATA_SET_TO_NAME_MAP[data_set]} for MLB {year}..."
         spinner.start()
 
     def import_scraped_data_set_complete(self, data_set, year):
-        self.spinners[year][data_set].succeed(f"Successfully updated {data_set} for MLB {year}!")
+        import_complete = f"Successfully updated {DATA_SET_TO_NAME_MAP[data_set]} for MLB {year}!"
+        self.spinners[year][data_set].succeed(import_complete)
 
     def import_scraped_data_complete(self):
         self.update_menu_heading("Complete!")

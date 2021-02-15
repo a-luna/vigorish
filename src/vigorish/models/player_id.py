@@ -1,11 +1,11 @@
 """Values used to identify a single player in various websites and databases."""
 from sqlalchemy import Column, ForeignKey, Integer, String
 
-from vigorish.database import Base
+import vigorish.database as db
 from vigorish.util.string_helpers import validate_at_bat_id
 
 
-class PlayerId(Base):
+class PlayerId(db.Base):
     """Values used to identify a single player in various websites and databases."""
 
     __tablename__ = "player_id"

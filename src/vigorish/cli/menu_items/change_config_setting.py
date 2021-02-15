@@ -70,7 +70,7 @@ class ChangeConfigSettting(MenuItem):
         if result.failure:
             return None
         use_same_setting = result.value
-        return [DataSet.ALL] if use_same_setting else [ds for ds in DataSet if ds != DataSet.ALL]
+        return [DataSet.ALL] if use_same_setting else list(DataSet)
 
     def get_new_setting(self, data_sets):
         if self.data_type == ConfigType.NUMERIC:
@@ -149,6 +149,9 @@ class ChangeConfigSettting(MenuItem):
     def get_updated_settings_enum(self, prompt_results):
         updated_settings = []
         for prompt, selected_menu_item_text in prompt_results:
+            if "ALL" in prompt:
+                new_value = self.enum_dict.get(selected_menu_item_text)
+                updated_settings.append((DataSet.ALL, new_value))
             for data_set in DataSet:
                 if data_set.name in prompt:
                     new_value = self.enum_dict.get(selected_menu_item_text)
@@ -159,6 +162,8 @@ class ChangeConfigSettting(MenuItem):
     def get_updated_settings_str_num(self, prompt_results):
         updated_settings = []
         for prompt, new_value in prompt_results:
+            if "ALL" in prompt:
+                updated_settings.append((DataSet.ALL, new_value))
             for data_set in DataSet:
                 if data_set.name in prompt:
                     updated_settings.append((data_set, new_value))

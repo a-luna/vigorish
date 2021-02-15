@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from tests.conftest import TESTS_FOLDER
+from tests.conftest import DOTENV_FILE, TESTS_FOLDER
 from vigorish.config.config_file import ConfigFile
 from vigorish.enums import DataSet, ScrapeCondition
 
@@ -106,3 +106,5 @@ def test_config_file():
     assert not s3_required
 
     default_config_path.unlink()
+    if DOTENV_FILE.exists():
+        DOTENV_FILE.unlink()

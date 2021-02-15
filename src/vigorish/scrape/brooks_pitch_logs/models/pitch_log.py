@@ -35,15 +35,16 @@ class BrooksPitchLog:
 
     @property
     def game_start_time(self):
+        game_start = datetime(
+            year=self.game_date.year,
+            month=self.game_date.month,
+            day=self.game_date.day,
+            hour=self.game_time_hour,
+            minute=self.game_time_minute,
+        )
         return (
-            datetime(
-                year=self.game_date.year,
-                month=self.game_date.month,
-                day=self.game_date.day,
-                hour=self.game_time_hour,
-                minute=self.game_time_minute,
-            ).replace(tzinfo=tz.gettz(self.time_zone_name))
-            if self.game_time_hour and self.game_time_minute and self.time_zone_name
+            game_start.replace(tzinfo=tz.gettz(self.time_zone_name))
+            if not (self.game_time_hour == 0 and self.game_time_minute == 0)
             else None
         )
 

@@ -1,4 +1,4 @@
-from vigorish.database import GameScrapeStatus
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
@@ -25,7 +25,7 @@ def update_status_bbref_boxscore(db_session, boxscore):
 
 def update_game_status_records(db_session, boxscore):
     try:
-        game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, boxscore.bbref_game_id)
+        game_status = db.GameScrapeStatus.find_by_bbref_game_id(db_session, boxscore.bbref_game_id)
         if not game_status:
             error = f"scrape_status_game does not contain an entry for bbref_game_id: {boxscore.bbref_game_id}"
             return Result.Fail(error)

@@ -110,7 +110,9 @@ class RestoreDatabase(MenuItem):
         self.spinner = None
 
     def restore_database_start(self):
+        subprocess.run(["clear"])
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
+        self.spinner.start()
 
     def restore_table_start(self, table):
         self.current_table = table

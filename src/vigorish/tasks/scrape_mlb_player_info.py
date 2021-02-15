@@ -5,7 +5,7 @@ from json.decoder import JSONDecodeError
 from events import Events
 from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 
-from vigorish.database import Player
+import vigorish.database as db
 from vigorish.tasks.base import Task
 from vigorish.util.request_url import request_url_with_retries
 from vigorish.util.result import Result
@@ -126,7 +126,7 @@ class ScrapeMlbPlayerInfoTask(Task):
 
     def add_player_to_database(self, player_dict):
         try:
-            new_player = Player(**player_dict)
+            new_player = db.Player(**player_dict)
             self.db_session.add(new_player)
             self.db_session.commit()
             self.events.scrape_player_info_complete(new_player)

@@ -4,10 +4,10 @@ from dataclass_csv import accept_whitespaces
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from vigorish.database import Base
+import vigorish.database as db
 
 
-class BatStats(Base):
+class BatStats(db.Base):
 
     __tablename__ = "bat_stats"
     id = Column(Integer, primary_key=True)

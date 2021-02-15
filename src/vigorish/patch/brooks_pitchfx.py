@@ -5,7 +5,7 @@ from typing import List
 
 from dacite import from_dict
 
-from vigorish.database import GameScrapeStatus, PlayerId
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.patch.base import Patch, PatchList
 from vigorish.scrape.brooks_pitchfx.models.pitchfx_log import BrooksPitchFxLog
@@ -64,12 +64,12 @@ class BrooksPitchFxPatchList(PatchList):
 
     def create_new_pitchfx_log(self, pitch_app_id, pitchfx_log, db_session, boxscore):
         pitcher_id_mlb = pitch_app_id.split("_")[1]
-        player = PlayerId.find_by_mlb_id(db_session, pitcher_id_mlb)
+        player = db.PlayerId.find_by_mlb_id(db_session, pitcher_id_mlb)
         away_team_id = boxscore.away_team_data.team_id_br
         home_team_id = boxscore.home_team_data.team_id_br
         player_team_id = boxscore.player_team_dict[player.bbref_id]
         opponent_team_id = away_team_id if player_team_id == home_team_id else home_team_id
-        game_status = GameScrapeStatus.find_by_bbref_game_id(db_session, self.url_id)
+        game_status = db.GameScrapeStatus.find_by_bbref_game_id(db_session, self.url_id)
         pfx_log_dict = {
             "pitchfx_log": pitchfx_log,
             "pitch_count_by_inning": self.get_pitch_count_by_inning(pitchfx_log),

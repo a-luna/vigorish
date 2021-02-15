@@ -39,20 +39,10 @@ class FileHelper:
         html_local_folder = self.config.all_settings.get("HTML_LOCAL_FOLDER_PATH")
         json_local_folder = self.config.all_settings.get("JSON_LOCAL_FOLDER_PATH")
         combined_local_folder = self.config.all_settings.get("COMBINED_DATA_LOCAL_FOLDER_PATH")
-        html_folderpath_dict = {
-            data_set: html_local_folder.current_setting(data_set=data_set)
-            for data_set in DataSet
-            if data_set != DataSet.ALL
-        }
-        json_folderpath_dict = {
-            data_set: json_local_folder.current_setting(data_set=data_set)
-            for data_set in DataSet
-            if data_set != DataSet.ALL
-        }
         return {
-            VigFile.SCRAPED_HTML: html_folderpath_dict,
-            VigFile.PARSED_JSON: json_folderpath_dict,
-            VigFile.PATCH_LIST: json_folderpath_dict,
+            VigFile.SCRAPED_HTML: {ds: html_local_folder.current_setting(data_set=ds) for ds in DataSet},
+            VigFile.PARSED_JSON: {ds: json_local_folder.current_setting(data_set=ds) for ds in DataSet},
+            VigFile.PATCH_LIST: {ds: json_local_folder.current_setting(data_set=ds) for ds in DataSet},
             VigFile.COMBINED_GAME_DATA: {DataSet.ALL: combined_local_folder.current_setting(data_set=DataSet.ALL)},
         }
 
@@ -61,20 +51,10 @@ class FileHelper:
         html_s3_folder = self.config.all_settings.get("HTML_S3_FOLDER_PATH")
         json_s3_folder = self.config.all_settings.get("JSON_S3_FOLDER_PATH")
         combined_s3_folder = self.config.all_settings.get("COMBINED_DATA_S3_FOLDER_PATH")
-        html_folderpath_dict = {
-            data_set: html_s3_folder.current_setting(data_set=data_set)
-            for data_set in DataSet
-            if data_set != DataSet.ALL
-        }
-        json_folderpath_dict = {
-            data_set: json_s3_folder.current_setting(data_set=data_set)
-            for data_set in DataSet
-            if data_set != DataSet.ALL
-        }
         return {
-            VigFile.SCRAPED_HTML: html_folderpath_dict,
-            VigFile.PARSED_JSON: json_folderpath_dict,
-            VigFile.PATCH_LIST: json_folderpath_dict,
+            VigFile.SCRAPED_HTML: {ds: html_s3_folder.current_setting(data_set=ds) for ds in DataSet},
+            VigFile.PARSED_JSON: {ds: json_s3_folder.current_setting(data_set=ds) for ds in DataSet},
+            VigFile.PATCH_LIST: {ds: json_s3_folder.current_setting(data_set=ds) for ds in DataSet},
             VigFile.COMBINED_GAME_DATA: {DataSet.ALL: combined_s3_folder.current_setting(data_set=DataSet.ALL)},
         }
 
@@ -132,16 +112,10 @@ class FileHelper:
         html_storage = self.config.all_settings.get("HTML_STORAGE")
         json_storage = self.config.all_settings.get("JSON_STORAGE")
         combined_storage = self.config.all_settings.get("COMBINED_DATA_STORAGE")
-        html_storage_dict = {
-            data_set: html_storage.current_setting(data_set=data_set) for data_set in DataSet if data_set != DataSet.ALL
-        }
-        json_storage_dict = {
-            data_set: json_storage.current_setting(data_set=data_set) for data_set in DataSet if data_set != DataSet.ALL
-        }
         return {
-            VigFile.SCRAPED_HTML: html_storage_dict,
-            VigFile.PARSED_JSON: json_storage_dict,
-            VigFile.PATCH_LIST: json_storage_dict,
+            VigFile.SCRAPED_HTML: {ds: html_storage.current_setting(data_set=ds) for ds in DataSet},
+            VigFile.PARSED_JSON: {ds: json_storage.current_setting(data_set=ds) for ds in DataSet},
+            VigFile.PATCH_LIST: {ds: json_storage.current_setting(data_set=ds) for ds in DataSet},
             VigFile.COMBINED_GAME_DATA: {DataSet.ALL: combined_storage.current_setting(data_set=DataSet.ALL)},
         }
 
@@ -176,7 +150,7 @@ class FileHelper:
 
     def get_all_object_keys_in_s3_bucket(self):  # pragma: no cover
         s3_bucket = self.get_s3_bucket()
-        return s3_bucket.objects.all() if s3_bucket else None
+        return list(s3_bucket.objects.all()) if s3_bucket else []
 
     def perform_local_file_task(
         self,
@@ -244,18 +218,16 @@ class FileHelper:
         pitch_app_id=None,
     ):
         if pitch_app_id:
-            identifier = pitch_app_id
+            url_id = pitch_app_id
         elif bb_game_id:
-            identifier = bb_game_id
+            url_id = bb_game_id
         elif bbref_game_id:
-            identifier = bbref_game_id
+            url_id = bbref_game_id
         elif game_date:
-            identifier = game_date
+            url_id = game_date
         else:
             raise ValueError("Unable to construct file name.")
-        return (
-            self.filename_dict[file_type][data_set](identifier) if data_set in self.filename_dict[file_type] else None
-        )
+        return self.filename_dict[file_type][data_set](url_id) if data_set in self.filename_dict[file_type] else None
 
     def perform_s3_task(
         self,

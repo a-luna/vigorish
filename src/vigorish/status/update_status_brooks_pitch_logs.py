@@ -1,17 +1,9 @@
-from vigorish.database import (
-    DateScrapeStatus,
-    GameScrapeStatus,
-    PitchAppScrapeStatus,
-    PlayerId,
-    Season,
-)
+import vigorish.database as db
 from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
 
-def update_status_brooks_pitch_logs_for_game_list(
-    scraped_data, db_session, new_brooks_game_ids, apply_patch_list=False
-):
+def update_status_brooks_pitch_logs_for_game_list(scraped_data, db_session, new_brooks_game_ids):
     for bb_game_id in new_brooks_game_ids:
         pitch_logs_for_game = scraped_data.get_brooks_pitch_logs_for_game(bb_game_id)
         if not pitch_logs_for_game:
@@ -41,7 +33,7 @@ def update_status_brooks_pitch_logs_for_game(db_session, pitch_logs_for_game):
 def update_game_status_records(db_session, pitch_logs_for_game):
     try:
         bb_game_id = pitch_logs_for_game.bb_game_id
-        game_status = GameScrapeStatus.find_by_bb_game_id(db_session, bb_game_id)
+        game_status = db.GameScrapeStatus.find_by_bb_game_id(db_session, bb_game_id)
         if not game_status:
             error = f"scrape_status_game does not contain an entry for bb_game_id: {bb_game_id}"
             return Result.Fail(error)
@@ -54,19 +46,19 @@ def update_game_status_records(db_session, pitch_logs_for_game):
 def create_pitch_appearance_status_records(db_session, pitch_logs_for_game):
     season = None
     bbref_game_id = pitch_logs_for_game.bbref_game_id
-    all_pitch_app_ids = PitchAppScrapeStatus.get_all_pitch_app_ids_for_game(db_session, bbref_game_id)
+    all_pitch_app_ids = db.PitchAppScrapeStatus.get_all_pitch_app_ids_for_game(db_session, bbref_game_id)
     scraped_pitch_app_ids = [plog.pitch_app_id for plog in pitch_logs_for_game.pitch_logs]
     update_pitch_app_ids = set(scraped_pitch_app_ids).difference(all_pitch_app_ids)
     for pitch_log in pitch_logs_for_game.pitch_logs:
         if pitch_log.pitch_app_id not in update_pitch_app_ids:
             continue
         if not season:
-            season = Season.find_by_year(db_session, pitch_log.game_date.year)
+            season = db.Season.find_by_year(db_session, pitch_log.game_date.year)
         try:
-            date_status = DateScrapeStatus.find_by_date(db_session, pitch_log.game_date)
-            game_status = GameScrapeStatus.find_by_bb_game_id(db_session, pitch_log.bb_game_id)
-            player_id = PlayerId.find_by_mlb_id(db_session, pitch_log.pitcher_id_mlb)
-            pitch_app_status = PitchAppScrapeStatus()
+            date_status = db.DateScrapeStatus.find_by_date(db_session, pitch_log.game_date)
+            game_status = db.GameScrapeStatus.find_by_bb_game_id(db_session, pitch_log.bb_game_id)
+            player_id = db.PlayerId.find_by_mlb_id(db_session, pitch_log.pitcher_id_mlb)
+            pitch_app_status = db.PitchAppScrapeStatus()
             pitch_app_status.pitcher_id_mlb = pitch_log.pitcher_id_mlb
             pitch_app_status.pitch_app_id = pitch_log.pitch_app_id
             pitch_app_status.bbref_game_id = pitch_log.bbref_game_id

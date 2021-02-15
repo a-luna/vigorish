@@ -5,10 +5,10 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from vigorish.database import Base
+import vigorish.database as db
 
 
-class PitchAppScrapeStatus(Base):
+class PitchAppScrapeStatus(db.Base):
     __tablename__ = "scrape_status_pitch_app"
     id = Column(Integer, primary_key=True)
     pitcher_id_mlb = Column(Integer)

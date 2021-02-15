@@ -1,4 +1,4 @@
-from vigorish.database import DateScrapeStatus
+import vigorish.database as db
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.brooks_pitch_logs.models.pitch_logs_for_game import BrooksPitchLogsForGame
 from vigorish.scrape.brooks_pitch_logs.parse_html import parse_pitch_log
@@ -15,7 +15,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         super().__init__(app, db_job)
 
     def check_prerequisites(self, game_date):
-        brooks_games_for_date = DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
+        brooks_games_for_date = db.DateScrapeStatus.verify_brooks_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
         if brooks_games_for_date:
@@ -30,7 +30,7 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
     def check_current_status(self, game_date):
         if self.scrape_condition == ScrapeCondition.ALWAYS:
             return Result.Ok()
-        scraped_brooks_pitch_logs = DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
+        scraped_brooks_pitch_logs = db.DateScrapeStatus.verify_all_brooks_pitch_logs_scraped_for_date(
             self.db_session, game_date
         )
         return Result.Ok() if not scraped_brooks_pitch_logs else Result.Fail("skip")
