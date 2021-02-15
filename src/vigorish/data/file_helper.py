@@ -218,18 +218,16 @@ class FileHelper:
         pitch_app_id=None,
     ):
         if pitch_app_id:
-            identifier = pitch_app_id
+            url_id = pitch_app_id
         elif bb_game_id:
-            identifier = bb_game_id
+            url_id = bb_game_id
         elif bbref_game_id:
-            identifier = bbref_game_id
+            url_id = bbref_game_id
         elif game_date:
-            identifier = game_date
+            url_id = game_date
         else:
             raise ValueError("Unable to construct file name.")
-        return (
-            self.filename_dict[file_type][data_set](identifier) if data_set in self.filename_dict[file_type] else None
-        )
+        return self.filename_dict[file_type][data_set](url_id) if data_set in self.filename_dict[file_type] else None
 
     def perform_s3_task(
         self,

@@ -3,6 +3,7 @@ import subprocess
 from collections import defaultdict
 from datetime import datetime
 
+from getch import pause
 from halo import Halo
 
 import vigorish.database as db
@@ -170,6 +171,9 @@ class JobRunner:
         return Result.Fail("\n".join(errors))
 
     def show_status_report(self):
+        if self.status_report == StatusReport.NONE:
+            pause(message="\nPress any key to continue...")
+            return Result.Ok()
         result = (
             report_season_status(db_session=self.db_session, year=self.season.year, report_type=self.status_report)
             if self.status_report == StatusReport.SEASON_SUMMARY
