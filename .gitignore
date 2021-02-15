@@ -4,6 +4,7 @@
 .python-version
 tmp
 venv
+pfx
 *.rdb
 *.db
 *.DS_Store
