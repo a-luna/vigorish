@@ -15,6 +15,7 @@ from vigorish.data.metrics.constants import (
     PFX_PLATE_DISCIPLINE_METRICS,
 )
 from vigorish.enums import PitchType
+from vigorish.types import RowDict
 
 
 @dataclass
@@ -176,7 +177,6 @@ class PitchFxMetricsCollection:
         return from_dict(data_class=cls, data=metrics_collection)
 
 
-RowDict = Dict[str, Union[bool, int, float, str]]
 PitchFxMetricsDict = Dict[str, Union[bool, int, float, str, PitchType]]
 PitchTypeMetricsDict = Dict[PitchType, PitchFxMetricsDict]
 PitchFxCollectionMetricsDict = Dict[str, Union[bool, int, float, str, List[PitchType]]]

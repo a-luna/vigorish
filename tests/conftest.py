@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 TESTS_FOLDER = Path(__file__).parent
+ROOT_FOLDER = TESTS_FOLDER.parent
 DOTENV_FILE = TESTS_FOLDER.joinpath(".env")
 CONFIG_FILE = TESTS_FOLDER.joinpath("vig.config.json")
 CSV_FOLDER = TESTS_FOLDER.joinpath("csv")

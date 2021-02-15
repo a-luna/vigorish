@@ -11,14 +11,15 @@ from vigorish.data.metrics.constants import (
     PITCH_STATS_INT_METRIC_NAMES,
     PITCH_STATS_STR_METRIC_NAMES,
 )
+from vigorish.types import RowDict
 
 
 @dataclass
 class PitchStatsMetrics:
     mlb_id: int
-    year: int = field(repr=False, default=None)
-    player_team_id_bbref: str = field(repr=False, default=None)
-    opponent_team_id_bbref: str = field(repr=False, default=None)
+    year: int = field(repr=False, default=0)
+    player_team_id_bbref: str = field(repr=False, default="")
+    opponent_team_id_bbref: str = field(repr=False, default="")
     stint_number: int = field(repr=False, default=0)
     total_games: int = field(repr=False, default=0)
     games_as_sp: int = field(repr=False, default=0)
@@ -69,7 +70,6 @@ class PitchStatsMetrics:
         return [from_dict(data_class=cls, data=pitch_stats) for pitch_stats in pitch_stats_list]
 
 
-RowDict = Dict[str, Union[bool, int, float, str]]
 PitchStatsMetricsDict = Dict[str, Union[int, float]]
 
 
