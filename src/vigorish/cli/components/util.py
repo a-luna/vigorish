@@ -62,8 +62,7 @@ def validate_scrape_dates(db_session, start_date, end_date):
     print_heading("\nError! Invalid value for start and/or end dates", fg="bright_red")
     for s in result.error:
         print_message(s, fg="bright_red")
-    print()
-    pause(message="Press any key to continue...")
+    pause(message="\nPress any key to continue...")
     return Result.Fail("")
 
 
