@@ -78,10 +78,6 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     for i, name in enumerate(column_names):
         if name.lower() in FILTER_NAMES:
             continue
-        field_type = str
-        dataclass_field = get_dataclass_field(name.lower())
-        if dataclass_field:
-            field_type = dataclass_field.type
         query = Template(T_PITCHFX_MEASUREMENT).substitute(i=(i + 1))
         results = table_row.xpath(query)
         if not results:
@@ -106,7 +102,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
                 f"Partial Data..: {pitchfx_dict}"
             )
             return Result.Fail(error)
-        pitchfx_dict[name.lower()] = convert_type_for_dataclass(field_type, results[0])
+        pitchfx_dict[name.lower()] = convert_type_for_dataclass(name.lower(), results[0])
     pitchfx_dict["pitcher_name"] = pitch_log.pitcher_name
     pitchfx_dict["pitch_app_id"] = pitch_log.pitch_app_id
     pitchfx_dict["pitcher_team_id_bb"] = pitch_log.pitcher_team_id_bb
@@ -133,11 +129,9 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     return Result.Ok(pitchfx)
 
 
-def get_dataclass_field(name):
-    return BrooksPitchFxData.__dataclass_fields__.get(name)
-
-
-def convert_type_for_dataclass(field_type, value):
+def convert_type_for_dataclass(name, value):
+    dataclass_field = BrooksPitchFxData.__dataclass_fields__.get(name)
+    field_type = dataclass_field.type if dataclass_field else str
     if field_type is bool:
         field_value = True if value else False
     elif not value:

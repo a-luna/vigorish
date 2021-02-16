@@ -2656,8 +2656,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 86
             },
             {
@@ -2743,8 +2743,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 103
             },
             {
@@ -2830,8 +2830,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 121
             },
             {
@@ -2917,8 +2917,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 139
             },
             {
@@ -3004,8 +3004,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 157
             },
             {
@@ -3091,8 +3091,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 176
             }
           ],
@@ -3266,8 +3266,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 209
             },
             {
@@ -3353,8 +3353,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 227
             },
             {
@@ -3440,8 +3440,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 247
             },
             {
@@ -3527,8 +3527,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 274
             }
           ],
@@ -3692,8 +3692,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 315
             },
             {
@@ -3779,8 +3779,8 @@
               "inning_id": "TOR201908170_INN_TOP01",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 336
             }
           ],
@@ -3988,8 +3988,8 @@
               "inning_id": "TOR201908170_INN_BOT01",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 27,
+              "pitcher_id_db": 203,
+              "batter_id_db": 30,
               "seconds_since_game_start": 488
             },
             {
@@ -4075,8 +4075,8 @@
               "inning_id": "TOR201908170_INN_BOT01",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 27,
+              "pitcher_id_db": 203,
+              "batter_id_db": 30,
               "seconds_since_game_start": 508
             }
           ],
@@ -4245,8 +4245,8 @@
               "inning_id": "TOR201908170_INN_BOT01",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 28,
+              "pitcher_id_db": 203,
+              "batter_id_db": 31,
               "seconds_since_game_start": 547
             },
             {
@@ -4332,8 +4332,8 @@
               "inning_id": "TOR201908170_INN_BOT01",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 28,
+              "pitcher_id_db": 203,
+              "batter_id_db": 31,
               "seconds_since_game_start": 587
             }
           ],
@@ -4562,8 +4562,8 @@
               "inning_id": "TOR201908170_INN_BOT01",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "guerrvl02",
-              "pitcher_id_db": 189,
-              "batter_id_db": 121,
+              "pitcher_id_db": 203,
+              "batter_id_db": 130,
               "seconds_since_game_start": 624
             },
             {
@@ -4649,8 +4649,8 @@
               "inning_id": "TOR201908170_INN_BOT01",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "guerrvl02",
-              "pitcher_id_db": 189,
-              "batter_id_db": 121,
+              "pitcher_id_db": 203,
+              "batter_id_db": 130,
               "seconds_since_game_start": 642
             },
             {
@@ -4736,8 +4736,8 @@
               "inning_id": "TOR201908170_INN_BOT01",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "guerrvl02",
-              "pitcher_id_db": 189,
-              "batter_id_db": 121,
+              "pitcher_id_db": 203,
+              "batter_id_db": 130,
               "seconds_since_game_start": 742
             },
             {
@@ -4823,8 +4823,8 @@
               "inning_id": "TOR201908170_INN_BOT01",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "guerrvl02",
-              "pitcher_id_db": 189,
-              "batter_id_db": 121,
+              "pitcher_id_db": 203,
+              "batter_id_db": 130,
               "seconds_since_game_start": 761
             }
           ],
@@ -5041,8 +5041,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 901
             },
             {
@@ -5128,8 +5128,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 920
             },
             {
@@ -5215,8 +5215,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 947
             }
           ],
@@ -5375,8 +5375,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 213,
+              "pitcher_id_db": 311,
+              "batter_id_db": 228,
               "seconds_since_game_start": 973
             }
           ],
@@ -5575,8 +5575,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 1017
             },
             {
@@ -5662,8 +5662,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 1040
             },
             {
@@ -5749,8 +5749,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 1074
             },
             {
@@ -5836,8 +5836,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 1091
             }
           ],
@@ -6031,8 +6031,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 1129
             },
             {
@@ -6118,8 +6118,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 1156
             },
             {
@@ -6205,8 +6205,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 1176
             },
             {
@@ -6292,8 +6292,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 1203
             },
             {
@@ -6379,8 +6379,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 1231
             },
             {
@@ -6466,8 +6466,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 1259
             },
             {
@@ -6553,8 +6553,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 1293
             },
             {
@@ -6640,8 +6640,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 1318
             }
           ],
@@ -6805,8 +6805,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 40,
+              "pitcher_id_db": 311,
+              "batter_id_db": 43,
               "seconds_since_game_start": 1395
             },
             {
@@ -6892,8 +6892,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 40,
+              "pitcher_id_db": 311,
+              "batter_id_db": 43,
               "seconds_since_game_start": 1429
             }
           ],
@@ -7067,8 +7067,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 200,
+              "pitcher_id_db": 311,
+              "batter_id_db": 215,
               "seconds_since_game_start": 1470
             },
             {
@@ -7154,8 +7154,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 200,
+              "pitcher_id_db": 311,
+              "batter_id_db": 215,
               "seconds_since_game_start": 1494
             },
             {
@@ -7241,8 +7241,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 200,
+              "pitcher_id_db": 311,
+              "batter_id_db": 215,
               "seconds_since_game_start": 1513
             },
             {
@@ -7328,8 +7328,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 200,
+              "pitcher_id_db": 311,
+              "batter_id_db": 215,
               "seconds_since_game_start": 1532
             }
           ],
@@ -7493,8 +7493,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 1573
             },
             {
@@ -7580,8 +7580,8 @@
               "inning_id": "TOR201908170_INN_TOP02",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 1597
             }
           ],
@@ -7802,8 +7802,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 284,
+              "pitcher_id_db": 203,
+              "batter_id_db": 309,
               "seconds_since_game_start": 1730
             },
             {
@@ -7889,8 +7889,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 284,
+              "pitcher_id_db": 203,
+              "batter_id_db": 309,
               "seconds_since_game_start": 1746
             },
             {
@@ -7976,8 +7976,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 284,
+              "pitcher_id_db": 203,
+              "batter_id_db": 309,
               "seconds_since_game_start": 1773
             },
             {
@@ -8063,8 +8063,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 284,
+              "pitcher_id_db": 203,
+              "batter_id_db": 309,
               "seconds_since_game_start": 1812
             }
           ],
@@ -8243,8 +8243,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 118,
+              "pitcher_id_db": 203,
+              "batter_id_db": 127,
               "seconds_since_game_start": 1844
             },
             {
@@ -8330,8 +8330,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 118,
+              "pitcher_id_db": 203,
+              "batter_id_db": 127,
               "seconds_since_game_start": 1857
             },
             {
@@ -8417,8 +8417,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 118,
+              "pitcher_id_db": 203,
+              "batter_id_db": 127,
               "seconds_since_game_start": 1878
             },
             {
@@ -8504,8 +8504,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 118,
+              "pitcher_id_db": 203,
+              "batter_id_db": 127,
               "seconds_since_game_start": 1896
             },
             {
@@ -8591,8 +8591,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 118,
+              "pitcher_id_db": 203,
+              "batter_id_db": 127,
               "seconds_since_game_start": 1915
             }
           ],
@@ -8761,8 +8761,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 266,
+              "pitcher_id_db": 203,
+              "batter_id_db": 290,
               "seconds_since_game_start": 1947
             },
             {
@@ -8848,8 +8848,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 266,
+              "pitcher_id_db": 203,
+              "batter_id_db": 290,
               "seconds_since_game_start": 1962
             },
             {
@@ -8935,8 +8935,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 266,
+              "pitcher_id_db": 203,
+              "batter_id_db": 290,
               "seconds_since_game_start": 1991
             }
           ],
@@ -9120,8 +9120,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 85,
+              "pitcher_id_db": 203,
+              "batter_id_db": 93,
               "seconds_since_game_start": 2035
             },
             {
@@ -9207,8 +9207,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 85,
+              "pitcher_id_db": 203,
+              "batter_id_db": 93,
               "seconds_since_game_start": 2062
             },
             {
@@ -9294,8 +9294,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 85,
+              "pitcher_id_db": 203,
+              "batter_id_db": 93,
               "seconds_since_game_start": 2086
             },
             {
@@ -9381,8 +9381,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 85,
+              "pitcher_id_db": 203,
+              "batter_id_db": 93,
               "seconds_since_game_start": 2112
             },
             {
@@ -9468,8 +9468,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 85,
+              "pitcher_id_db": 203,
+              "batter_id_db": 93,
               "seconds_since_game_start": 2143
             },
             {
@@ -9555,8 +9555,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 85,
+              "pitcher_id_db": 203,
+              "batter_id_db": 93,
               "seconds_since_game_start": 2179
             }
           ],
@@ -9720,8 +9720,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 192,
+              "pitcher_id_db": 203,
+              "batter_id_db": 206,
               "seconds_since_game_start": 2226
             },
             {
@@ -9807,8 +9807,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 192,
+              "pitcher_id_db": 203,
+              "batter_id_db": 206,
               "seconds_since_game_start": 2252
             }
           ],
@@ -9967,8 +9967,8 @@
               "inning_id": "TOR201908170_INN_BOT02",
               "pitcher_id_bbref": "mcclare01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 189,
-              "batter_id_db": 191,
+              "pitcher_id_db": 203,
+              "batter_id_db": 205,
               "seconds_since_game_start": 2330
             }
           ],
@@ -10211,8 +10211,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 2480
             },
             {
@@ -10298,8 +10298,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 2496
             },
             {
@@ -10385,8 +10385,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 2517
             },
             {
@@ -10472,8 +10472,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 2541
             },
             {
@@ -10559,8 +10559,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 2572
             }
           ],
@@ -10739,8 +10739,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 2596
             },
             {
@@ -10826,8 +10826,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 2612
             },
             {
@@ -10913,8 +10913,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 2634
             },
             {
@@ -11000,8 +11000,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 2651
             },
             {
@@ -11087,8 +11087,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 2672
             }
           ],
@@ -11252,8 +11252,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 2703
             },
             {
@@ -11339,8 +11339,8 @@
               "inning_id": "TOR201908170_INN_TOP03",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 2725
             }
           ],
@@ -11593,8 +11593,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 27,
+              "pitcher_id_db": 116,
+              "batter_id_db": 30,
               "seconds_since_game_start": 2893
             },
             {
@@ -11680,8 +11680,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 27,
+              "pitcher_id_db": 116,
+              "batter_id_db": 30,
               "seconds_since_game_start": 2916
             },
             {
@@ -11767,8 +11767,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 27,
+              "pitcher_id_db": 116,
+              "batter_id_db": 30,
               "seconds_since_game_start": 2938
             },
             {
@@ -11854,8 +11854,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 27,
+              "pitcher_id_db": 116,
+              "batter_id_db": 30,
               "seconds_since_game_start": 2962
             },
             {
@@ -11941,8 +11941,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 27,
+              "pitcher_id_db": 116,
+              "batter_id_db": 30,
               "seconds_since_game_start": 2985
             },
             {
@@ -12028,8 +12028,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 27,
+              "pitcher_id_db": 116,
+              "batter_id_db": 30,
               "seconds_since_game_start": 3005
             },
             {
@@ -12115,8 +12115,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 27,
+              "pitcher_id_db": 116,
+              "batter_id_db": 30,
               "seconds_since_game_start": 3059
             }
           ],
@@ -12275,8 +12275,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 28,
+              "pitcher_id_db": 116,
+              "batter_id_db": 31,
               "seconds_since_game_start": 3097
             }
           ],
@@ -12460,8 +12460,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 76,
+              "pitcher_id_db": 116,
+              "batter_id_db": 84,
               "seconds_since_game_start": 3143
             },
             {
@@ -12547,8 +12547,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 76,
+              "pitcher_id_db": 116,
+              "batter_id_db": 84,
               "seconds_since_game_start": 3164
             },
             {
@@ -12634,8 +12634,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 76,
+              "pitcher_id_db": 116,
+              "batter_id_db": 84,
               "seconds_since_game_start": 3186
             },
             {
@@ -12721,8 +12721,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 76,
+              "pitcher_id_db": 116,
+              "batter_id_db": 84,
               "seconds_since_game_start": 3211
             },
             {
@@ -12808,8 +12808,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 76,
+              "pitcher_id_db": 116,
+              "batter_id_db": 84,
               "seconds_since_game_start": 3245
             },
             {
@@ -12895,8 +12895,8 @@
               "inning_id": "TOR201908170_INN_BOT03",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 76,
+              "pitcher_id_db": 116,
+              "batter_id_db": 84,
               "seconds_since_game_start": 3276
             }
           ],
@@ -13121,8 +13121,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 213,
+              "pitcher_id_db": 311,
+              "batter_id_db": 228,
               "seconds_since_game_start": 3415
             },
             {
@@ -13208,8 +13208,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 213,
+              "pitcher_id_db": 311,
+              "batter_id_db": 228,
               "seconds_since_game_start": 3430
             },
             {
@@ -13295,8 +13295,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 213,
+              "pitcher_id_db": 311,
+              "batter_id_db": 228,
               "seconds_since_game_start": 3444
             },
             {
@@ -13382,8 +13382,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 213,
+              "pitcher_id_db": 311,
+              "batter_id_db": 228,
               "seconds_since_game_start": 3471
             },
             {
@@ -13469,8 +13469,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 213,
+              "pitcher_id_db": 311,
+              "batter_id_db": 228,
               "seconds_since_game_start": 3498
             }
           ],
@@ -13644,8 +13644,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 3537
             },
             {
@@ -13731,8 +13731,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 3551
             },
             {
@@ -13818,8 +13818,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 3567
             },
             {
@@ -13905,8 +13905,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 3586
             }
           ],
@@ -14065,8 +14065,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 3641
             }
           ],
@@ -14225,8 +14225,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 40,
+              "pitcher_id_db": 311,
+              "batter_id_db": 43,
               "seconds_since_game_start": 3694
             }
           ],
@@ -14385,8 +14385,8 @@
               "inning_id": "TOR201908170_INN_TOP04",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 200,
+              "pitcher_id_db": 311,
+              "batter_id_db": 215,
               "seconds_since_game_start": 3727
             }
           ],
@@ -14590,8 +14590,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 284,
+              "pitcher_id_db": 116,
+              "batter_id_db": 309,
               "seconds_since_game_start": 3888
             }
           ],
@@ -14760,8 +14760,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 118,
+              "pitcher_id_db": 116,
+              "batter_id_db": 127,
               "seconds_since_game_start": 3918
             },
             {
@@ -14847,8 +14847,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 118,
+              "pitcher_id_db": 116,
+              "batter_id_db": 127,
               "seconds_since_game_start": 3939
             },
             {
@@ -14934,8 +14934,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 118,
+              "pitcher_id_db": 116,
+              "batter_id_db": 127,
               "seconds_since_game_start": 3972
             }
           ],
@@ -15122,8 +15122,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 266,
+              "pitcher_id_db": 116,
+              "batter_id_db": 290,
               "seconds_since_game_start": 4084
             },
             {
@@ -15209,8 +15209,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 266,
+              "pitcher_id_db": 116,
+              "batter_id_db": 290,
               "seconds_since_game_start": 4103
             },
             {
@@ -15296,8 +15296,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 266,
+              "pitcher_id_db": 116,
+              "batter_id_db": 290,
               "seconds_since_game_start": 4125
             },
             {
@@ -15383,8 +15383,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "gearrco01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 107,
-              "batter_id_db": 266,
+              "pitcher_id_db": 116,
+              "batter_id_db": 290,
               "seconds_since_game_start": 4144
             }
           ],
@@ -15588,8 +15588,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 85,
+              "pitcher_id_db": 131,
+              "batter_id_db": 93,
               "seconds_since_game_start": 4318
             },
             {
@@ -15675,8 +15675,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 85,
+              "pitcher_id_db": 131,
+              "batter_id_db": 93,
               "seconds_since_game_start": 4343
             },
             {
@@ -15762,8 +15762,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 85,
+              "pitcher_id_db": 131,
+              "batter_id_db": 93,
               "seconds_since_game_start": 4363
             },
             {
@@ -15849,8 +15849,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 85,
+              "pitcher_id_db": 131,
+              "batter_id_db": 93,
               "seconds_since_game_start": 4390
             },
             {
@@ -15936,8 +15936,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 85,
+              "pitcher_id_db": 131,
+              "batter_id_db": 93,
               "seconds_since_game_start": 4417
             },
             {
@@ -16023,8 +16023,8 @@
               "inning_id": "TOR201908170_INN_BOT04",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 85,
+              "pitcher_id_db": 131,
+              "batter_id_db": 93,
               "seconds_since_game_start": 4447
             }
           ],
@@ -16228,8 +16228,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 167,
+              "pitcher_id_db": 311,
+              "batter_id_db": 179,
               "seconds_since_game_start": 4590
             }
           ],
@@ -16403,8 +16403,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 4640
             },
             {
@@ -16490,8 +16490,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 4659
             },
             {
@@ -16577,8 +16577,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 4681
             },
             {
@@ -16664,8 +16664,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 59,
+              "pitcher_id_db": 311,
+              "batter_id_db": 65,
               "seconds_since_game_start": 4706
             }
           ],
@@ -16844,8 +16844,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 4749
             },
             {
@@ -16931,8 +16931,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 4765
             },
             {
@@ -17018,8 +17018,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 4783
             },
             {
@@ -17105,8 +17105,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 4808
             },
             {
@@ -17192,8 +17192,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 208,
+              "pitcher_id_db": 311,
+              "batter_id_db": 223,
               "seconds_since_game_start": 4827
             }
           ],
@@ -17377,8 +17377,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 4862
             },
             {
@@ -17464,8 +17464,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 4882
             },
             {
@@ -17551,8 +17551,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 4905
             },
             {
@@ -17638,8 +17638,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 4947
             },
             {
@@ -17725,8 +17725,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 4976
             },
             {
@@ -17812,8 +17812,8 @@
               "inning_id": "TOR201908170_INN_TOP05",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 259,
+              "pitcher_id_db": 311,
+              "batter_id_db": 282,
               "seconds_since_game_start": 5005
             }
           ],
@@ -18034,8 +18034,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 192,
+              "pitcher_id_db": 131,
+              "batter_id_db": 206,
               "seconds_since_game_start": 5151
             },
             {
@@ -18121,8 +18121,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 192,
+              "pitcher_id_db": 131,
+              "batter_id_db": 206,
               "seconds_since_game_start": 5173
             },
             {
@@ -18208,8 +18208,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 192,
+              "pitcher_id_db": 131,
+              "batter_id_db": 206,
               "seconds_since_game_start": 5191
             },
             {
@@ -18295,8 +18295,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 192,
+              "pitcher_id_db": 131,
+              "batter_id_db": 206,
               "seconds_since_game_start": 5215
             }
           ],
@@ -18475,8 +18475,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 191,
+              "pitcher_id_db": 131,
+              "batter_id_db": 205,
               "seconds_since_game_start": 5250
             },
             {
@@ -18562,8 +18562,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 191,
+              "pitcher_id_db": 131,
+              "batter_id_db": 205,
               "seconds_since_game_start": 5276
             },
             {
@@ -18649,8 +18649,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 191,
+              "pitcher_id_db": 131,
+              "batter_id_db": 205,
               "seconds_since_game_start": 5295
             },
             {
@@ -18736,8 +18736,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 191,
+              "pitcher_id_db": 131,
+              "batter_id_db": 205,
               "seconds_since_game_start": 5326
             },
             {
@@ -18823,8 +18823,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 191,
+              "pitcher_id_db": 131,
+              "batter_id_db": 205,
               "seconds_since_game_start": 5357
             }
           ],
@@ -19008,8 +19008,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 27,
+              "pitcher_id_db": 131,
+              "batter_id_db": 30,
               "seconds_since_game_start": 5391
             },
             {
@@ -19095,8 +19095,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 27,
+              "pitcher_id_db": 131,
+              "batter_id_db": 30,
               "seconds_since_game_start": 5406
             },
             {
@@ -19182,8 +19182,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 27,
+              "pitcher_id_db": 131,
+              "batter_id_db": 30,
               "seconds_since_game_start": 5425
             },
             {
@@ -19269,8 +19269,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 27,
+              "pitcher_id_db": 131,
+              "batter_id_db": 30,
               "seconds_since_game_start": 5452
             },
             {
@@ -19356,8 +19356,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 27,
+              "pitcher_id_db": 131,
+              "batter_id_db": 30,
               "seconds_since_game_start": 5477
             },
             {
@@ -19443,8 +19443,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 27,
+              "pitcher_id_db": 131,
+              "batter_id_db": 30,
               "seconds_since_game_start": 5515
             }
           ],
@@ -19613,8 +19613,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 28,
+              "pitcher_id_db": 131,
+              "batter_id_db": 31,
               "seconds_since_game_start": 5557
             },
             {
@@ -19700,8 +19700,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 28,
+              "pitcher_id_db": 131,
+              "batter_id_db": 31,
               "seconds_since_game_start": 5574
             },
             {
@@ -19787,8 +19787,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "guilbta01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 122,
-              "batter_id_db": 28,
+              "pitcher_id_db": 131,
+              "batter_id_db": 31,
               "seconds_since_game_start": 5600
             }
           ],
@@ -19972,8 +19972,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 76,
+              "pitcher_id_db": 129,
+              "batter_id_db": 84,
               "seconds_since_game_start": 5773
             },
             {
@@ -20059,8 +20059,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 76,
+              "pitcher_id_db": 129,
+              "batter_id_db": 84,
               "seconds_since_game_start": 5799
             }
           ],
@@ -20224,8 +20224,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 284,
+              "pitcher_id_db": 129,
+              "batter_id_db": 309,
               "seconds_since_game_start": 5847
             },
             {
@@ -20311,8 +20311,8 @@
               "inning_id": "TOR201908170_INN_BOT05",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 284,
+              "pitcher_id_db": 129,
+              "batter_id_db": 309,
               "seconds_since_game_start": 5877
             }
           ],
@@ -20515,8 +20515,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 213,
+              "pitcher_id_db": 311,
+              "batter_id_db": 228,
               "seconds_since_game_start": 6018
             }
           ],
@@ -20690,8 +20690,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 6047
             },
             {
@@ -20777,8 +20777,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 6063
             },
             {
@@ -20864,8 +20864,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 6077
             },
             {
@@ -20951,8 +20951,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 300,
+              "pitcher_id_db": 311,
+              "batter_id_db": 326,
               "seconds_since_game_start": 6097
             }
           ],
@@ -21116,8 +21116,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 6128
             },
             {
@@ -21203,8 +21203,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 112,
+              "pitcher_id_db": 311,
+              "batter_id_db": 121,
               "seconds_since_game_start": 6158
             }
           ],
@@ -21383,8 +21383,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 40,
+              "pitcher_id_db": 311,
+              "batter_id_db": 43,
               "seconds_since_game_start": 6210
             },
             {
@@ -21470,8 +21470,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 40,
+              "pitcher_id_db": 311,
+              "batter_id_db": 43,
               "seconds_since_game_start": 6254
             },
             {
@@ -21557,8 +21557,8 @@
               "inning_id": "TOR201908170_INN_TOP06",
               "pitcher_id_bbref": "thorntr01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 286,
-              "batter_id_db": 40,
+              "pitcher_id_db": 311,
+              "batter_id_db": 43,
               "seconds_since_game_start": 6291
             }
           ],
@@ -21767,8 +21767,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 118,
+              "pitcher_id_db": 129,
+              "batter_id_db": 127,
               "seconds_since_game_start": 6444
             },
             {
@@ -21854,8 +21854,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 118,
+              "pitcher_id_db": 129,
+              "batter_id_db": 127,
               "seconds_since_game_start": 6460
             }
           ],
@@ -22039,8 +22039,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 266,
+              "pitcher_id_db": 129,
+              "batter_id_db": 290,
               "seconds_since_game_start": 6492
             },
             {
@@ -22126,8 +22126,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 266,
+              "pitcher_id_db": 129,
+              "batter_id_db": 290,
               "seconds_since_game_start": 6507
             },
             {
@@ -22213,8 +22213,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 266,
+              "pitcher_id_db": 129,
+              "batter_id_db": 290,
               "seconds_since_game_start": 6543
             },
             {
@@ -22300,8 +22300,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 266,
+              "pitcher_id_db": 129,
+              "batter_id_db": 290,
               "seconds_since_game_start": 6561
             },
             {
@@ -22387,8 +22387,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 266,
+              "pitcher_id_db": 129,
+              "batter_id_db": 290,
               "seconds_since_game_start": 6578
             },
             {
@@ -22474,8 +22474,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 266,
+              "pitcher_id_db": 129,
+              "batter_id_db": 290,
               "seconds_since_game_start": 6596
             }
           ],
@@ -22659,8 +22659,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 85,
+              "pitcher_id_db": 129,
+              "batter_id_db": 93,
               "seconds_since_game_start": 6636
             },
             {
@@ -22746,8 +22746,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 85,
+              "pitcher_id_db": 129,
+              "batter_id_db": 93,
               "seconds_since_game_start": 6654
             },
             {
@@ -22833,8 +22833,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 85,
+              "pitcher_id_db": 129,
+              "batter_id_db": 93,
               "seconds_since_game_start": 6675
             },
             {
@@ -22920,8 +22920,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 85,
+              "pitcher_id_db": 129,
+              "batter_id_db": 93,
               "seconds_since_game_start": 6699
             },
             {
@@ -23007,8 +23007,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 85,
+              "pitcher_id_db": 129,
+              "batter_id_db": 93,
               "seconds_since_game_start": 6721
             },
             {
@@ -23094,8 +23094,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 85,
+              "pitcher_id_db": 129,
+              "batter_id_db": 93,
               "seconds_since_game_start": 6745
             }
           ],
@@ -23294,8 +23294,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6779
             },
             {
@@ -23381,8 +23381,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6796
             },
             {
@@ -23468,8 +23468,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6815
             },
             {
@@ -23555,8 +23555,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6836
             },
             {
@@ -23642,8 +23642,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6859
             },
             {
@@ -23729,8 +23729,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6883
             },
             {
@@ -23816,8 +23816,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6908
             },
             {
@@ -23903,8 +23903,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6934
             },
             {
@@ -23990,8 +23990,8 @@
               "inning_id": "TOR201908170_INN_BOT06",
               "pitcher_id_bbref": "grotzza01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 120,
-              "batter_id_db": 192,
+              "pitcher_id_db": 129,
+              "batter_id_db": 206,
               "seconds_since_game_start": 6968
             }
           ],
@@ -24224,8 +24224,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 40,
+              "pitcher_id_db": 115,
+              "batter_id_db": 43,
               "seconds_since_game_start": 7139
             },
             {
@@ -24311,8 +24311,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 40,
+              "pitcher_id_db": 115,
+              "batter_id_db": 43,
               "seconds_since_game_start": 7154
             },
             {
@@ -24398,8 +24398,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 40,
+              "pitcher_id_db": 115,
+              "batter_id_db": 43,
               "seconds_since_game_start": 7177
             }
           ],
@@ -24568,8 +24568,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 200,
+              "pitcher_id_db": 115,
+              "batter_id_db": 215,
               "seconds_since_game_start": 7209
             },
             {
@@ -24655,8 +24655,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 200,
+              "pitcher_id_db": 115,
+              "batter_id_db": 215,
               "seconds_since_game_start": 7225
             },
             {
@@ -24742,8 +24742,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 200,
+              "pitcher_id_db": 115,
+              "batter_id_db": 215,
               "seconds_since_game_start": 7243
             }
           ],
@@ -24912,8 +24912,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 167,
+              "pitcher_id_db": 115,
+              "batter_id_db": 179,
               "seconds_since_game_start": 7276
             },
             {
@@ -24999,8 +24999,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 167,
+              "pitcher_id_db": 115,
+              "batter_id_db": 179,
               "seconds_since_game_start": 7291
             },
             {
@@ -25086,8 +25086,8 @@
               "inning_id": "TOR201908170_INN_TOP07",
               "pitcher_id_bbref": "gavigsa01",
               "batter_id_bbref": "lopesti01",
-              "pitcher_id_db": 106,
-              "batter_id_db": 167,
+              "pitcher_id_db": 115,
+              "batter_id_db": 179,
               "seconds_since_game_start": 7315
             }
           ],
@@ -25316,8 +25316,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 191,
+              "pitcher_id_db": 21,
+              "batter_id_db": 205,
               "seconds_since_game_start": 7467
             },
             {
@@ -25403,8 +25403,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 191,
+              "pitcher_id_db": 21,
+              "batter_id_db": 205,
               "seconds_since_game_start": 7493
             }
           ],
@@ -25583,8 +25583,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 27,
+              "pitcher_id_db": 21,
+              "batter_id_db": 30,
               "seconds_since_game_start": 7533
             },
             {
@@ -25670,8 +25670,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 27,
+              "pitcher_id_db": 21,
+              "batter_id_db": 30,
               "seconds_since_game_start": 7547
             },
             {
@@ -25757,8 +25757,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 27,
+              "pitcher_id_db": 21,
+              "batter_id_db": 30,
               "seconds_since_game_start": 7569
             },
             {
@@ -25844,8 +25844,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 27,
+              "pitcher_id_db": 21,
+              "batter_id_db": 30,
               "seconds_since_game_start": 7591
             },
             {
@@ -25931,8 +25931,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 27,
+              "pitcher_id_db": 21,
+              "batter_id_db": 30,
               "seconds_since_game_start": 7614
             }
           ],
@@ -26106,8 +26106,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 28,
+              "pitcher_id_db": 21,
+              "batter_id_db": 31,
               "seconds_since_game_start": 7651
             },
             {
@@ -26193,8 +26193,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 28,
+              "pitcher_id_db": 21,
+              "batter_id_db": 31,
               "seconds_since_game_start": 7668
             },
             {
@@ -26280,8 +26280,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 28,
+              "pitcher_id_db": 21,
+              "batter_id_db": 31,
               "seconds_since_game_start": 7691
             },
             {
@@ -26367,8 +26367,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "biggica01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 28,
+              "pitcher_id_db": 21,
+              "batter_id_db": 31,
               "seconds_since_game_start": 7711
             }
           ],
@@ -26547,8 +26547,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 76,
+              "pitcher_id_db": 21,
+              "batter_id_db": 84,
               "seconds_since_game_start": 7745
             },
             {
@@ -26634,8 +26634,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 76,
+              "pitcher_id_db": 21,
+              "batter_id_db": 84,
               "seconds_since_game_start": 7764
             },
             {
@@ -26721,8 +26721,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 76,
+              "pitcher_id_db": 21,
+              "batter_id_db": 84,
               "seconds_since_game_start": 7786
             },
             {
@@ -26808,8 +26808,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 76,
+              "pitcher_id_db": 21,
+              "batter_id_db": 84,
               "seconds_since_game_start": 7809
             },
             {
@@ -26895,8 +26895,8 @@
               "inning_id": "TOR201908170_INN_BOT07",
               "pitcher_id_bbref": "bassan01",
               "batter_id_bbref": "drurybr01",
-              "pitcher_id_db": 19,
-              "batter_id_db": 76,
+              "pitcher_id_db": 21,
+              "batter_id_db": 84,
               "seconds_since_game_start": 7845
             }
           ],
@@ -27130,8 +27130,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "mayzati01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 187,
-              "batter_id_db": 59,
+              "pitcher_id_db": 201,
+              "batter_id_db": 65,
               "seconds_since_game_start": 8002
             },
             {
@@ -27217,8 +27217,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "mayzati01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 187,
-              "batter_id_db": 59,
+              "pitcher_id_db": 201,
+              "batter_id_db": 65,
               "seconds_since_game_start": 8024
             },
             {
@@ -27304,8 +27304,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "mayzati01",
               "batter_id_bbref": "crawfjp01",
-              "pitcher_id_db": 187,
-              "batter_id_db": 59,
+              "pitcher_id_db": 201,
+              "batter_id_db": 65,
               "seconds_since_game_start": 8045
             }
           ],
@@ -27469,8 +27469,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "mayzati01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 187,
-              "batter_id_db": 208,
+              "pitcher_id_db": 201,
+              "batter_id_db": 223,
               "seconds_since_game_start": 8080
             },
             {
@@ -27556,8 +27556,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "mayzati01",
               "batter_id_bbref": "narvaom01",
-              "pitcher_id_db": 187,
-              "batter_id_db": 208,
+              "pitcher_id_db": 201,
+              "batter_id_db": 223,
               "seconds_since_game_start": 8107
             }
           ],
@@ -27716,8 +27716,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "mayzati01",
               "batter_id_bbref": "seageky01",
-              "pitcher_id_db": 187,
-              "batter_id_db": 259,
+              "pitcher_id_db": 201,
+              "batter_id_db": 282,
               "seconds_since_game_start": 8147
             }
           ],
@@ -27926,8 +27926,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 213,
+              "pitcher_id_db": 176,
+              "batter_id_db": 228,
               "seconds_since_game_start": 8318
             },
             {
@@ -28013,8 +28013,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 213,
+              "pitcher_id_db": 176,
+              "batter_id_db": 228,
               "seconds_since_game_start": 8332
             },
             {
@@ -28100,8 +28100,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 213,
+              "pitcher_id_db": 176,
+              "batter_id_db": 228,
               "seconds_since_game_start": 8350
             },
             {
@@ -28187,8 +28187,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 213,
+              "pitcher_id_db": 176,
+              "batter_id_db": 228,
               "seconds_since_game_start": 8378
             },
             {
@@ -28274,8 +28274,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 213,
+              "pitcher_id_db": 176,
+              "batter_id_db": 228,
               "seconds_since_game_start": 8395
             },
             {
@@ -28361,8 +28361,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 213,
+              "pitcher_id_db": 176,
+              "batter_id_db": 228,
               "seconds_since_game_start": 8421
             },
             {
@@ -28448,8 +28448,8 @@
               "inning_id": "TOR201908170_INN_TOP08",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "nolaau01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 213,
+              "pitcher_id_db": 176,
+              "batter_id_db": 228,
               "seconds_since_game_start": 8442
             }
           ],
@@ -28707,8 +28707,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 284,
+              "pitcher_id_db": 317,
+              "batter_id_db": 309,
               "seconds_since_game_start": 8602
             },
             {
@@ -28794,8 +28794,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 284,
+              "pitcher_id_db": 317,
+              "batter_id_db": 309,
               "seconds_since_game_start": 8619
             },
             {
@@ -28881,8 +28881,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 284,
+              "pitcher_id_db": 317,
+              "batter_id_db": 309,
               "seconds_since_game_start": 8639
             },
             {
@@ -28968,8 +28968,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 284,
+              "pitcher_id_db": 317,
+              "batter_id_db": 309,
               "seconds_since_game_start": 8660
             },
             {
@@ -29055,8 +29055,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 284,
+              "pitcher_id_db": 317,
+              "batter_id_db": 309,
               "seconds_since_game_start": 8692
             },
             {
@@ -29142,8 +29142,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 284,
+              "pitcher_id_db": 317,
+              "batter_id_db": 309,
               "seconds_since_game_start": 8717
             },
             {
@@ -29229,8 +29229,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 284,
+              "pitcher_id_db": 317,
+              "batter_id_db": 309,
               "seconds_since_game_start": 8745
             },
             {
@@ -29316,8 +29316,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "tellero01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 284,
+              "pitcher_id_db": 317,
+              "batter_id_db": 309,
               "seconds_since_game_start": 8774
             }
           ],
@@ -29476,8 +29476,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "grichra01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 118,
+              "pitcher_id_db": 317,
+              "batter_id_db": 127,
               "seconds_since_game_start": 8808
             }
           ],
@@ -29641,8 +29641,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 266,
+              "pitcher_id_db": 317,
+              "batter_id_db": 290,
               "seconds_since_game_start": 8851
             },
             {
@@ -29728,8 +29728,8 @@
               "inning_id": "TOR201908170_INN_BOT08",
               "pitcher_id_bbref": "tuivasa01",
               "batter_id_bbref": "smoakju01",
-              "pitcher_id_db": 292,
-              "batter_id_db": 266,
+              "pitcher_id_db": 317,
+              "batter_id_db": 290,
               "seconds_since_game_start": 8874
             }
           ],
@@ -29952,8 +29952,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 300,
+              "pitcher_id_db": 176,
+              "batter_id_db": 326,
               "seconds_since_game_start": 9008
             },
             {
@@ -30039,8 +30039,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 300,
+              "pitcher_id_db": 176,
+              "batter_id_db": 326,
               "seconds_since_game_start": 9022
             },
             {
@@ -30126,8 +30126,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 300,
+              "pitcher_id_db": 176,
+              "batter_id_db": 326,
               "seconds_since_game_start": 9036
             },
             {
@@ -30213,8 +30213,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 300,
+              "pitcher_id_db": 176,
+              "batter_id_db": 326,
               "seconds_since_game_start": 9059
             },
             {
@@ -30300,8 +30300,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "vogelda01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 300,
+              "pitcher_id_db": 176,
+              "batter_id_db": 326,
               "seconds_since_game_start": 9077
             }
           ],
@@ -30460,8 +30460,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "gordode01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 112,
+              "pitcher_id_db": 176,
+              "batter_id_db": 121,
               "seconds_since_game_start": 9110
             }
           ],
@@ -30645,8 +30645,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 40,
+              "pitcher_id_db": 176,
+              "batter_id_db": 43,
               "seconds_since_game_start": 9152
             },
             {
@@ -30732,8 +30732,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 40,
+              "pitcher_id_db": 176,
+              "batter_id_db": 43,
               "seconds_since_game_start": 9169
             },
             {
@@ -30819,8 +30819,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 40,
+              "pitcher_id_db": 176,
+              "batter_id_db": 43,
               "seconds_since_game_start": 9186
             },
             {
@@ -30906,8 +30906,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 40,
+              "pitcher_id_db": 176,
+              "batter_id_db": 43,
               "seconds_since_game_start": 9210
             },
             {
@@ -30993,8 +30993,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 40,
+              "pitcher_id_db": 176,
+              "batter_id_db": 43,
               "seconds_since_game_start": 9228
             },
             {
@@ -31080,8 +31080,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "broxtke01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 40,
+              "pitcher_id_db": 176,
+              "batter_id_db": 43,
               "seconds_since_game_start": 9249
             }
           ],
@@ -31263,8 +31263,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 200,
+              "pitcher_id_db": 176,
+              "batter_id_db": 215,
               "seconds_since_game_start": 9284
             },
             {
@@ -31350,8 +31350,8 @@
               "inning_id": "TOR201908170_INN_TOP09",
               "pitcher_id_bbref": "lawde01",
               "batter_id_bbref": "mooredy01",
-              "pitcher_id_db": 164,
-              "batter_id_db": 200,
+              "pitcher_id_db": 176,
+              "batter_id_db": 215,
               "seconds_since_game_start": 9303
             }
           ],
@@ -31585,8 +31585,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 85,
+              "pitcher_id_db": 186,
+              "batter_id_db": 93,
               "seconds_since_game_start": 9658
             },
             {
@@ -31672,8 +31672,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 85,
+              "pitcher_id_db": 186,
+              "batter_id_db": 93,
               "seconds_since_game_start": 9675
             },
             {
@@ -31759,8 +31759,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "fishede01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 85,
+              "pitcher_id_db": 186,
+              "batter_id_db": 93,
               "seconds_since_game_start": 9698
             }
           ],
@@ -31934,8 +31934,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 192,
+              "pitcher_id_db": 186,
+              "batter_id_db": 206,
               "seconds_since_game_start": 9733
             },
             {
@@ -32021,8 +32021,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 192,
+              "pitcher_id_db": 186,
+              "batter_id_db": 206,
               "seconds_since_game_start": 9751
             },
             {
@@ -32108,8 +32108,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 192,
+              "pitcher_id_db": 186,
+              "batter_id_db": 206,
               "seconds_since_game_start": 9774
             },
             {
@@ -32195,8 +32195,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "mckinbi01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 192,
+              "pitcher_id_db": 186,
+              "batter_id_db": 206,
               "seconds_since_game_start": 9797
             }
           ],
@@ -32370,8 +32370,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 191,
+              "pitcher_id_db": 186,
+              "batter_id_db": 205,
               "seconds_since_game_start": 9827
             },
             {
@@ -32457,8 +32457,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 191,
+              "pitcher_id_db": 186,
+              "batter_id_db": 205,
               "seconds_since_game_start": 9844
             },
             {
@@ -32544,8 +32544,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 191,
+              "pitcher_id_db": 186,
+              "batter_id_db": 205,
               "seconds_since_game_start": 9878
             },
             {
@@ -32631,8 +32631,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "mcguire01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 191,
+              "pitcher_id_db": 186,
+              "batter_id_db": 205,
               "seconds_since_game_start": 9901
             }
           ],
@@ -32846,8 +32846,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 27,
+              "pitcher_id_db": 186,
+              "batter_id_db": 30,
               "seconds_since_game_start": 9992
             },
             {
@@ -32933,8 +32933,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 27,
+              "pitcher_id_db": 186,
+              "batter_id_db": 30,
               "seconds_since_game_start": 10014
             },
             {
@@ -33020,8 +33020,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 27,
+              "pitcher_id_db": 186,
+              "batter_id_db": 30,
               "seconds_since_game_start": 10035
             },
             {
@@ -33107,8 +33107,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 27,
+              "pitcher_id_db": 186,
+              "batter_id_db": 30,
               "seconds_since_game_start": 10055
             },
             {
@@ -33194,8 +33194,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 27,
+              "pitcher_id_db": 186,
+              "batter_id_db": 30,
               "seconds_since_game_start": 10079
             },
             {
@@ -33281,8 +33281,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 27,
+              "pitcher_id_db": 186,
+              "batter_id_db": 30,
               "seconds_since_game_start": 10126
             },
             {
@@ -33368,8 +33368,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 27,
+              "pitcher_id_db": 186,
+              "batter_id_db": 30,
               "seconds_since_game_start": 10151
             },
             {
@@ -33455,8 +33455,8 @@
               "inning_id": "TOR201908170_INN_BOT09",
               "pitcher_id_bbref": "magilma01",
               "batter_id_bbref": "bichebo01",
-              "pitcher_id_db": 174,
-              "batter_id_db": 27,
+              "pitcher_id_db": 186,
+              "batter_id_db": 30,
               "seconds_since_game_start": 10182
             }
           ],

@@ -1,5 +1,6 @@
 name_common,mlb_ID,player_ID
 José Abreu,547989,abreujo02
+Willy Adames,642715,adamewi01
 Chance Adams,664856,adamsch01
 Lane Adams,572669,adamsla01
 Ozzie Albies,645277,albieoz01
@@ -8,6 +9,7 @@ Aaron Altherr,571437,altheaa01
 Jose Altuve,514888,altuvjo01
 Yordan Álvarez,670541,alvaryo01
 Justin Anderson,605121,anderju01
+Nick Anderson,623433,anderni01
 Tim Anderson,641313,anderti01
 Elvis Andrus,462101,andruel01
 Randy Arozarena,668227,arozara01
@@ -20,6 +22,7 @@ Kyle Barraclough,607457,barraky01
 Anthony Bass,542914,bassan01
 Chris Beck,571476,beckch02
 Cam Bedrosian,592135,bedroca01
+Jalen Beeks,656222,beeksja02
 Chad Bell,518445,bellch02
 Josh Bell,605137,belljo02
 Andrew Benintendi,643217,beninan01
@@ -47,9 +50,12 @@ Miguel Cabrera,408234,cabremi01
 Trevor Cahill,502239,cahiltr01
 Kole Calhoun,594777,calhoko01
 Nicholas Castellanos,592206,casteni01
+Diego Castillo,650895,castidi01
+Miguel Castro,612434,castrmi01
 Luis Cessa,570666,cessalu01
 Matt Chapman,656305,chapmma01
 Robinson Chirinos,455139,chiriro01
+Ji-Man Choi,596847,choiji01
 Shin-Soo Choo,425783,choosh01
 Tyler Clippard,461325,clippty01
 Tim Collins,525768,colliti01
@@ -60,7 +66,9 @@ Zack Cozart,446359,cozarza01
 J.P. Crawford,641487,crawfjp01
 Charlie Culberson,518586,culbech01
 John Curtiss,595928,curtijo02
+Travis d'Arnaud,518595,darnatr01
 Matt Davidson,571602,davidma02
+Chris Davis,448801,davisch02
 J.D. Davis,605204,davisjd01
 Khris Davis,501981,daviskh01
 Paul DeJong,657557,dejonpa01
@@ -96,6 +104,7 @@ Clint Frazier,640449,frazicl01
 Todd Frazier,453943,frazito01
 Freddie Freeman,518692,freemfr01
 Sam Freeman,518693,freemsa01
+Paul Fry,643316,frypa01
 Drew Gagnon,543193,gagnodr01
 Joey Gallo,608336,gallojo01
 Freddy Galvis,520471,galvifr01
@@ -129,6 +138,7 @@ Bryce Harper,547180,harpebr03
 Geoff Hartlieb,664129,hartlge01
 Chris Hatcher,501822,hatchch02
 Adeiny Hechavarria,588751,hechaad01
+Guillermo Heredia,628338,heredgu01
 Cesar Hernandez,514917,hernace02
 Teoscar Hernandez,606192,hernate01
 Odubel Herrera,546318,herreod01
@@ -152,10 +162,12 @@ Tommy Kahnle,592454,kahnlto01
 Shawn Kelley,518875,kellesh01
 Tony Kemp,643393,kempto01
 Spencer Kieboom,571851,kiebosp01
+Kevin Kiermaier,595281,kiermke01
 Isiah Kiner-Falefa,643396,kineris01
 Scott Kingery,664068,kingesc01
 Nick Kingham,592468,kinghni01
 Ian Kinsler,435079,kinslia01
+Andrew Kittredge,552640,kittran01
 Andrew Knapp,595284,knappan01
 Andrew Knizner,668800,kniznan01
 Kevin Kramer,596012,krameke01
@@ -175,12 +187,14 @@ Ryan Madson,425492,madsory01
 Matt Magill,543483,magilma01
 Luke Maile,571912,mailelu01
 Martin Maldonado,455117,maldoma01
+Trey Mancini,641820,mancitr01
 Nick Markakis,455976,markani01
 Parker Markel,571917,markepa01
 Jefry Marte,527043,marteje01
 Starling Marte,516782,martest01
 Chris Martin,455119,martich02
 J.D. Martinez,502110,martijd02
+Richie Martin,621006,martiri01
 Russell Martin,431145,martiru01
 Victor Martinez,400121,martivi01
 Jeff Mathis,425772,mathije01
@@ -192,6 +206,7 @@ Andrew McCutchen,457705,mccutan01
 Reese McGuire,624512,mcguire01
 Billy McKinney,641856,mckinbi01
 Jeff McNeil,643446,mcneije01
+Austin Meadows,640457,meadoau01
 Keynan Middleton,641871,middlke01
 Justin Miller,502522,milleju02
 Shelby Miller,571946,millesh01
@@ -214,6 +229,7 @@ Aaron Nola,605400,nolaaa01
 Austin Nola,543592,nolaau01
 Jake Noll,669738,nollja01
 Eduardo Nunez,456488,nunezed02
+Renato Nunez,600524,nunezre01
 Rougned Odor,596059,odorro01
 Seunghwan Oh,493200,ohse01
 Shohei Ohtani,660271,ohtansh01
@@ -221,15 +237,18 @@ Matt Olson,621566,olsonma02
 Tyler O'Neill,641933,oneilty01
 Jose Osuna,591741,osunajo01
 Marcell Ozuna,542303,ozunama01
+Emilio Pagan,641941,paganem01
 Blake Parker,453284,parkebl01
 James Paxton,572020,paxtoja01
 Mike Pelfrey,460059,pelfrmi01
 Felix Pena,570240,penafe01
 Yusmeiro Petit,433589,petityu01
+Tommy Pham,502054,phamth01
 David Phelps,475479,phelpda01
 Kevin Pillar,607680,pillake01
 Chad Pinder,640461,pindech01
 Stephen Piscotty,572039,piscost01
+Colin Poche,621363,pocheco01
 Daniel Ponce de Leon,594965,ponceda01
 Boog Powell,621471,powelbo02
 Jurickson Profar,595777,profaju01
@@ -245,16 +264,20 @@ Pablo Reyes,622569,reyespa01
 Bryan Reynolds,668804,reynobr01
 Tanner Roark,543699,roarkta01
 David Robertson,502085,roberda08
+Daniel Robertson,621002,roberda10
 Victor Robles,645302,roblevi01
 Fernando Rodney,407845,rodnefe01
+Chaz Roe,475054,roech01
 Andrew Romine,461865,rominan01
 Austin Romine,519222,rominau01
 Amed Rosario,642708,rosaram01
 Trevor Rosenthal,572096,rosentr01
+Rio Ruiz,547004,ruizri01
 Tyler Saladino,573135,saladty01
 Anibal Sanchez,434671,sanchan01
 Yolmer Sanchez,570560,sanchca01
 Gary Sanchez,596142,sanchga02
+Anthony Santander,623993,santaan02
 Carlos Santana,467793,santaca01
 Danny Santana,542454,santada01
 Kyle Seager,572122,seageky01
@@ -263,6 +286,7 @@ Marcus Semien,543760,semiema01
 Pedro Severino,600474,severpe01
 Andrelton Simmons,592743,simmoan01
 Tony Sipp,448609,sippto01
+Dwight Smith Jr.,596105,smithdw02
 Kevan Smith,607345,smithke04
 Justin Smoak,475253,smoakju01
 Cy Sneed,605482,sneedcy01
@@ -274,6 +298,7 @@ Juan Soto,665742,sotoju01
 George Springer,543807,springe01
 Andrew Stevenson,664057,stevean01
 Chris Stewart,455755,stewach01
+DJ Stewart,621466,stewadj01
 Myles Straw,664702,strawmy01
 Kurt Suzuki,435559,suzukku01
 Dansby Swanson,621020,swansda01
@@ -297,17 +322,24 @@ Gio Urshela,570482,urshegi01
 Luis Valbuena,472528,valbulu01
 Framber Valdez,664285,valdefr01
 Jason Vargas,450306,vargaja01
+Jonathan Villar,542340,villajo01
 Arodys Vizcaino,527055,vizcaar01
 Daniel Vogelbach,596129,vogelda01
 Luke Voit,572228,voitlu01
 Adam Wainwright,425794,wainwad01
 J.B. Wendelken,605525,wendejb01
+Joey Wendle,621563,wendljo01
 Tyler White,643603,whitety01
+Stevie Wilkerson,592859,wilkest01
+Mason Williams,592863,willima10
 Nick Williams,608384,willini01
 Alex Wilson,543935,wilsoal01
 Justin Wilson,458677,wilsoju10
 Dan Winkler,595465,winklda01
 Kolten Wong,543939,wongko01
 Blake Wood,502028,woodbl01
+Austin Wynns,642851,wynnsau01
+Gabriel Ynoa,593679,ynoaga01
 Michael Ynoa,573589,ynoami01
 Ryan Zimmerman,475582,zimmery01
+Mike Zunino,572287,zuninmi01
