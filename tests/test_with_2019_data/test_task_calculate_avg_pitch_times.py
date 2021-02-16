@@ -8,31 +8,34 @@ def test_task_calculate_avg_pitch_times(vig_app):
     pitch_metrics = result.value
     assert pitch_metrics
     assert "time_between_pitches" in pitch_metrics
-    time_between_pitches = pitch_metrics["time_between_pitches"]
-    assert "total" in time_between_pitches
-    assert time_between_pitches["total"] == 26862
-    assert time_between_pitches["count"] == 927
-    assert time_between_pitches["avg"] == 29.0
-    assert time_between_pitches["max"] == 1924
-    assert time_between_pitches["min"] == 9
-    assert time_between_pitches["range"] == 1915
+    assert pitch_metrics["time_between_pitches"] == {
+        "avg": 30.9,
+        "count": 1077,
+        "max": 1924,
+        "min": 9,
+        "range": 1915,
+        "total": 33287,
+        "trim": False,
+    }
 
     assert "time_between_at_bats" in pitch_metrics
-    time_between_at_bats = pitch_metrics["time_between_at_bats"]
-    assert "total" in time_between_at_bats
-    assert time_between_at_bats["total"] == 12817
-    assert time_between_at_bats["count"] == 252
-    assert time_between_at_bats["avg"] == 50.9
-    assert time_between_at_bats["max"] == 204
-    assert time_between_at_bats["min"] == 8
-    assert time_between_at_bats["range"] == 196
+    assert pitch_metrics["time_between_at_bats"] == {
+        "avg": 54.2,
+        "count": 295,
+        "max": 652,
+        "min": 8,
+        "range": 644,
+        "total": 15989,
+        "trim": False,
+    }
 
     assert "time_between_innings" in pitch_metrics
-    time_between_innings = pitch_metrics["time_between_innings"]
-    assert "total" in time_between_innings
-    assert time_between_innings["total"] == 10604
-    assert time_between_innings["count"] == 67
-    assert time_between_innings["avg"] == 158.3
-    assert time_between_innings["max"] == 588
-    assert time_between_innings["min"] == 125
-    assert time_between_innings["range"] == 463
+    assert pitch_metrics["time_between_innings"] == {
+        "avg": 156.0,
+        "count": 83,
+        "max": 588,
+        "min": 125,
+        "range": 463,
+        "total": 12945,
+        "trim": False,
+    }

@@ -180,7 +180,7 @@ class CombineScrapedDataTask(Task):
         first_pitch_thrown = all_pfx[0].time_pitch_thrown
         game_start_time = (
             first_pitch_thrown.replace(second=0)
-            if first_pitch_thrown.seconds
+            if first_pitch_thrown.second
             else first_pitch_thrown - timedelta(minutes=1)
         )
         self.game_status.game_time_hour = game_start_time.hour

@@ -153,8 +153,8 @@ def test_import_data_and_overwrite_existing(vig_app, mocker):
     scraped_ids_2019_after[DataSet.BROOKS_PITCHFX] = vig_app.scraped_data.get_scraped_ids_from_database(
         DataSet.BROOKS_PITCHFX, season_19
     )
-    assert len(scraped_ids_2019_after[DataSet.BBREF_GAMES_FOR_DATE]) == 7
-    assert len(scraped_ids_2019_after[DataSet.BROOKS_GAMES_FOR_DATE]) == 7
-    assert len(scraped_ids_2019_after[DataSet.BBREF_BOXSCORES]) == 8
-    assert len(scraped_ids_2019_after[DataSet.BROOKS_PITCH_LOGS]) == 8
-    assert len(scraped_ids_2019_after[DataSet.BROOKS_PITCHFX]) == 69
+    assert len(scraped_ids_2019_after[DataSet.BBREF_GAMES_FOR_DATE]) == 8
+    assert len(scraped_ids_2019_after[DataSet.BROOKS_GAMES_FOR_DATE]) == 8
+    assert len(scraped_ids_2019_after[DataSet.BBREF_BOXSCORES]) == 9
+    assert len(scraped_ids_2019_after[DataSet.BROOKS_PITCH_LOGS]) == 9
+    assert len(scraped_ids_2019_after[DataSet.BROOKS_PITCHFX]) == 79

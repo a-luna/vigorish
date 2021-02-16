@@ -5,6 +5,7 @@ import w3lib.url
 from lxml import html
 
 import vigorish.database as db
+from vigorish.constants import BB_BR_TEAM_ID_MAP, WEST_COAST_TEAMS
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
@@ -102,29 +103,34 @@ def _is_game_required(game_date, game_time, url, required_game_data):
 
 
 def _parse_gameinfo(game_date, game_time, url):
+    result = _parse_gameinfo_from_url(url)
+    if result.failure:
+        return result
+    gameinfo = result.value
+    home_team_id_br = BB_BR_TEAM_ID_MAP.get(gameinfo.home_team_id_bb, gameinfo.home_team_id_bb)
     game_time_hour_adjusted = game_time["hour"] + 12
     game_time_hour = (
         game_time["hour"]
-        if game_time["hour"] in [11, 12]
+        if (game_time["hour"] in [11, 12] or (game_time["hour"] == 10 and home_team_id_br not in WEST_COAST_TEAMS))
         else game_time_hour_adjusted
         if game_time["hour"] in range(1, 11)
         else 0
     )
-    gameinfo = BrooksGameInfo()
     gameinfo.game_date_year = game_date.year
     gameinfo.game_date_month = game_date.month
     gameinfo.game_date_day = game_date.day
     gameinfo.game_time_hour = game_time_hour
     gameinfo.game_time_minute = game_time["minute"]
     gameinfo.time_zone_name = "America/New_York"
-    return _parse_gameinfo_from_url(gameinfo, url)
+    return Result.Ok(gameinfo)
 
 
-def _parse_gameinfo_from_url(gameinfo, url):
+def _parse_gameinfo_from_url(url):
     gameid = _parse_gameid_from_url(url)
     if not gameid:
         error = "URL not in expected format, unable to retrieve value of " f'query parameter "game":\n{url}'
         return Result.Fail(error)
+    gameinfo = BrooksGameInfo()
     gameinfo.bb_game_id = gameid
     gameinfo.away_team_id_bb = _parse_away_team_from_gameid(gameid)
     gameinfo.home_team_id_bb = _parse_home_team_from_gameid(gameid)
