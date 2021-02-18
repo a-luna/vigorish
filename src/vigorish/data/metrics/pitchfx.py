@@ -9,13 +9,15 @@ from sqlalchemy.engine import RowProxy
 
 from vigorish.data.metrics.constants import (
     PFX_BATTED_BALL_METRICS,
-    PFX_BOOL_METRIC_NAMES,
-    PFX_FLOAT_METRIC_NAMES,
-    PFX_INT_METRIC_NAMES,
     PFX_PLATE_DISCIPLINE_METRICS,
 )
 from vigorish.enums import PitchType
 from vigorish.types import RowDict
+from vigorish.util.dataclass_helpers import get_field_types
+
+PitchFxMetricsDict = Dict[str, Union[bool, int, float, str, PitchType]]
+PitchTypeMetricsDict = Dict[PitchType, PitchFxMetricsDict]
+PitchFxCollectionMetricsDict = Dict[str, Union[bool, int, float, str, List[PitchType]]]
 
 
 @dataclass
@@ -171,22 +173,18 @@ class PitchFxMetricsCollection:
         row_dicts = [dict(row) for row in results]
         if not row_dicts:
             return None
+        threshold = 0.01
         pitcher_id_mlb = row_dicts[0]["pitcher_id_mlb"]
         metrics_detail = _get_pitchfx_metrics_for_each_pitch_type(row_dicts, threshold)
         metrics_collection = _get_pitchfx_metrics_for_all_pitch_types(pitcher_id_mlb, metrics_detail)
         return from_dict(data_class=cls, data=metrics_collection)
 
 
-PitchFxMetricsDict = Dict[str, Union[bool, int, float, str, PitchType]]
-PitchTypeMetricsDict = Dict[PitchType, PitchFxMetricsDict]
-PitchFxCollectionMetricsDict = Dict[str, Union[bool, int, float, str, List[PitchType]]]
-
-
 def _get_pitchfx_metrics_for_each_pitch_type(row_dicts: List[RowDict], threshold: float) -> PitchTypeMetricsDict:
     valid_pitch_types = _filter_pitch_types_above_threshold(row_dicts, threshold)
     total_pitches_valid = sum(metrics["total_pitches"] for metrics in valid_pitch_types)
     for metrics in valid_pitch_types:
-        metrics["percent"] = round(metrics["total_pitches"] / total_pitches_valid, 3)
+        metrics["percent"] = round(metrics["total_pitches"] / total_pitches_valid, 2)
     return {m["pitch_type"]: m for m in sorted(valid_pitch_types, key=lambda x: x["percent"], reverse=True)}
 
 
@@ -197,23 +195,18 @@ def _filter_pitch_types_above_threshold(row_dicts: List[RowDict], threshold: flo
 
 
 def _get_pitchfx_metrics_for_single_pitch_type(pitch_type_dict: RowDict) -> PitchFxMetricsDict:
-    pitch_metrics = {}
+    dc_fields = get_field_types(PitchFxMetrics)
+    pitch_metrics = {
+        k: round(v, 2) if dc_fields[k] is float else bool(v) if dc_fields[k] is bool else v
+        for k, v in pitch_type_dict.items()
+        if v and k in dc_fields
+    }
     pitch_metrics["pitch_type"] = PitchType.from_abbrev(pitch_type_dict["pitch_type"])
-    for metric in PFX_FLOAT_METRIC_NAMES:
-        if metric in pitch_type_dict:
-            pitch_metrics[metric] = round(pitch_type_dict[metric], 3)
-    for metric in PFX_INT_METRIC_NAMES:
-        if metric in pitch_type_dict:
-            pitch_metrics[metric] = pitch_type_dict[metric]
-    for metric in PFX_BOOL_METRIC_NAMES:
-        if metric in pitch_type_dict:
-            pitch_metrics[metric] = bool(pitch_type_dict[metric])
     return pitch_metrics
 
 
 def _check_threshold(pitch_count: int, total_pitches: int, threshold: float) -> bool:
-    percent = pitch_count / float(total_pitches)
-    return percent >= threshold
+    return (pitch_count / float(total_pitches)) >= threshold
 
 
 def _get_pitchfx_metrics_for_all_pitch_types(
@@ -223,11 +216,13 @@ def _get_pitchfx_metrics_for_all_pitch_types(
         "pitcher_id_mlb": pitcher_id_mlb,
         "pitch_types": list(metrics_detail.keys()),
     }
-    for metric_name in PFX_INT_METRIC_NAMES:
-        metrics_collection[metric_name] = sum(
-            pitch_metrics[metric_name]
+    for name, field_type in get_field_types(PitchFxMetrics).items():
+        if field_type is not int:
+            continue
+        metrics_collection[name] = sum(
+            pitch_metrics[name]
             for pitch_metrics in metrics_detail.values()
-            if metric_name in pitch_metrics and pitch_metrics[metric_name]
+            if name in pitch_metrics and pitch_metrics[name]
         )
     _calculate_pitch_discipline_metrics(metrics_collection)
     _calculate_batted_ball_metrics(metrics_collection)
@@ -237,22 +232,22 @@ def _get_pitchfx_metrics_for_all_pitch_types(
 
 def _calculate_pitch_discipline_metrics(pitch_metrics: PitchFxCollectionMetricsDict) -> None:
     pitch_metrics["zone_rate"] = (
-        round(pitch_metrics["total_inside_strike_zone"] / float(pitch_metrics["total_pitches"]), 3)
+        round(pitch_metrics["total_inside_strike_zone"] / float(pitch_metrics["total_pitches"]), 2)
         if pitch_metrics["total_pitches"]
         else 0.0
     )
     pitch_metrics["called_strike_rate"] = (
-        round(pitch_metrics["total_called_strikes"] / float(pitch_metrics["total_pitches"]), 3)
+        round(pitch_metrics["total_called_strikes"] / float(pitch_metrics["total_pitches"]), 2)
         if pitch_metrics["total_pitches"]
         else 0.0
     )
     pitch_metrics["swinging_strike_rate"] = (
-        round(pitch_metrics["total_swinging_strikes"] / float(pitch_metrics["total_pitches"]), 3)
+        round(pitch_metrics["total_swinging_strikes"] / float(pitch_metrics["total_pitches"]), 2)
         if pitch_metrics["total_pitches"]
         else 0.0
     )
     pitch_metrics["whiff_rate"] = (
-        round(pitch_metrics["total_swinging_strikes"] / float(pitch_metrics["total_swings"]), 3)
+        round(pitch_metrics["total_swinging_strikes"] / float(pitch_metrics["total_swings"]), 2)
         if pitch_metrics["total_swings"]
         else 0.0
     )
@@ -282,7 +277,7 @@ def _calculate_pitch_discipline_metrics(pitch_metrics: PitchFxCollectionMetricsD
         else 0.0
     )
     pitch_metrics["swing_rate"] = (
-        round(pitch_metrics["total_swings"] / float(pitch_metrics["total_pitches"]), 3)
+        round(pitch_metrics["total_swings"] / float(pitch_metrics["total_pitches"]), 2)
         if pitch_metrics["total_pitches"]
         else 0.0
     )
@@ -303,7 +298,7 @@ def _calculate_pitch_discipline_metrics(pitch_metrics: PitchFxCollectionMetricsD
         else 0.0
     )
     pitch_metrics["contact_rate"] = (
-        round(pitch_metrics["total_swings_made_contact"] / float(pitch_metrics["total_pitches"]), 3)
+        round(pitch_metrics["total_swings_made_contact"] / float(pitch_metrics["total_pitches"]), 2)
         if pitch_metrics["total_pitches"]
         else 0.0
     )
@@ -311,22 +306,22 @@ def _calculate_pitch_discipline_metrics(pitch_metrics: PitchFxCollectionMetricsD
 
 def _calculate_batted_ball_metrics(pitch_metrics: PitchFxCollectionMetricsDict) -> None:
     pitch_metrics["ground_ball_rate"] = (
-        round(pitch_metrics["total_ground_balls"] / float(pitch_metrics["total_batted_balls"]), 3)
+        round(pitch_metrics["total_ground_balls"] / float(pitch_metrics["total_batted_balls"]), 2)
         if pitch_metrics["total_batted_balls"]
         else 0.0
     )
     pitch_metrics["fly_ball_rate"] = (
-        round(pitch_metrics["total_fly_balls"] / float(pitch_metrics["total_batted_balls"]), 3)
+        round(pitch_metrics["total_fly_balls"] / float(pitch_metrics["total_batted_balls"]), 2)
         if pitch_metrics["total_batted_balls"]
         else 0.0
     )
     pitch_metrics["line_drive_rate"] = (
-        round(pitch_metrics["total_line_drives"] / float(pitch_metrics["total_batted_balls"]), 3)
+        round(pitch_metrics["total_line_drives"] / float(pitch_metrics["total_batted_balls"]), 2)
         if pitch_metrics["total_batted_balls"]
         else 0.0
     )
     pitch_metrics["pop_up_rate"] = (
-        round(pitch_metrics["total_pop_ups"] / float(pitch_metrics["total_batted_balls"]), 3)
+        round(pitch_metrics["total_pop_ups"] / float(pitch_metrics["total_batted_balls"]), 2)
         if pitch_metrics["total_batted_balls"]
         else 0.0
     )

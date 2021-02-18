@@ -6,12 +6,10 @@ from typing import Dict, List, Union
 from dacite import from_dict
 from sqlalchemy.engine import RowProxy
 
-from vigorish.data.metrics.constants import (
-    PITCH_STATS_FLOAT_METRIC_NAMES,
-    PITCH_STATS_INT_METRIC_NAMES,
-    PITCH_STATS_STR_METRIC_NAMES,
-)
 from vigorish.types import RowDict
+from vigorish.util.dataclass_helpers import get_field_types
+
+PitchStatsMetricsDict = Dict[str, Union[int, float]]
 
 
 @dataclass
@@ -62,26 +60,13 @@ class PitchStatsMetrics:
 
     @classmethod
     def from_pitch_stats_view_results(cls, results: List[RowProxy]) -> PitchStatsMetrics:
-        row_dicts = [dict(row) for row in results]
-        if not row_dicts:
-            return None
-        mlb_id = row_dicts[0]["mlb_id"]
-        pitch_stats_list = [_get_pitch_stats_for_table(mlb_id, d) for d in row_dicts]
-        return [from_dict(data_class=cls, data=pitch_stats) for pitch_stats in pitch_stats_list]
+        return [from_dict(data_class=cls, data=cls._get_pitch_stats_for_table(dict(row))) for row in results]
 
-
-PitchStatsMetricsDict = Dict[str, Union[int, float]]
-
-
-def _get_pitch_stats_for_table(mlb_id: int, pitch_stats_dict: RowDict) -> PitchStatsMetricsDict:
-    pitch_stats = {"mlb_id": mlb_id}
-    for metric in PITCH_STATS_FLOAT_METRIC_NAMES:
-        if metric in pitch_stats_dict:
-            pitch_stats[metric] = round(pitch_stats_dict[metric], 3)
-    for metric in PITCH_STATS_INT_METRIC_NAMES:
-        if metric in pitch_stats_dict:
-            pitch_stats[metric] = pitch_stats_dict[metric]
-    for metric in PITCH_STATS_STR_METRIC_NAMES:
-        if metric in pitch_stats_dict:
-            pitch_stats[metric] = pitch_stats_dict[metric]
-    return pitch_stats
+    @classmethod
+    def _get_pitch_stats_for_table(cls, pitch_stats: RowDict) -> PitchStatsMetricsDict:
+        dc_fields = get_field_types(cls)
+        return {
+            k: round(v, 2) if dc_fields[k] is float else bool(v) if dc_fields[k] is bool else v
+            for k, v in pitch_stats.items()
+            if v and k in dc_fields
+        }

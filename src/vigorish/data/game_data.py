@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 import vigorish.database as db
 from vigorish.cli.components.viewers import create_display_table, create_table_viewer, DisplayTable
-from vigorish.data.all_player_data import AllPlayerData
+from vigorish.data.player_data import PlayerData
 from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.dt_format_strings import DT_AWARE, DT_AWARE_VERBOSE
 from vigorish.util.exceptions import ScrapedDataException
@@ -25,7 +25,7 @@ AT_BAT_TABLE_MAX_ROWS = 8
 AT_BAT_DESC_MAX_WIDTH = 35
 
 
-class AllGameData:
+class GameData:
     def __init__(self, app, bbref_game_id):
 
         # TODO: Create views for pitch_type by handedness by year
@@ -189,7 +189,7 @@ class AllGameData:
     def get_player_data(self, mlb_id):
         player_data = self.player_data_cache.get(mlb_id)
         if not player_data:
-            player_data = AllPlayerData(self.app, mlb_id)
+            player_data = PlayerData(self.app, mlb_id)
             self.player_data_cache[mlb_id] = player_data
         return player_data
 

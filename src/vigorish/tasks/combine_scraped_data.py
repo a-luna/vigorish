@@ -59,14 +59,6 @@ class CombineScrapedDataTask(Task):
         return self.boxscore.home_team_data.team_id_br
 
     @property
-    def away_team_id_bb(self):
-        return get_brooks_team_id(self.boxscore.away_team_data.team_id_br)
-
-    @property
-    def home_team_id_bb(self):
-        return get_brooks_team_id(self.boxscore.home_team_data.team_id_br)
-
-    @property
     def game_start_time(self):
         return self.game_status.game_start_time if self.game_status else None
 
