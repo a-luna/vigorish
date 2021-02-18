@@ -1,9 +1,15 @@
-from dataclasses import asdict
+from dataclasses import asdict, fields
 from datetime import datetime
+from typing import get_type_hints
 
 from dacite import from_dict
 
 from vigorish.util.dt_format_strings import DATE_ONLY
+
+
+def get_field_types(data_class):
+    field_names = [field.name for field in fields(data_class)]
+    return {name: get_type_hints(data_class)[name] for name in field_names}
 
 
 def serialize_dataclass_list_to_csv(data_class_objects, date_format):

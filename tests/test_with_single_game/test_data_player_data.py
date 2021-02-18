@@ -1,6 +1,6 @@
 from dacite.core import from_dict
 
-from vigorish.data.all_player_data import AllPlayerData
+from vigorish.data.player_data import PlayerData
 from vigorish.data.metrics import PitchFxMetricsCollection, PitchStatsMetrics
 from vigorish.enums import PitchType
 
@@ -33,9 +33,9 @@ def test_pitch_stats(vig_app):
         "bb_per_nine": 0.0,
         "hr_per_nine": 0.0,
         "k_per_bb": 0.0,
-        "k_rate": 0.667,
+        "k_rate": 0.67,
         "bb_rate": 0.0,
-        "k_minus_bb": 0.667,
+        "k_minus_bb": 0.67,
         "hr_per_fb": 0.0,
         "pitch_count": 17,
         "strikes": 11,
@@ -48,7 +48,7 @@ def test_pitch_stats(vig_app):
         "unknown_type": 0,
         "inherited_runners": 0,
         "inherited_scored": 0,
-        "wpa_pitch": 0.049,
+        "wpa_pitch": 0.05,
         "re24_pitch": 0.5,
     }
 
@@ -79,9 +79,9 @@ def test_pitch_stats(vig_app):
         "bb_per_nine": 0.0,
         "hr_per_nine": 0.0,
         "k_per_bb": 0.0,
-        "k_rate": 0.667,
+        "k_rate": 0.67,
         "bb_rate": 0.0,
-        "k_minus_bb": 0.667,
+        "k_minus_bb": 0.67,
         "hr_per_fb": 0.0,
         "pitch_count": 17,
         "strikes": 11,
@@ -94,7 +94,7 @@ def test_pitch_stats(vig_app):
         "unknown_type": 0,
         "inherited_runners": 0,
         "inherited_scored": 0,
-        "wpa_pitch": 0.049,
+        "wpa_pitch": 0.05,
         "re24_pitch": 0.5,
     }
 
@@ -127,9 +127,9 @@ def test_pitch_stats(vig_app):
         "bb_per_nine": 0.0,
         "hr_per_nine": 0.0,
         "k_per_bb": 0.0,
-        "k_rate": 0.667,
+        "k_rate": 0.67,
         "bb_rate": 0.0,
-        "k_minus_bb": 0.667,
+        "k_minus_bb": 0.67,
         "hr_per_fb": 0.0,
         "pitch_count": 17,
         "strikes": 11,
@@ -142,7 +142,7 @@ def test_pitch_stats(vig_app):
         "unknown_type": 0,
         "inherited_runners": 0,
         "inherited_scored": 0,
-        "wpa_pitch": 0.049,
+        "wpa_pitch": 0.05,
         "re24_pitch": 0.5,
     }
 
@@ -173,9 +173,9 @@ def test_pitch_stats(vig_app):
         "bb_per_nine": 0.0,
         "hr_per_nine": 0.0,
         "k_per_bb": 0.0,
-        "k_rate": 0.667,
+        "k_rate": 0.67,
         "bb_rate": 0.0,
-        "k_minus_bb": 0.667,
+        "k_minus_bb": 0.67,
         "hr_per_fb": 0.0,
         "pitch_count": 17,
         "strikes": 11,
@@ -188,7 +188,7 @@ def test_pitch_stats(vig_app):
         "unknown_type": 0,
         "inherited_runners": 0,
         "inherited_scored": 0,
-        "wpa_pitch": 0.049,
+        "wpa_pitch": 0.05,
         "re24_pitch": 0.5,
     }
 
@@ -219,9 +219,9 @@ def test_pitch_stats(vig_app):
         "bb_per_nine": 0.0,
         "hr_per_nine": 0.0,
         "k_per_bb": 0.0,
-        "k_rate": 0.667,
+        "k_rate": 0.67,
         "bb_rate": 0.0,
-        "k_minus_bb": 0.667,
+        "k_minus_bb": 0.67,
         "hr_per_fb": 0.0,
         "pitch_count": 17,
         "strikes": 11,
@@ -234,7 +234,7 @@ def test_pitch_stats(vig_app):
         "unknown_type": 0,
         "inherited_runners": 0,
         "inherited_scored": 0,
-        "wpa_pitch": 0.049,
+        "wpa_pitch": 0.05,
         "re24_pitch": 0.5,
     }
 
@@ -265,9 +265,9 @@ def test_pitch_stats(vig_app):
         "bb_per_nine": 0.0,
         "hr_per_nine": 0.0,
         "k_per_bb": 0.0,
-        "k_rate": 0.667,
+        "k_rate": 0.67,
         "bb_rate": 0.0,
-        "k_minus_bb": 0.667,
+        "k_minus_bb": 0.67,
         "hr_per_fb": 0.0,
         "pitch_count": 17,
         "strikes": 11,
@@ -280,7 +280,7 @@ def test_pitch_stats(vig_app):
         "unknown_type": 0,
         "inherited_runners": 0,
         "inherited_scored": 0,
-        "wpa_pitch": 0.049,
+        "wpa_pitch": 0.05,
         "re24_pitch": 0.5,
     }
 
@@ -311,9 +311,9 @@ def test_pitch_stats(vig_app):
         "bb_per_nine": 0.0,
         "hr_per_nine": 0.0,
         "k_per_bb": 0.0,
-        "k_rate": 0.667,
+        "k_rate": 0.67,
         "bb_rate": 0.0,
-        "k_minus_bb": 0.667,
+        "k_minus_bb": 0.67,
         "hr_per_fb": 0.0,
         "pitch_count": 17,
         "strikes": 11,
@@ -326,7 +326,7 @@ def test_pitch_stats(vig_app):
         "unknown_type": 0,
         "inherited_runners": 0,
         "inherited_scored": 0,
-        "wpa_pitch": 0.049,
+        "wpa_pitch": 0.05,
         "re24_pitch": 0.5,
     }
 
@@ -339,7 +339,7 @@ def test_pitch_stats(vig_app):
     pitch_stats_by_opp_team = from_dict(data_class=PitchStatsMetrics, data=pitch_stats_by_opp_team_dict)
     pitch_stats_by_opp_team_by_year = from_dict(data_class=PitchStatsMetrics, data=pitch_stats_by_opp_team_by_year_dict)
 
-    player_data = AllPlayerData(vig_app, 571882)
+    player_data = PlayerData(vig_app, 571882)
     assert player_data.pitch_stats_for_career == pitch_stats_for_career
     assert player_data.pitch_stats_as_sp == pitch_stats_as_sp
     assert player_data.pitch_stats_as_rp == pitch_stats_as_rp
@@ -352,25 +352,25 @@ def test_pitch_stats(vig_app):
 
 def test_pitchfx_metrics_career(vig_app):
     pfx_metrics_career_CU_dict = {
-        "avg_pfx_x": 2.912,
-        "avg_pfx_z": -4.573,
-        "avg_px": 0.007,
-        "avg_pz": 1.785,
-        "avg_speed": 78.692,
+        "avg_pfx_x": 2.91,
+        "avg_pfx_z": -4.57,
+        "avg_px": 0.01,
+        "avg_pz": 1.79,
+        "avg_speed": 78.69,
         "called_strike_rate": 0.5,
-        "contact_rate": 0.167,
+        "contact_rate": 0.17,
         "csw_rate": 0.5,
-        "custom_score": 0.833,
+        "custom_score": 0.83,
         "fly_ball_rate": 0.0,
         "ground_ball_rate": 0.0,
         "line_drive_rate": 0.0,
         "money_pitch": False,
         "o_contact_rate": 1.0,
-        "o_swing_rate": 0.333,
-        "percent": 0.353,
+        "o_swing_rate": 0.33,
+        "percent": 0.35,
         "pitch_type": PitchType.CURVEBALL,
         "pop_up_rate": 0.0,
-        "swing_rate": 0.167,
+        "swing_rate": 0.17,
         "swinging_strike_rate": 0.0,
         "total_batted_balls": 0,
         "total_called_strikes": 3,
@@ -394,14 +394,14 @@ def test_pitchfx_metrics_career(vig_app):
         "zone_rate": 0.5,
     }
     pfx_metrics_career_FF_dict = {
-        "avg_pfx_x": -1.258,
+        "avg_pfx_x": -1.26,
         "avg_pfx_z": 8.69,
         "avg_px": -0.05,
-        "avg_pz": 3.307,
+        "avg_pz": 3.31,
         "avg_speed": 94.26,
-        "called_strike_rate": 0.167,
-        "contact_rate": 0.333,
-        "csw_rate": 0.167,
+        "called_strike_rate": 0.17,
+        "contact_rate": 0.33,
+        "csw_rate": 0.17,
         "custom_score": 0.5,
         "fly_ball_rate": 0.0,
         "ground_ball_rate": 0.0,
@@ -409,10 +409,10 @@ def test_pitchfx_metrics_career(vig_app):
         "money_pitch": False,
         "o_contact_rate": 0.0,
         "o_swing_rate": 0.0,
-        "percent": 0.353,
+        "percent": 0.35,
         "pitch_type": PitchType.FOUR_SEAM_FASTBALL,
         "pop_up_rate": 0.0,
-        "swing_rate": 0.333,
+        "swing_rate": 0.33,
         "swinging_strike_rate": 0.0,
         "total_batted_balls": 1,
         "total_called_strikes": 1,
@@ -432,30 +432,30 @@ def test_pitchfx_metrics_career(vig_app):
         "total_swings_outside_zone": 0,
         "whiff_rate": 0.0,
         "z_contact_rate": 1.0,
-        "z_swing_rate": 0.667,
+        "z_swing_rate": 0.67,
         "zone_rate": 0.5,
     }
     pfx_metrics_career_CH_dict = {
         "avg_pfx_x": -6.37,
-        "avg_pfx_z": 7.137,
+        "avg_pfx_z": 7.14,
         "avg_px": -0.3,
         "avg_pz": 2.37,
-        "avg_speed": 86.037,
-        "called_strike_rate": 0.333,
-        "contact_rate": 0.333,
-        "csw_rate": 0.667,
-        "custom_score": 0.0,
+        "avg_speed": 86.04,
+        "called_strike_rate": 0.33,
+        "contact_rate": 0.33,
+        "csw_rate": 0.67,
+        "custom_score": 1.33,
         "fly_ball_rate": 0.0,
         "ground_ball_rate": 0.0,
         "line_drive_rate": 0.0,
         "money_pitch": False,
         "o_contact_rate": 0.0,
         "o_swing_rate": 0.0,
-        "percent": 0.176,
+        "percent": 0.18,
         "pitch_type": PitchType.CHANGEUP,
         "pop_up_rate": 0.0,
-        "swing_rate": 0.667,
-        "swinging_strike_rate": 0.333,
+        "swing_rate": 0.67,
+        "swinging_strike_rate": 0.33,
         "total_batted_balls": 0,
         "total_called_strikes": 1,
         "total_contact_inside_zone": 1,
@@ -474,15 +474,15 @@ def test_pitchfx_metrics_career(vig_app):
         "total_swings_outside_zone": 0,
         "whiff_rate": 0.5,
         "z_contact_rate": 0.5,
-        "z_swing_rate": 0.667,
+        "z_swing_rate": 0.67,
         "zone_rate": 1.0,
     }
     pfx_metrics_career_SL_dict = {
         "avg_pfx_x": 1.83,
-        "avg_pfx_z": -1.265,
-        "avg_px": 0.845,
+        "avg_pfx_z": -1.27,
+        "avg_px": 0.84,
         "avg_pz": 0.54,
-        "avg_speed": 84.225,
+        "avg_speed": 84.22,
         "called_strike_rate": 0.0,
         "contact_rate": 0.0,
         "csw_rate": 0.5,
@@ -493,7 +493,7 @@ def test_pitchfx_metrics_career(vig_app):
         "money_pitch": False,
         "o_contact_rate": 0.0,
         "o_swing_rate": 0.5,
-        "percent": 0.118,
+        "percent": 0.12,
         "pitch_type": PitchType.SLIDER,
         "pop_up_rate": 0.0,
         "swing_rate": 0.5,
@@ -521,21 +521,19 @@ def test_pitchfx_metrics_career(vig_app):
     }
 
     pfx_metrics_career_dict = {
-        "called_strike_rate": 0.294,
-        "contact_rate": 0.235,
+        "called_strike_rate": 0.29,
+        "contact_rate": 0.24,
         "csw_rate": 0.412,
         "fly_ball_rate": 0.0,
         "ground_ball_rate": 0.0,
         "line_drive_rate": 1.0,
-        "money_pitch": 0,
         "o_contact_rate": 0.5,
         "o_swing_rate": 0.25,
-        "percent": 1.0,
         "pitch_types": [PitchType.CURVEBALL, PitchType.FOUR_SEAM_FASTBALL, PitchType.CHANGEUP, PitchType.SLIDER],
         "pitcher_id_mlb": 571882,
         "pop_up_rate": 0.0,
-        "swing_rate": 0.353,
-        "swinging_strike_rate": 0.118,
+        "swing_rate": 0.35,
+        "swinging_strike_rate": 0.12,
         "total_batted_balls": 1,
         "total_called_strikes": 5,
         "total_contact_inside_zone": 3,
@@ -552,10 +550,10 @@ def test_pitchfx_metrics_career(vig_app):
         "total_swings_inside_zone": 4,
         "total_swings_made_contact": 4,
         "total_swings_outside_zone": 2,
-        "whiff_rate": 0.333,
+        "whiff_rate": 0.33,
         "z_contact_rate": 0.75,
         "z_swing_rate": 0.444,
-        "zone_rate": 0.529,
+        "zone_rate": 0.53,
         "metrics_detail": {
             PitchType.CURVEBALL: pfx_metrics_career_CU_dict,
             PitchType.FOUR_SEAM_FASTBALL: pfx_metrics_career_FF_dict,
@@ -564,9 +562,7 @@ def test_pitchfx_metrics_career(vig_app):
         },
     }
     pfx_metrics_career = from_dict(data_class=PitchFxMetricsCollection, data=pfx_metrics_career_dict)
-
-    player_data = AllPlayerData(vig_app, 571882)
-    assert player_data.player_name == "Derek Law"
+    player_data = PlayerData(vig_app, 571882)
     assert player_data.pitchfx_metrics_career == pfx_metrics_career
 
 
