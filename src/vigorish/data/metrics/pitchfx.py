@@ -163,19 +163,19 @@ class PitchFxMetricsCollection:
 
     @property
     def zone_rate(self):
-        return round(self.total_inside_strike_zone / float(self.total_pitches), 2) if self.total_pitches else 0.0
+        return round(self.total_inside_strike_zone / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
     def called_strike_rate(self):
-        return round(self.total_called_strikes / float(self.total_pitches), 2) if self.total_pitches else 0.0
+        return round(self.total_called_strikes / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
     def swinging_strike_rate(self):
-        return round(self.total_swinging_strikes / float(self.total_pitches), 2) if self.total_pitches else 0.0
+        return round(self.total_swinging_strikes / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
     def whiff_rate(self):
-        return round(self.total_swinging_strikes / float(self.total_swings), 2) if self.total_swings else 0.0
+        return round(self.total_swinging_strikes / float(self.total_swings), 3) if self.total_swings else 0.0
 
     @property
     def csw_rate(self):
@@ -203,7 +203,7 @@ class PitchFxMetricsCollection:
 
     @property
     def swing_rate(self):
-        return round(self.total_swings / float(self.total_pitches), 2) if self.total_pitches else 0.0
+        return round(self.total_swings / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
     def o_contact_rate(self):
@@ -223,19 +223,19 @@ class PitchFxMetricsCollection:
 
     @property
     def contact_rate(self):
-        return round(self.total_swings_made_contact / float(self.total_pitches), 2) if self.total_pitches else 0.0
+        return round(self.total_swings_made_contact / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
     def ground_ball_rate(self):
-        return round(self.total_ground_balls / float(self.total_batted_balls), 2) if self.total_batted_balls else 0.0
+        return round(self.total_ground_balls / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
 
     @property
     def fly_ball_rate(self):
-        return round(self.total_fly_balls / float(self.total_batted_balls), 2) if self.total_batted_balls else 0.0
+        return round(self.total_fly_balls / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
 
     @property
     def line_drive_rate(self):
-        return round(self.total_line_drives / float(self.total_batted_balls), 2) if self.total_batted_balls else 0.0
+        return round(self.total_line_drives / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
 
     @property
     def pop_up_rate(self):
@@ -297,7 +297,7 @@ def _get_pitchfx_metrics_for_each_pitch_type(row_dicts: List[RowDict], threshold
     valid_pitch_types = _filter_pitch_types_above_threshold(row_dicts, threshold)
     total_pitches_valid = sum(metrics["total_pitches"] for metrics in valid_pitch_types)
     for metrics in valid_pitch_types:
-        metrics["percent"] = round(metrics["total_pitches"] / total_pitches_valid, 2)
+        metrics["percent"] = round(metrics["total_pitches"] / total_pitches_valid, 3)
     return {m["pitch_type"]: m for m in sorted(valid_pitch_types, key=lambda x: x["percent"], reverse=True)}
 
 
@@ -310,7 +310,7 @@ def _filter_pitch_types_above_threshold(row_dicts: List[RowDict], threshold: flo
 def _get_pitchfx_metrics_for_single_pitch_type(pitch_type_dict: RowDict) -> PitchFxMetricsDict:
     dc_fields = get_field_types(PitchFxMetrics)
     pitch_metrics = {
-        k: round(v, 2) if dc_fields[k] is float else bool(v) if dc_fields[k] is bool else v
+        k: round(v, 3) if dc_fields[k] is float else bool(v) if dc_fields[k] is bool else v
         for k, v in pitch_type_dict.items()
         if v and k in dc_fields
     }

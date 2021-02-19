@@ -2,6 +2,7 @@ from sqlalchemy import and_, func, join, select
 from sqlalchemy_utils.view import create_view
 
 import vigorish.database as db
+from vigorish.data.metrics.bat_stats import BatStatsMetrics
 from vigorish.views.bat_stats_col_expressions import avg, bb_rate, iso, k_rate, obp, ops, slg
 
 
@@ -52,6 +53,12 @@ class Player_BatStats_All_View(db.Base):
         metadata=db.Base.metadata,
         cascade_on_drop=False,
     )
+
+    @classmethod
+    def get_bat_stats_for_career_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return BatStatsMetrics.from_bat_stats_view_results(results)[0] if results else None
 
 
 class Player_BatStats_By_Year_View(db.Base):
@@ -105,6 +112,12 @@ class Player_BatStats_By_Year_View(db.Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_bat_stats_by_year_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return BatStatsMetrics.from_bat_stats_view_results(results) if results else []
+
 
 class Player_BatStats_By_Team_View(db.Base):
     __table__ = create_view(
@@ -155,6 +168,12 @@ class Player_BatStats_By_Team_View(db.Base):
         metadata=db.Base.metadata,
         cascade_on_drop=False,
     )
+
+    @classmethod
+    def get_bat_stats_by_team_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return BatStatsMetrics.from_bat_stats_view_results(results) if results else []
 
 
 class Player_BatStats_By_Team_Year_View(db.Base):
@@ -223,6 +242,12 @@ class Player_BatStats_By_Team_Year_View(db.Base):
         cascade_on_drop=False,
     )
 
+    @classmethod
+    def get_bat_stats_by_team_by_year_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return BatStatsMetrics.from_bat_stats_view_results(results) if results else []
+
 
 class Player_BatStats_By_Opp_Team_View(db.Base):
     __table__ = create_view(
@@ -273,6 +298,12 @@ class Player_BatStats_By_Opp_Team_View(db.Base):
         metadata=db.Base.metadata,
         cascade_on_drop=False,
     )
+
+    @classmethod
+    def get_bat_stats_by_opp_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return BatStatsMetrics.from_bat_stats_view_results(results) if results else []
 
 
 class Player_BatStats_By_Opp_Team_Year_View(db.Base):
@@ -328,3 +359,9 @@ class Player_BatStats_By_Opp_Team_Year_View(db.Base):
         metadata=db.Base.metadata,
         cascade_on_drop=False,
     )
+
+    @classmethod
+    def get_bat_stats_by_opp_by_year_for_player(cls, db_engine, player_id):
+        s = select([cls]).where(cls.id == player_id)
+        results = db_engine.execute(s).fetchall()
+        return BatStatsMetrics.from_bat_stats_view_results(results) if results else []
