@@ -94,7 +94,7 @@ class Pitch_Type_All_View(db.Base):
     def get_pitchfx_metrics_for_career_for_player(cls, db_engine, player_id):
         s = select([cls]).where(cls.id == player_id)
         results = db_engine.execute(s).fetchall()
-        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+        return PitchFxMetricsCollection.from_pitchfx_view_results(results) if results else None
 
 
 class Pitch_Type_Right_View(db.Base):
@@ -165,7 +165,7 @@ class Pitch_Type_Right_View(db.Base):
     def get_pitchfx_metrics_vs_rhb_for_player(cls, db_engine, player_id):
         s = select([cls]).where(cls.id == player_id)
         results = db_engine.execute(s).fetchall()
-        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+        return PitchFxMetricsCollection.from_pitchfx_view_results(results) if results else None
 
 
 class Pitch_Type_Left_View(db.Base):
@@ -236,7 +236,7 @@ class Pitch_Type_Left_View(db.Base):
     def get_pitchfx_metrics_vs_lhb_for_player(cls, db_engine, player_id):
         s = select([cls]).where(cls.id == player_id)
         results = db_engine.execute(s).fetchall()
-        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+        return PitchFxMetricsCollection.from_pitchfx_view_results(results) if results else None
 
 
 class Pitch_Type_By_Year_View(db.Base):
@@ -310,7 +310,7 @@ class Pitch_Type_By_Year_View(db.Base):
     def get_pitch_metrics_for_year_for_player(cls, db_engine, player_id, season_id):
         s = select([cls]).where(and_(cls.id == player_id, cls.season_id == season_id))
         results = db_engine.execute(s).fetchall()
-        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+        return PitchFxMetricsCollection.from_pitchfx_view_results(results) if results else None
 
     @classmethod
     def get_all_seasons_with_player_data(cls, db_engine, db_session, player_id):

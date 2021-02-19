@@ -90,7 +90,7 @@ class PlayerData:
             for season in self.seasons_played
         }
 
-    def get_pitch_metrics_for_game(self, bbref_game_id=None, pitch_app_id=None):
+    def get_pitchfx_metrics_for_game(self, bbref_game_id=None, pitch_app_id=None):
         pitch_app = self.get_pitch_app(bbref_game_id, pitch_app_id)
         if not pitch_app:
             return None
@@ -132,7 +132,7 @@ class PlayerData:
         )
 
     def get_pitch_mix_batter_stance_splits_for_game(self, game_id):
-        pitch_metrics = self.get_pitch_metrics_for_game(bbref_game_id=game_id)
+        pitch_metrics = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
         return self.get_pitch_mix_batter_stance_splits(
             pitch_metrics["all"], pitch_metrics["vs_rhb"], pitch_metrics["vs_lhb"], include_pitch_count=True
         )
@@ -173,7 +173,7 @@ class PlayerData:
         ]
 
     def get_pitch_mix_season_splits_for_pitch_type(self, game_id, pitch_type):
-        pitch_metrics_for_game = self.get_pitch_metrics_for_game(bbref_game_id=game_id)
+        pitch_metrics_for_game = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
         table_row = {
             "pitch_type": pitch_type.print_name,
             "game": pitch_metrics_for_game["all"].get_usage_stats_for_pitch_type(pitch_type),
@@ -200,7 +200,7 @@ class PlayerData:
         )
 
     def get_plate_discipline_pitch_type_splits_for_game(self, game_id):
-        pitch_metrics = self.get_pitch_metrics_for_game(bbref_game_id=game_id)
+        pitch_metrics = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
         return pitch_metrics["all"].get_plate_discipline_pitch_type_splits(include_pitch_count=True)
 
     def get_plate_discipline_pitch_type_splits_for_career(self):
@@ -223,7 +223,7 @@ class PlayerData:
         )
 
     def get_batted_ball_pitch_type_splits_for_game(self, game_id):
-        pitch_metrics = self.get_pitch_metrics_for_game(bbref_game_id=game_id)
+        pitch_metrics = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
         return pitch_metrics["all"].get_batted_ball_pitch_type_splits(include_bip_count=True)
 
     def get_batted_ball_pitch_type_splits_for_career(self):
