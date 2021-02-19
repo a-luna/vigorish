@@ -1,20 +1,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Union
+from typing import List
 
 from dacite import from_dict
 from sqlalchemy.engine import RowProxy
 
-from vigorish.types import RowDict
+from vigorish.types import MetricsDict, RowDict
 from vigorish.util.dataclass_helpers import get_field_types
-
-PitchStatsMetricsDict = Dict[str, Union[int, float]]
 
 
 @dataclass
 class PitchStatsMetrics:
-    mlb_id: int
+    mlb_id: int = field(repr=False, default=0)
     year: int = field(repr=False, default=0)
     player_team_id_bbref: str = field(repr=False, default="")
     opponent_team_id_bbref: str = field(repr=False, default="")
@@ -63,10 +61,10 @@ class PitchStatsMetrics:
         return [from_dict(data_class=cls, data=cls._get_pitch_stats_for_table(dict(row))) for row in results]
 
     @classmethod
-    def _get_pitch_stats_for_table(cls, pitch_stats: RowDict) -> PitchStatsMetricsDict:
+    def _get_pitch_stats_for_table(cls, pitch_stats: RowDict, decimal_precision=2) -> MetricsDict:
         dc_fields = get_field_types(cls)
         return {
-            k: round(v, 2) if dc_fields[k] is float else bool(v) if dc_fields[k] is bool else v
+            k: round(v, decimal_precision) if dc_fields[k] is float else v
             for k, v in pitch_stats.items()
             if v and k in dc_fields
         }
