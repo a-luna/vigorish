@@ -61,7 +61,7 @@ class PitchStatsMetrics:
         return [from_dict(data_class=cls, data=cls._get_pitch_stats_for_table(dict(row))) for row in results]
 
     @classmethod
-    def _get_pitch_stats_for_table(cls, pitch_stats: RowDict, decimal_precision=2) -> MetricsDict:
+    def _get_pitch_stats_for_table(cls, pitch_stats: RowDict, decimal_precision=3) -> MetricsDict:
         dc_fields = get_field_types(cls)
         return {
             k: round(v, decimal_precision) if dc_fields[k] is float else v

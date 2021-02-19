@@ -13,7 +13,7 @@ class PlayerData:
         self.mlb_id = mlb_id
         self.player = db.Player.find_by_mlb_id(self.db_session, self.mlb_id)
         self.player_id = db.PlayerId.find_by_mlb_id(self.db_session, self.mlb_id)
-        self.pitch_app_dict = {}
+        self.pitchfx_game_data_cache = {}
 
     @property
     def player_name(self):
@@ -70,6 +70,34 @@ class PlayerData:
         )
 
     @cached_property
+    def bat_stats_for_career(self):
+        return db.Player_BatStats_All_View.get_bat_stats_for_career_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def bat_stats_by_year(self):
+        return db.Player_BatStats_By_Year_View.get_bat_stats_by_year_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def bat_stats_by_team(self):
+        return db.Player_BatStats_By_Team_View.get_bat_stats_by_team_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def bat_stats_by_team_by_year(self):
+        return db.Player_BatStats_By_Team_Year_View.get_bat_stats_by_team_by_year_for_player(
+            self.db_engine, self.player.id
+        )
+
+    @cached_property
+    def bat_stats_by_opp_team(self):
+        return db.Player_BatStats_By_Opp_Team_View.get_bat_stats_by_opp_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def bat_stats_by_opp_team_by_year(self):
+        return db.Player_BatStats_By_Opp_Team_Year_View.get_bat_stats_by_opp_by_year_for_player(
+            self.db_engine, self.player.id
+        )
+
+    @cached_property
     def pitchfx_metrics_career(self):
         return db.Pitch_Type_All_View.get_pitchfx_metrics_for_career_for_player(self.db_engine, self.player.id)
 
@@ -94,9 +122,9 @@ class PlayerData:
         pitch_app = self.get_pitch_app(bbref_game_id, pitch_app_id)
         if not pitch_app:
             return None
-        pitch_mix_data = self.pitch_app_dict.get(bbref_game_id)
-        if not pitch_mix_data:
-            pitch_mix_data = {
+        pfx_metrics_for_game = self.pitchfx_game_data_cache.get(bbref_game_id)
+        if not pfx_metrics_for_game:
+            pfx_metrics_for_game = {
                 "all": db.PitchApp_PitchType_All_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
                 "vs_rhb": db.PitchApp_PitchType_Right_View.get_pitchfx_metrics_vs_rhb_for_pitch_app(
                     self.db_engine, pitch_app.id
@@ -105,8 +133,8 @@ class PlayerData:
                     self.db_engine, pitch_app.id
                 ),
             }
-            self.pitch_app_dict[bbref_game_id] = pitch_mix_data
-        return pitch_mix_data
+            self.pitchfx_game_data_cache[bbref_game_id] = pfx_metrics_for_game
+        return pfx_metrics_for_game
 
     def get_pitch_app(self, bbref_game_id, pitch_app_id):
         if not pitch_app_id and not bbref_game_id:
