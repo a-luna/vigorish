@@ -12,7 +12,7 @@ from vigorish.cli.components.util import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
-from vigorish.data.all_game_data import AllGameData
+from vigorish.data.game_data import GameData
 from vigorish.util.result import Result
 
 
@@ -59,7 +59,7 @@ class ViewGameData(MenuItem):
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = f"Loading data for {self.bbref_game_id}..."
         spinner.start()
-        self.game_data = AllGameData(self.app, self.bbref_game_id)
+        self.game_data = GameData(self.app, self.bbref_game_id)
         self.game_data.bat_boxscore[self.away_team_id]
         self.game_data.pitch_boxscore[self.away_team_id]
         self.game_data.bat_boxscore[self.home_team_id]

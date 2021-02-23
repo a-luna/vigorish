@@ -3,7 +3,7 @@ from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
 
-def update_status_bbref_boxscore_list(scraped_data, db_session, new_bbref_game_ids, apply_patch_list=False):
+def update_status_bbref_boxscore_list(scraped_data, db_session, new_bbref_game_ids, apply_patch_list=True):
     for bbref_game_id in new_bbref_game_ids:
         boxscore = scraped_data.get_bbref_boxscore(bbref_game_id, apply_patch_list)
         if not boxscore:

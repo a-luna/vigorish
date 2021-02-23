@@ -195,6 +195,7 @@ class DefensePosition(IntEnum):
     CENTER_FIELD = 8
     RIGHT_FIELD = 9
     DH = 10
+    BN = 11
 
     def __str__(self):
         abbrev_dict = {
@@ -210,6 +211,10 @@ class DefensePosition(IntEnum):
             "RIGHT_FIELD": "RF",
         }
         return abbrev_dict.get(self.name, self.name)
+
+    @property
+    def is_starter(self):
+        return True if int(self) in range(1, 11) else False
 
     @classmethod
     def from_abbrev(cls, abbrev):

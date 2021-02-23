@@ -99,10 +99,12 @@ class BackupDatabase(MenuItem):
         return [
             [
                 "This task creates a backup of the database tables listed below:\n",
+                "* bat_stats",
+                "* pitch_stats",
+                "* pitchfx",
                 "* scrape_status_date",
                 "* scrape_status_game",
-                "* scrape_status_pitch_app",
-                "* pitchfx\n",
+                "* scrape_status_pitch_app\n",
                 (
                     "After exporting each table as a CSV file, the files are added to a zip "
                     "archive. Then, the zip file is compressed and the CSV files are removed."

@@ -58,4 +58,8 @@ from vigorish.views import (
     Season_Game_PitchApp_View,
     Season_Game_View,
     Season_PitchApp_View,
+    Team_BatStats_By_Player_Year_View,
+    Team_BatStats_By_Year_View,
+    Team_PitchStats_By_Player_Year_View,
+    Team_PitchStats_By_Year_View,
 )

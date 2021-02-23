@@ -4,7 +4,7 @@ from functools import cached_property
 from events import Events
 
 import vigorish.database as db
-from vigorish.data.all_game_data import AllGameData
+from vigorish.data.game_data import GameData
 from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.result import Result
@@ -67,40 +67,46 @@ class AddToDatabaseTask(Task):
             return Result.Fail(error)
         self.events.add_data_to_db_start(year, game_ids)
         for num, game_id in enumerate(game_ids, start=1):
-            all_game_data = AllGameData(self.app, game_id)
-            result = self.add_player_stats_to_database(game_id, all_game_data)
+            game_data = GameData(self.app, game_id)
+            result = self.add_player_stats_to_database(game_id, game_data)
             if result.failure:
                 return result
-            result = self.add_pitchfx_to_database(all_game_data)
+            result = self.add_pitchfx_to_database(game_data)
             if result.failure:
                 return result
             self.events.add_data_to_db_progress(num, year, game_id)
         self.events.add_data_to_db_complete(year)
         return Result.Ok()
 
-    def add_player_stats_to_database(self, game_id, all_game_data):
+    def add_player_stats_to_database(self, game_id, game_data):
         game_status = db.GameScrapeStatus.find_by_bbref_game_id(self.db_session, game_id)
         if not game_status:
             error = f"Import aborted! Game status '{game_id}' not found in database"
             return Result.Fail(error)
         if not game_status.imported_bat_stats:
-            self.add_bat_stats_to_database(game_id, all_game_data, game_status)
+            self.add_bat_stats_to_database(game_id, game_data, game_status)
         if not game_status.imported_pitch_stats:
-            self.add_pitch_stats_to_database(game_id, all_game_data, game_status)
+            self.add_pitch_stats_to_database(game_id, game_data, game_status)
         return Result.Ok()
 
-    def add_bat_stats_to_database(self, game_id, all_game_data, game_status):
-        for mlb_id in all_game_data.bat_stats_player_ids:
-            bat_stats_dict = all_game_data.get_bat_stats(mlb_id).value
-            bat_stats = db.BatStats.from_dict(game_id, bat_stats_dict)
-            bat_stats = self.update_player_stats_relationships(bat_stats)
-            self.db_session.add(bat_stats)
+    def add_bat_stats_to_database(self, game_id, game_data, game_status):
+        for team_boxscore in game_data.bat_boxscore.values():
+            for player_boxscore in team_boxscore.values():
+                bat_stats_dict = game_data.get_bat_stats(player_boxscore["mlb_id"]).value
+                if not bat_stats_dict:
+                    continue
+                bat_stats_dict["is_starter"] = player_boxscore["is_starter"]
+                bat_stats_dict["bat_order"] = player_boxscore["bat_order"]
+                bat_stats_dict["def_position"] = player_boxscore["def_position"]
+                bat_stats = db.BatStats.from_dict(game_id, bat_stats_dict)
+                bat_stats = self.update_player_stats_relationships(bat_stats)
+                self.db_session.add(bat_stats)
         game_status.imported_bat_stats = 1
         self.db_session.commit()
 
-    def add_pitch_stats_to_database(self, game_id, all_game_data, game_status):
-        for mlb_id in all_game_data.pitch_stats_player_ids:
-            pitch_stats_dict = all_game_data.get_pitch_app_stats(mlb_id).value
+    def add_pitch_stats_to_database(self, game_id, game_data, game_status):
+        for mlb_id in game_data.pitch_stats_player_ids:
+            pitch_stats_dict = game_data.get_pitch_app_stats(mlb_id).value
             pitch_stats = db.PitchStats.from_dict(game_id, pitch_stats_dict)
             pitch_stats = self.update_player_stats_relationships(pitch_stats)
             self.db_session.add(pitch_stats)
@@ -117,8 +123,8 @@ class AddToDatabaseTask(Task):
         stats.game_status_id = self.game_id_map[stats.bbref_game_id]
         return stats
 
-    def add_pitchfx_to_database(self, all_game_data):
-        for pitch_app_id, pfx_dict_list in all_game_data.all_pitchfx.items():
+    def add_pitchfx_to_database(self, game_data):
+        for pitch_app_id, pfx_dict_list in game_data.all_pitchfx.items():
             pitch_app = db.PitchAppScrapeStatus.find_by_pitch_app_id(self.db_session, pitch_app_id)
             if not pitch_app:
                 error = f"Import aborted! Pitch app '{pitch_app_id}' not found in database"

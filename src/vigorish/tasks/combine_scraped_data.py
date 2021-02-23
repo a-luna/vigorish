@@ -59,14 +59,6 @@ class CombineScrapedDataTask(Task):
         return self.boxscore.home_team_data.team_id_br
 
     @property
-    def away_team_id_bb(self):
-        return get_brooks_team_id(self.boxscore.away_team_data.team_id_br)
-
-    @property
-    def home_team_id_bb(self):
-        return get_brooks_team_id(self.boxscore.home_team_data.team_id_br)
-
-    @property
     def game_start_time(self):
         return self.game_status.game_start_time if self.game_status else None
 
@@ -180,7 +172,7 @@ class CombineScrapedDataTask(Task):
         first_pitch_thrown = all_pfx[0].time_pitch_thrown
         game_start_time = (
             first_pitch_thrown.replace(second=0)
-            if first_pitch_thrown.seconds
+            if first_pitch_thrown.second
             else first_pitch_thrown - timedelta(minutes=1)
         )
         self.game_status.game_time_hour = game_start_time.hour

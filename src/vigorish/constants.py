@@ -26,6 +26,8 @@ BR_BB_TEAM_ID_MAP = {
 
 BB_BR_TEAM_ID_MAP = {v: k for k, v in BR_BB_TEAM_ID_MAP.items()}
 
+PACIFIC_TZ_TEAMS = ["ANA", "ARI", "LAD", "OAK", "SDP", "SEA", "SFG"]
+
 DEFENSE_POSITIONS = [
     "P",
     "C",

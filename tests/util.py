@@ -38,6 +38,7 @@ GAME_ID_EXTRA_PFX_REMOVED = "TEX201904150"
 GAME_ID_PFX_OUT_OF_SEQUENCE = "WAS201904030"
 GAME_ID_PATCH_PFX = "OAK201904030"
 GAME_ID_PATCH_BOXSCORE = "TOR201908170"
+GAME_ID_FIX_START_TIME = "TBA201909032"
 
 PATCH_BR_DAILY_GAME_DATE = datetime(2017, 9, 15)
 PATCH_BB_DAILY_GAME_DATE = datetime(2017, 5, 26)
@@ -91,6 +92,12 @@ COMBINED_DATA_GAME_DICT = {
         "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
         "game_date": datetime(2019, 4, 3),
         "apply_patch_list": False,
+    },
+    "FIX_START_TIME": {
+        "bbref_game_id": GAME_ID_FIX_START_TIME,
+        "bb_game_id": "gid_2019_09_03_balmlb_tbamlb_2",
+        "game_date": datetime(2019, 9, 3),
+        "apply_patch_list": True,
     },
 }
 

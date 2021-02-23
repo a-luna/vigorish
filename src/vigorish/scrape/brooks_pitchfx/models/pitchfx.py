@@ -112,15 +112,19 @@ class BrooksPitchFxData:
             int(group_dict["minute"]),
             int(group_dict["second"]),
         )
-        thrown_as_tz = timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
         thrown_replace_tz = timestamp.replace(tzinfo=TIME_ZONE_NEW_YORK)
-        return (
-            thrown_as_tz
-            if self.game_start_time and self.game_start_time < thrown_as_tz
-            else thrown_replace_tz
-            if self.game_start_time and self.game_start_time < thrown_replace_tz
-            else None
-        )
+        thrown_as_tz = timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
+        if not self.game_start_time:
+            return thrown_as_tz
+        seconds_since_thrown_replace_tz = (thrown_replace_tz - self.game_start_time).total_seconds()
+        seconds_since_thrown_as_tz = (thrown_as_tz - self.game_start_time).total_seconds()
+        if seconds_since_thrown_as_tz < 0 and seconds_since_thrown_replace_tz < 0:
+            return None
+        if seconds_since_thrown_as_tz > 0 and seconds_since_thrown_replace_tz < 0:
+            return thrown_as_tz
+        if seconds_since_thrown_as_tz < 0 and seconds_since_thrown_replace_tz > 0:
+            return thrown_replace_tz
+        return thrown_as_tz if seconds_since_thrown_as_tz < seconds_since_thrown_replace_tz else thrown_replace_tz
 
     @property
     def seconds_since_game_start(self):

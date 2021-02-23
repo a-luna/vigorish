@@ -1,16 +1,276 @@
+from dataclasses import asdict
+
 from dacite.core import from_dict
 
-from vigorish.data.all_player_data import AllPlayerData
-from vigorish.data.metrics import PitchFxMetricsCollection, PitchStatsMetrics
+from vigorish.data.metrics import BatStatsMetrics, PitchFxMetricsCollection, PitchStatsMetrics
+from vigorish.data.player_data import PlayerData
 from vigorish.enums import PitchType
+
+
+def test_bat_stats(vig_app):
+    bat_stats_for_career_dict = {
+        "year": 0,
+        "player_team_id_bbref": "",
+        "opponent_team_id_bbref": "",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
+        "stint_number": 0,
+        "total_games": 1,
+        "avg": 0.8,
+        "obp": 0.8,
+        "slg": 1.6,
+        "ops": 2.4,
+        "iso": 0.8,
+        "bb_rate": 0.0,
+        "k_rate": 0.0,
+        "plate_appearances": 5,
+        "at_bats": 5,
+        "hits": 4,
+        "runs_scored": 2,
+        "rbis": 3,
+        "bases_on_balls": 0,
+        "strikeouts": 0,
+        "doubles": 1,
+        "triples": 0,
+        "homeruns": 1,
+        "stolen_bases": 0,
+        "caught_stealing": 1,
+        "hit_by_pitch": 0,
+        "intentional_bb": 0,
+        "gdp": 0,
+        "sac_fly": 0,
+        "sac_hit": 0,
+        "total_pitches": 19,
+        "total_strikes": 11,
+        "wpa_bat": 0.145,
+        "wpa_bat_pos": 0.166,
+        "wpa_bat_neg": -0.021,
+        "re24_bat": 2.9,
+    }
+
+    bat_stats_by_year_dict = {
+        "year": 2019,
+        "player_team_id_bbref": "",
+        "opponent_team_id_bbref": "",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
+        "stint_number": 0,
+        "total_games": 1,
+        "avg": 0.8,
+        "obp": 0.8,
+        "slg": 1.6,
+        "ops": 2.4,
+        "iso": 0.8,
+        "bb_rate": 0.0,
+        "k_rate": 0.0,
+        "plate_appearances": 5,
+        "at_bats": 5,
+        "hits": 4,
+        "runs_scored": 2,
+        "rbis": 3,
+        "bases_on_balls": 0,
+        "strikeouts": 0,
+        "doubles": 1,
+        "triples": 0,
+        "homeruns": 1,
+        "stolen_bases": 0,
+        "caught_stealing": 1,
+        "hit_by_pitch": 0,
+        "intentional_bb": 0,
+        "gdp": 0,
+        "sac_fly": 0,
+        "sac_hit": 0,
+        "total_pitches": 19,
+        "total_strikes": 11,
+        "wpa_bat": 0.145,
+        "wpa_bat_pos": 0.166,
+        "wpa_bat_neg": -0.021,
+        "re24_bat": 2.9,
+    }
+
+    bat_stats_by_team_dict = {
+        "year": 0,
+        "player_team_id_bbref": "LAA",
+        "opponent_team_id_bbref": "",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
+        "stint_number": 0,
+        "total_games": 1,
+        "avg": 0.8,
+        "obp": 0.8,
+        "slg": 1.6,
+        "ops": 2.4,
+        "iso": 0.8,
+        "bb_rate": 0.0,
+        "k_rate": 0.0,
+        "plate_appearances": 5,
+        "at_bats": 5,
+        "hits": 4,
+        "runs_scored": 2,
+        "rbis": 3,
+        "bases_on_balls": 0,
+        "strikeouts": 0,
+        "doubles": 1,
+        "triples": 0,
+        "homeruns": 1,
+        "stolen_bases": 0,
+        "caught_stealing": 1,
+        "hit_by_pitch": 0,
+        "intentional_bb": 0,
+        "gdp": 0,
+        "sac_fly": 0,
+        "sac_hit": 0,
+        "total_pitches": 19,
+        "total_strikes": 11,
+        "wpa_bat": 0.145,
+        "wpa_bat_pos": 0.166,
+        "wpa_bat_neg": -0.021,
+        "re24_bat": 2.9,
+    }
+
+    bat_stats_by_team_by_year_dict = {
+        "year": 2019,
+        "player_team_id_bbref": "LAA",
+        "opponent_team_id_bbref": "",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
+        "stint_number": 1,
+        "total_games": 1,
+        "avg": 0.8,
+        "obp": 0.8,
+        "slg": 1.6,
+        "ops": 2.4,
+        "iso": 0.8,
+        "bb_rate": 0.0,
+        "k_rate": 0.0,
+        "plate_appearances": 5,
+        "at_bats": 5,
+        "hits": 4,
+        "runs_scored": 2,
+        "rbis": 3,
+        "bases_on_balls": 0,
+        "strikeouts": 0,
+        "doubles": 1,
+        "triples": 0,
+        "homeruns": 1,
+        "stolen_bases": 0,
+        "caught_stealing": 1,
+        "hit_by_pitch": 0,
+        "intentional_bb": 0,
+        "gdp": 0,
+        "sac_fly": 0,
+        "sac_hit": 0,
+        "total_pitches": 19,
+        "total_strikes": 11,
+        "wpa_bat": 0.145,
+        "wpa_bat_pos": 0.166,
+        "wpa_bat_neg": -0.021,
+        "re24_bat": 2.9,
+    }
+
+    bat_stats_by_opp_team_dict = {
+        "year": 0,
+        "player_team_id_bbref": "",
+        "opponent_team_id_bbref": "TOR",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
+        "stint_number": 0,
+        "total_games": 1,
+        "avg": 0.8,
+        "obp": 0.8,
+        "slg": 1.6,
+        "ops": 2.4,
+        "iso": 0.8,
+        "bb_rate": 0.0,
+        "k_rate": 0.0,
+        "plate_appearances": 5,
+        "at_bats": 5,
+        "hits": 4,
+        "runs_scored": 2,
+        "rbis": 3,
+        "bases_on_balls": 0,
+        "strikeouts": 0,
+        "doubles": 1,
+        "triples": 0,
+        "homeruns": 1,
+        "stolen_bases": 0,
+        "caught_stealing": 1,
+        "hit_by_pitch": 0,
+        "intentional_bb": 0,
+        "gdp": 0,
+        "sac_fly": 0,
+        "sac_hit": 0,
+        "total_pitches": 19,
+        "total_strikes": 11,
+        "wpa_bat": 0.145,
+        "wpa_bat_pos": 0.166,
+        "wpa_bat_neg": -0.021,
+        "re24_bat": 2.9,
+    }
+
+    bat_stats_by_opp_team_by_year_dict = {
+        "year": 2019,
+        "player_team_id_bbref": "",
+        "opponent_team_id_bbref": "TOR",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
+        "stint_number": 0,
+        "total_games": 1,
+        "avg": 0.8,
+        "obp": 0.8,
+        "slg": 1.6,
+        "ops": 2.4,
+        "iso": 0.8,
+        "bb_rate": 0.0,
+        "k_rate": 0.0,
+        "plate_appearances": 5,
+        "at_bats": 5,
+        "hits": 4,
+        "runs_scored": 2,
+        "rbis": 3,
+        "bases_on_balls": 0,
+        "strikeouts": 0,
+        "doubles": 1,
+        "triples": 0,
+        "homeruns": 1,
+        "stolen_bases": 0,
+        "caught_stealing": 1,
+        "hit_by_pitch": 0,
+        "intentional_bb": 0,
+        "gdp": 0,
+        "sac_fly": 0,
+        "sac_hit": 0,
+        "total_pitches": 19,
+        "total_strikes": 11,
+        "wpa_bat": 0.145,
+        "wpa_bat_pos": 0.166,
+        "wpa_bat_neg": -0.021,
+        "re24_bat": 2.9,
+    }
+
+    bat_stats_for_career = from_dict(data_class=BatStatsMetrics, data=bat_stats_for_career_dict)
+    bat_stats_by_year = from_dict(data_class=BatStatsMetrics, data=bat_stats_by_year_dict)
+    bat_stats_by_team = from_dict(data_class=BatStatsMetrics, data=bat_stats_by_team_dict)
+    bat_stats_by_team_by_year = from_dict(data_class=BatStatsMetrics, data=bat_stats_by_team_by_year_dict)
+    bat_stats_by_opp_team = from_dict(data_class=BatStatsMetrics, data=bat_stats_by_opp_team_dict)
+    bat_stats_by_opp_team_by_year = from_dict(data_class=BatStatsMetrics, data=bat_stats_by_opp_team_by_year_dict)
+
+    player_data = PlayerData(vig_app, 545361)
+    assert player_data.bat_stats_for_career == bat_stats_for_career
+    assert player_data.bat_stats_by_year == [bat_stats_by_year]
+    assert player_data.bat_stats_by_team == [bat_stats_by_team]
+    assert player_data.bat_stats_by_team_by_year == [bat_stats_by_team_by_year]
+    assert player_data.bat_stats_by_opp_team == [bat_stats_by_opp_team]
+    assert player_data.bat_stats_by_opp_team_by_year == [bat_stats_by_opp_team_by_year]
 
 
 def test_pitch_stats(vig_app):
     pitch_stats_for_career_dict = {
-        "mlb_id": 571882,
         "year": 0,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -53,10 +313,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_as_sp_dict = {
-        "mlb_id": 571882,
         "year": 0,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -101,10 +362,11 @@ def test_pitch_stats(vig_app):
     pitch_stats_as_rp = None
 
     pitch_stats_by_year_dict = {
-        "mlb_id": 571882,
         "year": 2019,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -147,10 +409,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_by_team_dict = {
-        "mlb_id": 571882,
         "year": 0,
         "player_team_id_bbref": "TOR",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -193,10 +456,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_by_team_by_year_dict = {
-        "mlb_id": 571882,
         "year": 2019,
         "player_team_id_bbref": "TOR",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 1,
         "total_games": 1,
         "games_as_sp": 1,
@@ -239,10 +503,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_by_opp_team_dict = {
-        "mlb_id": 571882,
         "year": 0,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "LAA",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -285,10 +550,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_by_opp_team_by_year_dict = {
-        "mlb_id": 571882,
         "year": 2019,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "LAA",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -339,7 +605,12 @@ def test_pitch_stats(vig_app):
     pitch_stats_by_opp_team = from_dict(data_class=PitchStatsMetrics, data=pitch_stats_by_opp_team_dict)
     pitch_stats_by_opp_team_by_year = from_dict(data_class=PitchStatsMetrics, data=pitch_stats_by_opp_team_by_year_dict)
 
-    player_data = AllPlayerData(vig_app, 571882)
+    player_data = PlayerData(vig_app, 571882)
+
+    left_dict = asdict(player_data.pitch_stats_for_career)
+    right_dict = pitch_stats_for_career_dict
+    assert left_dict == right_dict
+
     assert player_data.pitch_stats_for_career == pitch_stats_for_career
     assert player_data.pitch_stats_as_sp == pitch_stats_as_sp
     assert player_data.pitch_stats_as_rp == pitch_stats_as_rp
@@ -393,6 +664,7 @@ def test_pitchfx_metrics_career(vig_app):
         "z_swing_rate": 0.0,
         "zone_rate": 0.5,
     }
+
     pfx_metrics_career_FF_dict = {
         "avg_pfx_x": -1.258,
         "avg_pfx_z": 8.69,
@@ -435,6 +707,7 @@ def test_pitchfx_metrics_career(vig_app):
         "z_swing_rate": 0.667,
         "zone_rate": 0.5,
     }
+
     pfx_metrics_career_CH_dict = {
         "avg_pfx_x": -6.37,
         "avg_pfx_z": 7.137,
@@ -444,7 +717,7 @@ def test_pitchfx_metrics_career(vig_app):
         "called_strike_rate": 0.333,
         "contact_rate": 0.333,
         "csw_rate": 0.667,
-        "custom_score": 0.0,
+        "custom_score": 1.333,
         "fly_ball_rate": 0.0,
         "ground_ball_rate": 0.0,
         "line_drive_rate": 0.0,
@@ -477,6 +750,7 @@ def test_pitchfx_metrics_career(vig_app):
         "z_swing_rate": 0.667,
         "zone_rate": 1.0,
     }
+
     pfx_metrics_career_SL_dict = {
         "avg_pfx_x": 1.83,
         "avg_pfx_z": -1.265,
@@ -521,41 +795,7 @@ def test_pitchfx_metrics_career(vig_app):
     }
 
     pfx_metrics_career_dict = {
-        "called_strike_rate": 0.294,
-        "contact_rate": 0.235,
-        "csw_rate": 0.412,
-        "fly_ball_rate": 0.0,
-        "ground_ball_rate": 0.0,
-        "line_drive_rate": 1.0,
-        "money_pitch": 0,
-        "o_contact_rate": 0.5,
-        "o_swing_rate": 0.25,
-        "percent": 1.0,
-        "pitch_types": [PitchType.CURVEBALL, PitchType.FOUR_SEAM_FASTBALL, PitchType.CHANGEUP, PitchType.SLIDER],
         "pitcher_id_mlb": 571882,
-        "pop_up_rate": 0.0,
-        "swing_rate": 0.353,
-        "swinging_strike_rate": 0.118,
-        "total_batted_balls": 1,
-        "total_called_strikes": 5,
-        "total_contact_inside_zone": 3,
-        "total_contact_outside_zone": 1,
-        "total_fly_balls": 0,
-        "total_ground_balls": 0,
-        "total_inside_strike_zone": 9,
-        "total_line_drives": 1,
-        "total_outside_strike_zone": 8,
-        "total_pitches": 17,
-        "total_pop_ups": 0,
-        "total_swinging_strikes": 2,
-        "total_swings": 6,
-        "total_swings_inside_zone": 4,
-        "total_swings_made_contact": 4,
-        "total_swings_outside_zone": 2,
-        "whiff_rate": 0.333,
-        "z_contact_rate": 0.75,
-        "z_swing_rate": 0.444,
-        "zone_rate": 0.529,
         "metrics_detail": {
             PitchType.CURVEBALL: pfx_metrics_career_CU_dict,
             PitchType.FOUR_SEAM_FASTBALL: pfx_metrics_career_FF_dict,
@@ -564,9 +804,7 @@ def test_pitchfx_metrics_career(vig_app):
         },
     }
     pfx_metrics_career = from_dict(data_class=PitchFxMetricsCollection, data=pfx_metrics_career_dict)
-
-    player_data = AllPlayerData(vig_app, 571882)
-    assert player_data.player_name == "Derek Law"
+    player_data = PlayerData(vig_app, 571882)
     assert player_data.pitchfx_metrics_career == pfx_metrics_career
 
 

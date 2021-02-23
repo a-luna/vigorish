@@ -1,25 +1,22 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Union
+from typing import List
 
 from dacite import from_dict
 from sqlalchemy.engine import RowProxy
 
-from vigorish.data.metrics.constants import (
-    PITCH_STATS_FLOAT_METRIC_NAMES,
-    PITCH_STATS_INT_METRIC_NAMES,
-    PITCH_STATS_STR_METRIC_NAMES,
-)
-from vigorish.types import RowDict
+from vigorish.types import MetricsDict, RowDict
+from vigorish.util.dataclass_helpers import get_field_types
 
 
 @dataclass
 class PitchStatsMetrics:
-    mlb_id: int
     year: int = field(repr=False, default=0)
     player_team_id_bbref: str = field(repr=False, default="")
     opponent_team_id_bbref: str = field(repr=False, default="")
+    mlb_id: int = field(repr=False, default=0)
+    bbref_id: str = field(repr=False, default="")
     stint_number: int = field(repr=False, default=0)
     total_games: int = field(repr=False, default=0)
     games_as_sp: int = field(repr=False, default=0)
@@ -62,26 +59,13 @@ class PitchStatsMetrics:
 
     @classmethod
     def from_pitch_stats_view_results(cls, results: List[RowProxy]) -> PitchStatsMetrics:
-        row_dicts = [dict(row) for row in results]
-        if not row_dicts:
-            return None
-        mlb_id = row_dicts[0]["mlb_id"]
-        pitch_stats_list = [_get_pitch_stats_for_table(mlb_id, d) for d in row_dicts]
-        return [from_dict(data_class=cls, data=pitch_stats) for pitch_stats in pitch_stats_list]
+        return [from_dict(data_class=cls, data=cls._get_pitch_stats_for_table(dict(row))) for row in results]
 
-
-PitchStatsMetricsDict = Dict[str, Union[int, float]]
-
-
-def _get_pitch_stats_for_table(mlb_id: int, pitch_stats_dict: RowDict) -> PitchStatsMetricsDict:
-    pitch_stats = {"mlb_id": mlb_id}
-    for metric in PITCH_STATS_FLOAT_METRIC_NAMES:
-        if metric in pitch_stats_dict:
-            pitch_stats[metric] = round(pitch_stats_dict[metric], 3)
-    for metric in PITCH_STATS_INT_METRIC_NAMES:
-        if metric in pitch_stats_dict:
-            pitch_stats[metric] = pitch_stats_dict[metric]
-    for metric in PITCH_STATS_STR_METRIC_NAMES:
-        if metric in pitch_stats_dict:
-            pitch_stats[metric] = pitch_stats_dict[metric]
-    return pitch_stats
+    @classmethod
+    def _get_pitch_stats_for_table(cls, pitch_stats: RowDict, decimal_precision=3) -> MetricsDict:
+        dc_fields = get_field_types(cls)
+        return {
+            k: round(v, decimal_precision) if dc_fields[k] is float else v
+            for k, v in pitch_stats.items()
+            if v and k in dc_fields
+        }

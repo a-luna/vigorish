@@ -5,7 +5,7 @@ from vigorish.cli.components.viewers import create_display_table, create_table_v
 from vigorish.util.string_helpers import validate_pitch_app_id
 
 
-class AllPlayerData:
+class PlayerData:
     def __init__(self, app, mlb_id):
         self.app = app
         self.db_engine = self.app.db_engine
@@ -13,7 +13,7 @@ class AllPlayerData:
         self.mlb_id = mlb_id
         self.player = db.Player.find_by_mlb_id(self.db_session, self.mlb_id)
         self.player_id = db.PlayerId.find_by_mlb_id(self.db_session, self.mlb_id)
-        self.pitch_app_dict = {}
+        self.pitchfx_game_data_cache = {}
 
     @property
     def player_name(self):
@@ -70,6 +70,34 @@ class AllPlayerData:
         )
 
     @cached_property
+    def bat_stats_for_career(self):
+        return db.Player_BatStats_All_View.get_bat_stats_for_career_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def bat_stats_by_year(self):
+        return db.Player_BatStats_By_Year_View.get_bat_stats_by_year_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def bat_stats_by_team(self):
+        return db.Player_BatStats_By_Team_View.get_bat_stats_by_team_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def bat_stats_by_team_by_year(self):
+        return db.Player_BatStats_By_Team_Year_View.get_bat_stats_by_team_by_year_for_player(
+            self.db_engine, self.player.id
+        )
+
+    @cached_property
+    def bat_stats_by_opp_team(self):
+        return db.Player_BatStats_By_Opp_Team_View.get_bat_stats_by_opp_for_player(self.db_engine, self.player.id)
+
+    @cached_property
+    def bat_stats_by_opp_team_by_year(self):
+        return db.Player_BatStats_By_Opp_Team_Year_View.get_bat_stats_by_opp_by_year_for_player(
+            self.db_engine, self.player.id
+        )
+
+    @cached_property
     def pitchfx_metrics_career(self):
         return db.Pitch_Type_All_View.get_pitchfx_metrics_for_career_for_player(self.db_engine, self.player.id)
 
@@ -90,6 +118,31 @@ class AllPlayerData:
             for season in self.seasons_played
         }
 
+    def get_pitchfx_metrics_for_game(self, bbref_game_id=None, pitch_app_id=None):
+        pitch_app = self.get_pitch_app(bbref_game_id, pitch_app_id)
+        if not pitch_app:
+            return None
+        pfx_metrics_for_game = self.pitchfx_game_data_cache.get(bbref_game_id)
+        if not pfx_metrics_for_game:
+            pfx_metrics_for_game = {
+                "all": db.PitchApp_PitchType_All_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
+                "vs_rhb": db.PitchApp_PitchType_Right_View.get_pitchfx_metrics_vs_rhb_for_pitch_app(
+                    self.db_engine, pitch_app.id
+                ),
+                "vs_lhb": db.PitchApp_PitchType_Left_View.get_pitchfx_metrics_vs_lhb_for_pitch_app(
+                    self.db_engine, pitch_app.id
+                ),
+            }
+            self.pitchfx_game_data_cache[bbref_game_id] = pfx_metrics_for_game
+        return pfx_metrics_for_game
+
+    def get_pitch_app(self, bbref_game_id, pitch_app_id):
+        if not pitch_app_id and not bbref_game_id:
+            return None
+        if not bbref_game_id:
+            bbref_game_id = validate_pitch_app_id(pitch_app_id).value["game_id"]
+        return self.pitch_app_map.get(bbref_game_id)
+
     def view_pitch_mix_batter_stance_splits(self, game_id):
         return create_table_viewer(
             [
@@ -107,7 +160,7 @@ class AllPlayerData:
         )
 
     def get_pitch_mix_batter_stance_splits_for_game(self, game_id):
-        pitch_metrics = self.get_pitch_metrics_for_game(bbref_game_id=game_id)
+        pitch_metrics = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
         return self.get_pitch_mix_batter_stance_splits(
             pitch_metrics["all"], pitch_metrics["vs_rhb"], pitch_metrics["vs_lhb"], include_pitch_count=True
         )
@@ -148,7 +201,7 @@ class AllPlayerData:
         ]
 
     def get_pitch_mix_season_splits_for_pitch_type(self, game_id, pitch_type):
-        pitch_metrics_for_game = self.get_pitch_metrics_for_game(bbref_game_id=game_id)
+        pitch_metrics_for_game = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
         table_row = {
             "pitch_type": pitch_type.print_name,
             "game": pitch_metrics_for_game["all"].get_usage_stats_for_pitch_type(pitch_type),
@@ -175,7 +228,7 @@ class AllPlayerData:
         )
 
     def get_plate_discipline_pitch_type_splits_for_game(self, game_id):
-        pitch_metrics = self.get_pitch_metrics_for_game(bbref_game_id=game_id)
+        pitch_metrics = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
         return pitch_metrics["all"].get_plate_discipline_pitch_type_splits(include_pitch_count=True)
 
     def get_plate_discipline_pitch_type_splits_for_career(self):
@@ -198,33 +251,8 @@ class AllPlayerData:
         )
 
     def get_batted_ball_pitch_type_splits_for_game(self, game_id):
-        pitch_metrics = self.get_pitch_metrics_for_game(bbref_game_id=game_id)
+        pitch_metrics = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
         return pitch_metrics["all"].get_batted_ball_pitch_type_splits(include_bip_count=True)
 
     def get_batted_ball_pitch_type_splits_for_career(self):
         return self.pitchfx_metrics_career.get_batted_ball_pitch_type_splits()
-
-    def get_pitch_metrics_for_game(self, bbref_game_id=None, pitch_app_id=None):
-        pitch_app = self.get_pitch_app(bbref_game_id, pitch_app_id)
-        if not pitch_app:
-            return None
-        pitch_mix_data = self.pitch_app_dict.get(bbref_game_id)
-        if not pitch_mix_data:
-            pitch_mix_data = {
-                "all": db.PitchApp_PitchType_All_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
-                "vs_rhb": db.PitchApp_PitchType_Right_View.get_pitchfx_metrics_vs_rhb_for_pitch_app(
-                    self.db_engine, pitch_app.id
-                ),
-                "vs_lhb": db.PitchApp_PitchType_Left_View.get_pitchfx_metrics_vs_lhb_for_pitch_app(
-                    self.db_engine, pitch_app.id
-                ),
-            }
-            self.pitch_app_dict[bbref_game_id] = pitch_mix_data
-        return pitch_mix_data
-
-    def get_pitch_app(self, bbref_game_id, pitch_app_id):
-        if not pitch_app_id and not bbref_game_id:
-            return None
-        if not bbref_game_id:
-            bbref_game_id = validate_pitch_app_id(pitch_app_id).value["game_id"]
-        return self.pitch_app_map.get(bbref_game_id)
