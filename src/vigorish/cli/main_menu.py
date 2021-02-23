@@ -55,6 +55,7 @@ class MainMenu(Menu):
             AllJobsMenu: True,
             CombineScrapedData: True,
             ScrapedDataErrorsMenu: True,
+            AdminTasksMenu: True,
         }
         selected_menu_item = type(self.selected_menu_item)
         return check_refresh_dict.get(selected_menu_item, False)
