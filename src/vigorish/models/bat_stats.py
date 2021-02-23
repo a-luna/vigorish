@@ -16,6 +16,9 @@ class BatStats(db.Base):
     player_id_bbref = Column(String)
     player_team_id_bbref = Column(String)
     opponent_team_id_bbref = Column(String)
+    is_starter = Column(Integer, default=0)
+    bat_order = Column(Integer)
+    def_position = Column(String)
     plate_appearances = Column(Integer)
     at_bats = Column(Integer)
     hits = Column(Integer)
@@ -67,6 +70,9 @@ class BatStats(db.Base):
         bbref_data["player_id_bbref"] = bat_stats_dict["batter_id_bbref"]
         bbref_data["player_team_id_bbref"] = bat_stats_dict["batter_team_id_bbref"]
         bbref_data["opponent_team_id_bbref"] = bat_stats_dict["opponent_team_id_bbref"]
+        bbref_data["is_starter"] = int(bat_stats_dict["is_starter"])
+        bbref_data["bat_order"] = bat_stats_dict["bat_order"]
+        bbref_data["def_position"] = bat_stats_dict["def_position"]
         for d in bbref_data.pop("details", []):
             if d["stat"] == "2B":
                 bbref_data["doubles"] = d["count"]
@@ -100,6 +106,9 @@ class BatStatsCsvRow:
     player_id_bbref: str = None
     player_team_id_bbref: str = None
     opponent_team_id_bbref: str = None
+    is_starter: int = 0
+    bat_order: int = 0
+    def_position: str = None
     plate_appearances: int = 0
     at_bats: int = 0
     hits: int = 0

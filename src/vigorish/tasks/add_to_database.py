@@ -90,11 +90,17 @@ class AddToDatabaseTask(Task):
         return Result.Ok()
 
     def add_bat_stats_to_database(self, game_id, game_data, game_status):
-        for mlb_id in game_data.bat_stats_player_ids:
-            bat_stats_dict = game_data.get_bat_stats(mlb_id).value
-            bat_stats = db.BatStats.from_dict(game_id, bat_stats_dict)
-            bat_stats = self.update_player_stats_relationships(bat_stats)
-            self.db_session.add(bat_stats)
+        for team_boxscore in game_data.bat_boxscore.values():
+            for player_boxscore in team_boxscore.values():
+                bat_stats_dict = game_data.get_bat_stats(player_boxscore["mlb_id"]).value
+                if not bat_stats_dict:
+                    continue
+                bat_stats_dict["is_starter"] = player_boxscore["is_starter"]
+                bat_stats_dict["bat_order"] = player_boxscore["bat_order"]
+                bat_stats_dict["def_position"] = player_boxscore["def_position"]
+                bat_stats = db.BatStats.from_dict(game_id, bat_stats_dict)
+                bat_stats = self.update_player_stats_relationships(bat_stats)
+                self.db_session.add(bat_stats)
         game_status.imported_bat_stats = 1
         self.db_session.commit()
 

@@ -198,7 +198,9 @@ class GameData:
         batter_box = OrderedDict()
         for slot in team_data["starting_lineup"]:
             mlb_id = self.get_player_id_map(bbref_id=slot["player_id_br"]).mlb_id
-            batter_box[slot["bat_order"]] = self.get_bat_boxscore_for_player(mlb_id, slot["def_position"], team_data)
+            bat_order = slot["bat_order"]
+            def_pos = slot["def_position"]
+            batter_box[slot["bat_order"]] = self.get_bat_boxscore_for_player(mlb_id, bat_order, def_pos, team_data)
         lineup_player_ids = [bat_boxscore["mlb_id"] for bat_boxscore in batter_box.values()]
         sub_player_ids = [
             mlb_id
@@ -206,7 +208,7 @@ class GameData:
             if mlb_id in self.bat_stats_player_ids and mlb_id not in lineup_player_ids
         ]
         for num, sub_id in enumerate(sub_player_ids, start=1):
-            batter_box[f"BN{num}"] = self.get_bat_boxscore_for_player(sub_id, "BN", team_data)
+            batter_box[f"BN{num}"] = self.get_bat_boxscore_for_player(sub_id, 0, "BN", team_data)
         return batter_box
 
     def get_player_id_map(self, mlb_id=None, bbref_id=None):
@@ -225,19 +227,22 @@ class GameData:
             if player_dict["team_id_bbref"] == team_id
         ]
 
-    def get_bat_boxscore_for_player(self, mlb_id, def_position, team_data):
+    def get_bat_boxscore_for_player(self, mlb_id, bat_order, def_pos, team_data):
         player_id = self.get_player_id_map(mlb_id=mlb_id)
         bat_stats = self.get_bat_stats(mlb_id).value
-        (at_bats, details) = parse_bat_stats_for_game(bat_stats["bbref_data"])
+        (at_bats, details) = parse_bat_stats_for_game(bat_stats)
+        def_position = DefensePosition.from_abbrev(def_pos)
         return {
             "team_id": team_data["team_id_br"],
             "name": player_id.mlb_name,
             "mlb_id": player_id.mlb_id,
             "bbref_id": player_id.bbref_id,
-            "def_position": DefensePosition.from_abbrev(def_position),
+            "is_starter": def_position.is_starter,
+            "bat_order": bat_order if def_position.is_starter else 0,
+            "def_position": def_position,
             "at_bats": at_bats,
             "bat_stats": details,
-            "stats_to_date": parse_bat_stats_to_date(bat_stats["bbref_data"]),
+            "stats_to_date": parse_bat_stats_to_date(bat_stats),
         }
 
     def create_pitch_boxscore(self, team_id):
@@ -334,13 +339,14 @@ class GameData:
         if result.failure:
             return result
         mlb_id = result.value
-        pitch_stats = self.pitch_stats_map.get(mlb_id)
-        sp_mlb_ids = self.starting_pitcher_mlb_ids
-        pitch_stats["is_sp"] = pitch_stats["pitcher_id_mlb"] in sp_mlb_ids
-        pitch_stats["is_rp"] = pitch_stats["pitcher_id_mlb"] not in sp_mlb_ids
-        pitch_stats["is_wp"] = pitch_stats["pitcher_id_mlb"] == self.winning_pitcher
-        pitch_stats["is_lp"] = pitch_stats["pitcher_id_mlb"] == self.losing_pitcher
-        pitch_stats["is_sv"] = pitch_stats["pitcher_id_mlb"] == self.pitcher_earned_save
+        pitch_stats = self.pitch_stats_map.get(mlb_id, {})
+        if pitch_stats:
+            sp_mlb_ids = self.starting_pitcher_mlb_ids
+            pitch_stats["is_sp"] = pitch_stats["pitcher_id_mlb"] in sp_mlb_ids
+            pitch_stats["is_rp"] = pitch_stats["pitcher_id_mlb"] not in sp_mlb_ids
+            pitch_stats["is_wp"] = pitch_stats["pitcher_id_mlb"] == self.winning_pitcher
+            pitch_stats["is_lp"] = pitch_stats["pitcher_id_mlb"] == self.losing_pitcher
+            pitch_stats["is_sv"] = pitch_stats["pitcher_id_mlb"] == self.pitcher_earned_save
         return Result.Ok(deepcopy(pitch_stats))
 
     def get_bat_stats(self, mlb_id):
@@ -673,10 +679,10 @@ def parse_at_bat_result(at_bat):
 
 
 def parse_bat_stats_for_game(bat_stats):
-    if not bat_stats or not bat_stats["plate_appearances"]:
+    if "bbref_data" not in bat_stats or not bat_stats["bbref_data"] or not bat_stats["bbref_data"]["plate_appearances"]:
         return ("0/0", "")
-    at_bats = f"{bat_stats['hits']}/{bat_stats['at_bats']}"
-    stat_line = get_detailed_bat_stats(bat_stats)
+    at_bats = f"{bat_stats['bbref_data']['hits']}/{bat_stats['bbref_data']['at_bats']}"
+    stat_line = get_detailed_bat_stats(bat_stats["bbref_data"])
     return (at_bats, stat_line)
 
 
@@ -725,12 +731,12 @@ def parse_single_bat_stat(stat):
 def parse_bat_stats_to_date(bat_stats):
     return (
         (
-            f"{format_stat_decimal(bat_stats['avg_to_date'])}/"
-            f"{format_stat_decimal(bat_stats['obp_to_date'])}/"
-            f"{format_stat_decimal(bat_stats['slg_to_date'])}/"
-            f"{format_stat_decimal(bat_stats['ops_to_date'])}"
+            f"{format_stat_decimal(bat_stats['bbref_data']['avg_to_date'])}/"
+            f"{format_stat_decimal(bat_stats['bbref_data']['obp_to_date'])}/"
+            f"{format_stat_decimal(bat_stats['bbref_data']['slg_to_date'])}/"
+            f"{format_stat_decimal(bat_stats['bbref_data']['ops_to_date'])}"
         )
-        if bat_stats
+        if "bbref_data" in bat_stats
         else ""
     )
 
