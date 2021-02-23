@@ -5,7 +5,7 @@ import w3lib.url
 from lxml import html
 
 import vigorish.database as db
-from vigorish.constants import BB_BR_TEAM_ID_MAP, WEST_COAST_TEAMS
+from vigorish.constants import BB_BR_TEAM_ID_MAP, PACIFIC_TZ_TEAMS
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
@@ -108,11 +108,10 @@ def _parse_gameinfo(game_date, game_time, url):
         return result
     gameinfo = result.value
     home_team_id_br = BB_BR_TEAM_ID_MAP.get(gameinfo.home_team_id_bb, gameinfo.home_team_id_bb)
-    game_time_hour_adjusted = game_time["hour"] + 12
     game_time_hour = (
         game_time["hour"]
-        if (game_time["hour"] in [11, 12] or (game_time["hour"] == 10 and home_team_id_br not in WEST_COAST_TEAMS))
-        else game_time_hour_adjusted
+        if (game_time["hour"] in [11, 12] or (game_time["hour"] == 10 and home_team_id_br not in PACIFIC_TZ_TEAMS))
+        else game_time["hour"] + 12
         if game_time["hour"] in range(1, 11)
         else 0
     )
