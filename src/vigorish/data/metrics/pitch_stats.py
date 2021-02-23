@@ -12,10 +12,11 @@ from vigorish.util.dataclass_helpers import get_field_types
 
 @dataclass
 class PitchStatsMetrics:
-    mlb_id: int = field(repr=False, default=0)
     year: int = field(repr=False, default=0)
     player_team_id_bbref: str = field(repr=False, default="")
     opponent_team_id_bbref: str = field(repr=False, default="")
+    mlb_id: int = field(repr=False, default=0)
+    bbref_id: str = field(repr=False, default="")
     stint_number: int = field(repr=False, default=0)
     total_games: int = field(repr=False, default=0)
     games_as_sp: int = field(repr=False, default=0)

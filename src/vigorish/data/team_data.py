@@ -17,5 +17,25 @@ class TeamData:
         return db.Team_PitchStats_By_Year_View.get_pitch_stats_for_team(self.db_engine, self.team.id)
 
     @cached_property
+    def team_pitch_stats_by_year(self):
+        return db.Team_PitchStats_By_Year_View.get_pitch_stats_by_year_for_team(self.db_engine, self.team_id_bbref)
+
+    @cached_property
+    def team_pitch_stats_by_player(self):
+        return db.Team_PitchStats_By_Player_Year_View.get_pitch_stats_by_player_by_year_for_team(
+            self.db_engine, self.team.id
+        )
+
+    @cached_property
     def team_bat_stats(self):
         return db.Team_BatStats_By_Year_View.get_bat_stats_for_team(self.db_engine, self.team.id)
+
+    @cached_property
+    def team_bat_stats_by_year(self):
+        return db.Team_BatStats_By_Year_View.get_bat_stats_by_year_for_team(self.db_engine, self.team_id_bbref)
+
+    @cached_property
+    def team_bat_stats_by_player(self):
+        return db.Team_BatStats_By_Player_Year_View.get_bat_stats_by_player_by_year_for_team(
+            self.db_engine, self.team.id
+        )

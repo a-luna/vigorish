@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from dacite.core import from_dict
 
 from vigorish.data.player_data import PlayerData
@@ -7,10 +9,11 @@ from vigorish.enums import PitchType
 
 def test_bat_stats(vig_app):
     bat_stats_for_career_dict = {
-        "mlb_id": 545361,
         "year": 0,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
         "stint_number": 0,
         "total_games": 1,
         "avg": 0.8,
@@ -46,10 +49,11 @@ def test_bat_stats(vig_app):
     }
 
     bat_stats_by_year_dict = {
-        "mlb_id": 545361,
         "year": 2019,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
         "stint_number": 0,
         "total_games": 1,
         "avg": 0.8,
@@ -85,10 +89,11 @@ def test_bat_stats(vig_app):
     }
 
     bat_stats_by_team_dict = {
-        "mlb_id": 545361,
         "year": 0,
         "player_team_id_bbref": "LAA",
         "opponent_team_id_bbref": "",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
         "stint_number": 0,
         "total_games": 1,
         "avg": 0.8,
@@ -124,10 +129,11 @@ def test_bat_stats(vig_app):
     }
 
     bat_stats_by_team_by_year_dict = {
-        "mlb_id": 545361,
         "year": 2019,
         "player_team_id_bbref": "LAA",
         "opponent_team_id_bbref": "",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
         "stint_number": 1,
         "total_games": 1,
         "avg": 0.8,
@@ -163,10 +169,11 @@ def test_bat_stats(vig_app):
     }
 
     bat_stats_by_opp_team_dict = {
-        "mlb_id": 545361,
         "year": 0,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "TOR",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
         "stint_number": 0,
         "total_games": 1,
         "avg": 0.8,
@@ -202,10 +209,11 @@ def test_bat_stats(vig_app):
     }
 
     bat_stats_by_opp_team_by_year_dict = {
-        "mlb_id": 545361,
         "year": 2019,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "TOR",
+        "mlb_id": 545361,
+        "bbref_id": "troutmi01",
         "stint_number": 0,
         "total_games": 1,
         "avg": 0.8,
@@ -258,10 +266,11 @@ def test_bat_stats(vig_app):
 
 def test_pitch_stats(vig_app):
     pitch_stats_for_career_dict = {
-        "mlb_id": 571882,
         "year": 0,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -304,10 +313,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_as_sp_dict = {
-        "mlb_id": 571882,
         "year": 0,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -352,10 +362,11 @@ def test_pitch_stats(vig_app):
     pitch_stats_as_rp = None
 
     pitch_stats_by_year_dict = {
-        "mlb_id": 571882,
         "year": 2019,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -398,10 +409,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_by_team_dict = {
-        "mlb_id": 571882,
         "year": 0,
         "player_team_id_bbref": "TOR",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -444,10 +456,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_by_team_by_year_dict = {
-        "mlb_id": 571882,
         "year": 2019,
         "player_team_id_bbref": "TOR",
         "opponent_team_id_bbref": "",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 1,
         "total_games": 1,
         "games_as_sp": 1,
@@ -490,10 +503,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_by_opp_team_dict = {
-        "mlb_id": 571882,
         "year": 0,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "LAA",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -536,10 +550,11 @@ def test_pitch_stats(vig_app):
     }
 
     pitch_stats_by_opp_team_by_year_dict = {
-        "mlb_id": 571882,
         "year": 2019,
         "player_team_id_bbref": "",
         "opponent_team_id_bbref": "LAA",
+        "mlb_id": 571882,
+        "bbref_id": "lawde01",
         "stint_number": 0,
         "total_games": 1,
         "games_as_sp": 1,
@@ -591,6 +606,11 @@ def test_pitch_stats(vig_app):
     pitch_stats_by_opp_team_by_year = from_dict(data_class=PitchStatsMetrics, data=pitch_stats_by_opp_team_by_year_dict)
 
     player_data = PlayerData(vig_app, 571882)
+
+    left_dict = asdict(player_data.pitch_stats_for_career)
+    right_dict = pitch_stats_for_career_dict
+    assert left_dict == right_dict
+
     assert player_data.pitch_stats_for_career == pitch_stats_for_career
     assert player_data.pitch_stats_as_sp == pitch_stats_as_sp
     assert player_data.pitch_stats_as_rp == pitch_stats_as_rp
