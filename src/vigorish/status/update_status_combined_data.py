@@ -1,7 +1,25 @@
 from collections import defaultdict
 
 import vigorish.database as db
+from vigorish.enums import DataSet, VigFile
+from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.result import Result
+
+
+def update_status_combined_data_list(scraped_data, db_session, bbref_game_ids):
+    for bbref_game_id in bbref_game_ids:
+        combined_data = scraped_data.get_combined_game_data(bbref_game_id)
+        if not combined_data:
+            raise ScrapedDataException(file_type=VigFile.COMBINED_GAME_DATA, data_set=DataSet.ALL, url_id=bbref_game_id)
+        game_status = db.GameScrapeStatus.find_by_bbref_game_id(db_session, bbref_game_id)
+        if not game_status:
+            error = f"scrape_status_game does not contain an entry for bbref_game_id: {bbref_game_id}"
+            return Result.Fail(error)
+        game_status.combined_data_success = 1
+        result = update_pitch_apps_with_combined_data(db_session, combined_data)
+        if result.failure:
+            return result
+    return Result.Ok()
 
 
 def update_pitch_apps_with_combined_data(db_session, combined_data):

@@ -5,7 +5,7 @@ import vigorish.database as db
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
-from vigorish.enums import DataSet
+from vigorish.enums import DataSet, VigFile
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
 from vigorish.util.result import Result
 
@@ -53,8 +53,8 @@ class ScrapedData:
     def get_brooks_pitch_logs_for_game(self, bb_game_id):
         return self.get_scraped_data(DataSet.BROOKS_PITCH_LOGS, bb_game_id, apply_patch_list=False)
 
-    def get_brooks_pitchfx_log(self, pitch_app_id):
-        return self.get_scraped_data(DataSet.BROOKS_PITCHFX, pitch_app_id, apply_patch_list=False)
+    def get_brooks_pitchfx_log(self, pitch_app_id, apply_patch_list=False):
+        return self.get_scraped_data(DataSet.BROOKS_PITCHFX, pitch_app_id, apply_patch_list)
 
     def get_all_brooks_pitchfx_logs_for_game(self, bbref_game_id, apply_patch_list=True):
         pitchfx_logs = [
@@ -143,17 +143,22 @@ class ScrapedData:
             match = convert_regex.search(url_id)
             if not match:
                 raise ValueError(f"URL identifier is invalid: {url_id} ({data_set})")
-            captured = match.groupdict()
-            try:
-                year = int(captured["year"])
-                month = int(captured["month"])
-                day = int(captured["day"])
-                game_date = datetime(year, month, day)
-            except Exception as e:
-                error = f'Failed to parse date from url_id "{url_id} ({data_set})":\n{repr(e)}'
-                raise ValueError(error)
-            converted_url_ids.append(game_date)
+            if file_type == VigFile.COMBINED_GAME_DATA:
+                converted = match.groupdict()["bbref_game_id"]
+            else:
+                converted = self.convert_url_id_to_date(data_set, url_id, match.groupdict())
+            converted_url_ids.append(converted)
         return converted_url_ids
+
+    def convert_url_id_to_date(self, data_set, url_id, group_dict):
+        try:
+            year = int(group_dict["year"])
+            month = int(group_dict["month"])
+            day = int(group_dict["day"])
+            return datetime(year, month, day)
+        except Exception as e:
+            error = f'Failed to parse date from url_id "{url_id} ({data_set})":\n{repr(e)}'
+            raise ValueError(error)
 
     def get_scraped_ids_from_database(self, data_set, season):
         get_scraped_ids_from_db_dict = {

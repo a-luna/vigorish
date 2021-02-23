@@ -136,19 +136,7 @@ BBREF_BOXSCORE_PATCH_LIST_FILENAME_REGEX = re.compile(
 
 PITCHFX_LOG_PATCH_LIST_FILENAME_REGEX = BBREF_BOXSCORE_PATCH_LIST_FILENAME_REGEX
 
-COMBINED_DATA_FILENAME_REGEX = re.compile(
-    r"""
-    ^
-    (?P<home_team>[A-Z]{3,3})
-    (?P<year>\d{4,4})
-    (?P<month>\d{2,2})
-    (?P<day>\d{2,2})
-    (?P<game_num>\d)
-    _COMBINED_DATA
-    $
-""",
-    re.VERBOSE,
-)
+COMBINED_DATA_FILENAME_REGEX = re.compile(r"(?P<bbref_game_id>[A-Z]{3,3}\d{9,9})_COMBINED_DATA")
 
 BB_GAME_ID_REGEX = re.compile(
     r"""
@@ -233,4 +221,5 @@ URL_ID_CONVERT_REGEX = {
         DataSet.BROOKS_GAMES_FOR_DATE: BB_DAILY_JSON_FILENAME_REGEX,
         DataSet.BBREF_GAMES_FOR_DATE: BBREF_DAILY_JSON_FILENAME_REGEX,
     },
+    VigFile.COMBINED_GAME_DATA: {DataSet.ALL: COMBINED_DATA_FILENAME_REGEX},
 }
