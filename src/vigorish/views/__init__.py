@@ -37,5 +37,11 @@ from vigorish.views.season_date_view import Season_Date_View
 from vigorish.views.season_game_pitch_app_view import Season_Game_PitchApp_View
 from vigorish.views.season_game_view import Season_Game_View
 from vigorish.views.season_pitch_app_view import Season_PitchApp_View
-from vigorish.views.team_bat_stats_view import Team_BatStats_By_Player_Year_View, Team_BatStats_By_Year_View
-from vigorish.views.team_pitch_stats_view import Team_PitchStats_By_Player_Year_View, Team_PitchStats_By_Year_View
+from vigorish.views.team_bat_stats_view import (
+    Team_BatStats_By_Player_Year_View,
+    Team_BatStats_By_Year_View,
+)
+from vigorish.views.team_pitch_stats_view import (
+    Team_PitchStats_By_Player_Year_View,
+    Team_PitchStats_By_Year_View,
+)

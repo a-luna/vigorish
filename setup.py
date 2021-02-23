@@ -45,7 +45,7 @@ INSTALL_REQUIRES = [
     "pyfiglet",
     "python-dateutil",
     "python-dotenv",
-    "rapidfuzz",
+    "rapidfuzz <= 1.0.0",
     "requests",
     "sqlalchemy",
     "sqlalchemy-utils",

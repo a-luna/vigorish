@@ -1,7 +1,7 @@
 from dacite.core import from_dict
 
-from vigorish.data.team_data import TeamData
 from vigorish.data.metrics import BatStatsMetrics, PitchStatsMetrics
+from vigorish.data.team_data import TeamData
 
 
 def test_team_data(vig_app):

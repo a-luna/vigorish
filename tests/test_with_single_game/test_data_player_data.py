@@ -2,8 +2,8 @@ from dataclasses import asdict
 
 from dacite.core import from_dict
 
-from vigorish.data.player_data import PlayerData
 from vigorish.data.metrics import BatStatsMetrics, PitchFxMetricsCollection, PitchStatsMetrics
+from vigorish.data.player_data import PlayerData
 from vigorish.enums import PitchType
 
 

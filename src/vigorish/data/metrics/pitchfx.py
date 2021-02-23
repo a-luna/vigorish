@@ -7,10 +7,7 @@ from typing import Dict, List, Union
 from dacite import from_dict
 from sqlalchemy.engine import RowProxy
 
-from vigorish.data.metrics.constants import (
-    PFX_BATTED_BALL_METRICS,
-    PFX_PLATE_DISCIPLINE_METRICS,
-)
+from vigorish.data.metrics.constants import PFX_BATTED_BALL_METRICS, PFX_PLATE_DISCIPLINE_METRICS
 from vigorish.enums import PitchType
 from vigorish.types import RowDict
 from vigorish.util.dataclass_helpers import get_field_types

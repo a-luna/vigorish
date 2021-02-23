@@ -2,7 +2,6 @@ from sqlalchemy import and_, case, cast, Float, func
 
 import vigorish.database as db
 
-
 zone_rate_numer = func.sum(db.PitchFx.inside_strike_zone)
 zone_rate_denom = func.count(db.PitchFx.id)
 zone_rate = zone_rate_numer / cast(zone_rate_denom, Float)
