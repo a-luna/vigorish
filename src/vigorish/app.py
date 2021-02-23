@@ -27,8 +27,13 @@ class Vigorish:
     db_session: Session
     scraped_data: ScrapedData
 
-    def __init__(self, dotenv_file: Optional[Path] = None) -> None:
-        self.initialize_app(dotenv_file)
+    def __init__(
+        self,
+        dotenv_file: Optional[Path] = None,
+        db_engine: Optional[Engine] = None,
+        db_session: Optional[Session] = None,
+    ) -> None:
+        self.initialize_app(dotenv_file, db_engine, db_session)
         os.environ["INTERACTIVE_MODE"] = "NO" if "TEST" in os.environ.get("ENV", "DEV") else "YES"
 
     @property
@@ -54,13 +59,17 @@ class Vigorish:
     def audit_report(self) -> AuditReport:
         return self.scraped_data.get_audit_report()
 
-    def initialize_app(self, dotenv_file: Path) -> None:
+    def initialize_app(
+        self,
+        dotenv_file: Optional[Path] = None,
+        db_engine: Optional[Engine] = None,
+        db_session: Optional[Session] = None,
+    ) -> None:
         self.dotenv = DotEnvFile(dotenv_filepath=dotenv_file)
         self._get_db_url()
         self.config = ConfigFile()
-        self.db_engine = create_engine(self.db_url)
-        session_maker = sessionmaker(bind=self.db_engine)
-        self.db_session = session_maker()
+        self.db_engine = db_engine if db_engine else create_engine(self.db_url)
+        self.db_session = db_session if db_session else sessionmaker(bind=self.db_engine)()
         self.scraped_data = ScrapedData(self.db_engine, self.db_session, self.config)
 
     def get_total_number_of_rows(self, db_table: Table) -> int:

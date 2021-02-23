@@ -61,9 +61,8 @@ class PatchBrooksGamesForDateRemoveGame(Patch):
         self.patch_id = "__patch_brooks_games_for_date_remove_game__"
 
     def apply(self, data):
-        if self.remove_bbref_game_id in data.all_bbref_game_ids:
-            data.games = list(filter(lambda x: x.bbref_game_id != self.remove_bbref_game_id, data.games))
-            data.game_count = len(data.games)
+        data.games = list(filter(lambda x: x.bbref_game_id != self.remove_bbref_game_id, data.games))
+        data.game_count = len(data.games)
         return data
 
     def apply_to_database(self, data, db_session):
