@@ -55,7 +55,7 @@ class ImportScrapedData(MenuItem):
         result = self.import_scraped_data.execute(overwrite_existing_data)
         self.unsubscribe_from_events()
         if result.failure:
-            return result
+            self.display_error_messages(result.error)
         return Result.Ok(True)
 
     def update_menu_heading(self, current_action):
@@ -81,6 +81,11 @@ class ImportScrapedData(MenuItem):
             f"{EMOJIS.get('BACK')} Return to Admin/Tasks Menu": None,
         }
         return user_options_prompt(choices, OVERWRITE_DATA_PROMPT, clear_screen=False)
+
+    def display_error_messages(self, error_message):
+        self.update_menu_heading("Error!")
+        print_message(error_message)
+        pause(message="\nPress any key to continue...")
 
     def error_occurred(self, error_message, data_set, year):
         self.update_menu_heading("Error!")
@@ -112,10 +117,22 @@ class ImportScrapedData(MenuItem):
         import_complete = f"Successfully updated {DATA_SET_TO_NAME_MAP[data_set]} for MLB {year}!"
         self.spinners[year][data_set].succeed(import_complete)
 
+    def import_combined_game_data_start(self, year):
+        self.spinners["combined_data"] = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
+        self.spinners["combined_data"].text = f"Updating combined game data for MLB {year}..."
+        self.spinners["combined_data"].start()
+
+    def import_combined_game_data_complete(self, year):
+        import_complete = f"Successfully updated combined game data for MLB {year}!"
+        if "combined_data" not in self.spinners:
+            self.spinners["combined_data"] = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
+            self.spinners["combined_data"].text = f"Updating combined game data for MLB {year}..."
+            self.spinners["combined_data"].start()
+        self.spinners["combined_data"].succeed(import_complete)
+
     def import_scraped_data_complete(self):
         self.update_menu_heading("Complete!")
-        success = "Successfully imported all scraped data from local files"
-        print_message(success, fg="bright_yellow", bold=True)
+        print_message("Successfully imported all scraped data from local files", fg="bright_yellow", bold=True)
         pause(message="\nPress any key to continue...")
 
     def subscribe_to_events(self):
@@ -126,6 +143,8 @@ class ImportScrapedData(MenuItem):
         self.import_scraped_data.events.import_scraped_data_for_year_start += self.import_scraped_data_for_year_start
         self.import_scraped_data.events.import_scraped_data_set_start += self.import_scraped_data_set_start
         self.import_scraped_data.events.import_scraped_data_set_complete += self.import_scraped_data_set_complete
+        self.import_scraped_data.events.import_combined_game_data_start += self.import_combined_game_data_start
+        self.import_scraped_data.events.import_combined_game_data_complete += self.import_combined_game_data_complete
 
     def unsubscribe_from_events(self):
         self.import_scraped_data.events.error_occurred -= self.error_occurred
@@ -135,3 +154,5 @@ class ImportScrapedData(MenuItem):
         self.import_scraped_data.events.import_scraped_data_for_year_start -= self.import_scraped_data_for_year_start
         self.import_scraped_data.events.import_scraped_data_set_start -= self.import_scraped_data_set_start
         self.import_scraped_data.events.import_scraped_data_set_complete -= self.import_scraped_data_set_complete
+        self.import_scraped_data.events.import_combined_game_data_start -= self.import_combined_game_data_start
+        self.import_scraped_data.events.import_combined_game_data_complete -= self.import_combined_game_data_complete

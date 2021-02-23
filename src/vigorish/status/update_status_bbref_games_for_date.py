@@ -15,7 +15,7 @@ def update_bbref_games_for_date_single_date(db_session, season, games_for_date):
     return Result.Ok()
 
 
-def update_bbref_games_for_date_list(scraped_data, db_session, scraped_bbref_dates, apply_patch_list=False):
+def update_bbref_games_for_date_list(scraped_data, db_session, scraped_bbref_dates, apply_patch_list=True):
     season = None
     for game_date in scraped_bbref_dates:
         if not season:

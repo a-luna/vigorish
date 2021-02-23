@@ -1,22 +1,36 @@
 import vigorish.database as db
-from vigorish.enums import DataSet
 from vigorish.util.result import Result
 
 
 def update_status_brooks_pitch_logs_for_game_list(scraped_data, db_session, new_brooks_game_ids):
+    plog_missing_json, plog_missing_db_records = [], []
     for bb_game_id in new_brooks_game_ids:
         pitch_logs_for_game = scraped_data.get_brooks_pitch_logs_for_game(bb_game_id)
         if not pitch_logs_for_game:
-            error = f"Failed to retrieve {DataSet.BROOKS_PITCH_LOGS} (URL ID: {bb_game_id})"
-            return Result.Fail(error)
+            plog_missing_json.append(bb_game_id)
+            continue
         result = update_game_status_records(db_session, pitch_logs_for_game)
         if result.failure:
-            return result
+            plog_missing_db_records.append(bb_game_id)
+            continue
         result = create_pitch_appearance_status_records(db_session, pitch_logs_for_game)
         if result.failure:
             return result
         db_session.commit()
-    return Result.Ok()
+    return (
+        Result.Ok()
+        if not (plog_missing_json or plog_missing_db_records)
+        else Result.Fail(_get_error_message(plog_missing_json, plog_missing_db_records))
+    )
+
+
+def _get_error_message(plog_missing_json, plog_missing_db_records):
+    errors = []
+    if plog_missing_json:
+        errors.append(f"Failed to retrieve JSON files for pitch logs: {','.join(plog_missing_json)}")
+    if plog_missing_db_records:
+        errors.append(f"bb_game_id not found in scrape_status_game table: {','.join(plog_missing_db_records)}")
+    return "\n".join(errors)
 
 
 def update_status_brooks_pitch_logs_for_game(db_session, pitch_logs_for_game):
