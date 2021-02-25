@@ -91,91 +91,91 @@ class PitchFxMetricsCollection:
     metrics_detail: Dict[PitchType, PitchFxMetrics] = field(default_factory=dict)
 
     @property
-    def pitch_types(self):
+    def pitch_types(self) -> int:
         return list(self.metrics_detail.keys())
 
     @property
-    def total_pitches(self):
+    def total_pitches(self) -> int:
         return sum(pitch_metrics.total_pitches for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_swings(self):
+    def total_swings(self) -> int:
         return sum(pitch_metrics.total_swings for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_swings_made_contact(self):
+    def total_swings_made_contact(self) -> int:
         return sum(pitch_metrics.total_swings_made_contact for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_called_strikes(self):
+    def total_called_strikes(self) -> int:
         return sum(pitch_metrics.total_called_strikes for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_swinging_strikes(self):
+    def total_swinging_strikes(self) -> int:
         return sum(pitch_metrics.total_swinging_strikes for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_inside_strike_zone(self):
+    def total_inside_strike_zone(self) -> int:
         return sum(pitch_metrics.total_inside_strike_zone for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_outside_strike_zone(self):
+    def total_outside_strike_zone(self) -> int:
         return sum(pitch_metrics.total_outside_strike_zone for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_swings_inside_zone(self):
+    def total_swings_inside_zone(self) -> int:
         return sum(pitch_metrics.total_swings_inside_zone for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_swings_outside_zone(self):
+    def total_swings_outside_zone(self) -> int:
         return sum(pitch_metrics.total_swings_outside_zone for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_contact_inside_zone(self):
+    def total_contact_inside_zone(self) -> int:
         return sum(pitch_metrics.total_contact_inside_zone for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_contact_outside_zone(self):
+    def total_contact_outside_zone(self) -> int:
         return sum(pitch_metrics.total_contact_outside_zone for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_batted_balls(self):
+    def total_batted_balls(self) -> int:
         return sum(pitch_metrics.total_batted_balls for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_ground_balls(self):
+    def total_ground_balls(self) -> int:
         return sum(pitch_metrics.total_ground_balls for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_line_drives(self):
+    def total_line_drives(self) -> int:
         return sum(pitch_metrics.total_line_drives for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_fly_balls(self):
+    def total_fly_balls(self) -> int:
         return sum(pitch_metrics.total_fly_balls for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def total_pop_ups(self):
+    def total_pop_ups(self) -> int:
         return sum(pitch_metrics.total_pop_ups for pitch_metrics in self.metrics_detail.values())
 
     @property
-    def zone_rate(self):
+    def zone_rate(self) -> float:
         return round(self.total_inside_strike_zone / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
-    def called_strike_rate(self):
+    def called_strike_rate(self) -> float:
         return round(self.total_called_strikes / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
-    def swinging_strike_rate(self):
+    def swinging_strike_rate(self) -> float:
         return round(self.total_swinging_strikes / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
-    def whiff_rate(self):
+    def whiff_rate(self) -> float:
         return round(self.total_swinging_strikes / float(self.total_swings), 3) if self.total_swings else 0.0
 
     @property
-    def csw_rate(self):
+    def csw_rate(self) -> float:
         return (
             round((self.total_called_strikes + self.total_swinging_strikes) / float(self.total_pitches), 3)
             if self.total_pitches
@@ -183,7 +183,7 @@ class PitchFxMetricsCollection:
         )
 
     @property
-    def o_swing_rate(self):
+    def o_swing_rate(self) -> float:
         return (
             round(self.total_swings_outside_zone / float(self.total_outside_strike_zone), 3)
             if self.total_outside_strike_zone
@@ -191,7 +191,7 @@ class PitchFxMetricsCollection:
         )
 
     @property
-    def z_swing_rate(self):
+    def z_swing_rate(self) -> float:
         return (
             round(self.total_swings_inside_zone / float(self.total_inside_strike_zone), 3)
             if self.total_inside_strike_zone
@@ -199,11 +199,11 @@ class PitchFxMetricsCollection:
         )
 
     @property
-    def swing_rate(self):
+    def swing_rate(self) -> float:
         return round(self.total_swings / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
-    def o_contact_rate(self):
+    def o_contact_rate(self) -> float:
         return (
             round(self.total_contact_outside_zone / float(self.total_swings_outside_zone), 3)
             if self.total_swings_outside_zone
@@ -211,7 +211,7 @@ class PitchFxMetricsCollection:
         )
 
     @property
-    def z_contact_rate(self):
+    def z_contact_rate(self) -> float:
         return (
             round(self.total_contact_inside_zone / float(self.total_swings_inside_zone), 3)
             if self.total_swings_inside_zone
@@ -219,23 +219,23 @@ class PitchFxMetricsCollection:
         )
 
     @property
-    def contact_rate(self):
+    def contact_rate(self) -> float:
         return round(self.total_swings_made_contact / float(self.total_pitches), 3) if self.total_pitches else 0.0
 
     @property
-    def ground_ball_rate(self):
+    def ground_ball_rate(self) -> float:
         return round(self.total_ground_balls / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
 
     @property
-    def fly_ball_rate(self):
+    def fly_ball_rate(self) -> float:
         return round(self.total_fly_balls / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
 
     @property
-    def line_drive_rate(self):
+    def line_drive_rate(self) -> float:
         return round(self.total_line_drives / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
 
     @property
-    def pop_up_rate(self):
+    def pop_up_rate(self) -> float:
         return round(self.total_pop_ups / float(self.total_batted_balls), 2) if self.total_batted_balls else 0.0
 
     @cached_property
@@ -277,11 +277,11 @@ class PitchFxMetricsCollection:
         return (
             self.metrics_detail[pitch_type].get_usage_stats(include_pitch_count)
             if pitch_type in self.pitch_types
-            else "0.0% (N/A)"
+            else "0% (N/A)"
         )
 
     @classmethod
-    def from_pitchfx_view_results(cls, results: List[RowProxy], threshold: float = 0.01) -> PitchFxMetricsCollection:
+    def from_query_results(cls, results: List[RowProxy], threshold: float = 0.01) -> PitchFxMetricsCollection:
         row_dicts = [dict(row) for row in results]
         metrics_collection = {
             "pitcher_id_mlb": row_dicts[0]["pitcher_id_mlb"],

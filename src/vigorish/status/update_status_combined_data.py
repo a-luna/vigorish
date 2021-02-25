@@ -57,7 +57,6 @@ def update_pitch_appearance_status_records(db_session, pitch_stats):
     pitch_app_status.no_pitchfx_data = 1 if pitchfx_audit["pitch_count_pitchfx"] == 0 else 0
     pitch_app_status.batters_faced_bbref = pitchfx_audit["batters_faced_bbref"]
     pitch_app_status.batters_faced_pitchfx = pitchfx_audit["batters_faced_pitchfx"]
-    pitch_app_status.duplicate_guid_removed_count = pitchfx_audit["duplicate_guid_removed_count"]
     pitch_app_status.pitch_count_bbref = pitchfx_audit["pitch_count_bbref"]
     pitch_app_status.pitch_count_pitchfx_audited = pitchfx_audit["pitch_count_pitchfx"]
     pitch_app_status.total_at_bats_pitchfx_complete = pitchfx_audit["total_at_bats_pitchfx_complete"]
@@ -65,10 +64,8 @@ def update_pitch_appearance_status_records(db_session, pitch_stats):
     pitch_app_status.total_at_bats_patched_pitchfx = pitchfx_audit["total_at_bats_patched_pitchfx"]
     pitch_app_status.missing_pitchfx_count = pitchfx_audit["missing_pitchfx_count"]
     pitch_app_status.total_at_bats_missing_pitchfx = pitchfx_audit["total_at_bats_missing_pitchfx"]
-    pitch_app_status.extra_pitchfx_count = pitchfx_audit["extra_pitchfx_count"]
-    pitch_app_status.total_at_bats_extra_pitchfx = pitchfx_audit["total_at_bats_extra_pitchfx"]
-    pitch_app_status.extra_pitchfx_removed_count = pitchfx_audit["extra_pitchfx_removed_count"]
-    pitch_app_status.total_at_bats_extra_pitchfx_removed = pitchfx_audit["total_at_bats_extra_pitchfx_removed"]
+    pitch_app_status.removed_pitchfx_count = pitchfx_audit["removed_pitchfx_count"]
+    pitch_app_status.total_at_bats_removed_pitchfx = pitchfx_audit["total_at_bats_removed_pitchfx"]
     pitch_app_status.invalid_pitchfx = 1 if pitchfx_audit["invalid_pitchfx"] else 0
     pitch_app_status.invalid_pitchfx_count = pitchfx_audit["invalid_pitchfx_count"]
     pitch_app_status.total_at_bats_invalid_pitchfx = pitchfx_audit["total_at_bats_invalid_pitchfx"]

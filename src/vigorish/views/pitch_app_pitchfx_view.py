@@ -78,8 +78,6 @@ class PitchApp_PitchType_All_View(db.Base):
         )
         .where(
             and_(
-                db.PitchFx.is_duplicate_guid == 0,
-                db.PitchFx.is_duplicate_pitch_number == 0,
                 db.PitchFx.is_invalid_ibb == 0,
                 db.PitchFx.is_out_of_sequence == 0,
                 or_(db.PitchFx.stand == "L", db.PitchFx.stand == "R"),
@@ -97,7 +95,7 @@ class PitchApp_PitchType_All_View(db.Base):
     def get_pitchfx_metrics_for_pitch_app(cls, db_engine, pitch_app_id):
         s = select([cls]).where(cls.id == pitch_app_id)
         results = db_engine.execute(s).fetchall()
-        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+        return PitchFxMetricsCollection.from_query_results(results)
 
 
 class PitchApp_PitchType_Right_View(db.Base):
@@ -156,8 +154,6 @@ class PitchApp_PitchType_Right_View(db.Base):
         )
         .where(
             and_(
-                db.PitchFx.is_duplicate_guid == 0,
-                db.PitchFx.is_duplicate_pitch_number == 0,
                 db.PitchFx.is_invalid_ibb == 0,
                 db.PitchFx.is_out_of_sequence == 0,
                 db.PitchFx.stand == "R",
@@ -175,7 +171,7 @@ class PitchApp_PitchType_Right_View(db.Base):
     def get_pitchfx_metrics_vs_rhb_for_pitch_app(cls, db_engine, pitch_app_id):
         s = select([cls]).where(cls.id == pitch_app_id)
         results = db_engine.execute(s).fetchall()
-        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+        return PitchFxMetricsCollection.from_query_results(results)
 
 
 class PitchApp_PitchType_Left_View(db.Base):
@@ -234,8 +230,6 @@ class PitchApp_PitchType_Left_View(db.Base):
         )
         .where(
             and_(
-                db.PitchFx.is_duplicate_guid == 0,
-                db.PitchFx.is_duplicate_pitch_number == 0,
                 db.PitchFx.is_invalid_ibb == 0,
                 db.PitchFx.is_out_of_sequence == 0,
                 db.PitchFx.stand == "L",
@@ -253,4 +247,4 @@ class PitchApp_PitchType_Left_View(db.Base):
     def get_pitchfx_metrics_vs_lhb_for_pitch_app(cls, db_engine, pitch_app_id):
         s = select([cls]).where(cls.id == pitch_app_id)
         results = db_engine.execute(s).fetchall()
-        return PitchFxMetricsCollection.from_pitchfx_view_results(results)
+        return PitchFxMetricsCollection.from_query_results(results)

@@ -46,7 +46,6 @@ class GameData:
         self.away_team_data = combined_data["away_team_data"]
         self.home_team_data = combined_data["home_team_data"]
         self.innings_list = combined_data["play_by_play_data"]
-        self.duplicate_guids = combined_data["duplicate_guids"]
         self.removed_pitchfx = combined_data["removed_pitchfx"]
         self.invalid_pitchfx = combined_data["invalid_pitchfx"]
         self.player_id_dict = combined_data["player_id_dict"]
@@ -169,7 +168,6 @@ class GameData:
     def all_pitchfx(self):
         pfx_dict = defaultdict(list)
         all_pitchfx = [at_bat["pitchfx"] for at_bat in self.all_at_bats]
-        all_pitchfx.extend(self.get_duplicate_guid_pfx())
         all_pitchfx.extend(self.get_removed_pfx())
         sp_mlb_ids = self.starting_pitcher_mlb_ids
         for pfx in flatten_list2d(all_pitchfx):
@@ -426,9 +424,6 @@ class GameData:
         table = tabulate(table_rows)
         heading = f"Meta Information for game {self.bbref_game_id}"
         return create_table_viewer([DisplayTable(table, heading)])
-
-    def get_duplicate_guid_pfx(self):
-        return [at_bat["pitchfx"] for inning_dict in self.duplicate_guids.values() for at_bat in inning_dict.values()]
 
     def get_removed_pfx(self):
         return [at_bat["pitchfx"] for inning_dict in self.removed_pitchfx.values() for at_bat in inning_dict.values()]

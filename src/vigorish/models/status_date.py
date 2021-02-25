@@ -178,14 +178,6 @@ class DateScrapeStatus(db.Base):
         )
 
     @hybrid_property
-    def total_duplicate_pitchfx_removed_count(self):
-        return (
-            self.pitch_app_status.total_duplicate_pitchfx_removed_count
-            if self.pitch_app_status and self.pitch_app_status.total_duplicate_pitchfx_removed_count
-            else 0
-        )
-
-    @hybrid_property
     def total_missing_pitchfx_count(self):
         return (
             self.pitch_app_status.total_missing_pitchfx_count
@@ -194,18 +186,10 @@ class DateScrapeStatus(db.Base):
         )
 
     @hybrid_property
-    def total_extra_pitchfx_count(self):
+    def total_removed_pitchfx_count(self):
         return (
-            self.pitch_app_status.total_extra_pitchfx_count
-            if self.pitch_app_status and self.pitch_app_status.total_extra_pitchfx_count
-            else 0
-        )
-
-    @hybrid_property
-    def total_extra_pitchfx_removed_count(self):
-        return (
-            self.pitch_app_status.total_extra_pitchfx_removed_count
-            if self.pitch_app_status and self.pitch_app_status.total_extra_pitchfx_removed_count
+            self.pitch_app_status.total_removed_pitchfx_count
+            if self.pitch_app_status and self.pitch_app_status.total_removed_pitchfx_count
             else 0
         )
 
@@ -242,18 +226,10 @@ class DateScrapeStatus(db.Base):
         )
 
     @hybrid_property
-    def total_at_bats_extra_pitchfx(self):
+    def total_at_bats_removed_pitchfx(self):
         return (
-            self.pitch_app_status.total_at_bats_extra_pitchfx
-            if self.pitch_app_status and self.pitch_app_status.total_at_bats_extra_pitchfx
-            else 0
-        )
-
-    @hybrid_property
-    def total_at_bats_extra_pitchfx_removed(self):
-        return (
-            self.pitch_app_status.total_at_bats_extra_pitchfx_removed
-            if self.pitch_app_status and self.pitch_app_status.total_at_bats_pitchfx_error
+            self.pitch_app_status.total_at_bats_removed_pitchfx
+            if self.pitch_app_status and self.pitch_app_status.total_at_bats_removed_pitchfx
             else 0
         )
 
@@ -445,16 +421,13 @@ class DateScrapeStatus(db.Base):
             "total_pitch_count_bbref_audited": self.total_pitch_count_bbref_audited,
             "total_pitch_count_pitchfx": self.total_pitch_count_pitchfx,
             "total_pitch_count_pitchfx_audited": self.total_pitch_count_pitchfx_audited,
-            "total_duplicate_pitchfx_removed_count": self.total_duplicate_pitchfx_removed_count,
             "total_missing_pitchfx_count": self.total_missing_pitchfx_count,
-            "total_extra_pitchfx_count": self.total_extra_pitchfx_count,
-            "total_extra_pitchfx_removed_count": self.total_extra_pitchfx_removed_count,
+            "total_removed_pitchfx_count": self.total_removed_pitchfx_count,
             "total_batters_faced_bbref": self.total_batters_faced_bbref,
             "total_batters_faced_pitchfx": self.total_batters_faced_pitchfx,
             "total_at_bats_pitchfx_complete": self.total_at_bats_pitchfx_complete,
             "total_at_bats_missing_pitchfx": self.total_at_bats_missing_pitchfx,
-            "total_at_bats_extra_pitchfx": self.total_at_bats_extra_pitchfx,
-            "total_at_bats_extra_pitchfx_removed": self.total_at_bats_extra_pitchfx_removed,
+            "total_at_bats_removed_pitchfx": self.total_at_bats_removed_pitchfx,
             "total_at_bats_pitchfx_error": self.total_at_bats_pitchfx_error,
             "total_at_bats_invalid_pitchfx": self.total_at_bats_invalid_pitchfx,
             "scraped_all_pitchfx_logs": self.scraped_all_pitchfx_logs,
@@ -484,9 +457,6 @@ class DateScrapeStatus(db.Base):
         scraped_all_pitchfx_logs = "YES" if self.scraped_all_pitchfx_logs else "NO"
         combined_data_for_all_pitchfx_logs = "YES" if self.combined_data_for_all_pitchfx_logs else "NO"
         pitchfx_error_for_any_pitchfx_logs = "YES" if self.pitchfx_error_for_any_pitchfx_logs else "NO"
-        total_pitchfx_removed_count = (
-            self.total_duplicate_pitchfx_removed_count + self.total_extra_pitchfx_removed_count
-        )
         return [
             f"Overall Status For Date......................: {self.scrape_status_description}",
             f"Scraped Daily Dashboard (BBRef/Brooks).......: {scraped_daily_bbref}/{scraped_daily_brooks}",
@@ -528,7 +498,7 @@ class DateScrapeStatus(db.Base):
             (
                 "Pitch Count Audited (BBRef/PFx/Removed)......: "
                 f"{self.total_pitch_count_bbref_audited}/{self.total_pitch_count_pitchfx_audited}/"
-                f"{total_pitchfx_removed_count}"
+                f"{self.total_removed_pitchfx_count}"
             ),
         ]
 

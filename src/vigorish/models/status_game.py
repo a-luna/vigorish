@@ -126,20 +126,12 @@ class GameScrapeStatus(db.Base):
         return sum(pitch_app.pitch_count_pitchfx_audited for pitch_app in self.pitch_apps)
 
     @hybrid_property
-    def total_duplicate_pitchfx_removed_count(self):
-        return sum(pitch_app.duplicate_guid_removed_count for pitch_app in self.pitch_apps)
-
-    @hybrid_property
     def total_missing_pitchfx_count(self):
         return sum(pitch_app.missing_pitchfx_count for pitch_app in self.pitch_apps)
 
     @hybrid_property
-    def total_extra_pitchfx_count(self):
-        return sum(pitch_app.extra_pitchfx_count for pitch_app in self.pitch_apps)
-
-    @hybrid_property
-    def total_extra_pitchfx_removed_count(self):
-        return sum(pitch_app.extra_pitchfx_removed_count for pitch_app in self.pitch_apps)
+    def total_removed_pitchfx_count(self):
+        return sum(pitch_app.removed_pitchfx_count for pitch_app in self.pitch_apps)
 
     @hybrid_property
     def total_batters_faced_bbref(self):
@@ -158,12 +150,8 @@ class GameScrapeStatus(db.Base):
         return sum(pitch_app.total_at_bats_missing_pitchfx for pitch_app in self.pitch_apps)
 
     @hybrid_property
-    def total_at_bats_extra_pitchfx(self):
-        return sum(pitch_app.total_at_bats_extra_pitchfx for pitch_app in self.pitch_apps)
-
-    @hybrid_property
-    def total_at_bats_extra_pitchfx_removed(self):
-        return sum(pitch_app.total_at_bats_extra_pitchfx_removed for pitch_app in self.pitch_apps)
+    def total_at_bats_removed_pitchfx(self):
+        return sum(pitch_app.total_at_bats_removed_pitchfx for pitch_app in self.pitch_apps)
 
     @hybrid_property
     def total_at_bats_pitchfx_error(self):
@@ -234,16 +222,13 @@ class GameScrapeStatus(db.Base):
             "total_pitch_count_bbref_audited": self.total_pitch_count_bbref_audited,
             "total_pitch_count_pitchfx": self.total_pitch_count_pitchfx,
             "total_pitch_count_pitchfx_audited": self.total_pitch_count_pitchfx_audited,
-            "total_duplicate_pitchfx_removed_count": self.total_duplicate_pitchfx_removed_count,
             "total_missing_pitchfx_count": self.total_missing_pitchfx_count,
-            "total_extra_pitchfx_count": self.total_extra_pitchfx_count,
-            "total_extra_pitchfx_removed_count": self.total_extra_pitchfx_removed_count,
+            "total_removed_pitchfx_count": self.total_removed_pitchfx_count,
             "total_batters_faced_bbref": self.total_batters_faced_bbref,
             "total_batters_faced_pitchfx": self.total_batters_faced_pitchfx,
             "total_at_bats_pitchfx_complete": self.total_at_bats_pitchfx_complete,
             "total_at_bats_missing_pitchfx": self.total_at_bats_missing_pitchfx,
-            "total_at_bats_extra_pitchfx": self.total_at_bats_extra_pitchfx,
-            "total_at_bats_extra_pitchfx_removed": self.total_at_bats_extra_pitchfx_removed,
+            "total_at_bats_removed_pitchfx": self.total_at_bats_removed_pitchfx,
             "total_at_bats_pitchfx_error": self.total_at_bats_pitchfx_error,
             "total_at_bats_invalid_pitchfx": self.total_at_bats_invalid_pitchfx,
             "scraped_all_pitchfx_logs": self.scraped_all_pitchfx_logs,
@@ -260,9 +245,6 @@ class GameScrapeStatus(db.Base):
         scraped_all_pitchfx_logs = "YES" if self.scraped_all_pitchfx_logs else "NO"
         combined_data_for_all_pitchfx_logs = "YES" if self.combined_data_for_all_pitchfx_logs else "NO"
         pitchfx_error_for_any_pitchfx_logs = "YES" if self.pitchfx_error_for_any_pitchfx_logs else "NO"
-        total_pitchfx_removed_count = (
-            self.total_duplicate_pitchfx_removed_count + self.total_extra_pitchfx_removed_count
-        )
         return [
             f"BBRef Game ID................................: {bbref_game_id}",
             f"brooksbaseball.net Game ID...................: {bb_game_id}",
@@ -297,7 +279,7 @@ class GameScrapeStatus(db.Base):
                 "Pitch Count Audited (BBRef/PFx/Removed)......: "
                 f"{self.total_pitch_count_bbref_audited}/"
                 f"{self.total_pitch_count_pitchfx_audited}/"
-                f"{total_pitchfx_removed_count}"
+                f"{self.total_removed_pitchfx_count}"
             ),
         ]
 
