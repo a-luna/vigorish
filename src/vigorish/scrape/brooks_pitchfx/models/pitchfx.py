@@ -85,9 +85,23 @@ class BrooksPitchFxData:
     is_fly_ball: bool = field(repr=False, default=False)
     is_line_drive: bool = field(repr=False, default=False)
     is_pop_up: bool = field(repr=False, default=False)
+    is_final_pitch_of_ab: bool = field(repr=False, default=False)
+    ab_result_out: bool = field(repr=False, default=False)
+    ab_result_hit: bool = field(repr=False, default=False)
+    ab_result_single: bool = field(repr=False, default=False)
+    ab_result_double: bool = field(repr=False, default=False)
+    ab_result_triple: bool = field(repr=False, default=False)
+    ab_result_homerun: bool = field(repr=False, default=False)
+    ab_result_bb: bool = field(repr=False, default=False)
+    ab_result_ibb: bool = field(repr=False, default=False)
+    ab_result_k: bool = field(repr=False, default=False)
+    ab_result_hbp: bool = field(repr=False, default=False)
+    ab_result_sac_hit: bool = field(repr=False, default=False)
+    ab_result_sac_fly: bool = field(repr=False, default=False)
+    ab_result_unclear: bool = field(repr=False, default=False)
+    pbp_play_result: str = field(repr=False, default="")
+    pbp_runs_outs_result: str = field(repr=False, default="")
     is_patched: bool = field(repr=False, default=False)
-    is_duplicate_guid: bool = field(repr=False, default=False)
-    is_duplicate_pitch_number: bool = field(repr=False, default=False)
     is_invalid_ibb: bool = field(repr=False, default=False)
     is_out_of_sequence: bool = field(repr=False, default=False)
 
@@ -209,9 +223,23 @@ class BrooksPitchFxData:
             "is_fly_ball": self.is_fly_ball,
             "is_line_drive": self.is_line_drive,
             "is_pop_up": self.is_pop_up,
+            "is_final_pitch_of_ab": self.is_final_pitch_of_ab,
+            "ab_result_out": self.is_final_pitch_of_ab,
+            "ab_result_hit": self.is_final_pitch_of_ab,
+            "ab_result_single": self.is_final_pitch_of_ab,
+            "ab_result_double": self.is_final_pitch_of_ab,
+            "ab_result_triple": self.is_final_pitch_of_ab,
+            "ab_result_homerun": self.is_final_pitch_of_ab,
+            "ab_result_bb": self.is_final_pitch_of_ab,
+            "ab_result_ibb": self.is_final_pitch_of_ab,
+            "ab_result_k": self.is_final_pitch_of_ab,
+            "ab_result_hbp": self.is_final_pitch_of_ab,
+            "ab_result_sac_hit": self.is_final_pitch_of_ab,
+            "ab_result_sac_fly": self.is_final_pitch_of_ab,
+            "ab_result_unclear": self.is_final_pitch_of_ab,
+            "pbp_play_result": self.pbp_play_result,
+            "pbp_runs_outs_result": self.pbp_runs_outs_result,
             "is_patched": self.is_patched,
-            "is_duplicate_guid": self.is_duplicate_guid,
-            "is_duplicate_pitch_number": self.is_duplicate_pitch_number,
             "is_invalid_ibb": self.is_invalid_ibb,
             "is_out_of_sequence": self.is_out_of_sequence,
         }

@@ -25,19 +25,16 @@ class PitchAppScrapeStatus(db.Base):
     pitch_count_bbref = Column(Integer, default=0)
     pitch_count_pitchfx = Column(Integer, default=0)
     pitch_count_pitchfx_audited = Column(Integer, default=0)
-    patched_pitchfx_count = Column(Integer, default=0)
-    missing_pitchfx_count = Column(Integer, default=0)
-    extra_pitchfx_count = Column(Integer, default=0)
-    invalid_pitchfx_count = Column(Integer, default=0)
-    extra_pitchfx_removed_count = Column(Integer, default=0)
-    duplicate_guid_removed_count = Column(Integer, default=0)
     batters_faced_bbref = Column(Integer, default=0)
     batters_faced_pitchfx = Column(Integer, default=0)
+    patched_pitchfx_count = Column(Integer, default=0)
+    missing_pitchfx_count = Column(Integer, default=0)
+    removed_pitchfx_count = Column(Integer, default=0)
+    invalid_pitchfx_count = Column(Integer, default=0)
     total_at_bats_pitchfx_complete = Column(Integer, default=0)
     total_at_bats_patched_pitchfx = Column(Integer, default=0)
     total_at_bats_missing_pitchfx = Column(Integer, default=0)
-    total_at_bats_extra_pitchfx = Column(Integer, default=0)
-    total_at_bats_extra_pitchfx_removed = Column(Integer, default=0)
+    total_at_bats_removed_pitchfx = Column(Integer, default=0)
     total_at_bats_pitchfx_error = Column(Integer, default=0)
     total_at_bats_invalid_pitchfx = Column(Integer, default=0)
 
@@ -138,18 +135,15 @@ class PitchAppScrapeStatusCsvRow:
     pitch_count_bbref: int = 0
     pitch_count_pitchfx: int = 0
     pitch_count_pitchfx_audited: int = 0
-    patched_pitchfx_count: int = 0
-    missing_pitchfx_count: int = 0
-    extra_pitchfx_count: int = 0
-    invalid_pitchfx_count: int = 0
-    extra_pitchfx_removed_count: int = 0
-    duplicate_guid_removed_count: int = 0
     batters_faced_bbref: int = 0
     batters_faced_pitchfx: int = 0
+    patched_pitchfx_count: int = 0
+    missing_pitchfx_count: int = 0
+    removed_pitchfx_count: int = 0
+    invalid_pitchfx_count: int = 0
     total_at_bats_pitchfx_complete: int = 0
     total_at_bats_patched_pitchfx: int = 0
     total_at_bats_missing_pitchfx: int = 0
-    total_at_bats_extra_pitchfx: int = 0
-    total_at_bats_extra_pitchfx_removed: int = 0
+    total_at_bats_removed_pitchfx: int = 0
     total_at_bats_pitchfx_error: int = 0
     total_at_bats_invalid_pitchfx: int = 0
