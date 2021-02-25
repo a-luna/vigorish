@@ -19,7 +19,7 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
-from vigorish.enums import AuditError, DataSet, ScrapeCondition
+from vigorish.enums import AuditError, ScrapeCondition
 from vigorish.tasks import CombineScrapedDataTask
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.list_helpers import flatten_list2d
@@ -50,7 +50,7 @@ class CombineScrapedData(MenuItem):
         self.menu_item_text = "Combine Game Data"
         self.menu_item_emoji = EMOJIS.get("BANG", "")
         self.exit_menu = False
-        self.combine_condition = self.config.get_current_setting("SCRAPED_DATA_COMBINE_CONDITION", DataSet.ALL)
+        self.combine_condition = self.app.get_current_setting("SCRAPED_DATA_COMBINE_CONDITION")
         self.audit_type = None
         self.scrape_year = None
         self.current_game_date = None

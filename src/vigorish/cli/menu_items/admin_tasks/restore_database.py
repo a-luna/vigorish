@@ -16,7 +16,6 @@ from vigorish.cli.components.util import (
 from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
-from vigorish.enums import DataSet
 from vigorish.tasks import RestoreDatabaseTask
 from vigorish.util.datetime_util import format_timedelta_str, get_local_utcoffset
 from vigorish.util.dt_format_strings import DT_NAIVE, FILE_TIMESTAMP
@@ -32,8 +31,7 @@ class RestoreDatabase(MenuItem):
         self.restore_db = RestoreDatabaseTask(self.app)
         self.backup_start_time = None
         self.spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        backup_folder_setting = self.config.all_settings.get("DB_BACKUP_FOLDER_PATH")
-        self.backup_folder = backup_folder_setting.current_setting(DataSet.ALL).resolve()
+        self.backup_folder = self.app.get_current_setting("DB_BACKUP_FOLDER_PATH")
         self.backup_zip_files = []
         self.table_count = 0
         self.total_tables = 0

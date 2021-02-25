@@ -43,6 +43,7 @@ NumericSetting = Union[BatchJobSettings, BatchScrapeDelay, UrlScrapeDelay]
 PathSetting = Union[LocalFolderPathSetting, S3FolderPathSetting]
 ConfigValue = Union[None, bool, int, str, EnumSetting]
 ConfigDict = Mapping[str, Union[None, bool, int, str]]
+ConfigSettingValue = Union[EnumSetting, NumericSetting, PathSetting, str]
 
 
 class ConfigSetting(ABC):

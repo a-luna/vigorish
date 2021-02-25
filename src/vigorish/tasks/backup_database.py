@@ -5,7 +5,6 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from events import Events
 
-from vigorish.enums import DataSet
 from vigorish.models.bat_stats import BatStats, BatStatsCsvRow
 from vigorish.models.pitch_stats import PitchStats, PitchStatsCsvRow
 from vigorish.models.pitchfx import PitchFx, PitchFxCsvRow
@@ -70,12 +69,11 @@ class BackupDatabaseTask(Task):
         }
 
     def create_csv_folder(self):
-        backup_folder = self.config.all_settings.get("DB_BACKUP_FOLDER_PATH")
-        backup_folder_path = backup_folder.current_setting(DataSet.ALL).resolve()
+        backup_folder = self.app.get_current_setting("DB_BACKUP_FOLDER_PATH")
         folder_name = f"{datetime.now(timezone.utc).strftime(FILE_TIMESTAMP)}"
         if os.environ.get("ENV") == "TEST":
             folder_name = "__timestamp__"
-        csv_folder = Path(backup_folder_path).joinpath(folder_name)
+        csv_folder = Path(backup_folder).joinpath(folder_name)
         csv_folder.mkdir(parents=True)
         return csv_folder
 
