@@ -38,7 +38,7 @@ class ScrapeTaskABC(ABC):
         self.end_date = None
         self.season = self.db_job.season
         self.total_days = self.db_job.total_days
-        self.scrape_condition = self.config.get_current_setting("SCRAPE_CONDITION", self.data_set)
+        self.scrape_condition = self.app.get_current_setting("SCRAPE_CONDITION", self.data_set)
         self.spinner = Halo(color=JOB_SPINNER_COLORS[self.data_set], spinner="dots3")
 
     @property

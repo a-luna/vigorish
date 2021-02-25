@@ -116,9 +116,8 @@ class SetupDatabase(MenuItem):
         return self.setup_complete(restart_required)
 
     def import_scraped_data_prompt(self):
-        local_folder_path = self.config.all_settings.get("JSON_LOCAL_FOLDER_PATH")
-        example_folder = local_folder_path.current_setting(data_set=DataSet.BBREF_BOXSCORES)
-        root_folder = Path(example_folder.resolve(year=2019)).parent.parent
+        example_folder = self.app.get_current_setting("JSON_LOCAL_FOLDER_PATH", DataSet.BBREF_BOXSCORES, year=2019)
+        root_folder = Path(example_folder).parent.parent
         current_setting = f"JSON_LOCAL_FOLDER_PATH: {root_folder}"
         self.update_menu_heading("Import Local JSON Folder?")
         print_message(IMPORT_SCRAPED_DATA_MESSAGE)
