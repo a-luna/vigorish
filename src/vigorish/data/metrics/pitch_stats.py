@@ -58,7 +58,7 @@ class PitchStatsMetrics:
     re24_pitch: float = field(repr=False, default=0.0)
 
     @classmethod
-    def from_pitch_stats_view_results(cls, results: List[RowProxy]) -> PitchStatsMetrics:
+    def from_query_results(cls, results: List[RowProxy]) -> PitchStatsMetrics:
         return [from_dict(data_class=cls, data=cls._get_pitch_stats_for_table(dict(row))) for row in results]
 
     @classmethod
