@@ -80,13 +80,13 @@ class Team_PitchStats_By_Year_View(db.Base):
     def get_pitch_stats_for_team(cls, db_engine, team_id):
         s = select([cls]).where(cls.team_id == team_id)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results)[0] if results else None
+        return PitchStatsMetrics.from_query_results(results)[0] if results else None
 
     @classmethod
     def get_pitch_stats_by_year_for_team(cls, db_engine, team_id_bbref):
         s = select([cls]).where(cls.player_team_id_bbref == team_id_bbref)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results) if results else []
+        return PitchStatsMetrics.from_query_results(results) if results else []
 
 
 class Team_PitchStats_By_Player_Year_View(db.Base):
@@ -154,4 +154,4 @@ class Team_PitchStats_By_Player_Year_View(db.Base):
     def get_pitch_stats_by_player_by_year_for_team(cls, db_engine, team_id):
         s = select([cls]).where(cls.team_id == team_id)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results) if results else []
+        return PitchStatsMetrics.from_query_results(results) if results else []
