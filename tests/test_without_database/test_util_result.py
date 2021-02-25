@@ -25,6 +25,9 @@ def test_successful_result(capfd):
     assert result.value == 22
 
     result = Result.Ok(22).on_failure(show_error)
+    out, err = capfd.readouterr()
+    assert not out
+    assert not err
     assert result.success
     assert result.value == 22
 
@@ -50,6 +53,9 @@ def test_successful_result(capfd):
     assert not result.value
 
     result = Result.Ok().on_failure(show_error)
+    out, err = capfd.readouterr()
+    assert not out
+    assert not err
     assert result.success
     assert not result.value
 
@@ -151,6 +157,22 @@ def test_result_on_both(capfd):
 def test_result_combine():
     result1 = Result.Fail("error!")
     result2 = Result.Fail("another error!")
-    combined_result = Result.Combine([result1, result2])
-    assert combined_result.failure
-    assert combined_result.error == "error!\nanother error!"
+    result3 = Result.Ok(22)
+    result4 = Result.Ok(42)
+    result5 = Result.Ok()
+
+    combined_result1 = Result.Combine([result1, result2])
+    assert combined_result1.failure
+    assert combined_result1.error == ["error!", "another error!"]
+
+    combined_result2 = Result.Combine([result1, result2, result3])
+    assert combined_result2.failure
+    assert combined_result2.error == ["error!", "another error!", None]
+
+    combined_result3 = Result.Combine([result3, result4, result5])
+    assert combined_result3.success
+    assert combined_result3.value == [22, 42, None]
+
+    combined_result4 = Result.Combine([result1, result2, result3, result4, result5])
+    assert combined_result4.failure
+    assert combined_result4.error == ["error!", "another error!", None, None, None]
