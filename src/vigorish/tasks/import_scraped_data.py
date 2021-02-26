@@ -154,7 +154,7 @@ class ImportScrapedDataTask(Task):
             VigFile.COMBINED_GAME_DATA, DataSet.ALL, season.year
         )
         if not combined_ids:
-            self.events.import_combined_game_data_complete()
+            self.events.import_combined_game_data_complete(season.year)
             return Result.Ok()
         if not overwrite_existing:
             season_report = self.app.audit_report.get(season.year, {})
