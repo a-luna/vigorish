@@ -2,6 +2,7 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
+from vigorish.enums import PitchType
 from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
 from vigorish.util.dt_format_strings import DT_AWARE
 from vigorish.util.regex import PFX_TIMESTAMP_REGEX
@@ -96,6 +97,7 @@ class BrooksPitchFxData:
     ab_result_ibb: bool = field(repr=False, default=False)
     ab_result_k: bool = field(repr=False, default=False)
     ab_result_hbp: bool = field(repr=False, default=False)
+    ab_result_error: bool = field(repr=False, default=False)
     ab_result_sac_hit: bool = field(repr=False, default=False)
     ab_result_sac_fly: bool = field(repr=False, default=False)
     ab_result_unclear: bool = field(repr=False, default=False)
@@ -234,9 +236,11 @@ class BrooksPitchFxData:
             "ab_result_ibb": self.is_final_pitch_of_ab,
             "ab_result_k": self.is_final_pitch_of_ab,
             "ab_result_hbp": self.is_final_pitch_of_ab,
+            "ab_result_error": self.ab_result_error,
             "ab_result_sac_hit": self.is_final_pitch_of_ab,
             "ab_result_sac_fly": self.is_final_pitch_of_ab,
             "ab_result_unclear": self.is_final_pitch_of_ab,
+            "pitch_type_int": int(PitchType.from_abbrev(self.mlbam_pitch_name)),
             "pbp_play_result": self.pbp_play_result,
             "pbp_runs_outs_result": self.pbp_runs_outs_result,
             "is_patched": self.is_patched,

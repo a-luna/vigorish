@@ -29,8 +29,8 @@ slg_denominator = func.sum(db.BatStats.at_bats)
 slg_ = slg_numerator / cast(slg_denominator, Float)
 slg = case([(slg_denominator > 0, slg_)], else_=0.0).label("slg")
 
-ops = (obp_ + slg_).label("ops")
-iso = (slg_ - avg_).label("iso")
+ops = (obp + slg).label("ops")
+iso = (slg - avg).label("iso")
 
 bb_rate_numerator = func.sum(db.BatStats.bases_on_balls)
 bb_rate_denominator = func.sum(db.BatStats.plate_appearances)

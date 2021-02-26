@@ -248,7 +248,6 @@ AT_BAT_RESULTS_UNCLEAR = [
     "batter interference",
     "catcher interference",
     "fan interference",
-    "field error",
     "fielders choice",
     "fielders choice out",
     "missing_des",
@@ -273,6 +272,10 @@ AT_BAT_RESULTS_STRIKEOUT = [
 
 AT_BAT_RESULTS_HBP = [
     "hit by pitch",
+]
+
+AT_BAT_RESULTS_ERROR = [
+    "field error",
 ]
 
 AT_BAT_RESULTS_SAC_HIT = [

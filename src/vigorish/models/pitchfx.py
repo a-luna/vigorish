@@ -86,9 +86,11 @@ class PitchFx(db.Base):
     ab_result_ibb = Column(Integer)
     ab_result_k = Column(Integer)
     ab_result_hbp = Column(Integer)
+    ab_result_error = Column(Integer)
     ab_result_sac_hit = Column(Integer)
     ab_result_sac_fly = Column(Integer)
     ab_result_unclear = Column(Integer)
+    pitch_type_int = Column(Integer)
     pbp_play_result = Column(String)
     pbp_runs_outs_result = Column(String)
     is_sp = Column(Integer)
@@ -179,6 +181,7 @@ class PitchFx(db.Base):
         pfx_dict["ab_result_ibb"] = int(pfx_dict["ab_result_ibb"])
         pfx_dict["ab_result_k"] = int(pfx_dict["ab_result_k"])
         pfx_dict["ab_result_hbp"] = int(pfx_dict["ab_result_hbp"])
+        pfx_dict["ab_result_error"] = int(pfx_dict["ab_result_error"])
         pfx_dict["ab_result_sac_hit"] = int(pfx_dict["ab_result_sac_hit"])
         pfx_dict["ab_result_sac_fly"] = int(pfx_dict["ab_result_sac_fly"])
         pfx_dict["ab_result_unclear"] = int(pfx_dict["ab_result_unclear"])
@@ -286,9 +289,11 @@ class PitchFxCsvRow:
     ab_result_ibb: int = 0
     ab_result_k: int = 0
     ab_result_hbp: int = 0
+    ab_result_error: int = 0
     ab_result_sac_hit: int = 0
     ab_result_sac_fly: int = 0
     ab_result_unclear: int = 0
+    pitch_type_int: int = 0
     pbp_play_result: str = ""
     pbp_runs_outs_result: str = ""
     is_sp: int = 0
