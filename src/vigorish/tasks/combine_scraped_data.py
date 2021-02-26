@@ -6,6 +6,7 @@ from typing import Dict, List
 
 import vigorish.database as db
 from vigorish.constants import (
+    AT_BAT_RESULTS_ERROR,
     AT_BAT_RESULTS_HBP,
     AT_BAT_RESULTS_HIT,
     AT_BAT_RESULTS_OUT,
@@ -742,6 +743,9 @@ class CombineScrapedDataTask(Task):
 
         if at_bat_result in AT_BAT_RESULTS_HBP:
             final_pitch_of_ab["ab_result_hbp"] = True
+
+        if at_bat_result in AT_BAT_RESULTS_ERROR:
+            final_pitch_of_ab["ab_result_error"] = True
 
         if at_bat_result in AT_BAT_RESULTS_SAC_HIT:
             final_pitch_of_ab["ab_result_sac_hit"] = True

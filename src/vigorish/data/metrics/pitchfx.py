@@ -18,8 +18,45 @@ PitchTypeMetricsDict = Dict[PitchType, PitchFxMetricsDict]
 
 @dataclass
 class PitchFxMetrics:
-    pitch_type: PitchType = PitchType.UNKNOWN
+    pitcher_id_mlb: int = field(repr=False, default=0)
+    pitch_type: Union[PitchType, List[PitchType]] = PitchType.UNKNOWN
     total_pitches: int = field(repr=False, default=0)
+    total_pa: int = field(repr=False, default=0)
+    total_at_bats: int = field(repr=False, default=0)
+    total_outs: int = field(repr=False, default=0)
+    total_hits: int = field(repr=False, default=0)
+    total_bb: int = field(repr=False, default=0)
+    total_k: int = field(repr=False, default=0)
+    avg_speed: float = 0.0
+    avg: float = field(repr=False, default=0.0)
+    obp: float = field(repr=False, default=0.0)
+    slg: float = field(repr=False, default=0.0)
+    ops: float = field(repr=False, default=0.0)
+    iso: float = field(repr=False, default=0.0)
+    fly_ball_rate: float = field(repr=False, default=0.0)
+    ground_ball_rate: float = field(repr=False, default=0.0)
+    line_drive_rate: float = field(repr=False, default=0.0)
+    pop_up_rate: float = field(repr=False, default=0.0)
+    bb_rate: float = field(repr=False, default=0.0)
+    k_rate: float = field(repr=False, default=0.0)
+    hr_per_fb: float = field(repr=False, default=0.0)
+    avg_pfx_x: float = field(repr=False, default=0.0)
+    avg_pfx_z: float = field(repr=False, default=0.0)
+    avg_px: float = field(repr=False, default=0.0)
+    avg_pz: float = field(repr=False, default=0.0)
+    zone_rate: float = field(repr=False, default=0.0)
+    called_strike_rate: float = field(repr=False, default=0.0)
+    swinging_strike_rate: float = field(repr=False, default=0.0)
+    whiff_rate: float = field(repr=False, default=0.0)
+    csw_rate: float = field(repr=False, default=0.0)
+    o_swing_rate: float = field(repr=False, default=0.0)
+    z_swing_rate: float = field(repr=False, default=0.0)
+    swing_rate: float = field(repr=False, default=0.0)
+    o_contact_rate: float = field(repr=False, default=0.0)
+    z_contact_rate: float = field(repr=False, default=0.0)
+    contact_rate: float = field(repr=False, default=0.0)
+    custom_score: float = field(repr=False, default=0.0)
+    money_pitch: bool = field(repr=False, default=False)
     total_swings: int = field(repr=False, default=0)
     total_swings_made_contact: int = field(repr=False, default=0)
     total_called_strikes: int = field(repr=False, default=0)
@@ -35,29 +72,17 @@ class PitchFxMetrics:
     total_line_drives: int = field(repr=False, default=0)
     total_fly_balls: int = field(repr=False, default=0)
     total_pop_ups: int = field(repr=False, default=0)
+    total_singles: int = field(repr=False, default=0)
+    total_doubles: int = field(repr=False, default=0)
+    total_triples: int = field(repr=False, default=0)
+    total_homeruns: int = field(repr=False, default=0)
+    total_ibb: int = field(repr=False, default=0)
+    total_hbp: int = field(repr=False, default=0)
+    total_errors: int = field(repr=False, default=0)
+    total_sac_hit: int = field(repr=False, default=0)
+    total_sac_fly: int = field(repr=False, default=0)
+    pitch_type_int: int = field(repr=False, default=0)
     percent: float = 0.0
-    zone_rate: float = field(repr=False, default=0.0)
-    called_strike_rate: float = field(repr=False, default=0.0)
-    swinging_strike_rate: float = field(repr=False, default=0.0)
-    whiff_rate: float = field(repr=False, default=0.0)
-    csw_rate: float = field(repr=False, default=0.0)
-    o_swing_rate: float = field(repr=False, default=0.0)
-    z_swing_rate: float = field(repr=False, default=0.0)
-    swing_rate: float = field(repr=False, default=0.0)
-    o_contact_rate: float = field(repr=False, default=0.0)
-    z_contact_rate: float = field(repr=False, default=0.0)
-    contact_rate: float = field(repr=False, default=0.0)
-    custom_score: float = field(repr=False, default=0.0)
-    ground_ball_rate: float = field(repr=False, default=0.0)
-    line_drive_rate: float = field(repr=False, default=0.0)
-    fly_ball_rate: float = field(repr=False, default=0.0)
-    pop_up_rate: float = field(repr=False, default=0.0)
-    avg_speed: float = 0.0
-    avg_pfx_x: float = field(repr=False, default=0.0)
-    avg_pfx_z: float = field(repr=False, default=0.0)
-    avg_px: float = field(repr=False, default=0.0)
-    avg_pz: float = field(repr=False, default=0.0)
-    money_pitch: bool = field(repr=False, default=False)
 
     def get_plate_discipline_stats(self, include_pitch_count: bool = False) -> Dict[str, str]:
         money_pitch = "$ " if self.money_pitch else ""
@@ -81,168 +106,38 @@ class PitchFxMetrics:
         return f"{self.percent:.0%}{pitch_count} {self.avg_speed:.1f}mph"
 
     @classmethod
-    def from_pitchfx_view_results(cls, row_dict: RowDict) -> PitchFxMetrics:
-        return _get_pitchfx_metrics_for_single_pitch_type(row_dict)
+    def from_query_results(cls, results: List[RowProxy]) -> List[PitchFxMetrics]:
+        return [from_dict(data_class=cls, data=cls._get_pitchfx_metrics(dict(row))) for row in results]
+
+    @classmethod
+    def _get_pitchfx_metrics(cls, pfx_metrics: RowDict, decimal_precision: int = 3) -> PitchFxMetricsDict:
+        dc_fields = get_field_types(cls)
+        pitchfx_metrics_dict = {
+            k: round(v, decimal_precision) if dc_fields[k] is float else bool(v) if dc_fields[k] is bool else v
+            for k, v in pfx_metrics.items()
+            if v and k in dc_fields
+        }
+        pitchfx_metrics_dict["pitch_type"] = (
+            PitchType.get_pitch_mix_from_int(pfx_metrics["pitch_type_int"])
+            if "pitch_type_int" in pfx_metrics
+            else PitchType.from_abbrev(pfx_metrics["pitch_type"])
+        )
+        return pitchfx_metrics_dict
 
 
 @dataclass
-class PitchFxMetricsCollection:
-    pitcher_id_mlb: int
-    metrics_detail: Dict[PitchType, PitchFxMetrics] = field(default_factory=dict)
+class PitchFxMetricsCollection(PitchFxMetrics):
+    pitch_type_metrics: Dict[PitchType, PitchFxMetrics] = field(default_factory=dict)
 
     @property
-    def pitch_types(self) -> int:
-        return list(self.metrics_detail.keys())
-
-    @property
-    def total_pitches(self) -> int:
-        return sum(pitch_metrics.total_pitches for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_swings(self) -> int:
-        return sum(pitch_metrics.total_swings for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_swings_made_contact(self) -> int:
-        return sum(pitch_metrics.total_swings_made_contact for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_called_strikes(self) -> int:
-        return sum(pitch_metrics.total_called_strikes for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_swinging_strikes(self) -> int:
-        return sum(pitch_metrics.total_swinging_strikes for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_inside_strike_zone(self) -> int:
-        return sum(pitch_metrics.total_inside_strike_zone for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_outside_strike_zone(self) -> int:
-        return sum(pitch_metrics.total_outside_strike_zone for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_swings_inside_zone(self) -> int:
-        return sum(pitch_metrics.total_swings_inside_zone for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_swings_outside_zone(self) -> int:
-        return sum(pitch_metrics.total_swings_outside_zone for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_contact_inside_zone(self) -> int:
-        return sum(pitch_metrics.total_contact_inside_zone for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_contact_outside_zone(self) -> int:
-        return sum(pitch_metrics.total_contact_outside_zone for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_batted_balls(self) -> int:
-        return sum(pitch_metrics.total_batted_balls for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_ground_balls(self) -> int:
-        return sum(pitch_metrics.total_ground_balls for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_line_drives(self) -> int:
-        return sum(pitch_metrics.total_line_drives for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_fly_balls(self) -> int:
-        return sum(pitch_metrics.total_fly_balls for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def total_pop_ups(self) -> int:
-        return sum(pitch_metrics.total_pop_ups for pitch_metrics in self.metrics_detail.values())
-
-    @property
-    def zone_rate(self) -> float:
-        return round(self.total_inside_strike_zone / float(self.total_pitches), 3) if self.total_pitches else 0.0
-
-    @property
-    def called_strike_rate(self) -> float:
-        return round(self.total_called_strikes / float(self.total_pitches), 3) if self.total_pitches else 0.0
-
-    @property
-    def swinging_strike_rate(self) -> float:
-        return round(self.total_swinging_strikes / float(self.total_pitches), 3) if self.total_pitches else 0.0
-
-    @property
-    def whiff_rate(self) -> float:
-        return round(self.total_swinging_strikes / float(self.total_swings), 3) if self.total_swings else 0.0
-
-    @property
-    def csw_rate(self) -> float:
-        return (
-            round((self.total_called_strikes + self.total_swinging_strikes) / float(self.total_pitches), 3)
-            if self.total_pitches
-            else 0.0
-        )
-
-    @property
-    def o_swing_rate(self) -> float:
-        return (
-            round(self.total_swings_outside_zone / float(self.total_outside_strike_zone), 3)
-            if self.total_outside_strike_zone
-            else 0.0
-        )
-
-    @property
-    def z_swing_rate(self) -> float:
-        return (
-            round(self.total_swings_inside_zone / float(self.total_inside_strike_zone), 3)
-            if self.total_inside_strike_zone
-            else 0.0
-        )
-
-    @property
-    def swing_rate(self) -> float:
-        return round(self.total_swings / float(self.total_pitches), 3) if self.total_pitches else 0.0
-
-    @property
-    def o_contact_rate(self) -> float:
-        return (
-            round(self.total_contact_outside_zone / float(self.total_swings_outside_zone), 3)
-            if self.total_swings_outside_zone
-            else 0.0
-        )
-
-    @property
-    def z_contact_rate(self) -> float:
-        return (
-            round(self.total_contact_inside_zone / float(self.total_swings_inside_zone), 3)
-            if self.total_swings_inside_zone
-            else 0.0
-        )
-
-    @property
-    def contact_rate(self) -> float:
-        return round(self.total_swings_made_contact / float(self.total_pitches), 3) if self.total_pitches else 0.0
-
-    @property
-    def ground_ball_rate(self) -> float:
-        return round(self.total_ground_balls / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
-
-    @property
-    def fly_ball_rate(self) -> float:
-        return round(self.total_fly_balls / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
-
-    @property
-    def line_drive_rate(self) -> float:
-        return round(self.total_line_drives / float(self.total_batted_balls), 3) if self.total_batted_balls else 0.0
-
-    @property
-    def pop_up_rate(self) -> float:
-        return round(self.total_pop_ups / float(self.total_batted_balls), 2) if self.total_batted_balls else 0.0
+    def pitch_types(self) -> List[PitchType]:
+        return list(self.pitch_type_metrics.keys())
 
     @cached_property
     def pitch_mix(self) -> List[Dict[str, str]]:
         return [
             {"pitch_type": pitch_type.print_name, "usage": metrics.get_usage_stats()}
-            for pitch_type, metrics in self.metrics_detail.items()
+            for pitch_type, metrics in self.pitch_type_metrics.items()
         ]
 
     def get_plate_discipline_stats_for_all_pitches(self, include_pitch_count: bool = False) -> Dict[str, str]:
@@ -263,57 +158,43 @@ class PitchFxMetricsCollection:
 
     def get_plate_discipline_pitch_type_splits(self, include_pitch_count: bool = False) -> List[Dict[str, str]]:
         pd_split_stats = [
-            metrics.get_plate_discipline_stats(include_pitch_count) for metrics in self.metrics_detail.values()
+            metrics.get_plate_discipline_stats(include_pitch_count) for metrics in self.pitch_type_metrics.values()
         ]
         pd_split_stats.insert(0, self.get_plate_discipline_stats_for_all_pitches(include_pitch_count))
         return pd_split_stats
 
     def get_batted_ball_pitch_type_splits(self, include_bip_count: bool = False) -> List[Dict[str, str]]:
-        bb_split_stats = [metrics.get_batted_ball_stats(include_bip_count) for metrics in self.metrics_detail.values()]
+        bb_split_stats = [
+            metrics.get_batted_ball_stats(include_bip_count) for metrics in self.pitch_type_metrics.values()
+        ]
         bb_split_stats.insert(0, self.get_batted_ball_stats_for_all_pitches(include_bip_count))
         return bb_split_stats
 
     def get_usage_stats_for_pitch_type(self, pitch_type: PitchType, include_pitch_count: bool = False) -> str:
         return (
-            self.metrics_detail[pitch_type].get_usage_stats(include_pitch_count)
+            self.pitch_type_metrics[pitch_type].get_usage_stats(include_pitch_count)
             if pitch_type in self.pitch_types
             else "0% (N/A)"
         )
 
     @classmethod
-    def from_query_results(cls, results: List[RowProxy], threshold: float = 0.01) -> PitchFxMetricsCollection:
-        row_dicts = [dict(row) for row in results]
-        metrics_collection = {
-            "pitcher_id_mlb": row_dicts[0]["pitcher_id_mlb"],
-            "metrics_detail": _get_pitchfx_metrics_for_each_pitch_type(row_dicts, threshold),
-        }
+    def from_query_results(
+        cls, all_pt_results: RowDict, each_pt_results: List[RowDict]
+    ) -> PitchFxMetricsCollection:
+        metrics_collection = _get_pitchfx_metrics_for_all_pitch_types(all_pt_results)
+        metrics_collection["pitch_type_metrics"] = _get_pitchfx_metrics_for_each_pitch_type(each_pt_results)
         return from_dict(data_class=cls, data=metrics_collection)
 
 
-def _get_pitchfx_metrics_for_each_pitch_type(row_dicts: List[RowDict], threshold: float) -> PitchTypeMetricsDict:
-    valid_pitch_types = _filter_pitch_types_above_threshold(row_dicts, threshold)
-    total_pitches_valid = sum(metrics["total_pitches"] for metrics in valid_pitch_types)
-    for metrics in valid_pitch_types:
-        metrics["percent"] = round(metrics["total_pitches"] / total_pitches_valid, 3)
-    return {m["pitch_type"]: m for m in sorted(valid_pitch_types, key=lambda x: x["percent"], reverse=True)}
+def _get_pitchfx_metrics_for_all_pitch_types(results: RowDict) -> PitchFxMetricsDict:
+    metrics_collection = PitchFxMetrics._get_pitchfx_metrics(results)
+    metrics_collection["percent"] = 1.0
+    return metrics_collection
 
 
-def _filter_pitch_types_above_threshold(row_dicts: List[RowDict], threshold: float) -> List[PitchFxMetricsDict]:
-    all_pitch_types = [_get_pitchfx_metrics_for_single_pitch_type(d) for d in row_dicts]
+def _get_pitchfx_metrics_for_each_pitch_type(results: List[RowDict]) -> PitchTypeMetricsDict:
+    all_pitch_types = [PitchFxMetrics._get_pitchfx_metrics(pitch_type_metrics) for pitch_type_metrics in results]
     total_pitches = sum(metrics["total_pitches"] for metrics in all_pitch_types)
-    return list(filter(lambda x: _check_threshold(x["total_pitches"], total_pitches, threshold), all_pitch_types))
-
-
-def _get_pitchfx_metrics_for_single_pitch_type(pitch_type_dict: RowDict) -> PitchFxMetricsDict:
-    dc_fields = get_field_types(PitchFxMetrics)
-    pitch_metrics = {
-        k: round(v, 3) if dc_fields[k] is float else bool(v) if dc_fields[k] is bool else v
-        for k, v in pitch_type_dict.items()
-        if v and k in dc_fields
-    }
-    pitch_metrics["pitch_type"] = PitchType.from_abbrev(pitch_type_dict["pitch_type"])
-    return pitch_metrics
-
-
-def _check_threshold(pitch_count: int, total_pitches: int, threshold: float) -> bool:
-    return (pitch_count / float(total_pitches)) >= threshold
+    for pfx_metrics in all_pitch_types:
+        pfx_metrics["percent"] = round(pfx_metrics["total_pitches"] / total_pitches, 3)
+    return {m["pitch_type"]: m for m in sorted(all_pitch_types, key=lambda x: x["percent"], reverse=True)}
