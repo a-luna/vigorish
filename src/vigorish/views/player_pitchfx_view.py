@@ -113,7 +113,7 @@ class Player_PitchFx_All_View(db.Base):
     )
 
     @classmethod
-    def get_pitchfx_metrics_for_player(cls, db_engine, player_id):
+    def get_pfx_metrics_for_player(cls, db_engine, player_id):
         results = db_engine.execute(select([cls]).where(cls.id == player_id)).fetchall()
         return [dict(row) for row in results][0]
 
@@ -206,7 +206,7 @@ class Player_PitchType_All_View(db.Base):
     )
 
     @classmethod
-    def get_pitchfx_metrics_for_player(cls, db_engine, player_id):
+    def get_pfx_metrics_for_player(cls, db_engine, player_id):
         results = db_engine.execute(select([cls]).where(cls.id == player_id)).fetchall()
         return [dict(row) for row in results]
 
@@ -292,7 +292,7 @@ class Player_PitchFx_Right_View(db.Base):
     )
 
     @classmethod
-    def get_pitchfx_metrics_for_player(cls, db_engine, player_id):
+    def get_pfx_metrics_for_player(cls, db_engine, player_id):
         results = db_engine.execute(select([cls]).where(cls.id == player_id)).fetchall()
         return [dict(row) for row in results][0]
 
@@ -385,7 +385,7 @@ class Player_PitchType_Right_View(db.Base):
     )
 
     @classmethod
-    def get_pitchfx_metrics_for_player(cls, db_engine, player_id):
+    def get_pfx_metrics_for_player(cls, db_engine, player_id):
         results = db_engine.execute(select([cls]).where(cls.id == player_id)).fetchall()
         return [dict(row) for row in results]
 
@@ -471,7 +471,7 @@ class Player_PitchFx_Left_View(db.Base):
     )
 
     @classmethod
-    def get_pitchfx_metrics_for_player(cls, db_engine, player_id):
+    def get_pfx_metrics_for_player(cls, db_engine, player_id):
         results = db_engine.execute(select([cls]).where(cls.id == player_id)).fetchall()
         return [dict(row) for row in results][0]
 
@@ -564,7 +564,7 @@ class Player_PitchType_Left_View(db.Base):
     )
 
     @classmethod
-    def get_pitchfx_metrics_for_player(cls, db_engine, player_id):
+    def get_pfx_metrics_for_player(cls, db_engine, player_id):
         results = db_engine.execute(select([cls]).where(cls.id == player_id)).fetchall()
         return [dict(row) for row in results]
 
@@ -653,7 +653,7 @@ class Player_PitchFx_By_Year_View(db.Base):
     )
 
     @classmethod
-    def get_pitchfx_metrics_for_player(cls, db_engine, player_id, season_id):
+    def get_pfx_metrics_for_player(cls, db_engine, player_id, season_id):
         s = select([cls]).where(and_(cls.id == player_id, cls.season_id == season_id))
         results = db_engine.execute(s).fetchall()
         return [dict(row) for row in results][0]
@@ -750,14 +750,7 @@ class Player_PitchType_By_Year_View(db.Base):
     )
 
     @classmethod
-    def get_pitchfx_metrics_for_player(cls, db_engine, player_id, season_id):
+    def get_pfx_metrics_for_player(cls, db_engine, player_id, season_id):
         s = select([cls]).where(and_(cls.id == player_id, cls.season_id == season_id))
         results = db_engine.execute(s).fetchall()
         return [dict(row) for row in results]
-
-    @classmethod
-    def get_all_seasons_with_player_data(cls, db_engine, db_session, player_id):
-        s = select([cls.season_id]).where(cls.id == player_id).distinct()
-        results = db_engine.execute(s).fetchall()
-        seasons_played = [db_session.query(db.Season).get(d["season_id"]) for d in [dict(row) for row in results]]
-        return sorted(seasons_played, key=lambda x: x.year) if seasons_played else []

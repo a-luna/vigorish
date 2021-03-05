@@ -3,6 +3,7 @@ from vigorish.data.metrics.pitchfx import PitchFxMetricsCollection
 
 import vigorish.database as db
 from vigorish.cli.components.viewers import create_display_table, create_table_viewer
+from vigorish.util.exceptions import UnknownPlayerException
 from vigorish.util.string_helpers import validate_pitch_app_id
 
 
@@ -11,8 +12,11 @@ class PlayerData:
         self.app = app
         self.db_engine = self.app.db_engine
         self.db_session = self.app.db_session
+        self.scraped_data = self.app.scraped_data
         self.mlb_id = mlb_id
         self.player = db.Player.find_by_mlb_id(self.db_session, self.mlb_id)
+        if not self.player:
+            raise UnknownPlayerException(mlb_id)
         self.player_id = db.PlayerId.find_by_mlb_id(self.db_session, self.mlb_id)
         self.pitchfx_game_data_cache = {}
 
@@ -30,129 +34,89 @@ class PlayerData:
 
     @cached_property
     def seasons_played(self):
-        return db.Player_PitchType_By_Year_View.get_all_seasons_with_player_data(
-            self.db_engine, self.db_session, self.player.id
-        )
+        return self.scraped_data.get_all_seasons_with_data_for_player(self.mlb_id)
 
     @cached_property
     def pitch_stats_for_career(self):
-        return db.Player_PitchStats_All_View.get_pitch_stats_for_career_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_pitch_stats_for_career_for_player(self.mlb_id)
 
     @cached_property
     def pitch_stats_as_sp(self):
-        return db.Player_PitchStats_SP_View.get_pitch_stats_as_sp_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_pitch_stats_as_sp_for_player(self.mlb_id)
 
     @cached_property
     def pitch_stats_as_rp(self):
-        return db.Player_PitchStats_RP_View.get_pitch_stats_as_rp_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_pitch_stats_as_rp_for_player(self.mlb_id)
 
     @cached_property
     def pitch_stats_by_year(self):
-        return db.Player_PitchStats_By_Year_View.get_pitch_stats_by_year_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_pitch_stats_by_year_for_player(self.mlb_id)
 
     @cached_property
     def pitch_stats_by_team(self):
-        return db.Player_PitchStats_By_Team_View.get_pitch_stats_by_team_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_pitch_stats_by_team_for_player(self.mlb_id)
 
     @cached_property
     def pitch_stats_by_team_by_year(self):
-        return db.Player_PitchStats_By_Team_Year_View.get_pitch_stats_by_team_by_year_for_player(
-            self.db_engine, self.player.id
-        )
+        return self.scraped_data.get_pitch_stats_by_team_by_year_for_player(self.mlb_id)
 
     @cached_property
     def pitch_stats_by_opp_team(self):
-        return db.Player_PitchStats_By_Opp_Team_View.get_pitch_stats_by_opp_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_pitch_stats_by_opp_team_for_player(self.mlb_id)
 
     @cached_property
     def pitch_stats_by_opp_team_by_year(self):
-        return db.Player_PitchStats_By_Opp_Team_Year_View.get_pitch_stats_by_opp_by_year_for_player(
-            self.db_engine, self.player.id
-        )
+        return self.scraped_data.get_pitch_stats_by_opp_team_by_year_for_player(self.mlb_id)
 
     @cached_property
     def bat_stats_for_career(self):
-        return db.Player_BatStats_All_View.get_bat_stats_for_career_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_bat_stats_for_career_for_player(self.mlb_id)
 
     @cached_property
     def bat_stats_by_year(self):
-        return db.Player_BatStats_By_Year_View.get_bat_stats_by_year_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_bat_stats_by_year_for_player(self.mlb_id)
 
     @cached_property
     def bat_stats_by_team(self):
-        return db.Player_BatStats_By_Team_View.get_bat_stats_by_team_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_bat_stats_by_team_for_player(self.mlb_id)
 
     @cached_property
     def bat_stats_by_team_by_year(self):
-        return db.Player_BatStats_By_Team_Year_View.get_bat_stats_by_team_by_year_for_player(
-            self.db_engine, self.player.id
-        )
+        return self.scraped_data.get_bat_stats_by_team_by_year_for_player(self.mlb_id)
 
     @cached_property
     def bat_stats_by_opp_team(self):
-        return db.Player_BatStats_By_Opp_Team_View.get_bat_stats_by_opp_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_bat_stats_by_opp_for_player(self.mlb_id)
 
     @cached_property
     def bat_stats_by_opp_team_by_year(self):
-        return db.Player_BatStats_By_Opp_Team_Year_View.get_bat_stats_by_opp_by_year_for_player(
-            self.db_engine, self.player.id
-        )
-
-    @cached_property
-    def pitchfx_metrics_all_pitchtypes_vs_all_for_career(self):
-        return db.Player_PitchFx_All_View.get_pitchfx_metrics_for_player(self.db_engine, self.player.id)
-
-    @cached_property
-    def pitchfx_metrics_by_pitchtype_vs_all_for_career(self):
-        return db.Player_PitchType_All_View.get_pitchfx_metrics_for_player(self.db_engine, self.player.id)
+        return self.scraped_data.get_bat_stats_by_opp_by_year_for_player(self.mlb_id)
 
     @cached_property
     def pitchfx_metrics_vs_all_for_career(self):
         return PitchFxMetricsCollection.from_query_results(
-            self.pitchfx_metrics_all_pitchtypes_vs_all_for_career, self.pitchfx_metrics_by_pitchtype_vs_all_for_career
+            db.Player_PitchFx_All_View.get_pfx_metrics_for_player(self.db_engine, self.player.id),
+            db.Player_PitchType_All_View.get_pfx_metrics_for_player(self.db_engine, self.player.id),
         )
-
-    @cached_property
-    def pitchfx_metrics_all_pitchtypes_vs_rhb_for_career(self):
-        return db.Player_PitchFx_Right_View.get_pitchfx_metrics_for_player(self.db_engine, self.player.id)
-
-    @cached_property
-    def pitchfx_metrics_by_pitchtype_vs_rhb_for_career(self):
-        return db.Player_PitchType_Right_View.get_pitchfx_metrics_for_player(self.db_engine, self.player.id)
 
     @cached_property
     def pitchfx_metrics_vs_rhb_for_career(self):
         return PitchFxMetricsCollection.from_query_results(
-            self.pitchfx_metrics_all_pitchtypes_vs_rhb_for_career, self.pitchfx_metrics_by_pitchtype_vs_rhb_for_career
+            db.Player_PitchFx_Right_View.get_pfx_metrics_for_player(self.db_engine, self.player.id),
+            db.Player_PitchType_Right_View.get_pfx_metrics_for_player(self.db_engine, self.player.id),
         )
-
-    @cached_property
-    def pitchfx_metrics_all_pitchtypes_vs_lhb_for_career(self):
-        return db.Player_PitchFx_Left_View.get_pitchfx_metrics_for_player(self.db_engine, self.player.id)
-
-    @cached_property
-    def pitchfx_metrics_by_pitchtype_vs_lhb_for_career(self):
-        return db.Player_PitchType_Left_View.get_pitchfx_metrics_for_player(self.db_engine, self.player.id)
 
     @cached_property
     def pitchfx_metrics_vs_lhb_for_career(self):
         return PitchFxMetricsCollection.from_query_results(
-            self.pitchfx_metrics_all_pitchtypes_vs_lhb_for_career, self.pitchfx_metrics_by_pitchtype_vs_lhb_for_career
+            db.Player_PitchFx_Left_View.get_pfx_metrics_for_player(self.db_engine, self.player.id),
+            db.Player_PitchType_Left_View.get_pfx_metrics_for_player(self.db_engine, self.player.id),
         )
 
     @cached_property
     def pitchfx_metrics_all_pitchtypes_by_year(self):
         return {
-            season.year: db.Player_PitchFx_By_Year_View.get_pitchfx_metrics_for_player(
-                self.db_engine, self.player.id, season.id
-            )
-            for season in self.seasons_played
-        }
-
-    @cached_property
-    def pitchfx_metrics_by_pitchtype_by_year(self):
-        return {
-            season.year: db.Player_PitchType_By_Year_View.get_pitchfx_metrics_for_player(
+            season.year: db.Player_PitchFx_By_Year_View.get_pfx_metrics_for_player(
                 self.db_engine, self.player.id, season.id
             )
             for season in self.seasons_played
@@ -160,12 +124,17 @@ class PlayerData:
 
     @cached_property
     def pitchfx_metrics_by_year(self):
+        pfx_all_pitchtypes = {
+            s.year: db.Player_PitchFx_By_Year_View.get_pfx_metrics_for_player(self.db_engine, self.player.id, s.id)
+            for s in self.seasons_played
+        }
+        pfx_by_pitchtype = {
+            s.year: db.Player_PitchType_By_Year_View.get_pfx_metrics_for_player(self.db_engine, self.player.id, s.id)
+            for s in self.seasons_played
+        }
         return {
-            season.year: PitchFxMetricsCollection.from_query_results(
-                self.pitchfx_metrics_all_pitchtypes_by_year[season.year],
-                self.pitchfx_metrics_by_pitchtype_by_year[season.year],
-            )
-            for season in self.seasons_played
+            s.year: PitchFxMetricsCollection.from_query_results(pfx_all_pitchtypes[s.year], pfx_by_pitchtype[s.year])
+            for s in self.seasons_played
         }
 
     def get_pitchfx_metrics_for_game(self, bbref_game_id=None, pitch_app_id=None):
@@ -189,40 +158,22 @@ class PlayerData:
             bbref_game_id = validate_pitch_app_id(pitch_app_id).value["game_id"]
         return self.pitch_app_map.get(bbref_game_id)
 
-    def get_pitchfx_metrics_all_pitchtypes_vs_all_for_pitch_app(self, pitch_app):
-        return db.PitchApp_PitchFx_All_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id)
-
-    def get_pitchfx_metrics_by_pitchtype_vs_all_for_pitch_app(self, pitch_app):
-        return db.PitchApp_PitchType_All_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id)
-
     def get_pitchfx_metrics_vs_all_for_pitch_app(self, pitch_app):
         return PitchFxMetricsCollection.from_query_results(
-            self.get_pitchfx_metrics_all_pitchtypes_vs_all_for_pitch_app(pitch_app),
-            self.get_pitchfx_metrics_by_pitchtype_vs_all_for_pitch_app(pitch_app),
+            db.PitchApp_PitchFx_All_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
+            db.PitchApp_PitchType_All_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
         )
-
-    def get_pitchfx_metrics_all_pitchtypes_vs_rhb_for_pitch_app(self, pitch_app):
-        return db.PitchApp_PitchFx_Right_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id)
-
-    def get_pitchfx_metrics_by_pitchtype_vs_rhb_for_pitch_app(self, pitch_app):
-        return db.PitchApp_PitchType_Right_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id)
 
     def get_pitchfx_metrics_vs_rhb_for_pitch_app(self, pitch_app):
         return PitchFxMetricsCollection.from_query_results(
-            self.get_pitchfx_metrics_all_pitchtypes_vs_rhb_for_pitch_app(pitch_app),
-            self.get_pitchfx_metrics_by_pitchtype_vs_rhb_for_pitch_app(pitch_app),
+            db.PitchApp_PitchFx_Right_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
+            db.PitchApp_PitchType_Right_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
         )
-
-    def get_pitchfx_metrics_all_pitchtypes_vs_lhb_for_pitch_app(self, pitch_app):
-        return db.PitchApp_PitchFx_Left_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id)
-
-    def get_pitchfx_metrics_by_pitchtype_vs_lhb_for_pitch_app(self, pitch_app):
-        return db.PitchApp_PitchType_Left_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id)
 
     def get_pitchfx_metrics_vs_lhb_for_pitch_app(self, pitch_app):
         return PitchFxMetricsCollection.from_query_results(
-            self.get_pitchfx_metrics_all_pitchtypes_vs_lhb_for_pitch_app(pitch_app),
-            self.get_pitchfx_metrics_by_pitchtype_vs_lhb_for_pitch_app(pitch_app),
+            db.PitchApp_PitchFx_Left_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
+            db.PitchApp_PitchType_Left_View.get_pitchfx_metrics_for_pitch_app(self.db_engine, pitch_app.id),
         )
 
     def view_pitch_mix_batter_stance_splits(self, game_id):
@@ -340,3 +291,26 @@ class PlayerData:
 
     def get_batted_ball_pitch_type_splits_for_career(self):
         return self.pitchfx_metrics_vs_all_for_career.get_batted_ball_pitch_type_splits()
+
+    def view_bat_stats_pitch_type_splits(self, game_id):
+        return create_table_viewer(
+            [
+                create_display_table(
+                    table_rows=self.get_bat_stats_pitch_type_splits_for_game(game_id),
+                    heading=f"Batting Stats for {self.player_name} (This Game)",
+                    table_headers="keys",
+                ),
+                create_display_table(
+                    table_rows=self.get_bat_stats_pitch_type_splits_for_career(),
+                    heading=f"Batting Stats for {self.player_name} (Career)",
+                    table_headers="keys",
+                ),
+            ]
+        )
+
+    def get_bat_stats_pitch_type_splits_for_game(self, game_id):
+        pitch_metrics = self.get_pitchfx_metrics_for_game(bbref_game_id=game_id)
+        return pitch_metrics["all"].get_bat_stats_pitch_type_splits(include_pa_count=True)
+
+    def get_bat_stats_pitch_type_splits_for_career(self):
+        return self.pitchfx_metrics_vs_all_for_career.get_bat_stats_pitch_type_splits()

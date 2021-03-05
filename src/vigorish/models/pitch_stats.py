@@ -76,6 +76,10 @@ class PitchStats(db.Base):
         bbref_data["total_outs"] = calculate_total_outs(bbref_data["innings_pitched"])
         return cls(**bbref_data)
 
+    @classmethod
+    def get_all_seasons_with_data_for_player(cls, db_session, player_id_mlb):
+        return {ps.season for ps in db_session.query(cls).filter_by(player_id_mlb=player_id_mlb).all()}
+
 
 def calculate_total_outs(innings_pitched):
     split = str(innings_pitched).split(".")
