@@ -1,8 +1,11 @@
 from datetime import date, datetime
 from unittest.mock import patch
 
+import pytest
+
 from vigorish.database import Season
 from vigorish.enums import SeasonType
+from vigorish.util.exceptions import InvalidSeasonException
 
 MLB_YEAR = 2019
 
@@ -116,9 +119,8 @@ def test_is_date_in_season(vig_app):
     assert "is not within the scope of the MLB 2019 Regular Season" in result.error
 
     invalid_year = datetime(1941, 12, 7)
-    result = Season.is_date_in_season(vig_app.db_session, invalid_year)
-    assert result.failure
-    assert "Database does not contain info for the MLB 1941 Regular Season" in result.error
+    with pytest.raises(InvalidSeasonException):
+        result = Season.is_date_in_season(vig_app.db_session, invalid_year)
 
 
 def test_validate_date_range(vig_app):
