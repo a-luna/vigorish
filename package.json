@@ -1,6 +1,6 @@
 {
   "name": "vig-node-deps",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "This file is used for heroku deployment, the postbuild script below is called after each push to install the dependencies listed in the REAL package.json in the nightmarejs folder. Yes, I know that it is lame and hacky to have this root package.json file that exists solely to tap on the shoulder of another package.json and ask sheepishly to run freaking 'npm install' simply because heroku couldn't possibly manage the herculean feat of locating a package.json file anywhere but the root folder, but that's where we are and that's why this file exists.",
   "scripts": {
     "heroku-postbuild": "cd src/vigorish/nightmarejs && npm install"
