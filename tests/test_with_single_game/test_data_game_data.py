@@ -105,6 +105,9 @@ def test_game_data(vig_app):
     pitch_mix_viewer = game_data.view_bb_pitch_type_splits_for_pitcher(571882)
     assert pitch_mix_viewer
 
+    pitch_mix_viewer = game_data.view_bat_stats_pitch_type_splits_for_pitcher(571882)
+    assert pitch_mix_viewer
+
     matchup = game_data.get_matchup_details()
     assert matchup == (
         "Monday, June 17 2019 07:07 PM (UTC-04:00)\n"

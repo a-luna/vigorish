@@ -11,6 +11,7 @@ from vigorish.data.metrics.constants import PFX_BATTED_BALL_METRICS, PFX_PLATE_D
 from vigorish.enums import PitchType
 from vigorish.types import RowDict
 from vigorish.util.dataclass_helpers import get_field_types
+from vigorish.util.string_helpers import format_decimal_bat_stat
 
 PitchFxMetricsDict = Dict[str, Union[bool, int, float, str, PitchType]]
 PitchTypeMetricsDict = Dict[PitchType, PitchFxMetricsDict]
@@ -84,10 +85,32 @@ class PitchFxMetrics:
     pitch_type_int: int = field(repr=False, default=0)
     percent: float = 0.0
 
+    @property
+    def pitch_name(self) -> str:
+        return self.pitch_type.print_name
+
+    @property
+    def triple_slash(self) -> str:
+        return (
+            f"{format_decimal_bat_stat(self.avg)}/"
+            f"{format_decimal_bat_stat(self.obp)}/"
+            f"{format_decimal_bat_stat(self.slg)} ({format_decimal_bat_stat(self.ops)})"
+        )
+
+    def get_bat_stats(self, include_pa_count: bool = False) -> Dict[str, str]:
+        total_pa = f" ({self.total_pa})" if include_pa_count else ""
+        return {
+            "pitch_type": f"{self.pitch_name}{total_pa}",
+            "AVG/OBP/SLG (OPS)": self.triple_slash,
+            "K%": f"{self.k_rate:.0%}",
+            "BB%": f"{self.bb_rate:.0%}",
+            "HR/FB": f"{self.hr_per_fb:.0%}",
+        }
+
     def get_plate_discipline_stats(self, include_pitch_count: bool = False) -> Dict[str, str]:
         money_pitch = "$ " if self.money_pitch else ""
         total_pitches = f" ({self.total_pitches})" if include_pitch_count else ""
-        pd_stats = {"pitch_type": f"{money_pitch}{self.pitch_type.print_name}{total_pitches}"}
+        pd_stats = {"pitch_type": f"{money_pitch}{self.pitch_name}{total_pitches}"}
         for metric, (rate, total) in PFX_PLATE_DISCIPLINE_METRICS.items():
             pitch_count = f" ({getattr(self, total)})" if include_pitch_count else ""
             pd_stats[metric] = f"{getattr(self, rate):.0%}{pitch_count}"
@@ -95,7 +118,7 @@ class PitchFxMetrics:
 
     def get_batted_ball_stats(self, include_bip_count: bool = False) -> Dict[str, str]:
         total_bip = f" ({self.total_batted_balls})" if include_bip_count else ""
-        bb_stats = {"pitch_type": f"{self.pitch_type.print_name}{total_bip}"}
+        bb_stats = {"pitch_type": f"{self.pitch_name}{total_bip}"}
         for metric, (rate, total) in PFX_BATTED_BALL_METRICS.items():
             bip_count = f" ({getattr(self, total)})" if include_bip_count else ""
             bb_stats[metric] = f"{getattr(self, rate):.0%}{bip_count}"
@@ -130,6 +153,10 @@ class PitchFxMetricsCollection(PitchFxMetrics):
     pitch_type_metrics: Dict[PitchType, PitchFxMetrics] = field(default_factory=dict)
 
     @property
+    def pitch_name(self) -> str:
+        return PitchType.ALL.print_name
+
+    @property
     def pitch_types(self) -> List[PitchType]:
         return list(self.pitch_type_metrics.keys())
 
@@ -140,34 +167,23 @@ class PitchFxMetricsCollection(PitchFxMetrics):
             for pitch_type, metrics in self.pitch_type_metrics.items()
         ]
 
-    def get_plate_discipline_stats_for_all_pitches(self, include_pitch_count: bool = False) -> Dict[str, str]:
-        total_pitches = f" ({self.total_pitches})" if include_pitch_count else ""
-        pd_stats = {"pitch_type": f"ALL{total_pitches}"}
-        for metric, (rate, total) in PFX_PLATE_DISCIPLINE_METRICS.items():
-            pitch_count = f" ({getattr(self, total)})" if include_pitch_count else ""
-            pd_stats[metric] = f"{getattr(self, rate):.0%}{pitch_count}"
-        return pd_stats
-
-    def get_batted_ball_stats_for_all_pitches(self, include_bip_count: bool = False) -> Dict[str, str]:
-        total_bip = f" ({self.total_batted_balls})" if include_bip_count else ""
-        bb_stats = {"pitch_type": f"ALL{total_bip}"}
-        for metric, (rate, total) in PFX_BATTED_BALL_METRICS.items():
-            bip_count = f" ({getattr(self, total)})" if include_bip_count else ""
-            bb_stats[metric] = f"{getattr(self, rate):.0%}{bip_count}"
-        return bb_stats
+    def get_bat_stats_pitch_type_splits(self, include_pa_count: bool = False) -> List[Dict[str, str]]:
+        bat_stats_pt_splits = [metrics.get_bat_stats(include_pa_count) for metrics in self.pitch_type_metrics.values()]
+        bat_stats_pt_splits.insert(0, self.get_bat_stats(include_pa_count))
+        return bat_stats_pt_splits
 
     def get_plate_discipline_pitch_type_splits(self, include_pitch_count: bool = False) -> List[Dict[str, str]]:
         pd_split_stats = [
             metrics.get_plate_discipline_stats(include_pitch_count) for metrics in self.pitch_type_metrics.values()
         ]
-        pd_split_stats.insert(0, self.get_plate_discipline_stats_for_all_pitches(include_pitch_count))
+        pd_split_stats.insert(0, self.get_plate_discipline_stats(include_pitch_count))
         return pd_split_stats
 
     def get_batted_ball_pitch_type_splits(self, include_bip_count: bool = False) -> List[Dict[str, str]]:
         bb_split_stats = [
             metrics.get_batted_ball_stats(include_bip_count) for metrics in self.pitch_type_metrics.values()
         ]
-        bb_split_stats.insert(0, self.get_batted_ball_stats_for_all_pitches(include_bip_count))
+        bb_split_stats.insert(0, self.get_batted_ball_stats(include_bip_count))
         return bb_split_stats
 
     def get_usage_stats_for_pitch_type(self, pitch_type: PitchType, include_pitch_count: bool = False) -> str:
@@ -178,9 +194,7 @@ class PitchFxMetricsCollection(PitchFxMetrics):
         )
 
     @classmethod
-    def from_query_results(
-        cls, all_pt_results: RowDict, each_pt_results: List[RowDict]
-    ) -> PitchFxMetricsCollection:
+    def from_query_results(cls, all_pt_results: RowDict, each_pt_results: List[RowDict]) -> PitchFxMetricsCollection:
         metrics_collection = _get_pitchfx_metrics_for_all_pitch_types(all_pt_results)
         metrics_collection["pitch_type_metrics"] = _get_pitchfx_metrics_for_each_pitch_type(each_pt_results)
         return from_dict(data_class=cls, data=metrics_collection)

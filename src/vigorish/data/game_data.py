@@ -169,11 +169,8 @@ class GameData:
         pfx_dict = defaultdict(list)
         all_pitchfx = [at_bat["pitchfx"] for at_bat in self.all_at_bats]
         all_pitchfx.extend(self.get_removed_pfx())
-        sp_mlb_ids = self.starting_pitcher_mlb_ids
         for pfx in flatten_list2d(all_pitchfx):
-            pfx["is_sp"] = pfx["pitcher_id"] in sp_mlb_ids
-            pfx["is_rp"] = pfx["pitcher_id"] not in sp_mlb_ids
-            pfx_dict[pfx["pitch_app_id"]].append(pfx)
+            pfx_dict[pfx["pitch_app_id"]].append(self._update_pfx_attributes(pfx))
         return pfx_dict
 
     @cached_property
@@ -183,6 +180,22 @@ class GameData:
             for mlb_id, pitch_stats in self.pitch_stats_map.items()
             if check_pitch_stats_for_game_score(pitch_stats)
         ]
+
+    def get_pfx_for_pitcher(self, mlb_id):
+        result = self.validate_mlb_id(mlb_id)
+        if result.failure:
+            return result
+        mlb_id = result.value
+        pfx = [at_bat["pitchfx"] for at_bat in self.valid_at_bats if at_bat["pitcher_id_mlb"] == mlb_id]
+        pfx = list(map(db.PitchFx.update_pfx_dict, deepcopy(flatten_list2d(pfx))))
+        pfx = list(map(self._update_pfx_attributes, pfx))
+        pfx = sorted(pfx, key=lambda x: x["time_pitch_thrown_utc"])
+        return Result.Ok(pfx)
+
+    def _update_pfx_attributes(self, pfx):
+        pfx["is_sp"] = pfx["pitcher_id"] in self.starting_pitcher_mlb_ids
+        pfx["is_rp"] = pfx["pitcher_id"] not in self.starting_pitcher_mlb_ids
+        return pfx
 
     def get_player_data(self, mlb_id):
         player_data = self.player_data_cache.get(mlb_id)
@@ -462,6 +475,15 @@ class GameData:
         mlb_id = result.value
         pitcher_data = self.get_player_data(mlb_id)
         table_viewer = pitcher_data.view_batted_ball_pitch_type_splits(self.bbref_game_id)
+        return Result.Ok(table_viewer)
+
+    def view_bat_stats_pitch_type_splits_for_pitcher(self, mlb_id):
+        result = self.validate_mlb_id(mlb_id)
+        if result.failure:
+            return result
+        mlb_id = result.value
+        pitcher_data = self.get_player_data(mlb_id)
+        table_viewer = pitcher_data.view_bat_stats_pitch_type_splits(self.bbref_game_id)
         return Result.Ok(table_viewer)
 
     def get_matchup_details(self):
