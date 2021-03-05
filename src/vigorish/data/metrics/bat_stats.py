@@ -6,6 +6,7 @@ from typing import List
 from dacite import from_dict
 from sqlalchemy.engine import RowProxy
 
+from vigorish.enums import DefensePosition
 from vigorish.types import MetricsDict, RowDict
 from vigorish.util.dataclass_helpers import get_field_types
 
@@ -13,8 +14,11 @@ from vigorish.util.dataclass_helpers import get_field_types
 @dataclass
 class BatStatsMetrics:
     year: int = field(repr=False, default=0)
-    player_team_id_bbref: str = field(repr=False, default="")
+    team_id_bbref: str = field(repr=False, default="")
     opponent_team_id_bbref: str = field(repr=False, default="")
+    is_starter: bool = field(repr=False, default=False)
+    bat_order: int = field(repr=False, default=0)
+    def_position: DefensePosition = field(repr=False, default=DefensePosition.NONE)
     mlb_id: int = field(repr=False, default=0)
     bbref_id: str = field(repr=False, default="")
     stint_number: int = field(repr=False, default=0)
@@ -51,14 +55,20 @@ class BatStatsMetrics:
     re24_bat: float = field(repr=False, default=0.0)
 
     @classmethod
-    def from_query_results(cls, results: List[RowProxy]) -> BatStatsMetrics:
-        return [from_dict(data_class=cls, data=cls._get_bat_stats_for_table(dict(row))) for row in results]
+    def from_query_results(cls, results: List[RowProxy]) -> List[BatStatsMetrics]:
+        return [from_dict(data_class=cls, data=cls._get_bat_stats(dict(row))) for row in results]
 
     @classmethod
-    def _get_bat_stats_for_table(cls, bat_stats: RowDict, decimal_precision=3) -> MetricsDict:
+    def _get_bat_stats(cls, bat_stats: RowDict, decimal_precision=3) -> MetricsDict:
         dc_fields = get_field_types(cls)
         return {
-            k: round(v, decimal_precision) if dc_fields[k] is float else v
+            k: round(v, decimal_precision)
+            if dc_fields[k] is float
+            else bool(v)
+            if dc_fields[k] is bool
+            else DefensePosition(int(v))
+            if dc_fields[k] is DefensePosition
+            else v
             for k, v in bat_stats.items()
             if v and k in dc_fields
         }
