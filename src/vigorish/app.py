@@ -69,8 +69,8 @@ class Vigorish:
         self.dotenv = DotEnvFile(dotenv_filepath=dotenv_file)
         self.db_url = _get_db_url()
         self.config = ConfigFile()
-        self.db_engine = db_engine if db_engine else create_engine(self.db_url)
-        self.db_session = db_session if db_session else sessionmaker(bind=self.db_engine)()
+        self.db_engine = db_engine if db_engine else self._create_db_engine()
+        self.db_session = db_session if db_session else self._create_db_session()
         self.scraped_data = ScrapedData(self.db_engine, self.db_session, self.config)
 
     def get_total_number_of_rows(self, db_table: Table) -> int:
@@ -81,15 +81,15 @@ class Vigorish:
     def initialize_database(self, csv_folder: Optional[Path] = None) -> Result:
         if not csv_folder:
             csv_folder = CSV_FOLDER
-        self._create_schema()
+        self._create_db_schema()
         return populate_tables(self, csv_folder)
 
     def prepare_database_for_restore(self, csv_folder: Optional[Path] = None) -> Result:
         if not csv_folder:
             csv_folder = CSV_FOLDER
-        self._delete_sqlite_database()
+        self._delete_db_file()
         self.reset_database_connection()
-        self._create_schema()
+        self._create_db_schema()
         return populate_tables_for_restore(self, csv_folder)
 
     def reset_database_connection(self) -> None:
@@ -117,11 +117,17 @@ class Vigorish:
             else config_setting.current_setting(data_set)
         )
 
-    def _create_schema(self) -> None:
+    def _create_db_engine(self) -> Engine:
+        return create_engine(self.db_url, connect_args={"check_same_thread": False})
+
+    def _create_db_session(self) -> Session:
+        return sessionmaker(bind=self.db_engine)()
+
+    def _create_db_schema(self) -> None:
         db.Base.metadata.drop_all(self.db_engine)
         db.Base.metadata.create_all(self.db_engine)
 
-    def _delete_sqlite_database(self) -> None:
+    def _delete_db_file(self) -> None:
         db_file = Path(self.db_url.replace("sqlite:///", ""))
         if db_file.exists():
             db_file.unlink()
