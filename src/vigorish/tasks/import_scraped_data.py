@@ -1,4 +1,3 @@
-# import subprocess
 from pathlib import Path
 
 from events import Events
@@ -40,32 +39,32 @@ class ImportScrapedDataTask(Task):
         )
 
     def execute(self, overwrite_existing=False):
-        mlb_season_map = self.get_mlb_season_scraped_data_map()
+        mlb_season_map = self._get_mlb_season_scraped_data_map()
         if not any(season["has_data"] for season in mlb_season_map.values()):
             self.events.no_scraped_data_found()
             return Result.Ok()
-        self.remove_invalid_pitchfx_logs(mlb_season_map)
-        return self.import_scraped_data(mlb_season_map, overwrite_existing)
+        self._remove_invalid_pitchfx_logs(mlb_season_map)
+        return self._import_scraped_data(mlb_season_map, overwrite_existing)
 
-    def get_mlb_season_scraped_data_map(self):
+    def _get_mlb_season_scraped_data_map(self):
         self.events.search_local_files_start()
-        all_mlb_seasons = db.Season.all_regular_seasons(self.db_session)
+        all_mlb_seasons = db.Season.get_all_regular_seasons(self.db_session)
         return {
             season.year: {
-                "has_data": self.local_folder_has_parsed_data_for_season(season.year),
+                "has_data": self._local_folder_has_parsed_data_for_season(season.year),
                 "season": season,
             }
             for season in all_mlb_seasons
         }
 
-    def local_folder_has_parsed_data_for_season(self, year):
+    def _local_folder_has_parsed_data_for_season(self, year):
         for data_set in DataSet:
             scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(VigFile.PARSED_JSON, data_set, year)
             if scraped_ids:
                 return True
         return False
 
-    def remove_invalid_pitchfx_logs(self, mlb_season_map):
+    def _remove_invalid_pitchfx_logs(self, mlb_season_map):
         for season in mlb_season_map.values():
             if season["has_data"]:
                 invalid_ids = self._get_invalid_pitchfx_log_ids_for_season(season["season"])
@@ -94,17 +93,17 @@ class ImportScrapedDataTask(Task):
             if invalid_pitchfx_log.exists():
                 invalid_pitchfx_log.unlink()
 
-    def import_scraped_data(self, mlb_season_map, overwrite_existing):
+    def _import_scraped_data(self, mlb_season_map, overwrite_existing):
         self.events.import_scraped_data_start()
         error_dict = {}
         for season in mlb_season_map.values():
             if not season["has_data"]:
                 continue
             error_dict[season["season"].year] = []
-            result = self.update_all_data_sets(season["season"], overwrite_existing)
+            result = self._update_all_data_sets(season["season"], overwrite_existing)
             if result.failure:
                 error_dict[season["season"].year].append(result.error)
-            result = self.update_combined_data(season["season"], overwrite_existing)
+            result = self._update_combined_data(season["season"], overwrite_existing)
             if result.failure:
                 error_dict[season["season"].year].append(result.error)
         self.events.import_scraped_data_complete()
@@ -120,11 +119,11 @@ class ImportScrapedDataTask(Task):
         error_list = [f"{year}: " + "\n".join(errors) for year, errors in error_dict.items()]
         return "\n".join(error_list)
 
-    def update_all_data_sets(self, season, overwrite_existing=False):
+    def _update_all_data_sets(self, season, overwrite_existing=False):
         error_dict = {}
         self.events.import_scraped_data_for_year_start(season.year)
         for data_set in DataSet:
-            result = self.update_data_set(data_set, season, overwrite_existing)
+            result = self._update_data_set(data_set, season, overwrite_existing)
             if result.failure:
                 error_dict[data_set] = result.error
                 continue
@@ -135,7 +134,7 @@ class ImportScrapedDataTask(Task):
         error_list = [f"{data_set.name}: {error_ids}" for data_set, error_ids in error_dict.items()]
         return "\n".join(error_list)
 
-    def update_data_set(self, data_set, season, overwrite_existing=False):
+    def _update_data_set(self, data_set, season, overwrite_existing=False):
         self.events.import_scraped_data_set_start(data_set, season.year)
         scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(VigFile.PARSED_JSON, data_set, season.year)
         if not scraped_ids:
@@ -143,12 +142,12 @@ class ImportScrapedDataTask(Task):
         if not overwrite_existing:
             existing_scraped_ids = self.scraped_data.get_scraped_ids_from_database(data_set, season)
             scraped_ids = list(set(scraped_ids) - set(existing_scraped_ids))
-        result = self.update_status_for_data_set(data_set, scraped_ids)
+        result = self._update_status_for_data_set(data_set, scraped_ids)
         self.db_session.commit()
         self.events.import_scraped_data_set_complete(data_set, season.year)
         return result
 
-    def update_combined_data(self, season, overwrite_existing=False):
+    def _update_combined_data(self, season, overwrite_existing=False):
         self.events.import_combined_game_data_start(season.year)
         combined_ids = self.scraped_data.get_scraped_ids_from_local_folder(
             VigFile.COMBINED_GAME_DATA, DataSet.ALL, season.year
@@ -167,7 +166,7 @@ class ImportScrapedDataTask(Task):
         self.events.import_combined_game_data_complete(season.year)
         return result
 
-    def update_status_for_data_set(self, data_set, scraped_ids):
+    def _update_status_for_data_set(self, data_set, scraped_ids):
         update_status_dict = {
             DataSet.BROOKS_GAMES_FOR_DATE: update_status_brooks_games_for_date_list,
             DataSet.BBREF_GAMES_FOR_DATE: update_bbref_games_for_date_list,

@@ -321,3 +321,8 @@ def replace_char_with_newlines(input_str, replace):
     if replace not in input_str:
         return input_str
     return "\n".join([s.strip() for s in input_str.split(replace)])
+
+
+def format_decimal_bat_stat(input):
+    stat_with_leading_zero = f"{input:0.3f}"
+    return stat_with_leading_zero[1:] if float(stat_with_leading_zero) < 1 else stat_with_leading_zero
