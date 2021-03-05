@@ -136,24 +136,7 @@ class PitchFx(db.Base):
 
     @classmethod
     def from_dict(cls, pfx_dict):
-        game_start_str = pfx_dict.pop("game_start_time_str")
-        pitch_thrown_str = pfx_dict.pop("time_pitch_thrown_str")
-        game_start_time = datetime.strptime(game_start_str, DT_AWARE).astimezone(timezone.utc)
-        time_pitch_thrown = (
-            datetime.strptime(pitch_thrown_str, DT_AWARE).astimezone(timezone.utc) if pitch_thrown_str else None
-        )
-        seconds_since_game_start = (
-            int((time_pitch_thrown - game_start_time).total_seconds()) if time_pitch_thrown else 0
-        )
-        pfx_dict["game_start_time_utc"] = game_start_time
-        pfx_dict["time_pitch_thrown_utc"] = time_pitch_thrown
-        pfx_dict["seconds_since_game_start"] = seconds_since_game_start
-        pfx_dict["basic_type"] = pfx_dict.pop("type")
-        pfx_dict["pitch_id"] = pfx_dict.pop("id")
-        pfx_dict["pitcher_id_mlb"] = int(pfx_dict.pop("pitcher_id"))
-        pfx_dict["batter_id_mlb"] = int(pfx_dict.pop("batter_id"))
-        pfx_dict["pitcher_id"] = pfx_dict.pop("pitcher_id_db")
-        pfx_dict["batter_id"] = pfx_dict.pop("batter_id_db")
+        pfx_dict = cls.update_pfx_dict(pfx_dict)
         pfx_dict["zone_location"] = int(pfx_dict["zone_location"])
         pfx_dict["batter_did_swing"] = int(pfx_dict["batter_did_swing"])
         pfx_dict["batter_made_contact"] = int(pfx_dict["batter_made_contact"])
@@ -192,6 +175,28 @@ class PitchFx(db.Base):
         pfx_dict["pfx_z"] = round(pfx_dict["pfx_z"], 2)
         pfx_dict["px"] = round(pfx_dict["px"], 2)
         pfx_dict["pz"] = round(pfx_dict["pz"], 2)
+        return cls(**pfx_dict)
+
+    @staticmethod
+    def update_pfx_dict(pfx_dict):
+        game_start_str = pfx_dict.pop("game_start_time_str")
+        pitch_thrown_str = pfx_dict.pop("time_pitch_thrown_str")
+        game_start_time = datetime.strptime(game_start_str, DT_AWARE).astimezone(timezone.utc)
+        time_pitch_thrown = (
+            datetime.strptime(pitch_thrown_str, DT_AWARE).astimezone(timezone.utc) if pitch_thrown_str else None
+        )
+        seconds_since_game_start = (
+            int((time_pitch_thrown - game_start_time).total_seconds()) if time_pitch_thrown else 0
+        )
+        pfx_dict["game_start_time_utc"] = game_start_time
+        pfx_dict["time_pitch_thrown_utc"] = time_pitch_thrown
+        pfx_dict["seconds_since_game_start"] = seconds_since_game_start
+        pfx_dict["basic_type"] = pfx_dict.pop("type")
+        pfx_dict["pitch_id"] = pfx_dict.pop("id")
+        pfx_dict["pitcher_id_mlb"] = int(pfx_dict.pop("pitcher_id"))
+        pfx_dict["batter_id_mlb"] = int(pfx_dict.pop("batter_id"))
+        pfx_dict["pitcher_id"] = pfx_dict.pop("pitcher_id_db")
+        pfx_dict["batter_id"] = pfx_dict.pop("batter_id_db")
         pfx_dict.pop("play_guid", None)
         pfx_dict.pop("pitcher_name", None)
         pfx_dict.pop("pitch_con", None)
@@ -210,7 +215,7 @@ class PitchFx(db.Base):
         pfx_dict.pop("az", None)
         pfx_dict.pop("tm_spin", None)
         pfx_dict.pop("sb", None)
-        return cls(**pfx_dict)
+        return pfx_dict
 
 
 @accept_whitespaces
