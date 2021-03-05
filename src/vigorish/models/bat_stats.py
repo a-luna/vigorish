@@ -96,6 +96,10 @@ class BatStats(db.Base):
                 bbref_data["sac_hit"] = d["count"]
         return cls(**bbref_data)
 
+    @classmethod
+    def get_all_seasons_with_data_for_player(cls, db_session, player_id_mlb):
+        return {bs.season for bs in db_session.query(cls).filter_by(player_id_mlb=player_id_mlb).all()}
+
 
 @accept_whitespaces
 @dataclass

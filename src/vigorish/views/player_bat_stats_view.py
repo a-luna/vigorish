@@ -55,8 +55,8 @@ class Player_BatStats_All_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_for_career_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_bat_stats_for_career_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results)[0] if results else None
 
@@ -113,8 +113,8 @@ class Player_BatStats_By_Year_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_year_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_bat_stats_by_year_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
@@ -170,8 +170,8 @@ class Player_BatStats_By_Team_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_team_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_bat_stats_by_team_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
@@ -243,8 +243,8 @@ class Player_BatStats_By_Team_Year_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_team_by_year_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_bat_stats_by_team_by_year_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
@@ -300,8 +300,8 @@ class Player_BatStats_By_Opp_Team_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_opp_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_bat_stats_by_opp_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
@@ -361,7 +361,7 @@ class Player_BatStats_By_Opp_Team_Year_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_opp_by_year_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_bat_stats_by_opp_by_year_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
