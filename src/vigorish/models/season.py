@@ -10,6 +10,7 @@ import vigorish.database as db
 from vigorish.enums import SeasonType
 from vigorish.util.datetime_util import get_date_range as get_date_range_util
 from vigorish.util.dt_format_strings import DATE_ONLY
+from vigorish.util.exceptions import InvalidSeasonException
 from vigorish.util.result import Result
 
 
@@ -507,7 +508,10 @@ class Season(db.Base):
 
     @classmethod
     def find_by_year(cls, db_session, year, season_type=SeasonType.REGULAR_SEASON):
-        return db_session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
+        season = db_session.query(cls).filter_by(season_type=season_type).filter_by(year=year).first()
+        if not season:
+            raise InvalidSeasonException(year)
+        return season
 
     @classmethod
     def is_date_in_season(cls, db_session, check_date, season_type=SeasonType.REGULAR_SEASON):
@@ -554,7 +558,7 @@ class Season(db.Base):
         return Result.Ok(season)
 
     @classmethod
-    def all_regular_seasons(cls, db_session):
+    def get_all_regular_seasons(cls, db_session):
         return db_session.query(cls).filter_by(season_type=SeasonType.REGULAR_SEASON).all()
 
     @classmethod
@@ -563,6 +567,10 @@ class Season(db.Base):
         return game_date == season.asg_date if season else None
 
     @classmethod
-    def regular_season_map(cls, db_session):
-        regular_seasons = cls.all_regular_seasons(db_session)
+    def get_regular_season_map(cls, db_session):
+        regular_seasons = cls.get_all_regular_seasons(db_session)
         return {s.year: s.id for s in regular_seasons}
+
+    @classmethod
+    def get_total_games_for_all_seasons(cls, db_session):
+        return {s.year: s.total_games for s in cls.get_all_regular_seasons(db_session)}
