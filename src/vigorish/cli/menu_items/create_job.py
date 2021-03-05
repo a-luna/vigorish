@@ -11,7 +11,7 @@ from vigorish.cli.components import (
     yes_no_prompt,
 )
 from vigorish.cli.menu_item import MenuItem
-from vigorish.constants import EMOJIS
+from vigorish.constants import DATA_SET_TO_NAME_MAP, EMOJIS
 from vigorish.scrape.job_runner import JobRunner
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
@@ -33,7 +33,7 @@ class CreateJob(MenuItem):
 
     def launch(self):
         job_confirmed = False
-        data_sets = {}
+        data_sets = []
         start = None
         end = None
         job_name = None
@@ -52,7 +52,7 @@ class CreateJob(MenuItem):
             job_name = self.prompt_user_job_name(job_name)
             job_confirmed = self.confirm_job_details(data_sets, start, end, job_name)
 
-        new_job = self.app.create_scrape_job(data_sets.keys(), start, end, job_name).value
+        new_job = self.app.create_scrape_job(data_sets, start, end, job_name).value
         subprocess.run(["clear"])
         if yes_no_prompt(prompt="\nWould you like to begin executing this job?"):
             job_runner = JobRunner(app=self.app, db_job=new_job)
@@ -100,7 +100,7 @@ class CreateJob(MenuItem):
             f"{confirm_job_name}"
             f"Start date..: {start_date.strftime(DATE_ONLY_2)}\n"
             f"End Date....: {end_date.strftime(DATE_ONLY_2)}\n"
-            f"Data Sets...: {data_set_space.join(data_sets.values())}"
+            f"Data Sets...: {data_set_space.join([DATA_SET_TO_NAME_MAP[ds] for ds in data_sets])}"
         )
         print_heading(heading, fg="bright_yellow")
         print_message(job_details, wrap=False, fg="bright_yellow")
