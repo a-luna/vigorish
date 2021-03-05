@@ -107,7 +107,7 @@ class MlbSeason(click.ParamType):
             season = db.Season.find_by_year(db_session, year)
             if season:
                 return season.year
-            valid_years = [s.year for s in db.Season.all_regular_seasons(db_session)]
+            valid_years = [s.year for s in db.Season.get_all_regular_seasons(db_session)]
             year_min = min(sorted(valid_years))
             year_max = max(sorted(valid_years))
             error = (
