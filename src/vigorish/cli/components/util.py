@@ -2,6 +2,7 @@
 import subprocess
 from functools import partial
 from random import randint
+from bullet import Bullet, colors, ScrollBar
 
 import click
 from getch import pause
@@ -10,6 +11,43 @@ import vigorish.database as db
 from vigorish.constants import CLI_COLORS, FIGLET_FONTS
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import wrap_text
+
+
+def create_bullet_prompt(prompt, choices, wrap=True, max_line_len=70):
+    if wrap:
+        prompt = wrap_text(prompt, max_line_len)
+    return Bullet(
+        prompt,
+        choices,
+        bullet="",
+        shift=1,
+        indent=0,
+        margin=2,
+        bullet_color=colors.foreground["default"],
+        background_color=colors.foreground["default"],
+        background_on_switch=colors.foreground["default"],
+        word_color=colors.foreground["default"],
+        word_on_switch=colors.bright(colors.foreground["cyan"]),
+    )
+
+
+def create_scrolling_prompt(prompt, choices, wrap=True, max_line_len=70):
+    if wrap:
+        prompt = wrap_text(prompt, max_line_len)
+    return ScrollBar(
+        prompt,
+        choices,
+        height=8,
+        pointer="",
+        shift=1,
+        indent=0,
+        margin=2,
+        pointer_color=colors.foreground["default"],
+        word_color=colors.foreground["default"],
+        word_on_switch=colors.bright(colors.foreground["cyan"]),
+        background_color=colors.background["default"],
+        background_on_switch=colors.background["default"],
+    )
 
 
 def get_random_cli_color():

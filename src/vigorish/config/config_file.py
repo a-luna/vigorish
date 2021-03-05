@@ -22,7 +22,6 @@ from vigorish.enums import (
     ScrapeTaskOption,
     StatusReport,
 )
-from vigorish.util.exceptions import ConfigSettingException
 from vigorish.util.list_helpers import dict_to_param_list
 from vigorish.util.result import Result
 
@@ -53,16 +52,15 @@ class ConfigFile:
     def all_settings(self):
         return {name: self.config_factory(name, config) for name, config in self.config_json.items()}
 
-    def get_current_setting(self, setting_name, data_set):
-        config_dict = self.config_json.get(setting_name)
-        config = self.config_factory(setting_name, config_dict) if config_dict else None
-        if not config:
-            raise ConfigSettingException(
-                setting_name,
-                data_set,
-                detail=f"Failed to retrieve ConfigSetting with name = {setting_name}",
-            )
-        return config.current_setting(data_set)
+    def get_current_setting(self, setting_name, data_set=DataSet.ALL, year=None):
+        config_setting = self.all_settings.get(setting_name)
+        if not config_setting:
+            raise ValueError(f"{setting_name} is not a valid configuration setting")
+        return (
+            config_setting.current_setting(data_set).resolve(year)
+            if isinstance(config_setting, PathConfigSetting)
+            else config_setting.current_setting(data_set)
+        )
 
     def change_setting(self, setting_name, data_set, new_value):
         config_dict = self.config_json.get(setting_name)

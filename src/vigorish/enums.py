@@ -50,6 +50,10 @@ class DataSet(IntFlag):
                 return enum_item
         return cls.NONE
 
+    @classmethod
+    def get_data_sets_from_int(cls, data_sets_int):
+        return [data_set for data_set in cls if data_sets_int & data_set == data_set]
+
 
 class ConfigType(str, Enum):
     """Data types for configuration settings."""
@@ -302,6 +306,7 @@ class PitchType(IntFlag):
             "IN": "Intent ball",
             "KC": "Knuckle ball Curve",
             "KN": "Knuckle ball",
+            "ALL": "All Pitch Types",
         }
         return name_dict.get(str(self), self.name.replace("_", " ").title())
 
@@ -322,6 +327,10 @@ class PitchType(IntFlag):
             if name.upper() == enum_item.name:
                 return enum_item
         return cls.NONE
+
+    @classmethod
+    def get_pitch_mix_from_int(cls, pitch_mix_int):
+        return [pitch_type for pitch_type in cls if pitch_mix_int & pitch_type == pitch_type]
 
 
 class SeasonType(str, Enum):

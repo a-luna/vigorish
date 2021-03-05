@@ -1,13 +1,20 @@
 """Reusable menu prompts to get various values/data types from the user."""
 import subprocess
+from typing import List, Optional
 
-from bullet import Bullet, Check, colors, ScrollBar
+from bullet import Check, colors
 from getch import pause
 
 import vigorish.database as db
 from vigorish.cli.components.data_set_check import DataSetCheck
 from vigorish.cli.components.date_input import DateInput
-from vigorish.cli.components.util import print_heading, print_message
+from vigorish.cli.components.util import (
+    create_bullet_prompt,
+    create_scrolling_prompt,
+    print_error,
+    print_heading,
+    print_message,
+)
 from vigorish.constants import DATA_SET_FROM_NAME_MAP, DATA_SET_TO_NAME_MAP, EMOJIS, MENU_NUMBERS
 from vigorish.enums import DataSet, VigFile
 from vigorish.util.result import Result
@@ -21,21 +28,8 @@ def yes_no_prompt(prompt, wrap=True, max_line_len=70):
         f"{MENU_NUMBERS.get(1)}  YES": True,
         f"{MENU_NUMBERS.get(2)}  NO": False,
     }
-    prompt = Bullet(
-        prompt,
-        choices=list(choices.keys()),
-        bullet="",
-        shift=1,
-        indent=0,
-        margin=2,
-        bullet_color=colors.foreground["default"],
-        word_color=colors.foreground["default"],
-        word_on_switch=colors.bright(colors.foreground["cyan"]),
-        background_color=colors.background["default"],
-        background_on_switch=colors.background["default"],
-    )
-    choice_text = prompt.launch()
-    return choices.get(choice_text)
+    selected = create_bullet_prompt(prompt, list(choices.keys()), wrap, max_line_len).launch()
+    return choices.get(selected)
 
 
 def yes_no_cancel_prompt(prompt, wrap=True, max_line_len=70):
@@ -46,22 +40,9 @@ def yes_no_cancel_prompt(prompt, wrap=True, max_line_len=70):
         f"{MENU_NUMBERS.get(2)}  NO": False,
         f"{MENU_NUMBERS.get(3)}  CANCEL": None,
     }
-    prompt = Bullet(
-        prompt,
-        choices=list(choices.keys()),
-        bullet="",
-        shift=1,
-        indent=0,
-        margin=2,
-        bullet_color=colors.foreground["default"],
-        word_color=colors.foreground["default"],
-        word_on_switch=colors.bright(colors.foreground["cyan"]),
-        background_color=colors.background["default"],
-        background_on_switch=colors.background["default"],
-    )
-    choice_text = prompt.launch()
-    choice_value = choices.get(choice_text)
-    return Result.Fail("") if "CANCEL" in choice_text else Result.Ok(choice_value)
+    selected = create_bullet_prompt(prompt, list(choices.keys()), wrap, max_line_len).launch()
+    choice_value = choices.get(selected)
+    return Result.Fail("") if "CANCEL" in selected else Result.Ok(choice_value)
 
 
 def single_date_prompt(prompt):
@@ -75,49 +56,20 @@ def single_date_prompt(prompt):
     return user_date
 
 
-def user_options_prompt(choices, prompt, wrap=True, clear_screen=True, auto_scroll=True):
-    if wrap:
-        prompt = wrap_text(prompt, 70)
-    if auto_scroll and len(choices) > 8:
-        scroll_choices = list(choices.keys())
-        scroll_choices.insert(0, f"{EMOJIS.get('BACK')} Return to Previous Menu")
-        options_menu = ScrollBar(
-            prompt,
-            choices=scroll_choices,
-            height=8,
-            pointer="",
-            shift=1,
-            indent=0,
-            margin=2,
-            pointer_color=colors.foreground["default"],
-            word_color=colors.foreground["default"],
-            word_on_switch=colors.bright(colors.foreground["cyan"]),
-            background_color=colors.background["default"],
-            background_on_switch=colors.background["default"],
-        )
-    else:
-        bullet_choices = list(choices.keys())
-        if not auto_scroll:
-            bullet_choices.insert(0, f"{EMOJIS.get('BACK')} Return to Previous Menu")
-        options_menu = Bullet(
-            prompt,
-            choices=bullet_choices,
-            bullet="",
-            shift=1,
-            indent=0,
-            margin=2,
-            bullet_color=colors.foreground["default"],
-            background_color=colors.foreground["default"],
-            background_on_switch=colors.foreground["default"],
-            word_color=colors.foreground["default"],
-            word_on_switch=colors.bright(colors.foreground["cyan"]),
-        )
+def user_options_prompt(choice_map, prompt, wrap=True, clear_screen=True, auto_scroll=True):
+    choices = list(choice_map.keys())
+    choices.insert(0, f"{EMOJIS.get('BACK')} Return to Previous Menu")
+    options_prompt = (
+        create_scrolling_prompt(prompt, choices, wrap, max_line_len=70)
+        if auto_scroll and len(choices) > 8
+        else create_bullet_prompt(prompt, choices, wrap, max_line_len=70)
+    )
     if clear_screen:
         subprocess.run(["clear"])
         print()
-    choice_text = options_menu.launch()
-    choice_value = choices.get(choice_text)
-    return Result.Ok(choice_value) if choice_value else Result.Fail("")
+    selection = options_prompt.launch()
+    user_choice = choice_map.get(selection)
+    return Result.Ok(user_choice) if user_choice else Result.Fail("")
 
 
 def season_prompt(db_session, prompt=None, clear_screen=True):
@@ -125,7 +77,7 @@ def season_prompt(db_session, prompt=None, clear_screen=True):
         prompt = "Please select a MLB Season from the list below:"
     choices = {
         f"{MENU_NUMBERS.get(num)}  {season.year}": season
-        for num, season in enumerate(db.Season.all_regular_seasons(db_session), start=1)
+        for num, season in enumerate(db.Season.get_all_regular_seasons(db_session), start=1)
     }
     choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
     return user_options_prompt(choices, prompt=prompt, clear_screen=clear_screen)
@@ -139,15 +91,21 @@ def audit_report_season_prompt(audit_report, prompt=None):
     return user_options_prompt(choices, prompt)
 
 
-def data_sets_prompt(heading=None, prompt=None, valid_data_sets=0, checked_data_sets=None):
+def data_sets_prompt(
+    heading: str = None,
+    prompt: str = None,
+    valid_data_sets: Optional[List[DataSet]] = None,
+    checked_data_sets: Optional[List[DataSet]] = None,
+):
     if not prompt:
         prompt = "Select one or multiple data sets from the list below:"
     if not valid_data_sets:
-        valid_data_sets = int(DataSet.ALL)
+        valid_data_sets = [DataSet.ALL]
     instructions = "(use SPACE BAR to select each data set, ENTER to confirm your selections)"
-    choices = {f"{DATA_SET_TO_NAME_MAP[ds]}": ds for ds in DataSet if valid_data_sets & ds == ds}
+    valid_data_sets_int = sum(int(ds) for ds in valid_data_sets)
+    choices = {f"{DATA_SET_TO_NAME_MAP[ds]}": ds for ds in DataSet if valid_data_sets_int & ds == ds}
     if checked_data_sets:
-        checked_int = sum(int(ds) for ds in checked_data_sets.keys())
+        checked_int = sum(int(ds) for ds in checked_data_sets)
         checked_data_sets = [f"{DATA_SET_TO_NAME_MAP[ds]}" for ds in DataSet if checked_int & ds == ds]
     ds_prompt = DataSetCheck(
         prompt=instructions,
@@ -172,10 +130,10 @@ def data_sets_prompt(heading=None, prompt=None, valid_data_sets=0, checked_data_
         print_message(prompt, wrap=True)
         result = ds_prompt.launch()
         if not result:
-            print_message("\nYou must select at least one file type!", fg="bright_red", bold=True)
+            print_error("\nYou must select at least one data set!")
             pause(message="Press any key to continue...")
             continue
-        data_sets = {DATA_SET_FROM_NAME_MAP[sel]: sel for sel in result}
+        data_sets = [DATA_SET_FROM_NAME_MAP[sel] for sel in result]
     return data_sets
 
 
@@ -204,7 +162,7 @@ def file_types_prompt(prompt, valid_file_types=VigFile.ALL):
         print_message(prompt, fg="bright_yellow", bold=True, underline=True)
         result = file_types_prompt.launch()
         if not result:
-            print_message("\nYou must select at least one file type!", fg="bright_red", bold=True)
+            print_error("\nYou must select at least one file type!")
             pause(message="Press any key to continue...")
             continue
         file_types = [choices[sel] for sel in result]

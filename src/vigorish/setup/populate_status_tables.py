@@ -6,7 +6,7 @@ from vigorish.util.result import Result
 
 def populate_status_tables(db_session):
     try:
-        mlb_seasons = db.Season.all_regular_seasons(db_session)
+        mlb_seasons = db.Season.get_all_regular_seasons(db_session)
         with tqdm(
             total=len(mlb_seasons),
             unit="season",

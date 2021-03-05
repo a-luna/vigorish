@@ -55,25 +55,25 @@ COMBINED_DATA_GAME_DICT = {
         "bbref_game_id": GAME_ID_NO_ERRORS,
         "bb_game_id": "gid_2019_06_17_anamlb_tormlb_1",
         "game_date": datetime(2019, 6, 17),
-        "apply_patch_list": False,
+        "apply_patch_list": True,
     },
     "WITH_ERRORS": {
         "bbref_game_id": GAME_ID_WITH_ERRORS,
         "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
         "game_date": datetime(2019, 6, 11),
-        "apply_patch_list": False,
+        "apply_patch_list": True,
     },
     "NO_PFX_FOR_PITCH_APP": {
         "bbref_game_id": GAME_ID_NO_PFX_FOR_PITCH_APP,
         "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
         "game_date": datetime(2019, 9, 7),
-        "apply_patch_list": False,
+        "apply_patch_list": True,
     },
     "EXTRA_PFX_REMOVED": {
         "bbref_game_id": GAME_ID_EXTRA_PFX_REMOVED,
         "bb_game_id": "gid_2019_04_15_anamlb_texmlb_1",
         "game_date": datetime(2019, 4, 15),
-        "apply_patch_list": False,
+        "apply_patch_list": True,
     },
     "PATCH_PFX": {
         "bbref_game_id": GAME_ID_PATCH_PFX,
@@ -91,7 +91,7 @@ COMBINED_DATA_GAME_DICT = {
         "bbref_game_id": GAME_ID_PFX_OUT_OF_SEQUENCE,
         "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
         "game_date": datetime(2019, 4, 3),
-        "apply_patch_list": False,
+        "apply_patch_list": True,
     },
     "FIX_START_TIME": {
         "bbref_game_id": GAME_ID_FIX_START_TIME,
@@ -239,7 +239,7 @@ def revert_pitch_logs_to_state_before_combined_data(vig_app, bbref_game_id):
         pitch_app_status.combined_pitchfx_bbref_data = 0
         pitch_app_status.pitch_count_bbref = 0
         pitch_app_status.pitch_count_pitchfx_audited = 0
-        pitch_app_status.extra_pitchfx_removed_count = 0
+        pitch_app_status.removed_pitchfx_count = 0
         pitch_app_status.missing_pitchfx_count = 0
         pitch_app_status.batters_faced_bbref = 0
         pitch_app_status.total_at_bats_pitchfx_complete = 0

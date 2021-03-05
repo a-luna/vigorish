@@ -10,9 +10,9 @@ def create_display_table(
     message=None,
     table_headers=None,
     tablefmt="fancy_grid",
-    numalign=None,
-    stralign=None,
-    showindex=None,
+    numalign="default",
+    stralign="default",
+    showindex="default",
 ):
     return DisplayTable(
         table=tabulate(

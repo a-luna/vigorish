@@ -18,7 +18,6 @@ class PitchFx(db.Base):
     bb_game_id = Column(String)
     bbref_game_id = Column(String)
     pitch_app_id = Column(String)
-
     inning_id = Column(String)
     at_bat_id = Column(String)
     pitcher_id_mlb = Column(Integer)
@@ -76,11 +75,27 @@ class PitchFx(db.Base):
     is_fly_ball = Column(Integer)
     is_line_drive = Column(Integer)
     is_pop_up = Column(Integer)
+    is_final_pitch_of_ab = Column(Integer)
+    ab_result_out = Column(Integer)
+    ab_result_hit = Column(Integer)
+    ab_result_single = Column(Integer)
+    ab_result_double = Column(Integer)
+    ab_result_triple = Column(Integer)
+    ab_result_homerun = Column(Integer)
+    ab_result_bb = Column(Integer)
+    ab_result_ibb = Column(Integer)
+    ab_result_k = Column(Integer)
+    ab_result_hbp = Column(Integer)
+    ab_result_error = Column(Integer)
+    ab_result_sac_hit = Column(Integer)
+    ab_result_sac_fly = Column(Integer)
+    ab_result_unclear = Column(Integer)
+    pitch_type_int = Column(Integer)
+    pbp_play_result = Column(String)
+    pbp_runs_outs_result = Column(String)
     is_sp = Column(Integer)
     is_rp = Column(Integer)
     is_patched = Column(Integer)
-    is_duplicate_guid = Column(Integer)
-    is_duplicate_pitch_number = Column(Integer)
     is_invalid_ibb = Column(Integer)
     is_out_of_sequence = Column(Integer)
 
@@ -121,6 +136,49 @@ class PitchFx(db.Base):
 
     @classmethod
     def from_dict(cls, pfx_dict):
+        pfx_dict = cls.update_pfx_dict(pfx_dict)
+        pfx_dict["zone_location"] = int(pfx_dict["zone_location"])
+        pfx_dict["batter_did_swing"] = int(pfx_dict["batter_did_swing"])
+        pfx_dict["batter_made_contact"] = int(pfx_dict["batter_made_contact"])
+        pfx_dict["called_strike"] = int(pfx_dict["called_strike"])
+        pfx_dict["swinging_strike"] = int(pfx_dict["swinging_strike"])
+        pfx_dict["inside_strike_zone"] = int(pfx_dict["inside_strike_zone"])
+        pfx_dict["outside_strike_zone"] = int(pfx_dict["outside_strike_zone"])
+        pfx_dict["swing_inside_zone"] = int(pfx_dict["swing_inside_zone"])
+        pfx_dict["swing_outside_zone"] = int(pfx_dict["swing_outside_zone"])
+        pfx_dict["contact_inside_zone"] = int(pfx_dict["contact_inside_zone"])
+        pfx_dict["contact_outside_zone"] = int(pfx_dict["contact_outside_zone"])
+        pfx_dict["is_batted_ball"] = int(pfx_dict["is_batted_ball"])
+        pfx_dict["is_ground_ball"] = int(pfx_dict["is_ground_ball"])
+        pfx_dict["is_fly_ball"] = int(pfx_dict["is_fly_ball"])
+        pfx_dict["is_line_drive"] = int(pfx_dict["is_line_drive"])
+        pfx_dict["is_pop_up"] = int(pfx_dict["is_pop_up"])
+        pfx_dict["is_final_pitch_of_ab"] = int(pfx_dict["is_final_pitch_of_ab"])
+        pfx_dict["ab_result_out"] = int(pfx_dict["ab_result_out"])
+        pfx_dict["ab_result_hit"] = int(pfx_dict["ab_result_hit"])
+        pfx_dict["ab_result_single"] = int(pfx_dict["ab_result_single"])
+        pfx_dict["ab_result_double"] = int(pfx_dict["ab_result_double"])
+        pfx_dict["ab_result_triple"] = int(pfx_dict["ab_result_triple"])
+        pfx_dict["ab_result_homerun"] = int(pfx_dict["ab_result_homerun"])
+        pfx_dict["ab_result_bb"] = int(pfx_dict["ab_result_bb"])
+        pfx_dict["ab_result_ibb"] = int(pfx_dict["ab_result_ibb"])
+        pfx_dict["ab_result_k"] = int(pfx_dict["ab_result_k"])
+        pfx_dict["ab_result_hbp"] = int(pfx_dict["ab_result_hbp"])
+        pfx_dict["ab_result_error"] = int(pfx_dict["ab_result_error"])
+        pfx_dict["ab_result_sac_hit"] = int(pfx_dict["ab_result_sac_hit"])
+        pfx_dict["ab_result_sac_fly"] = int(pfx_dict["ab_result_sac_fly"])
+        pfx_dict["ab_result_unclear"] = int(pfx_dict["ab_result_unclear"])
+        pfx_dict["is_sp"] = int(pfx_dict["is_sp"])
+        pfx_dict["is_rp"] = int(pfx_dict["is_rp"])
+        pfx_dict["spin"] = round(pfx_dict["spin"], 1)
+        pfx_dict["pfx_x"] = round(pfx_dict["pfx_x"], 2)
+        pfx_dict["pfx_z"] = round(pfx_dict["pfx_z"], 2)
+        pfx_dict["px"] = round(pfx_dict["px"], 2)
+        pfx_dict["pz"] = round(pfx_dict["pz"], 2)
+        return cls(**pfx_dict)
+
+    @staticmethod
+    def update_pfx_dict(pfx_dict):
         game_start_str = pfx_dict.pop("game_start_time_str")
         pitch_thrown_str = pfx_dict.pop("time_pitch_thrown_str")
         game_start_time = datetime.strptime(game_start_str, DT_AWARE).astimezone(timezone.utc)
@@ -139,29 +197,6 @@ class PitchFx(db.Base):
         pfx_dict["batter_id_mlb"] = int(pfx_dict.pop("batter_id"))
         pfx_dict["pitcher_id"] = pfx_dict.pop("pitcher_id_db")
         pfx_dict["batter_id"] = pfx_dict.pop("batter_id_db")
-        pfx_dict["zone_location"] = int(pfx_dict["zone_location"])
-        pfx_dict["batter_did_swing"] = int(pfx_dict["batter_did_swing"])
-        pfx_dict["batter_made_contact"] = int(pfx_dict["batter_made_contact"])
-        pfx_dict["called_strike"] = int(pfx_dict["called_strike"])
-        pfx_dict["swinging_strike"] = int(pfx_dict["swinging_strike"])
-        pfx_dict["inside_strike_zone"] = int(pfx_dict["inside_strike_zone"])
-        pfx_dict["outside_strike_zone"] = int(pfx_dict["outside_strike_zone"])
-        pfx_dict["swing_inside_zone"] = int(pfx_dict["swing_inside_zone"])
-        pfx_dict["swing_outside_zone"] = int(pfx_dict["swing_outside_zone"])
-        pfx_dict["contact_inside_zone"] = int(pfx_dict["contact_inside_zone"])
-        pfx_dict["contact_outside_zone"] = int(pfx_dict["contact_outside_zone"])
-        pfx_dict["is_batted_ball"] = int(pfx_dict["is_batted_ball"])
-        pfx_dict["is_ground_ball"] = int(pfx_dict["is_ground_ball"])
-        pfx_dict["is_fly_ball"] = int(pfx_dict["is_fly_ball"])
-        pfx_dict["is_line_drive"] = int(pfx_dict["is_line_drive"])
-        pfx_dict["is_pop_up"] = int(pfx_dict["is_pop_up"])
-        pfx_dict["is_sp"] = int(pfx_dict["is_sp"])
-        pfx_dict["is_rp"] = int(pfx_dict["is_rp"])
-        pfx_dict["spin"] = round(pfx_dict["spin"], 1)
-        pfx_dict["pfx_x"] = round(pfx_dict["pfx_x"], 2)
-        pfx_dict["pfx_z"] = round(pfx_dict["pfx_z"], 2)
-        pfx_dict["px"] = round(pfx_dict["px"], 2)
-        pfx_dict["pz"] = round(pfx_dict["pz"], 2)
         pfx_dict.pop("play_guid", None)
         pfx_dict.pop("pitcher_name", None)
         pfx_dict.pop("pitch_con", None)
@@ -180,7 +215,7 @@ class PitchFx(db.Base):
         pfx_dict.pop("az", None)
         pfx_dict.pop("tm_spin", None)
         pfx_dict.pop("sb", None)
-        return cls(**pfx_dict)
+        return pfx_dict
 
 
 @accept_whitespaces
@@ -248,10 +283,26 @@ class PitchFxCsvRow:
     is_fly_ball: int = 0
     is_line_drive: int = 0
     is_pop_up: int = 0
+    is_final_pitch_of_ab: int = 0
+    ab_result_out: int = 0
+    ab_result_hit: int = 0
+    ab_result_single: int = 0
+    ab_result_double: int = 0
+    ab_result_triple: int = 0
+    ab_result_homerun: int = 0
+    ab_result_bb: int = 0
+    ab_result_ibb: int = 0
+    ab_result_k: int = 0
+    ab_result_hbp: int = 0
+    ab_result_error: int = 0
+    ab_result_sac_hit: int = 0
+    ab_result_sac_fly: int = 0
+    ab_result_unclear: int = 0
+    pitch_type_int: int = 0
+    pbp_play_result: str = ""
+    pbp_runs_outs_result: str = ""
     is_sp: int = 0
     is_rp: int = 0
     is_patched: int = 0
-    is_duplicate_guid: int = 0
-    is_duplicate_pitch_number: int = 0
     is_invalid_ibb: int = 0
     is_out_of_sequence: int = 0

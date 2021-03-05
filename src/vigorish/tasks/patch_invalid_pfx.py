@@ -18,23 +18,19 @@ from vigorish.util.string_helpers import validate_at_bat_id
 
 DATA_SET = DataSet.BROOKS_PITCHFX
 PATCH_STAT_NAMES = [
+    "pitch_count_bbref",
+    "pitch_count_pitchfx",
     "batters_faced_bbref",
     "batters_faced_pitchfx",
     "total_at_bats_pitchfx_complete",
     "total_at_bats_patched_pitchfx",
     "total_at_bats_missing_pitchfx",
-    "total_at_bats_extra_pitchfx",
-    "total_at_bats_extra_pitchfx_removed",
+    "total_at_bats_removed_pitchfx",
     "total_at_bats_pitchfx_error",
     "total_at_bats_invalid_pitchfx",
-    "pitch_count_bbref",
-    "pitch_count_pitchfx",
     "patched_pitchfx_count",
     "missing_pitchfx_count",
-    "extra_pitchfx_count",
-    "extra_pitchfx_removed_count",
-    "total_at_bats_extra_pitchfx_removed",
-    "total_at_bats_pitchfx_error",
+    "removed_pitchfx_count",
     "invalid_pitchfx_count",
 ]
 
@@ -346,7 +342,7 @@ class PatchInvalidPitchFxTask(Task):
         return patch_list
 
     def get_all_pfx_data_to_patch(self, invalid_pfx):
-        removed_pfx_count = invalid_pfx["at_bat_pitchfx_audit"]["extra_pitchfx_removed_count"]
+        removed_pfx_count = invalid_pfx["at_bat_pitchfx_audit"]["removed_pitchfx_count"]
         return invalid_pfx["pitchfx"] + invalid_pfx["removed_pitchfx"] if removed_pfx_count else invalid_pfx["pitchfx"]
 
     def combine_patch_lists(self, new_patch_list, old_patch_list):

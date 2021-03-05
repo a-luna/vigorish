@@ -1,14 +1,17 @@
+from dataclasses import asdict
+
 from dacite.core import from_dict
 
 from vigorish.data.metrics import BatStatsMetrics, PitchStatsMetrics
 from vigorish.data.team_data import TeamData
+from vigorish.enums import DefensePosition
 
 
 def test_team_data(vig_app):
     away_pitch_stats_dict = {
         "mlb_id": 0,
         "year": 2019,
-        "player_team_id_bbref": "LAA",
+        "team_id_bbref": "LAA",
         "opponent_team_id_bbref": "",
         "stint_number": 0,
         "total_games": 1,
@@ -54,7 +57,7 @@ def test_team_data(vig_app):
     away_bat_stats_dict = {
         "mlb_id": 0,
         "year": 2019,
-        "player_team_id_bbref": "LAA",
+        "team_id_bbref": "LAA",
         "opponent_team_id_bbref": "",
         "stint_number": 0,
         "total_games": 1,
@@ -93,7 +96,7 @@ def test_team_data(vig_app):
     home_pitch_stats_dict = {
         "mlb_id": 0,
         "year": 2019,
-        "player_team_id_bbref": "TOR",
+        "team_id_bbref": "TOR",
         "opponent_team_id_bbref": "",
         "stint_number": 0,
         "total_games": 1,
@@ -139,7 +142,7 @@ def test_team_data(vig_app):
     home_bat_stats_dict = {
         "mlb_id": 0,
         "year": 2019,
-        "player_team_id_bbref": "TOR",
+        "team_id_bbref": "TOR",
         "opponent_team_id_bbref": "",
         "stint_number": 0,
         "total_games": 1,
@@ -177,18 +180,18 @@ def test_team_data(vig_app):
 
     away_team_data = TeamData(vig_app, "LAA", 2019)
     home_team_data = TeamData(vig_app, "TOR", 2019)
-    assert away_team_data.team_pitch_stats == from_dict(data_class=PitchStatsMetrics, data=away_pitch_stats_dict)
-    assert away_team_data.team_bat_stats == from_dict(data_class=BatStatsMetrics, data=away_bat_stats_dict)
-    assert home_team_data.team_pitch_stats == from_dict(data_class=PitchStatsMetrics, data=home_pitch_stats_dict)
-    assert home_team_data.team_bat_stats == from_dict(data_class=BatStatsMetrics, data=home_bat_stats_dict)
-    assert away_team_data.team_pitch_stats_by_year == [
-        from_dict(data_class=PitchStatsMetrics, data=away_pitch_stats_dict)
-    ]
-    assert away_team_data.team_bat_stats_by_year == [from_dict(data_class=BatStatsMetrics, data=away_bat_stats_dict)]
-    assert home_team_data.team_pitch_stats_by_year == [
-        from_dict(data_class=PitchStatsMetrics, data=home_pitch_stats_dict)
-    ]
-    assert home_team_data.team_bat_stats_by_year == [from_dict(data_class=BatStatsMetrics, data=home_bat_stats_dict)]
+    assert away_team_data.pitch_stats == from_dict(data_class=PitchStatsMetrics, data=away_pitch_stats_dict)
+    assert away_team_data.bat_stats == from_dict(data_class=BatStatsMetrics, data=away_bat_stats_dict)
+    assert home_team_data.pitch_stats == from_dict(data_class=PitchStatsMetrics, data=home_pitch_stats_dict)
+    assert home_team_data.bat_stats == from_dict(data_class=BatStatsMetrics, data=home_bat_stats_dict)
+    assert away_team_data.pitch_stats_by_year == {
+        2019: from_dict(data_class=PitchStatsMetrics, data=away_pitch_stats_dict)
+    }
+    assert away_team_data.bat_stats_by_year == {2019: from_dict(data_class=BatStatsMetrics, data=away_bat_stats_dict)}
+    assert home_team_data.pitch_stats_by_year == {
+        2019: from_dict(data_class=PitchStatsMetrics, data=home_pitch_stats_dict)
+    }
+    assert home_team_data.bat_stats_by_year == {2019: from_dict(data_class=BatStatsMetrics, data=home_bat_stats_dict)}
 
 
 def test_team_data_by_player(vig_app):
@@ -221,7 +224,7 @@ def test_team_data_by_player(vig_app):
         "mlb_id": 621142,
         "opponent_team_id_bbref": "",
         "pitch_count": 6,
-        "player_team_id_bbref": "LAA",
+        "team_id_bbref": "LAA",
         "re24_pitch": 0.5,
         "runs": 0,
         "saves": 0,
@@ -260,7 +263,7 @@ def test_team_data_by_player(vig_app):
         "opponent_team_id_bbref": "",
         "ops": 0.7,
         "plate_appearances": 5,
-        "player_team_id_bbref": "LAA",
+        "team_id_bbref": "LAA",
         "rbis": 1,
         "re24_bat": -0.2,
         "runs_scored": 1,
@@ -308,7 +311,7 @@ def test_team_data_by_player(vig_app):
         "mlb_id": 571882,
         "opponent_team_id_bbref": "",
         "pitch_count": 17,
-        "player_team_id_bbref": "TOR",
+        "team_id_bbref": "TOR",
         "re24_pitch": 0.5,
         "runs": 0,
         "saves": 0,
@@ -328,60 +331,104 @@ def test_team_data_by_player(vig_app):
     }
 
     home_bat_stats_dict = {
-        "at_bats": 1,
-        "avg": 0.0,
-        "bases_on_balls": 1,
-        "bb_rate": 0.5,
-        "bbref_id": "gurrilo01",
+        "at_bats": 5,
+        "avg": 0.4,
+        "bases_on_balls": 0,
+        "bat_order": 0,
+        "bb_rate": 0.0,
+        "bbref_id": "sogarer01",
         "caught_stealing": 0,
+        "def_position": DefensePosition.NONE,
         "doubles": 0,
         "gdp": 0,
         "hit_by_pitch": 0,
-        "hits": 0,
+        "hits": 2,
         "homeruns": 0,
         "intentional_bb": 0,
+        "is_starter": False,
         "iso": 0.0,
         "k_rate": 0.0,
-        "mlb_id": 666971,
-        "obp": 0.5,
+        "mlb_id": 519299,
+        "obp": 0.4,
         "opponent_team_id_bbref": "",
-        "ops": 0.5,
-        "plate_appearances": 2,
-        "player_team_id_bbref": "TOR",
+        "ops": 0.8,
+        "plate_appearances": 5,
         "rbis": 0,
-        "re24_bat": 0.0,
+        "re24_bat": 0.2,
         "runs_scored": 1,
         "sac_fly": 0,
         "sac_hit": 0,
-        "slg": 0.0,
+        "slg": 0.4,
         "stint_number": 0,
         "stolen_bases": 0,
         "strikeouts": 0,
+        "team_id_bbref": "TOR",
         "total_games": 1,
-        "total_pitches": 8,
-        "total_strikes": 3,
+        "total_pitches": 14,
+        "total_strikes": 8,
         "triples": 0,
-        "wpa_bat": -0.01,
-        "wpa_bat_neg": -0.011,
-        "wpa_bat_pos": 0.001,
+        "wpa_bat": -0.02,
+        "wpa_bat_neg": -0.026,
+        "wpa_bat_pos": 0.006,
         "year": 2019,
     }
 
     away_team_data = TeamData(vig_app, "LAA", 2019)
     home_team_data = TeamData(vig_app, "TOR", 2019)
 
-    away_team_player_pitch_stats = away_team_data.team_pitch_stats_by_player
+    away_team_player_pitch_stats = away_team_data.pitch_stats_by_player
     assert len(away_team_player_pitch_stats) == 5
     assert away_team_player_pitch_stats[0] == from_dict(data_class=PitchStatsMetrics, data=away_pitch_stats_dict)
 
-    away_team_player_bat_stats = away_team_data.team_bat_stats_by_player
+    away_team_player_bat_stats = away_team_data.bat_stats_by_player
     assert len(away_team_player_bat_stats) == 9
     assert away_team_player_bat_stats[0] == from_dict(data_class=BatStatsMetrics, data=away_bat_stats_dict)
 
-    home_team_player_pitch_stats = home_team_data.team_pitch_stats_by_player
+    home_team_player_pitch_stats = home_team_data.pitch_stats_by_player
     assert len(home_team_player_pitch_stats) == 7
     assert home_team_player_pitch_stats[0] == from_dict(data_class=PitchStatsMetrics, data=home_pitch_stats_dict)
 
-    home_team_player_bat_stats = home_team_data.team_bat_stats_by_player
+    home_team_player_bat_stats = home_team_data.bat_stats_by_player
     assert len(home_team_player_bat_stats) == 10
+    left = asdict(home_team_player_bat_stats[0])
+    right = home_bat_stats_dict
+    assert left == right
     assert home_team_player_bat_stats[0] == from_dict(data_class=BatStatsMetrics, data=home_bat_stats_dict)
+
+
+def test_team_temp(vig_app):
+    away_team_data = TeamData(vig_app, "LAA", 2019)
+    home_team_data = TeamData(vig_app, "TOR", 2019)
+
+    temp = vig_app.scraped_data.get_bat_stats_for_season_for_all_teams(2019)
+
+    temp = away_team_data.pitch_stats_for_sp
+    temp = away_team_data.pitch_stats_for_sp_by_year
+    temp = away_team_data.pitch_stats_for_sp_by_player
+    temp = vig_app.scraped_data.get_pitch_stats_for_sp_for_season_for_all_teams(2019)
+
+    temp = away_team_data.pitch_stats_for_rp
+    temp = away_team_data.pitch_stats_for_rp_by_year
+    temp = away_team_data.pitch_stats_for_rp_by_player
+    temp = vig_app.scraped_data.get_pitch_stats_for_rp_for_season_for_all_teams(2019)
+
+    temp = away_team_data.bat_stats_by_lineup_spot
+    temp = away_team_data.get_bat_stats_for_lineup_spot_by_year(2)
+    temp = away_team_data.get_bat_stats_for_lineup_spot_by_player(2)
+    temp = vig_app.scraped_data.get_bat_stats_for_lineup_spot_for_season_for_all_teams(1, 2019)
+
+    temp = away_team_data.bat_stats_by_defpos
+    temp = away_team_data.get_bat_stats_for_defpos_by_year(DefensePosition.CATCHER)
+    temp = away_team_data.get_bat_stats_for_defpos_by_player(DefensePosition.CATCHER)
+    temp = vig_app.scraped_data.get_bat_stats_for_defpos_for_season_for_all_teams(DefensePosition.CATCHER, 2019)
+
+    temp = away_team_data.bat_stats_for_starters
+    temp = away_team_data.bat_stats_for_starters_by_year
+    temp = away_team_data.bat_stats_for_starters_by_player
+    temp = vig_app.scraped_data.get_bat_stats_for_starters_for_season_for_all_teams(2019)
+
+    temp = home_team_data.bat_stats_for_subs
+    temp = home_team_data.bat_stats_for_subs_by_year
+    temp = home_team_data.bat_stats_for_subs_by_player
+    temp = vig_app.scraped_data.get_bat_stats_for_subs_for_season_for_all_teams(2019)
+    assert temp

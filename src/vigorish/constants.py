@@ -43,55 +43,6 @@ DEFENSE_POSITIONS = [
     "PR",
 ]
 
-PITCH_TYPE_DICT = {
-    "CH": "Changeup",
-    "CU": "Curveball",
-    "EP": "Eephus",
-    "FA": "Fastball",
-    "FC": "Cutter",
-    "FF": "Four-seam Fastball",
-    "FS": "Splitter",
-    "FT": "Two-seam Fastball",
-    "FO": "Forkball",
-    "IN": "Intent ball",
-    "KC": "Knuckle ball Curve",
-    "KN": "Knuckle ball",
-    "PO": "Pitch Out",
-    "SC": "Screwball",
-    "SI": "Sinker",
-    "SL": "Slider",
-    "UN": "Unknown",
-}
-
-AT_BAT_RESULTS_ALL = [
-    "Bunt Groundout",
-    "Bunt Lineout",
-    "Bunt Pop Out",
-    "Double",
-    "Double Play",
-    "Field Error",
-    "Fielders Choice",
-    "Fielders Choice Out",
-    "Flyout",
-    "Forceout",
-    "Grounded Into DP",
-    "Groundout",
-    "Hit By Pitch",
-    "Home Run",
-    "Intent Walk",
-    "Lineout",
-    "Pop Out",
-    "Runner Out",
-    "Sac Bunt",
-    "Sac Fly",
-    "Sac Fly DP",
-    "Single",
-    "Strikeout",
-    "Strikeout - DP",
-    "Triple",
-    "Walk",
-]
-
 PPB_PITCH_LOG_DICT = {
     "C": {
         "description": "Called strike",
@@ -272,6 +223,70 @@ PLAY_DES_BB_TYPE_FB = ["Fly Ball", "Flyball", "Popfly"]
 PLAY_DES_BB_TYPE_GB = ["Ground Ball", "Groundout"]
 PLAY_DES_BB_TYPE_LD = ["Line Drive", "Lineout"]
 PLAY_DES_BB_TYPE_PU = ["Popfly"]
+
+AT_BAT_RESULTS_OUT = [
+    "bunt groundout",
+    "bunt pop out",
+    "double play",
+    "flyout",
+    "forceout",
+    "grounded into dp",
+    "groundout",
+    "lineout",
+    "pop out",
+    "runner out",
+    "sac bunt",
+    "sac fly",
+    "sac fly dp",
+    "sacrifice bunt dp",
+    "strikeout",
+    "strikeout - dp",
+    "triple play",
+]
+
+AT_BAT_RESULTS_UNCLEAR = [
+    "batter interference",
+    "catcher interference",
+    "fan interference",
+    "fielders choice",
+    "fielders choice out",
+    "missing_des",
+]
+
+AT_BAT_RESULTS_HIT = [
+    "double",
+    "home run",
+    "single",
+    "triple",
+]
+
+AT_BAT_RESULTS_WALK = [
+    "intent walk",
+    "walk",
+]
+
+AT_BAT_RESULTS_STRIKEOUT = [
+    "strikeout",
+    "strikeout - dp",
+]
+
+AT_BAT_RESULTS_HBP = [
+    "hit by pitch",
+]
+
+AT_BAT_RESULTS_ERROR = [
+    "field error",
+]
+
+AT_BAT_RESULTS_SAC_HIT = [
+    "sac bunt",
+    "sacrifice bunt dp",
+]
+
+AT_BAT_RESULTS_SAC_FLY = [
+    "sac fly",
+    "sac fly dp",
+]
 
 JOB_SPINNER_COLORS = {
     DataSet.BBREF_GAMES_FOR_DATE: "red",

@@ -136,6 +136,8 @@ class ViewGameData(MenuItem):
                 pitcher_data = result.value
                 if pitcher_data == "AT_BATS":
                     self.view_at_bats_for_player(player_type, mlb_id)
+                if pitcher_data == "BAT_STATS":
+                    self.view_bat_stats_by_pitch_type_for_player(mlb_id)
                 if pitcher_data == "PITCH_MIX_BY_STANCE":
                     self.view_pitch_mix_batter_stance_splits(mlb_id)
                 if pitcher_data == "PITCH_MIX_BY_SEASON":
@@ -200,10 +202,11 @@ class ViewGameData(MenuItem):
         )
         choices = {
             f"{MENU_NUMBERS.get(1)}  Play-by-Play Data for All At Bats": "AT_BATS",
-            f"{MENU_NUMBERS.get(2)}  Pitch Mix Split by Batter Stance": "PITCH_MIX_BY_STANCE",
-            f"{MENU_NUMBERS.get(3)}  Pitch Mix Split by Season": "PITCH_MIX_BY_SEASON",
-            f"{MENU_NUMBERS.get(4)}  Plate Discipline Metrics Split by Pitch Type": "PLATE_DISCIPLINE",
-            f"{MENU_NUMBERS.get(5)}  Batted Ball Metrics Split by Pitch Type": "BATTED_BALL",
+            f"{MENU_NUMBERS.get(2)}  Batting Stats By Pitch Type": "BAT_STATS",
+            f"{MENU_NUMBERS.get(3)}  Pitch Mix Split by Batter Stance": "PITCH_MIX_BY_STANCE",
+            f"{MENU_NUMBERS.get(4)}  Pitch Mix Split by Season": "PITCH_MIX_BY_SEASON",
+            f"{MENU_NUMBERS.get(5)}  Plate Discipline Metrics Split by Pitch Type": "PLATE_DISCIPLINE",
+            f"{MENU_NUMBERS.get(6)}  Batted Ball Metrics Split by Pitch Type": "BATTED_BALL",
             f"{EMOJIS.get('BACK')} Return to Previous Menu": None,
         }
         print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
@@ -213,6 +216,12 @@ class ViewGameData(MenuItem):
         subprocess.run(["clear"])
         innings_viewer = self.game_data.view_valid_at_bats_for_pitcher(mlb_id).value
         return self.view_at_bats_by_inning(innings_viewer)
+
+    def view_bat_stats_by_pitch_type_for_player(self, mlb_id):
+        subprocess.run(["clear"])
+        table_viewer = self.game_data.view_bat_stats_pitch_type_splits_for_pitcher(mlb_id).value
+        table_viewer.launch()
+        return Result.Ok()
 
     def view_pitch_mix_batter_stance_splits(self, mlb_id):
         subprocess.run(["clear"])

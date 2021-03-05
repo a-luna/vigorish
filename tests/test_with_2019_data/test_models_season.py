@@ -1,8 +1,11 @@
 from datetime import date, datetime
 from unittest.mock import patch
 
+import pytest
+
 from vigorish.database import Season
 from vigorish.enums import SeasonType
+from vigorish.util.exceptions import InvalidSeasonException
 
 MLB_YEAR = 2019
 
@@ -54,11 +57,10 @@ def test_season_as_dict(vig_app):
         "scraped_all_brooks_pitch_logs": False,
         "scraped_all_pitchfx_logs": False,
         "start_date_str": "2019-03-28",
-        "total_at_bats_extra_pitchfx": 0,
-        "total_at_bats_extra_pitchfx_removed": 33,
         "total_at_bats_invalid_pitchfx": 6,
         "total_at_bats_missing_pitchfx": 18,
         "total_at_bats_pitchfx_error": 0,
+        "total_at_bats_removed_pitchfx": 33,
         "total_batters_faced_bbref": 631,
         "total_batters_faced_pitchfx": 627,
         "total_bbref_boxscores_scraped": 8,
@@ -66,9 +68,6 @@ def test_season_as_dict(vig_app):
         "total_days": 186,
         "total_days_scraped_bbref": 7,
         "total_days_scraped_brooks": 7,
-        "total_duplicate_pitchfx_removed_count": 0,
-        "total_extra_pitchfx_count": 0,
-        "total_extra_pitchfx_removed_count": 62,
         "total_games": 97,
         "total_games_combined": 8,
         "total_games_combined_fail": 0,
@@ -86,6 +85,7 @@ def test_season_as_dict(vig_app):
         "total_pitch_count_pitch_logs": 2467,
         "total_pitch_count_pitchfx": 2467,
         "total_pitch_count_pitchfx_audited": 2386,
+        "total_removed_pitchfx_count": 62,
         "year": 2019,
     }
 
@@ -119,9 +119,8 @@ def test_is_date_in_season(vig_app):
     assert "is not within the scope of the MLB 2019 Regular Season" in result.error
 
     invalid_year = datetime(1941, 12, 7)
-    result = Season.is_date_in_season(vig_app.db_session, invalid_year)
-    assert result.failure
-    assert "Database does not contain info for the MLB 1941 Regular Season" in result.error
+    with pytest.raises(InvalidSeasonException):
+        result = Season.is_date_in_season(vig_app.db_session, invalid_year)
 
 
 def test_validate_date_range(vig_app):

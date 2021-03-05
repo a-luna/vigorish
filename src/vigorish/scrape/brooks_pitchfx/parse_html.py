@@ -132,17 +132,19 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
 def convert_type_for_dataclass(name, value):
     dataclass_field = BrooksPitchFxData.__dataclass_fields__.get(name)
     field_type = dataclass_field.type if dataclass_field else str
-    if field_type is bool:
-        field_value = True if value else False
-    elif not value:
-        field_value = None
-    elif field_type is int and not isinstance(value, int):
-        field_value = int(value)
-    elif field_type is float and not isinstance(value, float):
-        field_value = float(value)
-    else:
-        field_value = value
-    return field_value
+    return (
+        True
+        if field_type is bool and value
+        else False
+        if field_type is bool and not value
+        else None
+        if not value
+        else int(value)
+        if field_type is int and not isinstance(value, int)
+        else float(value)
+        if field_type is float and not isinstance(value, float)
+        else value
+    )
 
 
 def fix_missing_des(pfx_data, pitch_log):

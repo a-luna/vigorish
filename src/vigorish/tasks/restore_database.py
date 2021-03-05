@@ -59,7 +59,7 @@ class RestoreDatabaseTask(Task):
 
     @cached_property
     def season_id_map(self):
-        return db.Season.regular_season_map(self.db_session)
+        return db.Season.get_regular_season_map(self.db_session)
 
     @cached_property
     def player_id_map(self):

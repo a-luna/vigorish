@@ -13,7 +13,7 @@ from vigorish.util.dataclass_helpers import get_field_types
 @dataclass
 class PitchStatsMetrics:
     year: int = field(repr=False, default=0)
-    player_team_id_bbref: str = field(repr=False, default="")
+    team_id_bbref: str = field(repr=False, default="")
     opponent_team_id_bbref: str = field(repr=False, default="")
     mlb_id: int = field(repr=False, default=0)
     bbref_id: str = field(repr=False, default="")
@@ -58,11 +58,11 @@ class PitchStatsMetrics:
     re24_pitch: float = field(repr=False, default=0.0)
 
     @classmethod
-    def from_pitch_stats_view_results(cls, results: List[RowProxy]) -> PitchStatsMetrics:
-        return [from_dict(data_class=cls, data=cls._get_pitch_stats_for_table(dict(row))) for row in results]
+    def from_query_results(cls, results: List[RowProxy]) -> List[PitchStatsMetrics]:
+        return [from_dict(data_class=cls, data=cls._get_pitch_stats(dict(row))) for row in results]
 
     @classmethod
-    def _get_pitch_stats_for_table(cls, pitch_stats: RowDict, decimal_precision=3) -> MetricsDict:
+    def _get_pitch_stats(cls, pitch_stats: RowDict, decimal_precision: int = 3) -> MetricsDict:
         dc_fields = get_field_types(cls)
         return {
             k: round(v, decimal_precision) if dc_fields[k] is float else v

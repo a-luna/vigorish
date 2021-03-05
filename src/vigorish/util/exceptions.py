@@ -1,17 +1,4 @@
 """Custom exceptions for issues specific to vigorish actions/processes."""
-from vigorish.enums import DataSet
-
-
-class ConfigSettingException(Exception):
-    """Exception raised when an unrecoverable error occurs due to a ConfigSetting."""
-
-    def __init__(self, setting_name, data_set=DataSet.ALL, current_value=None, detail=None):
-        message = f"ConfigSetting value is invalid:\n\tName...........: {setting_name} (Data Set: {data_set})\n"
-        if current_value:
-            message += f"\tCurrent Value..: {current_value}\n"
-        if detail:
-            message += f"\tDetail.........: {detail}\n"
-        super().__init__(message)
 
 
 class ScrapedDataException(Exception):
@@ -19,4 +6,20 @@ class ScrapedDataException(Exception):
 
     def __init__(self, file_type, data_set, url_id):
         message = f"Failed to locate scraped data: URL ID: {url_id} (File Type: {file_type}, Data Set: {data_set})"
+        super().__init__(message)
+
+
+class InvalidSeasonException(Exception):
+    """Exception raised when the database does not contain data for the requested season."""
+
+    def __init__(self, year):
+        message = f"The database does not contain any data for the MLB {year} Season"
+        super().__init__(message)
+
+
+class UnknownPlayerException(Exception):
+    """Exception raised when the database does not contain data for the requested player."""
+
+    def __init__(self, mlb_id):
+        message = f"The database does not contain any data for a player with MLB ID: {mlb_id}"
         super().__init__(message)

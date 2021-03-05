@@ -53,7 +53,7 @@ def test_import_data_and_overwrite_existing(vig_app, mocker):
         s2019 = Season.find_by_year(db_session, 2019)
         return [s2018, s2019]
 
-    mocker.patch("vigorish.tasks.import_scraped_data.db.Season.all_regular_seasons", get_2018_2019_seasons)
+    mocker.patch("vigorish.tasks.import_scraped_data.db.Season.get_all_regular_seasons", get_2018_2019_seasons)
 
     season_18 = Season.find_by_year(vig_app.db_session, 2018)
     season_19 = Season.find_by_year(vig_app.db_session, 2019)

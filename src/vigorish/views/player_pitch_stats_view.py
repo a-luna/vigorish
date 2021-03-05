@@ -74,10 +74,10 @@ class Player_PitchStats_All_View(db.Base):
     )
 
     @classmethod
-    def get_pitch_stats_for_career_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_pitch_stats_for_career_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results)[0] if results else None
+        return PitchStatsMetrics.from_query_results(results)[0] if results else None
 
 
 class Player_PitchStats_SP_View(db.Base):
@@ -138,10 +138,10 @@ class Player_PitchStats_SP_View(db.Base):
     )
 
     @classmethod
-    def get_pitch_stats_as_sp_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_pitch_stats_as_sp_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results)[0] if results else None
+        return PitchStatsMetrics.from_query_results(results)[0] if results else None
 
 
 class Player_PitchStats_RP_View(db.Base):
@@ -201,10 +201,10 @@ class Player_PitchStats_RP_View(db.Base):
     )
 
     @classmethod
-    def get_pitch_stats_as_rp_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_pitch_stats_as_rp_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results)[0] if results else None
+        return PitchStatsMetrics.from_query_results(results)[0] if results else None
 
 
 class Player_PitchStats_By_Year_View(db.Base):
@@ -266,10 +266,10 @@ class Player_PitchStats_By_Year_View(db.Base):
     )
 
     @classmethod
-    def get_pitch_stats_by_year_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_pitch_stats_by_year_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results) if results else []
+        return PitchStatsMetrics.from_query_results(results) if results else []
 
 
 class Player_PitchStats_By_Team_View(db.Base):
@@ -280,7 +280,7 @@ class Player_PitchStats_By_Team_View(db.Base):
                 db.PitchStats.player_id.label("id"),
                 db.PitchStats.player_id_mlb.label("mlb_id"),
                 db.PitchStats.player_id_bbref.label("bbref_id"),
-                db.PitchStats.player_team_id_bbref.label("player_team_id_bbref"),
+                db.PitchStats.player_team_id_bbref.label("team_id_bbref"),
                 func.count(db.PitchStats.id).label("total_games"),
                 func.sum(db.PitchStats.is_sp).label("games_as_sp"),
                 func.sum(db.PitchStats.is_rp).label("games_as_rp"),
@@ -330,10 +330,10 @@ class Player_PitchStats_By_Team_View(db.Base):
     )
 
     @classmethod
-    def get_pitch_stats_by_team_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_pitch_stats_by_team_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results) if results else []
+        return PitchStatsMetrics.from_query_results(results) if results else []
 
 
 class Player_PitchStats_By_Team_Year_View(db.Base):
@@ -347,7 +347,7 @@ class Player_PitchStats_By_Team_Year_View(db.Base):
                 db.PitchStats.season_id.label("season_id"),
                 db.Season.year.label("year"),
                 db.PitchStats.player_team_id.label("player_team_id"),
-                db.PitchStats.player_team_id_bbref.label("player_team_id_bbref"),
+                db.PitchStats.player_team_id_bbref.label("team_id_bbref"),
                 db.Assoc_Player_Team.stint_number.label("stint_number"),
                 func.count(db.PitchStats.id).label("total_games"),
                 func.sum(db.PitchStats.is_sp).label("games_as_sp"),
@@ -410,10 +410,10 @@ class Player_PitchStats_By_Team_Year_View(db.Base):
     )
 
     @classmethod
-    def get_pitch_stats_by_team_by_year_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_pitch_stats_by_team_by_year_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results) if results else []
+        return PitchStatsMetrics.from_query_results(results) if results else []
 
 
 class Player_PitchStats_By_Opp_Team_View(db.Base):
@@ -474,10 +474,10 @@ class Player_PitchStats_By_Opp_Team_View(db.Base):
     )
 
     @classmethod
-    def get_pitch_stats_by_opp_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_pitch_stats_by_opp_team_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results) if results else []
+        return PitchStatsMetrics.from_query_results(results) if results else []
 
 
 class Player_PitchStats_By_Opp_Team_Year_View(db.Base):
@@ -542,7 +542,7 @@ class Player_PitchStats_By_Opp_Team_Year_View(db.Base):
     )
 
     @classmethod
-    def get_pitch_stats_by_opp_by_year_for_player(cls, db_engine, player_id):
-        s = select([cls]).where(cls.id == player_id)
+    def get_pitch_stats_by_opp_team_by_year_for_player(cls, db_engine, player_id_mlb):
+        s = select([cls]).where(cls.mlb_id == player_id_mlb)
         results = db_engine.execute(s).fetchall()
-        return PitchStatsMetrics.from_pitch_stats_view_results(results) if results else []
+        return PitchStatsMetrics.from_query_results(results) if results else []

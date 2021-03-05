@@ -18,7 +18,6 @@ from vigorish.scrape.brooks_pitchfx.scrape_task import ScrapeBrooksPitchFx
 from vigorish.status.report_status import report_date_range_status, report_season_status
 from vigorish.util.datetime_util import get_date_range
 from vigorish.util.dt_format_strings import DATE_ONLY_2
-from vigorish.util.exceptions import ConfigSettingException
 from vigorish.util.result import Result
 from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exists
 
@@ -51,33 +50,24 @@ class JobRunner:
         self.season = self.db_job.season
         self.spinners = defaultdict(lambda: Halo(spinner=FAKE_SPINNER))
         self.task_results = []
-        self.scrape_task_option = self.config.get_current_setting("SCRAPE_TASK_OPTION", DataSet.ALL)
-        self.status_report = self.config.get_current_setting("STATUS_REPORT", DataSet.ALL)
+        self.scrape_task_option = self.app.get_current_setting("SCRAPE_TASK_OPTION")
+        self.status_report = self.app.get_current_setting("STATUS_REPORT")
 
     def execute(self):
-        result = self.initialize()
-        if result.failure:
-            return self.job_failed(result)
-        result = self.run_job()
-        if result.failure:
-            return self.job_failed(result, self.data_set)
-        self.report_task_results()
-        result = self.show_status_report()
-        if result.failure:
-            return self.job_failed(result)
-        return self.job_succeeded()
+        return (
+            self.initialize()
+            .on_success(self.run_job)
+            .on_success(self.show_status_report)
+            .on_success(self.job_succeeded)
+            .on_failure(self.job_failed)
+        )
 
     def run_job(self):
-        if self.scrape_task_option == ScrapeTaskOption.BY_DATE:
-            return self.run_job_day_by_day()
-        elif self.scrape_task_option == ScrapeTaskOption.BY_DATA_SET:
-            return self.scrape_date_range(self.start_date, self.end_date)
-        else:
-            raise ConfigSettingException(
-                setting_name="SCRAPE_TASK_OPTION",
-                current_value=self.scrape_task_option,
-                detail='"SCRAPE_TASK_OPTION" only has two valid values: BY_DATE and BY_DATA_SET',
-            )
+        return (
+            self.run_job_day_by_day()
+            if self.scrape_task_option == ScrapeTaskOption.BY_DATE
+            else self.scrape_date_range(self.start_date, self.end_date)
+        )
 
     def run_job_day_by_day(self):
         for scrape_date in get_date_range(self.start_date, self.end_date):
@@ -149,6 +139,7 @@ class JobRunner:
             return
         for (message, text_color) in self.task_results:
             print_message(message, fg=text_color)
+        return Result.Ok()
 
     def initialize(self):
         errors = []
@@ -190,13 +181,13 @@ class JobRunner:
         report_viewer.launch()
         return Result.Ok()
 
-    def job_failed(self, result, data_set=DataSet.ALL):
+    def job_failed(self, error_message):
         self.end_time = datetime.now()
         self.db_job.status = JobStatus.ERROR
-        new_error = db.ScrapeError(error_message=result.error, data_set=data_set, job_id=self.db_job.id)
+        new_error = db.ScrapeError(error_message=error_message, data_set=self.data_set, job_id=self.db_job.id)
         self.db_session.add(new_error)
         self.db_session.commit()
-        return result
+        return Result.Fail(error_message)
 
     def job_succeeded(self):
         self.end_time = datetime.now()
