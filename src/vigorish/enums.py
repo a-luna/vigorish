@@ -50,6 +50,10 @@ class DataSet(IntFlag):
                 return enum_item
         return cls.NONE
 
+    @classmethod
+    def get_data_sets_from_int(cls, data_sets_int):
+        return [data_set for data_set in cls if data_sets_int & data_set == data_set]
+
 
 class ConfigType(str, Enum):
     """Data types for configuration settings."""
