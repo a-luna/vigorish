@@ -89,16 +89,17 @@ class SyncScrapedData(MenuItem):
         prompt = f"Select all data sets to synchronize for {file_type} files"
         if file_type == VigFile.COMBINED_GAME_DATA:
             return [DataSet.ALL]
-        if file_type == VigFile.PATCH_LIST:
-            valid_data_sets = (
-                DataSet.BBREF_GAMES_FOR_DATE
-                | DataSet.BBREF_BOXSCORES
-                | DataSet.BROOKS_GAMES_FOR_DATE
-                | DataSet.BROOKS_PITCHFX
-            )
-        else:
-            valid_data_sets = DataSet.ALL
-        return data_sets_prompt(heading, prompt, valid_data_sets=int(valid_data_sets))
+        valid_data_sets = (
+            [DataSet.ALL]
+            if file_type != VigFile.PATCH_LIST
+            else [
+                DataSet.BBREF_GAMES_FOR_DATE,
+                DataSet.BBREF_BOXSCORES,
+                DataSet.BROOKS_GAMES_FOR_DATE,
+                DataSet.BROOKS_PITCHFX,
+            ]
+        )
+        return data_sets_prompt(heading, prompt, valid_data_sets)
 
     def sync_direction_prompt(self):
         prompt = (
