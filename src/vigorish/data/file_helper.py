@@ -31,7 +31,7 @@ class FileHelper:
         try:  # pragma: no cover
             if os.environ.get("ENV") != "TEST":
                 self.s3_resource = boto3.resource("s3")
-        except boto3.exceptions.ResourceNotExistsError:  # pragma: no cover
+        except (boto3.exceptions.ResourceNotExistsError, ValueError):  # pragma: no cover
             self.s3_resource = None
 
     @property
