@@ -185,6 +185,44 @@ class JobStatus(IntEnum):
         return self.name
 
 
+class TeamID(str, Enum):
+    """Team IDs taken from baseball-reference.com"""
+
+    ARI = "ARI"
+    ATL = "ATL"
+    BAL = "BAL"
+    BOS = "BOS"
+    CHW = "CHW"
+    CHC = "CHC"
+    CIN = "CIN"
+    CLE = "CLE"
+    COL = "COL"
+    DET = "DET"
+    HOU = "HOU"
+    KCR = "KCR"
+    LAA = "LAA"
+    LAD = "LAD"
+    MIA = "MIA"
+    MIL = "MIL"
+    MIN = "MIN"
+    NYY = "NYY"
+    NYM = "NYM"
+    OAK = "OAK"
+    PHI = "PHI"
+    PIT = "PIT"
+    SDP = "SDP"
+    SEA = "SEA"
+    SFG = "SFG"
+    STL = "STL"
+    TBR = "TBR"
+    TEX = "TEX"
+    TOR = "TOR"
+    WSN = "WSN"
+
+    def __str__(self):
+        return self.name
+
+
 class DefensePosition(IntEnum):
     """Defensive positions and position numbers used when scoring a game."""
 
@@ -330,7 +368,8 @@ class PitchType(IntFlag):
 
     @classmethod
     def get_pitch_mix_from_int(cls, pitch_mix_int):
-        return [pitch_type for pitch_type in cls if pitch_mix_int & pitch_type == pitch_type]
+        pitch_mix = [pitch_type for pitch_type in cls if pitch_mix_int & pitch_type == pitch_type]
+        return pitch_mix[0] if pitch_mix and len(pitch_mix) == 1 else pitch_mix if pitch_mix else cls.NONE
 
 
 class SeasonType(str, Enum):

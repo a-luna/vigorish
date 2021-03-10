@@ -43,5 +43,5 @@ class Player(db.Base):
         return db_session.query(cls).filter_by(bbref_id=bbref_id).first()
 
     @classmethod
-    def find_by_mlb_id(cls, db_session, mlb_id):
+    def find_by_mlb_id(cls, db_session, mlb_id) -> "Player":
         return db_session.query(cls).filter_by(mlb_id=mlb_id).first()

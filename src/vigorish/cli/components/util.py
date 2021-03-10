@@ -2,9 +2,9 @@
 import subprocess
 from functools import partial
 from random import randint
-from bullet import Bullet, colors, ScrollBar
 
 import click
+from bullet import Bullet, colors, ScrollBar
 from getch import pause
 
 import vigorish.database as db
