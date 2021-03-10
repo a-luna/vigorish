@@ -1,12 +1,13 @@
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
 
 import vigorish.database as db
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
-from vigorish.data.metrics import BatStatsMetrics, PitchStatsMetrics
+from vigorish.data.metrics import BatStatsMetrics, PitchFxMetricsCollection, PitchStatsMetrics
+from vigorish.data.name_search import PlayerNameSearch
 from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
 from vigorish.util.result import Result
@@ -20,6 +21,7 @@ class ScrapedData:
         self.file_helper = FileHelper(config)
         self.html_storage = HtmlStorage(config, self.file_helper)
         self.json_storage = JsonStorage(config, self.file_helper)
+        self.name_search = PlayerNameSearch(db_session)
 
     def get_local_folderpath(self, file_type, data_set, year):
         return self.file_helper.local_folderpath_dict[file_type][data_set].resolve(year=year)
@@ -250,6 +252,9 @@ class ScrapedData:
         seasons_with_player_data = list(set(list(seasons_with_pitch_data) + list(seasons_with_bat_data)))
         return sorted(seasons_with_player_data, key=lambda x: x.year) if seasons_with_player_data else []
 
+    def player_name_search(self, query):
+        return self.name_search.fuzzy_match(query)
+
     # TEAM PITCH STATS
 
     def get_pitch_stats_for_team(self, team_id_bbref: str, year: int) -> PitchStatsMetrics:
@@ -432,52 +437,220 @@ class ScrapedData:
         )
         return _sort_and_map_team_bat_stats(team_batstats)
 
-    # PLAYER BAT STATS
-
-    def get_bat_stats_for_career_for_player(self, mlb_id: int) -> BatStatsMetrics:
-        return db.Player_BatStats_All_View.get_bat_stats_for_career_for_player(self.db_engine, mlb_id)
-
-    def get_bat_stats_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
-        return db.Player_BatStats_By_Year_View.get_bat_stats_by_year_for_player(self.db_engine, mlb_id)
-
-    def get_bat_stats_by_team_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
-        return db.Player_BatStats_By_Team_View.get_bat_stats_by_team_for_player(self.db_engine, mlb_id)
-
-    def get_bat_stats_by_team_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
-        return db.Player_BatStats_By_Team_Year_View.get_bat_stats_by_team_by_year_for_player(self.db_engine, mlb_id)
-
-    def get_bat_stats_by_opp_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
-        return db.Player_BatStats_By_Opp_Team_View.get_bat_stats_by_opp_for_player(self.db_engine, mlb_id)
-
-    def get_bat_stats_by_opp_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
-        return db.Player_BatStats_By_Opp_Team_Year_View.get_bat_stats_by_opp_by_year_for_player(self.db_engine, mlb_id)
-
     # PLAYER PITCH STATS
 
     def get_pitch_stats_for_career_for_player(self, mlb_id: int) -> PitchStatsMetrics:
-        return db.Player_PitchStats_All_View.get_pitch_stats_for_career_for_player(self.db_engine, mlb_id)
+        return db.PitchStats_All_View.get_pitch_stats_for_career_for_player(self.db_engine, mlb_id)
 
     def get_pitch_stats_as_sp_for_player(self, mlb_id: int) -> PitchStatsMetrics:
-        return db.Player_PitchStats_SP_View.get_pitch_stats_as_sp_for_player(self.db_engine, mlb_id)
+        return db.PitchStats_SP_View.get_pitch_stats_as_sp_for_player(self.db_engine, mlb_id)
 
     def get_pitch_stats_as_rp_for_player(self, mlb_id: int) -> PitchStatsMetrics:
-        return db.Player_PitchStats_RP_View.get_pitch_stats_as_rp_for_player(self.db_engine, mlb_id)
+        return db.PitchStats_RP_View.get_pitch_stats_as_rp_for_player(self.db_engine, mlb_id)
 
     def get_pitch_stats_by_year_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
-        return db.Player_PitchStats_By_Year_View.get_pitch_stats_by_year_for_player(self.db_engine, mlb_id)
+        return db.PitchStats_By_Year_View.get_pitch_stats_by_year_for_player(self.db_engine, mlb_id)
 
     def get_pitch_stats_by_team_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
-        return db.Player_PitchStats_By_Team_View.get_pitch_stats_by_team_for_player(self.db_engine, mlb_id)
+        return db.PitchStats_By_Team_View.get_pitch_stats_by_team_for_player(self.db_engine, mlb_id)
 
     def get_pitch_stats_by_team_by_year_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
-        return db.Player_PitchStats_By_Team_Year_View.get_pitch_stats_by_team_by_year_for_player(self.db_engine, mlb_id)
+        return db.PitchStats_By_Team_By_Year_View.get_pitch_stats_by_team_by_year_for_player(self.db_engine, mlb_id)
 
     def get_pitch_stats_by_opp_team_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
-        return db.Player_PitchStats_By_Opp_Team_View.get_pitch_stats_by_opp_team_for_player(self.db_engine, mlb_id)
+        return db.PitchStats_By_Opp_Team_View.get_pitch_stats_by_opp_team_for_player(self.db_engine, mlb_id)
 
     def get_pitch_stats_by_opp_team_by_year_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
-        return db.Player_PitchStats_By_Opp_Team_Year_View.get_pitch_stats_by_opp_team_by_year_for_player(
+        return db.PitchStats_By_Opp_Team_By_Year_View.get_pitch_stats_by_opp_team_by_year_for_player(
             self.db_engine, mlb_id
+        )
+
+    # PITCHER PITCHFX STATS
+
+    def get_career_pfx_metrics_for_pitcher(self, mlb_id: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Pitcher_PitchFx_All_View.get_pfx_metrics_for_career_for_pitcher(self.db_engine, mlb_id),
+            db.Pitcher_PitchType_All_View.get_pfx_metrics_for_career_for_pitcher(self.db_engine, mlb_id),
+        )
+
+    def get_career_pfx_metrics_vs_rhb_for_pitcher(self, mlb_id: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Pitcher_PitchFx_vs_RHB_View.get_pfx_metrics_vs_rhb_for_pitcher(self.db_engine, mlb_id),
+            db.Pitcher_PitchType_vs_RHB_View.get_pfx_metrics_vs_rhb_for_pitcher(self.db_engine, mlb_id),
+        )
+
+    def get_career_pfx_metrics_vs_lhb_for_pitcher(self, mlb_id: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Pitcher_PitchFx_vs_LHB_View.get_pfx_metrics_vs_lhb_for_pitcher(self.db_engine, mlb_id),
+            db.Pitcher_PitchType_vs_LHB_View.get_pfx_metrics_vs_lhb_for_pitcher(self.db_engine, mlb_id),
+        )
+
+    def get_pfx_metrics_for_year_for_pitcher(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Pitcher_PitchFx_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
+            db.Pitcher_PitchType_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
+        )
+
+    def get_pfx_metrics_for_game_for_pitcher(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Pitcher_PitchFx_For_Game_All_View.get_pfx_metrics_for_game_for_pitcher(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+            db.Pitcher_PitchType_For_Game_All_View.get_pfx_metrics_for_game_for_pitcher(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+        )
+
+    def get_pfx_metrics_for_game_vs_rhb_for_pitcher(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Pitcher_PitchFx_For_Game_vs_RHB_View.get_pfx_metrics_for_game_vs_rhb_for_pitcher(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+            db.Pitcher_PitchType_For_Game_vs_RHB_View.get_pfx_metrics_for_game_vs_rhb_for_pitcher(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+        )
+
+    def get_pfx_metrics_for_game_vs_lhb_for_pitcher(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Pitcher_PitchFx_For_Game_vs_LHB_View.get_pfx_metrics_for_game_vs_lhb_for_pitcher(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+            db.Pitcher_PitchType_For_Game_vs_LHB_View.get_pfx_metrics_for_game_vs_lhb_for_pitcher(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+        )
+
+    # PLAYER BAT STATS
+
+    def get_bat_stats_for_career_for_player(self, mlb_id: int) -> BatStatsMetrics:
+        return db.BatStats_All_View.get_bat_stats_for_career_for_player(self.db_engine, mlb_id)
+
+    def get_bat_stats_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+        return db.BatStats_By_Year_View.get_bat_stats_by_year_for_player(self.db_engine, mlb_id)
+
+    def get_bat_stats_by_team_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+        return db.BatStats_By_Team_View.get_bat_stats_by_team_for_player(self.db_engine, mlb_id)
+
+    def get_bat_stats_by_team_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+        return db.BatStats_By_Team_Year_View.get_bat_stats_by_team_by_year_for_player(self.db_engine, mlb_id)
+
+    def get_bat_stats_by_opp_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+        return db.BatStats_By_Opp_Team_View.get_bat_stats_by_opp_for_player(self.db_engine, mlb_id)
+
+    def get_bat_stats_by_opp_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+        return db.BatStats_By_Opp_Team_Year_View.get_bat_stats_by_opp_by_year_for_player(self.db_engine, mlb_id)
+
+    # BATTER PITCHFX STATS
+
+    def get_pfx_metrics_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_All_View.get_pfx_metrics_for_career_for_batter(self.db_engine, mlb_id),
+            db.Batter_PitchType_All_View.get_pfx_metrics_for_career_for_batter(self.db_engine, mlb_id),
+        )
+
+    def get_pfx_metrics_vs_rhp_as_rhb_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_vs_RHP_as_RHB_Career_View.get_pfx_metrics_vs_rhp_as_rhb_for_career_for_batter(
+                self.db_engine, mlb_id
+            ),
+            db.Batter_PitchType_vs_RHP_as_RHB_Career_View.get_pfx_metrics_vs_rhp_as_rhb_for_career_for_batter(
+                self.db_engine, mlb_id
+            ),
+        )
+
+    def get_pfx_metrics_vs_rhp_as_lhb_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_vs_RHP_as_LHB_Career_View.get_pfx_metrics_vs_rhp_as_lhb_for_career_for_batter(
+                self.db_engine, mlb_id
+            ),
+            db.Batter_PitchType_vs_RHP_as_LHB_Career_View.get_pfx_metrics_vs_rhp_as_lhb_for_career_for_batter(
+                self.db_engine, mlb_id
+            ),
+        )
+
+    def get_pfx_metrics_vs_lhp_as_lhb_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_vs_LHP_as_LHB_Career_View.get_pfx_metrics_vs_lhp_as_lhb_for_career_for_batter(
+                self.db_engine, mlb_id
+            ),
+            db.Batter_PitchType_vs_LHP_as_LHB_Career_View.get_pfx_metrics_vs_lhp_as_lhb_for_career_for_batter(
+                self.db_engine, mlb_id
+            ),
+        )
+
+    def get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_vs_LHP_as_RHB_Career_View.get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(
+                self.db_engine, mlb_id
+            ),
+            db.Batter_PitchType_vs_LHP_as_RHB_Career_View.get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(
+                self.db_engine, mlb_id
+            ),
+        )
+
+    def get_pfx_metrics_for_year_for_batter(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_By_Year_View.get_pfx_metrics_by_year_for_batter(self.db_engine, mlb_id, year),
+            db.Batter_PitchType_By_Year_View.get_pfx_metrics_by_year_for_batter(self.db_engine, mlb_id, year),
+        )
+
+    def get_pfx_metrics_for_game_for_batter(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_For_Game_All_View.get_pfx_metrics_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+            db.Batter_PitchType_For_Game_All_View.get_pfx_metrics_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+        )
+
+    def get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(
+        self, mlb_id: int, bbref_game_id: str
+    ) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_For_Game_vs_RHP_as_RHB_View.get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+            db.Batter_PitchType_For_Game_vs_RHP_as_RHB_View.get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+        )
+
+    def get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(
+        self, mlb_id: int, bbref_game_id: str
+    ) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_For_Game_vs_RHP_as_LHB_View.get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+            db.Batter_PitchType_For_Game_vs_RHP_as_LHB_View.get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+        )
+
+    def get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(
+        self, mlb_id: int, bbref_game_id: str
+    ) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_For_Game_vs_LHP_as_LHB_View.get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+            db.Batter_PitchType_For_Game_vs_LHP_as_LHB_View.get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+        )
+
+    def get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(
+        self, mlb_id: int, bbref_game_id: str
+    ) -> PitchFxMetricsCollection:
+        return PitchFxMetricsCollection.from_query_results(
+            db.Batter_PitchFx_For_Game_vs_LHP_as_RHB_View.get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
+            db.Batter_PitchType_For_Game_vs_LHP_as_RHB_View.get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(
+                self.db_engine, mlb_id, bbref_game_id
+            ),
         )
 
 

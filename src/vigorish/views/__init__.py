@@ -1,46 +1,68 @@
 # flake8: noqa
+from vigorish.views.bat_stats_view import (
+    BatStats_All_View,
+    BatStats_By_Opp_Team_View,
+    BatStats_By_Opp_Team_Year_View,
+    BatStats_By_Team_View,
+    BatStats_By_Team_Year_View,
+    BatStats_By_Year_View,
+)
+from vigorish.views.batter_pitchfx_view import (
+    Batter_PitchFx_All_View,
+    Batter_PitchFx_By_Year_View,
+    Batter_PitchFx_For_Game_All_View,
+    Batter_PitchFx_For_Game_vs_LHP_as_LHB_View,
+    Batter_PitchFx_For_Game_vs_LHP_as_RHB_View,
+    Batter_PitchFx_For_Game_vs_RHP_as_LHB_View,
+    Batter_PitchFx_For_Game_vs_RHP_as_RHB_View,
+    Batter_PitchFx_vs_LHP_as_LHB_Career_View,
+    Batter_PitchFx_vs_LHP_as_RHB_Career_View,
+    Batter_PitchFx_vs_RHP_as_LHB_Career_View,
+    Batter_PitchFx_vs_RHP_as_RHB_Career_View,
+    Batter_PitchType_All_View,
+    Batter_PitchType_By_Year_View,
+    Batter_PitchType_For_Game_All_View,
+    Batter_PitchType_For_Game_vs_LHP_as_LHB_View,
+    Batter_PitchType_For_Game_vs_LHP_as_RHB_View,
+    Batter_PitchType_For_Game_vs_RHP_as_LHB_View,
+    Batter_PitchType_For_Game_vs_RHP_as_RHB_View,
+    Batter_PitchType_vs_LHP_as_LHB_Career_View,
+    Batter_PitchType_vs_LHP_as_RHB_Career_View,
+    Batter_PitchType_vs_RHP_as_LHB_Career_View,
+    Batter_PitchType_vs_RHP_as_RHB_Career_View,
+)
 from vigorish.views.date_pitch_app_view import Date_PitchApp_View
 from vigorish.views.game_pitch_app_view import Game_PitchApp_View
-from vigorish.views.pitch_app_pitchfx_view import (
-    PitchApp_PitchFx_All_View,
-    PitchApp_PitchFx_Left_View,
-    PitchApp_PitchFx_Right_View,
-    PitchApp_PitchType_All_View,
-    PitchApp_PitchType_Left_View,
-    PitchApp_PitchType_Right_View,
+from vigorish.views.pitch_stats_view import (
+    PitchStats_All_View,
+    PitchStats_By_Opp_Team_By_Year_View,
+    PitchStats_By_Opp_Team_View,
+    PitchStats_By_Team_By_Year_View,
+    PitchStats_By_Team_View,
+    PitchStats_By_Year_View,
+    PitchStats_RP_View,
+    PitchStats_SP_View,
+)
+from vigorish.views.pitcher_pitchfx_view import (
+    Pitcher_PitchFx_All_View,
+    Pitcher_PitchFx_By_Year_View,
+    Pitcher_PitchFx_For_Game_All_View,
+    Pitcher_PitchFx_For_Game_vs_LHB_View,
+    Pitcher_PitchFx_For_Game_vs_RHB_View,
+    Pitcher_PitchFx_vs_LHB_View,
+    Pitcher_PitchFx_vs_RHB_View,
+    Pitcher_PitchType_All_View,
+    Pitcher_PitchType_By_Year_View,
+    Pitcher_PitchType_For_Game_All_View,
+    Pitcher_PitchType_For_Game_vs_LHB_View,
+    Pitcher_PitchType_For_Game_vs_RHB_View,
+    Pitcher_PitchType_vs_LHB_View,
+    Pitcher_PitchType_vs_RHB_View,
 )
 from vigorish.views.pitchtype_pitchfx_view import (
     PitchType_All_View,
     PitchType_Left_View,
     PitchType_Right_View,
-)
-from vigorish.views.player_bat_stats_view import (
-    Player_BatStats_All_View,
-    Player_BatStats_By_Opp_Team_View,
-    Player_BatStats_By_Opp_Team_Year_View,
-    Player_BatStats_By_Team_View,
-    Player_BatStats_By_Team_Year_View,
-    Player_BatStats_By_Year_View,
-)
-from vigorish.views.player_pitch_stats_view import (
-    Player_PitchStats_All_View,
-    Player_PitchStats_By_Opp_Team_View,
-    Player_PitchStats_By_Opp_Team_Year_View,
-    Player_PitchStats_By_Team_View,
-    Player_PitchStats_By_Team_Year_View,
-    Player_PitchStats_By_Year_View,
-    Player_PitchStats_RP_View,
-    Player_PitchStats_SP_View,
-)
-from vigorish.views.player_pitchfx_view import (
-    Player_PitchFx_All_View,
-    Player_PitchFx_By_Year_View,
-    Player_PitchFx_Left_View,
-    Player_PitchFx_Right_View,
-    Player_PitchType_All_View,
-    Player_PitchType_By_Year_View,
-    Player_PitchType_Left_View,
-    Player_PitchType_Right_View,
 )
 from vigorish.views.season_date_view import Season_Date_View
 from vigorish.views.season_game_pitch_app_view import Season_Game_PitchApp_View
