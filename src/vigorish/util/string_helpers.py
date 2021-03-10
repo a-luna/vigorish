@@ -23,17 +23,17 @@ NEWLINE_REGEX = re.compile(r"\n")
 WORD_REGEX = re.compile(r"(?:\s|\b)?(?P<word>[\w\S]+)(?:\s|\B)?")
 
 
-def fuzzy_match(query, mapped_choices, score_cutoff=88):
+def fuzzy_match(query, mapped_choices, limit=10, score_cutoff=88):
     best_matches = [
         {"match": match, "score": score, "result": result}
-        for (match, score, result) in process.extract(query, mapped_choices, score_cutoff=score_cutoff)
+        for (match, score, result) in process.extract(query, mapped_choices, limit=limit, score_cutoff=score_cutoff)
     ]
     return (
         best_matches
         if best_matches
         else [
             {"match": match, "score": score, "result": result}
-            for (match, score, result) in process.extract(query, mapped_choices, limit=3)
+            for (match, score, result) in process.extract(query, mapped_choices, limit=limit)
         ]
     )
 
