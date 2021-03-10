@@ -511,6 +511,10 @@ class DateScrapeStatus(db.Base):
         return db_session.query(cls).get(int(date_str))
 
     @classmethod
+    def get_all_bbref_game_ids_for_date(cls, db_session, game_date):
+        return [game.bbref_game_id for game in cls.find_by_date(db_session, game_date).games]
+
+    @classmethod
     def get_all_bbref_scraped_dates_for_season(cls, db_session, season_id):
         return [
             date_status.game_date
