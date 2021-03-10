@@ -19,6 +19,7 @@ from vigorish.data.json_decoder import (
 )
 from vigorish.enums import DataSet, LocalFileTask, S3FileTask, VigFile
 from vigorish.util.dt_format_strings import DATE_ONLY, DATE_ONLY_TABLE_ID
+from vigorish.util.exceptions import S3BucketException
 from vigorish.util.numeric_helpers import ONE_KB
 from vigorish.util.result import Result
 
@@ -129,12 +130,13 @@ class FileHelper:
             return Result.Fail(f"Error: {repr(e)}")
 
     def check_s3_bucket(self):  # pragma: no cover
+        if not self.s3_resource:
+            raise S3BucketException()
         try:
             s3_bucket = self.s3_resource.Bucket(self.bucket_name) if self.bucket_name else None
             return Result.Ok(s3_bucket)
         except botocore.exceptions.ClientError as ex:
-            error_code = ex.response["Error"]["Code"]
-            return Result.Fail(f"{repr(ex)} (Error Code: {error_code})")
+            raise S3BucketException(f'{repr(ex)} (Error Code: {ex.response["Error"]["Code"]})')
 
     def check_file_stored_local(self, file_type, data_set):
         storage_setting = self.file_storage_dict[file_type][data_set]

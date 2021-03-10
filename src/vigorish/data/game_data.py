@@ -187,10 +187,18 @@ class GameData:
             return result
         mlb_id = result.value
         pfx = [at_bat["pitchfx"] for at_bat in self.valid_at_bats if at_bat["pitcher_id_mlb"] == mlb_id]
-        pfx = list(map(db.PitchFx.update_pfx_dict, deepcopy(flatten_list2d(pfx))))
+        return Result.Ok(self._prepare_pfx_for_api_response(flatten_list2d(pfx)))
+
+    def get_pfx_for_at_bat(self, at_bat_id):
+        if at_bat_id not in self.at_bat_map:
+            return None
+        pfx = self.at_bat_map[at_bat_id]["pitchfx"]
+        return self._prepare_pfx_for_api_response(pfx)
+
+    def _prepare_pfx_for_api_response(self, pfx):
+        pfx = list(map(db.PitchFx.update_pfx_dict, deepcopy(pfx)))
         pfx = list(map(self._update_pfx_attributes, pfx))
-        pfx = sorted(pfx, key=lambda x: x["time_pitch_thrown_utc"])
-        return Result.Ok(pfx)
+        return sorted(pfx, key=lambda x: x["time_pitch_thrown_utc"])
 
     def _update_pfx_attributes(self, pfx):
         pfx["is_sp"] = pfx["pitcher_id"] in self.starting_pitcher_mlb_ids

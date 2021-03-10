@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 import vigorish.database as db
 from vigorish.app import Vigorish
-from vigorish.enums import DefensePosition
-from vigorish.data.scraped_data import ScrapedData
 from vigorish.data.metrics import BatStatsMetrics, PitchStatsMetrics
+from vigorish.data.scraped_data import ScrapedData
+from vigorish.enums import DefensePosition
 
 
 class TeamData:

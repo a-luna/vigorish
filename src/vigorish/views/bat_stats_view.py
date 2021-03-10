@@ -6,9 +6,9 @@ from vigorish.data.metrics.bat_stats import BatStatsMetrics
 from vigorish.views.bat_stats_col_expressions import avg, bb_rate, iso, k_rate, obp, ops, slg
 
 
-class Player_BatStats_All_View(db.Base):
+class BatStats_All_View(db.Base):
     __table__ = create_view(
-        name="player_batstats_all",
+        name="batstats_all",
         selectable=select(
             [
                 db.BatStats.player_id.label("id"),
@@ -55,15 +55,15 @@ class Player_BatStats_All_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_for_career_for_player(cls, db_engine, player_id_mlb):
-        s = select([cls]).where(cls.mlb_id == player_id_mlb)
+    def get_bat_stats_for_career_for_player(cls, db_engine, mlb_id):
+        s = select([cls]).where(cls.mlb_id == mlb_id)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results)[0] if results else None
 
 
-class Player_BatStats_By_Year_View(db.Base):
+class BatStats_By_Year_View(db.Base):
     __table__ = create_view(
-        name="player_batstats_by_year",
+        name="batstats_by_year",
         selectable=select(
             [
                 db.BatStats.player_id.label("id"),
@@ -113,15 +113,15 @@ class Player_BatStats_By_Year_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_year_for_player(cls, db_engine, player_id_mlb):
-        s = select([cls]).where(cls.mlb_id == player_id_mlb)
+    def get_bat_stats_by_year_for_player(cls, db_engine, mlb_id):
+        s = select([cls]).where(cls.mlb_id == mlb_id)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
 
-class Player_BatStats_By_Team_View(db.Base):
+class BatStats_By_Team_View(db.Base):
     __table__ = create_view(
-        name="player_batstats_by_team",
+        name="batstats_by_team",
         selectable=select(
             [
                 db.BatStats.player_id.label("id"),
@@ -170,15 +170,15 @@ class Player_BatStats_By_Team_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_team_for_player(cls, db_engine, player_id_mlb):
-        s = select([cls]).where(cls.mlb_id == player_id_mlb)
+    def get_bat_stats_by_team_for_player(cls, db_engine, mlb_id):
+        s = select([cls]).where(cls.mlb_id == mlb_id)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
 
-class Player_BatStats_By_Team_Year_View(db.Base):
+class BatStats_By_Team_Year_View(db.Base):
     __table__ = create_view(
-        name="player_batstats_by_team_year",
+        name="batstats_by_team_year",
         selectable=select(
             [
                 db.BatStats.player_id.label("id"),
@@ -243,15 +243,15 @@ class Player_BatStats_By_Team_Year_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_team_by_year_for_player(cls, db_engine, player_id_mlb):
-        s = select([cls]).where(cls.mlb_id == player_id_mlb)
+    def get_bat_stats_by_team_by_year_for_player(cls, db_engine, mlb_id):
+        s = select([cls]).where(cls.mlb_id == mlb_id)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
 
-class Player_BatStats_By_Opp_Team_View(db.Base):
+class BatStats_By_Opp_Team_View(db.Base):
     __table__ = create_view(
-        name="player_batstats_by_opp_team",
+        name="batstats_by_opp_team",
         selectable=select(
             [
                 db.BatStats.player_id.label("id"),
@@ -300,15 +300,15 @@ class Player_BatStats_By_Opp_Team_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_opp_for_player(cls, db_engine, player_id_mlb):
-        s = select([cls]).where(cls.mlb_id == player_id_mlb)
+    def get_bat_stats_by_opp_for_player(cls, db_engine, mlb_id):
+        s = select([cls]).where(cls.mlb_id == mlb_id)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
 
-class Player_BatStats_By_Opp_Team_Year_View(db.Base):
+class BatStats_By_Opp_Team_Year_View(db.Base):
     __table__ = create_view(
-        name="player_batstats_by_opp_team_year",
+        name="batstats_by_opp_team_year",
         selectable=select(
             [
                 db.BatStats.player_id.label("id"),
@@ -361,7 +361,7 @@ class Player_BatStats_By_Opp_Team_Year_View(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_by_opp_by_year_for_player(cls, db_engine, player_id_mlb):
-        s = select([cls]).where(cls.mlb_id == player_id_mlb)
+    def get_bat_stats_by_opp_by_year_for_player(cls, db_engine, mlb_id):
+        s = select([cls]).where(cls.mlb_id == mlb_id)
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
