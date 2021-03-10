@@ -1,8 +1,12 @@
+from dataclasses import asdict
+
 from dacite.core import from_dict
 
 from vigorish.data.metrics import BatStatsMetrics, PitchFxMetricsCollection, PitchStatsMetrics
 from vigorish.data.player_data import PlayerData
 from vigorish.enums import DefensePosition
+
+from .conftest import BBREF_GAME_ID
 
 
 def test_bat_stats(vig_app):
@@ -629,7 +633,7 @@ def test_pitch_stats(vig_app):
 def test_pitchfx_metrics_career(vig_app):
     pfx_metrics_career_ALL_dict = {
         "id": 176,
-        "pitcher_id_mlb": 571882,
+        "mlb_id": 571882,
         "pitch_type": "ALL",
         "total_pitches": 17,
         "total_pa": 3,
@@ -691,7 +695,7 @@ def test_pitchfx_metrics_career(vig_app):
 
     pfx_metrics_career_CU_dict = {
         "id": 176,
-        "pitcher_id_mlb": 571882,
+        "mlb_id": 571882,
         "pitch_type": "CU",
         "total_pitches": 6,
         "total_pa": 0,
@@ -759,7 +763,7 @@ def test_pitchfx_metrics_career(vig_app):
 
     pfx_metrics_career_FF_dict = {
         "id": 176,
-        "pitcher_id_mlb": 571882,
+        "mlb_id": 571882,
         "pitch_type": "FF",
         "total_pitches": 6,
         "total_pa": 1,
@@ -827,7 +831,7 @@ def test_pitchfx_metrics_career(vig_app):
 
     pfx_metrics_career_CH_dict = {
         "id": 176,
-        "pitcher_id_mlb": 571882,
+        "mlb_id": 571882,
         "pitch_type": "CH",
         "total_pitches": 3,
         "total_pa": 1,
@@ -895,7 +899,7 @@ def test_pitchfx_metrics_career(vig_app):
 
     pfx_metrics_career_SL_dict = {
         "id": 176,
-        "pitcher_id_mlb": 571882,
+        "mlb_id": 571882,
         "pitch_type": "SL",
         "total_pitches": 2,
         "total_pa": 1,
@@ -971,7 +975,31 @@ def test_pitchfx_metrics_career(vig_app):
         pfx_metrics_career_ALL_dict, pfx_metrics_career_by_pitchtype
     )
     player_data = PlayerData(vig_app, 571882)
-    assert player_data.pitchfx_metrics_vs_all_for_career == pfx_metrics_vs_all_career
+    left = asdict(player_data.pfx_pitching_metrics_for_career)
+    right = asdict(pfx_metrics_vs_all_career)
+    assert left == right
+    assert player_data.pfx_pitching_metrics_for_career == pfx_metrics_vs_all_career
+    assert player_data.pfx_pitching_metrics_vs_rhb_for_career
+    assert player_data.pfx_pitching_metrics_vs_lhb_for_career
+    assert player_data.pfx_pitching_metrics_by_year
+    assert player_data.get_pfx_pitching_metrics_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_pitching_metrics_vs_rhb_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_pitching_metrics_vs_lhb_for_game(BBREF_GAME_ID)
+
+    player_data = PlayerData(vig_app, 600303)
+    assert player_data.pfx_batting_metrics_for_career
+    assert player_data.pfx_batting_metrics_vs_rhp_as_lhb_for_career
+    assert player_data.pfx_batting_metrics_vs_lhp_as_lhb_for_career
+    assert player_data.pfx_batting_metrics_by_year
+    assert player_data.get_pfx_batting_metrics_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_batting_metrics_vs_rhp_as_lhb_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_batting_metrics_vs_lhp_as_lhb_for_game(BBREF_GAME_ID)
+
+    player_data = PlayerData(vig_app, 545361)
+    assert player_data.pfx_batting_metrics_vs_rhp_as_rhb_for_career
+    assert player_data.pfx_batting_metrics_vs_lhp_as_rhb_for_career
+    assert player_data.get_pfx_batting_metrics_vs_rhp_as_rhb_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_batting_metrics_vs_lhp_as_rhb_for_game(BBREF_GAME_ID)
 
 
 #     (pitch_mix_total_bat_r, pitch_mix_detail_bat_r) = pitch_mix["vs_rhb"]
