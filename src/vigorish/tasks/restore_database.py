@@ -79,8 +79,8 @@ class RestoreDatabaseTask(Task):
             db.DateScrapeStatusCsvRow: self.update_date_status_relationships,
             db.GameScrapeStatusCsvRow: self.update_game_status_relationships,
             db.PitchAppScrapeStatusCsvRow: self.update_pitch_app_status_relationships,
-            db.BatStatsCsvRow: self.update_player_stats_relationships,
-            db.PitchStatsCsvRow: self.update_player_stats_relationships,
+            db.BatStatsCsvRow: self.update_bat_stats_relationships,
+            db.PitchStatsCsvRow: self.update_pitch_stats_relationships,
             db.PitchFxCsvRow: self.update_pitchfx_relationships,
         }
 
@@ -127,6 +127,14 @@ class RestoreDatabaseTask(Task):
         player_stats_dict["date_id"] = get_date_status_id_from_game_date(game_date)
         player_stats_dict["game_status_id"] = self.game_id_map[player_stats_dict["bbref_game_id"]]
         return player_stats_dict
+
+    def update_bat_stats_relationships(self, dataclass):
+        return self.update_player_stats_relationships(dataclass)
+
+    def update_pitch_stats_relationships(self, dataclass):
+        pitch_stats_dict = self.update_player_stats_relationships(dataclass)
+        pitch_stats_dict["pitch_app_db_id"] = self.pitch_app_id_map[pitch_stats_dict["pitch_app_id"]]
+        return pitch_stats_dict
 
     def update_pitchfx_relationships(self, dataclass):
         pfx_dict = asdict(dataclass)

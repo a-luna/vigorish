@@ -45,10 +45,12 @@ class PitchStats(db.Base):
     wpa_pitch = Column(Float)
     avg_lvg_index = Column(Float)
     re24_pitch = Column(Float)
+    pitch_app_id = Column(String)
 
     player_id = Column(Integer, ForeignKey("player.id"), index=True)
     player_team_id = Column(Integer, ForeignKey("team.id"))
     opponent_team_id = Column(Integer, ForeignKey("team.id"))
+    pitch_app_db_id = Column(Integer, ForeignKey("scrape_status_pitch_app.id"), index=True)
     game_status_id = Column(Integer, ForeignKey("scrape_status_game.id"))
     date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
@@ -65,6 +67,7 @@ class PitchStats(db.Base):
         bbref_data = pitch_stats_dict.pop("bbref_data", {})
         bbref_data["bbref_game_id"] = bbref_game_id
         bbref_data["player_id_mlb"] = pitch_stats_dict["pitcher_id_mlb"]
+        bbref_data["pitch_app_id"] = f'{bbref_game_id}_{pitch_stats_dict["pitcher_id_mlb"]}'
         bbref_data["player_id_bbref"] = pitch_stats_dict["pitcher_id_bbref"]
         bbref_data["player_team_id_bbref"] = pitch_stats_dict["pitcher_team_id_bbref"]
         bbref_data["opponent_team_id_bbref"] = pitch_stats_dict["opponent_team_id_bbref"]
@@ -128,3 +131,4 @@ class PitchStatsCsvRow:
     wpa_pitch: float = 0.0
     avg_lvg_index: float = 0.0
     re24_pitch: float = 0.0
+    pitch_app_id: str = None
