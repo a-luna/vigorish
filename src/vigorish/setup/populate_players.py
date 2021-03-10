@@ -6,7 +6,7 @@ from dataclass_csv import accept_whitespaces, DataclassReader, dateformat
 from tqdm import tqdm
 
 import vigorish.database as db
-from vigorish.tasks import UpdatePlayerIdMapTask, UpdatePlayerTeamMapTask
+import vigorish.tasks as tasks
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.result import Result
 
@@ -52,7 +52,7 @@ def populate_players(app, csv_folder):
     if result.failure:
         return result
     app.db_session.commit()
-    result = import_people_csv(app.db_session, csv_folder)
+    result = import_people_csv(app, csv_folder)
     if result.failure:
         return result
     app.db_session.commit()
@@ -65,7 +65,7 @@ def populate_players(app, csv_folder):
 
 def import_id_map_csv(app, csv_folder):
     try:
-        id_map_task = UpdatePlayerIdMapTask(app, csv_folder.joinpath(PLAYER_ID_MAP_CSV))
+        id_map_task = tasks.UpdatePlayerIdMapTask(app, csv_folder.joinpath(PLAYER_ID_MAP_CSV))
         player_id_map = id_map_task.read_bbref_player_id_map_from_file()
         with tqdm(
             total=len(player_id_map),
@@ -93,10 +93,11 @@ def import_id_map_csv(app, csv_folder):
         return Result.Fail(error)
 
 
-def import_people_csv(db_session, csv_folder):
+def import_people_csv(app, csv_folder):
     player_csv_file = csv_folder.joinpath(PEOPLE_CSV)
     csv_text = player_csv_file.read_text()
     total_rows = len([row for row in csv_text.split("\n") if row])
+    earliest_year = min(s.year for s in db.Season.get_all_regular_seasons(app.db_session))
     try:
         with open(player_csv_file) as player_csv:
             reader = DataclassReader(player_csv, PlayerCsvRow)
@@ -113,7 +114,10 @@ def import_people_csv(db_session, csv_folder):
                     if not (row.birthYear or row.birthMonth or row.birthDay or row.debut):
                         pbar.update()
                         continue
-                    player_id = db.PlayerId.find_by_bbref_id(db_session, row.bbrefID)
+                    if row.debut and row.debut.year < (earliest_year - 25):
+                        pbar.update()
+                        continue
+                    player_id = db.PlayerId.find_by_bbref_id(app.db_session, row.bbrefID)
                     if not player_id:
                         pbar.update()
                         continue
@@ -136,20 +140,20 @@ def import_people_csv(db_session, csv_folder):
                         birth_city=row.birthCity,
                         missing_mlb_id=False,
                     )
-                    db_session.add(p)
-                    db_session.commit()
+                    app.db_session.add(p)
+                    app.db_session.commit()
                     player_id.db_player_id = p.id
                     pbar.update()
         return Result.Ok()
     except Exception as e:
         error = f"Error: {repr(e)}"
-        db_session.rollback()
+        app.db_session.rollback()
         return Result.Fail(error)
 
 
 def import_team_map_csv(app, csv_folder):
     try:
-        team_map_task = UpdatePlayerTeamMapTask(app, csv_folder.joinpath(PLAYER_TEAM_MAP_CSV))
+        team_map_task = tasks.UpdatePlayerTeamMapTask(app, csv_folder.joinpath(PLAYER_TEAM_MAP_CSV))
         player_team_map = team_map_task.read_bbref_player_team_map_from_file()
         with tqdm(
             total=len(player_team_map),
@@ -162,6 +166,9 @@ def import_team_map_csv(app, csv_folder):
         ) as pbar:
             for team_map in player_team_map:
                 player = db.Player.find_by_bbref_id(app.db_session, team_map.player_ID)
+                if not player:
+                    pbar.update()
+                    continue
                 team = db.Team.find_by_team_id_and_year(app.db_session, team_map.team_ID, int(team_map.year_ID))
                 season = db.Season.find_by_year(app.db_session, int(team_map.year_ID))
                 player_team = db.Assoc_Player_Team(
