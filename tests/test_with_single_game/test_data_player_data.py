@@ -979,9 +979,17 @@ def test_pitchfx_metrics_career(vig_app):
     right = asdict(pfx_metrics_vs_all_career)
     assert left == right
     assert player_data.pfx_pitching_metrics_for_career == pfx_metrics_vs_all_career
+    assert player_data.percentiles_for_pitch_types_for_career
     assert player_data.pfx_pitching_metrics_vs_rhb_for_career
+    assert player_data.percentiles_for_pitch_types_vs_rhb_for_career
     assert player_data.pfx_pitching_metrics_vs_lhb_for_career
+    assert player_data.percentiles_for_pitch_types_vs_lhb_for_career
     assert player_data.pfx_pitching_metrics_by_year
+    assert player_data.percentiles_for_pitch_types_by_year
+    assert player_data.pfx_pitching_metrics_vs_rhb_by_year
+    assert player_data.percentiles_for_pitch_types_vs_rhb_by_year
+    assert player_data.pfx_pitching_metrics_vs_lhb_by_year
+    assert player_data.percentiles_for_pitch_types_vs_lhb_by_year
     assert player_data.get_pfx_pitching_metrics_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_pitching_metrics_vs_rhb_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_pitching_metrics_vs_lhb_for_game(BBREF_GAME_ID)
