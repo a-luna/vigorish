@@ -68,6 +68,7 @@ def test_team_data(vig_app):
         "iso": 0.421,
         "bb_rate": 0.133,
         "k_rate": 0.133,
+        "contact_rate": 0.842,
         "plate_appearances": 45,
         "at_bats": 38,
         "hits": 13,
@@ -91,6 +92,10 @@ def test_team_data(vig_app):
         "wpa_bat_pos": 0.606,
         "wpa_bat_neg": -0.128,
         "re24_bat": 5.2,
+        "bbref_id": "",
+        "bat_order": 0,
+        "def_position": DefensePosition.NONE,
+        "is_starter": False,
     }
 
     home_pitch_stats_dict = {
@@ -153,6 +158,7 @@ def test_team_data(vig_app):
         "iso": 0.265,
         "bb_rate": 0.081,
         "k_rate": 0.216,
+        "contact_rate": 0.765,
         "plate_appearances": 37,
         "at_bats": 34,
         "hits": 8,
@@ -176,6 +182,10 @@ def test_team_data(vig_app):
         "wpa_bat_pos": 0.17,
         "wpa_bat_neg": -0.192,
         "re24_bat": 0.3,
+        "bbref_id": "",
+        "bat_order": 0,
+        "def_position": DefensePosition.NONE,
+        "is_starter": False,
     }
 
     away_team_data = TeamData(vig_app, "LAA", 2019)
@@ -247,9 +257,11 @@ def test_team_data_by_player(vig_app):
         "at_bats": 4,
         "avg": 0.25,
         "bases_on_balls": 0,
+        "bat_order": 0,
         "bb_rate": 0.0,
         "bbref_id": "bourju01",
         "caught_stealing": 0,
+        "def_position": DefensePosition.NONE,
         "doubles": 1,
         "gdp": 0,
         "hit_by_pitch": 0,
@@ -257,7 +269,9 @@ def test_team_data_by_player(vig_app):
         "homeruns": 0,
         "intentional_bb": 0,
         "iso": 0.25,
+        "is_starter": False,
         "k_rate": 0.0,
+        "contact_rate": 1.0,
         "mlb_id": 571506,
         "obp": 0.2,
         "opponent_team_id_bbref": "",
@@ -348,6 +362,7 @@ def test_team_data_by_player(vig_app):
         "is_starter": False,
         "iso": 0.0,
         "k_rate": 0.0,
+        "contact_rate": 1.0,
         "mlb_id": 519299,
         "obp": 0.4,
         "opponent_team_id_bbref": "",
@@ -382,6 +397,9 @@ def test_team_data_by_player(vig_app):
 
     away_team_player_bat_stats = away_team_data.bat_stats_by_player
     assert len(away_team_player_bat_stats) == 9
+    left = asdict(away_team_player_bat_stats[0])
+    right = away_bat_stats_dict
+    assert left == right
     assert away_team_player_bat_stats[0] == from_dict(data_class=BatStatsMetrics, data=away_bat_stats_dict)
 
     home_team_player_pitch_stats = home_team_data.pitch_stats_by_player

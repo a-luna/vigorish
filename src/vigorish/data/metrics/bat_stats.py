@@ -30,6 +30,7 @@ class BatStatsMetrics:
     iso: float = field(repr=False, default=0.0)
     bb_rate: float = field(repr=False, default=0.0)
     k_rate: float = field(repr=False, default=0.0)
+    contact_rate: float = field(repr=False, default=0.0)
     plate_appearances: int = 0
     at_bats: int = field(repr=False, default=0)
     hits: int = field(repr=False, default=0)
