@@ -6,7 +6,12 @@ import vigorish.database as db
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
-from vigorish.data.metrics import BatStatsMetrics, PitchFxMetrics, PitchFxMetricsCollection, PitchStatsMetrics
+from vigorish.data.metrics import (
+    BatStatsMetrics,
+    PitchFxMetrics,
+    PitchFxMetricsCollection,
+    PitchStatsMetrics,
+)
 from vigorish.data.name_search import PlayerNameSearch
 from vigorish.enums import DataSet, DefensePosition, VigFile
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
