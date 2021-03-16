@@ -41,3 +41,8 @@ k_rate_numerator = func.sum(db.BatStats.strikeouts)
 k_rate_denominator = func.sum(db.BatStats.plate_appearances)
 k_rate_ = k_rate_numerator / cast(k_rate_denominator, Float)
 k_rate = case([(k_rate_denominator > 0, k_rate_)], else_=0.0).label("k_rate")
+
+contact_rate_numerator = func.sum(db.BatStats.at_bats) - func.sum(db.BatStats.strikeouts)
+contact_rate_denominator = func.sum(db.BatStats.at_bats)
+contact_rate_ = contact_rate_numerator / cast(contact_rate_denominator, Float)
+contact_rate = case([(contact_rate_denominator > 0, contact_rate_)], else_=0.0).label("contact_rate")

@@ -25,6 +25,7 @@ def test_bat_stats(vig_app):
         "iso": 0.8,
         "bb_rate": 0.0,
         "k_rate": 0.0,
+        "contact_rate": 1.0,
         "plate_appearances": 5,
         "at_bats": 5,
         "hits": 4,
@@ -65,6 +66,7 @@ def test_bat_stats(vig_app):
         "iso": 0.8,
         "bb_rate": 0.0,
         "k_rate": 0.0,
+        "contact_rate": 1.0,
         "plate_appearances": 5,
         "at_bats": 5,
         "hits": 4,
@@ -108,6 +110,7 @@ def test_bat_stats(vig_app):
         "is_starter": False,
         "iso": 0.8,
         "k_rate": 0.0,
+        "contact_rate": 1.0,
         "mlb_id": 545361,
         "obp": 0.8,
         "opponent_team_id_bbref": "",
@@ -151,6 +154,7 @@ def test_bat_stats(vig_app):
         "is_starter": False,
         "iso": 0.8,
         "k_rate": 0.0,
+        "contact_rate": 1.0,
         "mlb_id": 545361,
         "obp": 0.8,
         "opponent_team_id_bbref": "",
@@ -194,6 +198,7 @@ def test_bat_stats(vig_app):
         "is_starter": False,
         "iso": 0.8,
         "k_rate": 0.0,
+        "contact_rate": 1.0,
         "mlb_id": 545361,
         "obp": 0.8,
         "opponent_team_id_bbref": "TOR",
@@ -237,6 +242,7 @@ def test_bat_stats(vig_app):
         "is_starter": False,
         "iso": 0.8,
         "k_rate": 0.0,
+        "contact_rate": 1.0,
         "mlb_id": 545361,
         "obp": 0.8,
         "opponent_team_id_bbref": "TOR",
@@ -664,7 +670,7 @@ def test_pitchfx_metrics_career(vig_app):
         "swing_rate": 0.35294117647058826,
         "o_contact_rate": 0.5,
         "z_contact_rate": 0.75,
-        "contact_rate": 0.23529411764705882,
+        "contact_rate": 0.66666666666666667,
         "total_swings": 6,
         "total_swings_made_contact": 4,
         "total_called_strikes": 5,
@@ -731,7 +737,7 @@ def test_pitchfx_metrics_career(vig_app):
         "swing_rate": 0.16666666666666666,
         "o_contact_rate": 1.0,
         "z_contact_rate": 0.0,
-        "contact_rate": 0.16666666666666666,
+        "contact_rate": 1.0,
         "custom_score": 0.8333333333333333,
         "money_pitch": False,
         "total_swings": 1,
@@ -799,7 +805,7 @@ def test_pitchfx_metrics_career(vig_app):
         "swing_rate": 0.3333333333333333,
         "o_contact_rate": 0.0,
         "z_contact_rate": 1.0,
-        "contact_rate": 0.3333333333333333,
+        "contact_rate": 1.0,
         "custom_score": 0.5,
         "money_pitch": False,
         "total_swings": 2,
@@ -867,8 +873,8 @@ def test_pitchfx_metrics_career(vig_app):
         "swing_rate": 0.6666666666666666,
         "o_contact_rate": 0.0,
         "z_contact_rate": 0.5,
-        "contact_rate": 0.3333333333333333,
-        "custom_score": 1.3333333333333333,
+        "contact_rate": 0.5,
+        "custom_score": 1.5,
         "money_pitch": False,
         "total_swings": 2,
         "total_swings_made_contact": 1,
@@ -936,7 +942,7 @@ def test_pitchfx_metrics_career(vig_app):
         "o_contact_rate": 0.0,
         "z_contact_rate": 0.0,
         "contact_rate": 0.0,
-        "custom_score": 1.0,
+        "custom_score": 1.5,
         "money_pitch": False,
         "total_swings": 1,
         "total_swings_made_contact": 0,
@@ -979,9 +985,17 @@ def test_pitchfx_metrics_career(vig_app):
     right = asdict(pfx_metrics_vs_all_career)
     assert left == right
     assert player_data.pfx_pitching_metrics_for_career == pfx_metrics_vs_all_career
+    assert player_data.percentiles_for_pitch_types_for_career
     assert player_data.pfx_pitching_metrics_vs_rhb_for_career
+    assert player_data.percentiles_for_pitch_types_vs_rhb_for_career
     assert player_data.pfx_pitching_metrics_vs_lhb_for_career
+    assert player_data.percentiles_for_pitch_types_vs_lhb_for_career
     assert player_data.pfx_pitching_metrics_by_year
+    assert player_data.percentiles_for_pitch_types_by_year
+    assert player_data.pfx_pitching_metrics_vs_rhb_by_year
+    assert player_data.percentiles_for_pitch_types_vs_rhb_by_year
+    assert player_data.pfx_pitching_metrics_vs_lhb_by_year
+    assert player_data.percentiles_for_pitch_types_vs_lhb_by_year
     assert player_data.get_pfx_pitching_metrics_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_pitching_metrics_vs_rhb_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_pitching_metrics_vs_lhb_for_game(BBREF_GAME_ID)

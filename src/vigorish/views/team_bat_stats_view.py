@@ -3,7 +3,16 @@ from sqlalchemy_utils.view import create_view
 
 import vigorish.database as db
 from vigorish.data.metrics.bat_stats import BatStatsMetrics
-from vigorish.views.bat_stats_col_expressions import avg, bb_rate, iso, k_rate, obp, ops, slg
+from vigorish.views.bat_stats_col_expressions import (
+    avg,
+    bb_rate,
+    contact_rate,
+    iso,
+    k_rate,
+    obp,
+    ops,
+    slg,
+)
 
 
 class Team_BatStats_By_Year_View(db.Base):
@@ -22,6 +31,7 @@ class Team_BatStats_By_Year_View(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -93,6 +103,7 @@ class Team_BatStats_By_BatOrder_By_Year(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -164,6 +175,7 @@ class Team_BatStats_By_DefPosition_By_Year(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -235,6 +247,7 @@ class Team_BatStats_For_Starters_By_Year(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -306,6 +319,7 @@ class Team_BatStats_For_Subs_By_Year(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -378,6 +392,7 @@ class Team_BatStats_By_Player_By_Year_View(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -440,6 +455,7 @@ class Team_BatStats_By_BatOrder_By_Player_By_Year(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -504,6 +520,7 @@ class Team_BatStats_By_DefPosition_By_Player_By_Year(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -568,6 +585,7 @@ class Team_BatStats_For_Starters_By_Player_By_Year(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),
@@ -631,6 +649,7 @@ class Team_BatStats_For_Subs_By_Player_By_Year(db.Base):
                 iso,
                 bb_rate,
                 k_rate,
+                contact_rate,
                 func.sum(db.BatStats.plate_appearances).label("plate_appearances"),
                 func.sum(db.BatStats.at_bats).label("at_bats"),
                 func.sum(db.BatStats.hits).label("hits"),

@@ -114,7 +114,7 @@ class Batter_PitchFx_All_View(db.Base):
     @classmethod
     def get_pfx_metrics_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_All_View(db.Base):
@@ -206,7 +206,7 @@ class Batter_PitchType_All_View(db.Base):
     @classmethod
     def get_pfx_metrics_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_vs_RHP_as_RHB_Career_View(db.Base):
@@ -295,7 +295,7 @@ class Batter_PitchFx_vs_RHP_as_RHB_Career_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_rhp_as_rhb_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_vs_RHP_as_RHB_Career_View(db.Base):
@@ -385,7 +385,7 @@ class Batter_PitchType_vs_RHP_as_RHB_Career_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_rhp_as_rhb_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_vs_RHP_as_LHB_Career_View(db.Base):
@@ -474,7 +474,7 @@ class Batter_PitchFx_vs_RHP_as_LHB_Career_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_rhp_as_lhb_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_vs_RHP_as_LHB_Career_View(db.Base):
@@ -564,7 +564,7 @@ class Batter_PitchType_vs_RHP_as_LHB_Career_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_rhp_as_lhb_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_vs_LHP_as_LHB_Career_View(db.Base):
@@ -653,7 +653,7 @@ class Batter_PitchFx_vs_LHP_as_LHB_Career_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_lhp_as_lhb_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_vs_LHP_as_LHB_Career_View(db.Base):
@@ -743,7 +743,7 @@ class Batter_PitchType_vs_LHP_as_LHB_Career_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_lhp_as_lhb_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_vs_LHP_as_RHB_Career_View(db.Base):
@@ -832,7 +832,7 @@ class Batter_PitchFx_vs_LHP_as_RHB_Career_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_vs_LHP_as_RHB_Career_View(db.Base):
@@ -922,7 +922,7 @@ class Batter_PitchType_vs_LHP_as_RHB_Career_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_By_Year_View(db.Base):
@@ -1012,7 +1012,7 @@ class Batter_PitchFx_By_Year_View(db.Base):
     def get_pfx_metrics_by_year_for_batter(cls, db_engine, mlb_id, year):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_By_Year_View(db.Base):
@@ -1107,7 +1107,7 @@ class Batter_PitchType_By_Year_View(db.Base):
     def get_pfx_metrics_by_year_for_batter(cls, db_engine, mlb_id, year):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_For_Game_All_View(db.Base):
@@ -1203,7 +1203,7 @@ class Batter_PitchFx_For_Game_All_View(db.Base):
     def get_pfx_metrics_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_For_Game_All_View(db.Base):
@@ -1300,7 +1300,7 @@ class Batter_PitchType_For_Game_All_View(db.Base):
     def get_pfx_metrics_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_For_Game_vs_RHP_as_RHB_View(db.Base):
@@ -1398,7 +1398,7 @@ class Batter_PitchFx_For_Game_vs_RHP_as_RHB_View(db.Base):
     def get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_For_Game_vs_RHP_as_RHB_View(db.Base):
@@ -1497,7 +1497,7 @@ class Batter_PitchType_For_Game_vs_RHP_as_RHB_View(db.Base):
     def get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_For_Game_vs_RHP_as_LHB_View(db.Base):
@@ -1595,7 +1595,7 @@ class Batter_PitchFx_For_Game_vs_RHP_as_LHB_View(db.Base):
     def get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_For_Game_vs_RHP_as_LHB_View(db.Base):
@@ -1694,7 +1694,7 @@ class Batter_PitchType_For_Game_vs_RHP_as_LHB_View(db.Base):
     def get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_For_Game_vs_LHP_as_RHB_View(db.Base):
@@ -1792,7 +1792,7 @@ class Batter_PitchFx_For_Game_vs_LHP_as_RHB_View(db.Base):
     def get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_For_Game_vs_LHP_as_RHB_View(db.Base):
@@ -1891,7 +1891,7 @@ class Batter_PitchType_For_Game_vs_LHP_as_RHB_View(db.Base):
     def get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Batter_PitchFx_For_Game_vs_LHP_as_LHB_View(db.Base):
@@ -1989,7 +1989,7 @@ class Batter_PitchFx_For_Game_vs_LHP_as_LHB_View(db.Base):
     def get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Batter_PitchType_For_Game_vs_LHP_as_LHB_View(db.Base):
@@ -2088,4 +2088,4 @@ class Batter_PitchType_For_Game_vs_LHP_as_LHB_View(db.Base):
     def get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []

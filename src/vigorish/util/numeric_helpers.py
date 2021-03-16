@@ -46,3 +46,11 @@ def get_standard_deviation(samples):
     mean = sum(samples) / len(samples)
     summed_squares = sum(math.pow((sample - mean), 2) for sample in samples)
     return math.sqrt(summed_squares / (len(samples) - 1))
+
+
+def calculate_percentile(value_name, result_dicts, check_value, decimal_precision):
+    all_values = {round(row_dict[value_name], decimal_precision) for row_dict in result_dicts}
+    value_rank_dict = {val: rank for rank, val in enumerate(sorted(all_values, reverse=True), start=1)}
+    pfx_rank = value_rank_dict.get(round(check_value, decimal_precision))
+    percentile = pfx_rank / float(len(all_values) + 1)
+    return round(percentile, 3)

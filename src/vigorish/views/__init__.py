@@ -44,19 +44,23 @@ from vigorish.views.pitch_stats_view import (
     PitchStats_SP_View,
 )
 from vigorish.views.pitcher_pitchfx_view import (
+    Pitcher_PitchFx_All_By_Year_View,
     Pitcher_PitchFx_All_View,
-    Pitcher_PitchFx_By_Year_View,
     Pitcher_PitchFx_For_Game_All_View,
     Pitcher_PitchFx_For_Game_vs_LHB_View,
     Pitcher_PitchFx_For_Game_vs_RHB_View,
+    Pitcher_PitchFx_vs_LHB_By_Year_View,
     Pitcher_PitchFx_vs_LHB_View,
+    Pitcher_PitchFx_vs_RHB_By_Year_View,
     Pitcher_PitchFx_vs_RHB_View,
+    Pitcher_PitchType_All_By_Year_View,
     Pitcher_PitchType_All_View,
-    Pitcher_PitchType_By_Year_View,
     Pitcher_PitchType_For_Game_All_View,
     Pitcher_PitchType_For_Game_vs_LHB_View,
     Pitcher_PitchType_For_Game_vs_RHB_View,
+    Pitcher_PitchType_vs_LHB_By_Year_View,
     Pitcher_PitchType_vs_LHB_View,
+    Pitcher_PitchType_vs_RHB_By_Year_View,
     Pitcher_PitchType_vs_RHB_View,
 )
 from vigorish.views.pitchtype_pitchfx_view import (
