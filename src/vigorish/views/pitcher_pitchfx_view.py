@@ -116,7 +116,7 @@ class Pitcher_PitchFx_All_View(db.Base):
     @classmethod
     def get_pfx_metrics_for_career_for_pitcher(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_All_View(db.Base):
@@ -209,24 +209,14 @@ class Pitcher_PitchType_All_View(db.Base):
     @classmethod
     def get_pfx_metrics_for_career_for_pitcher(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
     @classmethod
     def get_percentiles_for_pitch_type(cls, db_engine, pfx):
         percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
         s = select(percentile_values).where(cls.pitch_type == str(pfx.pitch_type))
-        avg_speed_perc = calculate_percentile(db_engine, "avg_speed", s, pfx.avg_speed)
-        ops_perc = calculate_percentile(db_engine, "ops", s, pfx.ops, decimal_precision=3)
-        whiff_rate_perc = calculate_percentile(db_engine, "whiff_rate", s, pfx.whiff_rate, decimal_precision=1)
-        zone_rate_perc = calculate_percentile(db_engine, "zone_rate", s, pfx.zone_rate, decimal_precision=1)
-        contact_rate_perc = calculate_percentile(db_engine, "contact_rate", s, pfx.contact_rate, decimal_precision=1)
-        return {
-            "avg_speed": avg_speed_perc,
-            "ops": ops_perc,
-            "whiff_rate": whiff_rate_perc,
-            "zone_rate": zone_rate_perc,
-            "contact_rate": contact_rate_perc,
-        }
+        results = [dict(row) for row in db_engine.execute(s).fetchall()]
+        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
 
 
 class Pitcher_PitchFx_vs_RHB_View(db.Base):
@@ -312,7 +302,7 @@ class Pitcher_PitchFx_vs_RHB_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_rhb_for_pitcher(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_vs_RHB_View(db.Base):
@@ -405,24 +395,14 @@ class Pitcher_PitchType_vs_RHB_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_rhb_for_pitcher(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
     @classmethod
     def get_percentiles_for_pitch_type_vs_rhb(cls, db_engine, pfx):
         percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
         s = select(percentile_values).where(cls.pitch_type == str(pfx.pitch_type))
-        avg_speed_perc = calculate_percentile(db_engine, "avg_speed", s, pfx.avg_speed)
-        ops_perc = calculate_percentile(db_engine, "ops", s, pfx.ops, decimal_precision=3)
-        whiff_rate_perc = calculate_percentile(db_engine, "whiff_rate", s, pfx.whiff_rate, decimal_precision=1)
-        zone_rate_perc = calculate_percentile(db_engine, "zone_rate", s, pfx.zone_rate, decimal_precision=1)
-        contact_rate_perc = calculate_percentile(db_engine, "contact_rate", s, pfx.contact_rate, decimal_precision=1)
-        return {
-            "avg_speed": avg_speed_perc,
-            "ops": ops_perc,
-            "whiff_rate": whiff_rate_perc,
-            "zone_rate": zone_rate_perc,
-            "contact_rate": contact_rate_perc,
-        }
+        results = [dict(row) for row in db_engine.execute(s).fetchall()]
+        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
 
 
 class Pitcher_PitchFx_vs_LHB_View(db.Base):
@@ -508,7 +488,7 @@ class Pitcher_PitchFx_vs_LHB_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_lhb_for_pitcher(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_vs_LHB_View(db.Base):
@@ -601,24 +581,14 @@ class Pitcher_PitchType_vs_LHB_View(db.Base):
     @classmethod
     def get_pfx_metrics_vs_lhb_for_pitcher(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
     @classmethod
     def get_percentiles_for_pitch_type_vs_lhb(cls, db_engine, pfx):
         percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
         s = select(percentile_values).where(cls.pitch_type == str(pfx.pitch_type))
-        avg_speed_perc = calculate_percentile(db_engine, "avg_speed", s, pfx.avg_speed)
-        ops_perc = calculate_percentile(db_engine, "ops", s, pfx.ops, decimal_precision=3)
-        whiff_rate_perc = calculate_percentile(db_engine, "whiff_rate", s, pfx.whiff_rate, decimal_precision=1)
-        zone_rate_perc = calculate_percentile(db_engine, "zone_rate", s, pfx.zone_rate, decimal_precision=1)
-        contact_rate_perc = calculate_percentile(db_engine, "contact_rate", s, pfx.contact_rate, decimal_precision=1)
-        return {
-            "avg_speed": avg_speed_perc,
-            "ops": ops_perc,
-            "whiff_rate": whiff_rate_perc,
-            "zone_rate": zone_rate_perc,
-            "contact_rate": contact_rate_perc,
-        }
+        results = [dict(row) for row in db_engine.execute(s).fetchall()]
+        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
 
 
 class Pitcher_PitchFx_All_By_Year_View(db.Base):
@@ -708,7 +678,7 @@ class Pitcher_PitchFx_All_By_Year_View(db.Base):
     def get_pfx_metrics_by_year_for_pitcher(cls, db_engine, mlb_id, year):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_All_By_Year_View(db.Base):
@@ -805,24 +775,14 @@ class Pitcher_PitchType_All_By_Year_View(db.Base):
     def get_pfx_metrics_by_year_for_pitcher(cls, db_engine, mlb_id, year):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
     @classmethod
     def get_percentiles_for_pitch_type_for_year(cls, db_engine, year, pfx):
         percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
         s = select(percentile_values).where(and_(cls.year == year, cls.pitch_type == str(pfx.pitch_type)))
-        avg_speed_perc = calculate_percentile(db_engine, "avg_speed", s, pfx.avg_speed)
-        ops_perc = calculate_percentile(db_engine, "ops", s, pfx.ops, decimal_precision=3)
-        whiff_rate_perc = calculate_percentile(db_engine, "whiff_rate", s, pfx.whiff_rate, decimal_precision=1)
-        zone_rate_perc = calculate_percentile(db_engine, "zone_rate", s, pfx.zone_rate, decimal_precision=1)
-        contact_rate_perc = calculate_percentile(db_engine, "contact_rate", s, pfx.contact_rate, decimal_precision=1)
-        return {
-            "avg_speed": avg_speed_perc,
-            "ops": ops_perc,
-            "whiff_rate": whiff_rate_perc,
-            "zone_rate": zone_rate_perc,
-            "contact_rate": contact_rate_perc,
-        }
+        results = [dict(row) for row in db_engine.execute(s).fetchall()]
+        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
 
 
 class Pitcher_PitchFx_vs_RHB_By_Year_View(db.Base):
@@ -912,7 +872,7 @@ class Pitcher_PitchFx_vs_RHB_By_Year_View(db.Base):
     def get_pfx_metrics_by_year_for_pitcher(cls, db_engine, mlb_id, year):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_vs_RHB_By_Year_View(db.Base):
@@ -1009,24 +969,14 @@ class Pitcher_PitchType_vs_RHB_By_Year_View(db.Base):
     def get_pfx_metrics_by_year_for_pitcher(cls, db_engine, mlb_id, year):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
     @classmethod
     def get_percentiles_for_pitch_type_for_year_vs_rhb(cls, db_engine, year, pfx):
         percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
         s = select(percentile_values).where(and_(cls.year == year, cls.pitch_type == str(pfx.pitch_type)))
-        avg_speed_perc = calculate_percentile(db_engine, "avg_speed", s, pfx.avg_speed)
-        ops_perc = calculate_percentile(db_engine, "ops", s, pfx.ops, decimal_precision=3)
-        whiff_rate_perc = calculate_percentile(db_engine, "whiff_rate", s, pfx.whiff_rate, decimal_precision=1)
-        zone_rate_perc = calculate_percentile(db_engine, "zone_rate", s, pfx.zone_rate, decimal_precision=1)
-        contact_rate_perc = calculate_percentile(db_engine, "contact_rate", s, pfx.contact_rate, decimal_precision=1)
-        return {
-            "avg_speed": avg_speed_perc,
-            "ops": ops_perc,
-            "whiff_rate": whiff_rate_perc,
-            "zone_rate": zone_rate_perc,
-            "contact_rate": contact_rate_perc,
-        }
+        results = [dict(row) for row in db_engine.execute(s).fetchall()]
+        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
 
 
 class Pitcher_PitchFx_vs_LHB_By_Year_View(db.Base):
@@ -1116,7 +1066,7 @@ class Pitcher_PitchFx_vs_LHB_By_Year_View(db.Base):
     def get_pfx_metrics_by_year_for_pitcher(cls, db_engine, mlb_id, year):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_vs_LHB_By_Year_View(db.Base):
@@ -1213,24 +1163,14 @@ class Pitcher_PitchType_vs_LHB_By_Year_View(db.Base):
     def get_pfx_metrics_by_year_for_pitcher(cls, db_engine, mlb_id, year):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
     @classmethod
     def get_percentiles_for_pitch_type_for_year_vs_lhb(cls, db_engine, year, pfx):
         percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
         s = select(percentile_values).where(and_(cls.year == year, cls.pitch_type == str(pfx.pitch_type)))
-        avg_speed_perc = calculate_percentile(db_engine, "avg_speed", s, pfx.avg_speed)
-        ops_perc = calculate_percentile(db_engine, "ops", s, pfx.ops, decimal_precision=3)
-        whiff_rate_perc = calculate_percentile(db_engine, "whiff_rate", s, pfx.whiff_rate, decimal_precision=1)
-        zone_rate_perc = calculate_percentile(db_engine, "zone_rate", s, pfx.zone_rate, decimal_precision=1)
-        contact_rate_perc = calculate_percentile(db_engine, "contact_rate", s, pfx.contact_rate, decimal_precision=1)
-        return {
-            "avg_speed": avg_speed_perc,
-            "ops": ops_perc,
-            "whiff_rate": whiff_rate_perc,
-            "zone_rate": zone_rate_perc,
-            "contact_rate": contact_rate_perc,
-        }
+        results = [dict(row) for row in db_engine.execute(s).fetchall()]
+        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
 
 
 class Pitcher_PitchFx_For_Game_All_View(db.Base):
@@ -1327,7 +1267,7 @@ class Pitcher_PitchFx_For_Game_All_View(db.Base):
     def get_pfx_metrics_for_game_for_pitcher(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_For_Game_All_View(db.Base):
@@ -1347,6 +1287,11 @@ class Pitcher_PitchType_For_Game_All_View(db.Base):
                 func.sum(db.PitchFx.ab_result_hit).label("total_hits"),
                 func.sum(db.PitchFx.ab_result_bb).label("total_bb"),
                 func.sum(db.PitchFx.ab_result_k).label("total_k"),
+                func.avg(db.PitchFx.start_speed).label("avg_speed"),
+                func.avg(db.PitchFx.pfx_x).label("avg_pfx_x"),
+                func.avg(db.PitchFx.pfx_z).label("avg_pfx_z"),
+                func.avg(db.PitchFx.px).label("avg_px"),
+                func.avg(db.PitchFx.pz).label("avg_pz"),
                 avg,
                 obp,
                 slg,
@@ -1425,7 +1370,7 @@ class Pitcher_PitchType_For_Game_All_View(db.Base):
     def get_pfx_metrics_for_game_for_pitcher(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Pitcher_PitchFx_For_Game_vs_RHB_View(db.Base):
@@ -1522,7 +1467,7 @@ class Pitcher_PitchFx_For_Game_vs_RHB_View(db.Base):
     def get_pfx_metrics_for_game_vs_rhb_for_pitcher(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_For_Game_vs_RHB_View(db.Base):
@@ -1542,6 +1487,11 @@ class Pitcher_PitchType_For_Game_vs_RHB_View(db.Base):
                 func.sum(db.PitchFx.ab_result_hit).label("total_hits"),
                 func.sum(db.PitchFx.ab_result_bb).label("total_bb"),
                 func.sum(db.PitchFx.ab_result_k).label("total_k"),
+                func.avg(db.PitchFx.start_speed).label("avg_speed"),
+                func.avg(db.PitchFx.pfx_x).label("avg_pfx_x"),
+                func.avg(db.PitchFx.pfx_z).label("avg_pfx_z"),
+                func.avg(db.PitchFx.px).label("avg_px"),
+                func.avg(db.PitchFx.pz).label("avg_pz"),
                 avg,
                 obp,
                 slg,
@@ -1620,7 +1570,7 @@ class Pitcher_PitchType_For_Game_vs_RHB_View(db.Base):
     def get_pfx_metrics_for_game_vs_rhb_for_pitcher(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
 
 
 class Pitcher_PitchFx_For_Game_vs_LHB_View(db.Base):
@@ -1717,7 +1667,7 @@ class Pitcher_PitchFx_For_Game_vs_LHB_View(db.Base):
     def get_pfx_metrics_for_game_vs_lhb_for_pitcher(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results][0]
+        return [dict(row) for row in results][0] if results else {}
 
 
 class Pitcher_PitchType_For_Game_vs_LHB_View(db.Base):
@@ -1737,6 +1687,11 @@ class Pitcher_PitchType_For_Game_vs_LHB_View(db.Base):
                 func.sum(db.PitchFx.ab_result_hit).label("total_hits"),
                 func.sum(db.PitchFx.ab_result_bb).label("total_bb"),
                 func.sum(db.PitchFx.ab_result_k).label("total_k"),
+                func.avg(db.PitchFx.start_speed).label("avg_speed"),
+                func.avg(db.PitchFx.pfx_x).label("avg_pfx_x"),
+                func.avg(db.PitchFx.pfx_z).label("avg_pfx_z"),
+                func.avg(db.PitchFx.px).label("avg_px"),
+                func.avg(db.PitchFx.pz).label("avg_pz"),
                 avg,
                 obp,
                 slg,
@@ -1815,4 +1770,15 @@ class Pitcher_PitchType_For_Game_vs_LHB_View(db.Base):
     def get_pfx_metrics_for_game_vs_lhb_for_pitcher(cls, db_engine, mlb_id, game_id):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
-        return [dict(row) for row in results]
+        return [dict(row) for row in results] if results else []
+
+
+def _calculate_pitch_type_percentiles(results, pfx):
+    return {
+        "pitch_type": pfx.pitch_type,
+        "avg_speed": calculate_percentile("avg_speed", results, pfx.avg_speed, decimal_precision=2),
+        "ops": calculate_percentile("ops", results, pfx.ops, decimal_precision=3),
+        "whiff_rate": calculate_percentile("whiff_rate", results, pfx.whiff_rate, decimal_precision=3),
+        "zone_rate": calculate_percentile("zone_rate", results, pfx.zone_rate, decimal_precision=3),
+        "contact_rate": calculate_percentile("contact_rate", results, pfx.contact_rate, decimal_precision=3),
+    }
