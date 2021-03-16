@@ -327,7 +327,7 @@ class ScrapedData:
         )
 
     def get_bat_stats_by_defpos_for_team(self, team_id_bbref: str, year: int) -> List[BatStatsMetrics]:
-        return db.Team_BatStats_By_DefPosition_By_Year.get_bat_stats_for_defpos_by_year_for_team(
+        return db.Team_BatStats_By_DefPosition_By_Year.get_bat_stats_by_defpos_for_team(
             self.db_engine, team_id_bbref, year
         )
 
