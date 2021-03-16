@@ -3,7 +3,16 @@ from sqlalchemy_utils.view import create_view
 
 import vigorish.database as db
 from vigorish.data.metrics.bat_stats import BatStatsMetrics
-from vigorish.views.bat_stats_col_expressions import avg, bb_rate, contact_rate, iso, k_rate, obp, ops, slg
+from vigorish.views.bat_stats_col_expressions import (
+    avg,
+    bb_rate,
+    contact_rate,
+    iso,
+    k_rate,
+    obp,
+    ops,
+    slg,
+)
 
 
 class BatStats_All_View(db.Base):
