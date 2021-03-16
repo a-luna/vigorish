@@ -2,8 +2,6 @@
 import math
 from datetime import date
 
-from sqlalchemy.sql.functions import percentile_cont
-
 from vigorish.util.string_helpers import try_parse_int
 
 ONE_KB = 1024
@@ -50,11 +48,9 @@ def get_standard_deviation(samples):
     return math.sqrt(summed_squares / (len(samples) - 1))
 
 
-def calculate_percentile(db_engine, value_name, select_values, check_value, decimal_precision=2):
-    all_values = {
-        round(dict(row)[value_name], decimal_precision) for row in db_engine.execute(select_values).fetchall()
-    }
+def calculate_percentile(value_name, result_dicts, check_value, decimal_precision):
+    all_values = {round(row_dict[value_name], decimal_precision) for row_dict in result_dicts}
     value_rank_dict = {val: rank for rank, val in enumerate(sorted(all_values, reverse=True), start=1)}
     pfx_rank = value_rank_dict.get(round(check_value, decimal_precision))
     percentile = pfx_rank / float(len(all_values) + 1)
-    return round(percentile, 1)
+    return round(percentile, 3)
