@@ -20,7 +20,7 @@ PitchTypeMetricsDict = Dict[PitchType, PitchFxMetricsDict]
 @dataclass
 class PitchFxMetrics:
     mlb_id: int = field(repr=False, default=0)
-    pitch_type: PitchType = PitchType.UNKNOWN
+    pitch_type: PitchType = PitchType.NONE
     total_pitches: int = field(repr=False, default=0)
     total_pa: int = field(repr=False, default=0)
     total_at_bats: int = field(repr=False, default=0)
@@ -144,6 +144,8 @@ class PitchFxMetrics:
             PitchType(pfx_metrics["pitch_type_int"])
             if "pitch_type_int" in pfx_metrics
             else PitchType.from_abbrev(pfx_metrics["pitch_type"])
+            if "pitch_type" in pfx_metrics
+            else None
         )
         return pitchfx_metrics_dict
 
