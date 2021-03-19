@@ -26,7 +26,7 @@ class BBRefInGameSubstitution:
         return PlayByPlayEvent.SUBSTITUTION
 
     def as_dict(self):
-        dict = {
+        return {
             "__bbref_pbp_in_game_substitution__": True,
             "inning_id": self.inning_id,
             "inning_label": self.inning_label,
@@ -40,4 +40,3 @@ class BBRefInGameSubstitution:
             "outgoing_player_pos": self.outgoing_player_pos,
             "lineup_slot": int(self.lineup_slot),
         }
-        return dict

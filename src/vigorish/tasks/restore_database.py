@@ -191,10 +191,10 @@ class RestoreDatabaseTask(Task):
             self.events.restore_table_complete(db_table)
 
     def restore_table_from_csv(self, csv_file, csv_dataclass, db_table):
-        batch = []
-        batch_count = 1
         with open(csv_file) as csv:
             reader = DataclassReader(csv, csv_dataclass)
+            batch = []
+            batch_count = 1
             for csv_row in reader:
                 obj_dict = self.update_relationships_map[csv_dataclass](csv_row)
                 batch.append(obj_dict)

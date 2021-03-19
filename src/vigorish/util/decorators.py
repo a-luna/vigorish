@@ -33,12 +33,11 @@ def retry(
                 try:
                     return func(*args, **kwargs)
                 except exceptions as ex:
-                    if remaining > 0:
-                        if on_failure:
-                            on_failure(func, remaining, ex, delay)
-                        sleep(delay)
-                    else:
+                    if remaining <= 0:
                         raise RetryLimitExceededError(func, max_attempts) from ex
+                    if on_failure:
+                        on_failure(func, remaining, ex, delay)
+                    sleep(delay)
                 else:
                     break
 

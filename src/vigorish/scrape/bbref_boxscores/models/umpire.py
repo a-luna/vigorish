@@ -10,8 +10,7 @@ class BBRefUmpire:
 
     def as_dict(self):
         """Convert umpire name and field location to a dictionary."""
-        dict = {
+        return {
             "field_location": f"{self.field_location}",
             "umpire_name": f"{self.umpire_name}",
         }
-        return dict

@@ -34,9 +34,7 @@ class UrlScrapeDelay:
             return False
         if not self.delay_is_random and self.delay_uniform < 3:
             return False
-        if self.delay_is_random and self.delay_random_min < 3:
-            return False
-        return True
+        return not self.delay_is_random or self.delay_random_min >= 3
 
     def to_dict(self):
         return {

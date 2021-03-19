@@ -25,9 +25,8 @@ def report_dict(dict, title="", title_prefix="### ", title_suffix=" ###", extra_
     report = "\n"
     max_length = 0
     for k, v in dict.items():
-        if not v:
-            if type(v) is not int and type(v) is not bool:
-                continue
+        if not v and type(v) is not int and type(v) is not bool:
+            continue
         if len(k) > max_length:
             max_length = len(k)
     max_length += extra_dots
@@ -35,9 +34,8 @@ def report_dict(dict, title="", title_prefix="### ", title_suffix=" ###", extra_
     if title:
         report += f"{title_prefix}{title}{title_suffix}"
     for k, v in dict.items():
-        if not v:
-            if type(v) is not int and type(v) is not bool:
-                continue
+        if not v and type(v) is not int and type(v) is not bool:
+            continue
         if type(v) is datetime:
             v = v.strftime(DT_AWARE)
         c = max_length - len(k)
@@ -123,7 +121,7 @@ def make_irregular_chunked_list(input_list, min_chunk_size, max_chunk_size):
         else:
             chunk_size = remaining
         start = end
-        end = end + chunk_size
+        end += chunk_size
         chunked_list.append(input_list[start:end])
         remaining -= chunk_size
     return chunked_list

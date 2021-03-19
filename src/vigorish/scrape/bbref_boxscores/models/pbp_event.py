@@ -29,7 +29,7 @@ class BBRefPlayByPlayEvent:
 
     def as_dict(self):
         """Convert game event values to a dictionary."""
-        dict = {
+        return {
             "__bbref_pbp_game_event__": True,
             "event_id": self.event_id,
             "inning_id": self.inning_id,
@@ -47,4 +47,3 @@ class BBRefPlayByPlayEvent:
             "batter_id_br": self.batter_id_br,
             "play_index_url": self.play_index_url,
         }
-        return dict

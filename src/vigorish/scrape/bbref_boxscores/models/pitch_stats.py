@@ -34,7 +34,7 @@ class BBRefPitchStats:
 
     def as_dict(self):
         """Convert a single player's pitching appearance to a dictionary."""
-        dict = {
+        return {
             "player_id_br": f"{self.player_id_br}",
             "player_team_id_br": f"{self.player_team_id_br}",
             "opponent_team_id_br": f"{self.opponent_team_id_br}",
@@ -62,4 +62,3 @@ class BBRefPitchStats:
             "avg_lvg_index": float(self.avg_lvg_index),
             "re24_pitch": float(self.re24_pitch),
         }
-        return dict

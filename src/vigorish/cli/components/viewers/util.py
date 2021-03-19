@@ -17,7 +17,7 @@ def create_display_table(
     return DisplayTable(
         table=tabulate(
             table_rows,
-            headers=table_headers if table_headers else (),
+            headers=table_headers or (),
             tablefmt=tablefmt,
             numalign=numalign,
             stralign=stralign,

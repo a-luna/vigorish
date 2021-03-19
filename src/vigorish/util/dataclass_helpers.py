@@ -43,7 +43,7 @@ def serialize_db_object_to_csv(db_obj, dataclass, date_format=DATE_ONLY):
     for name, field in dataclass.__dataclass_fields__.items():
         value = getattr(db_obj, name, None)
         if field.type is bool:
-            csv_dict[name] = True if value else False
+            csv_dict[name] = bool(value)
         elif not value:
             csv_dict[name] = None
         elif field.type is int and not isinstance(value, int):
@@ -56,7 +56,9 @@ def serialize_db_object_to_csv(db_obj, dataclass, date_format=DATE_ONLY):
 
 
 def dict_to_csv_row(csv_dict, date_format):
-    return ",".join([sanitize_value_for_csv(val, date_format) for val in csv_dict.values()])
+    return ",".join(
+        sanitize_value_for_csv(val, date_format) for val in csv_dict.values()
+    )
 
 
 def sanitize_value_for_csv(val, date_format):

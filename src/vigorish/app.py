@@ -69,8 +69,8 @@ class Vigorish:
         self.dotenv = DotEnvFile(dotenv_filepath=dotenv_file)
         self.db_url = _get_db_url()
         self.config = ConfigFile()
-        self.db_engine = db_engine if db_engine else self._create_db_engine()
-        self.db_session = db_session if db_session else self._create_db_session()
+        self.db_engine = db_engine or self._create_db_engine()
+        self.db_session = db_session or self._create_db_session()
         self.scraped_data = ScrapedData(self.db_engine, self.db_session, self.config)
 
     def get_total_number_of_rows(self, db_table: Table) -> int:
@@ -138,4 +138,4 @@ def _get_db_url() -> str:
     if db_url and db_url.startswith("/"):
         db_url = f"sqlite:///{db_url}"
     env = os.getenv("ENV", "prod")
-    return db_url if db_url else SQLITE_DEV_URL if env == "dev" else SQLITE_PROD_URL
+    return db_url or (SQLITE_DEV_URL if env == "dev" else SQLITE_PROD_URL)

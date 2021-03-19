@@ -22,10 +22,10 @@ def report_status_single_date(db_session, game_date, report_type):
         for num, (game_id, game_report) in enumerate(game_status_dict.items(), start=1):
             heading = f"### STATUS FOR {game_id} (Game {num}/{len(game_status_dict)}) ###"
             pages.append(DisplayPage(game_report, heading))
-    if (
-        report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX
-        or report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS
-    ):
+    if report_type in [
+        StatusReport.DATE_DETAIL_MISSING_PITCHFX,
+        StatusReport.SINGLE_DATE_WITH_GAME_STATUS,
+    ]:
         pages.extend(_get_missing_pfx_data_report_for_date(db_session, date_status))
     return Result.Ok(_create_report_viewer(pages, text_color="bright_magenta"))
 
@@ -71,11 +71,11 @@ def _validate_single_date(db_session, game_date):
 
 def _construct_date_range_status(db_session, start_date, end_date, report_type):
     show_all = False
-    if (
-        report_type == StatusReport.DATE_SUMMARY_ALL_DATES
-        or report_type == StatusReport.DATE_DETAIL_ALL_DATES
-        or report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX
-    ):
+    if report_type in [
+        StatusReport.DATE_SUMMARY_ALL_DATES,
+        StatusReport.DATE_DETAIL_ALL_DATES,
+        StatusReport.DATE_DETAIL_MISSING_PITCHFX,
+    ]:
         show_all = True
     status_date_range = []
     for game_date in get_date_range(start_date, end_date):
@@ -90,7 +90,10 @@ def _construct_date_range_status(db_session, start_date, end_date, report_type):
 
 
 def _get_report_for_date_range(db_session, start_date, end_date, status_date_range, report_type):
-    if report_type == StatusReport.DATE_DETAIL_MISSING_DATA or report_type == StatusReport.DATE_DETAIL_ALL_DATES:
+    if report_type in [
+        StatusReport.DATE_DETAIL_MISSING_DATA,
+        StatusReport.DATE_DETAIL_ALL_DATES,
+    ]:
         return _get_detailed_report_for_date_range(db_session, status_date_range, False)
     if report_type == StatusReport.DATE_DETAIL_MISSING_PITCHFX:
         return _get_detailed_report_for_date_range(db_session, status_date_range, True)

@@ -113,12 +113,14 @@ class ScrapeJob(db.Base):
             "Start Date": self.start_date.strftime(DATE_ONLY),
             "End Date": self.end_date.strftime(DATE_ONLY),
             "Created At": self.created_date_str,
-            "Data Sets": "\n\t      ".join([DATA_SET_TO_NAME_MAP[ds] for ds in self.data_sets]),
+            "Data Sets": "\n\t      ".join(
+                DATA_SET_TO_NAME_MAP[ds] for ds in self.data_sets
+            ),
         }
 
     @hybrid_property
     def error_messages(self):
-        return "\n".join([str(error) for error in self.errors])
+        return "\n".join(str(error) for error in self.errors)
 
     def __repr__(self):
         return f"<ScrapeJob id={self.id}, status={self.status}>"

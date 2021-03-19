@@ -51,7 +51,7 @@ class ImportScrapedData(MenuItem):
         result = self.prompt_user_overwrite_data()
         if result.failure:
             return Result.Ok(True)
-        overwrite_existing_data = True if result.value == "OVERWRITE" else False
+        overwrite_existing_data = result.value == "OVERWRITE"
         result = self.import_scraped_data.execute(overwrite_existing_data)
         self.unsubscribe_from_events()
         if result.failure:

@@ -247,21 +247,17 @@ class InvestigateInvalidPitchFx(MenuItem):
             f"{missing_pfx['pitcher']} and {missing_pfx['batter']} (at_bat_id: {at_bat_id}).\n"
         )
         match_details_heading = "The data used to make this potential match is given below:"
-        match_details = []
-        match_details.append(
+        match_details = [
             f"- Both at bats took place in the same inning ({missing_pfx['inning_id']}) and "
-            f"involve the same {pitcher_or_batter}.\n"
-        )
-        match_details.append(
+            f"involve the same {pitcher_or_batter}.\n",
             "- The number of pitches missing from the valid at bat "
             f"({len(missing_pfx['missing_pfx'])}) is the same (or less than) the total number of "
-            f"pitches in the invalid at bat ({invalid_pfx['pitch_count']}).\n"
-        )
-        match_details.append(
+            f"pitches in the invalid at bat ({invalid_pfx['pitch_count']}).\n",
             f"- The pitch sequence numbers of the invalid at bat ({invalid_pfx['invalid_pfx']}) "
             "contain all of the pitch numbers that are missing from the valid at bat "
-            f"({missing_pfx['missing_pfx']}).\n"
-        )
+            f"({missing_pfx['missing_pfx']}).\n",
+        ]
+
         subprocess.run(["clear"])
         print_heading(match_heading)
         print_message(match_summary)
@@ -322,8 +318,7 @@ class InvestigateInvalidPitchFx(MenuItem):
             subprocess.run(["clear"])
             error = "Multiple at bats were found for the invalid PitchFX data below (only one match is expected):\n"
             print_message(error, fg="bright_yellow", bold=True)
-            all_rows = [match_dict["invalid_pfx"]]
-            all_rows.extend(list(match_dict["missing_pfx"]))
+            all_rows = [match_dict["invalid_pfx"], *list(match_dict["missing_pfx"])]
             print_message(tabulate(all_rows, headers="keys"), wrap=False)
             print()
             pause(message="Press any key to continue...")
@@ -355,7 +350,7 @@ class InvestigateInvalidPitchFx(MenuItem):
             pfx_errors.pop("pitchfx_error", {}),
             pfx_errors.pop("invalid_pitchfx", {}),
         ]
-        if not any(len(f) > 0 for f in fail_results):
+        if all(len(f) <= 0 for f in fail_results):
             spinner.succeed(f"All scraped data for {self.game_id} was successfully combined!")
             pause(message="Press any key to continue...")
             return Result.Ok()

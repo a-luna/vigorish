@@ -411,7 +411,10 @@ class CombineScrapedDataTask(Task):
             all_pbp_events = self.get_all_pbp_events_for_at_bat(ab_id)
             first_pbp_event = all_pbp_events[0]
             final_pbp_event = all_pbp_events[-1]
-            runs_outs_result = "".join([event["runs_outs_result"] for event in all_pbp_events])
+            runs_outs_result = "".join(
+                event["runs_outs_result"] for event in all_pbp_events
+            )
+
             result = self.get_total_pitches_in_sequence(final_pbp_event["pitch_sequence"])
             if result.failure:
                 return result
@@ -441,7 +444,7 @@ class CombineScrapedDataTask(Task):
                     self._update_at_bat_result_stats(final_pitch_of_ab, final_pbp_event)
             (since_start, dur, first_pitch, last_pitch) = self.get_at_bat_duration(pfx_data)
             self.prepare_pfx_data_for_json_serialization(pfx_data)
-            if len(removed_pfx) > 0:
+            if removed_pfx:
                 all_removed_pfx[ab_id] = removed_pfx
                 self.prepare_pfx_data_for_json_serialization(removed_pfx)
             result = self.describe_at_bat(ab_id, final_pbp_event, pfx_data, missing_pitch_numbers)
@@ -670,7 +673,7 @@ class CombineScrapedDataTask(Task):
                 "min": self.avg_pitch_times["time_between_at_bats"]["min"],
                 "max": self.avg_pitch_times["time_between_at_bats"]["max"],
             }
-        if pitch_num == 1 and not same_inning:
+        if pitch_num == 1:
             return {
                 "avg": self.avg_pitch_times["time_between_innings"]["avg"],
                 "min": self.avg_pitch_times["time_between_innings"]["min"],
@@ -813,11 +816,9 @@ class CombineScrapedDataTask(Task):
                     next_pitch_blocked_by_c = False
                 sequence_description.append((pitch_number, f"{outcome}{blocked_by_c}", pfx_des))
                 continue
-            if abbrev != ".":
-                sequence_description.append(("", outcome, ""))
-            else:
+            if abbrev == ".":
                 outcome = self.get_next_event_description(non_batter_events, outcome)
-                sequence_description.append(("", outcome, ""))
+            sequence_description.append(("", outcome, ""))
         while any(not event_dict["processed"] for event_dict in non_batter_events.values()):
             outcome = self.get_next_event_description(non_batter_events)
             if outcome:
@@ -1350,12 +1351,13 @@ class CombineScrapedDataTask(Task):
             for at_bat_data in invalid_pfx_at_bat_dict.values()
         )
         invalid_pfx = {
-            "invalid_pitchfx": True if self.invalid_pitchfx else False,
+            "invalid_pitchfx": bool(self.invalid_pitchfx),
             "invalid_pitchfx_count": total_pitches_invalid_pfx,
             "total_at_bats_invalid_pitchfx": len(at_bat_ids_invalid_pfx),
             "at_bat_ids_invalid_pitchfx": at_bat_ids_invalid_pfx,
         }
-        pitchfx_vs_bbref_audit = {
+
+        return {
             "invalid_pitchfx": invalid_pfx["invalid_pitchfx"],
             "pitchfx_error": audit_report["pitchfx_error"],
             "pitch_count_bbref_stats_table": pitch_count_bbref_stats_table,
@@ -1367,20 +1369,41 @@ class CombineScrapedDataTask(Task):
             "missing_pitchfx_count": audit_report["missing_pitchfx_count"],
             "removed_pitchfx_count": audit_report["removed_pitchfx_count"],
             "invalid_pitchfx_count": invalid_pfx["invalid_pitchfx_count"],
-            "total_at_bats_pitchfx_complete": audit_report["total_at_bats_pitchfx_complete"],
-            "total_at_bats_patched_pitchfx": audit_report["total_at_bats_patched_pitchfx"],
-            "total_at_bats_missing_pitchfx": audit_report["total_at_bats_missing_pitchfx"],
-            "total_at_bats_removed_pitchfx": audit_report["total_at_bats_removed_pitchfx"],
-            "total_at_bats_pitchfx_error": audit_report["total_at_bats_pitchfx_error"],
-            "total_at_bats_invalid_pitchfx": invalid_pfx["total_at_bats_invalid_pitchfx"],
-            "at_bat_ids_pitchfx_complete": audit_report["at_bat_ids_pitchfx_complete"],
-            "at_bat_ids_patched_pitchfx": audit_report["at_bat_ids_patched_pitchfx"],
-            "at_bat_ids_missing_pitchfx": audit_report["at_bat_ids_missing_pitchfx"],
-            "at_bat_ids_removed_pitchfx": audit_report["at_bat_ids_removed_pitchfx"],
+            "total_at_bats_pitchfx_complete": audit_report[
+                "total_at_bats_pitchfx_complete"
+            ],
+            "total_at_bats_patched_pitchfx": audit_report[
+                "total_at_bats_patched_pitchfx"
+            ],
+            "total_at_bats_missing_pitchfx": audit_report[
+                "total_at_bats_missing_pitchfx"
+            ],
+            "total_at_bats_removed_pitchfx": audit_report[
+                "total_at_bats_removed_pitchfx"
+            ],
+            "total_at_bats_pitchfx_error": audit_report[
+                "total_at_bats_pitchfx_error"
+            ],
+            "total_at_bats_invalid_pitchfx": invalid_pfx[
+                "total_at_bats_invalid_pitchfx"
+            ],
+            "at_bat_ids_pitchfx_complete": audit_report[
+                "at_bat_ids_pitchfx_complete"
+            ],
+            "at_bat_ids_patched_pitchfx": audit_report[
+                "at_bat_ids_patched_pitchfx"
+            ],
+            "at_bat_ids_missing_pitchfx": audit_report[
+                "at_bat_ids_missing_pitchfx"
+            ],
+            "at_bat_ids_removed_pitchfx": audit_report[
+                "at_bat_ids_removed_pitchfx"
+            ],
             "at_bat_ids_pitchfx_error": audit_report["at_bat_ids_pitchfx_error"],
-            "at_bat_ids_invalid_pitchfx": invalid_pfx["at_bat_ids_invalid_pitchfx"],
+            "at_bat_ids_invalid_pitchfx": invalid_pfx[
+                "at_bat_ids_invalid_pitchfx"
+            ],
         }
-        return pitchfx_vs_bbref_audit
 
     def gather_scraped_data_failed(self, error):
         self.gather_scraped_data_success = False
