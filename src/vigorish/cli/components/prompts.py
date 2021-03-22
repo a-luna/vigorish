@@ -56,9 +56,12 @@ def single_date_prompt(prompt):
     return user_date
 
 
-def user_options_prompt(choice_map, prompt, wrap=True, clear_screen=True, auto_scroll=True):
+def user_options_prompt(
+    choice_map, prompt, wrap=True, clear_screen=True, auto_scroll=True, first_item_is_exit_menu=False
+):
     choices = list(choice_map.keys())
-    choices.insert(0, f"{EMOJIS.get('BACK')} Return to Previous Menu")
+    if first_item_is_exit_menu:
+        choices.insert(0, f"{EMOJIS.get('BACK')} Return to Previous Menu")
     options_prompt = (
         create_scrolling_prompt(prompt, choices, wrap, max_line_len=70)
         if auto_scroll and len(choices) > 8
@@ -174,7 +177,7 @@ def select_game_prompt(game_ids, prompt=None, use_numbers=True, clear_screen=Tru
         prompt = "Select a game from the list below:"
     choices = {f"{_get_menu_item_emoji(use_numbers, n)}  {gid}": gid for n, gid in enumerate(game_ids, start=1)}
     choices[f"{EMOJIS.get('BACK')} Return to Main Menu"] = None
-    return user_options_prompt(choices, prompt, clear_screen=clear_screen)
+    return user_options_prompt(choices, prompt, clear_screen=clear_screen, first_item_is_exit_menu=True)
 
 
 def _get_menu_item_emoji(use_numbers, num=None):
