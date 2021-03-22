@@ -81,7 +81,6 @@ class ConfigFile:
         url_delay_settings = self.get_current_setting("URL_SCRAPE_DELAY", data_set)
         batch_job_settings = self.get_current_setting("BATCH_JOB_SETTINGS", data_set)
         batch_delay_settings = self.get_current_setting("BATCH_SCRAPE_DELAY", data_set)
-        script_params = {}
         if url_delay_settings and batch_job_settings and batch_delay_settings:
             return self.get_nodejs_script_params_from_objects(
                 url_delay_settings, batch_job_settings, batch_delay_settings
@@ -105,8 +104,7 @@ class ConfigFile:
         html_storage_settings = [self.get_current_setting("HTML_STORAGE", data_set) for data_set in data_sets]
         json_storage_settings = [self.get_current_setting("JSON_STORAGE", data_set) for data_set in data_sets]
         html_local_storage = all(
-            html_storage
-            in [HtmlStorageOption.NONE, HtmlStorageOption.LOCAL_FOLDER]
+            html_storage in [HtmlStorageOption.NONE, HtmlStorageOption.LOCAL_FOLDER]
             for html_storage in html_storage_settings
         )
 
