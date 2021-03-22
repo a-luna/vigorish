@@ -327,21 +327,27 @@ class DateScrapeStatus(db.Base):
 
     @hybrid_property
     def scraped_only_bbref_boxscores(self):
-        return bool(self.scraped_all_bbref_boxscores
+        return bool(
+            self.scraped_all_bbref_boxscores
             and not self.scraped_all_brooks_pitch_logs
-            and not self.scraped_all_pitchfx_logs)
+            and not self.scraped_all_pitchfx_logs
+        )
 
     @hybrid_property
     def scraped_only_brooks_pitch_logs(self):
-        return bool(self.scraped_all_brooks_pitch_logs
+        return bool(
+            self.scraped_all_brooks_pitch_logs
             and not self.scraped_all_bbref_boxscores
-            and not self.scraped_all_pitchfx_logs)
+            and not self.scraped_all_pitchfx_logs
+        )
 
     @hybrid_property
     def scraped_only_both_bbref_boxscores_and_brooks_pitch_logs(self):
-        return bool(self.scraped_all_bbref_boxscores
+        return bool(
+            self.scraped_all_bbref_boxscores
             and self.scraped_all_brooks_pitch_logs
-            and not self.scraped_all_pitchfx_logs)
+            and not self.scraped_all_pitchfx_logs
+        )
 
     @hybrid_property
     def scraped_all_game_data(self):

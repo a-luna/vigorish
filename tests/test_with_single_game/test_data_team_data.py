@@ -400,9 +400,7 @@ def test_team_data_by_player(vig_app):
     left = asdict(away_team_player_bat_stats[0])
     right = away_bat_stats_dict
     assert left == right
-    assert away_team_player_bat_stats[0] == from_dict(
-        data_class=BatStatsMetrics, data=right
-    )
+    assert away_team_player_bat_stats[0] == from_dict(data_class=BatStatsMetrics, data=right)
 
     home_team_player_pitch_stats = home_team_data.pitch_stats_by_player
     assert len(home_team_player_pitch_stats) == 7

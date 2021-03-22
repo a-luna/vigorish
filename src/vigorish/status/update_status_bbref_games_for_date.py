@@ -17,7 +17,7 @@ def update_bbref_games_for_date_single_date(db_session, season, games_for_date):
 
 def update_bbref_games_for_date_list(scraped_data, db_session, scraped_bbref_dates, apply_patch_list=True):
     season = None
-    for game_date in scraped_bbref_dates:
+    for game_date in sorted(scraped_bbref_dates):
         if not season:
             season = db.Season.find_by_year(db_session, game_date.year)
         games_for_date = scraped_data.get_bbref_games_for_date(game_date, apply_patch_list)
@@ -56,7 +56,7 @@ def create_game_status_records(db_session, season, games_for_date):
     missing_bbref_game_ids = set(new_bbref_game_ids).difference(set(game_status_bbref_ids))
     if not missing_bbref_game_ids:
         return Result.Ok()
-    for game_info in games_for_date.games:
+    for game_info in filter(lambda x: x.bbref_game_id in missing_bbref_game_ids, games_for_date.games):
         try:
             game_date = games_for_date.game_date
             date_status = db.DateScrapeStatus.find_by_date(db_session, game_date)

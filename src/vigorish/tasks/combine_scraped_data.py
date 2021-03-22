@@ -411,9 +411,7 @@ class CombineScrapedDataTask(Task):
             all_pbp_events = self.get_all_pbp_events_for_at_bat(ab_id)
             first_pbp_event = all_pbp_events[0]
             final_pbp_event = all_pbp_events[-1]
-            runs_outs_result = "".join(
-                event["runs_outs_result"] for event in all_pbp_events
-            )
+            runs_outs_result = "".join(event["runs_outs_result"] for event in all_pbp_events)
 
             result = self.get_total_pitches_in_sequence(final_pbp_event["pitch_sequence"])
             if result.failure:
@@ -1369,40 +1367,18 @@ class CombineScrapedDataTask(Task):
             "missing_pitchfx_count": audit_report["missing_pitchfx_count"],
             "removed_pitchfx_count": audit_report["removed_pitchfx_count"],
             "invalid_pitchfx_count": invalid_pfx["invalid_pitchfx_count"],
-            "total_at_bats_pitchfx_complete": audit_report[
-                "total_at_bats_pitchfx_complete"
-            ],
-            "total_at_bats_patched_pitchfx": audit_report[
-                "total_at_bats_patched_pitchfx"
-            ],
-            "total_at_bats_missing_pitchfx": audit_report[
-                "total_at_bats_missing_pitchfx"
-            ],
-            "total_at_bats_removed_pitchfx": audit_report[
-                "total_at_bats_removed_pitchfx"
-            ],
-            "total_at_bats_pitchfx_error": audit_report[
-                "total_at_bats_pitchfx_error"
-            ],
-            "total_at_bats_invalid_pitchfx": invalid_pfx[
-                "total_at_bats_invalid_pitchfx"
-            ],
-            "at_bat_ids_pitchfx_complete": audit_report[
-                "at_bat_ids_pitchfx_complete"
-            ],
-            "at_bat_ids_patched_pitchfx": audit_report[
-                "at_bat_ids_patched_pitchfx"
-            ],
-            "at_bat_ids_missing_pitchfx": audit_report[
-                "at_bat_ids_missing_pitchfx"
-            ],
-            "at_bat_ids_removed_pitchfx": audit_report[
-                "at_bat_ids_removed_pitchfx"
-            ],
+            "total_at_bats_pitchfx_complete": audit_report["total_at_bats_pitchfx_complete"],
+            "total_at_bats_patched_pitchfx": audit_report["total_at_bats_patched_pitchfx"],
+            "total_at_bats_missing_pitchfx": audit_report["total_at_bats_missing_pitchfx"],
+            "total_at_bats_removed_pitchfx": audit_report["total_at_bats_removed_pitchfx"],
+            "total_at_bats_pitchfx_error": audit_report["total_at_bats_pitchfx_error"],
+            "total_at_bats_invalid_pitchfx": invalid_pfx["total_at_bats_invalid_pitchfx"],
+            "at_bat_ids_pitchfx_complete": audit_report["at_bat_ids_pitchfx_complete"],
+            "at_bat_ids_patched_pitchfx": audit_report["at_bat_ids_patched_pitchfx"],
+            "at_bat_ids_missing_pitchfx": audit_report["at_bat_ids_missing_pitchfx"],
+            "at_bat_ids_removed_pitchfx": audit_report["at_bat_ids_removed_pitchfx"],
             "at_bat_ids_pitchfx_error": audit_report["at_bat_ids_pitchfx_error"],
-            "at_bat_ids_invalid_pitchfx": invalid_pfx[
-                "at_bat_ids_invalid_pitchfx"
-            ],
+            "at_bat_ids_invalid_pitchfx": invalid_pfx["at_bat_ids_invalid_pitchfx"],
         }
 
     def gather_scraped_data_failed(self, error):

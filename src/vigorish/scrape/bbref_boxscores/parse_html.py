@@ -1129,9 +1129,7 @@ def _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id):
         event_descriptions = play_by_play_table.xpath(missing_events_xpath)
         if event_descriptions is None:
             continue
-        description = "".join(
-            des.strip().replace("\xa0", " ") for des in event_descriptions
-        )
+        description = "".join(des.strip().replace("\xa0", " ") for des in event_descriptions)
 
         misc_event = BBRefPlayByPlayMiscEvent(pbp_table_row_number=row_num, description=description)
         misc_events.append(misc_event)

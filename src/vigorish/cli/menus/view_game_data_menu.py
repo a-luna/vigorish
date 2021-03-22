@@ -130,7 +130,7 @@ class ViewGameDataMenu(MenuItem):
             if results["successful"]
         }
         choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
-        return user_options_prompt(choices, prompt, clear_screen=False)
+        return user_options_prompt(choices, prompt, clear_screen=False, first_item_is_exit_menu=True)
 
     def select_team_prompt(self):
         team_choices_dict = {
@@ -144,7 +144,7 @@ class ViewGameDataMenu(MenuItem):
             f"{EMOJIS.get('BLUE_DIAMOND')}  {name} ({team_id})": team_id for team_id, name in team_choices_dict.items()
         }
         choices[f"{EMOJIS.get('BACK')} Return to Previous Menu"] = None
-        result = user_options_prompt(choices, prompt, clear_screen=False)
+        result = user_options_prompt(choices, prompt, clear_screen=False, first_item_is_exit_menu=True)
         if result.failure:
             return result
         self.team_id = result.value
