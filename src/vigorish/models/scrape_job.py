@@ -113,9 +113,7 @@ class ScrapeJob(db.Base):
             "Start Date": self.start_date.strftime(DATE_ONLY),
             "End Date": self.end_date.strftime(DATE_ONLY),
             "Created At": self.created_date_str,
-            "Data Sets": "\n\t      ".join(
-                DATA_SET_TO_NAME_MAP[ds] for ds in self.data_sets
-            ),
+            "Data Sets": "\n\t      ".join(DATA_SET_TO_NAME_MAP[ds] for ds in self.data_sets),
         }
 
     @hybrid_property

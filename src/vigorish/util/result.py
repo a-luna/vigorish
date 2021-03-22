@@ -57,7 +57,5 @@ class Result(Generic[T]):
         return (
             Result.Ok([result.value or None for result in results])
             if all(result.success for result in results)
-            else Result.Fail(
-                [result.error if result.failure else None for result in results]
-            )
+            else Result.Fail([result.error if result.failure else None for result in results])
         )

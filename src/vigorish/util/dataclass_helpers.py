@@ -56,9 +56,7 @@ def serialize_db_object_to_csv(db_obj, dataclass, date_format=DATE_ONLY):
 
 
 def dict_to_csv_row(csv_dict, date_format):
-    return ",".join(
-        sanitize_value_for_csv(val, date_format) for val in csv_dict.values()
-    )
+    return ",".join(sanitize_value_for_csv(val, date_format) for val in csv_dict.values())
 
 
 def sanitize_value_for_csv(val, date_format):
