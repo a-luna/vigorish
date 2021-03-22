@@ -15,6 +15,7 @@ node_modules
 backup
 json_storage
 html_storage
+mlb_api_json_storage
 json_storage.zip
 html_storage.zip
 coverage_html

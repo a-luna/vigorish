@@ -340,6 +340,7 @@ EMOJIS = {
     "PACKAGE": "📦",
     "BAGS": "🛍️",
     "HONEY_POT": "🍯",
+    "CALENDAR": "📅",
     "CLOCK": "🕚",
     "PAGER": "📟",
     "SHRUG": "🤷‍♂️",
