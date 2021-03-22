@@ -30,9 +30,7 @@ def fuzzy_match(query, mapped_choices, limit=10, score_cutoff=88):
     ]
     return best_matches or [
         {"match": match, "score": score, "result": result}
-        for (match, score, result) in process.extract(
-            query, mapped_choices, limit=limit
-        )
+        for (match, score, result) in process.extract(query, mapped_choices, limit=limit)
     ]
 
 
