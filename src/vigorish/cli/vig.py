@@ -323,9 +323,10 @@ def exit_app_success(message=None):
 
 
 def exit_app_error(message):
-    if message and isinstance(message, list):
-        for m in message:
-            print_message(m, fg="bright_red", bold=True)
-    elif message:
-        print_message(message, fg="bright_red", bold=True)
+    if message:
+        if isinstance(message, list):
+            for m in message:
+                print_message(m, fg="bright_red", bold=True)
+        else:
+            print_message(message, fg="bright_red", bold=True)
     return 1

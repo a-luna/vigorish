@@ -55,7 +55,9 @@ class Result(Generic[T]):
     def Combine(results: Iterable[Result]) -> Result:
         """Return a Result object based on the outcome of a list of Results."""
         return (
-            Result.Ok([result.value if result.value else None for result in results])
+            Result.Ok([result.value or None for result in results])
             if all(result.success for result in results)
-            else Result.Fail([result.error if result.failure else None for result in results])
+            else Result.Fail(
+                [result.error if result.failure else None for result in results]
+            )
         )

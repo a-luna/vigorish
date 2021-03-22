@@ -11,8 +11,7 @@ class DateString(click.ParamType):
 
     def convert(self, value, param, ctx):
         try:
-            date = date_parser.parse(value)
-            return date
+            return date_parser.parse(value)
         except Exception:
             error = (
                 f'"{value}" could not be parsed as a valid date. You can '

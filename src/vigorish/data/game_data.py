@@ -540,7 +540,7 @@ def get_linescore_tables(away_team_data, home_team_data, innings_list):
     (away_team_runs_chunked, home_team_runs_chunked) = get_runs_by_inning(innings_list)
     for i in range(len(away_team_runs_chunked)):
         start_inning = i * 9 + 1
-        last_chunk = 1 == len(away_team_runs_chunked) - 1
+        last_chunk = len(away_team_runs_chunked) == 2
         table = create_linescore_table(
             away_team_data["team_id_br"],
             away_team_runs_chunked[i],
@@ -565,8 +565,7 @@ def get_team_totals_for_linescore(team_data):
     team_total_runs = team_data["total_runs_scored_by_team"]
     team_hits = team_data["total_hits_by_team"]
     team_errors = team_data["total_errors_by_team"]
-    team_totals = [team_total_runs, team_hits, team_errors]
-    return team_totals
+    return [team_total_runs, team_hits, team_errors]
 
 
 def get_runs_by_inning(innings_list):

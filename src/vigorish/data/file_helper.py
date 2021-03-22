@@ -207,7 +207,7 @@ class FileHelper:
         if not game_date and not year:
             error = "You must provide either the game_date or year argument to construct a folderpath"
             raise ValueError(error)
-        year = year if year else game_date.year
+        year = year or game_date.year
         return self.local_folderpath_dict[file_type][data_set].resolve(year=year)
 
     def get_file_name(
@@ -289,7 +289,7 @@ class FileHelper:
         if not game_date and not year:
             error = "You must provide either the game_date or year argument to construct a folderpath"
             raise ValueError(error)
-        year = year if year else game_date.year
+        year = year or game_date.year
         return self.s3_folderpath_dict[file_type][data_set].resolve(year=year)
 
     def get_file_name_html_brooks_games_for_date(self, game_date):
@@ -362,7 +362,7 @@ class FileHelper:
         delete_file = not self.check_file_stored_local(VigFile.PARSED_JSON, data_set)
         try:
             contents = filepath.read_text()
-            if delete_file and not os.environ.get("ENV") == "TEST":
+            if delete_file and os.environ.get("ENV") != "TEST":
                 filepath.unlink()
             return self.json_decoder_dict[file_type][data_set](json.loads(contents))
         except Exception as e:

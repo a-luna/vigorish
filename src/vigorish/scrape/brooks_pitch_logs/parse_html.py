@@ -40,9 +40,7 @@ def parse_pitch_log(scraped_html, game, pitcher_id, url):
         return Result.Ok(pitch_log)
     pitch_log.pitch_count_by_inning = result.value
 
-    total_pitches = 0
-    for count in pitch_log.pitch_count_by_inning.values():
-        total_pitches += count
+    total_pitches = sum(pitch_log.pitch_count_by_inning.values())
     pitch_log.total_pitch_count = int(total_pitches)
     pitch_log.parsed_all_info = True
 

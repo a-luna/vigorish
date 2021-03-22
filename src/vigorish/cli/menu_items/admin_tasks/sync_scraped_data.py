@@ -212,14 +212,14 @@ class SyncScrapedData(MenuItem):
             }
             for f in sync_files
         ]
-        missing_plural = "files below do" if missing_count > 1 else "file below does"
-        outdated_plural = "files have" if outdated_count > 1 else "file has"
-        file_dest = "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
-        file_src = "local folder" if self.sync_direction == SyncDirection.UP_TO_S3 else "S3 bucket"
         m = []
         if missing_count:
+            missing_plural = "files below do" if missing_count > 1 else "file below does"
+            file_dest = "S3 bucket" if self.sync_direction == SyncDirection.UP_TO_S3 else "local folder"
             m.append(f"{missing_count} {missing_plural} not exist in the {file_dest}")
         if outdated_count:
+            outdated_plural = "files have" if outdated_count > 1 else "file has"
+            file_src = "local folder" if self.sync_direction == SyncDirection.UP_TO_S3 else "S3 bucket"
             m.append(f"{outdated_count} {outdated_plural} a more recent version in the {file_src}")
         return DictListTableViewer(
             dict_list,

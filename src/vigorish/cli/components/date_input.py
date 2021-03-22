@@ -57,8 +57,7 @@ class DateInput(Input):
             if not result:
                 continue
             try:
-                date = date_parser.parse(result)
-                return date
+                return date_parser.parse(result)
             except ValueError:
                 error = f'\nError: "{result}" could not be parsed as a valid date.'
                 print_heading(error, fg="bright_red")

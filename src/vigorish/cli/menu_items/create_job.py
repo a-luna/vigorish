@@ -37,9 +37,9 @@ class CreateJob(MenuItem):
         start = None
         end = None
         job_name = None
+        prompt = "Select all data sets to scrape:"
         while not job_confirmed:
             heading = self.get_menu_heading("Select Data Sets")
-            prompt = "Select all data sets to scrape:"
             data_sets = data_sets_prompt(heading, prompt, checked_data_sets=data_sets)
             dates_validated = False
             while not dates_validated:

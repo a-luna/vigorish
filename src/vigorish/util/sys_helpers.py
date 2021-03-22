@@ -63,7 +63,7 @@ def program_is_installed(exe_name, version_option="--version"):  # pragma: no co
             encoding="utf-8",
         )
         output = check_version.stdout.strip()
-        return True if re.compile(r"[vV]?\d+\.").search(output) else False
+        return bool(re.compile(r"[vV]?\d+\.").search(output))
     except FileNotFoundError:
         return False
 
@@ -124,7 +124,7 @@ def validate_file_path(input_path: Union[Path, str]):
 
 def get_terminal_size(fallback: Tuple[int, int] = (80, 24)):  # pragma: no cover
     columns, rows = fallback
-    for i in range(0, 3):
+    for i in range(3):
         try:
             columns, rows = os.get_terminal_size(i)
         except OSError:

@@ -36,8 +36,7 @@ def parse_brooks_pitchfx_from_html(vig_app, bb_game_id, pitch_app_id):
     html_path = vig_app.scraped_data.get_html(DataSet.BROOKS_PITCHFX, pitch_app_id)
     result = parse_pitchfx_log(html_path.read_text(), pitch_log)
     assert result.success
-    pitchfx_log = result.value
-    return pitchfx_log
+    return result.value
 
 
 def test_parse_brooks_pitchfx(vig_app):

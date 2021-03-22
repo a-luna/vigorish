@@ -256,7 +256,7 @@ class DefensePosition(IntEnum):
 
     @property
     def is_starter(self):
-        return True if int(self) in range(1, 11) else False
+        return int(self) in range(1, 11)
 
     @classmethod
     def from_abbrev(cls, abbrev):

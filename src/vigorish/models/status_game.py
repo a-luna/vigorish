@@ -53,7 +53,7 @@ class GameScrapeStatus(db.Base):
         )
         return (
             game_start.replace(tzinfo=tz.gettz(self.game_time_zone))
-            if not (self.game_time_hour == 0 and self.game_time_minute == 0)
+            if self.game_time_hour != 0 or self.game_time_minute != 0
             else None
         )
 
@@ -238,8 +238,8 @@ class GameScrapeStatus(db.Base):
         }
 
     def status_report(self):
-        bbref_game_id = self.bbref_game_id if self.bbref_game_id else "BBREF_GAME_ID IS MISSING!"
-        bb_game_id = self.bb_game_id if self.bb_game_id else "BB_GAME_ID IS MISSING!"
+        bbref_game_id = self.bbref_game_id or "BBREF_GAME_ID IS MISSING!"
+        bb_game_id = self.bb_game_id or "BB_GAME_ID IS MISSING!"
         scraped_bbref_boxscore = "YES" if self.scraped_bbref_boxscore == 1 else "NO"
         scraped_brooks_pitch_logs = "YES" if self.scraped_brooks_pitch_logs == 1 else "NO"
         scraped_all_pitchfx_logs = "YES" if self.scraped_all_pitchfx_logs else "NO"

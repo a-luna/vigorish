@@ -28,14 +28,12 @@ def fuzzy_match(query, mapped_choices, limit=10, score_cutoff=88):
         {"match": match, "score": score, "result": result}
         for (match, score, result) in process.extract(query, mapped_choices, limit=limit, score_cutoff=score_cutoff)
     ]
-    return (
-        best_matches
-        if best_matches
-        else [
-            {"match": match, "score": score, "result": result}
-            for (match, score, result) in process.extract(query, mapped_choices, limit=limit)
-        ]
-    )
+    return best_matches or [
+        {"match": match, "score": score, "result": result}
+        for (match, score, result) in process.extract(
+            query, mapped_choices, limit=limit
+        )
+    ]
 
 
 def ellipsize(input_str, max_len):
@@ -102,8 +100,7 @@ def _replace_newline(wrapped, current_index, newline_match):
 
 def try_parse_int(input_str):
     try:
-        parsed = int(input_str)
-        return parsed
+        return int(input_str)
     except ValueError:
         return None
 
@@ -120,8 +117,7 @@ def parse_date(input_str):
         year = int(year_str)
         month = int(month_str)
         day = int(day_str)
-        parsed_date = datetime(year, month, day)
-        return parsed_date
+        return datetime(year, month, day)
     except Exception as e:
         raise ValueError(f"Failed to parse date from input_str ({input_str}):\n{repr(e)}")
 
@@ -188,10 +184,7 @@ def _parse_ints_from_regex_groups(match):
     month = int(match["month"])
     day = int(match["day"])
     parsed = int(match["game_num"])
-    if parsed < 2:
-        game_number = 1
-    else:
-        game_number = parsed
+    game_number = 1 if parsed < 2 else parsed
     return (year, month, day, game_number)
 
 
@@ -320,7 +313,7 @@ def inning_number_to_string(inning_str):
 def replace_char_with_newlines(input_str, replace):
     if replace not in input_str:
         return input_str
-    return "\n".join([s.strip() for s in input_str.split(replace)])
+    return "\n".join(s.strip() for s in input_str.split(replace))
 
 
 def format_decimal_bat_stat(input):

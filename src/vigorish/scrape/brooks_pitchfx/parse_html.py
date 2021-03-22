@@ -81,17 +81,17 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
         query = Template(T_PITCHFX_MEASUREMENT).substitute(i=(i + 1))
         results = table_row.xpath(query)
         if not results:
-            if name == "zone_location":
-                pitchfx_dict["zone_location"] = 99
-                continue
             if name == "des":
                 pitchfx_dict["des"] = "missing_des"
                 continue
-            if name == "pdes":
+            elif name == "pdes":
                 pitchfx_dict["pdes"] = "missing_pdes"
                 continue
-            if name == "play_guid":
+            elif name == "play_guid":
                 pitchfx_dict["play_guid"] = str(uuid.uuid4())
+                continue
+            elif name == "zone_location":
+                pitchfx_dict["zone_location"] = 99
                 continue
             error = (
                 f"Error occurred attempting to parse '{name}' (column #{i}) from pitchfx table:\n"
@@ -114,7 +114,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
 
     game_start_time = pitch_log.game_start_time
     pitchfx.game_start_time_str = game_start_time.strftime(DT_AWARE) if game_start_time else ""
-    pitchfx.has_zone_location = True if pitchfx.zone_location != 99 else False
+    pitchfx.has_zone_location = pitchfx.zone_location != 99
     pitchfx.batter_did_swing = pitchfx_dict["pdes"] in PITCH_DES_DID_SWING
     pitchfx.batter_made_contact = pitchfx_dict["pdes"] in PITCH_DES_MADE_CONTACT
     pitchfx.called_strike = "Called Strike" in pitchfx_dict["pdes"]
@@ -155,7 +155,7 @@ def fix_missing_des(pfx_data, pitch_log):
     for ab_id in list(fix_ab_ids):
         missing_des = [pfx for pfx in pfx_data if this_ab_and_missing_des(pfx, ab_id)]
         valid_des = list({pfx.des for pfx in pfx_data if this_ab_and_has_des(pfx, ab_id)})
-        if len(valid_des) == 0:
+        if not valid_des:
             continue
         if len(valid_des) == 1:
             for pfx in missing_des:
@@ -177,4 +177,4 @@ def this_ab_and_missing_des(pfx, ab_id):
 
 
 def this_ab_and_has_des(pfx, ab_id):
-    return pfx.ab_id == ab_id and not pfx.des == "missing_des"
+    return pfx.ab_id == ab_id and pfx.des != "missing_des"

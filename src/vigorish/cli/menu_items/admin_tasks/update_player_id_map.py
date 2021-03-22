@@ -34,7 +34,7 @@ class UpdatePlayerIdMap(MenuItem):
             spinner.stop()
             return result
         spinner.succeed("Player ID map was successfully updated!")
-        new_player_ids = result.value if result.value else []
+        new_player_ids = result.value or []
         if not new_player_ids:
             pause(message="Press any key to continue...")
             return Result.Ok(new_player_ids)

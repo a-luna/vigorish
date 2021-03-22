@@ -17,11 +17,10 @@ class BBRefPlayByPlayMiscEvent:
         return PlayByPlayEvent.MISC
 
     def as_dict(self):
-        dict = {
+        return {
             "__bbref_pbp_misc_event__": True,
             "inning_id": self.inning_id,
             "inning_label": self.inning_label,
             "pbp_table_row_number": int(self.pbp_table_row_number),
             "description": self.description,
         }
-        return dict

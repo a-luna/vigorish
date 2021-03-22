@@ -133,8 +133,7 @@ def parse_bbref_games_for_date_from_html(vig_app, game_date):
     html_path = vig_app.scraped_data.get_html(DataSet.BBREF_GAMES_FOR_DATE, game_date)
     result = parse_bbref_dashboard_page(html_path.read_text(), game_date, bbref_url)
     assert result.success
-    bbref_games_for_date = result.value
-    return bbref_games_for_date
+    return result.value
 
 
 def get_bbref_url_for_date(game_date):
@@ -165,8 +164,7 @@ def parse_brooks_games_for_date_from_html(vig_app, game_date, apply_patch_list=T
     games_for_date = vig_app.scraped_data.get_bbref_games_for_date(game_date, apply_patch_list)
     result = parse_brooks_dashboard_page(vig_app.db_session, page_content, game_date, url, games_for_date)
     assert result.success
-    brooks_games_for_date = result.value
-    return brooks_games_for_date
+    return result.value
 
 
 def get_brooks_url_for_date(game_date):
@@ -188,8 +186,7 @@ def parse_bbref_boxscore_from_html(vig_app, bbref_game_id):
     html_path = vig_app.scraped_data.get_html(DataSet.BBREF_BOXSCORES, bbref_game_id)
     result = parse_bbref_boxscore(html_path.read_text(), url, bbref_game_id)
     assert result.success
-    bbref_boxscore = result.value
-    return bbref_boxscore
+    return result.value
 
 
 def get_bbref_boxscore_url(bbref_game_id):

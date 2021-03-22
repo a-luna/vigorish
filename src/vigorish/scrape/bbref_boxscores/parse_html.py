@@ -474,7 +474,7 @@ def _parse_starting_lineup_for_team(page_content, team_id, is_home_team):
     if not bat_orders or not player_links or not def_positions:
         error = "Failed to parse team lineup data (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
-    for i in range(0, len(bat_orders)):
+    for i in range(len(bat_orders)):
         bat = BBRefStartingLineupSlot()
         split = player_links[i].split("/")
         if len(split) != 4:
@@ -610,7 +610,7 @@ def _parse_game_meta_info(page_content):
 
 def _parse_attendance_from_strings(strings):
     attendance = []
-    for i in range(0, len(strings)):
+    for i in range(len(strings)):
         matches = _ATTENDANCE_REGEX.findall(strings[i])
         if matches:
             for m in matches:
@@ -622,17 +622,16 @@ def _parse_attendance_from_strings(strings):
 
 
 def _parse_venue_from_strings(strings):
-    for i in range(0, len(strings)):
+    for i in range(len(strings)):
         for t in VENUE_TERMS:
             if t in strings[i].lower():
-                d = {"match": strings[i][2:], "index": i}
-                return d
+                return {"match": strings[i][2:], "index": i}
     return None
 
 
 def _parse_game_duration_from_strings(strings):
     duration = []
-    for i in range(0, len(strings)):
+    for i in range(len(strings)):
         if "start time" in strings[i].lower():
             continue
         matches = _GAME_DURATION_REGEX.findall(strings[i])
@@ -647,7 +646,7 @@ def _parse_game_duration_from_strings(strings):
 
 def _parse_day_night_field_type_from_strings(strings):
     matches = []
-    for i in range(0, len(strings)):
+    for i in range(len(strings)):
         if "game, on" in strings[i].lower():
             d = {"match": strings[i], "index": i}
             matches.append(d)
@@ -699,8 +698,7 @@ def _create_player_name_dict(
         return Result.Fail(error)
     batter_name_dict = {**away_team_batter_name_dict, **home_team_batter_name_dict}
     pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
-    player_name_dict = {**batter_name_dict, **pitcher_name_dict}
-    return player_name_dict
+    return {**batter_name_dict, **pitcher_name_dict}
 
 
 def _parse_batter_name_dict(team_batting_table, team_id_br):
@@ -742,9 +740,7 @@ def _parse_all_game_events(play_by_play_table, game_id, away_team_id, home_team_
         return Result.Fail(error)
     result_dict = result.value
     play_by_play_events = result_dict["play_by_play"]
-    player_id_match_log = []
-    player_id_match_log.extend(result_dict["player_id_match_log"])
-
+    player_id_match_log = list(result_dict["player_id_match_log"])
     player_team_dict = _create_player_team_dict(play_by_play_events)
     if not player_team_dict:
         error = "Player name was unmatched in play by play events"
@@ -795,15 +791,11 @@ def _parse_inning_summary_top(play_by_play_table):
     summaries = play_by_play_table.xpath(_PBP_INN_SUM_TOP_XPATH)
     if summaries is None:
         return None
-    inning_summaries = []
-    for s in summaries:
-        inning_summaries.append(s.strip().replace("\xa0", " "))
+    inning_summaries = [s.strip().replace("\xa0", " ") for s in summaries]
     row_numbers = play_by_play_table.xpath(_PBP_INN_SUM_TOP_ROW_NUM_XPATH)
     if row_numbers is None:
         return None
-    summary_row_numbers = []
-    for s in row_numbers:
-        summary_row_numbers.append(int(s))
+    summary_row_numbers = [int(s) for s in row_numbers]
     if len(inning_summaries) != len(summary_row_numbers):
         return None
     return dict(zip(summary_row_numbers, inning_summaries))
@@ -813,18 +805,14 @@ def _parse_inning_summary_bottom(play_by_play_table):
     summaries = play_by_play_table.xpath(_PBP_INN_SUM_BOT_XPATH)
     if summaries is None:
         return None
-    inning_summaries = []
-    for s in summaries:
-        inning_summaries.append(s.strip())
+    inning_summaries = [s.strip() for s in summaries]
     last_summary = play_by_play_table.xpath(_PBP_INN_SUM_BOT_LAST_XPATH)
     for s in last_summary:
         inning_summaries.append(s.strip())
     row_numbers = play_by_play_table.xpath(_PBP_INN_SUM_BOT_ROW_NUM_XPATH)
     if row_numbers is None:
         return None
-    summary_row_numbers = []
-    for s in row_numbers:
-        summary_row_numbers.append(int(s))
+    summary_row_numbers = [int(s) for s in row_numbers]
     if len(inning_summaries) != len(summary_row_numbers):
         return None
     return dict(zip(summary_row_numbers, inning_summaries))
@@ -834,7 +822,7 @@ def _parse_play_by_play(pbp_table, player_id_dict, away_team_id, home_team_id, g
     play_by_play = []
     player_id_match_log = []
     inning_list = pbp_table.xpath(_PBP_INNING_XPATH)
-    for i in range(0, len(inning_list)):
+    for i in range(len(inning_list)):
         event_num = i + 1
         event_dict = _parse_pbp_event(pbp_table, event_num)
         inning_label = inning_list[i]
@@ -934,7 +922,7 @@ def _create_player_team_dict(play_by_play):
         teams.append(pbp.team_pitching_id_br)
 
     player_dict = dict(zip(ids, teams))
-    for id in player_dict.keys():
+    for id in player_dict:
         if len(id) == 0:
             return None
     return player_dict
@@ -952,7 +940,7 @@ def _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict):
         sub_descriptions = play_by_play_table.xpath(subs_xpath)
         if sub_descriptions is None:
             continue
-        for i in range(0, len(sub_descriptions)):
+        for i in range(len(sub_descriptions)):
             s = sub_descriptions[i].strip().replace("\xa0", " ")
             result = _parse_substitution_description(s)
             if result.failure:
@@ -976,8 +964,7 @@ def _parse_in_game_substitutions(play_by_play_table, game_id, player_name_dict):
 
 
 def _parse_substitution_description(sub_description):
-    parsed_sub = {}
-    parsed_sub["description"] = sub_description
+    parsed_sub = {"description": sub_description}
     split, split2 = None, None
     pre_split = [s.strip() for s in sub_description.split("(change occurred mid-batter)")]
     sub_description = pre_split[0]
@@ -996,7 +983,7 @@ def _parse_substitution_description(sub_description):
     if "replaces" in sub_description:
         split = [s.strip() for s in sub_description.split("replaces")]
         parsed_sub["sub_type"] = "pitch"
-    elif "pinch hit for" and "and is now" in sub_description:
+    elif "and is now" in sub_description:
         split = [s.strip() for s in sub_description.split("pinch hit for")]
         parsed_sub["incoming_player_name"] = split[0]
         remaining_description = split[1]
@@ -1142,9 +1129,10 @@ def _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id):
         event_descriptions = play_by_play_table.xpath(missing_events_xpath)
         if event_descriptions is None:
             continue
-        description = ""
-        for des in event_descriptions:
-            description += des.strip().replace("\xa0", " ")
+        description = "".join(
+            des.strip().replace("\xa0", " ") for des in event_descriptions
+        )
+
         misc_event = BBRefPlayByPlayMiscEvent(pbp_table_row_number=row_num, description=description)
         misc_events.append(misc_event)
     return misc_events
@@ -1170,7 +1158,7 @@ def _create_innings_list(
     end_boundaries = sorted(summaries_end.keys())
     inning_number = 0
     innings_list = []
-    for i in range(0, len(summaries_begin)):
+    for i in range(len(summaries_begin)):
         start_row = start_boundaries[i]
         end_row = end_boundaries[i]
         if is_even(i):

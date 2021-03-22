@@ -44,13 +44,13 @@ class BrooksPitchLog:
         )
         return (
             game_start.replace(tzinfo=tz.gettz(self.time_zone_name))
-            if not (self.game_time_hour == 0 and self.game_time_minute == 0)
+            if self.game_time_hour != 0 or self.game_time_minute != 0
             else None
         )
 
     def as_dict(self):
         """Convert pitch log to a dictionary."""
-        dict = {
+        return {
             "__brooks_pitch_log__": True,
             "parsed_all_info": self.parsed_all_info,
             "pitcher_name": f"{self.pitcher_name}",
@@ -71,4 +71,3 @@ class BrooksPitchLog:
             "pitchfx_url": f"{self.pitchfx_url}",
             "pitch_log_url": f"{self.pitch_log_url}",
         }
-        return dict

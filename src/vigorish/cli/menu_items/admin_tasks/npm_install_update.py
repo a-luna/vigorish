@@ -58,9 +58,10 @@ class NpmInstallUpdate(MenuItem):
         spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
         spinner.text = "Updating node packages..." if node_modules_folder_exists() else "Installing node packages..."
         spinner.start()
-        cmd_output = []
-        for line in run_command(command, cwd=str(NIGHTMAREJS_FOLDER)):
-            cmd_output.append(line)
+        cmd_output = [
+            line for line in run_command(command, cwd=str(NIGHTMAREJS_FOLDER))
+        ]
+
         subprocess.run(["clear"])
         print_heading(self.menu_heading, fg="bright_yellow")
         spinner.succeed(
