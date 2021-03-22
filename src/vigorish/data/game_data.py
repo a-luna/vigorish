@@ -1,4 +1,4 @@
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime
 from functools import cached_property
@@ -142,6 +142,15 @@ class GameData:
         return [at_bat_data for inning_dict in self.invalid_pitchfx.values() for at_bat_data in inning_dict.values()]
 
     @cached_property
+    def player_substitutions(self):
+        return [
+            event
+            for at_bat in self.valid_at_bats
+            for event in at_bat["pbp_events"]
+            if event["event_type"] == "SUBSTITUTION"
+        ]
+
+    @cached_property
     def all_pitch_stats(self):
         return self.away_team_data["pitching_stats"] + self.home_team_data["pitching_stats"]
 
@@ -181,6 +190,48 @@ class GameData:
             if check_pitch_stats_for_game_score(pitch_stats)
         ]
 
+    def get_team_data(self):
+        return {
+            self.away_team_id: self._prepare_team_data(self.away_team_id),
+            self.home_team_id: self._prepare_team_data(self.home_team_id),
+        }
+
+    def _prepare_team_data(self, team_id):
+        team_data = deepcopy(self.team_data[team_id])
+        team_data.pop("starting_lineup")
+        bat_map = {b["batter_id_mlb"]: b for b in team_data.pop("batting_stats")}
+        bat_boxscore = self.bat_boxscore[team_id]
+        for box in bat_boxscore.values():
+            box["def_position"] = int(box["def_position"])
+            box["total_pbp_events"] = bat_map[box["mlb_id"]]["total_pbp_events"]
+            box["total_incomplete_at_bats"] = bat_map[box["mlb_id"]]["total_incomplete_at_bats"]
+            box["total_plate_appearances"] = bat_map[box["mlb_id"]]["total_plate_appearances"]
+            box["at_bat_ids"] = bat_map[box["mlb_id"]]["at_bat_ids"]
+            box["incomplete_at_bat_ids"] = bat_map[box["mlb_id"]]["incomplete_at_bat_ids"]
+            box["substitutions"] = self._find_player_sub_events(box["mlb_id"])
+            box["bbref_data"] = bat_map[box["mlb_id"]]["bbref_data"]
+        team_data["batting"] = bat_boxscore
+        pitch_map = {p["pitcher_id_mlb"]: p for p in team_data.pop("pitching_stats")}
+        pitch_boxscore = self.pitch_boxscore[team_id]
+        for box in pitch_boxscore.values():
+            box["pitch_app_id"] = pitch_map[box["mlb_id"]]["pitch_app_id"]
+            box["pitch_count_by_inning"] = pitch_map[box["mlb_id"]]["pitch_count_by_inning"]
+            box["pitch_count_by_pitch_type"] = pitch_map[box["mlb_id"]]["pitch_count_by_pitch_type"]
+            box["at_bat_ids"] = pitch_map[box["mlb_id"]]["pitch_app_pitchfx_audit"]["at_bat_ids_pitchfx_complete"]
+            box["substitutions"] = self._find_player_sub_events(box["mlb_id"])
+            box["bbref_data"] = pitch_map[box["mlb_id"]]["bbref_data"]
+        team_data["pitching"] = pitch_boxscore
+        return team_data
+
+    def _find_player_sub_events(self, mlb_id):
+        player_id = self.get_player_id_map(mlb_id=mlb_id)
+        bbref_id = player_id.bbref_id
+        return [
+            sub_event
+            for sub_event in self.player_substitutions
+            if bbref_id in [sub_event["incoming_player_id_br"], sub_event["outgoing_player_id_br"]]
+        ]
+
     def get_pfx_for_pitcher(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
@@ -214,7 +265,7 @@ class GameData:
 
     def create_bat_boxscore(self, team_id):
         team_data = self.team_data[team_id]
-        batter_box = OrderedDict()
+        batter_box = {}
         for slot in team_data["starting_lineup"]:
             mlb_id = self.get_player_id_map(bbref_id=slot["player_id_br"]).mlb_id
             bat_order = slot["bat_order"]
@@ -266,7 +317,7 @@ class GameData:
 
     def create_pitch_boxscore(self, team_id):
         team_data = self.team_data[team_id]
-        pitcher_box = OrderedDict()
+        pitcher_box = {}
         pitcher_ids = [
             mlb_id
             for mlb_id in self.get_all_player_ids_by_team(team_data["team_id_br"])
