@@ -97,7 +97,13 @@ def import_people_csv(app, csv_folder):
     player_csv_file = csv_folder.joinpath(PEOPLE_CSV)
     csv_text = player_csv_file.read_text()
     total_rows = len([row for row in csv_text.split("\n") if row])
-    earliest_year = min(s.year for s in db.Season.get_all_regular_seasons(app.db_session))
+    # To avoid populating the database with players from the 19th century, we set a limit based on the
+    # year a player debuted to determine if they need to be added. First, the earliest year (season)
+    # from the season table is found. Since two players have tied for the longest MLB career with 27
+    # years, setting a limit of 30 years will ensure that only players that could potentially have
+    # data tracked by this database are added.
+    earliest_season = min(s.year for s in db.Season.get_all_regular_seasons(app.db_session))
+    player_debut_limit = earliest_season - 30
     try:
         with open(player_csv_file) as player_csv:
             reader = DataclassReader(player_csv, PlayerCsvRow)
@@ -114,7 +120,7 @@ def import_people_csv(app, csv_folder):
                     if not (row.birthYear or row.birthMonth or row.birthDay or row.debut):
                         pbar.update()
                         continue
-                    if row.debut and row.debut.year < (earliest_year - 25):
+                    if row.debut and row.debut.year < player_debut_limit:
                         pbar.update()
                         continue
                     player_id = db.PlayerId.find_by_bbref_id(app.db_session, row.bbrefID)
