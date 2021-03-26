@@ -2,11 +2,11 @@
 from datetime import datetime, timezone
 
 from events import Events
+from scipy.stats.mstats import winsorize
 
 import vigorish.database as db
 from vigorish.tasks.base import Task
 from vigorish.util.datetime_util import TIME_ZONE_NEW_YORK
-from vigorish.util.numeric_helpers import trim_data_set
 from vigorish.util.regex import PFX_TIMESTAMP_REGEX
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import validate_bbref_game_id
@@ -46,9 +46,9 @@ class CalculateAvgPitchTimesTask(Task):
             self.events.calculate_pitch_metrics_progress(num)
         self.events.calculate_pitch_metrics_complete()
         metrics = {
-            "time_between_pitches": self.process_data_set(pitch_samples, trim=trim_data_sets, st_dev=0.2),
-            "time_between_at_bats": self.process_data_set(at_bat_samples, trim=trim_data_sets, st_dev=0.25),
-            "time_between_innings": self.process_data_set(inning_samples, trim=trim_data_sets, st_dev=0.007),
+            "time_between_pitches": self.process_data_set(pitch_samples, trim=trim_data_sets),
+            "time_between_at_bats": self.process_data_set(at_bat_samples, trim=trim_data_sets),
+            "time_between_innings": self.process_data_set(inning_samples, trim=trim_data_sets),
         }
         return Result.Ok(metrics)
 
@@ -120,14 +120,12 @@ class CalculateAvgPitchTimesTask(Task):
             return None
         return timestamp.replace(tzinfo=timezone.utc).astimezone(TIME_ZONE_NEW_YORK)
 
-    def process_data_set(self, data_set, trim=False, st_dev=1):
+    def process_data_set(self, data_set, trim=False):
         if not data_set or not isinstance(data_set, list):
             return {"error": "Data set is empty or is not a valid list"}
         if trim:
-            data_set = trim_data_set(data_set, st_dev_limit=st_dev)
-        if not data_set:
-            return {"error": f"Trim process with st_dev_limit={st_dev} eliminated all data"}
-        results = {
+            data_set = winsorize(data_set, limits=[0.01, 0.01], nan_policy="omit")
+        return {
             "total": int(sum(data_set)),
             "count": int(len(data_set)),
             "avg": round(sum(data_set) / len(data_set), 1),
@@ -136,6 +134,3 @@ class CalculateAvgPitchTimesTask(Task):
             "range": int(max(data_set) - min(data_set)),
             "trim": trim,
         }
-        if trim:
-            results["trim_stdev"] = st_dev
-        return results
