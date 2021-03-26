@@ -88,6 +88,8 @@ class CalculatePitchTimes(MenuItem):
         for stat_name in STAT_NAMES:
             row = {"stat_name": stat_name}
             for group_name, pitch_metrics in metrics.items():
+                if group_name == "timestamp":
+                    continue
                 row[group_name] = pitch_metrics[stat_name]
             table_data.append(row)
         return tabulate(table_data, headers="keys", numalign="right", stralign="right")
