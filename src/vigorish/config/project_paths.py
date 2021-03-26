@@ -14,6 +14,7 @@ NODEJS_INBOX = NIGHTMAREJS_FOLDER.joinpath("inbox")
 NODEJS_OUTBOX = NIGHTMAREJS_FOLDER.joinpath("outbox")
 NODEJS_SCRIPT = NIGHTMAREJS_FOLDER.joinpath("scrape_job.js")
 
+JSON_FOLDER = APP_FOLDER.joinpath("setup/json")
 CSV_FOLDER = APP_FOLDER.joinpath("setup/csv")
 PEOPLE_CSV = CSV_FOLDER.joinpath("People.csv")
 TEAM_CSV = CSV_FOLDER.joinpath("Teams.csv")

@@ -1,5 +1,5 @@
 from functools import cached_property
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
@@ -11,6 +11,8 @@ from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import PitchType
 from vigorish.util.exceptions import UnknownPlayerException
 from vigorish.util.string_helpers import validate_pitch_app_id
+
+PitchTypePercentiles = List[Dict[str, Union[PitchType, Tuple[float, float]]]]
 
 
 class PlayerData:
@@ -103,11 +105,10 @@ class PlayerData:
         return self.scraped_data.get_career_pfx_metrics_for_pitcher(self.mlb_id)
 
     @cached_property
-    def percentiles_for_pitch_types_for_career(self) -> List[Dict[str, Union[float, PitchType]]]:
-        pitch_type_metrics = self.pfx_pitching_metrics_for_career.pitch_type_metrics
+    def percentiles_for_pitch_types_for_career(self) -> List[PitchTypePercentiles]:
         return [
-            self.scraped_data.get_career_percentiles_for_pitch_type(pfx_metrics)
-            for pfx_metrics in pitch_type_metrics.values()
+            self.scraped_data.calculate_pitch_type_percentiles(self.player.throws, pfx_metrics)
+            for pfx_metrics in self.pfx_pitching_metrics_for_career.pitch_type_metrics.values()
         ]
 
     @cached_property
@@ -115,11 +116,10 @@ class PlayerData:
         return self.scraped_data.get_career_pfx_metrics_vs_rhb_for_pitcher(self.mlb_id)
 
     @cached_property
-    def percentiles_for_pitch_types_vs_rhb_for_career(self) -> List[Dict[str, Union[float, PitchType]]]:
-        pitch_type_metrics = self.pfx_pitching_metrics_vs_rhb_for_career.pitch_type_metrics
+    def percentiles_for_pitch_types_vs_rhb_for_career(self) -> List[PitchTypePercentiles]:
         return [
-            self.scraped_data.get_career_percentiles_vs_rhb_for_pitch_type(pfx_metrics)
-            for pfx_metrics in pitch_type_metrics.values()
+            self.scraped_data.calculate_pitch_type_percentiles(self.player.throws, pfx_metrics)
+            for pfx_metrics in self.pfx_pitching_metrics_vs_rhb_for_career.pitch_type_metrics.values()
         ]
 
     @cached_property
@@ -127,11 +127,10 @@ class PlayerData:
         return self.scraped_data.get_career_pfx_metrics_vs_lhb_for_pitcher(self.mlb_id)
 
     @cached_property
-    def percentiles_for_pitch_types_vs_lhb_for_career(self) -> List[Dict[str, Union[float, PitchType]]]:
-        pitch_type_metrics = self.pfx_pitching_metrics_vs_lhb_for_career.pitch_type_metrics
+    def percentiles_for_pitch_types_vs_lhb_for_career(self) -> List[PitchTypePercentiles]:
         return [
-            self.scraped_data.get_career_percentiles_vs_lhb_for_pitch_type(pfx_metrics)
-            for pfx_metrics in pitch_type_metrics.values()
+            self.scraped_data.calculate_pitch_type_percentiles(self.player.throws, pfx_metrics)
+            for pfx_metrics in self.pfx_pitching_metrics_vs_lhb_for_career.pitch_type_metrics.values()
         ]
 
     @cached_property
@@ -142,10 +141,10 @@ class PlayerData:
         }
 
     @cached_property
-    def percentiles_for_pitch_types_by_year(self) -> Dict[int, List[Dict[str, Union[float, PitchType]]]]:
+    def percentiles_for_pitch_types_by_year(self) -> Dict[int, List[PitchTypePercentiles]]:
         return {
             year: [
-                self.scraped_data.get_percentiles_for_year_for_pitch_type(year, pfx_metrics)
+                self.scraped_data.calculate_pitch_type_percentiles(self.player.throws, pfx_metrics)
                 for pfx_metrics in pfx_metrics_collection.pitch_type_metrics.values()
             ]
             for year, pfx_metrics_collection in self.pfx_pitching_metrics_by_year.items()
@@ -159,10 +158,12 @@ class PlayerData:
         }
 
     @cached_property
-    def percentiles_for_pitch_types_vs_rhb_by_year(self) -> Dict[int, List[Dict[str, Union[float, PitchType]]]]:
+    def percentiles_for_pitch_types_vs_rhb_by_year(
+        self,
+    ) -> Dict[int, List[PitchTypePercentiles]]:
         return {
             year: [
-                self.scraped_data.get_percentiles_for_year_vs_rhb_for_pitch_type(year, pfx_metrics)
+                self.scraped_data.calculate_pitch_type_percentiles(self.player.throws, pfx_metrics)
                 for pfx_metrics in pfx_metrics_collection.pitch_type_metrics.values()
             ]
             for year, pfx_metrics_collection in self.pfx_pitching_metrics_vs_rhb_by_year.items()
@@ -176,10 +177,12 @@ class PlayerData:
         }
 
     @cached_property
-    def percentiles_for_pitch_types_vs_lhb_by_year(self) -> Dict[int, List[Dict[str, Union[float, PitchType]]]]:
+    def percentiles_for_pitch_types_vs_lhb_by_year(
+        self,
+    ) -> Dict[int, List[PitchTypePercentiles]]:
         return {
             year: [
-                self.scraped_data.get_percentiles_for_year_vs_lhb_for_pitch_type(year, pfx_metrics)
+                self.scraped_data.calculate_pitch_type_percentiles(self.player.throws, pfx_metrics)
                 for pfx_metrics in pfx_metrics_collection.pitch_type_metrics.values()
             ]
             for year, pfx_metrics_collection in self.pfx_pitching_metrics_vs_lhb_by_year.items()
@@ -206,7 +209,7 @@ class PlayerData:
         return self.scraped_data.get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(self.mlb_id)
 
     @cached_property
-    def pfx_batting_metrics_by_year(self):
+    def pfx_batting_metrics_by_year(self) -> Dict[int, PitchFxMetricsCollection]:
         return {
             s.year: self.scraped_data.get_pfx_metrics_for_year_for_batter(self.mlb_id, s.year)
             for s in self.seasons_played
@@ -221,19 +224,19 @@ class PlayerData:
     def get_pfx_pitching_metrics_vs_lhb_for_game(self, bbref_game_id: str) -> PitchFxMetricsCollection:
         return self.scraped_data.get_pfx_metrics_for_game_vs_lhb_for_pitcher(self.mlb_id, bbref_game_id)
 
-    def get_pfx_batting_metrics_for_game(self, bbref_game_id):
+    def get_pfx_batting_metrics_for_game(self, bbref_game_id) -> PitchFxMetricsCollection:
         return self.scraped_data.get_pfx_metrics_for_game_for_batter(self.mlb_id, bbref_game_id)
 
-    def get_pfx_batting_metrics_vs_rhp_as_rhb_for_game(self, bbref_game_id):
+    def get_pfx_batting_metrics_vs_rhp_as_rhb_for_game(self, bbref_game_id) -> PitchFxMetricsCollection:
         return self.scraped_data.get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(self.mlb_id, bbref_game_id)
 
-    def get_pfx_batting_metrics_vs_rhp_as_lhb_for_game(self, bbref_game_id):
+    def get_pfx_batting_metrics_vs_rhp_as_lhb_for_game(self, bbref_game_id) -> PitchFxMetricsCollection:
         return self.scraped_data.get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(self.mlb_id, bbref_game_id)
 
-    def get_pfx_batting_metrics_vs_lhp_as_lhb_for_game(self, bbref_game_id):
+    def get_pfx_batting_metrics_vs_lhp_as_lhb_for_game(self, bbref_game_id) -> PitchFxMetricsCollection:
         return self.scraped_data.get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(self.mlb_id, bbref_game_id)
 
-    def get_pfx_batting_metrics_vs_lhp_as_rhb_for_game(self, bbref_game_id):
+    def get_pfx_batting_metrics_vs_lhp_as_rhb_for_game(self, bbref_game_id) -> PitchFxMetricsCollection:
         return self.scraped_data.get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(self.mlb_id, bbref_game_id)
 
     def get_pfx_metrics_collection_for_game(self, bbref_game_id=None, pitch_app_id=None):

@@ -8,6 +8,7 @@ TESTS_FOLDER = Path(__file__).parent
 ROOT_FOLDER = TESTS_FOLDER.parent
 DOTENV_FILE = TESTS_FOLDER.joinpath(".env")
 CONFIG_FILE = TESTS_FOLDER.joinpath("vig.config.json")
+JSON_FOLDER = TESTS_FOLDER.joinpath("json")
 CSV_FOLDER = TESTS_FOLDER.joinpath("csv")
 BACKUP_FOLDER = TESTS_FOLDER.joinpath("backup")
 DB_FILE = TESTS_FOLDER.joinpath("vig_test.db")

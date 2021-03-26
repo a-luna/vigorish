@@ -640,6 +640,7 @@ def test_pitchfx_metrics_career(vig_app):
     pfx_metrics_career_ALL_dict = {
         "id": 176,
         "mlb_id": 571882,
+        "p_throws": "R",
         "pitch_type": "ALL",
         "total_pitches": 17,
         "total_pa": 3,
@@ -702,6 +703,7 @@ def test_pitchfx_metrics_career(vig_app):
     pfx_metrics_career_CU_dict = {
         "id": 176,
         "mlb_id": 571882,
+        "p_throws": "R",
         "pitch_type": "CU",
         "total_pitches": 6,
         "total_pa": 0,
@@ -770,6 +772,7 @@ def test_pitchfx_metrics_career(vig_app):
     pfx_metrics_career_FF_dict = {
         "id": 176,
         "mlb_id": 571882,
+        "p_throws": "R",
         "pitch_type": "FF",
         "total_pitches": 6,
         "total_pa": 1,
@@ -838,6 +841,7 @@ def test_pitchfx_metrics_career(vig_app):
     pfx_metrics_career_CH_dict = {
         "id": 176,
         "mlb_id": 571882,
+        "p_throws": "R",
         "pitch_type": "CH",
         "total_pitches": 3,
         "total_pa": 1,
@@ -906,6 +910,7 @@ def test_pitchfx_metrics_career(vig_app):
     pfx_metrics_career_SL_dict = {
         "id": 176,
         "mlb_id": 571882,
+        "p_throws": "R",
         "pitch_type": "SL",
         "total_pitches": 2,
         "total_pa": 1,

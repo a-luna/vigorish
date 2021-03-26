@@ -12,6 +12,7 @@ exclude package-lock.json
 exclude package.json
 exclude runtime.txt
 include src/vigorish/setup/csv/*.csv
+include src/vigorish/setup/json/*.json
 include src/vigorish/nightmarejs/list_functions.js
 include src/vigorish/nightmarejs/new_nightmare.js
 include src/vigorish/nightmarejs/scrape_job.js

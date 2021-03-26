@@ -14,7 +14,7 @@ import vigorish.setup.populate_tables as setup_db
 from vigorish.config.config_file import ConfigFile
 from vigorish.config.config_setting import ConfigSettingValue, PathConfigSetting
 from vigorish.config.dotenv_file import DotEnvFile
-from vigorish.config.project_paths import CSV_FOLDER, SQLITE_DEV_URL, SQLITE_PROD_URL
+from vigorish.config.project_paths import CSV_FOLDER, JSON_FOLDER, SQLITE_DEV_URL, SQLITE_PROD_URL
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import DataSet
 from vigorish.types import AuditReport
@@ -78,19 +78,25 @@ class Vigorish:
         count_q = q.statement.with_only_columns([func.count()]).order_by(None)
         return q.session.execute(count_q).scalar()
 
-    def initialize_database(self, csv_folder: Optional[Path] = None) -> Result:
+    def initialize_database(self, csv_folder: Optional[Path] = None, json_folder: Optional[Path] = None) -> Result:
         if not csv_folder:
             csv_folder = CSV_FOLDER
+        if not json_folder:
+            json_folder = JSON_FOLDER
         self._create_db_schema()
-        return setup_db.populate_tables(self, csv_folder)
+        return setup_db.populate_tables(self, csv_folder, json_folder)
 
-    def prepare_database_for_restore(self, csv_folder: Optional[Path] = None) -> Result:
+    def prepare_database_for_restore(
+        self, csv_folder: Optional[Path] = None, json_folder: Optional[Path] = None
+    ) -> Result:
         if not csv_folder:
             csv_folder = CSV_FOLDER
+        if not json_folder:
+            json_folder = JSON_FOLDER
         self._delete_db_file()
         self.reset_database_connection()
         self._create_db_schema()
-        return setup_db.populate_tables_for_restore(self, csv_folder)
+        return setup_db.populate_tables_for_restore(self, csv_folder, json_folder)
 
     def reset_database_connection(self) -> None:
         self.db_session.close()

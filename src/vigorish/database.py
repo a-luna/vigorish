@@ -19,6 +19,7 @@ from vigorish.models import (
     PitchFxCsvRow,
     PitchStats,
     PitchStatsCsvRow,
+    PitchTypePercentile,
     Player,
     PlayerId,
     ScrapeError,
