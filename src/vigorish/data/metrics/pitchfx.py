@@ -20,6 +20,7 @@ PitchTypeMetricsDict = Dict[PitchType, PitchFxMetricsDict]
 @dataclass
 class PitchFxMetrics:
     mlb_id: int = field(repr=False, default=0)
+    p_throws: str = field(repr=False, default="")
     pitch_type: PitchType = PitchType.NONE
     total_pitches: int = field(repr=False, default=0)
     total_pa: int = field(repr=False, default=0)
