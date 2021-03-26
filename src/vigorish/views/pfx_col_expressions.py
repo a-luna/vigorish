@@ -1,4 +1,4 @@
-from sqlalchemy import and_, case, cast, Float, func
+from sqlalchemy import case, cast, Float, func
 
 import vigorish.database as db
 
@@ -56,9 +56,6 @@ contact_rate_numer = func.sum(db.PitchFx.batter_made_contact)
 contact_rate_denom = func.sum(db.PitchFx.batter_did_swing)
 contact_rate = contact_rate_numer / cast(contact_rate_denom, Float)
 contact_rate = case([(contact_rate_denom > 0, contact_rate)], else_=0.0).label("contact_rate")
-
-custom_score = (whiff_rate + o_swing_rate + zone_rate).label("custom_score")
-money_pitch = and_(whiff_rate > 0.35, o_swing_rate > 0.35, zone_rate > 0.35).label("money_pitch")
 
 gb_rate_numer = func.sum(db.PitchFx.is_ground_ball)
 gb_rate_denom = func.sum(db.PitchFx.is_batted_ball)
