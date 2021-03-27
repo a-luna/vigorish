@@ -208,11 +208,6 @@ class Pitcher_PitchType_All_View(db.Base):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
         return [dict(row) for row in results] if results else []
 
-    @classmethod
-    def get_money_pitches(cls, db_engine, minimum_pitches=75):
-        s = select([cls]).where(and_(cls.money_pitch == 1, cls.total_pitches >= minimum_pitches))
-        return db_engine.execute(s).fetchall()
-
 
 class Pitcher_PitchFx_vs_RHB_View(db.Base):
     __table__ = create_view(
@@ -391,11 +386,6 @@ class Pitcher_PitchType_vs_RHB_View(db.Base):
     def get_pfx_metrics_vs_rhb_for_pitcher(cls, db_engine, mlb_id):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
         return [dict(row) for row in results] if results else []
-
-    @classmethod
-    def get_money_pitches_vs_rhb(cls, db_engine, minimum_pitches=75):
-        s = select([cls]).where(and_(cls.money_pitch == 1, cls.total_pitches >= minimum_pitches))
-        return db_engine.execute(s).fetchall()
 
 
 class Pitcher_PitchFx_vs_LHB_View(db.Base):
@@ -762,11 +752,6 @@ class Pitcher_PitchType_All_By_Year_View(db.Base):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.year == year))
         results = db_engine.execute(s).fetchall()
         return [dict(row) for row in results] if results else []
-
-    @classmethod
-    def get_money_pitches_for_year(cls, db_engine, year, minimum_pitches=75):
-        s = select([cls]).where(and_(cls.money_pitch == 1, cls.year == year, cls.total_pitches >= minimum_pitches))
-        return db_engine.execute(s).fetchall()
 
 
 class Pitcher_PitchFx_vs_RHB_By_Year_View(db.Base):

@@ -57,8 +57,6 @@ class PitchFxMetrics:
     o_contact_rate: float = field(repr=False, default=0.0)
     z_contact_rate: float = field(repr=False, default=0.0)
     contact_rate: float = field(repr=False, default=0.0)
-    custom_score: float = field(repr=False, default=0.0)
-    money_pitch: bool = field(repr=False, default=False)
     total_swings: int = field(repr=False, default=0)
     total_swings_made_contact: int = field(repr=False, default=0)
     total_called_strikes: int = field(repr=False, default=0)
@@ -109,9 +107,8 @@ class PitchFxMetrics:
         }
 
     def get_plate_discipline_stats(self, include_pitch_count: bool = False) -> Dict[str, str]:
-        money_pitch = "$ " if self.money_pitch else ""
         total_pitches = f" ({self.total_pitches})" if include_pitch_count else ""
-        pd_stats = {"pitch_type": f"{money_pitch}{self.pitch_name}{total_pitches}"}
+        pd_stats = {"pitch_type": f"{self.pitch_name}{total_pitches}"}
         for metric, (rate, total) in PFX_PLATE_DISCIPLINE_METRICS.items():
             pitch_count = f" ({getattr(self, total)})" if include_pitch_count else ""
             pd_stats[metric] = f"{getattr(self, rate):.0%}{pitch_count}"
