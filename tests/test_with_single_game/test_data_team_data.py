@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from dacite.core import from_dict
 
 from vigorish.data.metrics import BatStatsMetrics, PitchStatsMetrics
@@ -397,10 +395,7 @@ def test_team_data_by_player(vig_app):
 
     away_team_player_bat_stats = away_team_data.bat_stats_by_player
     assert len(away_team_player_bat_stats) == 9
-    left = asdict(away_team_player_bat_stats[0])
-    right = away_bat_stats_dict
-    assert left == right
-    assert away_team_player_bat_stats[0] == from_dict(data_class=BatStatsMetrics, data=right)
+    assert away_team_player_bat_stats[0] == from_dict(data_class=BatStatsMetrics, data=away_bat_stats_dict)
 
     home_team_player_pitch_stats = home_team_data.pitch_stats_by_player
     assert len(home_team_player_pitch_stats) == 7
@@ -408,9 +403,6 @@ def test_team_data_by_player(vig_app):
 
     home_team_player_bat_stats = home_team_data.bat_stats_by_player
     assert len(home_team_player_bat_stats) == 10
-    left = asdict(home_team_player_bat_stats[0])
-    right = home_bat_stats_dict
-    assert left == right
     assert home_team_player_bat_stats[0] == from_dict(data_class=BatStatsMetrics, data=home_bat_stats_dict)
 
 
