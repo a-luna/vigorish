@@ -14,7 +14,6 @@ from vigorish.data.metrics import (
 )
 from vigorish.data.name_search import PlayerNameSearch
 from vigorish.enums import DataSet, DefensePosition, PitchType, VigFile
-from vigorish.util.list_helpers import group_and_sort_list
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
 from vigorish.util.result import Result
 
@@ -543,18 +542,6 @@ class ScrapedData:
                 self.db_engine, mlb_id, bbref_game_id
             ),
         )
-
-    def get_money_pitches(self, minimum_pitches: int = 75) -> Dict[PitchType, PitchFxMetrics]:
-        money_pitches = PitchFxMetrics.from_query_results(
-            db.Pitcher_PitchType_All_View.get_money_pitches(self.db_engine, minimum_pitches)
-        )
-        return group_and_sort_list(money_pitches, "pitch_type", "custom_score", sort_all_desc=True)
-
-    def get_money_pitches_for_year(self, year: int, minimum_pitches: int = 75) -> Dict[PitchType, PitchFxMetrics]:
-        money_pitches = PitchFxMetrics.from_query_results(
-            db.Pitcher_PitchType_All_By_Year_View.get_money_pitches_for_year(self.db_engine, year, minimum_pitches)
-        )
-        return group_and_sort_list(money_pitches, "pitch_type", "custom_score", sort_all_desc=True)
 
     # PLAYER BAT STATS
 
