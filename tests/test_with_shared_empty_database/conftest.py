@@ -1,6 +1,6 @@
 import pytest
 
-from tests.conftest import CSV_FOLDER
+from tests.conftest import CSV_FOLDER, JSON_FOLDER
 from vigorish.app import Vigorish
 
 
@@ -19,6 +19,6 @@ def vig_app(request):
 @pytest.fixture(scope="package", autouse=True)
 def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_with_empty_database package."""
-    vig_app.initialize_database(csv_folder=CSV_FOLDER)
+    vig_app.initialize_database(csv_folder=CSV_FOLDER, json_folder=JSON_FOLDER)
     assert vig_app.db_setup_complete
     return True

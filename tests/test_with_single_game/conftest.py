@@ -1,6 +1,6 @@
 import pytest
 
-from tests.conftest import CSV_FOLDER, DOTENV_FILE
+from tests.conftest import CSV_FOLDER, DOTENV_FILE, JSON_FOLDER
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,
@@ -36,7 +36,7 @@ def vig_app(request):
 @pytest.fixture(scope="package", autouse=True)
 def create_test_data(vig_app):
     """Initialize DB with data to verify test functions in test_with_single_game package."""
-    vig_app.initialize_database(csv_folder=CSV_FOLDER)
+    vig_app.initialize_database(csv_folder=CSV_FOLDER, json_folder=JSON_FOLDER)
     assert vig_app.db_setup_complete
     update_scraped_bbref_games_for_date(vig_app, GAME_DATE)
     update_scraped_brooks_games_for_date(vig_app, GAME_DATE)

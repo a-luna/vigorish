@@ -45,6 +45,7 @@ INSTALL_REQUIRES = [
     "python-dotenv",
     "rapidfuzz",
     "requests",
+    "scipy",
     "sqlalchemy==1.3.23",
     "sqlalchemy-utils",
     "tabulate",

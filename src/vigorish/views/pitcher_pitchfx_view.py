@@ -2,21 +2,18 @@ from sqlalchemy import and_, func, join, literal, or_, select
 from sqlalchemy_utils import create_view
 
 import vigorish.database as db
-from vigorish.util.numeric_helpers import calculate_percentile
 from vigorish.views.pfx_col_expressions import (
     avg,
     bb_rate,
     called_strike_rate,
     contact_rate,
     csw_rate,
-    custom_score,
     fly_ball_rate,
     ground_ball_rate,
     hr_per_fb,
     iso,
     k_rate,
     line_drive_rate,
-    money_pitch,
     o_contact_rate,
     o_swing_rate,
     obp,
@@ -40,6 +37,7 @@ class Pitcher_PitchFx_All_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 literal("ALL").label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
                 func.sum(db.PitchFx.is_final_pitch_of_ab).label("total_pa"),
@@ -126,6 +124,7 @@ class Pitcher_PitchType_All_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
                 func.sum(db.PitchFx.is_final_pitch_of_ab).label("total_pa"),
@@ -162,8 +161,6 @@ class Pitcher_PitchType_All_View(db.Base):
                 o_contact_rate,
                 z_contact_rate,
                 contact_rate,
-                custom_score,
-                money_pitch,
                 func.sum(db.PitchFx.batter_did_swing).label("total_swings"),
                 func.sum(db.PitchFx.batter_made_contact).label("total_swings_made_contact"),
                 func.sum(db.PitchFx.called_strike).label("total_called_strikes"),
@@ -211,13 +208,6 @@ class Pitcher_PitchType_All_View(db.Base):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
         return [dict(row) for row in results] if results else []
 
-    @classmethod
-    def get_percentiles_for_pitch_type(cls, db_engine, pfx):
-        percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
-        s = select(percentile_values).where(cls.pitch_type == str(pfx.pitch_type))
-        results = [dict(row) for row in db_engine.execute(s).fetchall()]
-        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
-
 
 class Pitcher_PitchFx_vs_RHB_View(db.Base):
     __table__ = create_view(
@@ -226,6 +216,7 @@ class Pitcher_PitchFx_vs_RHB_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 literal("ALL").label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
                 func.sum(db.PitchFx.is_final_pitch_of_ab).label("total_pa"),
@@ -312,6 +303,7 @@ class Pitcher_PitchType_vs_RHB_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
                 func.sum(db.PitchFx.is_final_pitch_of_ab).label("total_pa"),
@@ -348,8 +340,6 @@ class Pitcher_PitchType_vs_RHB_View(db.Base):
                 o_contact_rate,
                 z_contact_rate,
                 contact_rate,
-                custom_score,
-                money_pitch,
                 func.sum(db.PitchFx.batter_did_swing).label("total_swings"),
                 func.sum(db.PitchFx.batter_made_contact).label("total_swings_made_contact"),
                 func.sum(db.PitchFx.called_strike).label("total_called_strikes"),
@@ -397,13 +387,6 @@ class Pitcher_PitchType_vs_RHB_View(db.Base):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
         return [dict(row) for row in results] if results else []
 
-    @classmethod
-    def get_percentiles_for_pitch_type_vs_rhb(cls, db_engine, pfx):
-        percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
-        s = select(percentile_values).where(cls.pitch_type == str(pfx.pitch_type))
-        results = [dict(row) for row in db_engine.execute(s).fetchall()]
-        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
-
 
 class Pitcher_PitchFx_vs_LHB_View(db.Base):
     __table__ = create_view(
@@ -412,6 +395,7 @@ class Pitcher_PitchFx_vs_LHB_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 literal("ALL").label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
                 func.sum(db.PitchFx.is_final_pitch_of_ab).label("total_pa"),
@@ -498,6 +482,7 @@ class Pitcher_PitchType_vs_LHB_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
                 func.sum(db.PitchFx.is_final_pitch_of_ab).label("total_pa"),
@@ -534,8 +519,6 @@ class Pitcher_PitchType_vs_LHB_View(db.Base):
                 o_contact_rate,
                 z_contact_rate,
                 contact_rate,
-                custom_score,
-                money_pitch,
                 func.sum(db.PitchFx.batter_did_swing).label("total_swings"),
                 func.sum(db.PitchFx.batter_made_contact).label("total_swings_made_contact"),
                 func.sum(db.PitchFx.called_strike).label("total_called_strikes"),
@@ -583,13 +566,6 @@ class Pitcher_PitchType_vs_LHB_View(db.Base):
         results = db_engine.execute(select([cls]).where(cls.mlb_id == mlb_id)).fetchall()
         return [dict(row) for row in results] if results else []
 
-    @classmethod
-    def get_percentiles_for_pitch_type_vs_lhb(cls, db_engine, pfx):
-        percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
-        s = select(percentile_values).where(cls.pitch_type == str(pfx.pitch_type))
-        results = [dict(row) for row in db_engine.execute(s).fetchall()]
-        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
-
 
 class Pitcher_PitchFx_All_By_Year_View(db.Base):
     __table__ = create_view(
@@ -598,6 +574,7 @@ class Pitcher_PitchFx_All_By_Year_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.Season.year.label("year"),
                 literal("ALL").label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
@@ -688,6 +665,7 @@ class Pitcher_PitchType_All_By_Year_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.Season.year.label("year"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
@@ -725,8 +703,6 @@ class Pitcher_PitchType_All_By_Year_View(db.Base):
                 o_contact_rate,
                 z_contact_rate,
                 contact_rate,
-                custom_score,
-                money_pitch,
                 func.sum(db.PitchFx.batter_did_swing).label("total_swings"),
                 func.sum(db.PitchFx.batter_made_contact).label("total_swings_made_contact"),
                 func.sum(db.PitchFx.called_strike).label("total_called_strikes"),
@@ -777,13 +753,6 @@ class Pitcher_PitchType_All_By_Year_View(db.Base):
         results = db_engine.execute(s).fetchall()
         return [dict(row) for row in results] if results else []
 
-    @classmethod
-    def get_percentiles_for_pitch_type_for_year(cls, db_engine, year, pfx):
-        percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
-        s = select(percentile_values).where(and_(cls.year == year, cls.pitch_type == str(pfx.pitch_type)))
-        results = [dict(row) for row in db_engine.execute(s).fetchall()]
-        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
-
 
 class Pitcher_PitchFx_vs_RHB_By_Year_View(db.Base):
     __table__ = create_view(
@@ -792,6 +761,7 @@ class Pitcher_PitchFx_vs_RHB_By_Year_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.Season.year.label("year"),
                 literal("ALL").label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
@@ -882,6 +852,7 @@ class Pitcher_PitchType_vs_RHB_By_Year_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.Season.year.label("year"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
@@ -919,8 +890,6 @@ class Pitcher_PitchType_vs_RHB_By_Year_View(db.Base):
                 o_contact_rate,
                 z_contact_rate,
                 contact_rate,
-                custom_score,
-                money_pitch,
                 func.sum(db.PitchFx.batter_did_swing).label("total_swings"),
                 func.sum(db.PitchFx.batter_made_contact).label("total_swings_made_contact"),
                 func.sum(db.PitchFx.called_strike).label("total_called_strikes"),
@@ -971,13 +940,6 @@ class Pitcher_PitchType_vs_RHB_By_Year_View(db.Base):
         results = db_engine.execute(s).fetchall()
         return [dict(row) for row in results] if results else []
 
-    @classmethod
-    def get_percentiles_for_pitch_type_for_year_vs_rhb(cls, db_engine, year, pfx):
-        percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
-        s = select(percentile_values).where(and_(cls.year == year, cls.pitch_type == str(pfx.pitch_type)))
-        results = [dict(row) for row in db_engine.execute(s).fetchall()]
-        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
-
 
 class Pitcher_PitchFx_vs_LHB_By_Year_View(db.Base):
     __table__ = create_view(
@@ -986,6 +948,7 @@ class Pitcher_PitchFx_vs_LHB_By_Year_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.Season.year.label("year"),
                 literal("ALL").label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
@@ -1076,6 +1039,7 @@ class Pitcher_PitchType_vs_LHB_By_Year_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.Season.year.label("year"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
                 func.count(db.PitchFx.id).label("total_pitches"),
@@ -1113,8 +1077,6 @@ class Pitcher_PitchType_vs_LHB_By_Year_View(db.Base):
                 o_contact_rate,
                 z_contact_rate,
                 contact_rate,
-                custom_score,
-                money_pitch,
                 func.sum(db.PitchFx.batter_did_swing).label("total_swings"),
                 func.sum(db.PitchFx.batter_made_contact).label("total_swings_made_contact"),
                 func.sum(db.PitchFx.called_strike).label("total_called_strikes"),
@@ -1165,13 +1127,6 @@ class Pitcher_PitchType_vs_LHB_By_Year_View(db.Base):
         results = db_engine.execute(s).fetchall()
         return [dict(row) for row in results] if results else []
 
-    @classmethod
-    def get_percentiles_for_pitch_type_for_year_vs_lhb(cls, db_engine, year, pfx):
-        percentile_values = [cls.avg_speed, cls.ops, cls.whiff_rate, cls.zone_rate, cls.contact_rate]
-        s = select(percentile_values).where(and_(cls.year == year, cls.pitch_type == str(pfx.pitch_type)))
-        results = [dict(row) for row in db_engine.execute(s).fetchall()]
-        return _calculate_pitch_type_percentiles(results, pfx) if results else {}
-
 
 class Pitcher_PitchFx_For_Game_All_View(db.Base):
     __table__ = create_view(
@@ -1180,6 +1135,7 @@ class Pitcher_PitchFx_For_Game_All_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.pitch_app_id.label("pitch_app_id"),
                 db.PitchFx.bbref_game_id.label("bbref_game_id"),
                 literal("ALL").label("pitch_type"),
@@ -1277,6 +1233,7 @@ class Pitcher_PitchType_For_Game_All_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.pitch_app_id.label("pitch_app_id"),
                 db.PitchFx.bbref_game_id.label("bbref_game_id"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
@@ -1313,8 +1270,6 @@ class Pitcher_PitchType_For_Game_All_View(db.Base):
                 z_swing_rate,
                 swing_rate,
                 o_contact_rate,
-                z_contact_rate,
-                contact_rate,
                 func.sum(db.PitchFx.batter_did_swing).label("total_swings"),
                 func.sum(db.PitchFx.batter_made_contact).label("total_swings_made_contact"),
                 func.sum(db.PitchFx.called_strike).label("total_called_strikes"),
@@ -1380,6 +1335,7 @@ class Pitcher_PitchFx_For_Game_vs_RHB_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.pitch_app_id.label("pitch_app_id"),
                 db.PitchFx.bbref_game_id.label("bbref_game_id"),
                 literal("ALL").label("pitch_type"),
@@ -1477,6 +1433,7 @@ class Pitcher_PitchType_For_Game_vs_RHB_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.pitch_app_id.label("pitch_app_id"),
                 db.PitchFx.bbref_game_id.label("bbref_game_id"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
@@ -1580,6 +1537,7 @@ class Pitcher_PitchFx_For_Game_vs_LHB_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.pitch_app_id.label("pitch_app_id"),
                 db.PitchFx.bbref_game_id.label("bbref_game_id"),
                 literal("ALL").label("pitch_type"),
@@ -1677,6 +1635,7 @@ class Pitcher_PitchType_For_Game_vs_LHB_View(db.Base):
             [
                 db.PitchFx.pitcher_id.label("id"),
                 db.PitchFx.pitcher_id_mlb.label("mlb_id"),
+                db.PitchFx.p_throws.label("p_throws"),
                 db.PitchFx.pitch_app_id.label("pitch_app_id"),
                 db.PitchFx.bbref_game_id.label("bbref_game_id"),
                 db.PitchFx.mlbam_pitch_name.label("pitch_type"),
@@ -1771,14 +1730,3 @@ class Pitcher_PitchType_For_Game_vs_LHB_View(db.Base):
         s = select([cls]).where(and_(cls.mlb_id == mlb_id, cls.bbref_game_id == game_id))
         results = db_engine.execute(s).fetchall()
         return [dict(row) for row in results] if results else []
-
-
-def _calculate_pitch_type_percentiles(results, pfx):
-    return {
-        "pitch_type": pfx.pitch_type,
-        "avg_speed": calculate_percentile("avg_speed", results, pfx.avg_speed, decimal_precision=2),
-        "ops": calculate_percentile("ops", results, pfx.ops, decimal_precision=3),
-        "whiff_rate": calculate_percentile("whiff_rate", results, pfx.whiff_rate, decimal_precision=3),
-        "zone_rate": calculate_percentile("zone_rate", results, pfx.zone_rate, decimal_precision=3),
-        "contact_rate": calculate_percentile("contact_rate", results, pfx.contact_rate, decimal_precision=3),
-    }

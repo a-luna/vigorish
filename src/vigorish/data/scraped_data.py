@@ -1,6 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 
 import vigorish.database as db
 from vigorish.data.file_helper import FileHelper
@@ -13,7 +13,7 @@ from vigorish.data.metrics import (
     PitchStatsMetrics,
 )
 from vigorish.data.name_search import PlayerNameSearch
-from vigorish.enums import DataSet, DefensePosition, VigFile
+from vigorish.enums import DataSet, DefensePosition, PitchType, VigFile
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
 from vigorish.util.result import Result
 
@@ -478,8 +478,10 @@ class ScrapedData:
             db.Pitcher_PitchType_All_View.get_pfx_metrics_for_career_for_pitcher(self.db_engine, mlb_id),
         )
 
-    def get_career_percentiles_for_pitch_type(self, pfx_metrics: PitchFxMetrics) -> Dict[str, float]:
-        return db.Pitcher_PitchType_All_View.get_percentiles_for_pitch_type(self.db_engine, pfx_metrics)
+    def calculate_pitch_type_percentiles(
+        self, p_throws: str, pfx_metrics: PitchFxMetrics
+    ) -> Dict[str, Union[PitchType, Tuple[float, float]]]:
+        return db.PitchTypePercentile.calculate_pitch_type_percentiles(self.db_session, p_throws, pfx_metrics)
 
     def get_career_pfx_metrics_vs_rhb_for_pitcher(self, mlb_id: int) -> PitchFxMetricsCollection:
         return PitchFxMetricsCollection.from_query_results(
@@ -487,27 +489,16 @@ class ScrapedData:
             db.Pitcher_PitchType_vs_RHB_View.get_pfx_metrics_vs_rhb_for_pitcher(self.db_engine, mlb_id),
         )
 
-    def get_career_percentiles_vs_rhb_for_pitch_type(self, pfx_metrics: PitchFxMetrics) -> Dict[str, float]:
-        return db.Pitcher_PitchType_vs_RHB_View.get_percentiles_for_pitch_type_vs_rhb(self.db_engine, pfx_metrics)
-
     def get_career_pfx_metrics_vs_lhb_for_pitcher(self, mlb_id: int) -> PitchFxMetricsCollection:
         return PitchFxMetricsCollection.from_query_results(
             db.Pitcher_PitchFx_vs_LHB_View.get_pfx_metrics_vs_lhb_for_pitcher(self.db_engine, mlb_id),
             db.Pitcher_PitchType_vs_LHB_View.get_pfx_metrics_vs_lhb_for_pitcher(self.db_engine, mlb_id),
         )
 
-    def get_career_percentiles_vs_lhb_for_pitch_type(self, pfx_metrics: PitchFxMetrics) -> Dict[str, float]:
-        return db.Pitcher_PitchType_vs_LHB_View.get_percentiles_for_pitch_type_vs_lhb(self.db_engine, pfx_metrics)
-
     def get_pfx_metrics_for_year_for_pitcher(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
         return PitchFxMetricsCollection.from_query_results(
             db.Pitcher_PitchFx_All_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
             db.Pitcher_PitchType_All_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
-        )
-
-    def get_percentiles_for_year_for_pitch_type(self, year, pfx_metrics: PitchFxMetrics) -> Dict[str, float]:
-        return db.Pitcher_PitchType_All_By_Year_View.get_percentiles_for_pitch_type_for_year(
-            self.db_engine, year, pfx_metrics
         )
 
     def get_pfx_metrics_for_year_vs_rhb_for_pitcher(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
@@ -516,20 +507,10 @@ class ScrapedData:
             db.Pitcher_PitchType_vs_RHB_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
         )
 
-    def get_percentiles_for_year_vs_rhb_for_pitch_type(self, year, pfx_metrics: PitchFxMetrics) -> Dict[str, float]:
-        return db.Pitcher_PitchType_vs_RHB_By_Year_View.get_percentiles_for_pitch_type_for_year_vs_rhb(
-            self.db_engine, year, pfx_metrics
-        )
-
     def get_pfx_metrics_for_year_vs_lhb_for_pitcher(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
         return PitchFxMetricsCollection.from_query_results(
             db.Pitcher_PitchFx_vs_LHB_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
             db.Pitcher_PitchType_vs_LHB_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
-        )
-
-    def get_percentiles_for_year_vs_lhb_for_pitch_type(self, year, pfx_metrics: PitchFxMetrics) -> Dict[str, float]:
-        return db.Pitcher_PitchType_vs_LHB_By_Year_View.get_percentiles_for_pitch_type_for_year_vs_lhb(
-            self.db_engine, year, pfx_metrics
         )
 
     def get_pfx_metrics_for_game_for_pitcher(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:

@@ -311,6 +311,18 @@ class PitchType(IntFlag):
         | SLIDER
         | UNKNOWN
     )
+    PERCENTILES = (
+        CHANGEUP
+        | CURVEBALL
+        | FASTBALL
+        | CUTTER
+        | FOUR_SEAM_FASTBALL
+        | SPLITTER
+        | TWO_SEAM_FASTBALL
+        | KNUCKLE_BALL_CURVE
+        | SINKER
+        | SLIDER
+    )
 
     def __str__(self):
         abbrev_dict = {
