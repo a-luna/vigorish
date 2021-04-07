@@ -190,6 +190,30 @@ class GameData:
             if check_pitch_stats_for_game_score(pitch_stats)
         ]
 
+    @cached_property
+    def extra_innings(self):
+        return len(self.get_inning_numbers_sorted()) > 9
+
+    def get_game_data(self):
+        return {
+            "game_id": self.bbref_game_id,
+            "linescore": self.get_html_linescore(),
+            "pitcher_results": self.get_pitcher_results(),
+            "extra_innings": self.extra_innings,
+        }
+
+    def get_boxscore_data(self):
+        boxscore_data = {
+            "summary": [s for s in self.get_matchup_details().split("\n") if s],
+            "extra_innings": self.extra_innings,
+            "linescore": self.get_html_linescore(),
+            "game_meta": self.get_game_meta_info(),
+            "team_data": self.get_team_data(),
+        }
+        if self.extra_innings:
+            boxscore_data["linescore_complete"] = self.get_html_linescore(condensed=False)
+        return boxscore_data
+
     def get_team_data(self):
         return {
             self.away_team_id: self._prepare_team_data(self.away_team_id),
@@ -486,16 +510,21 @@ class GameData:
         return get_innings_sorted(innings_unsorted)
 
     def view_game_meta_info(self):
-        meta_info = deepcopy(self.game_meta_info)
+        meta_info = self.get_game_meta_info()
         meta_info.pop("umpires")
-        meta_info.pop("game_time_hour")
-        meta_info.pop("game_time_minute")
-        game_start_time = meta_info.pop("game_date_time_str")
+        game_start_time = meta_info.pop("game_start_time")
         table_rows = [[name, value] for name, value in meta_info.items()]
         table_rows.insert(0, ["game_start_time", game_start_time])
         table = tabulate(table_rows)
         heading = f"Meta Information for game {self.bbref_game_id}"
         return create_table_viewer([DisplayTable(table, heading)])
+
+    def get_game_meta_info(self):
+        meta_info = deepcopy(self.game_meta_info)
+        meta_info.pop("game_time_hour")
+        meta_info.pop("game_time_minute")
+        meta_info["game_start_time"] = meta_info.pop("game_date_time_str")
+        return meta_info
 
     def get_removed_pfx(self):
         return [at_bat["pitchfx"] for inning_dict in self.removed_pitchfx.values() for at_bat in inning_dict.values()]
@@ -550,49 +579,83 @@ class GameData:
         home_record = get_team_record_for_linescore(self.home_team_data)
         matchup = f"{self.away_team.name} ({away_record}) vs {self.home_team.name} ({home_record})"
         game_time = self.game_datetime.strftime(DT_AWARE_VERBOSE)
-        w_l_sv_pitchers = self.get_w_l_sv_pitcher_names()
-        return f"{game_time}\n{matchup}\n{w_l_sv_pitchers}\n"
+        w_l_sv = self.get_pitcher_results_str()
+        return f"{game_time}\n{matchup}\n{w_l_sv}\n"
 
-    def get_w_l_sv_pitcher_names(self):
-        w_l_sv_pitchers = ""
-        w_pitcher_id = (
+    def get_pitcher_results_str(self):
+        pitchers = self.get_pitcher_results()
+        w_pitcher = f'WP: {pitchers["wp"]["name"]} ({pitchers["wp"]["team_id"]})'
+        l_pitcher = f'LP: {pitchers["lp"]["name"]} ({pitchers["lp"]["team_id"]})'
+        if "sv" not in pitchers:
+            return f"{w_pitcher} {l_pitcher}"
+        sv_pitcher = f'SV: {pitchers["sv"]["name"]} ({pitchers["wp"]["team_id"]})'
+        return f"{w_pitcher} {l_pitcher} {sv_pitcher}"
+
+    def get_pitcher_results(self):
+        pitcher_results = {}
+        w_pitcher_bbref_id = (
             self.away_team_data["pitcher_of_record"]
             if self.away_team_data["team_won"]
             else self.home_team_data["pitcher_of_record"]
         )
-        w_pitcher_name = self.get_player_id_map(bbref_id=w_pitcher_id).mlb_name
+        w_pitcher_id = self.get_player_id_map(bbref_id=w_pitcher_bbref_id).mlb_id
+        w_pitcher_name = self.get_player_id_map(bbref_id=w_pitcher_bbref_id).mlb_name
         w_pitcher_team_id = self.away_team_id if self.away_team_data["team_won"] else self.home_team_id
-        l_pitcher_id = (
+        pitcher_results["wp"] = {"mlb_id": w_pitcher_id, "name": w_pitcher_name, "team_id": w_pitcher_team_id}
+        l_pitcher_bbref_id = (
             self.home_team_data["pitcher_of_record"]
             if self.away_team_data["team_won"]
             else self.away_team_data["pitcher_of_record"]
         )
-        l_pitcher_name = self.get_player_id_map(bbref_id=l_pitcher_id).mlb_name
+        l_pitcher_id = self.get_player_id_map(bbref_id=l_pitcher_bbref_id).mlb_id
+        l_pitcher_name = self.get_player_id_map(bbref_id=l_pitcher_bbref_id).mlb_name
         l_pitcher_team_id = self.home_team_id if self.away_team_data["team_won"] else self.away_team_id
-        w_l_sv_pitchers += f"WP: {w_pitcher_name} ({w_pitcher_team_id}) LP: {l_pitcher_name} ({l_pitcher_team_id})"
-        sv_pitcher_id = (
+        pitcher_results["lp"] = {"mlb_id": l_pitcher_id, "name": l_pitcher_name, "team_id": l_pitcher_team_id}
+        sv_pitcher_bbref_id = (
             self.away_team_data["pitcher_earned_save"]
             if self.away_team_data["team_won"] and self.away_team_data["pitcher_earned_save"]
             else self.home_team_data["pitcher_earned_save"]
             if self.home_team_data["team_won"] and self.home_team_data["pitcher_earned_save"]
-            else None
+            else 0
         )
-        if sv_pitcher_id:
-            sv_pitcher_name = self.get_player_id_map(bbref_id=sv_pitcher_id).mlb_name
-            w_l_sv_pitchers += f" SV: {sv_pitcher_name} ({w_pitcher_team_id})"
-        return w_l_sv_pitchers
+        if sv_pitcher_bbref_id:
+            sv_pitcher_id = self.get_player_id_map(bbref_id=sv_pitcher_bbref_id).mlb_id
+            sv_pitcher_name = self.get_player_id_map(bbref_id=sv_pitcher_bbref_id).mlb_name
+            pitcher_results["sv"] = {"mlb_id": sv_pitcher_id, "name": sv_pitcher_name, "team_id": w_pitcher_team_id}
+        return pitcher_results
 
-    def get_linescore(self):
-        return get_linescore_tables(self.away_team_data, self.home_team_data, self.innings_list)
+    def get_tui_linescore(self):
+        table_list = [
+            create_tui_linescore(**html_linescore)
+            for html_linescore in get_html_linescore(
+                self.away_team_data, self.home_team_data, self.innings_list, chunkify=True
+            )
+        ]
+        return "\n\n".join(table_list)
+
+    def get_html_linescore(self, condensed=True):
+        linescore_components = get_html_linescore(
+            self.away_team_data, self.home_team_data, self.innings_list, condensed
+        )
+        if condensed and self.extra_innings:
+            linescore_components = condense_html_linescore(linescore_components)
+        return convert_linescore_for_html(linescore_components, condensed)
+
+    def get_inning_numbers_sorted(self):
+        inning_labels = [inning["inning_id"] for inning in self.get_innings_sorted()]
+        return sorted({parse_inning_number_from_label(inning) for inning in inning_labels})
+
+    def get_inning_runs_scored_map(self):
+        html_linescore = get_html_linescore(self.away_team_data, self.home_team_data, self.innings_list, False)
+        return get_inning_runs_scored_map(html_linescore)
 
 
-def get_linescore_tables(away_team_data, home_team_data, innings_list):
-    table_list = []
-    (away_team_runs_chunked, home_team_runs_chunked) = get_runs_by_inning(innings_list)
-    for i in range(len(away_team_runs_chunked)):
+def get_html_linescore(away_team_data, home_team_data, innings_list, condensed=False, chunkify=False):
+    linescore_tables = []
+    (total_chunks, away_team_runs_chunked, home_team_runs_chunked) = get_runs_by_inning(innings_list, chunkify)
+    for i in range(total_chunks):
         start_inning = i * 9 + 1
-        last_chunk = len(away_team_runs_chunked) == 2
-        table = create_linescore_table(
+        linescore = create_html_linescore_components(
             away_team_data["team_id_br"],
             away_team_runs_chunked[i],
             get_team_totals_for_linescore(away_team_data),
@@ -600,10 +663,220 @@ def get_linescore_tables(away_team_data, home_team_data, innings_list):
             home_team_runs_chunked[i],
             get_team_totals_for_linescore(home_team_data),
             start_inning,
-            last_chunk,
+            is_last_chunk(total_chunks, i + 1),
+            is_extra_innings_game(total_chunks, away_team_runs_chunked[i]),
         )
-        table_list.append(table)
-    return "\n\n".join(table_list)
+        if condensed:
+            linescore.pop("last_chunk")
+        linescore_tables.append(linescore)
+    return linescore_tables
+
+
+def condense_html_linescore(linescore_tables):
+    inning_runs_scored_map = get_inning_runs_scored_map(linescore_tables)
+    (condensed_linescore_map, removed_inning_map, inning_runs_scored_map) = _condense_linescore(inning_runs_scored_map)
+    return {
+        "inning_numbers": [x["inning"] for x in condensed_linescore_map],
+        "game_totals": ["R", "H", "E"],
+        "away_team_id": linescore_tables[0]["away_team_id"],
+        "away_team_runs_by_inning": [x["away_runs"] for x in condensed_linescore_map],
+        "away_team_totals": linescore_tables[0]["away_team_totals"],
+        "home_team_id": linescore_tables[0]["home_team_id"],
+        "home_team_runs_by_inning": [x["home_runs"] for x in condensed_linescore_map],
+        "home_team_totals": linescore_tables[0]["home_team_totals"],
+        "extra_innings": linescore_tables[0]["extra_innings"],
+        "removed_innings": removed_inning_map,
+        "inning_runs_scored_map": inning_runs_scored_map,
+    }
+
+
+def get_inning_runs_scored_map(linescore_tables):
+    inning_runs_scored_map = []
+    if isinstance(linescore_tables, list):
+        for linescore in linescore_tables:
+            inning_map = _get_inning_runs_scored_map(linescore)
+            inning_runs_scored_map.extend(inning_map)
+    else:
+        inning_runs_scored_map = _get_inning_runs_scored_map(linescore_tables)
+    (_, _, inning_runs_scored_map) = _condense_linescore(inning_runs_scored_map)
+    return inning_runs_scored_map
+
+
+def _get_inning_runs_scored_map(linescore):
+    inning_runs_scored_map = []
+    inning_numbers_without_filler = [num for num in linescore["inning_numbers"] if num != ""]
+    for i in range(len(inning_numbers_without_filler)):
+        inning = linescore["inning_numbers"][i]
+        away_team_runs_scored = linescore["away_team_runs_by_inning"][i]
+        home_team_runs_scored = linescore["home_team_runs_by_inning"][i]
+        inning_somebody_scored = away_team_runs_scored != 0 or home_team_runs_scored != 0
+        home_team_runs_int = 0 if isinstance(home_team_runs_scored, str) else home_team_runs_scored
+        inning_runs_scored_map.append(
+            {
+                "runs_scored": inning_somebody_scored,
+                "inning": inning,
+                "away_runs": away_team_runs_scored,
+                "home_runs": home_team_runs_scored,
+                "total_runs_scored": away_team_runs_scored + home_team_runs_int,
+            }
+        )
+    return inning_runs_scored_map
+
+
+def _condense_linescore(inning_runs_scored_map):
+    innings_nobody_scored = list(filter(lambda x: not x["runs_scored"], inning_runs_scored_map))
+    innings_somebody_scored = list(filter(lambda x: x["runs_scored"], inning_runs_scored_map))
+    removed_innings = []
+    if len(innings_somebody_scored) < 9:
+        missing_column_count = 9 - len(innings_somebody_scored)
+        innings_somebody_scored.extend(innings_nobody_scored[:missing_column_count])
+        removed_innings = [inn["inning"] for inn in innings_nobody_scored[missing_column_count:]]
+    elif len(innings_somebody_scored) > 9:
+        remove_column_count = len(innings_somebody_scored) - 9
+        innings_somebody_scored.sort(key=lambda x: x["total_runs_scored"])
+        innings_somebody_scored = innings_somebody_scored[remove_column_count:]
+        removed_innings = [inn["inning"] for inn in innings_nobody_scored[:remove_column_count]]
+    removed_inning_map = []
+    for inning_map in inning_runs_scored_map:
+        removed_inning_map.append(inning_map["inning"] in removed_innings)
+        inning_map["removed_inning"] = inning_map["inning"] in removed_innings
+    return (sorted(innings_somebody_scored, key=lambda x: x["inning"]), removed_inning_map, inning_runs_scored_map)
+
+
+def get_runs_by_inning(innings_list, chunkify):
+    is_top_half = True
+    away_team_runs = []
+    home_team_runs = []
+    for inning in innings_list:
+        total_runs_this_inning = get_total_runs_in_inning(inning["inning_events"])
+        if is_top_half:
+            away_team_runs.append(total_runs_this_inning)
+        else:
+            home_team_runs.append(total_runs_this_inning)
+        is_top_half = not is_top_half
+    if len(away_team_runs) > len(home_team_runs):
+        home_team_runs.append("X")
+    if not chunkify:
+        return (1, [away_team_runs], [home_team_runs])
+    away_team_runs_chunked = make_chunked_list(away_team_runs, chunk_size=9)
+    home_team_runs_chunked = make_chunked_list(home_team_runs, chunk_size=9)
+    total_nine_inning_chunks = len(away_team_runs_chunked)
+    return (total_nine_inning_chunks, away_team_runs_chunked, home_team_runs_chunked)
+
+
+def get_total_runs_in_inning(inning_at_bats):
+    return sum(ab["runs_outs_result"].count("R") for ab in inning_at_bats)
+
+
+def is_last_chunk(total_linescore_tables, current_table_number):
+    return current_table_number == total_linescore_tables
+
+
+def is_extra_innings_game(total_linescore_tables, innings_list):
+    return total_linescore_tables > 1 or len(innings_list) > 9
+
+
+def create_html_linescore_components(
+    away_team_id,
+    away_team_runs_by_inning,
+    away_team_totals,
+    home_team_id,
+    home_team_runs_by_inning,
+    home_team_totals,
+    start_inning,
+    last_chunk,
+    extra_innings,
+):
+    end_inning = start_inning + len(away_team_runs_by_inning)
+    inning_numbers = list(range(start_inning, end_inning))
+    if last_chunk and extra_innings:
+        away_team_runs_by_inning = add_filler_columns(away_team_runs_by_inning)
+        home_team_runs_by_inning = add_filler_columns(home_team_runs_by_inning)
+        inning_numbers = add_filler_columns(inning_numbers)
+
+    return {
+        "inning_numbers": inning_numbers,
+        "game_totals": ["R", "H", "E"],
+        "away_team_id": away_team_id,
+        "away_team_runs_by_inning": away_team_runs_by_inning,
+        "away_team_totals": away_team_totals,
+        "home_team_id": home_team_id,
+        "home_team_runs_by_inning": home_team_runs_by_inning,
+        "home_team_totals": home_team_totals,
+        "last_chunk": last_chunk,
+        "extra_innings": extra_innings,
+    }
+
+
+def create_tui_linescore(
+    inning_numbers,
+    game_totals,
+    away_team_id,
+    away_team_runs_by_inning,
+    away_team_totals,
+    home_team_id,
+    home_team_runs_by_inning,
+    home_team_totals,
+    last_chunk,
+    extra_innings,
+):
+    inning_numbers = [get_tui_inning_number(num) for num in inning_numbers]
+    tui_inning_numbers = [f"{' '*(4-len(str(num)))}{num}" for num in inning_numbers]
+    tui_game_totals = [f"{' '*(4-len(letter))}{letter}" for letter in game_totals]
+    tui_away_inning_runs = [f"{' '*(4-len(str(num)))}{num}" for num in away_team_runs_by_inning]
+    tui_away_totals = [f"{' '*(4-len(str(num)))}{num}" for num in away_team_totals]
+    tui_home_inning_runs = [f"{' '*(4-len(str(num)))}{num}" for num in home_team_runs_by_inning]
+    tui_home_totals = [f"{' '*(4-len(str(num)))}{num}" for num in home_team_totals]
+    return format_tui_linescore_components(
+        tui_inning_numbers,
+        tui_game_totals,
+        away_team_id,
+        tui_away_inning_runs,
+        tui_away_totals,
+        home_team_id,
+        tui_home_inning_runs,
+        tui_home_totals,
+        last_chunk,
+    )
+
+
+def format_tui_linescore_components(
+    tui_inning_numbers,
+    tui_game_totals,
+    away_team_id,
+    tui_away_inning_runs,
+    tui_away_totals,
+    home_team_id,
+    tui_home_inning_runs,
+    tui_home_totals,
+    last_chunk,
+):
+    linescore = f'   {"".join(tui_inning_numbers)}'
+    if last_chunk:
+        linescore += "".join(tui_game_totals)
+    linescore += f"\n----{'----'*9}"
+    if last_chunk:
+        linescore += f"{'----'*3}"
+    linescore += f"\n{away_team_id}{''.join(tui_away_inning_runs)}"
+    if last_chunk:
+        linescore += "".join(tui_away_totals)
+    linescore += f"\n{home_team_id}{''.join(tui_home_inning_runs)}"
+    if last_chunk:
+        linescore += "".join(tui_home_totals)
+    return linescore
+
+
+def get_tui_inning_number(inning_number):
+    if isinstance(inning_number, str):
+        return ""
+    pad_len = 1 if inning_number < 10 else 0
+    return f"{' '*pad_len}{inning_number}"
+
+
+def add_filler_columns(list_to_pad):
+    for _ in range(9 - len(list_to_pad)):
+        list_to_pad.append("")
+    return list_to_pad
 
 
 def get_team_record_for_linescore(team_data):
@@ -619,69 +892,35 @@ def get_team_totals_for_linescore(team_data):
     return [team_total_runs, team_hits, team_errors]
 
 
-def get_runs_by_inning(innings_list):
-    is_top_half = True
-    away_team_runs = []
-    home_team_runs = []
-    for inning in innings_list:
-        total_runs_this_inning = get_total_runs_in_inning(inning["inning_events"])
-        if is_top_half:
-            away_team_runs.append(total_runs_this_inning)
-        else:
-            home_team_runs.append(total_runs_this_inning)
-        is_top_half = not is_top_half
-    if len(away_team_runs) > len(home_team_runs):
-        home_team_runs.append("X")
-    away_team_runs_chunked = make_chunked_list(away_team_runs, chunk_size=9)
-    home_team_runs_chunked = make_chunked_list(home_team_runs, chunk_size=9)
-    return (away_team_runs_chunked, home_team_runs_chunked)
-
-
-def get_total_runs_in_inning(inning_at_bats):
-    return sum(ab["runs_outs_result"].count("R") for ab in inning_at_bats)
-
-
-def create_linescore_table(
-    away_team_id,
-    away_team_runs_by_inning,
-    away_team_totals,
-    home_team_id,
-    home_team_runs_by_inning,
-    home_team_totals,
-    start_inning,
-    last_chunk,
-):
-    end_inning = start_inning + len(away_team_runs_by_inning)
-    inning_numbers = get_linescore_inning_numbers(start_inning, end_inning)
-    if start_inning != 1 and last_chunk:
-        away_team_runs_by_inning = add_filler_columns(away_team_runs_by_inning)
-        home_team_runs_by_inning = add_filler_columns(home_team_runs_by_inning)
-        inning_numbers = add_filler_columns(inning_numbers)
-    total_headers = [f"{' '*(4-len(letter))}{letter}" for letter in ["R", "H", "E"]]
-    column_headers = [f"{' '*(4-len(str(num)))}{num}" for num in inning_numbers]
-    away_numbers = [f"{' '*(4-len(str(num)))}{num}" for num in away_team_runs_by_inning]
-    away_totals = [f"{' '*(4-len(str(num)))}{num}" for num in away_team_totals]
-    home_numbers = [f"{' '*(4-len(str(num)))}{num}" for num in home_team_runs_by_inning]
-    home_totals = [f"{' '*(4-len(str(num)))}{num}" for num in home_team_totals]
-    return (
-        f"   {''.join(column_headers)}{''.join(total_headers)}\n"
-        f"----{'----'*9}{'----'*3}\n"
-        f"{away_team_id}{''.join(away_numbers)}{''.join(away_totals)}\n"
-        f"{home_team_id}{''.join(home_numbers)}{''.join(home_totals)}"
+def convert_linescore_for_html(linescore, condensed):
+    inning_runs_scored_map = get_inning_runs_scored_map(linescore)
+    (_, removed_inning_map, _) = _condense_linescore(inning_runs_scored_map)
+    if isinstance(linescore, list):
+        linescore = linescore[0]
+    html_dict_keys = ("col_header", "away_team", "home_team", "css_class", "removed_inning")
+    html_columns = [
+        dict(zip(html_dict_keys, ("&nbsp;", linescore["away_team_id"], linescore["home_team_id"], "team-id", False)))
+    ]
+    inning_css_classes = ["inning-runs-scored" for _ in range(len(linescore["inning_numbers"]))]
+    inning_tuples = zip(
+        linescore["inning_numbers"],
+        linescore["away_team_runs_by_inning"],
+        linescore["home_team_runs_by_inning"],
+        inning_css_classes,
+        removed_inning_map,
     )
-
-
-def get_linescore_inning_numbers(start, end):
-    inning_numbers = []
-    for i in range(start, end):
-        pad_len = 1 if i < 10 else 0
-        inning_numbers.append(f"{' '*pad_len}{i}")
-    return inning_numbers
-
-
-def add_filler_columns(list_to_pad):
-    pad_length = 9 - len(list_to_pad)
-    return f'{list_to_pad}{"  "*pad_length}'
+    html_columns.extend([dict(zip(html_dict_keys, inning)) for inning in inning_tuples])
+    game_total_css_classes = ["game-total" for _ in range(len(linescore["game_totals"]))]
+    removed_inning_false = [False for _ in range(len(linescore["game_totals"]))]
+    game_total_tuples = zip(
+        linescore["game_totals"],
+        linescore["away_team_totals"],
+        linescore["home_team_totals"],
+        game_total_css_classes,
+        removed_inning_false,
+    )
+    html_columns.extend([dict(zip(html_dict_keys, total)) for total in game_total_tuples])
+    return html_columns
 
 
 def get_innings_sorted(innings_unsorted):
@@ -698,6 +937,16 @@ def get_inning_weight(inning_id):
     inn_number = int(match[2])
     top_or_bottom = -1 if inn_half == "TOP" else 0
     return inn_number * 2 + top_or_bottom
+
+
+def parse_inning_number_from_label(inning_id):
+    match = INNING_LABEL_REGEX.search(inning_id)
+    if not match:
+        return 0
+    try:
+        return int(match[2])
+    except ValueError:
+        return 0
 
 
 def get_at_bat_details(at_bat, pitch_app_stats, bat_stats):

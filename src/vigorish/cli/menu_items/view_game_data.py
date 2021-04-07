@@ -69,7 +69,7 @@ class ViewGameData(MenuItem):
     def print_matchup_and_linescore(self):
         subprocess.run(["clear"])
         matchup = self.game_data.get_matchup_details()
-        linescore = self.game_data.get_linescore()
+        linescore = self.game_data.get_tui_linescore()
         print_heading(f"Scraped Data Viewer for Game ID: {self.bbref_game_id}", fg="bright_yellow")
         print_message(matchup, fg="bright_cyan", bold=True, wrap=False)
         print_message(linescore, fg="bright_cyan", wrap=False)
