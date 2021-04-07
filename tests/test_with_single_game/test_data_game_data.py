@@ -115,6 +115,29 @@ def test_game_data(vig_app):
         "WP: Felix Pena (LAA) LP: Edwin Jackson (TOR)\n"
     )
 
-    linescore = game_data.get_linescore()
-    assert "LAA   0   7   1   0   1   1   0   0   0  10  13   1" in linescore
-    assert "TOR   1   0   0   0   0   0   2   2   0   5   8   0" in linescore
+    tui_linescore = game_data.get_tui_linescore()
+    assert "LAA   0   7   1   0   1   1   0   0   0  10  13   1" in tui_linescore
+    assert "TOR   1   0   0   0   0   0   2   2   0   5   8   0" in tui_linescore
+
+    html_linescore = game_data.get_html_linescore()
+    assert html_linescore == [
+        {
+            "col_header": "&nbsp;",
+            "away_team": "LAA",
+            "home_team": "TOR",
+            "css_class": "team-id",
+            "removed_inning": False,
+        },
+        {"col_header": 1, "away_team": 0, "home_team": 1, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": 2, "away_team": 7, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": 3, "away_team": 1, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": 4, "away_team": 0, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": 5, "away_team": 1, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": 6, "away_team": 1, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": 7, "away_team": 0, "home_team": 2, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": 8, "away_team": 0, "home_team": 2, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": 9, "away_team": 0, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
+        {"col_header": "R", "away_team": 10, "home_team": 5, "css_class": "game-total", "removed_inning": False},
+        {"col_header": "H", "away_team": 13, "home_team": 8, "css_class": "game-total", "removed_inning": False},
+        {"col_header": "E", "away_team": 1, "home_team": 0, "css_class": "game-total", "removed_inning": False},
+    ]

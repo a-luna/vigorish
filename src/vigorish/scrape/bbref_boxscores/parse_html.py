@@ -314,11 +314,11 @@ def _parse_team_data(page_content, team_batting_table, team_pitching_table, team
     if not team_record:
         error = f"Failed to parse team record (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
-    team_totals = _parse_linescore_totals_for_team(page_content, team_id, is_home_team)
+    team_totals = _parse_game_totals_for_team(page_content, team_id, is_home_team)
     if not team_totals:
         error = "Failed to parse team linescore totals (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
-    opponent_totals = _parse_linescore_totals_for_team(page_content, opponent_id, not is_home_team)
+    opponent_totals = _parse_game_totals_for_team(page_content, opponent_id, not is_home_team)
     if not opponent_totals:
         error = "Failed to parse opponent linescore totals (team_id={opponent_id}, is_home_team={not is_home_team})"
         return Result.Fail(error)
@@ -366,7 +366,7 @@ def _parse_team_record(page_content, is_home_team):
     return team_record
 
 
-def _parse_linescore_totals_for_team(page_content, team_id, is_home_team):
+def _parse_game_totals_for_team(page_content, team_id, is_home_team):
     if is_home_team:
         linescore_xpath = _LINESCORE_HOME_VALS_XPATH
     else:
