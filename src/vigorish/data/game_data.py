@@ -194,6 +194,14 @@ class GameData:
     def extra_innings(self):
         return len(self.get_inning_numbers_sorted()) > 9
 
+    def get_game_data(self):
+        return {
+            "game_id": self.bbref_game_id,
+            "linescore": self.get_html_linescore(),
+            "pitcher_results": self.get_pitcher_results(),
+            "extra_innings": self.extra_innings,
+        }
+
     def get_boxscore_data(self):
         boxscore_data = {
             "summary": [s for s in self.get_matchup_details().split("\n") if s],

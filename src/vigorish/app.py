@@ -8,6 +8,7 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.schema import Table
+from vigorish.data.game_data import GameData
 
 import vigorish.database as db
 import vigorish.setup.populate_tables as setup_db
@@ -122,6 +123,10 @@ class Vigorish:
             if isinstance(config_setting, PathConfigSetting)
             else config_setting.current_setting(data_set)
         )
+
+    def get_scoreboard_data_for_date(self, game_date: datetime):
+        game_ids = db.DateScrapeStatus.get_all_bbref_game_ids_for_date(self.db_session, game_date)
+        return [GameData(self, game_id).get_game_data() for game_id in game_ids]
 
     def _create_db_engine(self) -> Engine:
         return create_engine(self.db_url, connect_args={"check_same_thread": False})
