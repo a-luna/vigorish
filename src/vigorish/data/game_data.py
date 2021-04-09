@@ -204,6 +204,7 @@ class GameData:
 
     def get_boxscore_data(self):
         boxscore_data = {
+            "game_id": self.bbref_game_id,
             "summary": [s for s in self.get_matchup_details().split("\n") if s],
             "extra_innings": self.extra_innings,
             "linescore": self.get_html_linescore(),
@@ -639,7 +640,7 @@ class GameData:
         )
         if condensed and self.extra_innings:
             linescore_components = condense_html_linescore(linescore_components)
-        return convert_linescore_for_html(linescore_components, condensed)
+        return linescore_components
 
     def get_inning_numbers_sorted(self):
         inning_labels = [inning["inning_id"] for inning in self.get_innings_sorted()]
@@ -892,35 +893,41 @@ def get_team_totals_for_linescore(team_data):
     return [team_total_runs, team_hits, team_errors]
 
 
-def convert_linescore_for_html(linescore, condensed):
-    inning_runs_scored_map = get_inning_runs_scored_map(linescore)
-    (_, removed_inning_map, _) = _condense_linescore(inning_runs_scored_map)
+def convert_linescore_for_html(linescore):
     if isinstance(linescore, list):
         linescore = linescore[0]
-    html_dict_keys = ("col_header", "away_team", "home_team", "css_class", "removed_inning")
-    html_columns = [
-        dict(zip(html_dict_keys, ("&nbsp;", linescore["away_team_id"], linescore["home_team_id"], "team-id", False)))
-    ]
-    inning_css_classes = ["inning-runs-scored" for _ in range(len(linescore["inning_numbers"]))]
-    inning_tuples = zip(
+    inning_runs_scored_map = get_inning_runs_scored_map(linescore)
+    (_, removed_inning_map, _) = _condense_linescore(inning_runs_scored_map)
+    html_dict_keys = ("col_index", "col_header", "away_team", "home_team", "css_class", "removed_inning")
+    team_id_column = (0, "&nbsp;", linescore["away_team_id"], linescore["home_team_id"], "team-id", False)
+    html_linescore = [dict(zip(html_dict_keys, team_id_column))]
+
+    total_innings = len(linescore["inning_numbers"])
+    inning_col_indices = list(range(1, total_innings + 1))
+    inning_css_classes = ["inning-runs-scored" for _ in range(total_innings)]
+    inning_columns = zip(
+        inning_col_indices,
         linescore["inning_numbers"],
         linescore["away_team_runs_by_inning"],
         linescore["home_team_runs_by_inning"],
         inning_css_classes,
         removed_inning_map,
     )
-    html_columns.extend([dict(zip(html_dict_keys, inning)) for inning in inning_tuples])
+    html_linescore.extend([dict(zip(html_dict_keys, column)) for column in inning_columns])
+
+    game_total_col_indices = list(range(total_innings + 1, total_innings + 4))
     game_total_css_classes = ["game-total" for _ in range(len(linescore["game_totals"]))]
     removed_inning_false = [False for _ in range(len(linescore["game_totals"]))]
-    game_total_tuples = zip(
+    game_total_columns = zip(
+        game_total_col_indices,
         linescore["game_totals"],
         linescore["away_team_totals"],
         linescore["home_team_totals"],
         game_total_css_classes,
         removed_inning_false,
     )
-    html_columns.extend([dict(zip(html_dict_keys, total)) for total in game_total_tuples])
-    return html_columns
+    html_linescore.extend([dict(zip(html_dict_keys, column)) for column in game_total_columns])
+    return html_linescore
 
 
 def get_innings_sorted(innings_unsorted):
