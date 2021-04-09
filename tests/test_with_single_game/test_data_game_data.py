@@ -122,22 +122,14 @@ def test_game_data(vig_app):
     html_linescore = game_data.get_html_linescore()
     assert html_linescore == [
         {
-            "col_header": "&nbsp;",
-            "away_team": "LAA",
-            "home_team": "TOR",
-            "css_class": "team-id",
-            "removed_inning": False,
-        },
-        {"col_header": 1, "away_team": 0, "home_team": 1, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": 2, "away_team": 7, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": 3, "away_team": 1, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": 4, "away_team": 0, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": 5, "away_team": 1, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": 6, "away_team": 1, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": 7, "away_team": 0, "home_team": 2, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": 8, "away_team": 0, "home_team": 2, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": 9, "away_team": 0, "home_team": 0, "css_class": "inning-runs-scored", "removed_inning": False},
-        {"col_header": "R", "away_team": 10, "home_team": 5, "css_class": "game-total", "removed_inning": False},
-        {"col_header": "H", "away_team": 13, "home_team": 8, "css_class": "game-total", "removed_inning": False},
-        {"col_header": "E", "away_team": 1, "home_team": 0, "css_class": "game-total", "removed_inning": False},
+            "inning_numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+            "game_totals": ["R", "H", "E"],
+            "away_team_id": "LAA",
+            "away_team_runs_by_inning": [0, 7, 1, 0, 1, 1, 0, 0, 0],
+            "away_team_totals": [10, 13, 1],
+            "home_team_id": "TOR",
+            "home_team_runs_by_inning": [1, 0, 0, 0, 0, 0, 2, 2, 0],
+            "home_team_totals": [5, 8, 0],
+            "extra_innings": False,
+        }
     ]
