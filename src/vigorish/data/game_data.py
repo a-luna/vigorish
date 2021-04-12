@@ -74,6 +74,13 @@ class GameData:
         return datetime.strptime(self.game_meta_info["game_date_time_str"], DT_AWARE)
 
     @property
+    def team_name(self):
+        return {
+            self.away_team_id: self.away_team.name,
+            self.home_team_id: self.home_team.name,
+        }
+
+    @property
     def team_data(self):
         return {
             self.away_team_id: self.away_team_data,
@@ -205,20 +212,30 @@ class GameData:
     def get_boxscore_data(self):
         boxscore_data = {
             "game_id": self.bbref_game_id,
-            "summary": [s for s in self.get_matchup_details().split("\n") if s],
+            "away_team": self.get_team_data(self.away_team_id),
+            "home_team": self.get_team_data(self.home_team_id),
             "extra_innings": self.extra_innings,
-            "linescore": self.get_html_linescore(),
             "game_meta": self.get_game_meta_info(),
-            "team_data": self.get_team_data(),
+            "linescore": self.get_html_linescore(),
         }
         if self.extra_innings:
             boxscore_data["linescore_complete"] = self.get_html_linescore(condensed=False)
         return boxscore_data
 
-    def get_team_data(self):
+    def get_team_data(self, team_id):
+        (team_bat_boxscore, team_pitch_boxscore) = self._prepare_team_data(team_id)
         return {
-            self.away_team_id: self._prepare_team_data(self.away_team_id),
-            self.home_team_id: self._prepare_team_data(self.home_team_id),
+            "team_id": team_id,
+            "team_name": self.team_name[team_id],
+            "total_wins": self.team_data[team_id]["total_wins_before_game"],
+            "total_losses": self.team_data[team_id]["total_losses_before_game"],
+            "runs_scored_by_team": self.team_data[team_id]["total_runs_scored_by_team"],
+            "runs_scored_by_opponent": self.team_data[team_id]["total_runs_scored_by_opponent"],
+            "team_won": self.team_data[team_id]["team_won"],
+            "pitcher_of_record": self.team_data[team_id]["pitcher_of_record"],
+            "pitcher_earned_save": self.team_data[team_id]["pitcher_earned_save"],
+            "batting": team_bat_boxscore,
+            "pitching": team_pitch_boxscore,
         }
 
     def _prepare_team_data(self, team_id):
@@ -235,7 +252,6 @@ class GameData:
             box["incomplete_at_bat_ids"] = bat_map[box["mlb_id"]]["incomplete_at_bat_ids"]
             box["substitutions"] = self._find_player_sub_events(box["mlb_id"])
             box["bbref_data"] = bat_map[box["mlb_id"]]["bbref_data"]
-        team_data["batting"] = bat_boxscore
         pitch_map = {p["pitcher_id_mlb"]: p for p in team_data.pop("pitching_stats")}
         pitch_boxscore = self.pitch_boxscore[team_id]
         for box in pitch_boxscore.values():
@@ -245,8 +261,7 @@ class GameData:
             box["at_bat_ids"] = pitch_map[box["mlb_id"]]["pitch_app_pitchfx_audit"]["at_bat_ids_pitchfx_complete"]
             box["substitutions"] = self._find_player_sub_events(box["mlb_id"])
             box["bbref_data"] = pitch_map[box["mlb_id"]]["bbref_data"]
-        team_data["pitching"] = pitch_boxscore
-        return team_data
+        return (bat_boxscore, pitch_boxscore)
 
     def _find_player_sub_events(self, mlb_id):
         player_id = self.get_player_id_map(mlb_id=mlb_id)
@@ -352,19 +367,17 @@ class GameData:
         for mlb_id in self.get_pitcher_app_order(pitcher_ids):
             player_box = self.get_pitch_boxscore_for_player(mlb_id, team_data)
             if player_box["pitch_app_type"] == "SP":
-                dict_index = "SP"
+                pitcher_box["SP"] = player_box
             else:
                 rp_count += 1
-                dict_index = f"RP{rp_count}"
-            pitcher_box[dict_index] = player_box
+                pitcher_box[f"RP{rp_count}"] = player_box
         return pitcher_box
 
     def get_pitcher_app_order(self, pitcher_ids):
-        pitcher_app_dict = {}
-        for mlb_id in pitcher_ids:
-            at_bats = self.get_valid_at_bats_for_pitcher(mlb_id).value
-            first_pitch = min(at_bat["pbp_table_row_number"] for at_bat in at_bats)
-            pitcher_app_dict[mlb_id] = first_pitch
+        pitcher_app_dict = {
+            mlb_id: min(at_bat["pbp_table_row_number"] for at_bat in self.get_valid_at_bats_for_pitcher(mlb_id).value)
+            for mlb_id in pitcher_ids
+        }
         return sorted(pitcher_ids, key=lambda x: pitcher_app_dict[x])
 
     def get_pitch_boxscore_for_player(self, mlb_id, team_data):
@@ -1018,7 +1031,7 @@ def parse_bat_stats_for_game(bat_stats):
 
 
 def get_detailed_bat_stats(bat_stats):
-    stats = homeruns = doubles = triples = stolen_bases = None
+    stats = homeruns = doubles = triples = stolen_bases = iw = None
     stat_list = []
     if bat_stats["details"]:
         stats = parse_bat_stat_details(bat_stats["details"])
@@ -1026,6 +1039,7 @@ def get_detailed_bat_stats(bat_stats):
         triples = stats.pop("3B", None)
         doubles = stats.pop("2B", None)
         stolen_bases = stats.pop("SB", None)
+        iw = stats.pop("IW", None)
     if homeruns:
         stat_list.append(homeruns)
     if triples:
@@ -1045,7 +1059,10 @@ def get_detailed_bat_stats(bat_stats):
         stat_list.append(f"{strikeouts}K")
     if bat_stats["bases_on_balls"]:
         bases_on_balls = bat_stats["bases_on_balls"] if bat_stats["bases_on_balls"] > 1 else ""
-        stat_list.append(f"{bases_on_balls}BB")
+        bb = f"{bases_on_balls}BB"
+        if iw:
+            bb += f" ({iw})"
+        stat_list.append(bb)
     if stats:
         stat_list.extend(list(stats.values()))
     return ", ".join(stat_list)
@@ -1056,7 +1073,8 @@ def parse_bat_stat_details(details):
 
 
 def parse_single_bat_stat(stat):
-    return f"{stat['count']}{stat['stat']}" if stat["count"] > 1 else stat["stat"]
+    separator = "-" if stat["stat"] in ["2B", "3B"] else ""
+    return f"{stat['count']}{separator}{stat['stat']}" if stat["count"] > 1 else stat["stat"]
 
 
 def parse_bat_stats_to_date(bat_stats):
@@ -1096,8 +1114,8 @@ def parse_pitch_app_stats(pitch_stats):
         bb = bbref_stats["bases_on_balls"] if bbref_stats["bases_on_balls"] > 1 else ""
         stat_list.append(f"{bb}BB")
     details = f", {', '.join(stat_list)}" if stat_list else ""
-    game_score = f" (GS: {bbref_stats['game_score']})" if bbref_stats["game_score"] > 0 else ""
-    return f"{ip} IP, {runs}{details}{game_score}"
+    game_score = f", GS: {bbref_stats['game_score']}" if bbref_stats["game_score"] > 0 else ""
+    return f"{ip} IP ({runs}{details}{game_score})"
 
 
 def format_pitch_sequence_description(pitch_seq_desc):
