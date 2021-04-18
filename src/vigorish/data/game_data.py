@@ -248,7 +248,7 @@ class GameData:
             box["total_pbp_events"] = bat_map[box["mlb_id"]]["total_pbp_events"]
             box["total_incomplete_at_bats"] = bat_map[box["mlb_id"]]["total_incomplete_at_bats"]
             box["total_plate_appearances"] = bat_map[box["mlb_id"]]["total_plate_appearances"]
-            box["at_bat_ids"] = bat_map[box["mlb_id"]]["at_bat_ids"]
+            box["at_bat_results"] = self._summarize_all_at_bats_for_player(box["mlb_id"])
             box["incomplete_at_bat_ids"] = bat_map[box["mlb_id"]]["incomplete_at_bat_ids"]
             box["substitutions"] = self._find_player_sub_events(box["mlb_id"])
             box["bbref_data"] = bat_map[box["mlb_id"]]["bbref_data"]
@@ -261,7 +261,27 @@ class GameData:
             box["at_bat_ids"] = pitch_map[box["mlb_id"]]["pitch_app_pitchfx_audit"]["at_bat_ids_pitchfx_complete"]
             box["substitutions"] = self._find_player_sub_events(box["mlb_id"])
             box["bbref_data"] = pitch_map[box["mlb_id"]]["bbref_data"]
+            box["inning_totals"] = self._summarize_pitch_app(box["mlb_id"])
         return (bat_boxscore, pitch_boxscore)
+
+    def _summarize_all_at_bats_for_player(self, mlb_id):
+        at_bat_ids = [ab["at_bat_id"] for ab in self.valid_at_bats if ab["batter_id_mlb"] == mlb_id]
+        return [self._summarize_at_bat(at_bat_id) for at_bat_id in at_bat_ids]
+
+    def _summarize_at_bat(self, at_bat_id):
+        at_bat = self.at_bat_map[at_bat_id]
+        pbp_events = [event for event in at_bat["pbp_events"] if event["event_type"] == "AT_BAT"]
+        pbp_events.sort(key=lambda x: x["pbp_table_row_number"])
+        return {
+            "pbp_table_row_number": at_bat["pbp_table_row_number"],
+            "batter_name": at_bat["batter_name"],
+            "pitcher_name": at_bat["pitcher_name"],
+            "inning": pbp_events[-1]["inning_label"],
+            "runners_on_base": pbp_events[-1]["runners_on_base"],
+            "outs": pbp_events[-1]["outs_before_play"],
+            "play_description": pbp_events[-1]["play_description"],
+            "pitch_sequence": pbp_events[-1]["pitch_sequence"],
+        }
 
     def _find_player_sub_events(self, mlb_id):
         player_id = self.get_player_id_map(mlb_id=mlb_id)
@@ -271,6 +291,25 @@ class GameData:
             for sub_event in self.player_substitutions
             if bbref_id in [sub_event["incoming_player_id_br"], sub_event["outgoing_player_id_br"]]
         ]
+
+    def _summarize_pitch_app(self, mlb_id):
+        pfx_by_inning = group_and_sort_dict_list(self.get_pfx_for_pitcher(mlb_id).value, "inning", "pitch_id")
+        at_bats = [ab for ab in self.valid_at_bats if ab["pitcher_id_mlb"] == mlb_id]
+        at_bats_by_inning = group_and_sort_dict_list(at_bats, "inning_id", "pbp_table_row_number")
+        inning_totals = []
+        for (inning_pfx, inning_at_bats) in zip(pfx_by_inning.values(), at_bats_by_inning.values()):
+            totals = {
+                "outs": sum(ab["runs_outs_result"].count("O") for ab in inning_at_bats),
+                "hits": sum(pfx["ab_result_hit"] for pfx in inning_pfx),
+                "runs": sum(ab["runs_outs_result"].count("R") for ab in inning_at_bats),
+                "bb": sum(pfx["ab_result_bb"] for pfx in inning_pfx),
+                "so": sum(pfx["ab_result_k"] for pfx in inning_pfx),
+                "bf": len({pfx["batter_id_mlb"] for pfx in inning_pfx}),
+                "pitch_count": len(inning_pfx),
+                "strikes": len([pfx for pfx in inning_pfx if pfx["basic_type"] in ["S", "X"]]),
+            }
+            inning_totals.append(totals)
+        return dict(zip(list(pfx_by_inning.keys()), inning_totals))
 
     def get_pfx_for_pitcher(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
