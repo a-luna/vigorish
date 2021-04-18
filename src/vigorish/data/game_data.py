@@ -293,7 +293,8 @@ class GameData:
         ]
 
     def _summarize_pitch_app(self, mlb_id):
-        pfx_by_inning = group_and_sort_dict_list(self.get_pfx_for_pitcher(mlb_id).value, "inning", "pitch_id")
+        pfx = self.get_pfx_for_pitcher(mlb_id).value
+        pfx_by_inning = group_and_sort_dict_list(pfx, "inning", "pitch_id")
         at_bats = [ab for ab in self.valid_at_bats if ab["pitcher_id_mlb"] == mlb_id]
         at_bats_by_inning = group_and_sort_dict_list(at_bats, "inning_id", "pbp_table_row_number")
         inning_totals = []
