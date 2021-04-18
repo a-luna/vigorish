@@ -237,11 +237,13 @@ class DefensePosition(IntEnum):
     CENTER_FIELD = 8
     RIGHT_FIELD = 9
     DH = 10
-    BN = 11
+    BENCH = 11
+    PINCH_HITTER = 12
+    PINCH_RUNNER = 13
 
     def __str__(self):
         abbrev_dict = {
-            "NONE": "BN",
+            "NONE": "NA",
             "PITCHER": "P",
             "CATCHER": "C",
             "FIRST_BASE": "1B",
@@ -251,6 +253,9 @@ class DefensePosition(IntEnum):
             "LEFT_FIELD": "LF",
             "CENTER_FIELD": "CF",
             "RIGHT_FIELD": "RF",
+            "BENCH": "BN",
+            "PINCH_HITTER": "PH",
+            "PINCH_RUNNER": "PR",
         }
         return abbrev_dict.get(self.name, self.name)
 
