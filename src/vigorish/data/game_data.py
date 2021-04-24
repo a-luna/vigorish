@@ -40,6 +40,7 @@ class GameData:
         combined_data = self.scraped_data.get_combined_game_data(bbref_game_id)
         if not combined_data:
             raise ScrapedDataException(file_type=VigFile.COMBINED_GAME_DATA, data_set=DataSet.ALL, url_id=bbref_game_id)
+        self.last_modified = combined_data["last_modified"]
         self.bbref_game_id = combined_data["bbref_game_id"]
         self.pitchfx_vs_bbref_audit = combined_data["pitchfx_vs_bbref_audit"]
         self.game_meta_info = combined_data["game_meta_info"]
@@ -211,6 +212,7 @@ class GameData:
 
     def get_boxscore_data(self):
         boxscore_data = {
+            "last_modified": self.last_modified,
             "game_id": self.bbref_game_id,
             "away_team": self.get_team_data(self.away_team_id),
             "home_team": self.get_team_data(self.home_team_id),
