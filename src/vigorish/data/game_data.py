@@ -265,14 +265,13 @@ class GameData:
         return (bat_boxscore, pitch_boxscore)
 
     def _summarize_all_at_bats_for_player(self, mlb_id):
-        at_bat_ids = [ab["at_bat_id"] for ab in self.valid_at_bats if ab["batter_id_mlb"] == mlb_id]
-        return [self._summarize_at_bat(at_bat_id) for at_bat_id in at_bat_ids]
+        return [self._summarize_at_bat(ab) for ab in self.valid_at_bats if ab["batter_id_mlb"] == mlb_id]
 
-    def _summarize_at_bat(self, at_bat_id):
-        at_bat = self.at_bat_map[at_bat_id]
+    def _summarize_at_bat(self, at_bat):
         pbp_events = [event for event in at_bat["pbp_events"] if event["event_type"] == "AT_BAT"]
         pbp_events.sort(key=lambda x: x["pbp_table_row_number"])
         return {
+            "at_bat_id": at_bat["at_bat_id"],
             "pbp_table_row_number": at_bat["pbp_table_row_number"],
             "batter_name": at_bat["batter_name"],
             "pitcher_name": at_bat["pitcher_name"],
