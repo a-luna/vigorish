@@ -25,7 +25,6 @@ CLASSIFIERS = [
     "Operating System :: Unix",
     "Programming Language :: JavaScript",
     "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3 :: Only",
 ]
 INSTALL_REQUIRES = [

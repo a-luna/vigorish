@@ -86,10 +86,6 @@ def get_file_size_bytes(filepath):  # pragma: no cover
     return Result.Ok(valid_filepath.stat().st_size)
 
 
-def get_last_mod_time_utc(filepath):
-    return dtaware_fromtimestamp(filepath.stat().st_mtime, use_tz=timezone.utc)
-
-
 def validate_folder_path(input_path: Union[Path, str]):
     if not input_path:
         return Result.Fail("NoneType or empty string is not a valid folder path.")

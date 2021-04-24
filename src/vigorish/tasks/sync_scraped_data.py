@@ -1,4 +1,5 @@
 from copy import deepcopy
+from datetime import timezone
 from functools import cached_property
 from pathlib import Path
 
@@ -8,9 +9,9 @@ from halo import Halo
 from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner
 from vigorish.enums import SyncDirection, VigFile
 from vigorish.tasks.base import Task
+from vigorish.util.datetime_util import dtaware_fromtimestamp
 from vigorish.util.regex import URL_ID_REGEX
 from vigorish.util.result import Result
-from vigorish.util.sys_helpers import get_last_mod_time_utc
 
 TIME_DIFFERENCE_SECONDS = 60
 
@@ -128,7 +129,7 @@ def get_local_file_data(file):
         "name": file.name,
         "path": file,
         "size": file.stat().st_size,
-        "last_modified": get_last_mod_time_utc(file),
+        "last_modified": dtaware_fromtimestamp(file.stat().st_mtime, use_tz=timezone.utc),
     }
 
 

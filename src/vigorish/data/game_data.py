@@ -40,7 +40,6 @@ class GameData:
         combined_data = self.scraped_data.get_combined_game_data(bbref_game_id)
         if not combined_data:
             raise ScrapedDataException(file_type=VigFile.COMBINED_GAME_DATA, data_set=DataSet.ALL, url_id=bbref_game_id)
-        self.last_modified = combined_data["last_modified"]
         self.bbref_game_id = combined_data["bbref_game_id"]
         self.pitchfx_vs_bbref_audit = combined_data["pitchfx_vs_bbref_audit"]
         self.game_meta_info = combined_data["game_meta_info"]
@@ -212,7 +211,6 @@ class GameData:
 
     def get_boxscore_data(self):
         boxscore_data = {
-            "last_modified": self.last_modified,
             "game_id": self.bbref_game_id,
             "away_team": self.get_team_data(self.away_team_id),
             "home_team": self.get_team_data(self.home_team_id),
@@ -267,13 +265,14 @@ class GameData:
         return (bat_boxscore, pitch_boxscore)
 
     def _summarize_all_at_bats_for_player(self, mlb_id):
-        return [self._summarize_at_bat(ab) for ab in self.valid_at_bats if ab["batter_id_mlb"] == mlb_id]
+        at_bat_ids = [ab["at_bat_id"] for ab in self.valid_at_bats if ab["batter_id_mlb"] == mlb_id]
+        return [self._summarize_at_bat(at_bat_id) for at_bat_id in at_bat_ids]
 
-    def _summarize_at_bat(self, at_bat):
+    def _summarize_at_bat(self, at_bat_id):
+        at_bat = self.at_bat_map[at_bat_id]
         pbp_events = [event for event in at_bat["pbp_events"] if event["event_type"] == "AT_BAT"]
         pbp_events.sort(key=lambda x: x["pbp_table_row_number"])
         return {
-            "at_bat_id": at_bat["at_bat_id"],
             "pbp_table_row_number": at_bat["pbp_table_row_number"],
             "batter_name": at_bat["batter_name"],
             "pitcher_name": at_bat["pitcher_name"],

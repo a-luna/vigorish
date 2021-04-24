@@ -2,8 +2,6 @@
 import json
 
 from vigorish.enums import DataSet, LocalFileTask, S3FileTask, VigFile
-from vigorish.util.sys_helpers import get_last_mod_time_utc
-from vigorish.util.dt_format_strings import HTTP_TIME
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
     validate_bbref_game_id,
@@ -200,7 +198,7 @@ class JsonStorage:
             DataSet.BBREF_GAMES_FOR_DATE: self.save_bbref_games_for_date_patch_list_local_file,
             DataSet.BBREF_BOXSCORES: self.save_bbref_boxscore_patch_list_local_file,
         }
-        save_patch_list_for_data_set = save_patch_list_local_dict.get(data_set)
+        save_patch_list_for_data_set = save_patch_list_local_dict.get(data_set, None)
         return save_patch_list_for_data_set(patch_list) if save_patch_list_for_data_set else None
 
     def save_brooks_games_for_date_patch_list_local_file(self, patch_list):
@@ -252,7 +250,7 @@ class JsonStorage:
             DataSet.BBREF_GAMES_FOR_DATE: self.save_bbref_games_for_date_patch_list_s3,
             DataSet.BBREF_BOXSCORES: self.save_bbref_boxscore_patch_list_s3,
         }
-        save_patch_list_for_data_set = save_patch_list_s3_dict.get(data_set)
+        save_patch_list_for_data_set = save_patch_list_s3_dict.get(data_set, None)
         return save_patch_list_for_data_set(patch_list) if save_patch_list_for_data_set else None
 
     def save_brooks_games_for_date_patch_list_s3(self, patch_list):  # pragma: no cover
@@ -361,7 +359,6 @@ class JsonStorage:
         filepath = result.value
         try:
             json_dict = json.loads(filepath.read_text())
-            json_dict["last_modified"] = get_last_mod_time_utc(filepath).strftime(HTTP_TIME)
             return Result.Ok(json_dict)
         except Exception as e:
             error = f"Error: {repr(e)}"
@@ -387,7 +384,6 @@ class JsonStorage:
         filepath = result.value
         try:
             json_dict = json.loads(filepath.read_text())
-            json_dict["last_modified"] = get_last_mod_time_utc(filepath).strftime(HTTP_TIME)
             return Result.Ok(json_dict)
         except Exception as e:
             error = f"Error: {repr(e)}"
@@ -715,7 +711,7 @@ class JsonStorage:
             DataSet.BBREF_GAMES_FOR_DATE: self.decode_bbref_games_for_date_patch_list_local_file,
             DataSet.BBREF_BOXSCORES: self.decode_bbref_boxscore_patch_list_local_file,
         }
-        get_patch_list_for_data_set = get_patch_list_local_dict.get(data_set)
+        get_patch_list_for_data_set = get_patch_list_local_dict.get(data_set, None)
         return get_patch_list_for_data_set(url_id) if get_patch_list_for_data_set else None
 
     def decode_brooks_games_for_date_patch_list_local_file(self, game_date):
@@ -825,7 +821,7 @@ class JsonStorage:
             DataSet.BBREF_GAMES_FOR_DATE: self.decode_bbref_games_for_date_patch_list_s3,
             DataSet.BBREF_BOXSCORES: self.decode_bbref_boxscore_patch_list_s3,
         }
-        get_patch_list_for_data_set = get_patch_list_s3_dict.get(data_set)
+        get_patch_list_for_data_set = get_patch_list_s3_dict.get(data_set, None)
         return get_patch_list_for_data_set(url_id) if get_patch_list_for_data_set else None
 
     def decode_brooks_games_for_date_patch_list_s3(self, game_date):  # pragma: no cover

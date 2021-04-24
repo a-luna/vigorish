@@ -1,7 +1,7 @@
 aenum==3.0.0
 blessed==1.18.0
-boto3==1.17.57
-botocore==1.20.57
+boto3==1.17.53
+botocore==1.20.53
 bullet==2.2.0
 certifi==2020.12.5
 chardet==4.0.0
@@ -24,12 +24,12 @@ python-dotenv==0.17.0
 PyYAML==5.4.1
 rapidfuzz==1.4.1
 requests==2.25.1
-s3transfer==0.4.2
+s3transfer==0.3.7
 scipy==1.6.2
 six==1.15.0
 spinners==0.0.24
 SQLAlchemy>=1.3.23,<1.4.0
-SQLAlchemy-Utils==0.37.0
+SQLAlchemy-Utils==0.36.8
 tabulate==0.8.9
 termcolor==1.1.0
 tqdm==4.60.0
