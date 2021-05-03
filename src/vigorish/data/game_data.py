@@ -219,10 +219,22 @@ class GameData:
             "extra_innings": self.extra_innings,
             "game_meta": self.get_game_meta_info(),
             "linescore": self.get_html_linescore(),
+            "inning_summaries": self._get_inning_summaries(),
         }
         if self.extra_innings:
             boxscore_data["linescore_complete"] = self.get_html_linescore(condensed=False)
         return boxscore_data
+
+    def _get_inning_summaries(self):
+        return {
+            inning["inning_id"]: {
+                "inning_label": inning["inning_label"],
+                "begin_inning_summary": inning["begin_inning_summary"],
+                "end_inning_summary": inning["end_inning_summary"],
+                "inning_totals": inning["inning_totals"],
+            }
+            for inning in self.innings_list
+        }
 
     def get_team_data(self, team_id):
         (team_bat_boxscore, team_pitch_boxscore) = self._prepare_team_data(team_id)
