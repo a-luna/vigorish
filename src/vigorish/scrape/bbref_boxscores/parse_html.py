@@ -129,6 +129,16 @@ _TEAM_ID_REGEX = re.compile(r"[A-Z]{3,3}")
 _W_L_SV_NAME_REGEX = re.compile(r"[LPSVW]{2,2}: (.+) (?:\(\d{1,2}-?\d{0,2}\))")
 _ATTENDANCE_REGEX = re.compile(r"\d{1,2},\d{3,3}")
 _GAME_DURATION_REGEX = re.compile(r"[1-9]:[0-5][0-9]")
+_START_WEATHER_REGEX = re.compile(
+    r"(?P<temperature>\d{1,3})° F, Wind "
+    r"(?P<wind_speed>\d{1,3})mph "
+    r"(?P<wind_dir>[\w\s]+), "
+    r"(?P<cloud_cover>[\w\s]+)[.,]+ ?"
+    r"(?P<precipitation>[\w]+)?.?"
+)
+_START_WEATHER_DOME_REGEX = re.compile(
+    r"(?P<temperature>\d{1,3})° F, Wind " r"(?P<wind_speed>\d{1,3})mph, " r"(?P<cloud_cover>[\w\s]+)"
+)
 _CHANGE_POS_REGEX = re.compile(r"from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b")
 _POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
 _NUM_REGEX = re.compile(r"[1-9]{1}")
@@ -578,21 +588,23 @@ def _parse_game_meta_info(page_content):
     if not first_pitch_weather:
         error = "Failed to parse first pitch weather info"
         return Result.Fail(error)
-    split2 = first_pitch_weather[0].split(",")
-    if len(split2) < 2:
+    match_norm = _START_WEATHER_REGEX.search(first_pitch_weather[0])
+    match_dome = _START_WEATHER_DOME_REGEX.search(first_pitch_weather[0])
+    if match_norm:
+        match_dict = match_norm.groupdict()
+        first_pitch_temperature = match_dict["temperature"]
+        first_pitch_clouds = match_dict["cloud_cover"]
+        first_pitch_precipitation = match_dict["precipitation"] or ""
+        first_pitch_wind = f'Wind {match_dict["wind_speed"]}mph {match_dict["wind_dir"]}'
+    elif match_dome:
+        match_dict = match_dome.groupdict()
+        first_pitch_temperature = match_dict["temperature"]
+        first_pitch_clouds = match_dict["cloud_cover"]
+        first_pitch_precipitation = ""
+        first_pitch_wind = f'Wind {match_dict["wind_speed"]}mph'
+    else:
         error = f"First pitch weather info is not in expected format:\n{first_pitch_weather}"
         return Result.Fail(error)
-
-    first_pitch_temperature = split2[0].strip()[:2]
-    first_pitch_wind = split2[1].strip()
-
-    first_pitch_clouds = ""
-    if len(split2) > 2:
-        first_pitch_clouds = split2[2].strip().strip(".")
-
-    first_pitch_precipitation = ""
-    if len(split2) > 3:
-        first_pitch_precipitation = split2[3].strip().strip(".")
 
     game_info = BBRefBoxscoreMeta(
         attendance=int(attendance),
