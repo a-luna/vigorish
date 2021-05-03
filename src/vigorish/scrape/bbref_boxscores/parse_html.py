@@ -132,12 +132,12 @@ _GAME_DURATION_REGEX = re.compile(r"[1-9]:[0-5][0-9]")
 _START_WEATHER_REGEX = re.compile(
     r"(?P<temperature>\d{1,3})° F, Wind "
     r"(?P<wind_speed>\d{1,3})mph "
-    r"(?P<wind_dir>[\w\s]+), "
-    r"(?P<cloud_cover>[\w\s]+)[.,]+ ?"
-    r"(?P<precipitation>[\w]+)?.?"
+    r"(?P<wind_dir>[\w\s]+)[.,\s]+"
+    r"(?P<cloud_cover>[\w\s]+)[.,\s]+"
+    r"(?P<precipitation>[\w\s]+)?.?"
 )
 _START_WEATHER_DOME_REGEX = re.compile(
-    r"(?P<temperature>\d{1,3})° F, Wind " r"(?P<wind_speed>\d{1,3})mph, " r"(?P<cloud_cover>[\w\s]+)"
+    r"(?P<temperature>\d{1,3})° F, Wind (?P<wind_speed>\d{1,3})mph, (?P<cloud_cover>[\w\s]+)"
 )
 _CHANGE_POS_REGEX = re.compile(r"from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b")
 _POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
