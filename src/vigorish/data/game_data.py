@@ -313,6 +313,18 @@ class GameData:
             inning_totals.append(totals)
         return dict(zip(list(pfx_by_inning.keys()), inning_totals))
 
+    def get_all_at_bats_no_pfx(self):
+        all_at_bats = deepcopy(self.valid_at_bats)
+        for at_bat in all_at_bats:
+            pfx = at_bat.pop("pitchfx")
+            pfx_audit = at_bat.pop("at_bat_pitchfx_audit")
+            at_bat["inning_label"] = at_bat["pbp_events"][0]["inning_label"]
+            at_bat["total_pitches"] = pfx_audit["pitch_count_bbref"]
+            at_bat["pfx_complete"] = pfx_audit["pitch_count_bbref"] == pfx_audit["pitch_count_pitchfx"]
+            at_bat["final_count_balls"] = pfx[-1]["balls"]
+            at_bat["final_count_strikes"] = pfx[-1]["strikes"]
+        return all_at_bats
+
     def get_pfx_for_pitcher(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
         if result.failure:
