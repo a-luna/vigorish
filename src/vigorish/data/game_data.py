@@ -219,10 +219,22 @@ class GameData:
             "extra_innings": self.extra_innings,
             "game_meta": self.get_game_meta_info(),
             "linescore": self.get_html_linescore(),
+            "inning_summaries": self._get_inning_summaries(),
         }
         if self.extra_innings:
             boxscore_data["linescore_complete"] = self.get_html_linescore(condensed=False)
         return boxscore_data
+
+    def _get_inning_summaries(self):
+        return {
+            inning["inning_id"]: {
+                "inning_label": inning["inning_label"],
+                "begin_inning_summary": inning["begin_inning_summary"],
+                "end_inning_summary": inning["end_inning_summary"],
+                "inning_totals": inning["inning_totals"],
+            }
+            for inning in self.innings_list
+        }
 
     def get_team_data(self, team_id):
         (team_bat_boxscore, team_pitch_boxscore) = self._prepare_team_data(team_id)
@@ -312,6 +324,23 @@ class GameData:
             }
             inning_totals.append(totals)
         return dict(zip(list(pfx_by_inning.keys()), inning_totals))
+
+    def get_all_at_bats_no_pfx(self):
+        return list(map(self._prepare_at_bat_for_api_response, deepcopy(self.valid_at_bats)))
+
+    def get_pbp_for_at_bat(self, at_bat_id):
+        at_bat_copy = deepcopy(self.at_bat_map[at_bat_id])
+        return self._prepare_at_bat_for_api_response(at_bat_copy)
+
+    def _prepare_at_bat_for_api_response(self, at_bat):
+        pfx = at_bat.pop("pitchfx")
+        pfx_audit = at_bat.pop("at_bat_pitchfx_audit")
+        at_bat["inning_label"] = at_bat["pbp_events"][0]["inning_label"]
+        at_bat["total_pitches"] = pfx_audit["pitch_count_bbref"]
+        at_bat["pfx_complete"] = pfx_audit["pitch_count_bbref"] == pfx_audit["pitch_count_pitchfx"]
+        at_bat["final_count_balls"] = pfx[-1]["balls"] if pfx else 0
+        at_bat["final_count_strikes"] = pfx[-1]["strikes"] if pfx else 0
+        return at_bat
 
     def get_pfx_for_pitcher(self, mlb_id):
         result = self.validate_mlb_id(mlb_id)
