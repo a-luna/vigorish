@@ -336,10 +336,13 @@ class GameData:
         pfx = at_bat.pop("pitchfx")
         pfx_audit = at_bat.pop("at_bat_pitchfx_audit")
         at_bat["inning_label"] = at_bat["pbp_events"][0]["inning_label"]
+        at_bat["pitcher_throws"] = pfx[0]["p_throws"] if pfx else ""
+        at_bat["batter_stance"] = pfx[0]["stand"] if pfx else ""
         at_bat["total_pitches"] = pfx_audit["pitch_count_bbref"]
         at_bat["pfx_complete"] = pfx_audit["pitch_count_bbref"] == pfx_audit["pitch_count_pitchfx"]
         at_bat["final_count_balls"] = pfx[-1]["balls"] if pfx else 0
         at_bat["final_count_strikes"] = pfx[-1]["strikes"] if pfx else 0
+        at_bat["pfx_des"] = pfx[0]["des"] if pfx else ""
         return at_bat
 
     def get_pfx_for_pitcher(self, mlb_id):
