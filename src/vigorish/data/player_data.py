@@ -133,6 +133,24 @@ class PlayerData:
             for pfx_metrics in self.pfx_pitching_metrics_vs_lhb_for_career.pitch_type_metrics.values()
         ]
 
+    def get_all_pfx_career_data(
+        self,
+    ) -> Dict[str, Dict[str, Union[List[PitchTypePercentiles], PitchFxMetricsCollection]]]:
+        return {
+            "both": {
+                "metrics": self.pfx_pitching_metrics_for_career,
+                "percentiles": self.percentiles_for_pitch_types_for_career,
+            },
+            "rhb": {
+                "metrics": self.pfx_pitching_metrics_vs_rhb_for_career,
+                "percentiles": self.percentiles_for_pitch_types_vs_rhb_for_career,
+            },
+            "lhb": {
+                "metrics": self.pfx_pitching_metrics_vs_lhb_for_career,
+                "percentiles": self.percentiles_for_pitch_types_vs_lhb_for_career,
+            },
+        }
+
     @cached_property
     def pfx_pitching_metrics_by_year(self) -> Dict[int, PitchFxMetricsCollection]:
         return {
@@ -186,6 +204,24 @@ class PlayerData:
                 for pfx_metrics in pfx_metrics_collection.pitch_type_metrics.values()
             ]
             for year, pfx_metrics_collection in self.pfx_pitching_metrics_vs_lhb_by_year.items()
+        }
+
+    def get_all_pfx_yearly_data(
+        self,
+    ) -> Dict[str, Dict[str, Dict[int, Dict[str, Union[List[PitchTypePercentiles], PitchFxMetricsCollection]]]]]:
+        return {
+            "both": {
+                "metrics": self.pfx_pitching_metrics_by_year,
+                "percentiles": self.percentiles_for_pitch_types_by_year,
+            },
+            "rhb": {
+                "metrics": self.pfx_pitching_metrics_vs_rhb_by_year,
+                "percentiles": self.percentiles_for_pitch_types_vs_rhb_by_year,
+            },
+            "lhb": {
+                "metrics": self.pfx_pitching_metrics_vs_lhb_by_year,
+                "percentiles": self.percentiles_for_pitch_types_vs_lhb_by_year,
+            },
         }
 
     @cached_property
