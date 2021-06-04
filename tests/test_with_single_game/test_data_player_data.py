@@ -991,6 +991,8 @@ def test_pitchfx_metrics_career(vig_app):
     assert player_data.get_pfx_pitching_metrics_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_pitching_metrics_vs_rhb_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_pitching_metrics_vs_lhb_for_game(BBREF_GAME_ID)
+    assert player_data.get_all_pfx_career_data()
+    assert player_data.get_all_pfx_yearly_data()
 
     player_data = PlayerData(vig_app, 600303)
     assert player_data.pfx_batting_metrics_for_career
