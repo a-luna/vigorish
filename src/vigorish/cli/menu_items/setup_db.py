@@ -85,7 +85,7 @@ class SetupDatabase(MenuItem):
         if result.failure:
             return Result.Ok()
         subprocess.run(["clear"])
-        return self.update_id_map_task.launch()
+        return self.update_id_map_task.launch(no_prompts=True)
 
     def update_database_connection(self):
         if self.db_initialized:
