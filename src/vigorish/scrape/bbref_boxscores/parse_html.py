@@ -628,9 +628,7 @@ def _parse_attendance_from_strings(strings):
             for m in matches:
                 d = {"match": m.replace(",", ""), "index": i}
                 attendance.append(d)
-    if len(attendance) == 1:
-        return attendance[0]
-    return None
+    return attendance[0] if len(attendance) == 1 else None
 
 
 def _parse_venue_from_strings(strings):
@@ -996,12 +994,15 @@ def _parse_substitution_description(sub_description):
         split = [s.strip() for s in sub_description.split("replaces")]
         parsed_sub["sub_type"] = "pitch"
     elif "and is now" in sub_description:
-        split = [s.strip() for s in sub_description.split("pinch hit for")]
+        if "pinch hit for" in sub_description:
+            split = [s.strip() for s in sub_description.split("pinch hit for")]
+        elif "pinch ran for" in sub_description:
+            split = [s.strip() for s in sub_description.split("pinch ran for")]
         parsed_sub["incoming_player_name"] = split[0]
         remaining_description = split[1]
         split2 = [s.strip() for s in remaining_description.split("and is now")]
-        parsed_sub["incoming_player_pos"] = split[0]
-        parsed_sub["outgoing_player_pos"] = split[0]
+        parsed_sub["incoming_player_pos"] = split2[1]
+        parsed_sub["outgoing_player_pos"] = split2[0]
         parsed_sub["outgoing_player_name"] = "N/A"
         parsed_sub["lineup_slot"] = 0
         parsed_sub["sub_type"] = "bat"
