@@ -114,19 +114,17 @@ class RestoreDatabaseTask(Task):
         return pitch_app_dict
 
     def update_player_stats_relationships(self, dataclass):
-        player_stats_dict = asdict(dataclass)
-        game_date = get_game_date_from_bbref_game_id(player_stats_dict["bbref_game_id"])
-        player_stats_dict["player_id"] = self.player_id_map[player_stats_dict["player_id_mlb"]]
-        player_stats_dict["player_team_id"] = self.get_team_id_map_for_year(game_date.year)[
-            player_stats_dict["player_team_id_bbref"]
+        stats_dict = asdict(dataclass)
+        game_date = get_game_date_from_bbref_game_id(stats_dict["bbref_game_id"])
+        stats_dict["player_id"] = self.player_id_map[stats_dict["player_id_mlb"]]
+        stats_dict["player_team_id"] = self.get_team_id_map_for_year(game_date.year)[stats_dict["player_team_id_bbref"]]
+        stats_dict["opponent_team_id"] = self.get_team_id_map_for_year(game_date.year)[
+            stats_dict["opponent_team_id_bbref"]
         ]
-        player_stats_dict["opponent_team_id"] = self.get_team_id_map_for_year(game_date.year)[
-            player_stats_dict["opponent_team_id_bbref"]
-        ]
-        player_stats_dict["season_id"] = self.season_id_map[game_date.year]
-        player_stats_dict["date_id"] = get_date_status_id_from_game_date(game_date)
-        player_stats_dict["game_status_id"] = self.game_id_map[player_stats_dict["bbref_game_id"]]
-        return player_stats_dict
+        stats_dict["season_id"] = self.season_id_map[game_date.year]
+        stats_dict["date_id"] = get_date_status_id_from_game_date(game_date)
+        stats_dict["game_status_id"] = self.game_id_map[stats_dict["bbref_game_id"]]
+        return stats_dict
 
     def update_bat_stats_relationships(self, dataclass):
         return self.update_player_stats_relationships(dataclass)
