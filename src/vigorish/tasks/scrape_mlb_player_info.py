@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from json.decoder import JSONDecodeError
 
 from events import Events
-from sqlalchemy.exc import DBAPIError, SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError
 
 import vigorish.database as db
 from vigorish.tasks.base import Task
@@ -131,5 +131,5 @@ class ScrapeMlbPlayerInfoTask(Task):
             self.db_session.commit()
             self.events.scrape_player_info_complete(new_player)
             return Result.Ok(new_player)
-        except (SQLAlchemyError, DBAPIError) as e:  # pragma: no cover
+        except SQLAlchemyError as e:  # pragma: no cover
             return Result.Fail(f"Error: {repr(e)}")
