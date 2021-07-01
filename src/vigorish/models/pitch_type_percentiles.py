@@ -26,7 +26,7 @@ class PitchTypePercentile(db.Base):
             .filter(cls.stat_value >= stat_value)
             .first()
         )
-        return (stat_value, pt_percentile.percentile) if pt_percentile else (stat_value, 1.0)
+        return (stat_value, pt_percentile.percentile) if pt_percentile else (stat_value, 99.0)
 
     @classmethod
     def get_percentile_for_lhp_pos_stat(cls, db_session, stat_name, pfx_metrics):
@@ -39,7 +39,7 @@ class PitchTypePercentile(db.Base):
             .filter(cls.stat_value >= stat_value)
             .first()
         )
-        return (stat_value, pt_percentile.percentile) if pt_percentile else (stat_value, 1.0)
+        return (stat_value, pt_percentile.percentile) if pt_percentile else (stat_value, 99.0)
 
     @classmethod
     def get_percentile_for_rhp_neg_stat(cls, db_session, stat_name, pfx_metrics):
