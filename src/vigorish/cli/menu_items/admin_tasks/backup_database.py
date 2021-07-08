@@ -7,7 +7,6 @@ from vigorish.cli.components.util import (
     get_random_cli_color,
     get_random_dots_spinner,
     print_heading,
-    print_message,
 )
 from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
@@ -77,11 +76,8 @@ class BackupDatabase(MenuItem):
         )
 
     def display_zip_file_details(self, zip_file):
-        print_heading("Backup Database to CSV", fg="bright_yellow", bg=None)
-        print_message("Successfully backed up database to .zip file:", bg=None)
-        print_message(f"{zip_file}\n", wrap=False)
-        print_message("Zipped File Info:\n", fg="bright_cyan", bold=True)
-        print_message(zip_file_report(zip_file), fg="bright_cyan", wrap=False)
+        page_viewer = zip_file_report(zip_file, heading_color="bright_cyan", text_color="bright_cyan")
+        page_viewer.launch()
 
     def subscribe_to_events(self):
         self.backup_db.events.backup_database_start += self.backup_database_start
