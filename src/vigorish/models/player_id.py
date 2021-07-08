@@ -18,6 +18,14 @@ class PlayerId(db.Base):
     def __repr__(self):
         return f"<PlayerId bbref_id={self.bbref_id}, mlb_id={self.mlb_id}>"
 
+    def as_dict(self):
+        return {
+            "mlb_id": self.mlb_id,
+            "mlb_name": self.mlb_name,
+            "bbref_id": self.bbref_id,
+            "db_player_id": self.db_player_id,
+        }
+
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):
         return db_session.query(cls).filter_by(bbref_id=bbref_id).first()
