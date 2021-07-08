@@ -1,3 +1,4 @@
+from collections import defaultdict
 from pathlib import Path
 
 from events import Events
@@ -7,7 +8,7 @@ from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore_list
 from vigorish.status.update_status_bbref_games_for_date import update_bbref_games_for_date_list
 from vigorish.status.update_status_brooks_games_for_date import (
-    update_status_brooks_games_for_date_list,
+    update_brooks_games_for_date_list,
 )
 from vigorish.status.update_status_brooks_pitch_logs import (
     update_status_brooks_pitch_logs_for_game_list,
@@ -16,6 +17,14 @@ from vigorish.status.update_status_brooks_pitchfx import update_status_brooks_pi
 from vigorish.status.update_status_combined_data import update_status_combined_data_list
 from vigorish.tasks.base import Task
 from vigorish.util.result import Result
+
+IMPORT_DATA_SET_ORDER = {
+    1: (DataSet.BBREF_GAMES_FOR_DATE, update_bbref_games_for_date_list),
+    2: (DataSet.BROOKS_GAMES_FOR_DATE, update_brooks_games_for_date_list),
+    3: (DataSet.BBREF_BOXSCORES, update_status_bbref_boxscore_list),
+    4: (DataSet.BROOKS_PITCH_LOGS, update_status_brooks_pitch_logs_for_game_list),
+    5: (DataSet.BROOKS_PITCHFX, update_status_brooks_pitchfx_log_list),
+}
 
 
 class ImportScrapedDataTask(Task):
@@ -38,23 +47,26 @@ class ImportScrapedDataTask(Task):
             )
         )
 
-    def execute(self, overwrite_existing=False):
-        mlb_season_map = self._get_mlb_season_scraped_data_map()
+    def execute(self, import_seasons=None, overwrite_existing=False):
+        mlb_season_map = self._get_mlb_season_scraped_data_map(import_seasons)
         if not any(season["has_data"] for season in mlb_season_map.values()):
             self.events.no_scraped_data_found()
             return Result.Ok()
         self._remove_invalid_pitchfx_logs(mlb_season_map)
         return self._import_scraped_data(mlb_season_map, overwrite_existing)
 
-    def _get_mlb_season_scraped_data_map(self):
+    def _get_mlb_season_scraped_data_map(self, import_seasons):
         self.events.search_local_files_start()
-        all_mlb_seasons = db.Season.get_all_regular_seasons(self.db_session)
+        if import_seasons:
+            seasons = [db.Season.find_by_year(self.db_session, year) for year in import_seasons]
+        else:
+            seasons = db.Season.get_all_regular_seasons(self.db_session)
         return {
             season.year: {
                 "has_data": self._local_folder_has_parsed_data_for_season(season.year),
                 "season": season,
             }
-            for season in all_mlb_seasons
+            for season in seasons
         }
 
     def _local_folder_has_parsed_data_for_season(self, year):
@@ -95,11 +107,10 @@ class ImportScrapedDataTask(Task):
 
     def _import_scraped_data(self, mlb_season_map, overwrite_existing):
         self.events.import_scraped_data_start()
-        error_dict = {}
+        error_dict = defaultdict(list)
         for season in mlb_season_map.values():
             if not season["has_data"]:
                 continue
-            error_dict[season["season"].year] = []
             result = self._update_all_data_sets(season["season"], overwrite_existing)
             if result.failure:
                 error_dict[season["season"].year].append(result.error)
@@ -110,11 +121,6 @@ class ImportScrapedDataTask(Task):
         error_dict = self._check_error_dict(error_dict)
         return Result.Ok() if not error_dict else Result.Fail(self._create_error_message_for_task(error_dict))
 
-    def _check_error_dict(self, error_dict):
-        for year in list(error_dict.keys())[:]:
-            if not error_dict[year]:
-                del error_dict[year]
-
     def _create_error_message_for_task(self, error_dict):
         error_list = [f"{year}: " + "\n".join(errors) for year, errors in error_dict.items()]
         return "\n".join(error_list)
@@ -122,8 +128,13 @@ class ImportScrapedDataTask(Task):
     def _update_all_data_sets(self, season, overwrite_existing=False):
         error_dict = {}
         self.events.import_scraped_data_for_year_start(season.year)
-        for data_set in DataSet:
-            result = self._update_data_set(data_set, season, overwrite_existing)
+        for i in IMPORT_DATA_SET_ORDER.keys():
+            (data_set, update_data_set) = IMPORT_DATA_SET_ORDER[i]
+            self.events.import_scraped_data_set_start(data_set, season.year)
+            scraped_ids = self._get_scraped_ids_for_data_set(data_set, season, overwrite_existing)
+            result = update_data_set(self.scraped_data, self.db_session, scraped_ids)
+            self.db_session.commit()
+            self.events.import_scraped_data_set_complete(data_set, season.year)
             if result.failure:
                 error_dict[data_set] = result.error
                 continue
@@ -134,18 +145,12 @@ class ImportScrapedDataTask(Task):
         error_list = [f"{data_set.name}: {error_ids}" for data_set, error_ids in error_dict.items()]
         return "\n".join(error_list)
 
-    def _update_data_set(self, data_set, season, overwrite_existing=False):
-        self.events.import_scraped_data_set_start(data_set, season.year)
+    def _get_scraped_ids_for_data_set(self, data_set, season, overwrite_existing):
         scraped_ids = self.scraped_data.get_scraped_ids_from_local_folder(VigFile.PARSED_JSON, data_set, season.year)
-        if not scraped_ids:
-            return Result.Ok()
-        if not overwrite_existing:
-            existing_scraped_ids = self.scraped_data.get_scraped_ids_from_database(data_set, season)
-            scraped_ids = list(set(scraped_ids) - set(existing_scraped_ids))
-        result = self._update_status_for_data_set(data_set, scraped_ids)
-        self.db_session.commit()
-        self.events.import_scraped_data_set_complete(data_set, season.year)
-        return result
+        if overwrite_existing:
+            return scraped_ids
+        existing_scraped_ids = self.scraped_data.get_scraped_ids_from_database(data_set, season)
+        return list(set(scraped_ids) - set(existing_scraped_ids))
 
     def _update_combined_data(self, season, overwrite_existing=False):
         self.events.import_combined_game_data_start(season.year)
@@ -166,12 +171,7 @@ class ImportScrapedDataTask(Task):
         self.events.import_combined_game_data_complete(season.year)
         return result
 
-    def _update_status_for_data_set(self, data_set, scraped_ids):
-        update_status_dict = {
-            DataSet.BROOKS_GAMES_FOR_DATE: update_status_brooks_games_for_date_list,
-            DataSet.BBREF_GAMES_FOR_DATE: update_bbref_games_for_date_list,
-            DataSet.BBREF_BOXSCORES: update_status_bbref_boxscore_list,
-            DataSet.BROOKS_PITCH_LOGS: update_status_brooks_pitch_logs_for_game_list,
-            DataSet.BROOKS_PITCHFX: update_status_brooks_pitchfx_log_list,
-        }
-        return update_status_dict[data_set](self.scraped_data, self.db_session, scraped_ids)
+    def _check_error_dict(self, error_dict):
+        for year in list(error_dict.keys())[:]:
+            if not error_dict[year]:
+                del error_dict[year]

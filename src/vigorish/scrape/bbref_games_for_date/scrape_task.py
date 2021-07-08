@@ -28,4 +28,8 @@ class ScrapeBBRefGamesForDate(ScrapeTaskABC):
         return parse_bbref_dashboard_page(url_details.html, url_details.url_id, url_details.url)
 
     def update_status(self, parsed_data):
-        return update_bbref_games_for_date_single_date(self.db_session, self.season, parsed_data)
+        result = update_bbref_games_for_date_single_date(self.db_session, parsed_data)
+        if result.failure:
+            return result
+        self.db_session.commit()
+        return Result.Ok()

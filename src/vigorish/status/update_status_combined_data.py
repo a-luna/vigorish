@@ -2,6 +2,7 @@ from collections import defaultdict
 
 import vigorish.database as db
 from vigorish.enums import DataSet, VigFile
+from vigorish.status.util import create_pitch_app_status_record, get_pitch_app_status_record
 from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.result import Result
 
@@ -49,9 +50,11 @@ def update_pitch_apps_with_combined_data(db_session, combined_data):
 
 def update_pitch_appearance_status_records(db_session, pitch_stats):
     pitchfx_audit = pitch_stats["pitch_app_pitchfx_audit"]
-    result = get_pitch_app_status(db_session, pitch_stats["pitch_app_id"])
+    result = get_pitch_app_status_record(db_session, pitch_stats["pitch_app_id"])
     if result.failure:
-        return result
+        if not zero_pitches_thrown_in_pitch_app(pitchfx_audit):
+            return result
+        result = create_pitch_app_status_with_zero_pithes_thrown(db_session, pitch_stats)
     pitch_app_status = result.value
     pitch_app_status.combined_pitchfx_bbref_data = 1
     pitch_app_status.no_pitchfx_data = 1 if pitchfx_audit["pitch_count_pitchfx"] == 0 else 0
@@ -74,14 +77,6 @@ def update_pitch_appearance_status_records(db_session, pitch_stats):
     return Result.Ok(pitch_app_status)
 
 
-def get_pitch_app_status(db_session, pitch_app_id):
-    pitch_app_status = db.PitchAppScrapeStatus.find_by_pitch_app_id(db_session, pitch_app_id)
-    if not pitch_app_status:
-        error = f"scrape_status_pitch_app does not contain an entry for pitch_app_id: {pitch_app_id}"
-        return Result.Fail(error)
-    return Result.Ok(pitch_app_status)
-
-
 def check_for_remaining_pitch_apps_no_pfx_data(db_session, bbref_game_id):
     pitch_apps_no_pfx_data = (
         db_session.query(db.PitchAppScrapeStatus)
@@ -93,3 +88,19 @@ def check_for_remaining_pitch_apps_no_pfx_data(db_session, bbref_game_id):
     )
     for pitch_app_status in pitch_apps_no_pfx_data:
         pitch_app_status.combined_pitchfx_bbref_data = 1
+
+
+def zero_pitches_thrown_in_pitch_app(pitchfx_audit):
+    return pitchfx_audit["pitch_count_bbref"] == 0 and pitchfx_audit["pitch_count_pitchfx"] == 0
+
+
+def create_pitch_app_status_with_zero_pithes_thrown(db_session, pitch_stats):
+    game_status = db.GameScrapeStatus.find_by_bbref_game_id(db_session, pitch_stats["bbref_game_id"])
+    player_id = db.PlayerId.find_by_mlb_id(db_session, pitch_stats["pitcher_id_mlb"])
+    pitch_app_status = create_pitch_app_status_record(
+        pitch_stats["bbref_game_id"], pitch_stats["bb_game_id"], game_status, player_id, pitch_stats["pitch_app_id"]
+    )
+    pitch_app_status.pitch_count_pitch_log = 0
+    pitch_app_status.scraped_pitchfx = 1
+    db_session.add(pitch_app_status)
+    return Result.Ok(pitch_app_status)

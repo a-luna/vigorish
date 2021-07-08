@@ -77,4 +77,8 @@ class ScrapeBrooksPitchLogs(ScrapeTaskABC):
         pass
 
     def update_status(self, parsed_data):
-        return update_status_brooks_pitch_logs_for_game(self.db_session, parsed_data)
+        result = update_status_brooks_pitch_logs_for_game(self.db_session, parsed_data)
+        if result.failure:
+            return result
+        self.db_session.commit()
+        return Result.Ok()
