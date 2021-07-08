@@ -7,6 +7,33 @@
     {
       "__brooks_pitch_log__": true,
       "parsed_all_info": true,
+      "pitcher_name": "Daniel Gossett",
+      "pitcher_id_mlb": 605254,
+      "pitch_app_id": "OAK201804010_605254",
+      "total_pitch_count": 66,
+      "pitch_count_by_inning": {
+        "1": 10,
+        "2": 18,
+        "3": 17,
+        "4": 11,
+        "5": 10
+      },
+      "pitcher_team_id_bb": "OAK",
+      "opponent_team_id_bb": "ANA",
+      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
+      "bbref_game_id": "OAK201804010",
+      "game_date_year": 2018,
+      "game_date_month": 4,
+      "game_date_day": 1,
+      "game_time_hour": 16,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605254&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=605254&game=529450&prevGame=529450&prevDate=0401"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
       "pitcher_name": "Shohei Ohtani",
       "pitcher_id_mlb": 660271,
       "pitch_app_id": "OAK201804010_660271",
@@ -29,127 +56,8 @@
       "game_time_hour": 16,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=660271&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=660271.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Cam Bedrosian",
-      "pitcher_id_mlb": 592135,
-      "pitch_app_id": "OAK201804010_592135",
-      "total_pitch_count": 15,
-      "pitch_count_by_inning": {
-        "7": 15
-      },
-      "pitcher_team_id_bb": "ANA",
-      "opponent_team_id_bb": "OAK",
-      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
-      "bbref_game_id": "OAK201804010",
-      "game_date_year": 2018,
-      "game_date_month": 4,
-      "game_date_day": 1,
-      "game_time_hour": 16,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=592135&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=592135.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Blake Wood",
-      "pitcher_id_mlb": 502028,
-      "pitch_app_id": "OAK201804010_502028",
-      "total_pitch_count": 14,
-      "pitch_count_by_inning": {
-        "8": 14
-      },
-      "pitcher_team_id_bb": "ANA",
-      "opponent_team_id_bb": "OAK",
-      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
-      "bbref_game_id": "OAK201804010",
-      "game_date_year": 2018,
-      "game_date_month": 4,
-      "game_date_day": 1,
-      "game_time_hour": 16,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=502028&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=502028.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Blake Parker",
-      "pitcher_id_mlb": 453284,
-      "pitch_app_id": "OAK201804010_453284",
-      "total_pitch_count": 18,
-      "pitch_count_by_inning": {
-        "9": 18
-      },
-      "pitcher_team_id_bb": "ANA",
-      "opponent_team_id_bb": "OAK",
-      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
-      "bbref_game_id": "OAK201804010",
-      "game_date_year": 2018,
-      "game_date_month": 4,
-      "game_date_day": 1,
-      "game_time_hour": 16,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=453284&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=453284.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Keynan Middleton",
-      "pitcher_id_mlb": 641871,
-      "pitch_app_id": "OAK201804010_641871",
-      "total_pitch_count": 11,
-      "pitch_count_by_inning": {
-        "9": 11
-      },
-      "pitcher_team_id_bb": "ANA",
-      "opponent_team_id_bb": "OAK",
-      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
-      "bbref_game_id": "OAK201804010",
-      "game_date_year": 2018,
-      "game_date_month": 4,
-      "game_date_day": 1,
-      "game_time_hour": 16,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=641871&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=641871.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Daniel Gossett",
-      "pitcher_id_mlb": 605254,
-      "pitch_app_id": "OAK201804010_605254",
-      "total_pitch_count": 66,
-      "pitch_count_by_inning": {
-        "1": 10,
-        "2": 18,
-        "3": 17,
-        "4": 11,
-        "5": 10
-      },
-      "pitcher_team_id_bb": "OAK",
-      "opponent_team_id_bb": "ANA",
-      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
-      "bbref_game_id": "OAK201804010",
-      "game_date_year": 2018,
-      "game_date_month": 4,
-      "game_date_day": 1,
-      "game_time_hour": 16,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605254&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=605254.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=660271&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=660271&game=529450&prevGame=529450&prevDate=0401"
     },
     {
       "__brooks_pitch_log__": true,
@@ -171,8 +79,8 @@
       "game_time_hour": 16,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=433589&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=433589.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=433589&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=433589&game=529450&prevGame=529450&prevDate=0401"
     },
     {
       "__brooks_pitch_log__": true,
@@ -180,9 +88,9 @@
       "pitcher_name": "Ryan Buchter",
       "pitcher_id_mlb": 488748,
       "pitch_app_id": "OAK201804010_488748",
-      "total_pitch_count": 23,
+      "total_pitch_count": 24,
       "pitch_count_by_inning": {
-        "6": 23
+        "6": 24
       },
       "pitcher_team_id_bb": "OAK",
       "opponent_team_id_bb": "ANA",
@@ -194,8 +102,8 @@
       "game_time_hour": 16,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=488748&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=488748.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=488748&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=488748&game=529450&prevGame=529450&prevDate=0401"
     },
     {
       "__brooks_pitch_log__": true,
@@ -203,9 +111,9 @@
       "pitcher_name": "Chris Hatcher",
       "pitcher_id_mlb": 501822,
       "pitch_app_id": "OAK201804010_501822",
-      "total_pitch_count": 16,
+      "total_pitch_count": 17,
       "pitch_count_by_inning": {
-        "7": 16
+        "7": 17
       },
       "pitcher_team_id_bb": "OAK",
       "opponent_team_id_bb": "ANA",
@@ -217,8 +125,8 @@
       "game_time_hour": 16,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=501822&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=501822.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=501822&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=501822&game=529450&prevGame=529450&prevDate=0401"
     },
     {
       "__brooks_pitch_log__": true,
@@ -240,8 +148,31 @@
       "game_time_hour": 16,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543056&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=543056.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543056&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=543056&game=529450&prevGame=529450&prevDate=0401"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Cam Bedrosian",
+      "pitcher_id_mlb": 592135,
+      "pitch_app_id": "OAK201804010_592135",
+      "total_pitch_count": 15,
+      "pitch_count_by_inning": {
+        "7": 15
+      },
+      "pitcher_team_id_bb": "ANA",
+      "opponent_team_id_bb": "OAK",
+      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
+      "bbref_game_id": "OAK201804010",
+      "game_date_year": 2018,
+      "game_date_month": 4,
+      "game_date_day": 1,
+      "game_time_hour": 16,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=592135&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=592135&game=529450&prevGame=529450&prevDate=0401"
     },
     {
       "__brooks_pitch_log__": true,
@@ -264,8 +195,77 @@
       "game_time_hour": 16,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=433586&game=gid_2018_04_01_anamlb_oakmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2018&month=4&day=01&pitchSel=433586.xml&game=gid_2018_04_01_anamlb_oakmlb_1/&prevGame=gid_2018_04_01_anamlb_oakmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=433586&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=433586&game=529450&prevGame=529450&prevDate=0401"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Blake Wood",
+      "pitcher_id_mlb": 502028,
+      "pitch_app_id": "OAK201804010_502028",
+      "total_pitch_count": 14,
+      "pitch_count_by_inning": {
+        "8": 14
+      },
+      "pitcher_team_id_bb": "ANA",
+      "opponent_team_id_bb": "OAK",
+      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
+      "bbref_game_id": "OAK201804010",
+      "game_date_year": 2018,
+      "game_date_month": 4,
+      "game_date_day": 1,
+      "game_time_hour": 16,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=502028&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=502028&game=529450&prevGame=529450&prevDate=0401"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Blake Parker",
+      "pitcher_id_mlb": 453284,
+      "pitch_app_id": "OAK201804010_453284",
+      "total_pitch_count": 18,
+      "pitch_count_by_inning": {
+        "9": 18
+      },
+      "pitcher_team_id_bb": "ANA",
+      "opponent_team_id_bb": "OAK",
+      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
+      "bbref_game_id": "OAK201804010",
+      "game_date_year": 2018,
+      "game_date_month": 4,
+      "game_date_day": 1,
+      "game_time_hour": 16,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=453284&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=453284&game=529450&prevGame=529450&prevDate=0401"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Keynan Middleton",
+      "pitcher_id_mlb": 641871,
+      "pitch_app_id": "OAK201804010_641871",
+      "total_pitch_count": 11,
+      "pitch_count_by_inning": {
+        "9": 11
+      },
+      "pitcher_team_id_bb": "ANA",
+      "opponent_team_id_bb": "OAK",
+      "bb_game_id": "gid_2018_04_01_anamlb_oakmlb_1",
+      "bbref_game_id": "OAK201804010",
+      "game_date_year": 2018,
+      "game_date_month": 4,
+      "game_date_day": 1,
+      "game_time_hour": 16,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=641871&game=529450&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2018&month=04&day=01&pitchSel=641871&game=529450&prevGame=529450&prevDate=0401"
     }
   ]
 }

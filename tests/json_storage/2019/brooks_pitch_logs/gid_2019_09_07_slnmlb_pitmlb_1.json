@@ -7,6 +7,34 @@
     {
       "__brooks_pitch_log__": true,
       "parsed_all_info": true,
+      "pitcher_name": "Steven Brault",
+      "pitcher_id_mlb": 643230,
+      "pitch_app_id": "PIT201909070_643230",
+      "total_pitch_count": 96,
+      "pitch_count_by_inning": {
+        "1": 20,
+        "2": 13,
+        "3": 25,
+        "4": 8,
+        "5": 11,
+        "6": 19
+      },
+      "pitcher_team_id_bb": "PIT",
+      "opponent_team_id_bb": "SLN",
+      "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
+      "bbref_game_id": "PIT201909070",
+      "game_date_year": 2019,
+      "game_date_month": 9,
+      "game_date_day": 7,
+      "game_time_hour": 19,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=643230&game=566250&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=09&day=07&pitchSel=643230&game=566250&prevGame=566250&prevDate=0907"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
       "pitcher_name": "Adam Wainwright",
       "pitcher_id_mlb": 425794,
       "pitch_app_id": "PIT201909070_425794",
@@ -30,80 +58,8 @@
       "game_time_hour": 19,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=425794&game=gid_2019_09_07_slnmlb_pitmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=9&day=07&pitchSel=425794.xml&game=gid_2019_09_07_slnmlb_pitmlb_1/&prevGame=gid_2019_09_07_slnmlb_pitmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Junior Fernandez",
-      "pitcher_id_mlb": 658551,
-      "pitch_app_id": "PIT201909070_658551",
-      "total_pitch_count": 13,
-      "pitch_count_by_inning": {
-        "8": 13
-      },
-      "pitcher_team_id_bb": "SLN",
-      "opponent_team_id_bb": "PIT",
-      "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
-      "bbref_game_id": "PIT201909070",
-      "game_date_year": 2019,
-      "game_date_month": 9,
-      "game_date_day": 7,
-      "game_time_hour": 19,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=658551&game=gid_2019_09_07_slnmlb_pitmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=9&day=07&pitchSel=658551.xml&game=gid_2019_09_07_slnmlb_pitmlb_1/&prevGame=gid_2019_09_07_slnmlb_pitmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": false,
-      "pitcher_name": "",
-      "pitcher_id_mlb": 594965,
-      "pitch_app_id": "PIT201909070_594965",
-      "total_pitch_count": 0,
-      "pitch_count_by_inning": {},
-      "pitcher_team_id_bb": "",
-      "opponent_team_id_bb": "",
-      "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
-      "bbref_game_id": "PIT201909070",
-      "game_date_year": 2019,
-      "game_date_month": 9,
-      "game_date_day": 7,
-      "game_time_hour": 19,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=9&day=07&pitchSel=594965.xml&game=gid_2019_09_07_slnmlb_pitmlb_1/&prevGame=gid_2019_09_07_slnmlb_pitmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Steven Brault",
-      "pitcher_id_mlb": 643230,
-      "pitch_app_id": "PIT201909070_643230",
-      "total_pitch_count": 96,
-      "pitch_count_by_inning": {
-        "1": 20,
-        "2": 13,
-        "3": 25,
-        "4": 8,
-        "5": 11,
-        "6": 19
-      },
-      "pitcher_team_id_bb": "PIT",
-      "opponent_team_id_bb": "SLN",
-      "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
-      "bbref_game_id": "PIT201909070",
-      "game_date_year": 2019,
-      "game_date_month": 9,
-      "game_date_day": 7,
-      "game_time_hour": 19,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=643230&game=gid_2019_09_07_slnmlb_pitmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=9&day=07&pitchSel=643230.xml&game=gid_2019_09_07_slnmlb_pitmlb_1/&prevGame=gid_2019_09_07_slnmlb_pitmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=425794&game=566250&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=09&day=07&pitchSel=425794&game=566250&prevGame=566250&prevDate=0907"
     },
     {
       "__brooks_pitch_log__": true,
@@ -126,8 +82,8 @@
       "game_time_hour": 19,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605280&game=gid_2019_09_07_slnmlb_pitmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=9&day=07&pitchSel=605280.xml&game=gid_2019_09_07_slnmlb_pitmlb_1/&prevGame=gid_2019_09_07_slnmlb_pitmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605280&game=566250&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=09&day=07&pitchSel=605280&game=566250&prevGame=566250&prevDate=0907"
     },
     {
       "__brooks_pitch_log__": true,
@@ -135,9 +91,9 @@
       "pitcher_name": "Geoff Hartlieb",
       "pitcher_id_mlb": 664129,
       "pitch_app_id": "PIT201909070_664129",
-      "total_pitch_count": 30,
+      "total_pitch_count": 29,
       "pitch_count_by_inning": {
-        "8": 30
+        "8": 29
       },
       "pitcher_team_id_bb": "PIT",
       "opponent_team_id_bb": "SLN",
@@ -149,8 +105,31 @@
       "game_time_hour": 19,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=664129&game=gid_2019_09_07_slnmlb_pitmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=9&day=07&pitchSel=664129.xml&game=gid_2019_09_07_slnmlb_pitmlb_1/&prevGame=gid_2019_09_07_slnmlb_pitmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=664129&game=566250&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=09&day=07&pitchSel=664129&game=566250&prevGame=566250&prevDate=0907"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Junior Fernandez",
+      "pitcher_id_mlb": 658551,
+      "pitch_app_id": "PIT201909070_658551",
+      "total_pitch_count": 13,
+      "pitch_count_by_inning": {
+        "8": 13
+      },
+      "pitcher_team_id_bb": "SLN",
+      "opponent_team_id_bb": "PIT",
+      "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
+      "bbref_game_id": "PIT201909070",
+      "game_date_year": 2019,
+      "game_date_month": 9,
+      "game_date_day": 7,
+      "game_time_hour": 19,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=658551&game=566250&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=09&day=07&pitchSel=658551&game=566250&prevGame=566250&prevDate=0907"
     },
     {
       "__brooks_pitch_log__": true,
@@ -158,9 +137,9 @@
       "pitcher_name": "Parker Markel",
       "pitcher_id_mlb": 571917,
       "pitch_app_id": "PIT201909070_571917",
-      "total_pitch_count": 9,
+      "total_pitch_count": 22,
       "pitch_count_by_inning": {
-        "9": 9
+        "9": 22
       },
       "pitcher_team_id_bb": "PIT",
       "opponent_team_id_bb": "SLN",
@@ -172,8 +151,31 @@
       "game_time_hour": 19,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=571917&game=gid_2019_09_07_slnmlb_pitmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=9&day=07&pitchSel=571917.xml&game=gid_2019_09_07_slnmlb_pitmlb_1/&prevGame=gid_2019_09_07_slnmlb_pitmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=571917&game=566250&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=09&day=07&pitchSel=571917&game=566250&prevGame=566250&prevDate=0907"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Daniel Ponce de Leon",
+      "pitcher_id_mlb": 594965,
+      "pitch_app_id": "PIT201909070_594965",
+      "total_pitch_count": 21,
+      "pitch_count_by_inning": {
+        "9": 21
+      },
+      "pitcher_team_id_bb": "SLN",
+      "opponent_team_id_bb": "PIT",
+      "bb_game_id": "gid_2019_09_07_slnmlb_pitmlb_1",
+      "bbref_game_id": "PIT201909070",
+      "game_date_year": 2019,
+      "game_date_month": 9,
+      "game_date_day": 7,
+      "game_time_hour": 19,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=594965&game=566250&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=09&day=07&pitchSel=594965&game=566250&prevGame=566250&prevDate=0907"
     }
   ]
 }
