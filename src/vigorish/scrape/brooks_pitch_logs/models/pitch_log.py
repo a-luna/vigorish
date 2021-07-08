@@ -18,6 +18,7 @@ class BrooksPitchLog:
     pitch_count_by_inning: Dict[str, int] = field(default_factory=dict)
     pitcher_team_id_bb: str = ""
     opponent_team_id_bb: str = ""
+    mlb_game_id: str = ""
     bb_game_id: str = ""
     bbref_game_id: str = ""
     game_date_year: str = ""
