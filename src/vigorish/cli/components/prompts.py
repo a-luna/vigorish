@@ -140,6 +140,41 @@ def data_sets_prompt(
     return data_sets
 
 
+def multi_season_prompt(db_session, prompt=None, heading=None):
+    if not prompt:
+        prompt = "Select one or multiple seasons from the list below:"
+    all_seasons = db.Season.get_all_regular_seasons(db_session)
+    choices = {f"{season.year}": season.year for season in all_seasons}
+    instructions = "(use SPACE BAR to select each file type, ENTER to confirm your selections)"
+    seasons_prompt = Check(
+        prompt=instructions,
+        choices=list(choices.keys()),
+        check=EMOJIS.get("CHECK", ""),
+        shift=1,
+        indent=0,
+        margin=2,
+        check_color=colors.foreground["default"],
+        check_on_switch=colors.foreground["default"],
+        word_color=colors.foreground["default"],
+        word_on_switch=colors.bright(colors.foreground["cyan"]),
+        background_color=colors.background["default"],
+        background_on_switch=colors.background["default"],
+    )
+    selected_years = []
+    while not selected_years:
+        subprocess.run(["clear"])
+        if heading:
+            print_heading(heading, fg="bright_yellow")
+        print_message(prompt, wrap=True)
+        result = seasons_prompt.launch()
+        if not result:
+            print_error("\nYou must select at least one season!")
+            pause(message="Press any key to continue...")
+            continue
+        selected_years = [choices[sel] for sel in result]
+    return selected_years
+
+
 def file_types_prompt(prompt, valid_file_types=VigFile.ALL):
     if not prompt:
         prompt = "Select one or multiple file types from the list below:"
