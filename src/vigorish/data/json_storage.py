@@ -716,7 +716,7 @@ class JsonStorage:
             DataSet.BBREF_BOXSCORES: self.decode_bbref_boxscore_patch_list_local_file,
         }
         get_patch_list_for_data_set = get_patch_list_local_dict.get(data_set)
-        return get_patch_list_for_data_set(url_id) if get_patch_list_for_data_set else None
+        return get_patch_list_for_data_set(url_id) if get_patch_list_for_data_set else Result.Ok({})
 
     def decode_brooks_games_for_date_patch_list_local_file(self, game_date):
         result = self.get_brooks_games_for_date_patch_list_local_file(game_date)
