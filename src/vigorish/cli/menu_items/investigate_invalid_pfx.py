@@ -10,14 +10,13 @@ from vigorish.cli.components import (
     get_random_cli_color,
     get_random_dots_spinner,
     print_error,
-    print_heading,
     print_message,
     print_success,
     select_game_prompt,
     user_options_prompt,
     yes_no_prompt,
 )
-from vigorish.cli.components.viewers import DictListTableViewer, DisplayTable, TableViewer
+from vigorish.cli.components.viewers import DictListTableViewer, DisplayTable, TableViewer, DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType
@@ -37,6 +36,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         self.bbref_game_ids = bbref_game_ids
         self.menu_item_text = f"{AuditError.INVALID_PITCHFX_DATA} ({self.game_count} Games)"
         self.menu_item_emoji = EMOJIS.get("UPSIDE_DOWN")
+        self.menu_heading = self._menu_item_text
 
     @property
     def game_count(self):
@@ -65,6 +65,7 @@ class InvestigateInvalidPitchFx(MenuItem):
                 self.unsubscribe_from_events()
                 return Result.Ok(True)
             self.game_id = result.value
+            self.menu_heading = f"Invalid PitchFX Data for {self.game_id}"
             result = self.select_game_operation_prompt()
             if result.failure:
                 exit_single_game_menu = True
@@ -114,18 +115,15 @@ class InvestigateInvalidPitchFx(MenuItem):
             print_message(result.error, fg="bright_yellow")
             pause(message="Press any key to continue...")
             return Result.Ok(True)
-        subprocess.run(["clear"])
-        self.display_invalid_pfx_details()
         if not self.prompt_user_create_patch_list():
             return Result.Ok(True)
         result = self.patch_invalid_pfx.match_missing_pfx_data()
         if result.failure:
             return result
-        subprocess.run(["clear"])
         for result, matches in self.patch_invalid_pfx.match_results.items():
             if result == "success":
                 for num, match_dict in enumerate(matches, start=1):
-                    self.display_potential_data_match(num, len(matches), match_dict)
+                    match_dict["patch"] = self.prompt_user_create_patch(num, len(matches), match_dict)
             if result == "no_matches":
                 self.display_no_match_found(matches)
             if result == "many_matches":
@@ -167,7 +165,43 @@ class InvestigateInvalidPitchFx(MenuItem):
             self.display_patched_data_tables(**self.patch_results["patch_diff_report"])
         return Result.Ok()
 
-    def display_invalid_pfx_details(self):
+    def prompt_user_create_patch_list(self):
+        subprocess.run(["clear"])
+        heading = f"Invalid PitchFX Data for {self.game_id}"
+        prompt = "Would you like to run this task and attempt to fix the invalid data?"
+        pages = [
+            DisplayPage(self.summarize_pfx_errors(), heading),
+            DisplayPage(self.get_invalid_pfx_table(), heading, False),
+            DisplayPage(self.get_task_explanation(), heading),
+        ]
+        page_viewer = PageViewer(pages, prompt=prompt, heading_color="bright_magenta", text_color="bright_magenta")
+        return page_viewer.launch()
+
+    def summarize_pfx_errors(self):
+        at_bat_ids = [
+            at_bat_id
+            for pitch_app_dict in self.patch_invalid_pfx.invalid_pfx_map.values()
+            for inning_dict in pitch_app_dict.values()
+            for at_bat_id in inning_dict.keys()
+        ]
+        pitch_app_ids = list(self.patch_invalid_pfx.invalid_pfx_map.keys())
+        at_bats_plural = "at bats" if len(at_bat_ids) > 1 else "at bat"
+        pitch_apps_plural = "pitching appearances" if len(pitch_app_ids) > 1 else "pitching appearance"
+
+        return [
+            (
+                "Invalid PitchFX data is sometimes valid data where the pitcher or batter ID value is "
+                "incorrect, while the inning, pitch count, and pitch numbers are correct.\n"
+            ),
+            (
+                f"{self.game_id} contains PitchFX data for {len(at_bat_ids)} {at_bats_plural} "
+                f"({len(pitch_app_ids)} total {pitch_apps_plural}) that does not belong to any "
+                "at bat that occurred during this game according to the baseball-reference.com "
+                "boxscore."
+            ),
+        ]
+
+    def get_invalid_pfx_table(self):
         invalid_pfx_error_data = []
         for pitch_app_dict in self.patch_invalid_pfx.invalid_pfx_map.values():
             for inning_id, inning_dict in pitch_app_dict.items():
@@ -186,41 +220,25 @@ class InvestigateInvalidPitchFx(MenuItem):
                         "pfx_ab_numbers": pitch_numbers,
                     }
                     invalid_pfx_error_data.append(error_data)
-        invalid_pfx_table = tabulate(invalid_pfx_error_data, headers="keys")
-        self.summarize_pfx_errors(self.patch_invalid_pfx.invalid_pfx_map)
-        print_message(invalid_pfx_table, wrap=False, fg="bright_magenta")
-
-    def summarize_pfx_errors(self, pfx_error_map):
-        at_bat_ids = [
-            at_bat_id
-            for pitch_app_dict in pfx_error_map.values()
-            for inning_dict in pitch_app_dict.values()
-            for at_bat_id in inning_dict.keys()
+        return [
+            "The table below shows the invalid PitchFx data:\n",
+            tabulate(invalid_pfx_error_data, headers="keys"),
         ]
-        pitch_app_ids = list(pfx_error_map.keys())
-        at_bats_plural = "at bats" if len(at_bat_ids) > 1 else "at bat"
-        pitch_apps_plural = "pitching appearances" if len(pitch_app_ids) > 1 else "pitching appearance"
-        header = f"Invalid PitchFX Data for {self.game_id}\n"
-        message = (
-            f"{self.game_id} contains PitchFX data that does not belong to any at bat "
-            f"that occurred during this game according to the baseball-reference.com boxscore "
-            f"({len(at_bat_ids)} {at_bats_plural}, {len(pitch_app_ids)} total "
-            f"{pitch_apps_plural}).\n"
-        )
-        print_message(header, wrap=False, bold=True, underline=True)
-        print_message(message)
 
-    def prompt_user_create_patch_list(self):
-        print()
-        prompt = (
-            "\nInvalid PitchFX data is sometimes valid data where the pitcher or batter ID value "
-            "is incorrect, while the inning, pitch count, and pitch numbers are correct. Would "
-            "you like to check for at bats that match these criteria?"
-        )
-        return yes_no_prompt(prompt)
+    def get_task_explanation(self):
+        return [
+            (
+                "This task checks for at bats that are missing PitchFX data and determines if the "
+                "invalid data matches the at bat. If a match is found, a patch file is created to "
+                "fix the invalid data. After applying the patch, the game data will be combined.\n"
+            ),
+            "This should eliminate all data errors in most cases.",
+        ]
 
-    def display_potential_data_match(self, num, total_matches, match_dict):
-        self.describe_potential_data_match(num, total_matches, match_dict)
+    def prompt_user_create_patch(self, num, total_matches, match_dict):
+        subprocess.run(["clear"])
+        heading = f"Match {num}/{total_matches} (Patch Type: {match_dict['patch_type']}):"
+        (summary_page, details_page) = self.describe_potential_data_match(heading, match_dict)
         match_copy = deepcopy(match_dict)
         match_copy["invalid_pfx"].pop("at_bat_id")
         match_copy["invalid_pfx"].pop("pitcher_id")
@@ -229,71 +247,51 @@ class InvestigateInvalidPitchFx(MenuItem):
         match_copy["missing_pfx"].pop("pitcher_id")
         match_copy["missing_pfx"].pop("batter_id")
         match_rows = [match_copy["invalid_pfx"], match_copy["missing_pfx"]]
-        print_message(tabulate(match_rows, headers="keys"), wrap=False, fg="bright_green")
-        match_dict["patch"] = self.prompt_user_create_patch(match_dict)
+        page_content = [
+            "The table below illustrates the relationship between the invalid and missing data:\n",
+            tabulate(match_rows, headers="keys"),
+        ]
+        patch_table = DisplayPage(page_content, heading, False)
+        pages = [summary_page, details_page, patch_table]
+        prompt = "Would you like to create a patch file to apply these changes?"
+        page_viewer = PageViewer(pages, prompt=prompt, heading_color="bright_green", text_color="bright_green")
+        return page_viewer.launch()
 
-    def describe_potential_data_match(self, num, total, match_dict):
+    def describe_potential_data_match(self, heading, match_dict):
         invalid_pfx = match_dict["invalid_pfx"]
         missing_pfx = match_dict["missing_pfx"]
-        at_bat_id = missing_pfx["at_bat_id"]
         inning_str = inning_number_to_string(invalid_pfx["inning_id"])
         pitcher_or_batter = "pitcher" if match_dict["patch_type"] == PatchType.CHANGE_BATTER_ID else "batter"
-        match_heading = f"Match {num}/{total} (Patch Type: {match_dict['patch_type']}):"
-        match_summary = []
-        match_summary = (
-            f"The invalid PitchFX data below for an at bat between {invalid_pfx['pitcher']} and "
-            f"{invalid_pfx['batter']} in the {inning_str} is a potential "
-            "match for missing data that actually occurred in the same inning between "
-            f"{missing_pfx['pitcher']} and {missing_pfx['batter']} (at_bat_id: {at_bat_id}).\n"
-        )
-        match_details_heading = "The data used to make this potential match is given below:"
-        match_details = [
-            f"- Both at bats took place in the same inning ({missing_pfx['inning_id']}) and "
-            f"involve the same {pitcher_or_batter}.\n",
-            "- The number of pitches missing from the valid at bat "
-            f"({len(missing_pfx['missing_pfx'])}) is the same (or less than) the total number of "
-            f"pitches in the invalid at bat ({invalid_pfx['pitch_count']}).\n",
-            f"- The pitch sequence numbers of the invalid at bat ({invalid_pfx['invalid_pfx']}) "
-            "contain all of the pitch numbers that are missing from the valid at bat "
-            f"({missing_pfx['missing_pfx']}).\n",
+        match_summary = [
+            (
+                f"This game contains invalid PitchFX data for an at bat between {invalid_pfx['pitcher']} "
+                f"and {invalid_pfx['batter']} in the {inning_str}, which has been identified as a match "
+                f"for missing data in the same inning between {missing_pfx['pitcher']} and "
+                f"{missing_pfx['batter']}."
+            )
         ]
-
-        subprocess.run(["clear"])
-        print_heading(match_heading)
-        print_message(match_summary)
-        print_heading(match_details_heading, fg="bright_green")
-        for message in match_details:
-            print_message(message, fg="bright_green")
-
-    def prompt_user_create_patch(self, match_dict):
-        prompt = ""
-        if match_dict["patch_type"] == PatchType.CHANGE_BATTER_ID:
-            prompt = (
-                "Change batter_id on all invalid_pfx data in the table above from "
-                f'{self.get_batter_name_and_id(match_dict["invalid_pfx"])} to '
-                f'{self.get_batter_name_and_id(match_dict["missing_pfx"])}'
-            )
-        if match_dict["patch_type"] == PatchType.CHANGE_PITCHER_ID:
-            prompt = (
-                "Change pitcher_id on all invalid_pfx data in the table above from "
-                f'{self.get_pitcher_name_and_id(match_dict["invalid_pfx"])} to '
-                f'{self.get_pitcher_name_and_id(match_dict["missing_pfx"])}'
-            )
-        prompt_heading = "\nWould you like to create a patch file to apply these changes?"
-        print_heading(prompt_heading, fg="bright_yellow")
-        return yes_no_prompt(prompt)
-
-    def get_pitcher_name_and_id(self, at_bat_data):
-        player_name = at_bat_data["pitcher"].split("(")[0].strip()
-        player_id = at_bat_data["pitcher_id"]
-        return f"{player_name} (MLB ID: {player_id})"
-
-    def get_batter_name_and_id(self, at_bat_data):
-        player_name = at_bat_data["batter"].split("(")[0].strip()
-        player_id = at_bat_data["batter_id"]
-        return f"{player_name} (MLB ID: {player_id})"
+        match_details = [
+            "The data used to identify the invalid data as the data missing from the valid at bat are given below:\n",
+            (
+                f"- Both at bats took place in the same inning ({missing_pfx['inning_id']}) and involve the "
+                f"same {pitcher_or_batter}."
+            ),
+            (
+                f"- The number of pitches missing from the valid at bat ({len(missing_pfx['missing_pfx'])}) is "
+                "the same as (or less than) the total number of pitches in the invalid at bat "
+                f"({invalid_pfx['pitch_count']})."
+            ),
+            (
+                f"- The pitch sequence numbers of the invalid at bat ({invalid_pfx['invalid_pfx']}) contain all "
+                f"of the pitch numbers that are missing from the valid at bat ({missing_pfx['missing_pfx']})."
+            ),
+        ]
+        summary_page = DisplayPage(match_summary, heading)
+        details_page = DisplayPage(match_details, heading)
+        return (summary_page, details_page)
 
     def display_no_match_found(self, matches):
+        subprocess.run(["clear"])
         for match_dict in matches:
             match_dict["invalid_pfx"].pop("at_bat_id")
             match_dict["invalid_pfx"].pop("pitcher_id")
@@ -307,6 +305,7 @@ class InvestigateInvalidPitchFx(MenuItem):
         pause(message="Press any key to continue...")
 
     def display_many_matches_found(self, matches):
+        subprocess.run(["clear"])
         for match_dict in matches:
             match_dict["invalid_pfx"].pop("at_bat_id")
             match_dict["invalid_pfx"].pop("pitcher_id")
@@ -325,10 +324,9 @@ class InvestigateInvalidPitchFx(MenuItem):
 
     def prompt_user_apply_patch_list(self):
         subprocess.run(["clear"])
-        prompt = (
-            f"\nA patch list for {self.game_id} was successfully created! Would you like to apply "
-            "these changes and attempt to combine the scraped data after doing so?"
-        )
+        prompt = "Would you like to apply the patch to fix the invalid data?"
+        self.update_menu_heading("Apply Patch?", heading_color="bright_cyan")
+        print_message(f"A patch list for {self.game_id} was successfully created!\n", fg="bright_cyan")
         return yes_no_prompt(prompt)
 
     def combine_scraped_data_for_game(self):
@@ -380,7 +378,10 @@ class InvestigateInvalidPitchFx(MenuItem):
         return yes_no_prompt(prompt)
 
     def prompt_user_view_patched_data(self):
-        prompt = "\nWould you like to see a report detailing the changes that were made by applying the patch list?"
+        subprocess.run(["clear"])
+        prompt = "Would you like to see a report detailing the changes that were made by applying the patch list?"
+        self.update_menu_heading("View Patch Results?", heading_color="bright_cyan")
+        print_message("The patch was successfully applied to the PitchFX data!\n", fg="bright_cyan")
         return yes_no_prompt(prompt)
 
     def display_patched_data_tables(self, boxscore_changes, pitch_stat_changes_dict, pitch_stats_after):
