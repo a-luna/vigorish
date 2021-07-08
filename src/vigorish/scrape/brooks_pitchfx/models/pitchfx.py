@@ -21,7 +21,6 @@ class BrooksPitchFxData:
     opponent_team_id_bb: str = field(repr=False, default="")
     bb_game_id: str = field(repr=False, default="")
     bbref_game_id: str = field(repr=False, default="")
-    table_row_number: int = field(repr=False, default=0)
     park_sv_id: str = field(repr=False, default="")
     play_guid: str = field(repr=False, default="")
     ab_total: int = field(repr=False, default=0)
@@ -32,26 +31,16 @@ class BrooksPitchFxData:
     id: int = 0
     sz_top: float = field(repr=False, default=0.0)
     sz_bot: float = field(repr=False, default=0.0)
-    pfx_xdatafile: float = field(repr=False, default=0.0)
-    pfx_zdatafile: float = field(repr=False, default=0.0)
     mlbam_pitch_name: str = ""
     zone_location: int = field(repr=False, default=0)
-    pitch_con: float = field(repr=False, default=0.0)
     stand: str = field(repr=False, default="")
     strikes: int = field(repr=False, default=0)
     balls: int = field(repr=False, default=0)
     p_throws: str = field(repr=False, default="")
     pdes: str = field(repr=False, default="")
-    spin: float = field(repr=False, default=0.0)
-    norm_ht: float = field(repr=False, default=0.0)
     inning: int = field(repr=False, default=0)
-    tstart: float = field(repr=False, default=0.0)
-    vystart: float = field(repr=False, default=0.0)
-    ftime: float = field(repr=False, default=0.0)
     pfx_x: float = field(repr=False, default=0.0)
     pfx_z: float = field(repr=False, default=0.0)
-    uncorrected_pfx_x: float = field(repr=False, default=0.0)
-    uncorrected_pfx_z: float = field(repr=False, default=0.0)
     x0: float = field(repr=False, default=0.0)
     y0: float = field(repr=False, default=0.0)
     z0: float = field(repr=False, default=0.0)
@@ -64,10 +53,21 @@ class BrooksPitchFxData:
     start_speed: float = field(repr=False, default=0.0)
     px: float = field(repr=False, default=0.0)
     pz: float = field(repr=False, default=0.0)
-    pxold: float = field(repr=False, default=0.0)
-    pzold: float = field(repr=False, default=0.0)
-    tm_spin: int = field(repr=False, default=0)
-    sb: int = field(repr=False, default=0)
+    plate_time: float = field(repr=False, default=0.0)
+    extension: float = field(repr=False, default=0.0)
+    break_angle: float = field(repr=False, default=0.0)
+    break_length: float = field(repr=False, default=0.0)
+    break_y: float = field(repr=False, default=0.0)
+    spin_rate: int = field(repr=False, default=0)
+    spin_direction: int = field(repr=False, default=0)
+    launch_speed: float = field(repr=False, default=0.0)
+    launch_angle: float = field(repr=False, default=0.0)
+    total_distance: float = field(repr=False, default=0.0)
+    trajectory: str = field(repr=False, default="")
+    hardness: str = field(repr=False, default="")
+    location: int = field(repr=False, default=0)
+    coord_x: float = field(repr=False, default=0.0)
+    coord_y: float = field(repr=False, default=0.0)
     game_start_time_str: str = field(repr=False, default="")
     time_pitch_thrown_str: str = field(repr=False, default="")
     has_zone_location: bool = field(repr=False, default=False)
@@ -81,11 +81,15 @@ class BrooksPitchFxData:
     swing_outside_zone: bool = field(repr=False, default=False)
     contact_inside_zone: bool = field(repr=False, default=False)
     contact_outside_zone: bool = field(repr=False, default=False)
-    is_batted_ball: bool = field(repr=False, default=False)
+    is_in_play: bool = field(repr=False, default=False)
     is_ground_ball: bool = field(repr=False, default=False)
     is_fly_ball: bool = field(repr=False, default=False)
     is_line_drive: bool = field(repr=False, default=False)
-    is_pop_up: bool = field(repr=False, default=False)
+    is_popup: bool = field(repr=False, default=False)
+    is_hard_hit: bool = field(repr=False, default=False)
+    is_medium_hit: bool = field(repr=False, default=False)
+    is_soft_hit: bool = field(repr=False, default=False)
+    is_barreled: bool = field(repr=False, default=False)
     is_final_pitch_of_ab: bool = field(repr=False, default=False)
     ab_result_out: bool = field(repr=False, default=False)
     ab_result_hit: bool = field(repr=False, default=False)
@@ -160,7 +164,6 @@ class BrooksPitchFxData:
             "opponent_team_id_bb": self.opponent_team_id_bb,
             "bb_game_id": self.bb_game_id,
             "bbref_game_id": self.bbref_game_id,
-            "table_row_number": self.table_row_number,
             "park_sv_id": self.park_sv_id,
             "play_guid": self.play_guid,
             "ab_total": self.ab_total,
@@ -171,26 +174,16 @@ class BrooksPitchFxData:
             "id": self.id,
             "sz_top": self.sz_top,
             "sz_bot": self.sz_bot,
-            "pfx_xdatafile": self.pfx_xdatafile,
-            "pfx_zdatafile": self.pfx_zdatafile,
             "mlbam_pitch_name": self.mlbam_pitch_name,
             "zone_location": self.zone_location,
-            "pitch_con": self.pitch_con,
             "stand": self.stand,
             "strikes": self.strikes,
             "balls": self.balls,
             "p_throws": self.p_throws,
             "pdes": self.pdes,
-            "spin": self.spin,
-            "norm_ht": self.norm_ht,
             "inning": self.inning,
-            "tstart": self.tstart,
-            "vystart": self.vystart,
-            "ftime": self.ftime,
             "pfx_x": self.pfx_x,
             "pfx_z": self.pfx_z,
-            "uncorrected_pfx_x": self.uncorrected_pfx_x,
-            "uncorrected_pfx_z": self.uncorrected_pfx_z,
             "x0": self.x0,
             "y0": self.y0,
             "z0": self.z0,
@@ -203,10 +196,21 @@ class BrooksPitchFxData:
             "start_speed": self.start_speed,
             "px": self.px,
             "pz": self.pz,
-            "pxold": self.pxold,
-            "pzold": self.pzold,
-            "tm_spin": self.tm_spin,
-            "sb": self.sb,
+            "plate_time": self.plate_time,
+            "extension": self.extension,
+            "break_angle": self.break_angle,
+            "break_length": self.break_length,
+            "break_y": self.break_y,
+            "spin_rate": self.spin_rate,
+            "spin_direction": self.spin_direction,
+            "launch_speed": self.launch_speed,
+            "launch_angle": self.launch_angle,
+            "total_distance": self.total_distance,
+            "trajectory": self.trajectory,
+            "hardness": self.hardness,
+            "location": self.location,
+            "coord_x": self.coord_x,
+            "coord_y": self.coord_y,
             "game_start_time_str": self.game_start_time_str,
             "time_pitch_thrown_str": self.get_time_pitch_thrown_str(),
             "has_zone_location": self.has_zone_location,
@@ -220,11 +224,15 @@ class BrooksPitchFxData:
             "swing_outside_zone": self.swing_outside_zone,
             "contact_inside_zone": self.contact_inside_zone,
             "contact_outside_zone": self.contact_outside_zone,
-            "is_batted_ball": self.is_batted_ball,
+            "is_in_play": self.is_in_play,
             "is_ground_ball": self.is_ground_ball,
             "is_fly_ball": self.is_fly_ball,
             "is_line_drive": self.is_line_drive,
-            "is_pop_up": self.is_pop_up,
+            "is_popup": self.is_popup,
+            "is_hard_hit": self.is_hard_hit,
+            "is_medium_hit": self.is_medium_hit,
+            "is_soft_hit": self.is_soft_hit,
+            "is_barreled": self.is_barreled,
             "is_final_pitch_of_ab": self.is_final_pitch_of_ab,
             "ab_result_out": self.is_final_pitch_of_ab,
             "ab_result_hit": self.is_final_pitch_of_ab,
@@ -239,10 +247,10 @@ class BrooksPitchFxData:
             "ab_result_error": self.ab_result_error,
             "ab_result_sac_hit": self.is_final_pitch_of_ab,
             "ab_result_sac_fly": self.is_final_pitch_of_ab,
-            "ab_result_unclear": self.is_final_pitch_of_ab,
-            "pitch_type_int": int(PitchType.from_abbrev(self.mlbam_pitch_name)),
+            "ab_result_unclear": self.ab_result_unclear,
             "pbp_play_result": self.pbp_play_result,
             "pbp_runs_outs_result": self.pbp_runs_outs_result,
+            "pitch_type_int": int(PitchType.from_abbrev(self.mlbam_pitch_name)),
             "is_patched": self.is_patched,
             "is_invalid_ibb": self.is_invalid_ibb,
             "is_out_of_sequence": self.is_out_of_sequence,

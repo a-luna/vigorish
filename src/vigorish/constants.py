@@ -9,6 +9,40 @@ ENV_VAR_NAMES = [
     "DATABASE_URL",
 ]
 
+TEAM_NAME_MAP = {
+    "Arizona Diamondbacks": "ARI",
+    "Atlanta Braves": "ATL",
+    "Baltimore Orioles": "BAL",
+    "Boston Red Sox": "BOS",
+    "Chicago White Sox": "CHA",
+    "Chicago Cubs": "CHN",
+    "Cincinnati Reds": "CIN",
+    "Cleveland Indians": "CLE",
+    "Colorado Rockies": "COL",
+    "Detroit Tigers": "DET",
+    "Houston Astros": "HOU",
+    "Kansas City Royals": "KCA",
+    "Los Angeles Angels of Anaheim": "ANA",
+    "Los Angeles Angels": "ANA",
+    "Los Angeles Dodgers": "LAN",
+    "Miami Marlins": "MIA",
+    "Milwaukee Brewers": "MIL",
+    "Minnesota Twins": "MIN",
+    "New York Yankees": "NYA",
+    "New York Mets": "NYN",
+    "Oakland Athletics": "OAK",
+    "Philadelphia Phillies": "PHI",
+    "Pittsburgh Pirates": "PIT",
+    "San Diego Padres": "SDN",
+    "Seattle Mariners": "SEA",
+    "San Francisco Giants": "SFN",
+    "St. Louis Cardinals": "SLN",
+    "Tampa Bay Rays": "TBA",
+    "Texas Rangers": "TEX",
+    "Toronto Blue Jays": "TOR",
+    "Washington Nationals": "WAS",
+}
+
 BR_BB_TEAM_ID_MAP = {
     "CHW": "CHA",
     "CHC": "CHN",
@@ -219,11 +253,6 @@ PITCH_DES_MADE_CONTACT = [
     "In play; run(s)",
 ]
 
-PLAY_DES_BB_TYPE_FB = ["Fly Ball", "Flyball", "Popfly"]
-PLAY_DES_BB_TYPE_GB = ["Ground Ball", "Groundout"]
-PLAY_DES_BB_TYPE_LD = ["Line Drive", "Lineout"]
-PLAY_DES_BB_TYPE_PU = ["Popfly"]
-
 AT_BAT_RESULTS_OUT = [
     "bunt groundout",
     "bunt pop out",
@@ -288,6 +317,28 @@ AT_BAT_RESULTS_SAC_FLY = [
     "sac fly dp",
 ]
 
+BARREL_MAP = {
+    98: {"min": 26, "max": 30},
+    99: {"min": 25, "max": 31},
+    100: {"min": 24, "max": 33},
+    101: {"min": 23, "max": 34},
+    102: {"min": 22, "max": 35},
+    103: {"min": 21, "max": 36},
+    104: {"min": 20, "max": 37},
+    105: {"min": 19, "max": 38},
+    106: {"min": 18, "max": 39},
+    107: {"min": 17, "max": 40},
+    108: {"min": 16, "max": 41},
+    109: {"min": 15, "max": 43},
+    110: {"min": 14, "max": 44},
+    111: {"min": 13, "max": 45},
+    112: {"min": 12, "max": 46},
+    113: {"min": 11, "max": 47},
+    114: {"min": 10, "max": 48},
+    115: {"min": 9, "max": 49},
+    116: {"min": 8, "max": 50},
+}
+
 JOB_SPINNER_COLORS = {
     DataSet.BBREF_GAMES_FOR_DATE: "red",
     DataSet.BROOKS_GAMES_FOR_DATE: "blue",
@@ -348,6 +399,7 @@ EMOJIS = {
     "WEARY": "😩",
     "UPSIDE_DOWN": "🙃",
     "CONFUSED": "😕",
+    "FAMILY": "👨‍👩‍👦",
     "THUMBS_UP": "👍",
     "CLOUD": "🌧",
     "SPIRAL": "🌀",

@@ -9,5 +9,5 @@ PFX_BATTED_BALL_METRICS = {
     "GB%": ("ground_ball_rate", "total_ground_balls"),
     "LD%": ("line_drive_rate", "total_line_drives"),
     "FB%": ("fly_ball_rate", "total_fly_balls"),
-    "PU%": ("pop_up_rate", "total_pop_ups"),
+    "PU%": ("popup_rate", "total_popups"),
 }
