@@ -7,14 +7,39 @@
     {
       "__brooks_pitch_log__": true,
       "parsed_all_info": true,
+      "pitcher_name": "James Paxton",
+      "pitcher_id_mlb": 572020,
+      "pitch_app_id": "NYA201906112_572020",
+      "total_pitch_count": 63,
+      "pitch_count_by_inning": {
+        "1": 20,
+        "2": 6,
+        "3": 37
+      },
+      "pitcher_team_id_bb": "NYA",
+      "opponent_team_id_bb": "NYN",
+      "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
+      "bbref_game_id": "NYA201906112",
+      "game_date_year": 2019,
+      "game_date_month": 6,
+      "game_date_day": 11,
+      "game_time_hour": 19,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=572020&game=567492&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=06&day=11&pitchSel=572020&game=567492&prevGame=567492&prevDate=0611"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
       "pitcher_name": "Jason Vargas",
       "pitcher_id_mlb": 450306,
       "pitch_app_id": "NYA201906112_450306",
-      "total_pitch_count": 85,
+      "total_pitch_count": 93,
       "pitch_count_by_inning": {
         "1": 21,
         "2": 14,
-        "3": 17,
+        "3": 25,
         "4": 15,
         "5": 7,
         "6": 11
@@ -29,8 +54,35 @@
       "game_time_hour": 19,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=450306&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=11&pitchSel=450306.xml&game=gid_2019_06_11_nynmlb_nyamlb_2/&prevGame=gid_2019_06_11_nynmlb_nyamlb_2/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=450306&game=567492&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=06&day=11&pitchSel=450306&game=567492&prevGame=567492&prevDate=0611"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Chance Adams",
+      "pitcher_id_mlb": 664856,
+      "pitch_app_id": "NYA201906112_664856",
+      "total_pitch_count": 88,
+      "pitch_count_by_inning": {
+        "3": 1,
+        "4": 26,
+        "5": 23,
+        "6": 19,
+        "7": 19
+      },
+      "pitcher_team_id_bb": "NYA",
+      "opponent_team_id_bb": "NYN",
+      "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
+      "bbref_game_id": "NYA201906112",
+      "game_date_year": 2019,
+      "game_date_month": 6,
+      "game_date_day": 11,
+      "game_time_hour": 19,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=664856&game=567492&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=06&day=11&pitchSel=664856&game=567492&prevGame=567492&prevDate=0611"
     },
     {
       "__brooks_pitch_log__": true,
@@ -52,106 +104,8 @@
       "game_time_hour": 19,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=544727&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=11&pitchSel=544727.xml&game=gid_2019_06_11_nynmlb_nyamlb_2/&prevGame=gid_2019_06_11_nynmlb_nyamlb_2/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Seth Lugo",
-      "pitcher_id_mlb": 607625,
-      "pitch_app_id": "NYA201906112_607625",
-      "total_pitch_count": 13,
-      "pitch_count_by_inning": {
-        "8": 13
-      },
-      "pitcher_team_id_bb": "NYN",
-      "opponent_team_id_bb": "NYA",
-      "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
-      "bbref_game_id": "NYA201906112",
-      "game_date_year": 2019,
-      "game_date_month": 6,
-      "game_date_day": 11,
-      "game_time_hour": 19,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=607625&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=11&pitchSel=607625.xml&game=gid_2019_06_11_nynmlb_nyamlb_2/&prevGame=gid_2019_06_11_nynmlb_nyamlb_2/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Drew Gagnon",
-      "pitcher_id_mlb": 543193,
-      "pitch_app_id": "NYA201906112_543193",
-      "total_pitch_count": 20,
-      "pitch_count_by_inning": {
-        "9": 20
-      },
-      "pitcher_team_id_bb": "NYN",
-      "opponent_team_id_bb": "NYA",
-      "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
-      "bbref_game_id": "NYA201906112",
-      "game_date_year": 2019,
-      "game_date_month": 6,
-      "game_date_day": 11,
-      "game_time_hour": 19,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543193&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=11&pitchSel=543193.xml&game=gid_2019_06_11_nynmlb_nyamlb_2/&prevGame=gid_2019_06_11_nynmlb_nyamlb_2/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "James Paxton",
-      "pitcher_id_mlb": 572020,
-      "pitch_app_id": "NYA201906112_572020",
-      "total_pitch_count": 64,
-      "pitch_count_by_inning": {
-        "1": 20,
-        "2": 6,
-        "3": 38
-      },
-      "pitcher_team_id_bb": "NYA",
-      "opponent_team_id_bb": "NYN",
-      "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
-      "bbref_game_id": "NYA201906112",
-      "game_date_year": 2019,
-      "game_date_month": 6,
-      "game_date_day": 11,
-      "game_time_hour": 19,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=572020&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=11&pitchSel=572020.xml&game=gid_2019_06_11_nynmlb_nyamlb_2/&prevGame=gid_2019_06_11_nynmlb_nyamlb_2/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Chance Adams",
-      "pitcher_id_mlb": 664856,
-      "pitch_app_id": "NYA201906112_664856",
-      "total_pitch_count": 82,
-      "pitch_count_by_inning": {
-        "3": 1,
-        "4": 20,
-        "5": 23,
-        "6": 19,
-        "7": 19
-      },
-      "pitcher_team_id_bb": "NYA",
-      "opponent_team_id_bb": "NYN",
-      "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
-      "bbref_game_id": "NYA201906112",
-      "game_date_year": 2019,
-      "game_date_month": 6,
-      "game_date_day": 11,
-      "game_time_hour": 19,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=664856&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=11&pitchSel=664856.xml&game=gid_2019_06_11_nynmlb_nyamlb_2/&prevGame=gid_2019_06_11_nynmlb_nyamlb_2/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=544727&game=567492&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=06&day=11&pitchSel=544727&game=567492&prevGame=567492&prevDate=0611"
     },
     {
       "__brooks_pitch_log__": true,
@@ -173,8 +127,31 @@
       "game_time_hour": 19,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=570666&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=11&pitchSel=570666.xml&game=gid_2019_06_11_nynmlb_nyamlb_2/&prevGame=gid_2019_06_11_nynmlb_nyamlb_2/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=570666&game=567492&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=06&day=11&pitchSel=570666&game=567492&prevGame=567492&prevDate=0611"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Seth Lugo",
+      "pitcher_id_mlb": 607625,
+      "pitch_app_id": "NYA201906112_607625",
+      "total_pitch_count": 13,
+      "pitch_count_by_inning": {
+        "8": 13
+      },
+      "pitcher_team_id_bb": "NYN",
+      "opponent_team_id_bb": "NYA",
+      "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
+      "bbref_game_id": "NYA201906112",
+      "game_date_year": 2019,
+      "game_date_month": 6,
+      "game_date_day": 11,
+      "game_time_hour": 19,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=607625&game=567492&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=06&day=11&pitchSel=607625&game=567492&prevGame=567492&prevDate=0611"
     },
     {
       "__brooks_pitch_log__": true,
@@ -196,8 +173,31 @@
       "game_time_hour": 19,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605501&game=gid_2019_06_11_nynmlb_nyamlb_2/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=6&day=11&pitchSel=605501.xml&game=gid_2019_06_11_nynmlb_nyamlb_2/&prevGame=gid_2019_06_11_nynmlb_nyamlb_2/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605501&game=567492&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=06&day=11&pitchSel=605501&game=567492&prevGame=567492&prevDate=0611"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Drew Gagnon",
+      "pitcher_id_mlb": 543193,
+      "pitch_app_id": "NYA201906112_543193",
+      "total_pitch_count": 20,
+      "pitch_count_by_inning": {
+        "9": 20
+      },
+      "pitcher_team_id_bb": "NYN",
+      "opponent_team_id_bb": "NYA",
+      "bb_game_id": "gid_2019_06_11_nynmlb_nyamlb_2",
+      "bbref_game_id": "NYA201906112",
+      "game_date_year": 2019,
+      "game_date_month": 6,
+      "game_date_day": 11,
+      "game_time_hour": 19,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543193&game=567492&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=06&day=11&pitchSel=543193&game=567492&prevGame=567492&prevDate=0611"
     }
   ]
 }
