@@ -85,6 +85,9 @@ class PitchTypePercentile(db.Base):
             "zone_rate": cls.get_percentile_for_rhp_pos_stat(db_session, "zone_rate", pfx),
             "contact_rate": cls.get_percentile_for_rhp_neg_stat(db_session, "contact_rate", pfx),
             "o_swing_rate": cls.get_percentile_for_rhp_pos_stat(db_session, "o_swing_rate", pfx),
+            "ground_ball_rate": cls.get_percentile_for_rhp_pos_stat(db_session, "ground_ball_rate", pfx),
+            "barrel_rate": cls.get_percentile_for_rhp_neg_stat(db_session, "barrel_rate", pfx),
+            "avg_exit_velocity": cls.get_percentile_for_rhp_neg_stat(db_session, "avg_launch_speed", pfx),
         }
 
     @classmethod
@@ -97,4 +100,7 @@ class PitchTypePercentile(db.Base):
             "zone_rate": cls.get_percentile_for_lhp_pos_stat(db_session, "zone_rate", pfx),
             "contact_rate": cls.get_percentile_for_lhp_neg_stat(db_session, "contact_rate", pfx),
             "o_swing_rate": cls.get_percentile_for_lhp_pos_stat(db_session, "o_swing_rate", pfx),
+            "ground_ball_rate": cls.get_percentile_for_lhp_pos_stat(db_session, "ground_ball_rate", pfx),
+            "barrel_rate": cls.get_percentile_for_lhp_neg_stat(db_session, "barrel_rate", pfx),
+            "avg_exit_velocity": cls.get_percentile_for_lhp_neg_stat(db_session, "avg_launch_speed", pfx),
         }
