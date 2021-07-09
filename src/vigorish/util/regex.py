@@ -3,6 +3,7 @@ import re
 
 from vigorish.enums import DataSet, VigFile
 
+
 TIMESTAMP_REGEX = re.compile(r"(?P<hour>\d?\d):(?P<minute>\d\d)")
 JOB_NAME_PATTERN = r"^[\w\s-]+$"
 JOB_NAME_REGEX = re.compile(JOB_NAME_PATTERN)

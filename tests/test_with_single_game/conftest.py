@@ -10,7 +10,8 @@ from tests.util import (
     update_scraped_pitchfx_logs,
 )
 from vigorish.app import Vigorish
-from vigorish.tasks import AddToDatabaseTask, CombineScrapedDataTask
+from vigorish.tasks import AddToDatabaseTask
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
 TEST_ID = "NO_ERRORS"
 GAME_DATE = COMBINED_DATA_GAME_DICT[TEST_ID]["game_date"]

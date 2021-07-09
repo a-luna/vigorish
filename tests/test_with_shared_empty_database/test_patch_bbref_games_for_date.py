@@ -1,7 +1,7 @@
 from tests.util import (
-    parse_brooks_games_for_date_from_html,
     PATCH_BR_DAILY_GAME_DATE,
     update_scraped_bbref_games_for_date,
+    update_scraped_brooks_games_for_date,
 )
 from vigorish.database import GameScrapeStatus
 
@@ -11,7 +11,7 @@ def test_patch_bbref_games_for_date(vig_app):
     patched_game_id = "MIA201709150"
     update_scraped_bbref_games_for_date(vig_app, PATCH_BR_DAILY_GAME_DATE)
 
-    games_for_date_no_patch = parse_brooks_games_for_date_from_html(
+    games_for_date_no_patch = update_scraped_brooks_games_for_date(
         vig_app, PATCH_BR_DAILY_GAME_DATE, apply_patch_list=False
     )
     assert games_for_date_no_patch
@@ -20,11 +20,11 @@ def test_patch_bbref_games_for_date(vig_app):
     assert invalid_game_id not in bbref_game_ids_no_patch
     assert patched_game_id not in bbref_game_ids_no_patch
     invalid_game_id_status = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, invalid_game_id)
-    assert invalid_game_id_status and invalid_game_id_status.bbref_game_id == invalid_game_id
+    assert not invalid_game_id_status
     patched_game_id_status = GameScrapeStatus.find_by_bbref_game_id(vig_app.db_session, patched_game_id)
     assert not patched_game_id_status
 
-    games_for_date_patched = parse_brooks_games_for_date_from_html(
+    games_for_date_patched = update_scraped_brooks_games_for_date(
         vig_app, PATCH_BR_DAILY_GAME_DATE, apply_patch_list=True
     )
     assert games_for_date_patched

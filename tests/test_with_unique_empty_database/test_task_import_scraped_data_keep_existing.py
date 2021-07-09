@@ -14,7 +14,8 @@ from tests.util import (
 from vigorish.app import Vigorish
 from vigorish.database import Season
 from vigorish.enums import DataSet
-from vigorish.tasks import CombineScrapedDataTask, ImportScrapedDataTask
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 
 TEST_ID = "NO_ERRORS"
 GAME_DICT = COMBINED_DATA_GAME_DICT[TEST_ID]

@@ -1,9 +1,8 @@
-import vigorish.database as db
 from vigorish.status.util import (
     get_game_status,
     get_pitch_app_status,
+    get_player_id,
 )
-from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 from vigorish.util.result import Result
 
 
@@ -43,17 +42,7 @@ def update_pitch_app_status_records(db_session, boxscore, game_status):
     for pitch_stats in all_pitch_stats:
         bbref_game_id = boxscore.bbref_game_id
         bb_game_id = boxscore.bb_game_id
-        player_id = db.PlayerId.find_by_bbref_id(db_session, pitch_stats.player_id_br)
-        if not player_id:
-            bbref_id = pitch_stats.player_id_br
-            name_with_team = [k for k, v in boxscore.player_name_dict.items() if v == bbref_id][0]
-            name = name_with_team.split(",")[0]
-            scrape_player_task = ScrapeMlbPlayerInfoTask(get_mock_app(db_session))
-            result = scrape_player_task.execute(name, bbref_id, game_status.date)
-            if result.failure:
-                return result
-            player = result.value
-            player_id = player.id_map
+        player_id = get_player_id(db_session, bbref_id=pitch_stats.player_id_br, boxscore=boxscore)
         pitch_app_id = f"{boxscore.bbref_game_id}_{player_id.mlb_id}"
         pitch_app_status = get_pitch_app_status(
             db_session, bbref_game_id, bb_game_id, game_status, player_id, pitch_app_id
@@ -67,15 +56,3 @@ def update_pitch_app_status_record(pitch_app_status, pitch_stats):
     if pitch_stats.pitch_count == 0 and pitch_stats.batters_faced == 0:
         pitch_app_status.scraped_pitchfx = 1
         pitch_app_status.no_pitchfx_data = 1
-
-
-def get_mock_app(db_session):
-    class MockApp:
-        def __init__(self, db_session):
-            self.dotenv = ""
-            self.config = ""
-            self.db_engine = ""
-            self.db_session = db_session
-            self.scraped_data = ""
-
-    return MockApp(db_session)

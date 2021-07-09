@@ -9,33 +9,33 @@ def test_task_calculate_avg_pitch_times(vig_app):
     assert pitch_metrics
     assert "time_between_pitches" in pitch_metrics
     assert pitch_metrics["time_between_pitches"] == {
-        "avg": 30.9,
-        "count": 1077,
-        "max": 1924,
-        "min": 9,
-        "range": 1915,
-        "total": 33287,
+        "total": 32058,
+        "count": 1342,
+        "avg": 23.9,
+        "max": 172,
+        "min": 10,
+        "range": 162,
         "trim": False,
     }
 
     assert "time_between_at_bats" in pitch_metrics
     assert pitch_metrics["time_between_at_bats"] == {
-        "avg": 54.2,
-        "count": 295,
-        "max": 652,
-        "min": 8,
-        "range": 644,
-        "total": 15989,
+        "total": 20236,
+        "count": 369,
+        "avg": 54.8,
+        "max": 217,
+        "min": 27,
+        "range": 190,
         "trim": False,
     }
 
     assert "time_between_innings" in pitch_metrics
     assert pitch_metrics["time_between_innings"] == {
-        "avg": 156.0,
-        "count": 83,
-        "max": 588,
-        "min": 125,
-        "range": 463,
-        "total": 12945,
+        "total": 16045,
+        "count": 100,
+        "avg": 160.4,
+        "max": 355,
+        "min": 128,
+        "range": 227,
         "trim": False,
     }

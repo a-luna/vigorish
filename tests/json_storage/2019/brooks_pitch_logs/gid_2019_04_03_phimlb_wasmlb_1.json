@@ -7,155 +7,12 @@
     {
       "__brooks_pitch_log__": true,
       "parsed_all_info": true,
-      "pitcher_name": "Aaron Nola",
-      "pitcher_id_mlb": 605400,
-      "pitch_app_id": "WAS201904030_605400",
-      "total_pitch_count": 80,
-      "pitch_count_by_inning": {
-        "1": 38,
-        "2": 9,
-        "3": 33
-      },
-      "pitcher_team_id_bb": "PHI",
-      "opponent_team_id_bb": "WAS",
-      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
-      "bbref_game_id": "WAS201904030",
-      "game_date_year": 2019,
-      "game_date_month": 4,
-      "game_date_day": 3,
-      "game_time_hour": 13,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605400&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=605400.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Edubray Ramos",
-      "pitcher_id_mlb": 591693,
-      "pitch_app_id": "WAS201904030_591693",
-      "total_pitch_count": 41,
-      "pitch_count_by_inning": {
-        "4": 14,
-        "5": 16,
-        "6": 11
-      },
-      "pitcher_team_id_bb": "PHI",
-      "opponent_team_id_bb": "WAS",
-      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
-      "bbref_game_id": "WAS201904030",
-      "game_date_year": 2019,
-      "game_date_month": 4,
-      "game_date_day": 3,
-      "game_time_hour": 13,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=591693&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=591693.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Juan Nicasio",
-      "pitcher_id_mlb": 504379,
-      "pitch_app_id": "WAS201904030_504379",
-      "total_pitch_count": 11,
-      "pitch_count_by_inning": {
-        "5": 6,
-        "6": 5
-      },
-      "pitcher_team_id_bb": "PHI",
-      "opponent_team_id_bb": "WAS",
-      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
-      "bbref_game_id": "WAS201904030",
-      "game_date_year": 2019,
-      "game_date_month": 4,
-      "game_date_day": 3,
-      "game_time_hour": 13,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=504379&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=504379.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Hector Neris",
-      "pitcher_id_mlb": 593576,
-      "pitch_app_id": "WAS201904030_593576",
-      "total_pitch_count": 10,
-      "pitch_count_by_inning": {
-        "7": 10
-      },
-      "pitcher_team_id_bb": "PHI",
-      "opponent_team_id_bb": "WAS",
-      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
-      "bbref_game_id": "WAS201904030",
-      "game_date_year": 2019,
-      "game_date_month": 4,
-      "game_date_day": 3,
-      "game_time_hour": 13,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=593576&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=593576.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Seranthony Dominguez",
-      "pitcher_id_mlb": 622554,
-      "pitch_app_id": "WAS201904030_622554",
-      "total_pitch_count": 26,
-      "pitch_count_by_inning": {
-        "8": 26
-      },
-      "pitcher_team_id_bb": "PHI",
-      "opponent_team_id_bb": "WAS",
-      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
-      "bbref_game_id": "WAS201904030",
-      "game_date_year": 2019,
-      "game_date_month": 4,
-      "game_date_day": 3,
-      "game_time_hour": 13,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=622554&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=622554.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "David Robertson",
-      "pitcher_id_mlb": 502085,
-      "pitch_app_id": "WAS201904030_502085",
-      "total_pitch_count": 19,
-      "pitch_count_by_inning": {
-        "9": 19
-      },
-      "pitcher_team_id_bb": "PHI",
-      "opponent_team_id_bb": "WAS",
-      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
-      "bbref_game_id": "WAS201904030",
-      "game_date_year": 2019,
-      "game_date_month": 4,
-      "game_date_day": 3,
-      "game_time_hour": 13,
-      "game_time_minute": 5,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=502085&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=502085.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
       "pitcher_name": "Anibal Sanchez",
       "pitcher_id_mlb": 434671,
       "pitch_app_id": "WAS201904030_434671",
-      "total_pitch_count": 93,
+      "total_pitch_count": 77,
       "pitch_count_by_inning": {
-        "1": 38,
+        "1": 22,
         "2": 11,
         "3": 13,
         "4": 31
@@ -170,8 +27,57 @@
       "game_time_hour": 13,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=434671&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=434671.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=434671&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=434671&game=565899&prevGame=565899&prevDate=0403"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Aaron Nola",
+      "pitcher_id_mlb": 605400,
+      "pitch_app_id": "WAS201904030_605400",
+      "total_pitch_count": 63,
+      "pitch_count_by_inning": {
+        "1": 22,
+        "2": 9,
+        "3": 32
+      },
+      "pitcher_team_id_bb": "PHI",
+      "opponent_team_id_bb": "WAS",
+      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
+      "bbref_game_id": "WAS201904030",
+      "game_date_year": 2019,
+      "game_date_month": 4,
+      "game_date_day": 3,
+      "game_time_hour": 13,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=605400&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=605400&game=565899&prevGame=565899&prevDate=0403"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Edubray Ramos",
+      "pitcher_id_mlb": 591693,
+      "pitch_app_id": "WAS201904030_591693",
+      "total_pitch_count": 30,
+      "pitch_count_by_inning": {
+        "4": 14,
+        "5": 16
+      },
+      "pitcher_team_id_bb": "PHI",
+      "opponent_team_id_bb": "WAS",
+      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
+      "bbref_game_id": "WAS201904030",
+      "game_date_year": 2019,
+      "game_date_month": 4,
+      "game_date_day": 3,
+      "game_time_hour": 13,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=591693&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=591693&game=565899&prevGame=565899&prevDate=0403"
     },
     {
       "__brooks_pitch_log__": true,
@@ -193,8 +99,32 @@
       "game_time_hour": 13,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=594840&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=594840.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=594840&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=594840&game=565899&prevGame=565899&prevDate=0403"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Juan Nicasio",
+      "pitcher_id_mlb": 504379,
+      "pitch_app_id": "WAS201904030_504379",
+      "total_pitch_count": 24,
+      "pitch_count_by_inning": {
+        "5": 2,
+        "6": 22
+      },
+      "pitcher_team_id_bb": "PHI",
+      "opponent_team_id_bb": "WAS",
+      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
+      "bbref_game_id": "WAS201904030",
+      "game_date_year": 2019,
+      "game_date_month": 4,
+      "game_date_day": 3,
+      "game_time_hour": 13,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=504379&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=504379&game=565899&prevGame=565899&prevDate=0403"
     },
     {
       "__brooks_pitch_log__": true,
@@ -202,9 +132,9 @@
       "pitcher_name": "Justin Miller",
       "pitcher_id_mlb": 502522,
       "pitch_app_id": "WAS201904030_502522",
-      "total_pitch_count": 27,
+      "total_pitch_count": 25,
       "pitch_count_by_inning": {
-        "6": 19,
+        "6": 17,
         "7": 8
       },
       "pitcher_team_id_bb": "WAS",
@@ -217,8 +147,31 @@
       "game_time_hour": 13,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=502522&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=502522.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=502522&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=502522&game=565899&prevGame=565899&prevDate=0403"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Hector Neris",
+      "pitcher_id_mlb": 593576,
+      "pitch_app_id": "WAS201904030_593576",
+      "total_pitch_count": 10,
+      "pitch_count_by_inning": {
+        "7": 10
+      },
+      "pitcher_team_id_bb": "PHI",
+      "opponent_team_id_bb": "WAS",
+      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
+      "bbref_game_id": "WAS201904030",
+      "game_date_year": 2019,
+      "game_date_month": 4,
+      "game_date_day": 3,
+      "game_time_hour": 13,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=593576&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=593576&game=565899&prevGame=565899&prevDate=0403"
     },
     {
       "__brooks_pitch_log__": true,
@@ -240,8 +193,8 @@
       "game_time_hour": 13,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=448609&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=448609.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=448609&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=448609&game=565899&prevGame=565899&prevDate=0403"
     },
     {
       "__brooks_pitch_log__": true,
@@ -263,8 +216,8 @@
       "game_time_hour": 13,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=572096&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=572096.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=572096&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=572096&game=565899&prevGame=565899&prevDate=0403"
     },
     {
       "__brooks_pitch_log__": true,
@@ -272,9 +225,9 @@
       "pitcher_name": "Kyle Barraclough",
       "pitcher_id_mlb": 607457,
       "pitch_app_id": "WAS201904030_607457",
-      "total_pitch_count": 25,
+      "total_pitch_count": 29,
       "pitch_count_by_inning": {
-        "8": 25
+        "8": 29
       },
       "pitcher_team_id_bb": "WAS",
       "opponent_team_id_bb": "PHI",
@@ -286,8 +239,31 @@
       "game_time_hour": 13,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=607457&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=607457.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=607457&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=607457&game=565899&prevGame=565899&prevDate=0403"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Seranthony Dominguez",
+      "pitcher_id_mlb": 622554,
+      "pitch_app_id": "WAS201904030_622554",
+      "total_pitch_count": 25,
+      "pitch_count_by_inning": {
+        "8": 25
+      },
+      "pitcher_team_id_bb": "PHI",
+      "opponent_team_id_bb": "WAS",
+      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
+      "bbref_game_id": "WAS201904030",
+      "game_date_year": 2019,
+      "game_date_month": 4,
+      "game_date_day": 3,
+      "game_time_hour": 13,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=622554&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=622554&game=565899&prevGame=565899&prevDate=0403"
     },
     {
       "__brooks_pitch_log__": true,
@@ -309,8 +285,31 @@
       "game_time_hour": 13,
       "game_time_minute": 5,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=448281&game=gid_2019_04_03_phimlb_wasmlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=4&day=03&pitchSel=448281.xml&game=gid_2019_04_03_phimlb_wasmlb_1/&prevGame=gid_2019_04_03_phimlb_wasmlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=448281&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=448281&game=565899&prevGame=565899&prevDate=0403"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "David Robertson",
+      "pitcher_id_mlb": 502085,
+      "pitch_app_id": "WAS201904030_502085",
+      "total_pitch_count": 19,
+      "pitch_count_by_inning": {
+        "9": 19
+      },
+      "pitcher_team_id_bb": "PHI",
+      "opponent_team_id_bb": "WAS",
+      "bb_game_id": "gid_2019_04_03_phimlb_wasmlb_1",
+      "bbref_game_id": "WAS201904030",
+      "game_date_year": 2019,
+      "game_date_month": 4,
+      "game_date_day": 3,
+      "game_time_hour": 13,
+      "game_time_minute": 5,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=502085&game=565899&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=04&day=03&pitchSel=502085&game=565899&prevGame=565899&prevDate=0403"
     }
   ]
 }

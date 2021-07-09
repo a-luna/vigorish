@@ -1148,7 +1148,7 @@ def test_game_data(vig_app):
             "pitch_app_id": "TOR201906170_570240",
             "pitch_app_type": "RP",
             "pitch_count_by_inning": {"2": 13, "3": 10, "4": 11, "5": 8, "6": 15, "7": 20, "8": 8},
-            "pitch_count_by_pitch_type": {"CH": 15, "FF": 10, "FT": 36, "SL": 24},
+            "pitch_count_by_pitch_type": {"CH": 16, "FT": 46, "SL": 23},
             "substitutions": [
                 {
                     "at_bat_id": "TOR201906170_02_ANA_570240_TOR_606192_0",
@@ -1234,7 +1234,7 @@ def test_game_data(vig_app):
             "pitch_app_id": "TOR201906170_598287",
             "pitch_app_type": "RP",
             "pitch_count_by_inning": {"8": 16},
-            "pitch_count_by_pitch_type": {"CH": 4, "CU": 9, "SI": 3},
+            "pitch_count_by_pitch_type": {"CH": 4, "CU": 9, "FF": 3},
             "substitutions": [
                 {
                     "at_bat_id": "TOR201906170_08_ANA_598287_TOR_665489_0",
@@ -1444,7 +1444,7 @@ def test_game_data(vig_app):
             "pitch_app_id": "TOR201906170_472610",
             "pitch_app_type": "SP",
             "pitch_count_by_inning": {"1": 15},
-            "pitch_count_by_pitch_type": {"CH": 4, "FF": 2, "FT": 6, "SL": 3},
+            "pitch_count_by_pitch_type": {"FF": 2, "FS": 7, "FT": 6},
             "substitutions": [
                 {
                     "at_bat_id": "TOR201906170_02_ANA_570240_TOR_606192_0",
@@ -2432,7 +2432,7 @@ def test_game_data(vig_app):
             "pitch_app_id": "TOR201906170_429719",
             "pitch_app_type": "RP",
             "pitch_count_by_inning": {"2": 38},
-            "pitch_count_by_pitch_type": {"CH": 2, "FF": 19, "FT": 2, "SL": 15},
+            "pitch_count_by_pitch_type": {"CH": 5, "FC": 4, "FF": 6, "FT": 11, "SL": 12},
             "substitutions": [
                 {
                     "at_bat_id": "TOR201906170_02_TOR_429719_ANA_457708_0",
@@ -2539,7 +2539,7 @@ def test_game_data(vig_app):
             "pitch_app_id": "TOR201906170_543208",
             "pitch_app_type": "RP",
             "pitch_count_by_inning": {"2": 2, "3": 14, "4": 15, "5": 8},
-            "pitch_count_by_pitch_type": {"CH": 1, "FS": 1, "SI": 21, "SL": 16},
+            "pitch_count_by_pitch_type": {"CH": 1, "SI": 27, "SL": 11},
             "substitutions": [
                 {
                     "at_bat_id": "TOR201906170_02_TOR_543208_ANA_594777_0",
@@ -2627,7 +2627,7 @@ def test_game_data(vig_app):
             "pitch_app_id": "TOR201906170_592468",
             "pitch_app_type": "RP",
             "pitch_count_by_inning": {"6": 18},
-            "pitch_count_by_pitch_type": {"CH": 3, "CU": 5, "FC": 1, "FF": 6, "FT": 3},
+            "pitch_count_by_pitch_type": {"CH": 3, "FF": 6, "FT": 3, "KC": 4, "SL": 2},
             "substitutions": [
                 {
                     "at_bat_id": "TOR201906170_06_TOR_592468_ANA_541600_0",
@@ -2704,7 +2704,7 @@ def test_game_data(vig_app):
             "pitch_app_id": "TOR201906170_475479",
             "pitch_app_type": "RP",
             "pitch_count_by_inning": {"7": 13},
-            "pitch_count_by_pitch_type": {"CU": 2, "FF": 4, "FT": 3, "SL": 4},
+            "pitch_count_by_pitch_type": {"FC": 3, "FF": 4, "FT": 3, "KC": 3},
             "substitutions": [
                 {
                     "at_bat_id": "TOR201906170_07_TOR_475479_ANA_664058_0",
@@ -2947,7 +2947,7 @@ def test_game_data(vig_app):
             "pitch_app_id": "TOR201906170_571882",
             "pitch_app_type": "SP",
             "pitch_count_by_inning": {"1": 17},
-            "pitch_count_by_pitch_type": {"CH": 3, "CU": 6, "FF": 6, "SL": 2},
+            "pitch_count_by_pitch_type": {"CH": 3, "CU": 4, "FF": 6, "SL": 4},
             "substitutions": [
                 {
                     "at_bat_id": "TOR201906170_02_TOR_429719_ANA_457708_0",

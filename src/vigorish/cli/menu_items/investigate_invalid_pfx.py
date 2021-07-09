@@ -20,8 +20,8 @@ from vigorish.cli.components.viewers import DictListTableViewer, DisplayTable, T
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType
-from vigorish.tasks import CombineScrapedDataTask, PatchAllInvalidPitchFxTask
-from vigorish.tasks.patch_all_invalid_pfx import PatchInvalidPitchFxTask
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
+from vigorish.tasks.patch_all_invalid_pfx import PatchAllInvalidPitchFxTask, PatchInvalidPitchFxTask
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import inning_number_to_string, validate_at_bat_id
 

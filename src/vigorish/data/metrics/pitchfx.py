@@ -163,6 +163,7 @@ class PitchFxMetrics:
             if "pitch_type" in pfx_metrics
             else None
         )
+        pitchfx_metrics_dict["pitch_type_int"] = int(pitchfx_metrics_dict.get("pitch_type", 0))
         return pitchfx_metrics_dict
 
 
@@ -215,7 +216,8 @@ class PitchFxMetricsCollection(PitchFxMetrics):
     def from_query_results(cls, all_pt_results: RowDict, each_pt_results: List[RowDict]) -> PitchFxMetricsCollection:
         metrics_collection = _get_pitchfx_metrics_for_all_pitch_types(all_pt_results)
         metrics_collection["pitch_type_metrics"] = _get_pitchfx_metrics_for_each_pitch_type(each_pt_results)
-        metrics_collection["pitch_type"] = _get_pfx_collection_pitch_type(metrics_collection["pitch_type_metrics"])
+        metrics_collection["pitch_type_int"] = _get_all_pitch_types_int(metrics_collection["pitch_type_metrics"])
+        metrics_collection["pitch_type"] = PitchType(metrics_collection["pitch_type_int"])
         return from_dict(data_class=cls, data=metrics_collection)
 
 
@@ -234,6 +236,5 @@ def _get_pitchfx_metrics_for_each_pitch_type(results: List[RowDict]) -> PitchTyp
     return {m["pitch_type"]: m for m in sorted(all_pitch_types, key=lambda x: x["percent"], reverse=True)}
 
 
-def _get_pfx_collection_pitch_type(pitch_type_metrics: PitchTypeMetricsDict) -> PitchType:
-    all_pitch_types_int = sum(int(pitch_type) for pitch_type in list(pitch_type_metrics.keys()))
-    return PitchType(all_pitch_types_int)
+def _get_all_pitch_types_int(pitch_type_metrics: PitchTypeMetricsDict) -> PitchType:
+    return sum(int(pitch_type) for pitch_type in list(pitch_type_metrics.keys()))

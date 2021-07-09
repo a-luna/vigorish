@@ -6,7 +6,7 @@ from tests.conftest import CSV_FOLDER, DOTENV_FILE
 from vigorish.app import Vigorish
 from vigorish.database import Season
 from vigorish.enums import DataSet
-from vigorish.tasks import ImportScrapedDataTask
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 
 
 @pytest.fixture()
