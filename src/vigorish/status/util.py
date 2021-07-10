@@ -1,4 +1,5 @@
 import vigorish.database as db
+from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 
@@ -21,6 +22,37 @@ def get_game_status(db_session, game_date, bbref_game_id, bb_game_id):
     else:
         game_status = result.value
     return game_status
+
+
+def get_player_id(db_session, mlb_id=None, bbref_id=None, boxscore=None):
+    if mlb_id:
+        player_id = db.PlayerId.find_by_mlb_id(db_session, mlb_id)
+    if bbref_id:
+        player_id = db.PlayerId.find_by_bbref_id(db_session, bbref_id)
+    if not player_id and not boxscore:
+        raise ValueError(f"Failed to retrive player id info! (bbref_id: {bbref_id})")
+    if not player_id:  # pragma: no cover
+        name_with_team = [k for k, v in boxscore.player_name_dict.items() if v == bbref_id][0]
+        name = name_with_team.split(",")[0]
+        scrape_task = ScrapeMlbPlayerInfoTask(get_mock_app(db_session))
+        result = scrape_task.execute(name, bbref_id, boxscore.game_date)
+        if result.failure:
+            raise ValueError(f"Failed to retrive or scrape player id info! (bbref_id: {bbref_id})")
+        player = result.value
+        player_id = player.id_map
+    return player_id
+
+
+def get_mock_app(db_session):
+    class MockApp:
+        def __init__(self, db_session):
+            self.dotenv = ""
+            self.config = ""
+            self.db_engine = ""
+            self.db_session = db_session
+            self.scraped_data = ""
+
+    return MockApp(db_session)
 
 
 def get_pitch_app_status(db_session, bbref_game_id, bb_game_id, game_status, player_id, pitch_app_id):

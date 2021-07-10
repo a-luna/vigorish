@@ -19,7 +19,7 @@ def test_status_game_status_report(vig_app):
         "Pitch App Count (BBRef/Brooks)...............: 12/12",
         "Pitch App Count (PFx/data/no data)...........: 12/12/0",
         "Pitch Count (BBRef/Brooks/PFx)...............: 298/299/299",
-        "Pitch Count Audited (BBRef/PFx/Removed)......: 298/298/1",
+        "Pitch Count Audited (BBRef/PFx/Removed)......: 298/298/0",
     ]
 
 
@@ -44,14 +44,14 @@ def test_status_game_as_dict(vig_app):
         "scraped_all_pitchfx_logs": True,
         "scraped_bbref_boxscore": 1,
         "scraped_brooks_pitch_logs": 1,
-        "total_at_bats_removed_pitchfx": 1,
+        "total_at_bats_removed_pitchfx": 0,
         "total_at_bats_invalid_pitchfx": 0,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_pitchfx_complete": 82,
         "total_at_bats_pitchfx_error": 0,
         "total_batters_faced_bbref": 82,
         "total_batters_faced_pitchfx": 82,
-        "total_removed_pitchfx_count": 1,
+        "total_removed_pitchfx_count": 0,
         "total_missing_pitchfx_count": 0,
         "total_pitch_apps_combined_data": 12,
         "total_pitch_apps_invalid_pitchfx": 0,

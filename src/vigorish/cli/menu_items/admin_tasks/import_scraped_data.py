@@ -17,7 +17,7 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import DATA_SET_TO_NAME_MAP, EMOJIS, MENU_NUMBERS
-from vigorish.tasks import ImportScrapedDataTask
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.util.datetime_util import format_timedelta_str
 from vigorish.util.result import Result
 

@@ -17,7 +17,7 @@ from vigorish.status.update_status_brooks_games_for_date import (
     update_brooks_games_for_date_single_date as update_status_brooks_games_for_date,
 )
 from vigorish.status.update_status_brooks_pitch_logs import update_status_brooks_pitch_logs_for_game
-from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
+from vigorish.status.update_status_brooks_pitchfx import update_status_brooks_pitchfx_log
 from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 
 GAME_DATE_BR_DAILY = datetime(2018, 7, 26)
@@ -121,9 +121,8 @@ def seed_database_with_2019_test_data(vig_app):
 
 
 def update_scraped_bbref_games_for_date(vig_app, game_date):
-    season = get_season(vig_app, game_date.year)
     bbref_games_for_date = parse_bbref_games_for_date_from_html(vig_app, game_date)
-    result = update_status_bbref_games_for_date(vig_app.db_session, season, bbref_games_for_date)
+    result = update_status_bbref_games_for_date(vig_app.db_session, bbref_games_for_date)
     assert result.success
     return bbref_games_for_date
 
@@ -144,17 +143,10 @@ def get_bbref_url_for_date(game_date):
 
 
 def update_scraped_brooks_games_for_date(vig_app, game_date, apply_patch_list=True):
-    season = get_season(vig_app, game_date.year)
     brooks_games_for_date = parse_brooks_games_for_date_from_html(vig_app, game_date, apply_patch_list)
-    result = update_status_brooks_games_for_date(vig_app.db_session, season, brooks_games_for_date)
+    result = update_status_brooks_games_for_date(vig_app.db_session, brooks_games_for_date)
     assert result.success
     return brooks_games_for_date
-
-
-def get_season(vig_app, year):
-    season = db.Season.find_by_year(vig_app.db_session, year)
-    assert season
-    return season
 
 
 def parse_brooks_games_for_date_from_html(vig_app, game_date, apply_patch_list=True):
@@ -198,8 +190,8 @@ def update_scraped_pitch_logs(vig_app, game_date, bbref_game_id, apply_patch_lis
     pitch_logs_for_game = parse_brooks_pitch_logs_for_game_from_html(
         vig_app, game_date, bbref_game_id, apply_patch_list
     )
-    result = update_status_brooks_pitch_logs_for_game(vig_app.db_session, pitch_logs_for_game)
-    assert result.success
+    assert pitch_logs_for_game
+    update_status_brooks_pitch_logs_for_game(vig_app.db_session, pitch_logs_for_game)
     return pitch_logs_for_game
 
 
@@ -251,11 +243,13 @@ def update_scraped_pitchfx_logs(vig_app, bb_game_id):
         if not pitch_log.parsed_all_info:
             continue
         html_path = vig_app.scraped_data.get_html(DataSet.BROOKS_PITCHFX, pitch_log.pitch_app_id)
+        if not html_path:
+            continue
         result = parse_pitchfx_log(html_path.read_text(), pitch_log)
         assert result.success
         pfx_log = result.value
         pitchfx_logs_for_game.append(pfx_log)
-        result = update_pitch_appearance_status_records(vig_app.db_session, pfx_log)
+        result = update_status_brooks_pitchfx_log(vig_app.db_session, pfx_log)
         assert result.success
     return pitchfx_logs_for_game
 

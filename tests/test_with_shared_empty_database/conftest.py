@@ -1,6 +1,6 @@
 import pytest
 
-from tests.conftest import CSV_FOLDER, JSON_FOLDER
+from tests.conftest import CSV_FOLDER, JSON_FOLDER, TESTS_FOLDER
 from vigorish.app import Vigorish
 
 
@@ -11,6 +11,8 @@ def vig_app(request):
 
     def fin():
         app.db_session.close()
+        for file in TESTS_FOLDER.glob("vig_*.db"):
+            file.unlink()
 
     request.addfinalizer(fin)
     return app

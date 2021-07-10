@@ -1,7 +1,7 @@
-import vigorish.database as db
 from vigorish.status.util import (
     get_game_status,
     get_pitch_app_status,
+    get_player_id,
 )
 from vigorish.util.result import Result
 
@@ -39,7 +39,7 @@ def update_pitch_app_status_records(db_session, pitch_logs_for_game, game_status
         bbref_game_id = pitch_log.bbref_game_id
         bb_game_id = pitch_log.bb_game_id
         pitch_app_id = pitch_log.pitch_app_id
-        player_id = db.PlayerId.find_by_mlb_id(db_session, pitch_log.pitcher_id_mlb)
+        player_id = get_player_id(db_session, mlb_id=pitch_log.pitcher_id_mlb)
         pitch_app_status = get_pitch_app_status(
             db_session, bbref_game_id, bb_game_id, game_status, player_id, pitch_app_id
         )

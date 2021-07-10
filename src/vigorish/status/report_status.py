@@ -16,12 +16,12 @@ def report_status_single_date(db_session, game_date, report_type):
     date_status = result.value
     date_str = game_date.strftime(DATE_MONTH_NAME)
     heading = f"### OVERALL STATUS FOR {date_str} ###"
-    pages.append(DisplayPage(date_status.status_report(), heading))
+    pages.append(DisplayPage(date_status.status_report(), heading, wrap=False))
     if report_type == StatusReport.SINGLE_DATE_WITH_GAME_STATUS:
         game_status_dict = date_status.games_status_report()
         for num, (game_id, game_report) in enumerate(game_status_dict.items(), start=1):
             heading = f"### STATUS FOR {game_id} (Game {num}/{len(game_status_dict)}) ###"
-            pages.append(DisplayPage(game_report, heading))
+            pages.append(DisplayPage(game_report, heading, wrap=False))
     if report_type in [
         StatusReport.DATE_DETAIL_MISSING_PITCHFX,
         StatusReport.SINGLE_DATE_WITH_GAME_STATUS,
@@ -36,7 +36,7 @@ def report_season_status(db_session, year, report_type):
     season = db.Season.find_by_year(db_session, year)
     if report_type == StatusReport.SEASON_SUMMARY:
         heading = f"### STATUS REPORT FOR {season.name} ###"
-        pages = [DisplayPage(season.status_report(), heading)]
+        pages = [DisplayPage(season.status_report(), heading, wrap=False)]
         return Result.Ok(_create_report_viewer(pages, text_color="bright_yellow"))
     return report_date_range_status(db_session, season.start_date, season.end_date, report_type)
 
@@ -105,7 +105,7 @@ def _get_detailed_report_for_date_range(db_session, status_date_range, missing_p
     for date_status in status_date_range:
         game_date_str = date_status.game_date.strftime(DATE_MONTH_NAME)
         heading = f"### STATUS REPORT FOR {game_date_str} ###"
-        pages.append(DisplayPage(date_status.status_report(), heading))
+        pages.append(DisplayPage(date_status.status_report(), heading, wrap=False))
         if missing_pitchfx:
             pages.extend(_get_missing_pfx_data_report_for_date(db_session, date_status))
     return Result.Ok(_create_report_viewer(pages, text_color="bright_cyan"))
@@ -116,7 +116,7 @@ def _get_missing_pfx_data_report_for_date(db_session, date_status):
     heading = f"### MISSING PITCHFX DATA FOR {game_date_str} ###"
     missing_pfx_ids_list = _get_missing_pfx_ids_for_date(db_session, date_status)
     chunked_list = make_chunked_list(missing_pfx_ids_list, chunk_size=4)
-    return [DisplayPage(chunk, heading) for chunk in chunked_list]
+    return [DisplayPage(chunk, heading, wrap=False) for chunk in chunked_list]
 
 
 def _get_missing_pfx_ids_for_date(db_session, date_status):
@@ -138,7 +138,7 @@ def _get_summary_report_for_date_range(start_date, end_date, status_date_range):
     end_str = end_date.strftime(DATE_MONTH_NAME)
     heading = f"### STATUS REPORT FOR {start_str} - {end_str} ###"
     if not status_date_range:
-        pages = [DisplayPage(["All data has been scraped for all dates in the requested range"], heading)]
+        pages = [DisplayPage(["All data has been scraped for all dates in the requested range"], heading, wrap=False)]
         return Result.Ok(_create_report_viewer(pages, text_color="bright_magenta"))
     dict_list = [{"game_date": ds.game_date_str, "status": ds.scrape_status_description} for ds in status_date_range]
     date_report = DictListTableViewer(
@@ -160,5 +160,4 @@ def _create_report_viewer(pages, text_color):
         confirm_only=True,
         heading_color=text_color,
         text_color=text_color,
-        wrap_text=False,
     )

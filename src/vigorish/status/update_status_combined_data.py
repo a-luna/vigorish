@@ -2,7 +2,7 @@ from collections import defaultdict
 
 import vigorish.database as db
 from vigorish.enums import DataSet, VigFile
-from vigorish.status.util import create_pitch_app_status_record, get_pitch_app_status_record
+from vigorish.status.util import create_pitch_app_status_record, get_pitch_app_status_record, get_player_id
 from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.result import Result
 
@@ -96,7 +96,7 @@ def zero_pitches_thrown_in_pitch_app(pitchfx_audit):
 
 def create_pitch_app_status_with_zero_pithes_thrown(db_session, pitch_stats):
     game_status = db.GameScrapeStatus.find_by_bbref_game_id(db_session, pitch_stats["bbref_game_id"])
-    player_id = db.PlayerId.find_by_mlb_id(db_session, pitch_stats["pitcher_id_mlb"])
+    player_id = get_player_id(db_session, mlb_id=pitch_stats["pitcher_id_mlb"])
     pitch_app_status = create_pitch_app_status_record(
         pitch_stats["bbref_game_id"], pitch_stats["bb_game_id"], game_status, player_id, pitch_stats["pitch_app_id"]
     )

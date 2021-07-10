@@ -2,11 +2,11 @@ from datetime import datetime
 
 import pytest
 
-from tests.conftest import CSV_FOLDER, DOTENV_FILE
+from tests.conftest import CSV_FOLDER, TESTS_FOLDER
 from vigorish.app import Vigorish
 from vigorish.database import Season
 from vigorish.enums import DataSet
-from vigorish.tasks import ImportScrapedDataTask
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 
 
 @pytest.fixture()
@@ -18,8 +18,8 @@ def vig_app(request):
 
     def fin():
         app.db_session.close()
-        if DOTENV_FILE.exists():
-            DOTENV_FILE.unlink()
+        for file in TESTS_FOLDER.glob("vig_*.db"):
+            file.unlink()
 
     request.addfinalizer(fin)
     return app

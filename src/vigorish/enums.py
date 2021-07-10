@@ -352,6 +352,9 @@ class PitchType(IntFlag):
         }
         return abbrev_dict.get(self.name, self.name)
 
+    def __repr__(self):
+        return str(self)
+
     @property
     def print_name(self):
         name_dict = {

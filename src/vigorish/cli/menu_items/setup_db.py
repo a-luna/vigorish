@@ -21,7 +21,7 @@ from vigorish.cli.menu_item import MenuItem
 from vigorish.cli.menu_items.admin_tasks.update_player_id_map import UpdatePlayerIdMap
 from vigorish.constants import EMOJIS
 from vigorish.enums import DataSet
-from vigorish.tasks import ImportScrapedDataTask
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 from vigorish.util.result import Result
 
 SETUP_HEADING = (

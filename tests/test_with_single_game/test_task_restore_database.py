@@ -1,5 +1,6 @@
 from tests.conftest import BACKUP_FOLDER, CSV_FOLDER
 from tests.util import COMBINED_DATA_GAME_DICT, NO_ERRORS_PITCH_APP
+from vigorish.cli.components.viewers.page_viewer import PageViewer
 from vigorish.database import DateScrapeStatus, GameScrapeStatus, PitchAppScrapeStatus, PitchFx
 from vigorish.tasks import AddToDatabaseTask, BackupDatabaseTask, RestoreDatabaseTask
 from vigorish.util.sys_helpers import zip_file_report
@@ -11,11 +12,11 @@ BBREF_GAME_ID = GAME_ID_DICT["bbref_game_id"]
 
 def test_restore_database(vig_app):
     total_rows = vig_app.get_total_number_of_rows(PitchFx)
-    assert total_rows == 299
+    assert total_rows == 298
     result = AddToDatabaseTask(vig_app).execute()
     assert result.success
     total_rows = vig_app.get_total_number_of_rows(PitchFx)
-    assert total_rows == 299
+    assert total_rows == 298
 
     remove_everything_in_backup_folder()
     result = BackupDatabaseTask(vig_app).execute()
@@ -23,10 +24,7 @@ def test_restore_database(vig_app):
     zip_file = result.value
     assert zip_file.exists()
     report = zip_file_report(zip_file)
-    assert "Filename.......: scrape_status_date.csv" in report
-    assert "Filename.......: scrape_status_game.csv" in report
-    assert "Filename.......: scrape_status_pitch_app.csv" in report
-    assert "Filename.......: pitchfx.csv" in report
+    assert isinstance(report, PageViewer)
 
     result = RestoreDatabaseTask(vig_app).execute(csv_folder=CSV_FOLDER)
     assert result.success
@@ -49,7 +47,7 @@ def test_restore_database(vig_app):
     assert status_pitch_app.combined_pitchfx_bbref_data == 1
     assert status_pitch_app.imported_pitchfx == 1
     row_count = vig_app.get_total_number_of_rows(PitchFx)
-    assert row_count == 299
+    assert row_count == 298
     vig_app.db_session.close()
 
 

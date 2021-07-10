@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from tests.conftest import CSV_FOLDER, DOTENV_FILE
+from tests.conftest import CSV_FOLDER, TESTS_FOLDER
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,
@@ -14,7 +14,8 @@ from tests.util import (
 from vigorish.app import Vigorish
 from vigorish.database import Season
 from vigorish.enums import DataSet
-from vigorish.tasks import CombineScrapedDataTask, ImportScrapedDataTask
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
 
 TEST_ID = "NO_ERRORS"
 GAME_DICT = COMBINED_DATA_GAME_DICT[TEST_ID]
@@ -40,8 +41,8 @@ def vig_app(request):
 
     def fin():
         app.db_session.close()
-        if DOTENV_FILE.exists():
-            DOTENV_FILE.unlink()
+        for file in TESTS_FOLDER.glob("vig_*.db"):
+            file.unlink()
 
     request.addfinalizer(fin)
     return app

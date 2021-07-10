@@ -1,6 +1,6 @@
 from tests.util import GAME_DATE_BR_DAILY as GAME_DATE
 from tests.util import get_bbref_url_for_date, parse_bbref_games_for_date_from_html
-from vigorish.database import DateScrapeStatus, Season
+from vigorish.database import DateScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.bbref_games_for_date.models.games_for_date import BBRefGamesForDate
 from vigorish.status.update_status_bbref_games_for_date import (
@@ -40,10 +40,7 @@ def test_update_database_bbref_games_for_date(vig_app):
     assert date_status
     assert date_status.scraped_daily_dash_bbref == 0
     assert date_status.game_count_bbref == 0
-    result = Season.is_date_in_season(vig_app.db_session, GAME_DATE)
-    assert result.success
-    season = result.value
-    result = update_bbref_games_for_date_single_date(vig_app.db_session, season, games_for_date)
+    result = update_bbref_games_for_date_single_date(vig_app.db_session, games_for_date)
     assert result.success
     assert date_status.scraped_daily_dash_bbref == 1
     assert date_status.game_count_bbref == 11
