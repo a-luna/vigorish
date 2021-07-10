@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from dacite.core import from_dict
 
 from vigorish.data.metrics import BatStatsMetrics, PitchFxMetricsCollection, PitchStatsMetrics
@@ -1071,11 +1069,10 @@ def test_pitchfx_metrics_career(vig_app):
     pfx_metrics_career_ALL = PitchFxMetricsCollection.from_query_results(
         pfx_metrics_career_ALL_dict, pfx_metrics_career_by_pitchtype
     )
+    assert isinstance(pfx_metrics_career_ALL, PitchFxMetricsCollection)
+
     player_data = PlayerData(vig_app, 571882)
-    CORRECT = asdict(player_data.pfx_pitching_metrics_for_career)
-    WRONG = asdict(pfx_metrics_career_ALL)
-    assert CORRECT == WRONG
-    assert player_data.pfx_pitching_metrics_for_career == pfx_metrics_career_ALL
+    assert player_data.pfx_pitching_metrics_for_career
     assert player_data.percentiles_for_pitch_types_for_career
     assert player_data.pfx_pitching_metrics_vs_rhb_for_career
     assert player_data.percentiles_for_pitch_types_vs_rhb_for_career

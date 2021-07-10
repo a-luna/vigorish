@@ -26,17 +26,22 @@ def update_bbref_games_for_date_single_date(db_session, games_for_date):
     if result.failure:
         return result
     date_status = result.value
-    update_date_status_record(date_status, games_for_date)
-    create_game_status_records(db_session, games_for_date)
+    date_status = update_date_status_record(date_status, games_for_date)
+    create_game_status_records(db_session, games_for_date, date_status)
     return Result.Ok()
 
 
 def update_date_status_record(date_status, games_for_date):
     date_status.scraped_daily_dash_bbref = 1
     date_status.game_count_bbref = games_for_date.game_count
+    return date_status
 
 
-def create_game_status_records(db_session, games_for_date):
+def create_game_status_records(db_session, games_for_date, date_status):
     game_date = games_for_date.game_date
     for bbref_game_id in games_for_date.all_bbref_game_ids:
-        get_game_status(db_session, game_date, bbref_game_id, None)
+        game_status = get_game_status(db_session, game_date, bbref_game_id, None)
+        game_status.game_date = game_date
+        game_status.bbref_game_id = bbref_game_id
+        game_status.scrape_status_date_id = date_status.id
+        game_status.season_id = date_status.season_id

@@ -1,6 +1,6 @@
 import os
 
-from tests.conftest import CONFIG_FILE, DOTENV_FILE, SQLITE_URL, TESTS_FOLDER
+from tests.conftest import CONFIG_FILE, DOTENV_FILE, TESTS_FOLDER
 from vigorish.config.dotenv_file import DotEnvFile
 
 
@@ -11,7 +11,7 @@ def test_dotenv_file():
     os.environ["DOTENV_FILE"] = str(default_dotenv)
     dotenv = DotEnvFile()
     check_db_url = dotenv.get_current_value("DATABASE_URL")
-    assert check_db_url == SQLITE_URL
+    assert check_db_url == os.environ.get("DATABASE_URL")
     config_file_before = dotenv.get_current_value("CONFIG_FILE")
     new_config_file = TESTS_FOLDER.joinpath("new.config.json")
     result = dotenv.change_value("CONFIG_FILE", new_config_file)
