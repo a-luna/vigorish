@@ -4,6 +4,8 @@ from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Dict, List
 
+import snoop
+
 import vigorish.database as db
 from vigorish.constants import (
     AT_BAT_RESULTS_ERROR,
@@ -65,12 +67,15 @@ class CombineScrapedDataTask(Task):
 
     @property
     def game_start_time(self):
-        return self.game_status.game_start_time if self.game_status else None
+        with snoop:
+            return self.game_status.game_start_time if self.game_status else None
 
     @property
     def game_start_time_str(self):
-        return self.game_start_time.strftime(DT_AWARE) if self.game_status else None
+        with snoop:
+            return self.game_start_time.strftime(DT_AWARE) if self.game_status else None
 
+    @snoop
     def execute(self, bbref_game_id, apply_patch_list=True, write_json=True, update_db=True):
         self.bbref_game_id = bbref_game_id
         self.apply_patch_list = apply_patch_list
@@ -139,6 +144,7 @@ class CombineScrapedDataTask(Task):
         audit_results["boxscore"] = result.value
         return audit_results
 
+    @snoop
     def gather_scraped_data(self):
         self.game_status = db.GameScrapeStatus.find_by_bbref_game_id(self.db_session, self.bbref_game_id)
         self.boxscore = self.scraped_data.get_bbref_boxscore(self.bbref_game_id, self.apply_patch_list)
@@ -152,6 +158,7 @@ class CombineScrapedDataTask(Task):
         self.avg_pitch_times = db.TimeBetweenPitches.get_latest_results(self.db_session)
         return Result.Ok()
 
+    @snoop
     def check_pfx_game_start_time(self):
         self.gather_scraped_data_success = True
         if not self.game_status.game_start_time:
@@ -171,6 +178,7 @@ class CombineScrapedDataTask(Task):
                     pfx.game_start_time_str = self.game_start_time_str
         return Result.Ok()
 
+    @snoop
     def update_game_start_time(self):
         all_pfx = [pfx for pfx_log in self.pitchfx_logs_for_game for pfx in pfx_log.pitchfx_log]
         all_pfx.sort(key=lambda x: x.park_sv_id)
@@ -915,6 +923,7 @@ class CombineScrapedDataTask(Task):
             }
             self.all_removed_pfx[inning_id][ab_id] = at_bat_data
 
+    @snoop
     def update_boxscore_with_combined_data(self):
         updated_innings_list = [self.update_inning_with_combined_data(inning) for inning in self.boxscore.innings_list]
         (pitch_stats_away, pitch_stats_home) = self.update_all_pitch_stats()
