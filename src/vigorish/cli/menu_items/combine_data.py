@@ -4,6 +4,7 @@ import subprocess
 import time
 from collections import defaultdict
 
+import snoop
 import enlighten
 from getch import pause
 from halo import Halo
@@ -125,7 +126,7 @@ class CombineScrapedData(MenuItem):
         return (
             sum(len(game_ids) for game_ids in self.date_game_id_map.values())
             if self.audit_type == "SEASON"
-            else len(self.date_game_id_map.get(self.current_game_date, None))
+            else len(self.date_game_id_map.get(self.current_game_date, []))
         )
 
     @property
@@ -256,10 +257,12 @@ class CombineScrapedData(MenuItem):
             self.display_results()
         return Result.Ok(self.exit_menu)
 
+    @snoop(watch_explode=["self.date_game_id_map"])
     def launch_no_prompts(self, game_date):
         self.current_game_date = game_date
+        self.scrape_year = game_date.year
         self.pbar_manager = enlighten.get_manager()
-        self.init_progress_bars(game_date=self.current_game_date)
+        self.init_progress_bars(game_date=self.all_dates_in_season[0])
         subprocess.run(["clear"])
         game_ids = self.date_game_id_map.get(self.current_game_date, None)
         if not game_ids:
@@ -267,7 +270,7 @@ class CombineScrapedData(MenuItem):
             message = f"All games on {game_date_str} have already been combined."
             print_message(message, fg="bright_cyan", bold=True)
             self.close_progress_bars()
-            return Result.Ok()
+            return ([], [])
         self.combine_selected_games(self.current_game_date, game_ids)
         self.date_progress_bar.update()
         self.close_progress_bars()

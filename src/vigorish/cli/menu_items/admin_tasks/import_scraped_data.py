@@ -50,10 +50,10 @@ class ImportScrapedData(MenuItem):
         self.menu_item_text = "Import Scraped Data from Local Folders"
         self.menu_item_emoji = EMOJIS.get("HONEY_POT")
 
-    def launch(self, import_seasons=None, no_prompts=False):
+    def launch(self, import_seasons=None, no_prompts=False, overwrite=False):
         self.no_prompts = no_prompts
         return (
-            self.import_scraped_data_no_prompts(import_seasons)
+            self.import_scraped_data_no_prompts(import_seasons, overwrite)
             if no_prompts
             else self.import_scraped_data_prompts(import_seasons)
         )
@@ -78,9 +78,9 @@ class ImportScrapedData(MenuItem):
             self.display_task_duration(elapsed)
         return Result.Ok(True)
 
-    def import_scraped_data_no_prompts(self, import_seasons):
+    def import_scraped_data_no_prompts(self, import_seasons, overwrite):
         self.subscribe_to_events()
-        result = self.import_scraped_data.execute(import_seasons)
+        result = self.import_scraped_data.execute(import_seasons, overwrite)
         self.unsubscribe_from_events()
         if result.failure:
             self.update_menu_heading("Error!")
