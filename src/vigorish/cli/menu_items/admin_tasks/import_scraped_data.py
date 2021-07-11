@@ -1,4 +1,5 @@
 """Update bbref_player_id_map.json file."""
+from datetime import datetime
 import subprocess
 from collections import defaultdict
 
@@ -8,6 +9,7 @@ from halo import Halo
 from vigorish.cli.components import (
     get_random_cli_color,
     get_random_dots_spinner,
+    multi_season_prompt,
     print_heading,
     print_message,
     user_options_prompt,
@@ -15,7 +17,8 @@ from vigorish.cli.components import (
 )
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import DATA_SET_TO_NAME_MAP, EMOJIS, MENU_NUMBERS
-from vigorish.tasks import ImportScrapedDataTask
+from vigorish.tasks.import_scraped_data import ImportScrapedDataTask
+from vigorish.util.datetime_util import format_timedelta_str
 from vigorish.util.result import Result
 
 IMPORT_DATA_MESSAGE = (
@@ -28,6 +31,9 @@ OVERWRITE_DATA_MESSAGE = (
     'By default, data that is already considered "scraped" within the database will not be '
     "updated with the data found in the local file system."
 )
+
+IMPORT_ALL_SEASONS_PROMPT = "\nSelect YES to import data for all seasons\nSelect NO to choose each season(s) to import"
+
 OVERWRITE_DATA_PROMPT = (
     "Select KEEP EXISTING DATA to use the default behavior and only update data which is not "
     'already marked as "scraped" in the database\n'
@@ -44,18 +50,41 @@ class ImportScrapedData(MenuItem):
         self.menu_item_text = "Import Scraped Data from Local Folders"
         self.menu_item_emoji = EMOJIS.get("HONEY_POT")
 
-    def launch(self):
+    def launch(self, import_seasons=None, no_prompts=False, overwrite=False):
+        self.no_prompts = no_prompts
+        return (
+            self.import_scraped_data_no_prompts(import_seasons, overwrite)
+            if no_prompts
+            else self.import_scraped_data_prompts(import_seasons)
+        )
+
+    def import_scraped_data_prompts(self, import_seasons):
         if not self.prompt_user_import_data():
             return Result.Ok(True)
         self.subscribe_to_events()
+        if not self.prompt_user_import_all_seasons():
+            import_seasons = self.prompt_user_select_seasons()
         result = self.prompt_user_overwrite_data()
         if result.failure:
             return Result.Ok(True)
         overwrite_existing_data = result.value == "OVERWRITE"
-        result = self.import_scraped_data.execute(overwrite_existing_data)
+        start = datetime.now()
+        result = self.import_scraped_data.execute(import_seasons, overwrite_existing_data)
+        elapsed = datetime.now() - start
         self.unsubscribe_from_events()
         if result.failure:
             self.display_error_messages(result.error)
+        else:
+            self.display_task_duration(elapsed)
+        return Result.Ok(True)
+
+    def import_scraped_data_no_prompts(self, import_seasons, overwrite):
+        self.subscribe_to_events()
+        result = self.import_scraped_data.execute(import_seasons, overwrite)
+        self.unsubscribe_from_events()
+        if result.failure:
+            self.update_menu_heading("Error!")
+            print_message(result.error)
         return Result.Ok(True)
 
     def update_menu_heading(self, current_action):
@@ -72,6 +101,14 @@ class ImportScrapedData(MenuItem):
         print_message(IMPORT_DATA_MESSAGE, fg="bright_yellow", bold=True)
         return yes_no_prompt(IMPORT_DATA_PROMPT, wrap=False)
 
+    def prompt_user_import_all_seasons(self):
+        self.update_menu_heading("Options")
+        print_message("Would you like to import data for all seasons?", fg="bright_yellow", bold=True)
+        return yes_no_prompt(IMPORT_ALL_SEASONS_PROMPT, wrap=False)
+
+    def prompt_user_select_seasons(self):
+        return multi_season_prompt(self.db_session, heading="Select Seasons to Import")
+
     def prompt_user_overwrite_data(self):
         self.update_menu_heading("Overwrite Existing Data?")
         print_message(OVERWRITE_DATA_MESSAGE, fg="bright_yellow", bold=True)
@@ -85,6 +122,11 @@ class ImportScrapedData(MenuItem):
     def display_error_messages(self, error_message):
         self.update_menu_heading("Error!")
         print_message(error_message)
+        pause(message="\nPress any key to continue...")
+
+    def display_task_duration(self, elapsed):
+        self.update_menu_heading("Finished!")
+        print_message(f"Execution time for this import task: {format_timedelta_str(elapsed)}")
         pause(message="\nPress any key to continue...")
 
     def error_occurred(self, error_message, data_set, year):
@@ -133,7 +175,8 @@ class ImportScrapedData(MenuItem):
     def import_scraped_data_complete(self):
         self.update_menu_heading("Complete!")
         print_message("Successfully imported all scraped data from local files", fg="bright_yellow", bold=True)
-        pause(message="\nPress any key to continue...")
+        if not self.no_prompts:
+            pause(message="\nPress any key to continue...")
 
     def subscribe_to_events(self):
         self.import_scraped_data.events.error_occurred += self.error_occurred

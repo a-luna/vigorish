@@ -38,7 +38,14 @@ class PitchFxMetrics:
     fly_ball_rate: float = field(repr=False, default=0.0)
     ground_ball_rate: float = field(repr=False, default=0.0)
     line_drive_rate: float = field(repr=False, default=0.0)
-    pop_up_rate: float = field(repr=False, default=0.0)
+    popup_rate: float = field(repr=False, default=0.0)
+    hard_hit_rate: float = field(repr=False, default=0.0)
+    medium_hit_rate: float = field(repr=False, default=0.0)
+    soft_hit_rate: float = field(repr=False, default=0.0)
+    barrel_rate: float = field(repr=False, default=0.0)
+    avg_launch_speed: float = field(repr=False, default=0.0)
+    avg_launch_angle: float = field(repr=False, default=0.0)
+    avg_hit_distance: float = field(repr=False, default=0.0)
     bb_rate: float = field(repr=False, default=0.0)
     k_rate: float = field(repr=False, default=0.0)
     hr_per_fb: float = field(repr=False, default=0.0)
@@ -46,6 +53,13 @@ class PitchFxMetrics:
     avg_pfx_z: float = field(repr=False, default=0.0)
     avg_px: float = field(repr=False, default=0.0)
     avg_pz: float = field(repr=False, default=0.0)
+    avg_plate_time: float = field(repr=False, default=0.0)
+    avg_extension: float = field(repr=False, default=0.0)
+    avg_break_angle: float = field(repr=False, default=0.0)
+    avg_break_length: float = field(repr=False, default=0.0)
+    avg_break_y: float = field(repr=False, default=0.0)
+    avg_spin_rate: float = field(repr=False, default=0.0)
+    avg_spin_direction: float = field(repr=False, default=0.0)
     zone_rate: float = field(repr=False, default=0.0)
     called_strike_rate: float = field(repr=False, default=0.0)
     swinging_strike_rate: float = field(repr=False, default=0.0)
@@ -67,11 +81,15 @@ class PitchFxMetrics:
     total_swings_outside_zone: int = field(repr=False, default=0)
     total_contact_inside_zone: int = field(repr=False, default=0)
     total_contact_outside_zone: int = field(repr=False, default=0)
-    total_batted_balls: int = field(repr=False, default=0)
+    total_balls_in_play: int = field(repr=False, default=0)
     total_ground_balls: int = field(repr=False, default=0)
     total_line_drives: int = field(repr=False, default=0)
     total_fly_balls: int = field(repr=False, default=0)
-    total_pop_ups: int = field(repr=False, default=0)
+    total_popups: int = field(repr=False, default=0)
+    total_hard_hits: int = field(repr=False, default=0)
+    total_medium_hits: int = field(repr=False, default=0)
+    total_soft_hits: int = field(repr=False, default=0)
+    total_barrels: int = field(repr=False, default=0)
     total_singles: int = field(repr=False, default=0)
     total_doubles: int = field(repr=False, default=0)
     total_triples: int = field(repr=False, default=0)
@@ -115,7 +133,7 @@ class PitchFxMetrics:
         return pd_stats
 
     def get_batted_ball_stats(self, include_bip_count: bool = False) -> Dict[str, str]:
-        total_bip = f" ({self.total_batted_balls})" if include_bip_count else ""
+        total_bip = f" ({self.total_balls_in_play})" if include_bip_count else ""
         bb_stats = {"pitch_type": f"{self.pitch_name}{total_bip}"}
         for metric, (rate, total) in PFX_BATTED_BALL_METRICS.items():
             bip_count = f" ({getattr(self, total)})" if include_bip_count else ""
@@ -145,6 +163,7 @@ class PitchFxMetrics:
             if "pitch_type" in pfx_metrics
             else None
         )
+        pitchfx_metrics_dict["pitch_type_int"] = int(pitchfx_metrics_dict.get("pitch_type", 0))
         return pitchfx_metrics_dict
 
 
@@ -197,7 +216,8 @@ class PitchFxMetricsCollection(PitchFxMetrics):
     def from_query_results(cls, all_pt_results: RowDict, each_pt_results: List[RowDict]) -> PitchFxMetricsCollection:
         metrics_collection = _get_pitchfx_metrics_for_all_pitch_types(all_pt_results)
         metrics_collection["pitch_type_metrics"] = _get_pitchfx_metrics_for_each_pitch_type(each_pt_results)
-        metrics_collection["pitch_type"] = _get_pfx_collection_pitch_type(metrics_collection["pitch_type_metrics"])
+        metrics_collection["pitch_type_int"] = _get_all_pitch_types_int(metrics_collection["pitch_type_metrics"])
+        metrics_collection["pitch_type"] = PitchType(metrics_collection["pitch_type_int"])
         return from_dict(data_class=cls, data=metrics_collection)
 
 
@@ -216,6 +236,5 @@ def _get_pitchfx_metrics_for_each_pitch_type(results: List[RowDict]) -> PitchTyp
     return {m["pitch_type"]: m for m in sorted(all_pitch_types, key=lambda x: x["percent"], reverse=True)}
 
 
-def _get_pfx_collection_pitch_type(pitch_type_metrics: PitchTypeMetricsDict) -> PitchType:
-    all_pitch_types_int = sum(int(pitch_type) for pitch_type in list(pitch_type_metrics.keys()))
-    return PitchType(all_pitch_types_int)
+def _get_all_pitch_types_int(pitch_type_metrics: PitchTypeMetricsDict) -> PitchType:
+    return sum(int(pitch_type) for pitch_type in list(pitch_type_metrics.keys()))

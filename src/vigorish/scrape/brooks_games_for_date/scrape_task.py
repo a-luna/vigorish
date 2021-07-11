@@ -48,4 +48,8 @@ class ScrapeBrooksGamesForDate(ScrapeTaskABC):
         )
 
     def update_status(self, parsed_data):
-        return update_brooks_games_for_date_single_date(self.db_session, self.season, parsed_data)
+        result = update_brooks_games_for_date_single_date(self.db_session, parsed_data)
+        if result.failure:
+            return result
+        self.db_session.commit()
+        return Result.Ok()

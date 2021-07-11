@@ -30,6 +30,7 @@ class Player(db.Base):
     scraped_transactions = Column(Boolean, default=False)
     minor_league_player = Column(Boolean, default=False)
     missing_mlb_id = Column(Boolean, default=True)
+    add_to_db_backup = Column(Boolean, default=False)
 
     id_map = relationship("PlayerId", backref=backref("player", uselist=False))
     pitch_apps = relationship("PitchAppScrapeStatus", backref="player")

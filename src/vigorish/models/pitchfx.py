@@ -33,7 +33,6 @@ class PitchFx(db.Base):
     ab_total = Column(Integer)
     ab_count = Column(Integer)
     ab_id = Column(Integer)
-    table_row_number = Column(Integer)
     des = Column(String)
     strikes = Column(Integer)
     balls = Column(Integer)
@@ -41,21 +40,38 @@ class PitchFx(db.Base):
     pdes = Column(String)
     mlbam_pitch_name = Column(String)
     start_speed = Column(Float)
-    spin = Column(Float)
     zone_location = Column(Integer)
     sz_top = Column(Float)
     sz_bot = Column(Float)
-    pfx_xdatafile = Column(Float)
-    pfx_zdatafile = Column(Float)
     pfx_x = Column(Float)
     pfx_z = Column(Float)
-    uncorrected_pfx_x = Column(Float)
-    uncorrected_pfx_z = Column(Float)
+    x0 = Column(Float)
+    y0 = Column(Float)
+    z0 = Column(Float)
+    vx0 = Column(Float)
+    vy0 = Column(Float)
+    vz0 = Column(Float)
+    ax = Column(Float)
+    ay = Column(Float)
+    az = Column(Float)
     px = Column(Float)
     pz = Column(Float)
-    pxold = Column(Float)
-    pzold = Column(Float)
     park_sv_id = Column(String)
+    plate_time = Column(Float)
+    extension = Column(Float)
+    break_angle = Column(Float)
+    break_length = Column(Float)
+    break_y = Column(Float)
+    spin_rate = Column(Integer)
+    spin_direction = Column(Integer)
+    launch_speed = Column(Float)
+    launch_angle = Column(Float)
+    total_distance = Column(Float)
+    trajectory = Column(String)
+    hardness = Column(String)
+    location = Column(Integer)
+    coord_x = Column(Float)
+    coord_y = Column(Float)
     game_start_time_utc = Column(DateTime)
     time_pitch_thrown_utc = Column(DateTime)
     seconds_since_game_start = Column(Integer)
@@ -70,11 +86,15 @@ class PitchFx(db.Base):
     swing_outside_zone = Column(Integer)
     contact_inside_zone = Column(Integer)
     contact_outside_zone = Column(Integer)
-    is_batted_ball = Column(Integer)
+    is_in_play = Column(Integer)
     is_ground_ball = Column(Integer)
     is_fly_ball = Column(Integer)
     is_line_drive = Column(Integer)
-    is_pop_up = Column(Integer)
+    is_popup = Column(Integer)
+    is_hard_hit = Column(Integer)
+    is_medium_hit = Column(Integer)
+    is_soft_hit = Column(Integer)
+    is_barreled = Column(Integer)
     is_final_pitch_of_ab = Column(Integer)
     ab_result_out = Column(Integer)
     ab_result_hit = Column(Integer)
@@ -148,11 +168,15 @@ class PitchFx(db.Base):
         pfx_dict["swing_outside_zone"] = int(pfx_dict["swing_outside_zone"])
         pfx_dict["contact_inside_zone"] = int(pfx_dict["contact_inside_zone"])
         pfx_dict["contact_outside_zone"] = int(pfx_dict["contact_outside_zone"])
-        pfx_dict["is_batted_ball"] = int(pfx_dict["is_batted_ball"])
+        pfx_dict["is_in_play"] = int(pfx_dict["is_in_play"])
         pfx_dict["is_ground_ball"] = int(pfx_dict["is_ground_ball"])
         pfx_dict["is_fly_ball"] = int(pfx_dict["is_fly_ball"])
         pfx_dict["is_line_drive"] = int(pfx_dict["is_line_drive"])
-        pfx_dict["is_pop_up"] = int(pfx_dict["is_pop_up"])
+        pfx_dict["is_popup"] = int(pfx_dict["is_popup"])
+        pfx_dict["is_hard_hit"] = int(pfx_dict["is_hard_hit"])
+        pfx_dict["is_medium_hit"] = int(pfx_dict["is_medium_hit"])
+        pfx_dict["is_soft_hit"] = int(pfx_dict["is_soft_hit"])
+        pfx_dict["is_barreled"] = int(pfx_dict["is_barreled"])
         pfx_dict["is_final_pitch_of_ab"] = int(pfx_dict["is_final_pitch_of_ab"])
         pfx_dict["ab_result_out"] = int(pfx_dict["ab_result_out"])
         pfx_dict["ab_result_hit"] = int(pfx_dict["ab_result_hit"])
@@ -170,11 +194,6 @@ class PitchFx(db.Base):
         pfx_dict["ab_result_unclear"] = int(pfx_dict["ab_result_unclear"])
         pfx_dict["is_sp"] = int(pfx_dict["is_sp"])
         pfx_dict["is_rp"] = int(pfx_dict["is_rp"])
-        pfx_dict["spin"] = round(pfx_dict["spin"], 1)
-        pfx_dict["pfx_x"] = round(pfx_dict["pfx_x"], 2)
-        pfx_dict["pfx_z"] = round(pfx_dict["pfx_z"], 2)
-        pfx_dict["px"] = round(pfx_dict["px"], 2)
-        pfx_dict["pz"] = round(pfx_dict["pz"], 2)
         return cls(**pfx_dict)
 
     @staticmethod
@@ -199,22 +218,6 @@ class PitchFx(db.Base):
         pfx_dict["batter_id"] = pfx_dict.pop("batter_id_db")
         pfx_dict.pop("play_guid", None)
         pfx_dict.pop("pitcher_name", None)
-        pfx_dict.pop("pitch_con", None)
-        pfx_dict.pop("norm_ht", None)
-        pfx_dict.pop("tstart", None)
-        pfx_dict.pop("vystart", None)
-        pfx_dict.pop("ftime", None)
-        pfx_dict.pop("x0", None)
-        pfx_dict.pop("y0", None)
-        pfx_dict.pop("z0", None)
-        pfx_dict.pop("vx0", None)
-        pfx_dict.pop("vy0", None)
-        pfx_dict.pop("vz0", None)
-        pfx_dict.pop("ax", None)
-        pfx_dict.pop("ay", None)
-        pfx_dict.pop("az", None)
-        pfx_dict.pop("tm_spin", None)
-        pfx_dict.pop("sb", None)
         return pfx_dict
 
 
@@ -241,7 +244,6 @@ class PitchFxCsvRow:
     ab_total: int = None
     ab_count: int = None
     ab_id: int = None
-    table_row_number: int = 0
     des: str = None
     strikes: int = 0
     balls: int = 0
@@ -249,21 +251,42 @@ class PitchFxCsvRow:
     pdes: str = None
     mlbam_pitch_name: str = None
     start_speed: float = None
-    spin: float = None
     zone_location: int = None
     sz_top: float = None
     sz_bot: float = None
-    pfx_xdatafile: float = None
-    pfx_zdatafile: float = None
     pfx_x: float = None
     pfx_z: float = None
-    uncorrected_pfx_x: float = None
-    uncorrected_pfx_z: float = None
+    x0: float = None
+    y0: float = None
+    z0: float = None
+    vx0: float = None
+    vy0: float = None
+    vz0: float = None
+    ax: float = None
+    ay: float = None
+    az: float = None
+    px: float = None
+    pz: float = None
     px: float = None
     pz: float = None
     pxold: float = None
     pzold: float = None
     park_sv_id: str = None
+    plate_time: float = None
+    extension: float = None
+    break_angle: float = None
+    break_length: float = None
+    break_y: float = None
+    spin_rate: int = 0
+    spin_direction: int = 0
+    launch_speed: float = None
+    launch_angle: float = None
+    total_distance: float = None
+    trajectory: str = None
+    hardness: str = None
+    location: int = 0
+    coord_x: float = None
+    coord_y: float = None
     game_start_time_utc: datetime = None
     time_pitch_thrown_utc: datetime = None
     seconds_since_game_start: int = 0
@@ -278,11 +301,15 @@ class PitchFxCsvRow:
     swing_outside_zone: int = 0
     contact_inside_zone: int = 0
     contact_outside_zone: int = 0
-    is_batted_ball: int = 0
+    is_in_play: int = 0
     is_ground_ball: int = 0
     is_fly_ball: int = 0
     is_line_drive: int = 0
-    is_pop_up: int = 0
+    is_popup: int = 0
+    is_hard_hit: int = 0
+    is_medium_hit: int = 0
+    is_soft_hit: int = 0
+    is_barreled: int = 0
     is_final_pitch_of_ab: int = 0
     ab_result_out: int = 0
     ab_result_hit: int = 0

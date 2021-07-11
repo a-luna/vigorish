@@ -11,6 +11,7 @@ from zipfile import ZipFile
 from Naked.toolshed.shell import execute as execute_shell_command
 from Naked.toolshed.shell import execute_js
 
+from vigorish.cli.components.viewers import DisplayPage, PageViewer
 from vigorish.util.datetime_util import dtaware_fromtimestamp
 from vigorish.util.dt_format_strings import DT_NAIVE
 from vigorish.util.result import Result
@@ -142,36 +143,41 @@ def get_terminal_width():  # pragma: no cover
     return columns
 
 
-def zip_file_report(zip_file_path):
+def zip_file_report(zip_file_path, heading_color=None, text_color=None):
     report = []
     with ZipFile(zip_file_path, "r") as zip:
         zip_original_size = 0
-        for info in zip.infolist():
+        for file_number, info in enumerate(zip.infolist(), start=1):
+            heading = f"##### FILE {file_number}/{len(zip.infolist())} #####"
             zip_original_size += info.file_size
             compression_ratio = 1 - info.compress_size / float(info.file_size)
             (compressed_str, original_str) = align_file_sizes(info.compress_size, info.file_size)
-            file_info = (
-                f"\tFilename.......: {Path(info.filename).name}\n"
-                f"\tModified.......: {datetime(*info.date_time).strftime(DT_NAIVE)} UTC\n"
-                f"\tZipped Size....: {compressed_str} ({compression_ratio:.0%} Reduction)\n"
-                f"\tOriginal Size..: {original_str}\n"
-            )
-            report.append(file_info)
+            file_info = [
+                f"Filename.......: {Path(info.filename).name}",
+                f"Modified.......: {datetime(*info.date_time).strftime(DT_NAIVE)} UTC",
+                f"Zipped Size....: {compressed_str} ({compression_ratio:.0%} Reduction)",
+                f"Original Size..: {original_str}",
+            ]
+            report.append(DisplayPage(file_info, heading))
+        heading = f"##### ZIP FILE REPORT: {zip_file_path.name} #####"
         zip_compressed_size = zip_file_path.stat().st_size
         compression_ratio = 1 - zip_compressed_size / float(zip_original_size)
         (compressed_str, original_str) = align_file_sizes(zip_compressed_size, zip_original_size)
-        zip_mod_timestamp = zip_file_path.stat().st_mtime
-        zip_file_modified = dtaware_fromtimestamp(zip_mod_timestamp, use_tz=timezone.utc)
-        file_info = (
-            f"Filename.......: {Path(zip_file_path).name}\n"
-            f"Modified.......: {zip_file_modified.strftime(DT_NAIVE)} UTC\n"
-            f"Zipped Size....: {compressed_str} ({compression_ratio:.0%} Reduction)\n"
-            f"Original Size..: {original_str}\n"
-        )
-        report.insert(0, f"##### ZIP FILE REPORT: {zip_file_path.name} #####\n")
-        report.insert(1, file_info)
-        report.insert(2, "\t##### ZIP FILE CONTENTS #####\n")
-    return "\n".join(report)
+        zip_file_modified = dtaware_fromtimestamp(zip_file_path.stat().st_mtime, use_tz=timezone.utc)
+        file_info = [
+            f"Filename.......: {Path(zip_file_path).name}",
+            f"Modified.......: {zip_file_modified.strftime(DT_NAIVE)} UTC",
+            f"Zipped Size....: {compressed_str} ({compression_ratio:.0%} Reduction)",
+            f"Original Size..: {original_str}",
+        ]
+        report.insert(0, DisplayPage(file_info, heading))
+    return PageViewer(
+        report,
+        prompt="Press Enter to return to the previous menu",
+        confirm_only=True,
+        heading_color=heading_color,
+        text_color=text_color,
+    )
 
 
 def align_file_sizes(compressed_size, original_size):

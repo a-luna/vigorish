@@ -59,12 +59,11 @@ def test_update_database_brooks_pitch_logs_for_game(vig_app):
     assert game_status
     assert game_status.scraped_brooks_pitch_logs == 0
     pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(vig_app.db_session, PITCH_APP_ID)
-    assert not pitch_app_status
-    result = update_status_brooks_pitch_logs_for_game(vig_app.db_session, pitch_logs_for_game)
-    assert result.success
-    assert game_status.scraped_brooks_pitch_logs == 1
-    pitch_app_status = PitchAppScrapeStatus.find_by_pitch_app_id(vig_app.db_session, PITCH_APP_ID)
     assert pitch_app_status
+    assert pitch_app_status.pitch_count_pitch_log == 0
+    update_status_brooks_pitch_logs_for_game(vig_app.db_session, pitch_logs_for_game)
+    vig_app.db_session.commit()
+    assert game_status.scraped_brooks_pitch_logs == 1
     assert pitch_app_status.pitch_count_pitch_log == 25
     vig_app.db_session.commit()
 

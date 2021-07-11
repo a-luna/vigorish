@@ -1,5 +1,6 @@
 """Individual game info scraped from brooksbaseball.com."""
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Dict
 
 
@@ -14,6 +15,7 @@ class BrooksGameInfo:
     game_time_hour: str = field(repr=False, default="")
     game_time_minute: str = field(repr=False, default="")
     time_zone_name: str = field(repr=False, default="")
+    mlb_game_id: str = field(repr=False, default="")
     bb_game_id: str = field(repr=False, default="")
     bbref_game_id: str = ""
     away_team_id_bb: str = field(repr=False, default="")
@@ -21,6 +23,10 @@ class BrooksGameInfo:
     game_number_this_day: int = field(repr=False, default=0)
     pitcher_appearance_count: int = field(repr=False, default=0)
     pitcher_appearance_dict: Dict[str, str] = field(repr=False, default_factory=dict)
+
+    @property
+    def game_date(self):
+        return datetime(self.game_date_year, self.game_date_month, self.game_date_day).date()
 
     @property
     def all_pitch_app_ids(self):

@@ -20,7 +20,7 @@ from vigorish.cli.components import (
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import AuditError, ScrapeCondition
-from vigorish.tasks import CombineScrapedDataTask
+from vigorish.tasks.combine_scraped_data import CombineScrapedDataTask
 from vigorish.util.dt_format_strings import DATE_MONTH_NAME
 from vigorish.util.list_helpers import flatten_list2d
 from vigorish.util.result import Result
@@ -125,7 +125,7 @@ class CombineScrapedData(MenuItem):
         return (
             sum(len(game_ids) for game_ids in self.date_game_id_map.values())
             if self.audit_type == "SEASON"
-            else len(self.date_game_id_map.get(self.current_game_date, None))
+            else len(self.date_game_id_map.get(self.current_game_date, []))
         )
 
     @property
@@ -255,6 +255,29 @@ class CombineScrapedData(MenuItem):
                 continue
             self.display_results()
         return Result.Ok(self.exit_menu)
+
+    def launch_no_prompts(self, game_date):
+        self.current_game_date = game_date
+        self.scrape_year = game_date.year
+        self.pbar_manager = enlighten.get_manager()
+        self.init_progress_bars(game_date=self.all_dates_in_season[0])
+        subprocess.run(["clear"])
+        game_ids = self.date_game_id_map.get(self.current_game_date, None)
+        if not game_ids:
+            game_date_str = self.current_game_date.strftime(DATE_MONTH_NAME)
+            message = f"All games on {game_date_str} have already been combined."
+            print_message(message, fg="bright_cyan", bold=True)
+            self.close_progress_bars()
+            return ([], [])
+        self.combine_selected_games(self.current_game_date, game_ids)
+        self.date_progress_bar.update()
+        self.close_progress_bars()
+        invalid_pfx_game_ids, pfx_error_game_ids = [], []
+        if self.total_games_invalid_pitchfx:
+            invalid_pfx_game_ids = list(self.invalid_pfx.keys())
+        if self.total_games_pitchfx_error:
+            pfx_error_game_ids = list(self.pfx_errors.keys())
+        return (invalid_pfx_game_ids, pfx_error_game_ids)
 
     def combine_games_for_season(self):
         result = audit_report_season_prompt(self.app.audit_report)

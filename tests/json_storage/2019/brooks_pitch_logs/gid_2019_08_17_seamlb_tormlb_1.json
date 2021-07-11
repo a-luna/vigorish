@@ -7,171 +7,6 @@
     {
       "__brooks_pitch_log__": true,
       "parsed_all_info": true,
-      "pitcher_name": "Reggie McClain",
-      "pitcher_id_mlb": 596035,
-      "pitch_app_id": "TOR201908170_596035",
-      "total_pitch_count": 29,
-      "pitch_count_by_inning": {
-        "1": 8,
-        "2": 21
-      },
-      "pitcher_team_id_bb": "SEA",
-      "opponent_team_id_bb": "TOR",
-      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
-      "bbref_game_id": "TOR201908170",
-      "game_date_year": 2019,
-      "game_date_month": 8,
-      "game_date_day": 17,
-      "game_time_hour": 15,
-      "game_time_minute": 7,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=596035&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=596035.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Cory Gearrin",
-      "pitcher_id_mlb": 518715,
-      "pitch_app_id": "TOR201908170_518715",
-      "total_pitch_count": 22,
-      "pitch_count_by_inning": {
-        "3": 14,
-        "4": 8
-      },
-      "pitcher_team_id_bb": "SEA",
-      "opponent_team_id_bb": "TOR",
-      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
-      "bbref_game_id": "TOR201908170",
-      "game_date_year": 2019,
-      "game_date_month": 8,
-      "game_date_day": 17,
-      "game_time_hour": 15,
-      "game_time_minute": 7,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=518715&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=518715.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Taylor Guilbeau",
-      "pitcher_id_mlb": 607555,
-      "pitch_app_id": "TOR201908170_607555",
-      "total_pitch_count": 24,
-      "pitch_count_by_inning": {
-        "4": 6,
-        "5": 18
-      },
-      "pitcher_team_id_bb": "SEA",
-      "opponent_team_id_bb": "TOR",
-      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
-      "bbref_game_id": "TOR201908170",
-      "game_date_year": 2019,
-      "game_date_month": 8,
-      "game_date_day": 17,
-      "game_time_hour": 15,
-      "game_time_minute": 7,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=607555&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=607555.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Zac Grotz",
-      "pitcher_id_mlb": 665093,
-      "pitch_app_id": "TOR201908170_665093",
-      "total_pitch_count": 27,
-      "pitch_count_by_inning": {
-        "5": 4,
-        "6": 23
-      },
-      "pitcher_team_id_bb": "SEA",
-      "opponent_team_id_bb": "TOR",
-      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
-      "bbref_game_id": "TOR201908170",
-      "game_date_year": 2019,
-      "game_date_month": 8,
-      "game_date_day": 17,
-      "game_time_hour": 15,
-      "game_time_minute": 7,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=665093&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=665093.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Anthony Bass",
-      "pitcher_id_mlb": 542914,
-      "pitch_app_id": "TOR201908170_542914",
-      "total_pitch_count": 16,
-      "pitch_count_by_inning": {
-        "7": 16
-      },
-      "pitcher_team_id_bb": "SEA",
-      "opponent_team_id_bb": "TOR",
-      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
-      "bbref_game_id": "TOR201908170",
-      "game_date_year": 2019,
-      "game_date_month": 8,
-      "game_date_day": 17,
-      "game_time_hour": 15,
-      "game_time_minute": 7,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=542914&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=542914.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Sam Tuivailala",
-      "pitcher_id_mlb": 592815,
-      "pitch_app_id": "TOR201908170_592815",
-      "total_pitch_count": 11,
-      "pitch_count_by_inning": {
-        "8": 11
-      },
-      "pitcher_team_id_bb": "SEA",
-      "opponent_team_id_bb": "TOR",
-      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
-      "bbref_game_id": "TOR201908170",
-      "game_date_year": 2019,
-      "game_date_month": 8,
-      "game_date_day": 17,
-      "game_time_hour": 15,
-      "game_time_minute": 7,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=592815&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=592815.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
-      "pitcher_name": "Matt Magill",
-      "pitcher_id_mlb": 543483,
-      "pitch_app_id": "TOR201908170_543483",
-      "total_pitch_count": 19,
-      "pitch_count_by_inning": {
-        "9": 19
-      },
-      "pitcher_team_id_bb": "SEA",
-      "opponent_team_id_bb": "TOR",
-      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
-      "bbref_game_id": "TOR201908170",
-      "game_date_year": 2019,
-      "game_date_month": 8,
-      "game_date_day": 17,
-      "game_time_hour": 15,
-      "game_time_minute": 7,
-      "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543483&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=543483.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
-    },
-    {
-      "__brooks_pitch_log__": true,
-      "parsed_all_info": true,
       "pitcher_name": "Trent Thornton",
       "pitcher_id_mlb": 663423,
       "pitch_app_id": "TOR201908170_663423",
@@ -194,8 +29,104 @@
       "game_time_hour": 15,
       "game_time_minute": 7,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=663423&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=663423.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=663423&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=663423&game=566926&prevGame=566926&prevDate=0817"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Reggie McClain",
+      "pitcher_id_mlb": 596035,
+      "pitch_app_id": "TOR201908170_596035",
+      "total_pitch_count": 29,
+      "pitch_count_by_inning": {
+        "1": 8,
+        "2": 21
+      },
+      "pitcher_team_id_bb": "SEA",
+      "opponent_team_id_bb": "TOR",
+      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
+      "bbref_game_id": "TOR201908170",
+      "game_date_year": 2019,
+      "game_date_month": 8,
+      "game_date_day": 17,
+      "game_time_hour": 15,
+      "game_time_minute": 7,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=596035&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=596035&game=566926&prevGame=566926&prevDate=0817"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Cory Gearrin",
+      "pitcher_id_mlb": 518715,
+      "pitch_app_id": "TOR201908170_518715",
+      "total_pitch_count": 22,
+      "pitch_count_by_inning": {
+        "3": 14,
+        "4": 8
+      },
+      "pitcher_team_id_bb": "SEA",
+      "opponent_team_id_bb": "TOR",
+      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
+      "bbref_game_id": "TOR201908170",
+      "game_date_year": 2019,
+      "game_date_month": 8,
+      "game_date_day": 17,
+      "game_time_hour": 15,
+      "game_time_minute": 7,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=518715&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=518715&game=566926&prevGame=566926&prevDate=0817"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Taylor Guilbeau",
+      "pitcher_id_mlb": 607555,
+      "pitch_app_id": "TOR201908170_607555",
+      "total_pitch_count": 24,
+      "pitch_count_by_inning": {
+        "4": 6,
+        "5": 18
+      },
+      "pitcher_team_id_bb": "SEA",
+      "opponent_team_id_bb": "TOR",
+      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
+      "bbref_game_id": "TOR201908170",
+      "game_date_year": 2019,
+      "game_date_month": 8,
+      "game_date_day": 17,
+      "game_time_hour": 15,
+      "game_time_minute": 7,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=607555&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=607555&game=566926&prevGame=566926&prevDate=0817"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Zac Grotz",
+      "pitcher_id_mlb": 665093,
+      "pitch_app_id": "TOR201908170_665093",
+      "total_pitch_count": 27,
+      "pitch_count_by_inning": {
+        "5": 4,
+        "6": 23
+      },
+      "pitcher_team_id_bb": "SEA",
+      "opponent_team_id_bb": "TOR",
+      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
+      "bbref_game_id": "TOR201908170",
+      "game_date_year": 2019,
+      "game_date_month": 8,
+      "game_date_day": 17,
+      "game_time_hour": 15,
+      "game_time_minute": 7,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=665093&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=665093&game=566926&prevGame=566926&prevDate=0817"
     },
     {
       "__brooks_pitch_log__": true,
@@ -217,8 +148,31 @@
       "game_time_hour": 15,
       "game_time_minute": 7,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543208&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=543208.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543208&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=543208&game=566926&prevGame=566926&prevDate=0817"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Anthony Bass",
+      "pitcher_id_mlb": 542914,
+      "pitch_app_id": "TOR201908170_542914",
+      "total_pitch_count": 16,
+      "pitch_count_by_inning": {
+        "7": 16
+      },
+      "pitcher_team_id_bb": "SEA",
+      "opponent_team_id_bb": "TOR",
+      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
+      "bbref_game_id": "TOR201908170",
+      "game_date_year": 2019,
+      "game_date_month": 8,
+      "game_date_day": 17,
+      "game_time_hour": 15,
+      "game_time_minute": 7,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=542914&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=542914&game=566926&prevGame=566926&prevDate=0817"
     },
     {
       "__brooks_pitch_log__": true,
@@ -240,8 +194,8 @@
       "game_time_hour": 15,
       "game_time_minute": 7,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=641835&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=641835.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=641835&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=641835&game=566926&prevGame=566926&prevDate=0817"
     },
     {
       "__brooks_pitch_log__": true,
@@ -264,8 +218,54 @@
       "game_time_hour": 15,
       "game_time_minute": 7,
       "time_zone_name": "America/New_York",
-      "pitchfx_url": "http://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=571882&game=gid_2019_08_17_seamlb_tormlb_1/&s_type=3&h_size=700&v_size=500",
-      "pitch_log_url": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=8&day=17&pitchSel=571882.xml&game=gid_2019_08_17_seamlb_tormlb_1/&prevGame=gid_2019_08_17_seamlb_tormlb_1/"
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=571882&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=571882&game=566926&prevGame=566926&prevDate=0817"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Sam Tuivailala",
+      "pitcher_id_mlb": 592815,
+      "pitch_app_id": "TOR201908170_592815",
+      "total_pitch_count": 11,
+      "pitch_count_by_inning": {
+        "8": 11
+      },
+      "pitcher_team_id_bb": "SEA",
+      "opponent_team_id_bb": "TOR",
+      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
+      "bbref_game_id": "TOR201908170",
+      "game_date_year": 2019,
+      "game_date_month": 8,
+      "game_date_day": 17,
+      "game_time_hour": 15,
+      "game_time_minute": 7,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=592815&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=592815&game=566926&prevGame=566926&prevDate=0817"
+    },
+    {
+      "__brooks_pitch_log__": true,
+      "parsed_all_info": true,
+      "pitcher_name": "Matt Magill",
+      "pitcher_id_mlb": 543483,
+      "pitch_app_id": "TOR201908170_543483",
+      "total_pitch_count": 19,
+      "pitch_count_by_inning": {
+        "9": 19
+      },
+      "pitcher_team_id_bb": "SEA",
+      "opponent_team_id_bb": "TOR",
+      "bb_game_id": "gid_2019_08_17_seamlb_tormlb_1",
+      "bbref_game_id": "TOR201908170",
+      "game_date_year": 2019,
+      "game_date_month": 8,
+      "game_date_day": 17,
+      "game_time_hour": 15,
+      "game_time_minute": 7,
+      "time_zone_name": "America/New_York",
+      "pitchfx_url": "https://www.brooksbaseball.net/pfxVB/tabdel_expanded.php?pitchSel=543483&game=566926&s_type=3&h_size=700&v_size=500",
+      "pitch_log_url": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=08&day=17&pitchSel=543483&game=566926&prevGame=566926&prevDate=0817"
     }
   ]
 }

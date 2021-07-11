@@ -23,10 +23,10 @@ def test_season_status_report(vig_app):
     assert "PitchFx Logs Scraped.........................: NO 79/79 (100%)" in report
     assert "Combined BBRef/PitchFX Data (Success/Total)..: NO 8/8" in report
     assert "Pitch App Count (BBRef/Brooks)...............: 79/868" in report
-    assert "Pitch App Count (PFx/data/no data)...........: 79/78/1" in report
-    assert "PitchFX Data Errors (Valid AB/Invalid AB)....: NO 0/3" in report
+    assert "Pitch App Count (PFx/data/no data)...........: 79/77/2" in report
+    assert "PitchFX Data Errors (Valid AB/Invalid AB)....: NO 0/0" in report
     assert "Pitch Count (BBRef/Brooks/PFx)...............: 2,456/2,467/2,467" in report
-    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 2,456/2,386/62" in report
+    assert "Pitch Count Audited (BBRef/PFx/Removed)......: 2,456/2,419/5" in report
 
 
 def test_season_as_dict(vig_app):
@@ -57,12 +57,12 @@ def test_season_as_dict(vig_app):
         "scraped_all_brooks_pitch_logs": False,
         "scraped_all_pitchfx_logs": False,
         "start_date_str": "2019-03-28",
-        "total_at_bats_invalid_pitchfx": 6,
-        "total_at_bats_missing_pitchfx": 18,
+        "total_at_bats_invalid_pitchfx": 0,
+        "total_at_bats_missing_pitchfx": 7,
         "total_at_bats_pitchfx_error": 0,
-        "total_at_bats_removed_pitchfx": 33,
+        "total_at_bats_removed_pitchfx": 2,
         "total_batters_faced_bbref": 631,
-        "total_batters_faced_pitchfx": 627,
+        "total_batters_faced_pitchfx": 624,
         "total_bbref_boxscores_scraped": 8,
         "total_brooks_pitch_logs_scraped": 8,
         "total_days": 186,
@@ -72,20 +72,20 @@ def test_season_as_dict(vig_app):
         "total_games_combined": 8,
         "total_games_combined_fail": 0,
         "total_games_combined_success": 8,
-        "total_missing_pitchfx_count": 70,
+        "total_missing_pitchfx_count": 37,
         "total_pitch_apps_combined_data": 79,
-        "total_pitch_apps_invalid_pitchfx": 3,
-        "total_pitch_apps_no_pitchfx_data": 1,
+        "total_pitch_apps_invalid_pitchfx": 0,
+        "total_pitch_apps_no_pitchfx_data": 2,
         "total_pitch_apps_pitchfx_error": 0,
-        "total_pitch_apps_pitchfx_is_valid": 76,
+        "total_pitch_apps_pitchfx_is_valid": 79,
         "total_pitch_apps_scraped_pitchfx": 79,
-        "total_pitch_apps_with_pitchfx_data": 78,
+        "total_pitch_apps_with_pitchfx_data": 77,
         "total_pitch_count_bbref": 2456,
         "total_pitch_count_bbref_audited": 2456,
         "total_pitch_count_pitch_logs": 2467,
         "total_pitch_count_pitchfx": 2467,
-        "total_pitch_count_pitchfx_audited": 2386,
-        "total_removed_pitchfx_count": 62,
+        "total_pitch_count_pitchfx_audited": 2419,
+        "total_removed_pitchfx_count": 5,
         "year": 2019,
     }
 

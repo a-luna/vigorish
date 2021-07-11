@@ -6,7 +6,7 @@ from tests.util import (
     parse_brooks_games_for_date_from_html,
     update_scraped_bbref_games_for_date,
 )
-from vigorish.database import DateScrapeStatus, GameScrapeStatus, Season
+from vigorish.database import DateScrapeStatus, GameScrapeStatus
 from vigorish.enums import DataSet
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.scrape.brooks_games_for_date.models.games_for_date import BrooksGamesForDate
@@ -58,10 +58,7 @@ def test_update_database_brooks_games_for_date(vig_app):
     assert date_status.game_count_brooks == 0
     game_status = GameScrapeStatus.find_by_bb_game_id(vig_app.db_session, GAME_ID)
     assert not game_status
-    result = Season.is_date_in_season(vig_app.db_session, GAME_DATE)
-    assert result.success
-    season = result.value
-    result = update_brooks_games_for_date_single_date(vig_app.db_session, season, games_for_date)
+    result = update_brooks_games_for_date_single_date(vig_app.db_session, games_for_date)
     assert result.success
     assert date_status.scraped_daily_dash_brooks == 1
     assert date_status.game_count_brooks == 16

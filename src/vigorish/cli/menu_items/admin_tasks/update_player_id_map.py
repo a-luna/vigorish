@@ -28,7 +28,7 @@ class UpdatePlayerIdMap(MenuItem):
 
     def launch(self, no_prompts=False):
         subprocess.run(["clear"])
-        if not self.prompt_user_run_task():
+        if not no_prompts and not self.prompt_user_run_task():
             return Result.Ok(False)
         result = self.update_player_data(self.id_map_task, "Player-ID map", no_prompts)
         if result.failure:

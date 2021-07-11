@@ -29,13 +29,28 @@ class AddToDatabase(MenuItem):
     def total_games(self):
         return len(self.game_ids)
 
-    def launch(self):
+    def launch(self, year=None, no_prompts=False):
+        return self.launch_no_prompts(year) if no_prompts else self.launch_interactive(year)
+
+    def launch_no_prompts(self, year):
+        self.subscribe_to_events()
+        result = self.add_to_db.execute(year)
+        self.spinner.stop()
+        self.unsubscribe_from_events()
+        if result.failure:
+            return result
+        subprocess.run(["clear"])
+        print_message(f"Added PitchFX data for {len(self.game_ids)} games to database!")
+        return Result.Ok()
+
+    def launch_interactive(self, year):
         if not self.prompt_user_run_task():
             return Result.Ok(True)
-        result = self.select_season_prompt()
-        if result.failure:
-            return Result.Ok()
-        year = result.value
+        if not year:
+            result = self.select_season_prompt()
+            if result.failure:
+                return Result.Ok()
+            year = result.value
         self.subscribe_to_events()
         result = self.add_to_db.execute(year)
         self.spinner.stop()
@@ -45,7 +60,7 @@ class AddToDatabase(MenuItem):
         subprocess.run(["clear"])
         print_message(f"Added PitchFX data for {len(self.game_ids)} games to database!")
         pause(message="\nPress any key to continue...")
-        return Result.Ok()
+        return Result.Ok(True)
 
     def prompt_user_run_task(self):
         task_description = [

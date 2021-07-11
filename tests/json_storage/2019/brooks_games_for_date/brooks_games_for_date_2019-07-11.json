@@ -20,13 +20,13 @@
       "game_number_this_day": 1,
       "pitcher_appearance_count": 7,
       "pitcher_appearance_dict": {
-        "664285": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=664285.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
-        "606965": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=606965.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
-        "605482": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=605482.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
-        "657624": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=657624.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
-        "458681": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=458681.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
-        "600917": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=600917.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/",
-        "455119": "http://brooksbaseball.net/pfx/index.php?s_type=3&sp_type=1&batterX=0&year=2019&month=7&day=11&pitchSel=455119.xml&game=gid_2019_07_11_houmlb_texmlb_1/&prevGame=gid_2019_07_11_houmlb_texmlb_1/"
+        "664285": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=07&day=11&pitchSel=664285&game=566810&prevGame=566810&prevDate=0711",
+        "606965": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=07&day=11&pitchSel=606965&game=566810&prevGame=566810&prevDate=0711",
+        "605482": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=07&day=11&pitchSel=605482&game=566810&prevGame=566810&prevDate=0711",
+        "657624": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=07&day=11&pitchSel=657624&game=566810&prevGame=566810&prevDate=0711",
+        "458681": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=07&day=11&pitchSel=458681&game=566810&prevGame=566810&prevDate=0711",
+        "600917": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=07&day=11&pitchSel=600917&game=566810&prevGame=566810&prevDate=0711",
+        "455119": "https://www.brooksbaseball.net/pfxVB/pfx.php?s_type=2&sp_type=1&batterX=0&year=2019&month=07&day=11&pitchSel=455119&game=566810&prevGame=566810&prevDate=0711"
       }
     }
   ]

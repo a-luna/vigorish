@@ -37,4 +37,8 @@ class ScrapeBBRefBoxscores(ScrapeTaskABC):
         return parse_bbref_boxscore(url_details.html, url_details.url, url_details.url_id)
 
     def update_status(self, parsed_data):
-        return update_status_bbref_boxscore(self.db_session, parsed_data)
+        result = update_status_bbref_boxscore(self.db_session, parsed_data)
+        if result.failure:
+            return result
+        self.db_session.commit()
+        return Result.Ok()

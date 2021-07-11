@@ -2,7 +2,7 @@ import vigorish.database as db
 from vigorish.enums import DataSet, ScrapeCondition
 from vigorish.scrape.brooks_pitchfx.parse_html import parse_pitchfx_log
 from vigorish.scrape.scrape_task import ScrapeTaskABC
-from vigorish.status.update_status_brooks_pitchfx import update_pitch_appearance_status_records
+from vigorish.status.update_status_brooks_pitchfx import update_status_brooks_pitchfx_log
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 
@@ -70,4 +70,8 @@ class ScrapeBrooksPitchFx(ScrapeTaskABC):
         pass
 
     def update_status(self, parsed_data):
-        return update_pitch_appearance_status_records(self.db_session, parsed_data)
+        result = update_status_brooks_pitchfx_log(self.db_session, parsed_data)
+        if result.failure:
+            return result
+        self.db_session.commit()
+        return Result.Ok()

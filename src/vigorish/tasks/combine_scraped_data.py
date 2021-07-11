@@ -15,10 +15,6 @@ from vigorish.constants import (
     AT_BAT_RESULTS_STRIKEOUT,
     AT_BAT_RESULTS_UNCLEAR,
     AT_BAT_RESULTS_WALK,
-    PLAY_DES_BB_TYPE_FB,
-    PLAY_DES_BB_TYPE_GB,
-    PLAY_DES_BB_TYPE_LD,
-    PLAY_DES_BB_TYPE_PU,
     PPB_PITCH_LOG_DICT,
 )
 from vigorish.enums import DataSet, PitchType
@@ -450,7 +446,6 @@ class CombineScrapedDataTask(Task):
                 return result
             pitch_sequence_description = result.value
             id_dict = db.PlayerId.get_player_ids_from_at_bat_id(self.db_session, ab_id)
-            pfx_data = self.determine_bb_type(pfx_data, final_pbp_event["play_description"])
             combined_at_bat_data = {
                 "at_bat_id": ab_id,
                 "pfx_ab_id": pfx_ab_id,
@@ -715,10 +710,10 @@ class CombineScrapedDataTask(Task):
         final_pitch_of_ab["is_final_pitch_of_ab"] = True
         at_bat_result = final_pitch_of_ab["des"].lower()
 
-        if at_bat_result == AT_BAT_RESULTS_UNCLEAR:
+        if at_bat_result in AT_BAT_RESULTS_UNCLEAR:
             final_pitch_of_ab["ab_result_unclear"] = True
             final_pitch_of_ab["pbp_play_result"] = game_event["play_description"]
-            final_pitch_of_ab["pbp_runs_outs_result"] = game_event["pbp_runs_outs_result"]
+            final_pitch_of_ab["pbp_runs_outs_result"] = game_event["runs_outs_result"]
 
         if at_bat_result in AT_BAT_RESULTS_OUT:
             final_pitch_of_ab["ab_result_out"] = True
@@ -854,22 +849,6 @@ class CombineScrapedDataTask(Task):
                 event_dict["processed"] = True
                 break
         return outcome.strip(".")
-
-    def determine_bb_type(self, pfx_data, play_description):
-        pfx = [pfx for pfx in pfx_data if pfx["type"] == "X"]
-        if not pfx:
-            return pfx_data
-        pfx = pfx[0]
-        pfx["is_batted_ball"] = True
-        if any(bb_type in play_description for bb_type in PLAY_DES_BB_TYPE_FB):
-            pfx["is_fly_ball"] = True
-        if any(bb_type in play_description for bb_type in PLAY_DES_BB_TYPE_GB):
-            pfx["is_ground_ball"] = True
-        if any(bb_type in play_description for bb_type in PLAY_DES_BB_TYPE_LD):
-            pfx["is_line_drive"] = True
-        if any(bb_type in play_description for bb_type in PLAY_DES_BB_TYPE_PU):
-            pfx["is_pop_up"] = True
-        return pfx_data
 
     def save_invalid_pitchfx(self, at_bat_ids_invalid_pfx):
         self.invalid_pitchfx = defaultdict(dict)

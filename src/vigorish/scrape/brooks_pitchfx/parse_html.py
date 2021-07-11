@@ -109,7 +109,7 @@ def parse_pitchfx_data(column_names, table_row, row_num, pitch_log):
     pitchfx_dict["opponent_team_id_bb"] = pitch_log.opponent_team_id_bb
     pitchfx_dict["bb_game_id"] = pitch_log.bb_game_id
     pitchfx_dict["bbref_game_id"] = pitch_log.bbref_game_id
-    pitchfx_dict["table_row_number"] = row_num
+    pitchfx_dict = remove_invalid_dict_values(pitchfx_dict)
     pitchfx = BrooksPitchFxData(**pitchfx_dict)
 
     game_start_time = pitch_log.game_start_time
@@ -178,3 +178,25 @@ def this_ab_and_missing_des(pfx, ab_id):
 
 def this_ab_and_has_des(pfx, ab_id):
     return pfx.ab_id == ab_id and pfx.des != "missing_des"
+
+
+def remove_invalid_dict_values(pitchfx_dict):
+    pitchfx_dict.pop("pfx_xdatafile", "")
+    pitchfx_dict.pop("pfx_zdatafile", "")
+    pitchfx_dict.pop("pitch_con", "")
+    pitchfx_dict.pop("gid", "")
+    pitchfx_dict.pop("norm_ht", "")
+    pitchfx_dict.pop("spin", "")
+    pitchfx_dict.pop("tstart", "")
+    pitchfx_dict.pop("vystart", "")
+    pitchfx_dict.pop("ftime", "")
+    pitchfx_dict.pop("uncorrected_pfx_x", "")
+    pitchfx_dict.pop("uncorrected_pfx_z", "")
+    pitchfx_dict.pop("pxold", "")
+    pitchfx_dict.pop("pzold", "")
+    pitchfx_dict.pop("tm_spin", "")
+    pitchfx_dict.pop("sb", "")
+    pitchfx_dict.pop("tm_spin", "")
+    pitchfx_dict.pop("sb", "")
+    pitchfx_dict["pitcher_team_id_bb"] = pitchfx_dict.pop("pitcher_team", "")
+    return pitchfx_dict

@@ -1,4 +1,5 @@
 """Scrape MLB player data"""
+import re
 from datetime import date, datetime, timedelta
 from json.decoder import JSONDecodeError
 
@@ -7,12 +8,15 @@ from sqlalchemy.exc import SQLAlchemyError
 
 import vigorish.database as db
 from vigorish.tasks.base import Task
+from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.request_url import request_url_with_retries
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
 
 MLB_PLAYER_SEARCH_URL = "http://lookup-service-prod.mlb.com/json/named.search_player_all.bam"
+MLB_API_PLAYER_URL = "https://statsapi.mlb.com/api/v1/people/"
 MLB_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
+HEIGHT_REGEX = re.compile(r"(?P<feet>\d)' (?P<inches>\d{1,2})\"")
 
 
 class ScrapeMlbPlayerInfoTask(Task):
@@ -25,6 +29,73 @@ class ScrapeMlbPlayerInfoTask(Task):
                 "scrape_player_info_complete",
             )
         )
+
+    def find_by_mlb_id(self, mlb_id, bbref_id, debut_limit=None):
+        url = f"{MLB_API_PLAYER_URL}{mlb_id}"
+        result = request_url_with_retries(url)
+        if result.failure:
+            return result
+        response = result.value
+        resp_json = response.json()
+        if "people" not in resp_json or len(resp_json["people"]) != 1:
+            return Result.Fail("Response JSON was not in the expected format")
+        result = self.parse_player_data_v2(resp_json["people"][0], bbref_id, debut_limit)
+        if result.failure:
+            if "Player debuted before the debut limit" in result.error:
+                return Result.Ok({})
+            return result
+        player_dict = result.value
+        return self.add_player_to_database(player_dict)
+
+    def parse_player_data_v2(self, player_data, bbref_id, debut_limit=None):
+        try:
+            debut = datetime.strptime(player_data.get("mlbDebutDate", ""), DATE_ONLY).date()
+        except ValueError:  # pragma: no cover
+            debut = date.min
+
+        if debut_limit and debut.year < debut_limit:
+            return Result.Fail("Player debuted before the debut limit")
+
+        try:
+            birth_date = datetime.strptime(player_data.get("birthDate", ""), DATE_ONLY).date()
+        except ValueError:  # pragma: no cover
+            birth_date = date.min
+
+        match = HEIGHT_REGEX.search(player_data.get("height", r"0' 0\""))
+        if not match:
+            return Result.Fail("Response JSON was not in the expected format")
+        groups = match.groupdict()
+        height_total_inches = int(groups["feet"]) * 12 + int(groups["inches"])
+
+        name_given = (
+            f'{player_data.get("firstName", "")} {player_data["middleName"]}'
+            if "middleName" in player_data
+            else player_data.get("firstName", "")
+        )
+        first_name = player_data.get("useName", "") if "useName" in player_data else player_data.get("firstName", "")
+        bats = player_data.get("batSide", {})
+        throws = player_data.get("pitchHand", {})
+
+        player_dict = {
+            "name_first": first_name,
+            "name_last": player_data.get("lastName", ""),
+            "name_given": name_given,
+            "bats": bats.get("code", ""),
+            "throws": throws.get("code", ""),
+            "weight": player_data.get("weight"),
+            "height": height_total_inches,
+            "debut": debut,
+            "birth_year": birth_date.year,
+            "birth_month": birth_date.month,
+            "birth_day": birth_date.day,
+            "birth_country": player_data.get("birthCountry", ""),
+            "birth_state": player_data.get("birthStateProvince", ""),
+            "birth_city": player_data.get("birthCity", ""),
+            "bbref_id": bbref_id,
+            "mlb_id": player_data["id"],
+            "missing_mlb_id": False,
+        }
+        return Result.Ok(player_dict)
 
     def execute(self, name, bbref_id, game_date):
         return (
@@ -128,6 +199,15 @@ class ScrapeMlbPlayerInfoTask(Task):
         try:
             new_player = db.Player(**player_dict)
             self.db_session.add(new_player)
+            self.db_session.commit()
+            player_id_dict = {
+                "mlb_id": new_player.mlb_id,
+                "mlb_name": f"{new_player.name_first} {new_player.name_last}",
+                "bbref_id": new_player.bbref_id,
+                "db_player_id": new_player.id,
+            }
+            new_player_id = db.PlayerId(**player_id_dict)
+            self.db_session.add(new_player_id)
             self.db_session.commit()
             self.events.scrape_player_info_complete(new_player)
             return Result.Ok(new_player)

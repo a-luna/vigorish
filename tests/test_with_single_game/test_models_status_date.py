@@ -20,7 +20,7 @@ def test_status_date_status_report(vig_app):
         "Pitch App Count (PFx/data/no data)...........: 12/12/0",
         "PitchFX Data Errors (Valid AB/Invalid AB)....: NO 0/0",
         "Pitch Count (BBRef/Brooks/PFx)...............: 298/299/299",
-        "Pitch Count Audited (BBRef/PFx/Removed)......: 298/298/1",
+        "Pitch Count Audited (BBRef/PFx/Removed)......: 298/298/0",
     ]
 
 
@@ -60,7 +60,7 @@ def test_status_date_as_dict(vig_app):
         "scraped_only_brooks_daily_dash": False,
         "scraped_only_brooks_pitch_logs": False,
         "season_id": 11,
-        "total_at_bats_removed_pitchfx": 1,
+        "total_at_bats_removed_pitchfx": 0,
         "total_at_bats_invalid_pitchfx": 0,
         "total_at_bats_missing_pitchfx": 0,
         "total_at_bats_pitchfx_complete": 82,
@@ -69,7 +69,7 @@ def test_status_date_as_dict(vig_app):
         "total_batters_faced_pitchfx": 82,
         "total_bbref_boxscores_scraped": 1,
         "total_brooks_pitch_logs_scraped": 1,
-        "total_removed_pitchfx_count": 1,
+        "total_removed_pitchfx_count": 0,
         "total_games": 11,
         "total_games_combined": 1,
         "total_games_combined_fail": 0,

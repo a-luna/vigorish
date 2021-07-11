@@ -1,6 +1,6 @@
 import pytest
 
-from tests.conftest import CSV_FOLDER, JSON_FOLDER
+from tests.conftest import CSV_FOLDER, JSON_FOLDER, TESTS_FOLDER
 from tests.util import seed_database_with_2019_test_data
 from vigorish.app import Vigorish
 
@@ -12,6 +12,8 @@ def vig_app(request):
 
     def fin():
         app.db_session.close()
+        for file in TESTS_FOLDER.glob("vig_*.db"):
+            file.unlink()
 
     request.addfinalizer(fin)
     return app

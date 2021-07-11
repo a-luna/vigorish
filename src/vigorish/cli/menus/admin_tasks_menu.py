@@ -6,6 +6,7 @@ from vigorish.cli.menu_items.admin_tasks import (
     BackupDatabase,
     CalculatePitchTimes,
     ImportScrapedData,
+    FixOrphanedPlayerIds,
     NpmInstallUpdate,
     RestoreDatabase,
     SyncScrapedData,
@@ -32,6 +33,7 @@ class AdminTasksMenu(Menu):
         self.menu_items.append(SyncScrapedData(self.app))
         if self.app.db_setup_complete:
             self.menu_items.append(ImportScrapedData(self.app))
+            self.menu_items.append(FixOrphanedPlayerIds(self.app))
             self.menu_items.append(AddToDatabase(self.app))
             self.menu_items.append(BackupDatabase(self.app))
             self.menu_items.append(RestoreDatabase(self.app))
