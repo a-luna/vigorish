@@ -4,7 +4,6 @@ import subprocess
 import time
 from collections import defaultdict
 
-import snoop
 import enlighten
 from getch import pause
 from halo import Halo
@@ -257,7 +256,6 @@ class CombineScrapedData(MenuItem):
             self.display_results()
         return Result.Ok(self.exit_menu)
 
-    @snoop(watch_explode=["self.date_game_id_map"])
     def launch_no_prompts(self, game_date):
         self.current_game_date = game_date
         self.scrape_year = game_date.year
