@@ -35,6 +35,10 @@ def update_game_status_record(game_status, boxscore):
     game_status.scraped_bbref_boxscore = 1
     game_status.pitch_app_count_bbref = boxscore.pitch_appearance_count
     game_status.total_pitch_count_bbref = boxscore.pitch_count
+    game_status.away_team_id_br = boxscore.away_team_data.team_id_br
+    game_status.home_team_id_br = boxscore.home_team_data.team_id_br
+    game_status.away_team_runs_scored = boxscore.away_team_data.total_runs_scored_by_team
+    game_status.home_team_runs_scored = boxscore.home_team_data.total_runs_scored_by_team
 
 
 def update_pitch_app_status_records(db_session, boxscore, game_status):
