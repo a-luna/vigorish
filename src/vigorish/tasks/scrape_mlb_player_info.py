@@ -11,7 +11,7 @@ from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.request_url import request_url_with_retries
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import fuzzy_match
+from vigorish.util.string_helpers import fuzzy_match, remove_accents
 
 MLB_PLAYER_SEARCH_URL = "http://lookup-service-prod.mlb.com/json/named.search_player_all.bam"
 MLB_API_PLAYER_URL = "https://statsapi.mlb.com/api/v1/people/"
@@ -93,11 +93,11 @@ class ScrapeMlbPlayerInfoTask(Task):
             "birth_city": player_data.get("birthCity", ""),
             "bbref_id": bbref_id,
             "mlb_id": player_data["id"],
-            "missing_mlb_id": False,
         }
         return Result.Ok(player_dict)
 
     def execute(self, name, bbref_id, game_date):
+        name = remove_accents(name)
         return (
             self.get_search_url(name)
             .on_success(request_url_with_retries)
@@ -191,7 +191,6 @@ class ScrapeMlbPlayerInfoTask(Task):
             "birth_city": player_data["birth_city"],
             "bbref_id": bbref_id,
             "mlb_id": player_data["player_id"],
-            "missing_mlb_id": False,
         }
         return Result.Ok(player_dict)
 
