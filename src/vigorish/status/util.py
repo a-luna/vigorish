@@ -2,6 +2,12 @@ import vigorish.database as db
 from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
+from vigorish.util.string_helpers import validate_bbref_game_id
+
+
+def get_date_status_from_bbref_game_id(db_session, bbref_game_id):
+    game_dict = validate_bbref_game_id(bbref_game_id).value
+    return get_date_status(db_session, game_dict["game_date"])
 
 
 def get_date_status(db_session, game_date):
@@ -39,7 +45,9 @@ def get_player_id(db_session, mlb_id=None, bbref_id=None, boxscore=None):
         if result.failure:
             raise ValueError(f"Failed to retrive or scrape player id info! (bbref_id: {bbref_id})")
         player = result.value
-        player_id = player.id_map
+        player_id = db.PlayerId.find_by_mlb_id(db_session, player.mlb_id)
+    if not player_id:
+        raise ValueError(f"Failed to retrive or scrape player id info! (bbref_id: {bbref_id})")
     return player_id
 
 
