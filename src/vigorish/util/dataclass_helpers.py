@@ -65,9 +65,13 @@ def sanitize_value_for_csv(val, date_format):
         if isinstance(val, str)
         else val.strftime(date_format).strip()
         if isinstance(val, datetime)
-        else 0
+        else "0"
         if (isinstance(val, bool) and not val)
-        else 1
+        else "0"
+        if (isinstance(val, int) and not val)
+        else "0"
+        if (isinstance(val, float) and not val)
+        else "1"
         if (isinstance(val, bool) and val)
         else ""
         if not val

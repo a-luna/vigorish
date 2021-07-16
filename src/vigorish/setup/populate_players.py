@@ -94,14 +94,17 @@ def import_id_map_csv(app, csv_folder):
 
 
 def import_people_csv(app, csv_folder):
+    # To avoid populating the database with players from the 19th century, we set a limit based on the
+    # year a player debuted to determine if they need to be added.
+
+    # If a player debuted 30 years before any season, it is imposssible for them to have played in that
+    # season (MLB record for most seasons played is 27).
+
+    # The debut limit is calculated by subtracting 30 years from the earliest season that we are tracking.
+    # Any players who debuted earlier than that will not be added to the database.
     player_csv_file = csv_folder.joinpath(PEOPLE_CSV)
     csv_text = player_csv_file.read_text()
     total_rows = len([row for row in csv_text.split("\n") if row])
-    # To avoid populating the database with players from the 19th century, we set a limit based on the
-    # year a player debuted to determine if they need to be added. First, the earliest year (season)
-    # from the season table is found. Since two players have tied for the longest MLB career with 27
-    # years, setting a limit of 30 years will ensure that only players that could potentially have
-    # data tracked by this database are added.
     earliest_season = min(s.year for s in db.Season.get_all_regular_seasons(app.db_session))
     player_debut_limit = earliest_season - 30
     try:

@@ -29,7 +29,7 @@ class Player(db.Base):
     mlb_id = Column(Integer, index=True)
     scraped_transactions = Column(Boolean, default=False)
     minor_league_player = Column(Boolean, default=False)
-    missing_mlb_id = Column(Boolean, default=True)
+    missing_mlb_id = Column(Boolean, default=False)
     add_to_db_backup = Column(Boolean, default=False)
 
     id_map = relationship("PlayerId", backref=backref("player", uselist=False))
