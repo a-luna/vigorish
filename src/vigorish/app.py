@@ -57,6 +57,10 @@ class Vigorish:
             and self.get_total_number_of_rows(db.Team) > 0
         )
 
+    @property
+    def db_filepath(self):
+        return Path(self.db_url.replace("sqlite:///", ""))
+
     @cached_property
     def audit_report(self) -> AuditReport:
         return self.scraped_data.get_audit_report()
@@ -128,6 +132,12 @@ class Vigorish:
         game_ids = db.DateScrapeStatus.get_all_bbref_game_ids_for_date(self.db_session, game_date)
         return [GameData(self, game_id).get_game_data() for game_id in game_ids]
 
+    def regular_season_is_in_progress(self):
+        return db.Season.regular_season_is_in_progress(self.db_session)
+
+    def get_most_recent_scraped_date(self):
+        return db.Season.get_most_recent_scraped_date(self.db_session, datetime.today().year)
+
     def _create_db_engine(self) -> Engine:
         return create_engine(self.db_url, connect_args={"check_same_thread": False})
 
@@ -139,9 +149,8 @@ class Vigorish:
         db.Base.metadata.create_all(self.db_engine)
 
     def _delete_db_file(self) -> None:
-        db_file = Path(self.db_url.replace("sqlite:///", ""))
-        if db_file.exists():
-            db_file.unlink()
+        if self.db_filepath.exists():
+            self.db_filepath.unlink()
 
 
 def _get_db_url() -> str:
