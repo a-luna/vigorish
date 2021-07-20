@@ -66,6 +66,11 @@ class AddToDatabaseTask(Task):
             error = f"No games for MLB Season {year} qualify to have PitchFx data imported."
             return Result.Fail(error)
         self.events.add_data_to_db_start(year, game_ids)
+        self.add_data_for_games(year, game_ids)
+        self.events.add_data_to_db_complete(year)
+        return Result.Ok()
+
+    def add_data_for_games(self, year, game_ids):
         for num, game_id in enumerate(game_ids, start=1):
             game_data = GameData(self.app, game_id)
             result = self.add_player_stats_to_database(game_id, game_data)
@@ -75,8 +80,6 @@ class AddToDatabaseTask(Task):
             if result.failure:
                 return result
             self.events.add_data_to_db_progress(num, year, game_id)
-        self.events.add_data_to_db_complete(year)
-        return Result.Ok()
 
     def add_player_stats_to_database(self, game_id, game_data):
         game_status = db.GameScrapeStatus.find_by_bbref_game_id(self.db_session, game_id)

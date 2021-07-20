@@ -11,7 +11,7 @@ from vigorish.tasks.base import Task
 from vigorish.util.dt_format_strings import DATE_ONLY
 from vigorish.util.request_url import request_url_with_retries
 from vigorish.util.result import Result
-from vigorish.util.string_helpers import fuzzy_match
+from vigorish.util.string_helpers import fuzzy_match, remove_accents
 
 MLB_PLAYER_SEARCH_URL = "http://lookup-service-prod.mlb.com/json/named.search_player_all.bam"
 MLB_API_PLAYER_URL = "https://statsapi.mlb.com/api/v1/people/"
@@ -45,7 +45,7 @@ class ScrapeMlbPlayerInfoTask(Task):
                 return Result.Ok({})
             return result
         player_dict = result.value
-        return self.add_player_to_database(player_dict)
+        return self.add_player_to_database_v2(player_dict)
 
     def parse_player_data_v2(self, player_data, bbref_id, debut_limit=None):
         try:
@@ -93,11 +93,23 @@ class ScrapeMlbPlayerInfoTask(Task):
             "birth_city": player_data.get("birthCity", ""),
             "bbref_id": bbref_id,
             "mlb_id": player_data["id"],
-            "missing_mlb_id": False,
+            "add_to_db_backup": True,
         }
         return Result.Ok(player_dict)
 
+    def add_player_to_database_v2(self, player_dict):
+        try:
+            new_player = db.Player(**player_dict)
+            self.db_session.add(new_player)
+            self.db_session.commit()
+            self.events.scrape_player_info_complete(new_player)
+            return Result.Ok(new_player)
+        except SQLAlchemyError as e:  # pragma: no cover
+            return Result.Fail(f"Error: {repr(e)}")
+
     def execute(self, name, bbref_id, game_date):
+        name = remove_accents(name)
+        self.name = name
         return (
             self.get_search_url(name)
             .on_success(request_url_with_retries)
@@ -122,13 +134,31 @@ class ScrapeMlbPlayerInfoTask(Task):
             resp_json = response.json()
             query_results = resp_json["search_player_all"]["queryResults"]
             num_results = int(query_results["totalSize"])
+            if not num_results:
+                result = self.try_alternate_url().on_success(request_url_with_retries)
+                if result.failure:
+                    return result
+                response = result.value
+                resp_json = response.json()
+                query_results = resp_json["search_player_all"]["queryResults"]
+                num_results = int(query_results["totalSize"])
+            if not num_results:
+                return Result.Fail(f"Failed to retrieve any results for player name: {self.name} (Tried 2 URLs)")
             return Result.Ok((query_results, num_results))
-        except (JSONDecodeError, KeyError) as e:  # pragma: no cover
+        except (JSONDecodeError, KeyError) as e:
             error = f"Failed to decode HTTP response as JSON: {repr(e)}\n{e.response.text}"
             return Result.Fail(error)
         except ValueError:  # pragma: no cover
             error = f"Failed to parse number of results from search response: {query_results}"
             return Result.Fail(error)
+
+    def try_alternate_url(self):
+        split = self.name.split()
+        if len(split) <= 2:
+            return Result.Fail(f"Failed to retrieve any results for player name: {self.name}")
+        name_part = split[-1].upper()
+        url = f"{MLB_PLAYER_SEARCH_URL}?sport_code='mlb'&name_part='{name_part}%25'&active_sw='Y'"
+        return Result.Ok(url)
 
     def get_player_data(self, results_tuple, name, game_date):
         results = results_tuple[0]
@@ -191,7 +221,7 @@ class ScrapeMlbPlayerInfoTask(Task):
             "birth_city": player_data["birth_city"],
             "bbref_id": bbref_id,
             "mlb_id": player_data["player_id"],
-            "missing_mlb_id": False,
+            "add_to_db_backup": True,
         }
         return Result.Ok(player_dict)
 
@@ -200,16 +230,30 @@ class ScrapeMlbPlayerInfoTask(Task):
             new_player = db.Player(**player_dict)
             self.db_session.add(new_player)
             self.db_session.commit()
+            player_id = db.PlayerId.find_by_mlb_id(self.db_session, new_player.mlb_id)
+            if not player_id:
+                name = f"{new_player.name_first} {new_player.name_last}"
+                result = self.add_player_id_to_database(name, new_player.mlb_id, new_player.bbref_id)
+                if result.failure:
+                    return result
+                player_id = result.value
+            player_id.db_player_id = new_player.id
+            self.db_session.commit()
+            self.events.scrape_player_info_complete(new_player)
+            return Result.Ok(new_player)
+        except SQLAlchemyError as e:  # pragma: no cover
+            return Result.Fail(f"Error: {repr(e)}")
+
+    def add_player_id_to_database(self, name, mlb_id, bbref_id):
+        try:
             player_id_dict = {
-                "mlb_id": new_player.mlb_id,
-                "mlb_name": f"{new_player.name_first} {new_player.name_last}",
-                "bbref_id": new_player.bbref_id,
-                "db_player_id": new_player.id,
+                "mlb_id": mlb_id,
+                "mlb_name": name,
+                "bbref_id": bbref_id,
             }
             new_player_id = db.PlayerId(**player_id_dict)
             self.db_session.add(new_player_id)
             self.db_session.commit()
-            self.events.scrape_player_info_complete(new_player)
-            return Result.Ok(new_player)
+            return Result.Ok(new_player_id)
         except SQLAlchemyError as e:  # pragma: no cover
             return Result.Fail(f"Error: {repr(e)}")

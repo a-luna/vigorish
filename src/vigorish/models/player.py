@@ -29,7 +29,7 @@ class Player(db.Base):
     mlb_id = Column(Integer, index=True)
     scraped_transactions = Column(Boolean, default=False)
     minor_league_player = Column(Boolean, default=False)
-    missing_mlb_id = Column(Boolean, default=True)
+    missing_mlb_id = Column(Boolean, default=False)
     add_to_db_backup = Column(Boolean, default=False)
 
     id_map = relationship("PlayerId", backref=backref("player", uselist=False))
@@ -38,6 +38,9 @@ class Player(db.Base):
 
     def __repr__(self):
         return f"<Player name={self.name_first} {self.name_last}, bbref_id={self.bbref_id}>"
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):

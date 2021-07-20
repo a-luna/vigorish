@@ -1,7 +1,8 @@
 """Individual game info scraped from brooksbaseball.com."""
 from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Dict
+
+from vigorish.util.string_helpers import validate_bbref_game_id
 
 
 @dataclass(eq=True)
@@ -26,7 +27,8 @@ class BrooksGameInfo:
 
     @property
     def game_date(self):
-        return datetime(self.game_date_year, self.game_date_month, self.game_date_day).date()
+        game_dict = validate_bbref_game_id(self.bbref_game_id).value
+        return game_dict["game_date"]
 
     @property
     def all_pitch_app_ids(self):

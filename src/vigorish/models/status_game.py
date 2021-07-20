@@ -27,6 +27,10 @@ class GameScrapeStatus(db.Base):
     game_time_zone = Column(String)
     bbref_game_id = Column(String, unique=True)
     bb_game_id = Column(String, unique=True)
+    away_team_id_br = Column(String)
+    home_team_id_br = Column(String)
+    away_team_runs_scored = Column(Integer)
+    home_team_runs_scored = Column(Integer)
     scraped_bbref_boxscore = Column(Integer, default=0)
     scraped_brooks_pitch_logs = Column(Integer, default=0)
     combined_data_success = Column(Integer, default=0)
@@ -334,6 +338,21 @@ class GameScrapeStatus(db.Base):
             game.bbref_game_id
             for game in games_for_season
             if game.away_team_id_bb == bb_team_id or game.home_team_id_bb == bb_team_id
+        ]
+
+    @classmethod
+    def get_all_games_for_team(cls, db_session, team_id_br, year):
+        season = Season.find_by_year(db_session, year)
+        if not season:
+            return None
+        games_for_season = list(db_session.query(cls).filter_by(season_id=season.id).all())
+        games_for_season.sort(key=lambda x: x.scrape_status_date_id)
+        bb_team_id = get_brooks_team_id(team_id_br)
+        return [
+            game
+            for game in games_for_season
+            if (game.away_team_id_bb == bb_team_id or game.home_team_id_bb == bb_team_id)
+            and game.scraped_bbref_boxscore
         ]
 
     @classmethod

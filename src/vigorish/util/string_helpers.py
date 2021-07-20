@@ -1,5 +1,6 @@
 """Utility functions that transform and/or produce string values."""
 import re
+import unicodedata
 from datetime import datetime
 
 from rapidfuzz import process
@@ -317,3 +318,8 @@ def replace_char_with_newlines(input_str, replace):
 def format_decimal_bat_stat(input):
     stat_with_leading_zero = f"{input:0.3f}"
     return stat_with_leading_zero[1:] if float(stat_with_leading_zero) < 1 else stat_with_leading_zero
+
+
+def remove_accents(input):
+    text = unicodedata.normalize("NFD", input).encode("ascii", "ignore").decode("utf-8")
+    return str(text)
