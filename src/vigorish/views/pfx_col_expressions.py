@@ -116,6 +116,8 @@ hr_per_fb = case([(total_fly_balls > 0, hr_per_fb)], else_=0.0).label("hr_per_fb
 avg_launch_speed = func.sum(db.PitchFx.launch_speed) / cast(total_balls_in_play, Float)
 avg_launch_speed = case([(total_balls_in_play > 0, avg_launch_speed)], else_=0.0).label("avg_launch_speed")
 
+max_launch_speed = func.max(db.PitchFx.launch_speed).label("max_launch_speed")
+
 avg_launch_angle = func.sum(db.PitchFx.launch_angle) / cast(total_balls_in_play, Float)
 avg_launch_angle = case([(total_balls_in_play > 0, avg_launch_angle)], else_=0.0).label("avg_launch_angle")
 

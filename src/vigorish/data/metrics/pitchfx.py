@@ -21,6 +21,7 @@ PitchTypeMetricsDict = Dict[PitchType, PitchFxMetricsDict]
 class PitchFxMetrics:
     mlb_id: int = field(repr=False, default=0)
     p_throws: str = field(repr=False, default="")
+    bat_stand: str = field(repr=False, default="")
     pitch_type: PitchType = PitchType.NONE
     total_pitches: int = field(repr=False, default=0)
     total_pa: int = field(repr=False, default=0)
@@ -44,6 +45,7 @@ class PitchFxMetrics:
     soft_hit_rate: float = field(repr=False, default=0.0)
     barrel_rate: float = field(repr=False, default=0.0)
     avg_launch_speed: float = field(repr=False, default=0.0)
+    max_launch_speed: float = field(repr=False, default=0.0)
     avg_launch_angle: float = field(repr=False, default=0.0)
     avg_hit_distance: float = field(repr=False, default=0.0)
     bb_rate: float = field(repr=False, default=0.0)
