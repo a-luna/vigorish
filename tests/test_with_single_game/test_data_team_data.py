@@ -423,14 +423,14 @@ def test_team_temp(vig_app):
     temp = vig_app.scraped_data.get_pitch_stats_for_rp_for_season_for_all_teams(2019)
 
     temp = away_team_data.bat_stats_by_lineup_spot
-    temp = away_team_data.get_bat_stats_for_lineup_spot_by_year(2)
-    temp = away_team_data.get_bat_stats_for_lineup_spot_by_player(2)
-    temp = vig_app.scraped_data.get_bat_stats_for_lineup_spot_for_season_for_all_teams(1, 2019)
+    temp = away_team_data.get_bat_stats_for_lineup_spot_by_year([2])
+    temp = away_team_data.get_bat_stats_for_lineup_spot_by_player([2])
+    temp = vig_app.scraped_data.get_bat_stats_for_lineup_spot_for_season_for_all_teams([1], 2019)
 
     temp = away_team_data.bat_stats_by_defpos
-    temp = away_team_data.get_bat_stats_for_defpos_by_year(DefensePosition.CATCHER)
-    temp = away_team_data.get_bat_stats_for_defpos_by_player(DefensePosition.CATCHER)
-    temp = vig_app.scraped_data.get_bat_stats_for_defpos_for_season_for_all_teams(DefensePosition.CATCHER, 2019)
+    temp = away_team_data.get_bat_stats_for_defpos_by_year([DefensePosition.CATCHER])
+    temp = away_team_data.get_bat_stats_for_defpos_by_player([DefensePosition.CATCHER])
+    temp = vig_app.scraped_data.get_bat_stats_for_defpos_for_season_for_all_teams([DefensePosition.CATCHER], 2019)
 
     temp = away_team_data.bat_stats_for_starters
     temp = away_team_data.bat_stats_for_starters_by_year

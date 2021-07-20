@@ -101,18 +101,18 @@ class TeamData:
     def bat_stats_for_subs_by_player(self) -> List[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_subs_by_player_for_team(self.team_id_bbref, self.year)
 
-    def get_bat_stats_for_lineup_spot_by_year(self, lineup_spot: int) -> Dict[int, BatStatsMetrics]:
-        return self.scraped_data.get_bat_stats_for_lineup_spot_by_year_for_team(lineup_spot, self.team_id_bbref)
+    def get_bat_stats_for_lineup_spot_by_year(self, bat_order_list: List[int]) -> Dict[int, BatStatsMetrics]:
+        return self.scraped_data.get_bat_stats_for_lineup_spot_by_year_for_team(bat_order_list, self.team_id_bbref)
 
-    def get_bat_stats_for_lineup_spot_by_player(self, lineup_spot: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_for_lineup_spot_by_player(self, bat_order_list: List[int]) -> List[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_lineup_spot_by_player_for_team(
-            lineup_spot, self.team_id_bbref, self.year
+            bat_order_list, self.team_id_bbref, self.year
         )
 
-    def get_bat_stats_for_defpos_by_year(self, def_position: DefensePosition) -> Dict[int, BatStatsMetrics]:
-        return self.scraped_data.get_bat_stats_for_defpos_by_year_for_team(def_position, self.team_id_bbref)
+    def get_bat_stats_for_defpos_by_year(self, def_position_list: List[DefensePosition]) -> Dict[int, BatStatsMetrics]:
+        return self.scraped_data.get_bat_stats_for_defpos_by_year_for_team(def_position_list, self.team_id_bbref)
 
-    def get_bat_stats_for_defpos_by_player(self, def_position: DefensePosition) -> List[BatStatsMetrics]:
+    def get_bat_stats_for_defpos_by_player(self, def_position_list: List[DefensePosition]) -> List[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_defpos_by_player_for_team(
-            def_position, self.team_id_bbref, self.year
+            def_position_list, self.team_id_bbref, self.year
         )
