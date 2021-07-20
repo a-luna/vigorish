@@ -1,5 +1,6 @@
 # flake8: noqa
 from vigorish.models.bat_stats import BatStats, BatStatsCsvRow
+from vigorish.models.batter_percentiles import BatterPercentile
 from vigorish.models.pitch_stats import PitchStats, PitchStatsCsvRow
 from vigorish.models.pitch_type_percentiles import PitchTypePercentile
 from vigorish.models.pitchfx import PitchFx, PitchFxCsvRow
