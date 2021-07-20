@@ -1,6 +1,6 @@
 {
   "name": "vig-nodejs",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "NightmareJS and other node modules used to scrape html from websites",
   "author": "Aaron Luna <contact@aaronluna.dev> (https://aaronluna.dev)",
   "license": "MIT",
