@@ -140,7 +140,10 @@ class ScrapeTaskABC(ABC):
                     continue
                 result = self.parse_html(url_details)
                 if result.failure:
-                    if "Unable to parse any game data" in result.error:
+                    if (
+                        "Unable to parse any game data" in result.error
+                        or "will be completed at a later date" in result.error
+                    ):
                         continue
                     return result
                 parsed_data = result.value

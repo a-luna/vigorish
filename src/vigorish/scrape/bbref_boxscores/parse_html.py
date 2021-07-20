@@ -21,6 +21,7 @@ from vigorish.util.numeric_helpers import is_even
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
 
+_SPECIAL_NOTE_XPATH = '//div[@class="special_note"]/text()'
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
 _AWAY_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[1]/div[3]/text()'
 _HOME_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[2]/div[3]/text()'
@@ -157,7 +158,9 @@ _INNING_TOTALS_REGEX = re.compile(
 def parse_bbref_boxscore(scraped_html, url, game_id):
     """Parse boxscore data from the page source."""
     page_content = html.fromstring(scraped_html, base_url=url)
-    (away_team_id, home_team_id) = _parse_team_ids(page_content, url)
+    if _game_is_incomplete(page_content):
+        return Result.Fail(f"Game was suspended and will be completed at a later date (game_id: {game_id})")
+    (away_team_id, home_team_id) = _parse_team_ids(page_content)
 
     (
         away_team_bat_table,
@@ -223,7 +226,15 @@ def parse_bbref_boxscore(scraped_html, url, game_id):
     return Result.Ok(boxscore)
 
 
-def _parse_team_ids(page_content, url):
+def _game_is_incomplete(page_content):
+    result = page_content.xpath(_SPECIAL_NOTE_XPATH)
+    if not result:
+        return False
+    special_note = result[0].lower()
+    return "game was suspended" in special_note and "will be completed" in special_note
+
+
+def _parse_team_ids(page_content):
     away_team_id = _parse_away_team_id(page_content)
     if not away_team_id:
         error = "Failed to parse away team ID"
