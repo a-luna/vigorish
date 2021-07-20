@@ -39,6 +39,9 @@ class Player(db.Base):
     def __repr__(self):
         return f"<Player name={self.name_first} {self.name_last}, bbref_id={self.bbref_id}>"
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):
         return db_session.query(cls).filter_by(bbref_id=bbref_id).first()
