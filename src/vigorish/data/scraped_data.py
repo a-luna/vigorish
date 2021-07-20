@@ -260,6 +260,54 @@ class ScrapedData:
     def player_name_search(self, query):
         return self.name_search.fuzzy_match(query)
 
+    def get_season_standings(self, year=None):
+        if not year:
+            most_recent_season = max(s.year for s in db.Season.get_all_regular_seasons(self.db_session))
+            year = most_recent_season
+        standings = []
+        all_teams = db.Team.get_all_teams_for_season(self.db_session, year)
+        for team in all_teams:
+            all_games = db.GameScrapeStatus.get_all_games_for_team(self.db_session, team.team_id_br, year)
+            away_games = list(filter(lambda x: x.away_team_id_br == team.team_id_br, all_games))
+            home_games = list(filter(lambda x: x.home_team_id_br == team.team_id_br, all_games))
+            away_results = self._get_away_game_results(away_games)
+            home_results = self._get_home_game_results(home_games)
+            team_results = self._combine_team_results(team, away_results, home_results)
+            standings.append(team_results)
+        return standings
+
+    def _get_away_game_results(self, games):
+        wins, losses, runs_scored, runs_against = 0, 0, 0, 0
+        for game in games:
+            if game.away_team_runs_scored > game.home_team_runs_scored:
+                wins += 1
+            else:
+                losses += 1
+            runs_scored += game.away_team_runs_scored
+            runs_against += game.home_team_runs_scored
+        return (wins, losses, runs_scored, runs_against)
+
+    def _get_home_game_results(self, games):
+        wins, losses, runs_scored, runs_against = 0, 0, 0, 0
+        for game in games:
+            if game.home_team_runs_scored > game.away_team_runs_scored:
+                wins += 1
+            else:
+                losses += 1
+            runs_scored += game.home_team_runs_scored
+            runs_against += game.away_team_runs_scored
+        return (wins, losses, runs_scored, runs_against)
+
+    def _combine_team_results(self, team, away_results, home_results):
+        (away_wins, away_losses, away_runs_scored, away_runs_against) = away_results
+        (home_wins, home_losses, home_runs_scored, home_runs_against) = home_results
+        team_dict = team.as_dict()
+        team_dict["wins"] = away_wins + home_wins
+        team_dict["losses"] = away_losses + home_losses
+        team_dict["runs"] = away_runs_scored + home_runs_scored
+        team_dict["runs_against"] = away_runs_against + home_runs_against
+        return team_dict
+
     # TEAM PITCH STATS
 
     def get_pitch_stats_for_team(self, team_id_bbref: str, year: int) -> PitchStatsMetrics:

@@ -351,7 +351,8 @@ class GameScrapeStatus(db.Base):
         return [
             game
             for game in games_for_season
-            if game.away_team_id_bb == bb_team_id or game.home_team_id_bb == bb_team_id
+            if (game.away_team_id_bb == bb_team_id or game.home_team_id_bb == bb_team_id)
+            and game.scraped_bbref_boxscore
         ]
 
     @classmethod
