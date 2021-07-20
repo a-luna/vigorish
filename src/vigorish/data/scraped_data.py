@@ -14,6 +14,7 @@ from vigorish.data.metrics import (
 )
 from vigorish.data.name_search import PlayerNameSearch
 from vigorish.enums import DataSet, DefensePosition, PitchType, VigFile
+from vigorish.util.list_helpers import flatten_list2d, group_and_sort_list
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
 from vigorish.util.result import Result
 
@@ -397,20 +398,25 @@ class ScrapedData:
         return {s.year: s for s in team_stats}
 
     def get_bat_stats_for_lineup_spot_by_year_for_team(
-        self, lineup_spot: int, team_id_bbref: str
+        self, bat_order_list: List[int], team_id_bbref: str
     ) -> Dict[int, BatStatsMetrics]:
         team_stats = db.Team_BatStats_By_BatOrder_By_Year.get_bat_stats_for_lineup_spot_by_year_for_team(
-            self.db_engine, lineup_spot, team_id_bbref
+            self.db_engine, bat_order_list, team_id_bbref
         )
-        return {s.year: s for s in team_stats}
+        grouped = group_and_sort_list(team_stats, "bat_order", "total_games", sort_all_desc=True)
+        team_stats_sorted = flatten_list2d(iter(grouped.values()))
+        return {s.year: s for s in team_stats_sorted}
 
     def get_bat_stats_for_defpos_by_year_for_team(
-        self, def_position: DefensePosition, team_id_bbref: str
+        self, def_position_list: List[DefensePosition], team_id_bbref: str
     ) -> Dict[int, BatStatsMetrics]:
+        def_pos_num_list = [int(def_pos) for def_pos in def_position_list]
         team_stats = db.Team_BatStats_By_DefPosition_By_Year.get_bat_stats_for_defpos_by_year_for_team(
-            self.db_engine, int(def_position), team_id_bbref
+            self.db_engine, def_pos_num_list, team_id_bbref
         )
-        return {s.year: s for s in team_stats}
+        grouped = group_and_sort_list(team_stats, "def_position", "total_games", sort_all_desc=True)
+        team_stats_sorted = flatten_list2d(iter(grouped.values()))
+        return {s.year: s for s in team_stats_sorted}
 
     def get_bat_stats_for_starters_by_year_for_team(self, team_id_bbref: str) -> Dict[int, BatStatsMetrics]:
         team_stats = db.Team_BatStats_For_Starters_By_Year.get_bat_stats_for_starters_by_year_for_team(
@@ -431,20 +437,23 @@ class ScrapedData:
         return sorted(team_stats, key=lambda x: x.plate_appearances, reverse=True)
 
     def get_bat_stats_for_lineup_spot_by_player_for_team(
-        self, lineup_spot: int, team_id_bbref: str, year: int
+        self, bat_order_list: List[int], team_id_bbref: str, year: int
     ) -> List[BatStatsMetrics]:
         team_stats = db.Team_BatStats_By_BatOrder_By_Player_By_Year.get_bat_stats_for_lineup_spot_by_player_for_team(
-            self.db_engine, lineup_spot, team_id_bbref, year
+            self.db_engine, bat_order_list, team_id_bbref, year
         )
-        return sorted(team_stats, key=lambda x: x.plate_appearances, reverse=True)
+        grouped = group_and_sort_list(team_stats, "bat_order", "total_games", sort_all_desc=True)
+        return flatten_list2d(iter(grouped.values()))
 
     def get_bat_stats_for_defpos_by_player_for_team(
-        self, def_position: DefensePosition, team_id_bbref: str, year: int
+        self, def_position_list: List[DefensePosition], team_id_bbref: str, year: int
     ) -> List[BatStatsMetrics]:
+        def_pos_num_list = [int(def_pos) for def_pos in def_position_list]
         team_stats = db.Team_BatStats_By_DefPosition_By_Player_By_Year.get_bat_stats_for_defpos_by_player_for_team(
-            self.db_engine, int(def_position), team_id_bbref, year
+            self.db_engine, def_pos_num_list, team_id_bbref, year
         )
-        return sorted(team_stats, key=lambda x: x.plate_appearances, reverse=True)
+        grouped = group_and_sort_list(team_stats, "def_position", "total_games", sort_all_desc=True)
+        return flatten_list2d(iter(grouped.values()))
 
     def get_bat_stats_for_starters_by_player_for_team(self, team_id_bbref: str, year: int) -> List[BatStatsMetrics]:
         team_stats = db.Team_BatStats_For_Starters_By_Player_By_Year.get_bat_stats_for_starters_by_player_for_team(
@@ -463,32 +472,33 @@ class ScrapedData:
         return _sort_and_map_team_bat_stats(team_stats)
 
     def get_bat_stats_for_lineup_spot_for_season_for_all_teams(
-        self, lineup_spot: int, year: int
+        self, bat_order_list: List[int], year: int
     ) -> Dict[str, BatStatsMetrics]:
         team_batstats = db.Team_BatStats_By_BatOrder_By_Year.get_bat_stats_for_lineup_spot_for_season_for_all_teams(
-            self.db_engine, lineup_spot, year
+            self.db_engine, bat_order_list, year
         )
         return _sort_and_map_team_bat_stats(team_batstats)
 
     def get_bat_stats_for_defpos_for_season_for_all_teams(
-        self, def_position: DefensePosition, year: int
+        self, def_position_list: List[DefensePosition], year: int
     ) -> Dict[str, BatStatsMetrics]:
-        team_batstats = db.Team_BatStats_By_DefPosition_By_Year.get_bat_stats_for_defpos_for_season_for_all_teams(
-            self.db_engine, int(def_position), year
+        def_pos_num_list = [int(def_pos) for def_pos in def_position_list]
+        team_stats = db.Team_BatStats_By_DefPosition_By_Year.get_bat_stats_for_defpos_for_season_for_all_teams(
+            self.db_engine, def_pos_num_list, year
         )
-        return _sort_and_map_team_bat_stats(team_batstats)
+        return _sort_and_map_team_bat_stats(team_stats)
 
     def get_bat_stats_for_starters_for_season_for_all_teams(self, year: int) -> Dict[str, BatStatsMetrics]:
-        team_batstats = db.Team_BatStats_For_Starters_By_Year.get_bat_stats_for_starters_for_season_for_all_teams(
+        team_stats = db.Team_BatStats_For_Starters_By_Year.get_bat_stats_for_starters_for_season_for_all_teams(
             self.db_engine, year
         )
-        return _sort_and_map_team_bat_stats(team_batstats)
+        return _sort_and_map_team_bat_stats(team_stats)
 
     def get_bat_stats_for_subs_for_season_for_all_teams(self, year: int) -> Dict[str, BatStatsMetrics]:
-        team_batstats = db.Team_BatStats_For_Subs_By_Year.get_bat_stats_for_subs_for_season_for_all_teams(
+        team_stats = db.Team_BatStats_For_Subs_By_Year.get_bat_stats_for_subs_for_season_for_all_teams(
             self.db_engine, year
         )
-        return _sort_and_map_team_bat_stats(team_batstats)
+        return _sort_and_map_team_bat_stats(team_stats)
 
     # PLAYER PITCH STATS
 

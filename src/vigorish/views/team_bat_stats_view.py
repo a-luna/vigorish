@@ -146,14 +146,14 @@ class Team_BatStats_By_BatOrder_By_Year(db.Base):
         return BatStatsMetrics.from_query_results(results) if results else []
 
     @classmethod
-    def get_bat_stats_for_lineup_spot_by_year_for_team(cls, db_engine, lineup_spot, team_id_bbref):
-        s = select([cls]).where(and_(cls.bat_order == lineup_spot, cls.team_id_bbref == team_id_bbref))
+    def get_bat_stats_for_lineup_spot_by_year_for_team(cls, db_engine, bat_order_list, team_id_bbref):
+        s = select([cls]).where(and_(cls.bat_order.in_(bat_order_list), cls.team_id_bbref == team_id_bbref))
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
     @classmethod
-    def get_bat_stats_for_lineup_spot_for_season_for_all_teams(cls, db_engine, lineup_spot, year):
-        s = select([cls]).where(and_(cls.bat_order == lineup_spot, cls.year == year))
+    def get_bat_stats_for_lineup_spot_for_season_for_all_teams(cls, db_engine, bat_order_list, year):
+        s = select([cls]).where(and_(cls.bat_order.in_(bat_order_list), cls.year == year))
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
@@ -218,14 +218,14 @@ class Team_BatStats_By_DefPosition_By_Year(db.Base):
         return BatStatsMetrics.from_query_results(results) if results else []
 
     @classmethod
-    def get_bat_stats_for_defpos_by_year_for_team(cls, db_engine, def_position, team_id_bbref):
-        s = select([cls]).where(and_(cls.def_position == def_position, cls.team_id_bbref == team_id_bbref))
+    def get_bat_stats_for_defpos_by_year_for_team(cls, db_engine, def_position_list, team_id_bbref):
+        s = select([cls]).where(and_(cls.def_position.in_(def_position_list), cls.team_id_bbref == team_id_bbref))
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
     @classmethod
-    def get_bat_stats_for_defpos_for_season_for_all_teams(cls, db_engine, def_position, year):
-        s = select([cls]).where(and_(cls.def_position == def_position, cls.year == year))
+    def get_bat_stats_for_defpos_for_season_for_all_teams(cls, db_engine, def_position_list, year):
+        s = select([cls]).where(and_(cls.def_position.in_(def_position_list), cls.year == year))
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
 
@@ -493,9 +493,9 @@ class Team_BatStats_By_BatOrder_By_Player_By_Year(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_for_lineup_spot_by_player_for_team(cls, db_engine, lineup_spot, team_id_bbref, year):
+    def get_bat_stats_for_lineup_spot_by_player_for_team(cls, db_engine, bat_order_list, team_id_bbref, year):
         s = select([cls]).where(
-            and_(cls.bat_order == lineup_spot, cls.team_id_bbref == team_id_bbref, cls.year == year)
+            and_(cls.bat_order.in_(bat_order_list), cls.team_id_bbref == team_id_bbref, cls.year == year)
         )
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
@@ -558,9 +558,9 @@ class Team_BatStats_By_DefPosition_By_Player_By_Year(db.Base):
     )
 
     @classmethod
-    def get_bat_stats_for_defpos_by_player_for_team(cls, db_engine, def_position, team_id_bbref, year):
+    def get_bat_stats_for_defpos_by_player_for_team(cls, db_engine, def_position_list, team_id_bbref, year):
         s = select([cls]).where(
-            and_(cls.def_position == def_position, cls.team_id_bbref == team_id_bbref, cls.year == year)
+            and_(cls.def_position.in_(def_position_list), cls.team_id_bbref == team_id_bbref, cls.year == year)
         )
         results = db_engine.execute(s).fetchall()
         return BatStatsMetrics.from_query_results(results) if results else []
