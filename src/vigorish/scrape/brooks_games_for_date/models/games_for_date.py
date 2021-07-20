@@ -26,6 +26,10 @@ class BrooksGamesForDate:
     def all_bbref_game_ids(self):
         return [game.bbref_game_id for game in self.games]
 
+    @property
+    def all_bb_game_ids(self):
+        return [game.bb_game_id for game in self.games]
+
     def as_dict(self):
         """Convert daily boxscore URL values to a dictionary."""
         return {
