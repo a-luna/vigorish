@@ -1,5 +1,5 @@
 """Db model that describes a MLB season and tracks data scraping progress."""
-from datetime import date
+from datetime import date, datetime
 
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -527,6 +527,23 @@ class Season(db.Base):
             error = f"{date_str} is not within the scope of the {season.name}"
             return Result.Fail(error)
         return Result.Ok(season)
+
+    @classmethod
+    def regular_season_is_in_progress(cls, db_session):
+        today = datetime.today()
+        current_season = cls.find_by_year(db_session, today.year)
+        return current_season.start_date <= today and today <= current_season.end_date if current_season else False
+
+    @classmethod
+    def get_most_recent_scraped_date(cls, db_session, year):
+        season = cls.find_by_year(db_session, year)
+        if not season:
+            return None
+        today = datetime.today()
+        if today < season.start_date:
+            last_season = cls.find_by_year(db_session, year - 1)
+            return last_season.end_date
+        return max(d.game_date for d in season.dates if d.combined_data_for_all_pitchfx_logs)
 
     @classmethod
     def validate_date_range(cls, db_session, start, end):
