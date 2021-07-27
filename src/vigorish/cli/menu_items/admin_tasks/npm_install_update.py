@@ -3,10 +3,8 @@ import subprocess
 from tempfile import TemporaryDirectory
 
 from getch import pause
-from halo import Halo
 
 from vigorish.cli.components import print_heading, print_message, yes_no_prompt
-from vigorish.cli.components.util import get_random_cli_color, get_random_dots_spinner
 from vigorish.cli.menu_item import MenuItem
 from vigorish.config.project_paths import NIGHTMAREJS_FOLDER, NODEJS_INBOX
 from vigorish.constants import EMOJIS
@@ -16,7 +14,7 @@ from vigorish.util.sys_helpers import node_is_installed, node_modules_folder_exi
 INSTALL_ERROR = "Error! Node.js is not installed, see README for install instructions."
 INSTALL_MESSAGE = "You must install all required node packages in order to scrape any data."
 INSTALL_PROMPT = (
-    "\nSelect YES install Nightmare, Xfvb, and other node packages\n" "Select NO to return to the previous menu"
+    "\nSelect YES to install Nightmare, Xfvb, and other node packages\n" "Select NO to return to the previous menu"
 )
 UPDATE_MESSAGE = "Nightmare and all node dependencies are installed."
 UPDATE_PROMPT = (
@@ -55,20 +53,9 @@ class NpmInstallUpdate(MenuItem):
             return Result.Ok(self.exit_menu)
         subprocess.run(["clear"])
         print_heading(self.menu_heading, fg="bright_yellow")
-        spinner = Halo(spinner=get_random_dots_spinner(), color=get_random_cli_color())
-        spinner.text = "Updating node packages..." if node_modules_folder_exists() else "Installing node packages..."
-        spinner.start()
-        cmd_output = list(run_command(command, cwd=str(NIGHTMAREJS_FOLDER)))
-
-        subprocess.run(["clear"])
-        print_heading(self.menu_heading, fg="bright_yellow")
-        spinner.succeed(
-            "All node packages are up-to-date!"
-            if node_modules_folder_exists()
-            else "Successfully installed all node dependencies!"
-        )
-        for s in cmd_output:
-            print_message(s)
+        result = run_command(command, cwd=str(NIGHTMAREJS_FOLDER))
+        if result.failure:
+            return result
         if temp_folder:
             temp_folder.cleanup()
         pause(message="\nPress any key to continue...")

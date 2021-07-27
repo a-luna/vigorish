@@ -5,7 +5,7 @@ import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Tuple, Union
+import sys
 from zipfile import ZipFile
 
 from Naked.toolshed.shell import execute as execute_shell_command
@@ -22,19 +22,17 @@ ONE_GB = ONE_MB * 1000
 
 
 def run_command(command, cwd=None, shell=True, text=True):  # pragma: no cover
-    process = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        cwd=cwd,
-        shell=shell,
-        text=text,
-    )
-    for line in iter(process.stdout.readline, ""):
-        if line:
-            line = line[:-1] if line.endswith("\n") else line
-            yield line
-    print()
+    try:
+        subprocess.check_call(command, stdout=sys.stdout, stderr=subprocess.STDOUT, cwd=cwd, shell=shell, text=text)
+        return Result.Ok()
+    except subprocess.CalledProcessError as e:
+        cmd = e.cmd
+        return_code = e.returncode
+        stderr = e.stderr
+        error = f"An error occurred while executing the command below:\n\tCommand: {cmd} (return code = {return_code})"
+        if stderr:
+            error += f"\n\tError: {stderr}"
+        return Result.Fail(error)
 
 
 def execute_nodejs_script(script_file_path, script_args):  # pragma: no cover
