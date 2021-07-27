@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 from dataclass_csv import accept_whitespaces
@@ -57,7 +59,7 @@ class PitchAppScrapeStatus(db.Base):
         return f'<PitchAppScrapeStatus pitch_app_id="{self.pitch_app_id}">'
 
     @classmethod
-    def find_by_pitch_app_id(cls, db_session, pitch_app_id):
+    def find_by_pitch_app_id(cls, db_session, pitch_app_id) -> PitchAppScrapeStatus:
         return db_session.query(cls).filter_by(pitch_app_id=pitch_app_id).first()
 
     @classmethod

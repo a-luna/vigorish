@@ -60,10 +60,10 @@ def dict_to_csv_row(csv_dict, date_format):
 
 
 def sanitize_value_for_csv(val, date_format):
-    return (
+    if isinstance(val, str):
         val.replace(",", ";")
-        if isinstance(val, str)
-        else val.strftime(date_format).strip()
+    return (
+        val.strftime(date_format).strip()
         if isinstance(val, datetime)
         else "0"
         if (isinstance(val, bool) and not val)
