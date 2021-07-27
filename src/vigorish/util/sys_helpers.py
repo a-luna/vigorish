@@ -1,11 +1,13 @@
 """Utility functions that interact with the terminal."""
+import hashlib
 import os
 import platform
 import re
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Tuple, Union
+import sys
+from typing import Dict, Tuple, Union
 from zipfile import ZipFile
 
 from Naked.toolshed.shell import execute as execute_shell_command
@@ -19,22 +21,21 @@ from vigorish.util.result import Result
 ONE_KB = 1000
 ONE_MB = ONE_KB * 1000
 ONE_GB = ONE_MB * 1000
+CHUNK_SIZE = 8192
 
 
 def run_command(command, cwd=None, shell=True, text=True):  # pragma: no cover
-    process = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        cwd=cwd,
-        shell=shell,
-        text=text,
-    )
-    for line in iter(process.stdout.readline, ""):
-        if line:
-            line = line[:-1] if line.endswith("\n") else line
-            yield line
-    print()
+    try:
+        subprocess.check_call(command, stdout=sys.stdout, stderr=subprocess.STDOUT, cwd=cwd, shell=shell, text=text)
+        return Result.Ok()
+    except subprocess.CalledProcessError as e:
+        cmd = e.cmd
+        return_code = e.returncode
+        stderr = e.stderr
+        error = f"An error occurred while executing the command below:\n\tCommand: {cmd} (return code = {return_code})"
+        if stderr:
+            error += f"\n\tError: {stderr}"
+        return Result.Fail(error)
 
 
 def execute_nodejs_script(script_file_path, script_args):  # pragma: no cover
@@ -204,3 +205,26 @@ def file_size_str(size_bytes):
         if size_bytes > ONE_KB
         else f"{size_bytes} bytes"
     )
+
+
+def hash_all_files_in_folder(folderpath: Path, create_hash_files: bool = True) -> Dict[Path, str]:
+    remove_ds_store_file_from_folder(folderpath)
+    file_hash_map = {file.name: calc_file_hash(file) for file in folderpath.glob("*.*") if file.suffix != "md5"}
+    if create_hash_files:
+        for file, md5_hash in file_hash_map.items():
+            hash_file = Path(folderpath).joinpath(f"{file}.md5")
+            hash_file.write_text(md5_hash)
+    return file_hash_map
+
+
+def remove_ds_store_file_from_folder(folderpath: Path):
+    for file in folderpath.glob("*.DS_Store"):
+        file.unlink()
+
+
+def calc_file_hash(filepath: Path) -> str:
+    md5 = hashlib.md5()
+    with open(filepath, "rb") as f:
+        while chunk := f.read(CHUNK_SIZE):
+            md5.update(chunk)
+    return md5.hexdigest()

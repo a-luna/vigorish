@@ -5,12 +5,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from events import Events
 
-from vigorish.models.bat_stats import BatStats, BatStatsCsvRow
-from vigorish.models.pitch_stats import PitchStats, PitchStatsCsvRow
-from vigorish.models.pitchfx import PitchFx, PitchFxCsvRow
-from vigorish.models.status_date import DateScrapeStatus, DateScrapeStatusCsvRow
-from vigorish.models.status_game import GameScrapeStatus, GameScrapeStatusCsvRow
-from vigorish.models.status_pitch_appearance import PitchAppScrapeStatus, PitchAppScrapeStatusCsvRow
+import vigorish.database as db
 from vigorish.tasks.base import Task
 from vigorish.util.dataclass_helpers import serialize_db_object_to_csv
 from vigorish.util.dt_format_strings import CSV_UTC, DATE_ONLY, DT_AWARE, FILE_TIMESTAMP
@@ -18,12 +13,12 @@ from vigorish.util.numeric_helpers import ONE_PERCENT
 from vigorish.util.result import Result
 
 DB_MODEL_TO_CSV_MAP = {
-    DateScrapeStatus: {"dataclass": DateScrapeStatusCsvRow, "date_format": DATE_ONLY},
-    GameScrapeStatus: {"dataclass": GameScrapeStatusCsvRow, "date_format": DATE_ONLY},
-    PitchAppScrapeStatus: {"dataclass": PitchAppScrapeStatusCsvRow, "date_format": DT_AWARE},
-    BatStats: {"dataclass": BatStatsCsvRow, "date_format": None},
-    PitchStats: {"dataclass": PitchStatsCsvRow, "date_format": None},
-    PitchFx: {"dataclass": PitchFxCsvRow, "date_format": CSV_UTC},
+    db.DateScrapeStatus: {"dataclass": db.DateScrapeStatusCsvRow, "date_format": DATE_ONLY},
+    db.GameScrapeStatus: {"dataclass": db.GameScrapeStatusCsvRow, "date_format": DATE_ONLY},
+    db.PitchAppScrapeStatus: {"dataclass": db.PitchAppScrapeStatusCsvRow, "date_format": DT_AWARE},
+    db.BatStats: {"dataclass": db.BatStatsCsvRow, "date_format": None},
+    db.PitchStats: {"dataclass": db.PitchStatsCsvRow, "date_format": None},
+    db.PitchFx: {"dataclass": db.PitchFxCsvRow, "date_format": CSV_UTC},
 }
 
 
@@ -60,12 +55,12 @@ class BackupDatabaseTask(Task):
     def get_csv_map(self):
         self.csv_folder = self.create_csv_folder()
         return {
-            DateScrapeStatus: self.csv_folder.joinpath("scrape_status_date.csv"),
-            GameScrapeStatus: self.csv_folder.joinpath("scrape_status_game.csv"),
-            PitchAppScrapeStatus: self.csv_folder.joinpath("scrape_status_pitch_app.csv"),
-            BatStats: self.csv_folder.joinpath("bat_stats.csv"),
-            PitchStats: self.csv_folder.joinpath("pitch_stats.csv"),
-            PitchFx: self.csv_folder.joinpath("pitchfx.csv"),
+            db.DateScrapeStatus: self.csv_folder.joinpath("scrape_status_date.csv"),
+            db.GameScrapeStatus: self.csv_folder.joinpath("scrape_status_game.csv"),
+            db.PitchAppScrapeStatus: self.csv_folder.joinpath("scrape_status_pitch_app.csv"),
+            db.BatStats: self.csv_folder.joinpath("bat_stats.csv"),
+            db.PitchStats: self.csv_folder.joinpath("pitch_stats.csv"),
+            db.PitchFx: self.csv_folder.joinpath("pitchfx.csv"),
         }
 
     def create_csv_folder(self):

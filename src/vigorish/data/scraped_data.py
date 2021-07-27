@@ -9,7 +9,6 @@ from vigorish.data.json_storage import JsonStorage
 from vigorish.data.metrics import (
     BatStatsMetrics,
     PitchFxMetrics,
-    PitchFxMetricsCollection,
     PitchStatsMetrics,
 )
 from vigorish.data.name_search import PlayerNameSearch
@@ -528,78 +527,17 @@ class ScrapedData:
             self.db_engine, mlb_id
         )
 
-    # PITCHER PITCHFX STATS
-
-    def get_career_pfx_metrics_for_pitcher(self, mlb_id: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_All_View.get_pfx_metrics_for_career_for_pitcher(self.db_engine, mlb_id),
-            db.Pitcher_PitchType_All_View.get_pfx_metrics_for_career_for_pitcher(self.db_engine, mlb_id),
-        )
+    # PERCENTILES
 
     def calculate_pitch_type_percentiles(
         self, p_throws: str, pfx_metrics: PitchFxMetrics
     ) -> Dict[str, Union[PitchType, Tuple[float, float]]]:
         return db.PitchTypePercentile.calculate_pitch_type_percentiles(self.db_session, p_throws, pfx_metrics)
 
-    def get_career_pfx_metrics_vs_rhb_for_pitcher(self, mlb_id: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_vs_RHB_View.get_pfx_metrics_vs_rhb_for_pitcher(self.db_engine, mlb_id),
-            db.Pitcher_PitchType_vs_RHB_View.get_pfx_metrics_vs_rhb_for_pitcher(self.db_engine, mlb_id),
-        )
-
-    def get_career_pfx_metrics_vs_lhb_for_pitcher(self, mlb_id: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_vs_LHB_View.get_pfx_metrics_vs_lhb_for_pitcher(self.db_engine, mlb_id),
-            db.Pitcher_PitchType_vs_LHB_View.get_pfx_metrics_vs_lhb_for_pitcher(self.db_engine, mlb_id),
-        )
-
-    def get_pfx_metrics_for_year_for_pitcher(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_All_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
-            db.Pitcher_PitchType_All_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
-        )
-
-    def get_pfx_metrics_for_year_vs_rhb_for_pitcher(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_vs_RHB_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
-            db.Pitcher_PitchType_vs_RHB_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
-        )
-
-    def get_pfx_metrics_for_year_vs_lhb_for_pitcher(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_vs_LHB_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
-            db.Pitcher_PitchType_vs_LHB_By_Year_View.get_pfx_metrics_by_year_for_pitcher(self.db_engine, mlb_id, year),
-        )
-
-    def get_pfx_metrics_for_game_for_pitcher(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_For_Game_All_View.get_pfx_metrics_for_game_for_pitcher(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-            db.Pitcher_PitchType_For_Game_All_View.get_pfx_metrics_for_game_for_pitcher(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-        )
-
-    def get_pfx_metrics_for_game_vs_rhb_for_pitcher(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_For_Game_vs_RHB_View.get_pfx_metrics_for_game_vs_rhb_for_pitcher(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-            db.Pitcher_PitchType_For_Game_vs_RHB_View.get_pfx_metrics_for_game_vs_rhb_for_pitcher(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-        )
-
-    def get_pfx_metrics_for_game_vs_lhb_for_pitcher(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Pitcher_PitchFx_For_Game_vs_LHB_View.get_pfx_metrics_for_game_vs_lhb_for_pitcher(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-            db.Pitcher_PitchType_For_Game_vs_LHB_View.get_pfx_metrics_for_game_vs_lhb_for_pitcher(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-        )
+    def calculate_batter_percentiles(
+        self, pfx_metrics: PitchFxMetrics
+    ) -> Dict[str, Union[PitchType, Tuple[float, float]]]:
+        return db.BatterPercentile.calculate_batter_percentiles(self.db_session, pfx_metrics)
 
     # PLAYER BAT STATS
 
@@ -620,118 +558,6 @@ class ScrapedData:
 
     def get_bat_stats_by_opp_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
         return db.BatStats_By_Opp_Team_Year_View.get_bat_stats_by_opp_by_year_for_player(self.db_engine, mlb_id)
-
-    # BATTER PITCHFX STATS
-
-    def get_pfx_metrics_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_All_View.get_pfx_metrics_for_career_for_batter(self.db_engine, mlb_id),
-            db.Batter_PitchType_All_View.get_pfx_metrics_for_career_for_batter(self.db_engine, mlb_id),
-        )
-
-    def get_pfx_metrics_vs_rhp_as_rhb_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_vs_RHP_as_RHB_Career_View.get_pfx_metrics_vs_rhp_as_rhb_for_career_for_batter(
-                self.db_engine, mlb_id
-            ),
-            db.Batter_PitchType_vs_RHP_as_RHB_Career_View.get_pfx_metrics_vs_rhp_as_rhb_for_career_for_batter(
-                self.db_engine, mlb_id
-            ),
-        )
-
-    def get_pfx_metrics_vs_rhp_as_lhb_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_vs_RHP_as_LHB_Career_View.get_pfx_metrics_vs_rhp_as_lhb_for_career_for_batter(
-                self.db_engine, mlb_id
-            ),
-            db.Batter_PitchType_vs_RHP_as_LHB_Career_View.get_pfx_metrics_vs_rhp_as_lhb_for_career_for_batter(
-                self.db_engine, mlb_id
-            ),
-        )
-
-    def get_pfx_metrics_vs_lhp_as_lhb_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_vs_LHP_as_LHB_Career_View.get_pfx_metrics_vs_lhp_as_lhb_for_career_for_batter(
-                self.db_engine, mlb_id
-            ),
-            db.Batter_PitchType_vs_LHP_as_LHB_Career_View.get_pfx_metrics_vs_lhp_as_lhb_for_career_for_batter(
-                self.db_engine, mlb_id
-            ),
-        )
-
-    def get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(self, mlb_id: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_vs_LHP_as_RHB_Career_View.get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(
-                self.db_engine, mlb_id
-            ),
-            db.Batter_PitchType_vs_LHP_as_RHB_Career_View.get_pfx_metrics_vs_lhp_as_rhb_for_career_for_batter(
-                self.db_engine, mlb_id
-            ),
-        )
-
-    def get_pfx_metrics_for_year_for_batter(self, mlb_id: int, year: int) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_By_Year_View.get_pfx_metrics_by_year_for_batter(self.db_engine, mlb_id, year),
-            db.Batter_PitchType_By_Year_View.get_pfx_metrics_by_year_for_batter(self.db_engine, mlb_id, year),
-        )
-
-    def get_pfx_metrics_for_game_for_batter(self, mlb_id: int, bbref_game_id: str) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_For_Game_All_View.get_pfx_metrics_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-            db.Batter_PitchType_For_Game_All_View.get_pfx_metrics_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-        )
-
-    def get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(
-        self, mlb_id: int, bbref_game_id: str
-    ) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_For_Game_vs_RHP_as_RHB_View.get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-            db.Batter_PitchType_For_Game_vs_RHP_as_RHB_View.get_pfx_metrics_vs_rhp_as_rhb_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-        )
-
-    def get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(
-        self, mlb_id: int, bbref_game_id: str
-    ) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_For_Game_vs_RHP_as_LHB_View.get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-            db.Batter_PitchType_For_Game_vs_RHP_as_LHB_View.get_pfx_metrics_vs_rhp_as_lhb_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-        )
-
-    def get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(
-        self, mlb_id: int, bbref_game_id: str
-    ) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_For_Game_vs_LHP_as_LHB_View.get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-            db.Batter_PitchType_For_Game_vs_LHP_as_LHB_View.get_pfx_metrics_vs_lhp_as_lhb_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-        )
-
-    def get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(
-        self, mlb_id: int, bbref_game_id: str
-    ) -> PitchFxMetricsCollection:
-        return PitchFxMetricsCollection.from_query_results(
-            db.Batter_PitchFx_For_Game_vs_LHP_as_RHB_View.get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-            db.Batter_PitchType_For_Game_vs_LHP_as_RHB_View.get_pfx_metrics_vs_lhp_as_rhb_for_game_for_batter(
-                self.db_engine, mlb_id, bbref_game_id
-            ),
-        )
 
 
 def _sort_and_map_stats_list(stats_list, sort_attr, group_attr):

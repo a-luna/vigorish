@@ -27,6 +27,7 @@ src/vigorish/nightmarejs/node_modules
 src/vigorish/nightmarejs/inbox/*.json
 src/vigorish/nightmarejs/outbox/**/*.html
 docs/svg/*.cast
+old_files
 pitch_type_percentiles**.json
 
 # Byte-compiled / optimized / DLL files

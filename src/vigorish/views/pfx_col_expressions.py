@@ -1,4 +1,4 @@
-from sqlalchemy import case, cast, Float, func
+from sqlalchemy import and_, case, cast, Float, func
 
 import vigorish.database as db
 
@@ -43,6 +43,13 @@ total_hard_hits = func.sum(db.PitchFx.is_hard_hit).label("total_hard_hits")
 total_medium_hits = func.sum(db.PitchFx.is_medium_hit).label("total_medium_hits")
 total_soft_hits = func.sum(db.PitchFx.is_soft_hit).label("total_soft_hits")
 total_barrels = func.sum(db.PitchFx.is_barreled).label("total_barrels")
+
+bad_whiff = case([(and_(db.PitchFx.swinging_strike == 1, db.PitchFx.outside_strike_zone == 1), 1)], else_=0).label(
+    "bad_whiff"
+)
+total_bad_whiffs = func.sum(bad_whiff).label("total_bad_whiffs")
+bad_whiff_rate = total_bad_whiffs / cast(total_swings, Float)
+bad_whiff_rate = case([(total_swings > 0, bad_whiff_rate)], else_=0.0).label("bad_whiff_rate")
 
 zone_rate = total_inside_strike_zone / cast(total_pitches, Float)
 zone_rate = case([(total_pitches > 0, zone_rate)], else_=0.0).label("zone_rate")
