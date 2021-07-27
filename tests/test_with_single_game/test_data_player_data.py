@@ -1072,32 +1072,41 @@ def test_pitchfx_metrics_career(vig_app):
     assert isinstance(pfx_metrics_career_ALL, PitchFxMetricsCollection)
 
     player_data = PlayerData(vig_app, 571882)
-    assert player_data.pfx_pitching_metrics_for_career
+    assert player_data.pfx_pitching_metrics_vs_all_for_career
     assert player_data.percentiles_for_pitch_types_for_career
     assert player_data.pfx_pitching_metrics_vs_rhb_for_career
     assert player_data.percentiles_for_pitch_types_vs_rhb_for_career
     assert player_data.pfx_pitching_metrics_vs_lhb_for_career
     assert player_data.percentiles_for_pitch_types_vs_lhb_for_career
-    assert player_data.pfx_pitching_metrics_by_year
+    assert player_data.pfx_pitching_metrics_vs_all_by_year
     assert player_data.percentiles_for_pitch_types_by_year
     assert player_data.pfx_pitching_metrics_vs_rhb_by_year
     assert player_data.percentiles_for_pitch_types_vs_rhb_by_year
     assert player_data.pfx_pitching_metrics_vs_lhb_by_year
     assert player_data.percentiles_for_pitch_types_vs_lhb_by_year
-    assert player_data.get_pfx_pitching_metrics_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_pitching_metrics_vs_all_for_season(2019)
+    assert player_data.get_pfx_pitching_metrics_vs_rhb_for_season(2019)
+    assert player_data.get_pfx_pitching_metrics_vs_lhb_for_season(2019)
+    assert player_data.get_pfx_pitching_metrics_vs_all_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_pitching_metrics_vs_rhb_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_pitching_metrics_vs_lhb_for_game(BBREF_GAME_ID)
     assert player_data.get_all_pfx_career_data()
     assert player_data.get_all_pfx_yearly_data()
 
     player_data = PlayerData(vig_app, 600303)
-    assert player_data.pfx_batting_metrics_for_career
+    assert player_data.pfx_batting_metrics_vs_all_for_career
+    assert player_data.pfx_batting_metrics_vs_rhp_for_career
+    assert player_data.pfx_batting_metrics_vs_lhp_for_career
     assert player_data.pfx_batting_metrics_vs_rhp_as_lhb_for_career
     assert player_data.pfx_batting_metrics_vs_lhp_as_lhb_for_career
     assert player_data.pfx_batting_metrics_by_year
-    assert player_data.get_pfx_batting_metrics_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_batting_metrics_vs_all_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_batting_metrics_vs_rhp_for_game(BBREF_GAME_ID)
+    assert player_data.get_pfx_batting_metrics_vs_lhp_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_batting_metrics_vs_rhp_as_lhb_for_game(BBREF_GAME_ID)
     assert player_data.get_pfx_batting_metrics_vs_lhp_as_lhb_for_game(BBREF_GAME_ID)
+    assert player_data.get_all_pfx_batting_career_data()
+    assert player_data.get_all_pfx_batting_yearly_data()
 
     player_data = PlayerData(vig_app, 545361)
     assert player_data.pfx_batting_metrics_vs_rhp_as_rhb_for_career
