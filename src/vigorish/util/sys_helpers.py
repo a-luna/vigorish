@@ -209,7 +209,9 @@ def file_size_str(size_bytes):
 
 def hash_all_files_in_folder(folderpath: Path, create_hash_files: bool = True) -> Dict[Path, str]:
     remove_ds_store_file_from_folder(folderpath)
-    file_hash_map = {file.name: calc_file_hash(file) for file in folderpath.glob("*.*") if file.suffix != "md5"}
+    file_hash_map = {
+        file.name: calc_file_hash(file) for file in folderpath.glob("*.*") if not file.name.endswith("md5")
+    }
     if create_hash_files:
         for file, md5_hash in file_hash_map.items():
             hash_file = Path(folderpath).joinpath(f"{file}.md5")
