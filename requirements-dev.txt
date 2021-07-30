@@ -10,8 +10,8 @@ backports.entry-points-selectable==1.1.0
 black==21.5b1
 bleach==3.3.1
 blessed==1.18.1
-boto3==1.18.7
-botocore==1.21.7
+boto3==1.18.10
+botocore==1.21.10
 bullet==2.2.0
 certifi==2021.5.30
 cffi==1.14.6
@@ -57,9 +57,9 @@ ipdb==0.13.9
 ipykernel==6.0.3
 ipython==7.25.0
 ipython-genutils==0.2.0
-isort==5.9.2
+isort==5.9.3
 jedi==0.18.0
-jeepney==0.7.0
+jeepney==0.7.1
 jmespath==0.10.0
 jupyter-client==6.1.12
 jupyter-core==4.7.1
@@ -82,7 +82,7 @@ pickleshare==0.7.5
 pip-upgrader==1.4.15
 pipdeptree==2.0.0
 pkginfo==1.7.1
-platformdirs==2.1.0
+platformdirs==2.2.0
 pluggy==0.13.1
 prefixed==0.3.2
 prompt-toolkit==3.0.19
