@@ -1,5 +1,8 @@
 """Enum definitions."""
+from __future__ import annotations
+
 from enum import Enum, IntEnum
+from typing import List
 
 from aenum import auto, IntFlag
 
@@ -240,6 +243,8 @@ class DefensePosition(IntEnum):
     BENCH = 11
     PINCH_HITTER = 12
     PINCH_RUNNER = 13
+    STARTING_PITCHER = 14
+    RELIEF_PITCHER = 15
 
     def __str__(self):
         abbrev_dict = {
@@ -256,6 +261,8 @@ class DefensePosition(IntEnum):
             "BENCH": "BN",
             "PINCH_HITTER": "PH",
             "PINCH_RUNNER": "PR",
+            "STARTING_PITCHER": "SP",
+            "RELIEF_PITCHER": "RP",
         }
         return abbrev_dict.get(self.name, self.name)
 
@@ -276,6 +283,10 @@ class DefensePosition(IntEnum):
             if name.upper() == enum_item.name:
                 return enum_item
         return cls.NONE
+
+    @classmethod
+    def get_position_weights(cls):
+        return {str(pos): int(pos) for pos in cls}
 
 
 class PitchType(IntFlag):
@@ -385,9 +396,8 @@ class PitchType(IntFlag):
         return cls.NONE
 
     @classmethod
-    def deconstruct_pitch_types_from_int(cls, pitch_mix_int):
-        pitch_mix = [pitch_type for pitch_type in cls if pitch_mix_int & pitch_type == pitch_type]
-        return [int(pitch_type) for pitch_type in pitch_mix]
+    def deconstruct_pitch_types_from_int(cls, pitch_mix_int) -> List[PitchType]:
+        return [pitch_type for pitch_type in cls if pitch_mix_int & pitch_type == pitch_type]
 
 
 class SeasonType(str, Enum):
