@@ -1,7 +1,6 @@
 from functools import cached_property
 from typing import Dict, List, Tuple, Union
 
-from sqlalchemy import desc
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
@@ -52,8 +51,8 @@ class PlayerData:
             self.db_session.query(db.Assoc_Player_Team)
             .filter_by(db_player_id=self.player.id)
             .filter(db.Assoc_Player_Team.year >= 2017)
-            .order_by(desc(db.Assoc_Player_Team.year))
-            .order_by(desc(db.Assoc_Player_Team.stint_number))
+            .order_by(db.Assoc_Player_Team.year)
+            .order_by(db.Assoc_Player_Team.stint_number)
             .all()
         )
         return [team.as_dict() for team in team_assoc_list]
@@ -67,42 +66,8 @@ class PlayerData:
         player_details.pop("minor_league_player")
         player_details.pop("missing_mlb_id")
         player_details.pop("add_to_db_backup")
-
-        all_teams = self.all_teams_played_for
-        if not all_teams:
-            return player_details
-        most_recent = all_teams[0]
-        previous_teams = all_teams[1:]
-        player_details["current_team"] = {
-            "team_id": most_recent["team_id"],
-            "year": most_recent["year"],
-            "pos": most_recent["def_pos_list"],
-        }
-        player_details["previous_teams"] = self._summarize_previous_teams(previous_teams) if previous_teams else []
+        player_details["all_teams"] = self.all_teams_played_for
         return player_details
-
-    def _summarize_previous_teams(self, previous_teams):
-        previous_teams.sort(key=lambda x: (x["year"], x["stint_number"]))
-        previous_teams_years = []
-        streak_active = False
-        current = previous_teams[0]["team_id"]
-        last_year_checked = previous_teams[0]["year"]
-        seasons_played = f"{last_year_checked}"
-        for t in previous_teams[1:]:
-            if t["team_id"] == current:
-                streak_active = True
-                last_year_checked = t["year"]
-                continue
-            if streak_active:
-                seasons_played += f"-{last_year_checked}"
-                streak_active = False
-            previous_teams_years.append({"team_id": current, "years_played": f"{current} ({seasons_played})"})
-            current = t["team_id"]
-            seasons_played = f"{t['year']}"
-        if streak_active:
-            seasons_played += f"-{last_year_checked}"
-            previous_teams_years.append({"team_id": current, "years_played": f"{current} ({seasons_played})"})
-        return [t["years_played"] for t in reversed(previous_teams_years)]
 
     @property
     def pitch_app_map(self) -> Dict[str, db.PitchAppScrapeStatus]:
@@ -284,7 +249,7 @@ class PlayerData:
 
     def get_all_pfx_yearly_data(
         self,
-    ) -> Dict[str, Dict[str, Dict[int, Dict[str, Union[List[PitchTypePercentiles], PitchFxMetricsSet]]]]]:
+    ) -> Dict[str, Dict[str, Dict[int, Union[PitchFxMetricsSet, PitchTypePercentiles]]]]:
         return {
             "all": {
                 "metrics": self.pfx_pitching_metrics_vs_all_by_year,
