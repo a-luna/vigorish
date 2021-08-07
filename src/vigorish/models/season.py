@@ -1,5 +1,8 @@
 """Db model that describes a MLB season and tracks data scraping progress."""
+from __future__ import annotations
+
 from datetime import date, datetime
+from typing import List
 
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -522,9 +525,8 @@ class Season(db.Base):
                 f'{season_type.replace("_", " ").title()}'
             )
             return Result.Fail(error)
-        date_str = check_date.strftime(DATE_ONLY)
         if check_date < season.start_date or check_date > season.end_date:
-            error = f"{date_str} is not within the scope of the {season.name}"
+            error = f"{check_date.strftime(DATE_ONLY)} is not within the scope of the {season.name}"
             return Result.Fail(error)
         return Result.Ok(season)
 
@@ -575,7 +577,7 @@ class Season(db.Base):
         return Result.Ok(season)
 
     @classmethod
-    def get_all_regular_seasons(cls, db_session):
+    def get_all_regular_seasons(cls, db_session) -> List[db.Season]:
         return db_session.query(cls).filter_by(season_type=SeasonType.REGULAR_SEASON).all()
 
     @classmethod

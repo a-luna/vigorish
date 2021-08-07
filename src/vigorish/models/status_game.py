@@ -6,9 +6,9 @@ from dateutil import tz
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.elements import or_
 
 import vigorish.database as db
-from vigorish.models.season import Season
 from vigorish.util.dt_format_strings import (
     DATE_ONLY,
     DATE_ONLY_2,
@@ -328,7 +328,7 @@ class GameScrapeStatus(db.Base):
 
     @classmethod
     def get_all_bbref_game_ids_for_team(cls, db_session, team_id_br, year):
-        season = Season.find_by_year(db_session, year)
+        season = db.Season.find_by_year(db_session, year)
         if not season:
             return None
         games_for_season = list(db_session.query(cls).filter_by(season_id=season.id).all())
@@ -341,19 +341,24 @@ class GameScrapeStatus(db.Base):
         ]
 
     @classmethod
-    def get_all_games_for_team(cls, db_session, team_id_br, year):
-        season = Season.find_by_year(db_session, year)
+    def get_all_games_for_team(cls, db_session, team_id_br, year, game_date=None):
+        if not game_date:
+            game_date = db.Season.get_most_recent_scraped_date(db_session, year)
+        if game_date.year != year:
+            raise ValueError('"year" and "game_date" parameters must belong to the same season')
+        date_id = game_date.strftime(DATE_ONLY_TABLE_ID)
+        season = db.Season.find_by_year(db_session, year)
         if not season:
             return None
-        games_for_season = list(db_session.query(cls).filter_by(season_id=season.id).all())
-        games_for_season.sort(key=lambda x: x.scrape_status_date_id)
-        bb_team_id = get_brooks_team_id(team_id_br)
-        return [
-            game
-            for game in games_for_season
-            if (game.away_team_id_bb == bb_team_id or game.home_team_id_bb == bb_team_id)
-            and game.scraped_bbref_boxscore
-        ]
+        return (
+            db_session.query(cls)
+            .filter(cls.season_id == season.id)
+            .filter(cls.scrape_status_date_id <= date_id)
+            .filter(or_(cls.away_team_id_br == team_id_br, cls.home_team_id_br == team_id_br))
+            .filter(cls.scraped_bbref_boxscore == 1)
+            .order_by(cls.scrape_status_date_id)
+            .all()
+        )
 
     @classmethod
     def get_game_id_map(cls, db_session):
