@@ -13,6 +13,7 @@ from vigorish.data.metrics import (
 )
 from vigorish.data.name_search import PlayerNameSearch
 from vigorish.enums import DataSet, DefensePosition, PitchType, VigFile
+from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.list_helpers import flatten_list2d, group_and_sort_list
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
 from vigorish.util.result import Result
@@ -260,14 +261,34 @@ class ScrapedData:
     def player_name_search(self, query):
         return self.name_search.fuzzy_match(query)
 
-    def get_season_standings(self, year=None):
-        if not year:
-            most_recent_season = max(s.year for s in db.Season.get_all_regular_seasons(self.db_session))
-            year = most_recent_season
+    def get_pitch_apps_for_player_up_to_date(self, mlb_id, game_date):
+        player_id = db.PlayerId.find_by_mlb_id(self.db_session, mlb_id)
+        if not player_id:
+            return []
+        date_id = game_date.strftime(DATE_ONLY_TABLE_ID)
+        date_status = self.db_session.query(db.DateScrapeStatus).get(int(date_id))
+        return (
+            self.db_session.query(db.PitchStats)
+            .filter(db.PitchStats.player_id == player_id.db_player_id)
+            .filter(db.PitchStats.date_id <= date_id)
+            .filter(db.PitchStats.season_id == date_status.season_id)
+        )
+
+    def get_pitcher_record_on_date(self, mlb_id, game_date):
+        pitch_apps = self.get_pitch_apps_for_player_up_to_date(mlb_id, game_date)
+        wins = sum(p.is_wp for p in pitch_apps)
+        losses = sum(p.is_lp for p in pitch_apps)
+        return (wins, losses)
+
+    def get_pitcher_total_saves_on_date(self, mlb_id, game_date):
+        pitch_apps = self.get_pitch_apps_for_player_up_to_date(mlb_id, game_date)
+        return sum(p.is_sv for p in pitch_apps)
+
+    def get_season_standings(self, year, game_date=None):
         standings = []
         all_teams = db.Team.get_all_teams_for_season(self.db_session, year)
         for team in all_teams:
-            all_games = db.GameScrapeStatus.get_all_games_for_team(self.db_session, team.team_id_br, year)
+            all_games = db.GameScrapeStatus.get_all_games_for_team(self.db_session, team.team_id_br, year, game_date)
             away_games = list(filter(lambda x: x.away_team_id_br == team.team_id_br, all_games))
             home_games = list(filter(lambda x: x.home_team_id_br == team.team_id_br, all_games))
             away_results = self._get_away_game_results(away_games)
