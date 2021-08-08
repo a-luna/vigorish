@@ -42,6 +42,10 @@ class Player(db.Base):
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+    @property
+    def name(self):
+        return f"{self.name_first} {self.name_last}"
+
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):
         return db_session.query(cls).filter_by(bbref_id=bbref_id).first()

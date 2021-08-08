@@ -29,13 +29,17 @@ def run_command(command, cwd=None, shell=True, text=True):  # pragma: no cover
         subprocess.check_call(command, stdout=sys.stdout, stderr=subprocess.STDOUT, cwd=cwd, shell=shell, text=text)
         return Result.Ok()
     except subprocess.CalledProcessError as e:
-        cmd = e.cmd
-        return_code = e.returncode
-        stderr = e.stderr
-        error = f"An error occurred while executing the command below:\n\tCommand: {cmd} (return code = {return_code})"
-        if stderr:
-            error += f"\n\tError: {stderr}"
+        error = (
+            f"An error occurred while executing the command below:\n"
+            f"\tCommand: {e.cmd} (return code = {e.returncode})"
+        )
+        if e.stderr:
+            error += f"\n\tError: {e.stderr}"
         return Result.Fail(error)
+
+
+def run_remote_command(user, host, command, cwd=None):
+    return run_command(f"ssh {user}@{host} {command}", cwd=cwd)
 
 
 def execute_nodejs_script(script_file_path, script_args):  # pragma: no cover
