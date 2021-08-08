@@ -3,6 +3,7 @@ import subprocess
 from collections import defaultdict
 from datetime import datetime
 
+from events import Events
 from halo import Halo
 
 import vigorish.database as db
@@ -51,6 +52,12 @@ class JobRunner:
         self.task_results = []
         self.scrape_task_option = self.app.get_current_setting("SCRAPE_TASK_OPTION")
         self.status_report = self.app.get_current_setting("STATUS_REPORT")
+        self.events = Events(
+            (
+                "data_set_skipped",
+                "data_set_scraped",
+            )
+        )
 
     def execute(self):
         return (
@@ -85,10 +92,12 @@ class JobRunner:
             result = self.scrape_data_set(data_set, start_date, end_date)
             if result.failure:
                 if "skip" in result.error:
+                    self.events.data_set_skipped(data_set)
                     self.log_result_data_set_skipped(data_set, task_number)
                     self.spinners[data_set].stop()
                     continue
                 return result
+            self.events.data_set_scraped(data_set)
             self.log_result_data_set_scraped(data_set, task_number)
             self.spinners[data_set].stop()
         return Result.Ok()
@@ -123,6 +132,14 @@ class JobRunner:
 
     def report_task_results(self):
         subprocess.run(["clear"])
+        self.print_job_heading()
+        if not self.task_results:
+            return
+        for (message, text_color) in self.task_results:
+            print_message(message, fg=text_color)
+        return Result.Ok()
+
+    def print_job_heading(self):
         job_name_id = f"Job Name: {self.job_name} (ID: {self.job_id.upper()})"
         if self.job_name == self.job_id:
             job_name_id = f"Job ID: {self.job_id.upper()}"
@@ -134,11 +151,6 @@ class JobRunner:
             date_range += f" (Now: {scrape_date_str})"
         job_heading = f"{job_name_id} {date_range}"
         print_heading(job_heading, fg="bright_yellow")
-        if not self.task_results:
-            return
-        for (message, text_color) in self.task_results:
-            print_message(message, fg=text_color)
-        return Result.Ok()
 
     def initialize(self):
         errors = []

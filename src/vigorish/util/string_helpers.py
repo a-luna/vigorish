@@ -321,5 +321,5 @@ def format_decimal_bat_stat(input):
 
 
 def remove_accents(input):
-    text = unicodedata.normalize("NFD", input).encode("ascii", "ignore").decode("utf-8")
-    return str(text)
+    normalized = unicodedata.normalize("NFD", input).encode("ascii", "ignore").decode("utf-8")
+    return str(normalized)

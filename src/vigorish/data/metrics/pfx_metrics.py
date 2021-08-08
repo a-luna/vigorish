@@ -36,14 +36,6 @@ class PitchFxMetrics:
     def pitch_name(self) -> str:
         return self.pitch_type.print_name
 
-    @property
-    def triple_slash(self) -> str:
-        return (
-            f"{format_decimal_bat_stat(self.avg)}/"
-            f"{format_decimal_bat_stat(self.obp)}/"
-            f"{format_decimal_bat_stat(self.slg)} ({format_decimal_bat_stat(self.ops)})"
-        )
-
     @cached_property
     def pitch_type_int(self):
         return sum({p.pitch_type_int for p in self.pfx})
@@ -55,6 +47,14 @@ class PitchFxMetrics:
     @property
     def pitch_type_abbrevs(self) -> List[str]:
         return [str(pt) for pt in self.pitch_type]
+
+    @property
+    def triple_slash(self) -> str:
+        return (
+            f"{format_decimal_bat_stat(self.avg)}/"
+            f"{format_decimal_bat_stat(self.obp)}/"
+            f"{format_decimal_bat_stat(self.slg)} ({format_decimal_bat_stat(self.ops)})"
+        )
 
     @cached_property
     def total_pitches(self) -> int:
@@ -443,50 +443,3 @@ class PitchFxMetrics:
     def get_usage_stats(self, include_pitch_count: bool = False) -> str:
         pitch_count = f" ({self.total_pitches})" if include_pitch_count else ""
         return f"{self.percent:.0%}{pitch_count} {self.avg_speed:.1f}mph"
-
-
-# from vigorish.app import Vigorish
-# from vigorish.data.metrics.pfx_metrics import PitchFxMetrics
-# mlb_id = 621111
-# game_id = "LAN202106130"
-# app = Vigorish()
-# pfx_for_game = PitchFxMetrics.for_pitcher_game(app.db_session, mlb_id, game_id)
-
-# from vigorish.app import Vigorish
-# from vigorish.data.metrics.pfx_metrics import PitchFxMetrics
-# from vigorish.data.player_data import PlayerData
-# mlb_id = 621111
-# game_id = "LAN202106130"
-# app = Vigorish()
-# pd = PlayerData(app, mlb_id)
-# pfx = pd.get_pfx_bat_metrics_for_game(game_id)
-
-# import json
-# from pathlib import Path
-# from vigorish.app import Vigorish
-# from vigorish.data.metrics.pfx_metrics import PitchFxMetrics
-# from vigorish.util.datetime_util import format_timedelta_str
-# mlb_id = 425794
-# app = Vigorish()
-# pfx_by_year = PitchFxMetrics.for_pitcher_by_year(app.db_session, mlb_id)
-# Path("pfx_metrics_example.json").write_text(json.dumps(pfx_by_year, indent=2, sort_keys=False))
-
-# import json
-# from pathlib import Path
-# from vigorish.app import Vigorish
-# from vigorish.data.player_data import PlayerData
-# app = Vigorish()
-# pd = PlayerData(app, 621111)
-# career_pfx=pd.get_all_pfx_career_data()
-# career_pfx["all"]["metrics"] = career_pfx["all"]["metrics"].as_dict()
-# career_pfx["rhb"]["metrics"] = career_pfx["rhb"]["metrics"].as_dict()
-# career_pfx["lhb"]["metrics"] = career_pfx["lhb"]["metrics"].as_dict()
-# yearly_pfx=pd.get_all_pfx_yearly_data()
-# for year, pfx_stats_for_year in yearly_pfx["all"]["metrics"].items():
-#     yearly_pfx["all"]["metrics"][year] = pfx_stats_for_year.as_dict()
-# for year, pfx_stats_for_year in yearly_pfx["rhb"]["metrics"].items():
-#     yearly_pfx["rhb"]["metrics"][year] = pfx_stats_for_year.as_dict()
-# for year, pfx_stats_for_year in yearly_pfx["lhb"]["metrics"].items():
-#     yearly_pfx["lhb"]["metrics"][year] = pfx_stats_for_year.as_dict()
-# Path("career_pfx.json").write_text(json.dumps(career_pfx, indent=2, sort_keys=False))
-# Path("yearly_pfx.json").write_text(json.dumps(yearly_pfx, indent=2, sort_keys=False))
