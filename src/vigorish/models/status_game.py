@@ -27,6 +27,7 @@ class GameScrapeStatus(db.Base):
     game_time_zone = Column(String)
     bbref_game_id = Column(String, unique=True)
     bb_game_id = Column(String, unique=True)
+    reverse_home_away_status = Column(Integer, default=0)
     away_team_id_br = Column(String)
     home_team_id_br = Column(String)
     away_team_runs_scored = Column(Integer)

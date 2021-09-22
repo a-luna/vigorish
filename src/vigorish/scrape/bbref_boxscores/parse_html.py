@@ -23,6 +23,8 @@ from vigorish.util.string_helpers import fuzzy_match
 
 _SPECIAL_NOTE_XPATH = '//div[@class="special_note"]/text()'
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
+_SCOREBOX_TEAM_URL_XPATH = '//div[@class="scorebox"]//a[@itemprop="name"]/@href'
+_LINESCORE_TEAM_URL_XPATH = '//div[@class="linescore_wrap"]/table/tbody/tr[position()=1 or position()=2]/td[2]//a/@href'
 _AWAY_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[1]/div[3]/text()'
 _HOME_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[2]/div[3]/text()'
 _SCOREBOX_META_XPATH = '//div[@class="scorebox_meta"]//div/text()'
@@ -125,7 +127,6 @@ PBP_STATS = {
     "play_index_url": "play_index_url",
 }
 
-_GAME_ID_REGEX = re.compile(r"[A-Z]{3,3}\d{9,9}")
 _TEAM_ID_REGEX = re.compile(r"[A-Z]{3,3}")
 _W_L_SV_NAME_REGEX = re.compile(r"[LPSVW]{2,2}: (.+) (?:\(\d{1,2}-?\d{0,2}\))")
 _ATTENDANCE_REGEX = re.compile(r"\d{1,2},\d{3,3}")
@@ -160,7 +161,7 @@ def parse_bbref_boxscore(scraped_html, url, game_id):
     page_content = html.fromstring(scraped_html, base_url=url)
     if _game_is_incomplete(page_content):
         return Result.Fail(f"Game was suspended and will be completed at a later date (game_id: {game_id})")
-    (away_team_id, home_team_id) = _parse_team_ids(page_content)
+    (away_team_id, home_team_id, reverse_home_away) = _parse_team_ids(page_content)
 
     (
         away_team_bat_table,
@@ -178,6 +179,7 @@ def parse_bbref_boxscore(scraped_html, url, game_id):
         home_team_pitch_table,
         away_team_id,
         home_team_id,
+        reverse_home_away,
     )
 
     player_name_dict = _create_player_name_dict(
@@ -235,15 +237,24 @@ def _game_is_incomplete(page_content):
 
 
 def _parse_team_ids(page_content):
-    away_team_id = _parse_away_team_id(page_content)
-    if not away_team_id:
-        error = "Failed to parse away team ID"
-        return Result.Fail(error)
-    home_team_id = _parse_home_team_id(page_content)
-    if not home_team_id:
-        error = "Failed to parse home team ID"
-        return Result.Fail(error)
-    return (away_team_id, home_team_id)
+    sbox_urls = page_content.xpath(_SCOREBOX_TEAM_URL_XPATH)
+    if not sbox_urls or len(sbox_urls) != 2:
+        return None
+    matches = _TEAM_ID_REGEX.findall(sbox_urls[0])
+    sbox_away_team_id = matches[0] if matches else None
+    matches = _TEAM_ID_REGEX.findall(sbox_urls[1])
+    sbox_home_team_id = matches[0] if matches else None
+
+    line_urls = page_content.xpath(_LINESCORE_TEAM_URL_XPATH)
+    if not line_urls or len(line_urls) != 2:
+        return None
+    matches = _TEAM_ID_REGEX.findall(line_urls[0])
+    line_away_team_id = matches[0] if matches else None
+    matches = _TEAM_ID_REGEX.findall(line_urls[1])
+    line_home_team_id = matches[0] if matches else None
+
+    reverse_home_away = sbox_away_team_id == line_home_team_id and sbox_home_team_id == line_away_team_id
+    return (line_away_team_id, line_home_team_id, reverse_home_away)
 
 
 def _parse_data_tables(page_content):
@@ -300,6 +311,7 @@ def _parse_all_team_data(
     home_team_pitch_table,
     away_team_id,
     home_team_id,
+    reverse_home_away_status,
 ):
     result = _parse_team_data(
         page_content,
@@ -308,6 +320,7 @@ def _parse_all_team_data(
         team_id=away_team_id,
         opponent_id=home_team_id,
         is_home_team=False,
+        reverse_home_away_status=reverse_home_away_status,
     )
     if result.failure:
         return result
@@ -321,6 +334,7 @@ def _parse_all_team_data(
         team_id=home_team_id,
         opponent_id=away_team_id,
         is_home_team=True,
+        reverse_home_away_status=reverse_home_away_status,
     )
     if result.failure:
         return result
@@ -330,8 +344,10 @@ def _parse_all_team_data(
     return (away_team_data, home_team_data)
 
 
-def _parse_team_data(page_content, team_batting_table, team_pitching_table, team_id, opponent_id, is_home_team):
-    team_record = _parse_team_record(page_content, is_home_team)
+def _parse_team_data(
+    page_content, team_batting_table, team_pitching_table, team_id, opponent_id, is_home_team, reverse_home_away_status
+):
+    team_record = _parse_team_record(page_content, is_home_team, reverse_home_away_status)
     if not team_record:
         error = f"Failed to parse team record (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
@@ -351,7 +367,7 @@ def _parse_team_data(page_content, team_batting_table, team_pitching_table, team
     if not pitching_stats:
         error = "Failed to parse away team pitching stats"
         return Result.Fail(error)
-    result = _parse_starting_lineup_for_team(page_content, team_id, is_home_team)
+    result = _parse_starting_lineup_for_team(page_content, team_id, is_home_team, reverse_home_away_status)
     if result.failure:
         return result
     starting_lineup = result.value
@@ -373,11 +389,11 @@ def _parse_team_data(page_content, team_batting_table, team_pitching_table, team
     return Result.Ok(team_dict)
 
 
-def _parse_team_record(page_content, is_home_team):
+def _parse_team_record(page_content, is_home_team, reverse_home_away_status):
     if is_home_team:
-        team_record_xpath = _HOME_TEAM_RECORD_XPATH
+        team_record_xpath = _HOME_TEAM_RECORD_XPATH if not reverse_home_away_status else _AWAY_TEAM_RECORD_XPATH
     else:
-        team_record_xpath = _AWAY_TEAM_RECORD_XPATH
+        team_record_xpath = _AWAY_TEAM_RECORD_XPATH if not reverse_home_away_status else _HOME_TEAM_RECORD_XPATH
     team_record_dirty = page_content.xpath(team_record_xpath)
     if not team_record_dirty:
         return None
@@ -482,16 +498,21 @@ def _get_pitch_stat_value(player_pitch_data_html, stat_name):
     return pitch_stat_value if isinstance(pitch_stat_value, list) else pitch_stat_value.rstrip("%")
 
 
-def _parse_starting_lineup_for_team(page_content, team_id, is_home_team):
+def _parse_starting_lineup_for_team(page_content, team_id, is_home_team, reverse_home_away_status):
     lineup = []
     if is_home_team:
-        bat_orders = page_content.xpath(_HOME_LINEUP_ORDER_XPATH)
-        player_links = page_content.xpath(_HOME_LINEUP_PLAYER_XPATH)
-        def_positions = page_content.xpath(_HOME_LINEUP_DEF_POS_XPATH)
+        bat_order_xpath = _HOME_LINEUP_ORDER_XPATH if not reverse_home_away_status else _AWAY_LINEUP_ORDER_XPATH
+        player_link_xpath = _HOME_LINEUP_PLAYER_XPATH if not reverse_home_away_status else _AWAY_LINEUP_PLAYER_XPATH
+        def_pos_xpath = _HOME_LINEUP_DEF_POS_XPATH if not reverse_home_away_status else _AWAY_LINEUP_DEF_POS_XPATH
     else:
-        bat_orders = page_content.xpath(_AWAY_LINEUP_ORDER_XPATH)
-        player_links = page_content.xpath(_AWAY_LINEUP_PLAYER_XPATH)
-        def_positions = page_content.xpath(_AWAY_LINEUP_DEF_POS_XPATH)
+        bat_order_xpath = _AWAY_LINEUP_ORDER_XPATH if not reverse_home_away_status else _HOME_LINEUP_ORDER_XPATH
+        player_link_xpath = _AWAY_LINEUP_PLAYER_XPATH if not reverse_home_away_status else _HOME_LINEUP_PLAYER_XPATH
+        def_pos_xpath = _AWAY_LINEUP_DEF_POS_XPATH if not reverse_home_away_status else _HOME_LINEUP_DEF_POS_XPATH
+
+    bat_orders = page_content.xpath(bat_order_xpath)
+    player_links = page_content.xpath(player_link_xpath)
+    def_positions = page_content.xpath(def_pos_xpath)
+
     if not bat_orders or not player_links or not def_positions:
         error = "Failed to parse team lineup data (team_id={team_id}, is_home_team={is_home_team})"
         return Result.Fail(error)
@@ -561,14 +582,12 @@ def _parse_game_meta_info(page_content):
     else:
         attendance = "0"
 
+    park_name = ""
     venue_matches = _parse_venue_from_strings(scorebox_meta_strings)
-    if venue_matches is None:
-        error = "Failed to parse park name"
-        return Result.Fail(error)
-
-    park_name = venue_matches["match"]
-    venue_index = venue_matches["index"]
-    del scorebox_meta_strings[venue_index]
+    if venue_matches:
+        park_name = venue_matches["match"]
+        venue_index = venue_matches["index"]
+        del scorebox_meta_strings[venue_index]
 
     game_duration_matches = _parse_game_duration_from_strings(scorebox_meta_strings)
     if game_duration_matches is None:
