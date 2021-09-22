@@ -2,6 +2,7 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 
 import vigorish.database as db
+from vigorish.constants import TEAM_ID_MAP
 
 
 class Assoc_Player_Team(db.Base):
@@ -36,13 +37,13 @@ class Assoc_Player_Team(db.Base):
 
     @property
     def def_pos_metrics(self):
-        metrics = [data.split(",") for data in self.def_pos_list.split("/")]
-        return [{"def_pos": d[0], "percent": int(d[1])} for d in metrics if len(d) == 2]
+        metrics = [data.split(",") for data in self.def_pos_list.split("/")] if self.def_pos_list else []
+        return [{"def_pos": d[0], "percent": int(d[1])} for d in metrics if len(d) == 2] if metrics else []
 
     @property
     def bat_order_metrics(self):
-        metrics = [data.split(",") for data in self.bat_order_list.split("/")]
-        return [{"bat_order": int(d[0]), "percent": int(d[1])} for d in metrics if len(d) == 2]
+        metrics = [data.split(",") for data in self.bat_order_list.split("/")] if self.bat_order_list else []
+        return [{"bat_order": int(d[0]), "percent": int(d[1])} for d in metrics if len(d) == 2] if metrics else []
 
     def as_dict(self):
         return {
@@ -63,3 +64,23 @@ class Assoc_Player_Team(db.Base):
             "def_pos_list": self.def_pos_metrics,
             "bat_order_list": self.bat_order_metrics,
         }
+
+    def as_player_team_map(self, db_session):
+        player_id = db.PlayerId.find_by_mlb_id(db_session, self.mlb_id)
+        return {
+            "name_common": player_id.mlb_name,
+            "age": 0,
+            "mlb_ID": str(self.mlb_id),
+            "player_ID": self.bbref_id,
+            "year_ID": str(self.year),
+            "team_ID": self.team_id,
+            "stint_ID": str(self.stint_number),
+            "lg_ID": TEAM_ID_MAP[self.team_id]["league"],
+        }
+
+    @classmethod
+    def get_stints_for_year_for_player(cls, db_session, mlb_id, year):
+        stints = (
+            db_session.query(cls).filter(cls.mlb_id == mlb_id).filter(cls.year == year).order_by(cls.stint_number).all()
+        )
+        return [s.as_dict() for s in stints]

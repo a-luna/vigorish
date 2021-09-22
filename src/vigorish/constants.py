@@ -43,6 +43,39 @@ TEAM_NAME_MAP = {
     "Washington Nationals": "WAS",
 }
 
+TEAM_ID_MAP = {
+    "ARI": {"league": "NL", "division": "W"},
+    "ATL": {"league": "NL", "division": "E"},
+    "BAL": {"league": "AL", "division": "E"},
+    "BOS": {"league": "AL", "division": "E"},
+    "CHW": {"league": "AL", "division": "C"},
+    "CHC": {"league": "NL", "division": "C"},
+    "CIN": {"league": "NL", "division": "C"},
+    "CLE": {"league": "AL", "division": "C"},
+    "COL": {"league": "NL", "division": "W"},
+    "DET": {"league": "AL", "division": "C"},
+    "HOU": {"league": "AL", "division": "W"},
+    "KCR": {"league": "AL", "division": "C"},
+    "LAA": {"league": "AL", "division": "W"},
+    "LAD": {"league": "NL", "division": "W"},
+    "MIA": {"league": "NL", "division": "E"},
+    "MIL": {"league": "NL", "division": "C"},
+    "MIN": {"league": "AL", "division": "C"},
+    "NYY": {"league": "AL", "division": "E"},
+    "NYM": {"league": "NL", "division": "E"},
+    "OAK": {"league": "AL", "division": "W"},
+    "PHI": {"league": "NL", "division": "E"},
+    "PIT": {"league": "NL", "division": "C"},
+    "SDP": {"league": "NL", "division": "W"},
+    "SEA": {"league": "AL", "division": "W"},
+    "SFG": {"league": "NL", "division": "W"},
+    "STL": {"league": "NL", "division": "C"},
+    "TBR": {"league": "AL", "division": "E"},
+    "TEX": {"league": "AL", "division": "W"},
+    "TOR": {"league": "AL", "division": "E"},
+    "WSN": {"league": "NL", "division": "E"},
+}
+
 BR_BB_TEAM_ID_MAP = {
     "CHW": "CHA",
     "CHC": "CHN",
@@ -356,6 +389,14 @@ DATA_SET_FROM_NAME_MAP = {
 }
 
 DATA_SET_TO_NAME_MAP = {data_set: name for name, data_set in DATA_SET_FROM_NAME_MAP.items()}
+
+DATA_SET_TO_FOLDER_NAME_MAP = {
+    DataSet.BBREF_GAMES_FOR_DATE: "bbref_games_for_date",
+    DataSet.BROOKS_GAMES_FOR_DATE: "brooks_games_for_date",
+    DataSet.BBREF_BOXSCORES: "bbref_boxscores",
+    DataSet.BROOKS_PITCH_LOGS: "brooks_pitch_logs",
+    DataSet.BROOKS_PITCHFX: "brooks_pitchfx",
+}
 
 CLI_COLORS = [
     "black",
