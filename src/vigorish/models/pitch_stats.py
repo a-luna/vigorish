@@ -1,10 +1,13 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from dataclass_csv import accept_whitespaces
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 import vigorish.database as db
+from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 
 
 class PitchStats(db.Base):
@@ -62,6 +65,10 @@ class PitchStats(db.Base):
     date = relationship("DateScrapeStatus", foreign_keys=[date_id])
     season = relationship("Season", foreign_keys=[season_id])
 
+    @hybrid_property
+    def game_date(self):
+        return datetime.strptime(str(self.date_id), DATE_ONLY_TABLE_ID)
+
     @classmethod
     def from_dict(cls, bbref_game_id, pitch_stats_dict):
         bbref_data = pitch_stats_dict.pop("bbref_data", {})
@@ -82,6 +89,34 @@ class PitchStats(db.Base):
     @classmethod
     def get_all_seasons_with_data_for_player(cls, db_session, player_id_mlb):
         return {ps.season for ps in db_session.query(cls).filter_by(player_id_mlb=player_id_mlb).all()}
+
+    @classmethod
+    def get_date_intervals_for_player_teams(cls, db_session, player_id_mlb, year):
+        player = db.Player.find_by_mlb_id(db_session, player_id_mlb)
+        season = db.Season.find_by_year(db_session, year)
+        if not player or not season:
+            return []
+        pitch_stats_for_season = (
+            db_session.query(cls).filter(cls.player_id == player.id).filter(cls.season_id == season.id).all()
+        )
+        all_teams = {(ps.player_team_id_bbref, ps.player_team_id) for ps in pitch_stats_for_season}
+        player_team_info = []
+        for team_id_bbref, team_id in all_teams:
+            pitch_stats_with_team = [ps for ps in pitch_stats_for_season if ps.player_team_id_bbref == team_id_bbref]
+            min_date = min(ps.game_date for ps in pitch_stats_with_team)
+            max_date = max(ps.game_date for ps in pitch_stats_with_team)
+            player_team_info.append(
+                {
+                    "team_id": team_id_bbref,
+                    "db_team_id": team_id,
+                    "min_date": min_date,
+                    "max_date": max_date,
+                }
+            )
+        player_team_info.sort(key=lambda x: x["min_date"])
+        for stint, team_info in enumerate(player_team_info, start=1):
+            team_info["stint_number"] = stint
+        return player_team_info
 
 
 def calculate_total_outs(innings_pitched):
