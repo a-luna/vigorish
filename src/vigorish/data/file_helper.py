@@ -347,6 +347,7 @@ class FileHelper:
         if file_type == VigFile.COMBINED_GAME_DATA:
             data = json.dumps(data, indent=2, sort_keys=False)
         try:
+            filepath.parent.mkdir(parents=True, exist_ok=True)
             filepath.write_text(data)
             return Result.Ok(filepath)
         except Exception as e:

@@ -1406,9 +1406,12 @@ class CombineScrapedDataTask(Task):
             "gather_scraped_data_success": self.gather_scraped_data_success,
             "combined_data_success": self.combined_data_success,
             "save_combined_data_success": self.save_combined_data_success,
-            "error": "\n".join(self.error_messages),
+            "error": self.format_error_messages(),
         }
         return result
+
+    def format_error_messages(self):
+        return "\n".join("\n\t".join(m for m in e if m) for e in self.error_messages)
 
     def check_update_db(self, value):
         self.save_combined_data_success = True

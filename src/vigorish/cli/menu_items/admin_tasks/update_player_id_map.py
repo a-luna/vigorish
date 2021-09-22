@@ -55,9 +55,9 @@ class UpdatePlayerIdMap(MenuItem):
             spinner.stop()
             return result
         spinner.succeed(f"{data_set} was successfully updated!")
+        updated_players = result.value or []
         if no_prompts:
             return Result.Ok()
-        updated_players = result.value or []
         if not updated_players:
             pause(message="Press any key to continue...")
             return Result.Ok(updated_players)

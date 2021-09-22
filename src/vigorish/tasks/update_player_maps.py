@@ -134,7 +134,7 @@ class BBRefPlayerTeamMap:
     year_ID: str
     team_ID: str
     stint_ID: str = field(repr=False)
-    lg_ID: str = field(repr=False)
+    lg_ID: str = field(compare=False, repr=False)
 
 
 class UpdatePlayerIdMapTask(Task):
