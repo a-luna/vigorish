@@ -7,13 +7,17 @@ from sqlalchemy.orm import Session
 import vigorish.database as db
 from vigorish.cli.components.viewers import create_display_table, create_table_viewer
 from vigorish.data.metrics.bat_stats import BatStatsMetrics
-from vigorish.data.metrics.pitchfx import (
-    PitchFxMetricsFactory,
-    PitchFxBattingMetrics,
-    PitchFxPitchingMetrics,
-    PitchFxMetricsSet,
+from vigorish.data.metrics.pitch_stats import (
+    PitchStatsMetrics,
+    PitchStatsMetricsFactory,
+    PlayerPitchStatsMetrics,
 )
-from vigorish.data.metrics.pitch_stats import PitchStatsMetricsFactory, PlayerPitchStatsMetrics, PitchStatsMetrics
+from vigorish.data.metrics.pitchfx import (
+    PitchFxBattingMetrics,
+    PitchFxMetricsFactory,
+    PitchFxMetricsSet,
+    PitchFxPitchingMetrics,
+)
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import PitchType
 from vigorish.models.batter_percentiles import BatterPercentile

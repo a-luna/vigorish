@@ -1,4 +1,4 @@
-from tests.util import (
+from tests.util import (  # GAME_ID_PATCH_PFX,
     combine_scraped_data_for_game,
     COMBINED_DATA_GAME_DICT,
     GAME_ID_EXTRA_PFX_REMOVED,
@@ -6,7 +6,6 @@ from tests.util import (
     GAME_ID_NO_ERRORS,
     GAME_ID_NO_PFX_FOR_PITCH_APP,
     GAME_ID_PATCH_BOXSCORE,
-    # GAME_ID_PATCH_PFX,
     GAME_ID_PFX_OUT_OF_SEQUENCE,
     GAME_ID_WITH_ERRORS,
     NO_ERRORS_PITCH_APP,

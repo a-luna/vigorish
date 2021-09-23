@@ -6,8 +6,8 @@ import vigorish.database as db
 from vigorish.data.file_helper import FileHelper
 from vigorish.data.html_storage import HtmlStorage
 from vigorish.data.json_storage import JsonStorage
-from vigorish.data.metrics.bat_stats import BatStatsMetricsFactory, BatStatsMetrics
-from vigorish.data.metrics.pitch_stats import PitchStatsMetricsFactory, PitchStatsMetrics
+from vigorish.data.metrics.bat_stats import BatStatsMetrics, BatStatsMetricsFactory
+from vigorish.data.metrics.pitch_stats import PitchStatsMetrics, PitchStatsMetricsFactory
 from vigorish.data.metrics.pitchfx import PitchFxMetrics
 from vigorish.data.name_search import PlayerNameSearch
 from vigorish.enums import DataSet, DefensePosition, PitchType, VigFile

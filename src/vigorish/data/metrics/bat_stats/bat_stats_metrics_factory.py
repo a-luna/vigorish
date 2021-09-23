@@ -5,7 +5,6 @@ from typing import Dict, List
 import vigorish.database as db
 from vigorish.constants import TEAM_ID_MAP
 from vigorish.data.metrics.bat_stats.bat_stats_metrics import BatStatsMetrics
-
 from vigorish.data.metrics.bat_stats.player_bat_stat_metrics import PlayerBatStatsMetrics
 from vigorish.data.metrics.bat_stats.team_bat_stat_metrics import TeamBatStatsMetrics
 from vigorish.enums import DefensePosition

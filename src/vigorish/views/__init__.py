@@ -1,8 +1,8 @@
 # flake8: noqa
 from vigorish.views.batter_pitchfx_view import Batter_PitchType_All_View
-from vigorish.views.pitcher_pitchfx_view import Pitcher_PitchType_All_View
 from vigorish.views.date_pitch_app_view import Date_PitchApp_View
 from vigorish.views.game_pitch_app_view import Game_PitchApp_View
+from vigorish.views.pitcher_pitchfx_view import Pitcher_PitchType_All_View
 from vigorish.views.season_date_view import Season_Date_View
 from vigorish.views.season_game_pitch_app_view import Season_Game_PitchApp_View
 from vigorish.views.season_game_view import Season_Game_View

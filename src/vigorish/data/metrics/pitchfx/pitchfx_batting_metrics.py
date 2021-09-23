@@ -4,7 +4,10 @@ from copy import deepcopy
 from typing import List
 
 import vigorish.database as db
-from vigorish.data.metrics.pitchfx.pitchfx_metrics_set import PitchFxMetricsSet, PfxMetricsSetBuilder
+from vigorish.data.metrics.pitchfx.pitchfx_metrics_set import (
+    PfxMetricsSetBuilder,
+    PitchFxMetricsSet,
+)
 
 
 class PitchFxBattingMetrics:

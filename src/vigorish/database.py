@@ -7,9 +7,9 @@ Base = declarative_base()
 
 from vigorish.models import (
     Assoc_Player_Team,
-    BatterPercentile,
     BatStats,
     BatStatsCsvRow,
+    BatterPercentile,
     DateScrapeStatus,
     DateScrapeStatusCsvRow,
     GameScrapeStatus,

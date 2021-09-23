@@ -8,7 +8,6 @@ from sqlalchemy import create_engine, func, inspect
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.schema import Table
-from vigorish.data.game_data import GameData
 
 import vigorish.database as db
 import vigorish.setup.populate_tables as setup_db
@@ -16,6 +15,7 @@ from vigorish.config.config_file import ConfigFile
 from vigorish.config.config_setting import ConfigSettingValue, PathConfigSetting
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.config.project_paths import CSV_FOLDER, JSON_FOLDER, SQLITE_DEV_URL, SQLITE_PROD_URL
+from vigorish.data.game_data import GameData
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import DataSet
 from vigorish.types import AuditReport

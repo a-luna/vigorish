@@ -2,7 +2,11 @@ from collections import defaultdict
 
 import vigorish.database as db
 from vigorish.enums import DataSet, VigFile
-from vigorish.status.util import create_pitch_app_status_record, get_pitch_app_status_record, get_player_id
+from vigorish.status.util import (
+    create_pitch_app_status_record,
+    get_pitch_app_status_record,
+    get_player_id,
+)
 from vigorish.util.exceptions import ScrapedDataException
 from vigorish.util.result import Result
 

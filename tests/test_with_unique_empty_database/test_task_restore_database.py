@@ -1,6 +1,7 @@
 import pytest
 
-from tests.conftest import BACKUP_FOLDER, CSV_FOLDER, TESTS_FOLDER, JSON_FOLDER
+import vigorish.database as db
+from tests.conftest import BACKUP_FOLDER, CSV_FOLDER, JSON_FOLDER, TESTS_FOLDER
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     NO_ERRORS_PITCH_APP,
@@ -10,7 +11,6 @@ from tests.util import (
     update_scraped_pitch_logs,
     update_scraped_pitchfx_logs,
 )
-import vigorish.database as db
 from vigorish.app import Vigorish
 from vigorish.cli.components.viewers.page_viewer import PageViewer
 from vigorish.tasks import AddToDatabaseTask, BackupDatabaseTask, RestoreDatabaseTask
