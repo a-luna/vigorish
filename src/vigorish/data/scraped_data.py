@@ -11,7 +11,6 @@ from vigorish.data.metrics.pitch_stats import PitchStatsMetricsFactory, PitchSta
 from vigorish.data.metrics.pitchfx import PitchFxMetrics
 from vigorish.data.name_search import PlayerNameSearch
 from vigorish.enums import DataSet, DefensePosition, PitchType, VigFile
-from vigorish.util.dt_format_strings import DATE_ONLY_TABLE_ID
 from vigorish.util.regex import URL_ID_CONVERT_REGEX, URL_ID_REGEX
 from vigorish.util.result import Result
 
@@ -520,7 +519,7 @@ class ScrapedData:
     def get_bat_stats_by_opp_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
         return self.bat_stats.for_player(mlb_id).by_opponent
 
-    def get_bat_stats_by_opp_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_by_opp_by_year_for_player(self, mlb_id: int) -> Dict[str, BatStatsMetrics]:
         return self.bat_stats.for_player(mlb_id).by_opponent_by_year
 
 

@@ -256,7 +256,7 @@ def validate_at_bat_id(at_bat_id):
     inning_label = f"{inning_half}{captured['inning']}"
     which_half = "TOP" if inning_label[0] == "t" else "BOT"
     inning = int(captured["inning"])
-    inning_str = f"{0}{inning}" if inning < 10 else inning
+    inning_str = f"0{inning}" if inning < 10 else inning
     inning_id = f'{game_dict["game_id"]}_INN_{which_half}{inning_str}'
 
     at_bat_dict = {
@@ -284,7 +284,7 @@ def get_inning_id_from_at_bat_id(at_bat_id):
     inning_label = at_bat_dict["inning_label"]
     which_half = "TOP" if inning_label[0] == "t" else "BOT"
     inning = int(at_bat_dict["inning"])
-    inning_str = f"{0}{inning}" if inning < 10 else inning
+    inning_str = f"0{inning}" if inning < 10 else inning
     return f'{at_bat_dict["game_id"]}_INN_{which_half}{inning_str}'
 
 
