@@ -27,7 +27,7 @@ class PlayerBatStatsMetrics:
         return player_id.bbref_id if player_id else ""
 
     @cached_property
-    def all_bat_stats(self) -> Dict[str, BatStatsMetrics]:
+    def all_bat_stats(self) -> BatStatsMetrics:
         return BatStatsMetrics(
             bat_stats=deepcopy(self.bat_stats),
             player_id_mlb=self.mlb_id,
@@ -70,7 +70,7 @@ class PlayerBatStatsMetrics:
         }
 
     @cached_property
-    def by_opponent_by_year(self) -> List[BatStatsMetrics]:
+    def by_opponent_by_year(self) -> Dict[str, BatStatsMetrics]:
         all_seasons = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         by_opponent_by_year = {}
         for year, season_id in sorted(all_seasons, key=lambda x: x[0]):

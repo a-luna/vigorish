@@ -4,7 +4,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import Optional
 
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, inspect
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.schema import Table
@@ -44,10 +44,11 @@ class Vigorish:
 
     @property
     def db_setup_complete(self) -> bool:
+        inspector = inspect(self.db_engine)
         tables_missing = (
-            "player" not in self.db_engine.table_names()
-            or "season" not in self.db_engine.table_names()
-            or "team" not in self.db_engine.table_names()
+            "player" not in inspector.get_table_names()
+            or "season" not in inspector.get_table_names()
+            or "team" not in inspector.get_table_names()
         )
         if tables_missing:
             return False
