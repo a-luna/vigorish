@@ -98,7 +98,7 @@ class PlayerData:
 
     @property
     def all_pitch_stats_for_career(self) -> PitchStatsMetrics:
-        return self.pitch_stats_for_career.by_role["all "]
+        return self.pitch_stats_for_career.by_role["all"]
 
     @property
     def pitch_stats_as_sp(self) -> PitchStatsMetrics:
@@ -149,7 +149,7 @@ class PlayerData:
         return self.scraped_data.get_bat_stats_by_opp_for_player(self.mlb_id)
 
     @cached_property
-    def bat_stats_by_opp_team_by_year(self) -> List[BatStatsMetrics]:
+    def bat_stats_by_opp_team_by_year(self) -> Dict[str, BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_by_opp_by_year_for_player(self.mlb_id)
 
     @cached_property

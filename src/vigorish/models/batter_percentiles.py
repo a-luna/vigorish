@@ -17,7 +17,11 @@ class BatterPercentile(db.Base):
         pt_percentile = (
             db_session.query(cls).filter_by(stat_name=stat_name).filter(cls.stat_value >= stat_value).first()
         )
-        return (stat_value, pt_percentile.percentile) if pt_percentile else (stat_value, 100.0)
+        return (
+            (round(stat_value, ndigits=1), pt_percentile.percentile)
+            if pt_percentile
+            else (round(stat_value, ndigits=1), 100.0)
+        )
 
     @classmethod
     def get_percentile_for_neg_stat(cls, db_session, stat_name, pfx_metrics):
@@ -25,7 +29,11 @@ class BatterPercentile(db.Base):
         pt_percentile = (
             db_session.query(cls).filter_by(stat_name=stat_name).filter(cls.stat_value <= stat_value).first()
         )
-        return (stat_value, pt_percentile.percentile) if pt_percentile else (stat_value, 100.0)
+        return (
+            (round(stat_value, ndigits=1), pt_percentile.percentile)
+            if pt_percentile
+            else (round(stat_value, ndigits=1), 100.0)
+        )
 
     @classmethod
     def calculate_batter_percentiles(cls, db_session, pfx):

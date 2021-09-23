@@ -60,7 +60,7 @@ class BatStatsMetricsFactory:
     def for_bench_for_all_teams(self, year: int) -> List[BatStatsMetrics]:
         return [
             BatStatsMetrics(
-                bat_stats=deepcopy(self._get_bat_stats_for_bench_for_teamj(team_id, year)),
+                bat_stats=deepcopy(self._get_bat_stats_for_bench_for_team(team_id, year)),
                 year=year,
                 team_id_bbref=team_id,
                 player_team_id_bbref=team_id,
