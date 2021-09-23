@@ -6,12 +6,17 @@ from sqlalchemy.orm import Session
 
 import vigorish.database as db
 from vigorish.cli.components.viewers import create_display_table, create_table_viewer
-from vigorish.data.metrics import BatStatsMetrics, PitchStatsMetrics
-from vigorish.data.metrics.pfx_metrics_factory import (
-    PfxMetricsFactory,
+from vigorish.data.metrics.bat_stats import BatStatsMetrics
+from vigorish.data.metrics.pitch_stats import (
+    PitchStatsMetrics,
+    PitchStatsMetricsFactory,
+    PlayerPitchStatsMetrics,
+)
+from vigorish.data.metrics.pitchfx import (
     PitchFxBattingMetrics,
-    PitchFxPitchingMetrics,
+    PitchFxMetricsFactory,
     PitchFxMetricsSet,
+    PitchFxPitchingMetrics,
 )
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import PitchType
@@ -29,7 +34,8 @@ class PlayerData:
         self.db_engine: Engine = self.app.db_engine
         self.db_session: Session = self.app.db_session
         self.scraped_data: ScrapedData = self.app.scraped_data
-        self.pfx_metrics = PfxMetricsFactory(app)
+        self.pfx_metrics = PitchFxMetricsFactory(app)
+        self.pitch_stats = PitchStatsMetricsFactory(app.db_session)
         self.player = db.Player.find_by_mlb_id(self.db_session, self.mlb_id)
         if not self.player:
             raise UnknownPlayerException(mlb_id)
@@ -57,6 +63,19 @@ class PlayerData:
         )
         return [team.as_dict() for team in team_assoc_list]
 
+    @cached_property
+    def team_stint_details(self):
+        return {year: self.get_team_stint_details_for_season(year) for year in self.years_played}
+
+    def get_team_stint_details_for_season(self, year: int):
+        season_pitch_stats = (
+            self.db_session.query(db.PitchStats).filter(db.PitchStats.player_id_mlb == self.mlb_id).count()
+        )
+        season_bat_stats = self.db_session.query(db.BatStats).filter(db.BatStats.player_id_mlb == self.mlb_id).count()
+        if season_pitch_stats > season_bat_stats:
+            return db.PitchStats.get_date_intervals_for_player_teams(self.db_session, self.mlb_id, year)
+        return db.BatStats.get_date_intervals_for_player_teams(self.db_session, self.mlb_id, year)
+
     @property
     def player_details(self):
         player_details = self.player.as_dict()
@@ -78,36 +97,40 @@ class PlayerData:
         return self.scraped_data.get_all_seasons_with_data_for_player(self.mlb_id)
 
     @cached_property
-    def pitch_stats_for_career(self) -> PitchStatsMetrics:
-        return self.scraped_data.get_pitch_stats_for_career_for_player(self.mlb_id)
+    def pitch_stats_for_career(self) -> PlayerPitchStatsMetrics:
+        return self.pitch_stats.for_pitcher(self.mlb_id)
 
-    @cached_property
+    @property
+    def all_pitch_stats_for_career(self) -> PitchStatsMetrics:
+        return self.pitch_stats_for_career.by_role["all"]
+
+    @property
     def pitch_stats_as_sp(self) -> PitchStatsMetrics:
-        return self.scraped_data.get_pitch_stats_as_sp_for_player(self.mlb_id)
+        return self.pitch_stats_for_career.by_role["as_sp"]
 
-    @cached_property
+    @property
     def pitch_stats_as_rp(self) -> PitchStatsMetrics:
-        return self.scraped_data.get_pitch_stats_as_rp_for_player(self.mlb_id)
+        return self.pitch_stats_for_career.by_role["as_rp"]
+
+    @property
+    def pitch_stats_by_year(self) -> Dict[int, PlayerPitchStatsMetrics]:
+        return self.pitch_stats_for_career.by_year
 
     @cached_property
-    def pitch_stats_by_year(self) -> List[PitchStatsMetrics]:
-        return self.scraped_data.get_pitch_stats_by_year_for_player(self.mlb_id)
+    def pitch_stats_by_team(self) -> Dict[str, PlayerPitchStatsMetrics]:
+        return self.pitch_stats_for_career.by_team
 
     @cached_property
-    def pitch_stats_by_team(self) -> List[PitchStatsMetrics]:
-        return self.scraped_data.get_pitch_stats_by_team_for_player(self.mlb_id)
+    def pitch_stats_by_team_by_year(self) -> Dict[int, Dict[str, PlayerPitchStatsMetrics]]:
+        return self.pitch_stats_for_career.by_team_by_year
 
     @cached_property
-    def pitch_stats_by_team_by_year(self) -> List[PitchStatsMetrics]:
-        return self.scraped_data.get_pitch_stats_by_team_by_year_for_player(self.mlb_id)
+    def pitch_stats_by_opp_team(self) -> Dict[str, PlayerPitchStatsMetrics]:
+        return self.pitch_stats_for_career.by_opponent
 
     @cached_property
-    def pitch_stats_by_opp_team(self) -> List[PitchStatsMetrics]:
-        return self.scraped_data.get_pitch_stats_by_opp_team_for_player(self.mlb_id)
-
-    @cached_property
-    def pitch_stats_by_opp_team_by_year(self) -> List[PitchStatsMetrics]:
-        return self.scraped_data.get_pitch_stats_by_opp_team_by_year_for_player(self.mlb_id)
+    def pitch_stats_by_opp_team_by_year(self) -> Dict[int, Dict[str, PlayerPitchStatsMetrics]]:
+        return self.pitch_stats_for_career.by_opponent_by_year
 
     @cached_property
     def bat_stats_for_career(self) -> BatStatsMetrics:
@@ -130,7 +153,7 @@ class PlayerData:
         return self.scraped_data.get_bat_stats_by_opp_for_player(self.mlb_id)
 
     @cached_property
-    def bat_stats_by_opp_team_by_year(self) -> List[BatStatsMetrics]:
+    def bat_stats_by_opp_team_by_year(self) -> Dict[str, BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_by_opp_by_year_for_player(self.mlb_id)
 
     @cached_property
@@ -411,15 +434,15 @@ class PlayerData:
         self,
     ) -> Dict[str, Dict[str, Dict[int, Dict[str, Union[List[BatterPercentile], PitchFxMetricsSet]]]]]:
         return {
-            "all": {
+            "vs_all": {
                 "metrics": self.pfx_batting_metrics_vs_all_by_year,
                 "percentiles": self.bat_stat_percentiles_vs_all_by_year,
             },
-            "rhb": {
+            "vs_rhb": {
                 "metrics": self.pfx_batting_metrics_vs_rhp_by_year,
                 "percentiles": self.bat_stat_percentiles_vs_rhp_by_year,
             },
-            "lhb": {
+            "vs_lhb": {
                 "metrics": self.pfx_batting_metrics_vs_lhp_by_year,
                 "percentiles": self.bat_stat_percentiles_vs_lhp_by_year,
             },

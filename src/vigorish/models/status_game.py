@@ -27,6 +27,7 @@ class GameScrapeStatus(db.Base):
     game_time_zone = Column(String)
     bbref_game_id = Column(String, unique=True)
     bb_game_id = Column(String, unique=True)
+    reverse_home_away_status = Column(Integer, default=0)
     away_team_id_br = Column(String)
     home_team_id_br = Column(String)
     away_team_runs_scored = Column(Integer)
@@ -43,8 +44,8 @@ class GameScrapeStatus(db.Base):
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    pitch_apps = relationship("PitchAppScrapeStatus")
-    pitchfx = relationship("PitchFx")
+    pitch_apps = relationship("PitchAppScrapeStatus", backref="game")
+    pitchfx = relationship("PitchFx", backref="game")
 
     @hybrid_property
     def game_start_time(self):

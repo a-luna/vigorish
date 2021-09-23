@@ -1,4 +1,8 @@
-from vigorish.status.util import get_date_status, get_date_status_from_bbref_game_id, get_game_status
+from vigorish.status.util import (
+    get_date_status,
+    get_date_status_from_bbref_game_id,
+    get_game_status,
+)
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.result import Result
 

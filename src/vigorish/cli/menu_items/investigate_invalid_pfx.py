@@ -16,7 +16,13 @@ from vigorish.cli.components import (
     user_options_prompt,
     yes_no_prompt,
 )
-from vigorish.cli.components.viewers import DictListTableViewer, DisplayTable, TableViewer, DisplayPage, PageViewer
+from vigorish.cli.components.viewers import (
+    DictListTableViewer,
+    DisplayPage,
+    DisplayTable,
+    PageViewer,
+    TableViewer,
+)
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS, MENU_NUMBERS
 from vigorish.enums import AuditError, PatchType

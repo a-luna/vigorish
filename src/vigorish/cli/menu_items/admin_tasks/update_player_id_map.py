@@ -4,12 +4,8 @@ import subprocess
 from getch import pause
 from halo import Halo
 
-from vigorish.cli.components import (
-    get_random_cli_color,
-    get_random_dots_spinner,
-    print_heading,
-)
-from vigorish.cli.components.viewers import DisplayPage, PageViewer, DictListTableViewer
+from vigorish.cli.components import get_random_cli_color, get_random_dots_spinner, print_heading
+from vigorish.cli.components.viewers import DictListTableViewer, DisplayPage, PageViewer
 from vigorish.cli.menu_item import MenuItem
 from vigorish.constants import EMOJIS
 from vigorish.status.update_player_id_team_maps import update_player_id_map, update_player_team_map
@@ -55,9 +51,9 @@ class UpdatePlayerIdMap(MenuItem):
             spinner.stop()
             return result
         spinner.succeed(f"{data_set} was successfully updated!")
+        updated_players = result.value or []
         if no_prompts:
             return Result.Ok()
-        updated_players = result.value or []
         if not updated_players:
             pause(message="Press any key to continue...")
             return Result.Ok(updated_players)

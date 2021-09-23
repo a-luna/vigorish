@@ -1,8 +1,4 @@
-from vigorish.status.util import (
-    get_game_status,
-    get_pitch_app_status,
-    get_player_id,
-)
+from vigorish.status.util import get_game_status, get_pitch_app_status, get_player_id
 from vigorish.util.result import Result
 
 

@@ -1,7 +1,7 @@
 """Update bbref_player_id_map.json file."""
-from datetime import datetime
 import subprocess
 from collections import defaultdict
+from datetime import datetime
 
 from getch import pause
 from halo import Halo

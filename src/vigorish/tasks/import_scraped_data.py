@@ -7,9 +7,7 @@ import vigorish.database as db
 from vigorish.enums import DataSet, VigFile
 from vigorish.status.update_status_bbref_boxscores import update_status_bbref_boxscore_list
 from vigorish.status.update_status_bbref_games_for_date import update_bbref_games_for_date_list
-from vigorish.status.update_status_brooks_games_for_date import (
-    update_brooks_games_for_date_list,
-)
+from vigorish.status.update_status_brooks_games_for_date import update_brooks_games_for_date_list
 from vigorish.status.update_status_brooks_pitch_logs import (
     update_status_brooks_pitch_logs_for_game_list,
 )

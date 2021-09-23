@@ -4,11 +4,10 @@ from functools import cached_property
 from pathlib import Path
 from typing import Optional
 
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, inspect
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.schema import Table
-from vigorish.data.game_data import GameData
 
 import vigorish.database as db
 import vigorish.setup.populate_tables as setup_db
@@ -16,6 +15,7 @@ from vigorish.config.config_file import ConfigFile
 from vigorish.config.config_setting import ConfigSettingValue, PathConfigSetting
 from vigorish.config.dotenv_file import DotEnvFile
 from vigorish.config.project_paths import CSV_FOLDER, JSON_FOLDER, SQLITE_DEV_URL, SQLITE_PROD_URL
+from vigorish.data.game_data import GameData
 from vigorish.data.scraped_data import ScrapedData
 from vigorish.enums import DataSet
 from vigorish.types import AuditReport
@@ -44,10 +44,11 @@ class Vigorish:
 
     @property
     def db_setup_complete(self) -> bool:
+        inspector = inspect(self.db_engine)
         tables_missing = (
-            "player" not in self.db_engine.table_names()
-            or "season" not in self.db_engine.table_names()
-            or "team" not in self.db_engine.table_names()
+            "player" not in inspector.get_table_names()
+            or "season" not in inspector.get_table_names()
+            or "team" not in inspector.get_table_names()
         )
         if tables_missing:
             return False

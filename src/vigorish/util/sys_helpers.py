@@ -4,9 +4,9 @@ import os
 import platform
 import re
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
-import sys
 from typing import Dict, Tuple, Union
 from zipfile import ZipFile
 

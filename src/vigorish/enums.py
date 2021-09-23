@@ -141,6 +141,13 @@ class StatusReport(IntEnum):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def from_str(cls, name):
+        for enum_item in cls:
+            if name.upper() == enum_item.name:
+                return enum_item
+        return cls.NONE
+
 
 class FileTask(str, Enum):
     """Generic file actions that are mapped to LocalFileTask and S3FileTask file actions."""
@@ -186,6 +193,13 @@ class JobStatus(IntEnum):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def from_str(cls, name):
+        for enum_item in cls:
+            if name.upper() == enum_item.name:
+                return enum_item
+        return cls.NONE
 
 
 class TeamID(str, Enum):
@@ -278,7 +292,7 @@ class DefensePosition(IntEnum):
         return cls.NONE
 
     @classmethod
-    def from_name(cls, name):
+    def from_str(cls, name):
         for enum_item in cls:
             if name.upper() == enum_item.name:
                 return enum_item
@@ -449,6 +463,13 @@ class AuditTask(IntEnum):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def from_str(cls, name):
+        for enum_item in cls:
+            if name.upper() == enum_item.name:
+                return enum_item
+        return cls.NONE
 
 
 class PatchType(str, Enum):

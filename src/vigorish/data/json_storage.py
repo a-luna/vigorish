@@ -2,7 +2,6 @@
 import json
 
 from vigorish.enums import DataSet, LocalFileTask, S3FileTask, VigFile
-from vigorish.util.sys_helpers import get_last_mod_time_utc
 from vigorish.util.dt_format_strings import HTTP_TIME
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import (
@@ -10,6 +9,7 @@ from vigorish.util.string_helpers import (
     validate_brooks_game_id,
     validate_pitch_app_id,
 )
+from vigorish.util.sys_helpers import get_last_mod_time_utc
 
 
 class JsonStorage:

@@ -1406,7 +1406,7 @@ class CombineScrapedDataTask(Task):
             "gather_scraped_data_success": self.gather_scraped_data_success,
             "combined_data_success": self.combined_data_success,
             "save_combined_data_success": self.save_combined_data_success,
-            "error": "\n".join(self.error_messages),
+            "error": self.error_messages,
         }
         return result
 
@@ -1433,7 +1433,7 @@ class CombineScrapedDataTask(Task):
                 "save_combined_data_success": self.save_combined_data_success,
                 "boxscore": self.combined_data,
                 "update_pitch_apps_success": False,
-                "error": "\n".join(self.error_messages),
+                "error": self.error_messages,
             }
             return result
         results = {

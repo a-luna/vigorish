@@ -1,6 +1,6 @@
 import pytest
 
-from tests.conftest import CSV_FOLDER, TESTS_FOLDER, JSON_FOLDER
+from tests.conftest import CSV_FOLDER, JSON_FOLDER, TESTS_FOLDER
 from tests.util import (
     COMBINED_DATA_GAME_DICT,
     update_scraped_bbref_games_for_date,
