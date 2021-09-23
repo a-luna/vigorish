@@ -135,7 +135,6 @@ class RestoreDatabaseTask(Task):
         return pitch_stats_dict
 
     def update_pitchfx_relationships(self, dataclass):
-        check_pamap = list(self.pitch_app_id_map.keys())
         pfx_dict = asdict(dataclass)
         game_date = get_game_date_from_bbref_game_id(pfx_dict["bbref_game_id"])
         pitcher_team_id_br = get_bbref_team_id(pfx_dict["pitcher_team_id_bb"])
