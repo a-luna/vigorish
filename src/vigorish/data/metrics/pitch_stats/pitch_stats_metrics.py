@@ -112,38 +112,42 @@ class PitchStatsMetrics:
     @cached_property
     def era(self) -> float:
         runs_per_out = self.earned_runs / float(self.total_outs) if self.total_outs else 0.0
-        return runs_per_out * 27
+        return round(runs_per_out * 27, ndigits=2)
 
     @cached_property
     def whip(self) -> float:
-        return ((self.bases_on_balls + self.hits) * 3) / float(self.total_outs) if self.total_outs else 0.0
+        whip = ((self.bases_on_balls + self.hits) * 3) / float(self.total_outs) if self.total_outs else 0.0
+        return round(whip, ndigits=2)
 
     @cached_property
     def k_per_nine(self) -> float:
         k_per_out = self.strikeouts / float(self.total_outs) if self.total_outs else 0.0
-        return k_per_out * 27
+        return round(k_per_out * 27, ndigits=1)
 
     @cached_property
     def bb_per_nine(self) -> float:
         bb_per_out = self.bases_on_balls / float(self.total_outs) if self.total_outs else 0.0
-        return bb_per_out * 27
+        return round(bb_per_out * 27, ndigits=1)
 
     @cached_property
     def hr_per_nine(self) -> float:
         hr_per_out = self.homeruns / float(self.total_outs) if self.total_outs else 0.0
-        return hr_per_out * 27
+        return round(hr_per_out * 27, ndigits=1)
 
     @cached_property
     def k_per_bb(self) -> float:
-        return self.strikeouts / float(self.bases_on_balls) if self.bases_on_balls else 0.0
+        k_per_bb = self.strikeouts / float(self.bases_on_balls) if self.bases_on_balls else 0.0
+        return round(k_per_bb * 27, ndigits=1)
 
     @cached_property
     def k_rate(self) -> float:
-        return self.strikeouts / float(self.batters_faced) if self.batters_faced else 0.0
+        k_rate = self.strikeouts / float(self.batters_faced) if self.batters_faced else 0.0
+        return round(k_rate, ndigits=1)
 
     @cached_property
     def bb_rate(self) -> float:
-        return self.bases_on_balls / float(self.batters_faced) if self.batters_faced else 0.0
+        bb_rate = self.bases_on_balls / float(self.batters_faced) if self.batters_faced else 0.0
+        return round(bb_rate, ndigits=1)
 
     @cached_property
     def k_minus_bb(self) -> float:
@@ -151,7 +155,8 @@ class PitchStatsMetrics:
 
     @cached_property
     def hr_per_fb(self) -> float:
-        return self.homeruns / float(self.fly_balls) if self.fly_balls else 0.0
+        hr_per_fb = self.homeruns / float(self.fly_balls) if self.fly_balls else 0.0
+        return round(hr_per_fb, ndigits=1)
 
     @cached_property
     def pitch_count(self) -> int:
@@ -199,11 +204,13 @@ class PitchStatsMetrics:
 
     @cached_property
     def wpa_pitch(self) -> float:
-        return sum(stats.wpa_pitch for stats in self.pitch_stats)
+        wpa_pitch = sum(stats.wpa_pitch for stats in self.pitch_stats)
+        return round(wpa_pitch, ndigits=2)
 
     @cached_property
     def re24_pitch(self) -> float:
-        return sum(stats.re24_pitch for stats in self.pitch_stats)
+        re24_pitch = sum(stats.re24_pitch for stats in self.pitch_stats)
+        return round(re24_pitch, ndigits=1)
 
     def as_dict(self):
         dict_keys = list(filter(lambda x: not x.startswith(("__", "as_")), dir(self)))

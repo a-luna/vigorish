@@ -44,8 +44,8 @@ class GameScrapeStatus(db.Base):
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    pitch_apps = relationship("PitchAppScrapeStatus")
-    pitchfx = relationship("PitchFx")
+    pitch_apps = relationship("PitchAppScrapeStatus", backref="game")
+    pitchfx = relationship("PitchFx", backref="game")
 
     @hybrid_property
     def game_start_time(self):

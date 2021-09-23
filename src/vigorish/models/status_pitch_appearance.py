@@ -45,7 +45,7 @@ class PitchAppScrapeStatus(db.Base):
     scrape_status_date_id = Column(Integer, ForeignKey("scrape_status_date.id"))
     season_id = Column(Integer, ForeignKey("season.id"))
 
-    pitchfx = relationship("PitchFx")
+    pitchfx = relationship("PitchFx", backref="pitch_app")
 
     @hybrid_property
     def game_date(self):

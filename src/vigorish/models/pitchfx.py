@@ -132,8 +132,6 @@ class PitchFx(db.Base):
     batter = relationship("Player", foreign_keys=[batter_id], backref="pfx_as_batter")
     team_pitching = relationship("Team", foreign_keys=[team_pitching_id])
     team_batting = relationship("Team", foreign_keys=[team_batting_id])
-    game = relationship("GameScrapeStatus", foreign_keys=[game_status_id])
-    pitch_app = relationship("PitchAppScrapeStatus", foreign_keys=[pitch_app_db_id])
     date = relationship("DateScrapeStatus", foreign_keys=[date_id])
     season = relationship("Season", foreign_keys=[season_id])
 

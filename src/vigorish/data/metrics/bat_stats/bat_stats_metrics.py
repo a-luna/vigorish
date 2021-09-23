@@ -3,6 +3,7 @@ from typing import List
 
 import vigorish.database as db
 from vigorish.enums import DefensePosition
+from vigorish.util.string_helpers import format_decimal_bat_stat
 
 
 class BatStatsMetrics:
@@ -69,38 +70,46 @@ class BatStatsMetrics:
 
     @cached_property
     def avg(self) -> float:
-        return self.hits / float(self.at_bats) if self.at_bats else 0.0
+        avg = self.hits / float(self.at_bats) if self.at_bats else 0.0
+        return float(format_decimal_bat_stat(avg))
 
     @cached_property
     def obp(self) -> float:
         obp_denom = self.at_bats + self.bases_on_balls + self.hit_by_pitch
-        return (self.hits + self.bases_on_balls + self.hit_by_pitch) / float(obp_denom) if obp_denom else 0.0
+        obp = (self.hits + self.bases_on_balls + self.hit_by_pitch) / float(obp_denom) if obp_denom else 0.0
+        return float(format_decimal_bat_stat(obp))
 
     @cached_property
     def slg(self) -> float:
         singles = self.hits - self.doubles - self.triples - self.homeruns
         total_bases = singles + self.doubles * 2 + self.triples * 3 + self.homeruns * 4
-        return total_bases / float(self.at_bats) if self.at_bats else 0.0
+        slg = total_bases / float(self.at_bats) if self.at_bats else 0.0
+        return float(format_decimal_bat_stat(slg))
 
     @cached_property
     def ops(self) -> float:
-        return self.obp + self.slg
+        ops = self.obp + self.slg
+        return float(format_decimal_bat_stat(ops))
 
     @cached_property
     def iso(self) -> float:
-        return self.slg - self.avg
+        iso = self.slg - self.avg
+        return float(format_decimal_bat_stat(iso))
 
     @cached_property
     def bb_rate(self) -> float:
-        return self.bases_on_balls / float(self.plate_appearances) if self.plate_appearances else 0.0
+        bb_rate = self.bases_on_balls / float(self.plate_appearances) if self.plate_appearances else 0.0
+        return round(bb_rate, ndigits=1)
 
     @cached_property
     def k_rate(self) -> float:
-        return self.strikeouts / float(self.plate_appearances) if self.plate_appearances else 0.0
+        k_rate = self.strikeouts / float(self.plate_appearances) if self.plate_appearances else 0.0
+        return round(k_rate, ndigits=1)
 
     @cached_property
     def contact_rate(self) -> float:
-        return (self.at_bats - self.strikeouts) / float(self.at_bats) if self.at_bats else 0.0
+        cached_property = (self.at_bats - self.strikeouts) / float(self.at_bats) if self.at_bats else 0.0
+        return round(cached_property, ndigits=1)
 
     @cached_property
     def plate_appearances(self) -> int:
@@ -180,19 +189,23 @@ class BatStatsMetrics:
 
     @cached_property
     def wpa_bat(self) -> float:
-        return sum(bs.wpa_bat for bs in self.bat_stats)
+        wpa_bat = sum(bs.wpa_bat for bs in self.bat_stats)
+        return round(wpa_bat, ndigits=2)
 
     @cached_property
     def wpa_bat_pos(self) -> float:
-        return sum(bs.wpa_bat_pos for bs in self.bat_stats)
+        wpa_bat_pos = sum(bs.wpa_bat_pos for bs in self.bat_stats)
+        return round(wpa_bat_pos, ndigits=2)
 
     @cached_property
     def wpa_bat_neg(self) -> float:
-        return sum(bs.wpa_bat_neg for bs in self.bat_stats)
+        wpa_bat_neg = sum(bs.wpa_bat_neg for bs in self.bat_stats)
+        return round(wpa_bat_neg, ndigits=2)
 
     @cached_property
     def re24_bat(self) -> float:
-        return sum(bs.re24_bat for bs in self.bat_stats)
+        re24_bat = sum(bs.re24_bat for bs in self.bat_stats)
+        return round(re24_bat, ndigits=1)
 
     def as_dict(self):
         dict_keys = list(filter(lambda x: not x.startswith(("__", "as_")), dir(self)))
