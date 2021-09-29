@@ -7,7 +7,7 @@ from vigorish.config.project_paths import PLAYER_ID_MAP_CSV, PLAYER_TEAM_MAP_CSV
 from vigorish.tasks.base import Task
 from vigorish.util.dataclass_helpers import (
     deserialize_dataclass_list_from_csv,
-    get_dataclass_list_from_csv,
+    get_dataclass_list_from_csv_file,
     serialize_dataclass_list_to_csv,
 )
 from vigorish.util.dt_format_strings import DATE_ONLY
@@ -187,7 +187,7 @@ class UpdatePlayerIdMapTask(Task):
         self.id_map_filepath.write_text(csv_text)
 
     def read_bbref_player_id_map_from_file(self):
-        id_map = get_dataclass_list_from_csv(self.id_map_filepath, BBRefPlayerIdMap)
+        id_map = get_dataclass_list_from_csv_file(self.id_map_filepath, BBRefPlayerIdMap)
         return list(set(id_map))
 
 
@@ -249,7 +249,7 @@ class UpdatePlayerTeamMapTask(Task):
         self.team_map_filepath.write_text(csv_text)
 
     def read_bbref_player_team_map_from_file(self):
-        team_map = get_dataclass_list_from_csv(self.team_map_filepath, BBRefPlayerTeamMap)
+        team_map = get_dataclass_list_from_csv_file(self.team_map_filepath, BBRefPlayerTeamMap)
         return list(set(team_map))
 
 

@@ -66,6 +66,24 @@ class BatStatsMetrics:
         return len(self.bat_stats)
 
     @cached_property
+    def total_games_started(self) -> int:
+        return sum(bs.is_starter for bs in self.bat_stats)
+
+    @property
+    def total_games_subbed(self) -> int:
+        return self.total_games - self.total_games_started
+
+    @property
+    def percent_started(self) -> float:
+        percent_started = self.total_games_started / float(self.total_games)
+        return round(percent_started, ndigits=3)
+
+    @property
+    def percent_subbed(self) -> float:
+        percent_subbed = self.total_games_subbed / float(self.total_games)
+        return round(percent_subbed, ndigits=3)
+
+    @cached_property
     def avg(self) -> float:
         avg = self.hits / float(self.at_bats) if self.at_bats else 0.0
         return float(format_decimal_bat_stat(avg))
@@ -96,17 +114,17 @@ class BatStatsMetrics:
     @cached_property
     def bb_rate(self) -> float:
         bb_rate = self.bases_on_balls / float(self.plate_appearances) if self.plate_appearances else 0.0
-        return round(bb_rate, ndigits=1)
+        return round(bb_rate, ndigits=3)
 
     @cached_property
     def k_rate(self) -> float:
         k_rate = self.strikeouts / float(self.plate_appearances) if self.plate_appearances else 0.0
-        return round(k_rate, ndigits=1)
+        return round(k_rate, ndigits=3)
 
     @cached_property
     def contact_rate(self) -> float:
         cached_property = (self.at_bats - self.strikeouts) / float(self.at_bats) if self.at_bats else 0.0
-        return round(cached_property, ndigits=1)
+        return round(cached_property, ndigits=3)
 
     @cached_property
     def plate_appearances(self) -> int:
@@ -261,11 +279,3 @@ def _format_bat_order_list(bat_order_list: List[int]) -> str:
 
 def _format_def_position_list(def_position_list: List[int]) -> str:
     return ",".join(str(DefensePosition(int(def_pos))) for def_pos in def_position_list)
-
-
-# from vigorish.app import Vigorish
-# from vigorish.enums import DefensePosition
-# app = Vigorish()
-# def_positions = [DefensePosition.SECOND_BASE, DefensePosition.SHORT_STOP]
-# ball = app.scraped_data.get_bat_stats_for_defpos_for_season_for_all_teams(def_positions, 2021)
-# bt = app.scraped_data.get_bat_stats_for_defpos_by_player_for_team(def_positions, "TOR", 2021)

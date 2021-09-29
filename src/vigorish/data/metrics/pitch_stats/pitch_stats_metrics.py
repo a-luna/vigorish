@@ -137,17 +137,17 @@ class PitchStatsMetrics:
     @cached_property
     def k_per_bb(self) -> float:
         k_per_bb = self.strikeouts / float(self.bases_on_balls) if self.bases_on_balls else 0.0
-        return round(k_per_bb * 27, ndigits=1)
+        return round(k_per_bb, ndigits=1)
 
     @cached_property
     def k_rate(self) -> float:
         k_rate = self.strikeouts / float(self.batters_faced) if self.batters_faced else 0.0
-        return round(k_rate, ndigits=1)
+        return round(k_rate, ndigits=3)
 
     @cached_property
     def bb_rate(self) -> float:
         bb_rate = self.bases_on_balls / float(self.batters_faced) if self.batters_faced else 0.0
-        return round(bb_rate, ndigits=1)
+        return round(bb_rate, ndigits=3)
 
     @cached_property
     def k_minus_bb(self) -> float:
@@ -156,7 +156,7 @@ class PitchStatsMetrics:
     @cached_property
     def hr_per_fb(self) -> float:
         hr_per_fb = self.homeruns / float(self.fly_balls) if self.fly_balls else 0.0
-        return round(hr_per_fb, ndigits=1)
+        return round(hr_per_fb, ndigits=3)
 
     @cached_property
     def pitch_count(self) -> int:

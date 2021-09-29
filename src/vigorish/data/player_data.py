@@ -354,6 +354,18 @@ class PlayerData:
                 "metrics": self.pfx_batting_metrics_vs_lhp_for_career,
                 "percentiles": self.bat_stat_percentiles_vs_lhp_career,
             },
+            "as_rhb_vs_rhp": {
+                "metrics": self.pfx_batting_metrics_vs_rhp_as_rhb_for_career,
+            },
+            "as_rhb_vs_lhp": {
+                "metrics": self.pfx_batting_metrics_vs_lhp_as_rhb_for_career,
+            },
+            "as_lhb_vs_rhp": {
+                "metrics": self.pfx_batting_metrics_vs_rhp_as_lhb_for_career,
+            },
+            "as_lhb_vs_lhp": {
+                "metrics": self.pfx_batting_metrics_vs_lhp_as_lhb_for_career,
+            },
         }
 
     @cached_property
@@ -370,7 +382,7 @@ class PlayerData:
     @cached_property
     def bat_stat_percentiles_vs_all_by_year(self) -> Dict[int, BatterPercentile]:
         return {
-            year: [self.scraped_data.calculate_batter_percentiles(pfx_metrics_collection.metrics_combined)]
+            year: self.scraped_data.calculate_batter_percentiles(pfx_metrics_collection.metrics_combined)
             for year, pfx_metrics_collection in self.pfx_batting_metrics_vs_all_by_year.items()
         }
 
@@ -384,7 +396,7 @@ class PlayerData:
     @cached_property
     def bat_stat_percentiles_vs_rhp_by_year(self) -> Dict[int, BatterPercentile]:
         return {
-            year: [self.scraped_data.calculate_batter_percentiles(pfx_metrics_collection.metrics_combined)]
+            year: self.scraped_data.calculate_batter_percentiles(pfx_metrics_collection.metrics_combined)
             for year, pfx_metrics_collection in self.pfx_batting_metrics_vs_rhp_by_year.items()
         }
 
@@ -412,7 +424,7 @@ class PlayerData:
     @cached_property
     def bat_stat_percentiles_vs_lhp_by_year(self) -> Dict[int, BatterPercentile]:
         return {
-            year: [self.scraped_data.calculate_batter_percentiles(pfx_metrics_collection.metrics_combined)]
+            year: self.scraped_data.calculate_batter_percentiles(pfx_metrics_collection.metrics_combined)
             for year, pfx_metrics_collection in self.pfx_batting_metrics_vs_lhp_by_year.items()
         }
 
@@ -438,13 +450,25 @@ class PlayerData:
                 "metrics": self.pfx_batting_metrics_vs_all_by_year,
                 "percentiles": self.bat_stat_percentiles_vs_all_by_year,
             },
-            "vs_rhb": {
+            "vs_rhp": {
                 "metrics": self.pfx_batting_metrics_vs_rhp_by_year,
                 "percentiles": self.bat_stat_percentiles_vs_rhp_by_year,
             },
-            "vs_lhb": {
+            "vs_lhp": {
                 "metrics": self.pfx_batting_metrics_vs_lhp_by_year,
                 "percentiles": self.bat_stat_percentiles_vs_lhp_by_year,
+            },
+            "as_rhb_vs_rhp": {
+                "metrics": self.pfx_batting_metrics_vs_rhp_as_rhb_by_year,
+            },
+            "as_rhb_vs_lhp": {
+                "metrics": self.pfx_batting_metrics_vs_lhp_as_rhb_by_year,
+            },
+            "as_lhb_vs_rhp": {
+                "metrics": self.pfx_batting_metrics_vs_rhp_as_lhb_by_year,
+            },
+            "as_lhb_vs_lhp": {
+                "metrics": self.pfx_batting_metrics_vs_lhp_as_lhb_by_year,
             },
         }
 
