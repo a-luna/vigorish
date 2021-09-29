@@ -21,7 +21,7 @@ def serialize_dataclass_list_to_csv(data_class_objects, date_format):
     return "\n".join((col_names + csv_rows))
 
 
-def get_dataclass_list_from_csv(csv_filepath, data_class):
+def get_dataclass_list_from_csv_file(csv_filepath, data_class):
     if not csv_filepath.exists():
         return []
     csv_text = csv_filepath.read_text()
@@ -69,7 +69,7 @@ def sanitize_value_for_csv(val, date_format):
         if (isinstance(val, bool) and not val)
         else "0"
         if (isinstance(val, int) and not val)
-        else "0"
+        else "0.0"
         if (isinstance(val, float) and not val)
         else "1"
         if (isinstance(val, bool) and val)
