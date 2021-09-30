@@ -75,12 +75,12 @@ class BatStatsMetrics:
 
     @property
     def percent_started(self) -> float:
-        percent_started = self.total_games_started / float(self.total_games)
+        percent_started = self.total_games_started / float(self.total_games) if self.total_games else 0.0
         return round(percent_started, ndigits=3)
 
     @property
     def percent_subbed(self) -> float:
-        percent_subbed = self.total_games_subbed / float(self.total_games)
+        percent_subbed = self.total_games_subbed / float(self.total_games) if self.total_games else 0.0
         return round(percent_subbed, ndigits=3)
 
     @cached_property
