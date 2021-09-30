@@ -151,7 +151,7 @@ class PitchStatsMetrics:
 
     @cached_property
     def k_minus_bb(self) -> float:
-        return self.k_rate - self.bb_rate
+        return round(self.k_rate - self.bb_rate, ndigits=3)
 
     @cached_property
     def hr_per_fb(self) -> float:
