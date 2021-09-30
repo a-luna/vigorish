@@ -221,32 +221,32 @@ class PitchFxMetrics:
     @cached_property
     def avg_pfx_x(self) -> float:
         avg_pfx_x = sum(p.pfx_x for p in self.pfx) / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(avg_pfx_x, ndigits=1)
+        return round(avg_pfx_x, ndigits=2)
 
     @cached_property
     def avg_pfx_z(self) -> float:
         avg_pfx_z = sum(p.pfx_z for p in self.pfx) / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(avg_pfx_z, ndigits=1)
+        return round(avg_pfx_z, ndigits=2)
 
     @cached_property
     def avg_px(self) -> float:
         avg_px = sum(p.px for p in self.pfx) / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(avg_px, ndigits=1)
+        return round(avg_px, ndigits=2)
 
     @cached_property
     def avg_pz(self) -> float:
         avg_pz = sum(p.pz for p in self.pfx) / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(avg_pz, ndigits=1)
+        return round(avg_pz, ndigits=2)
 
     @cached_property
     def avg_plate_time(self) -> float:
         avg_plate_time = sum(p.plate_time for p in self.pfx) / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(avg_plate_time, ndigits=1)
+        return round(avg_plate_time, ndigits=3)
 
     @cached_property
     def avg_extension(self) -> float:
         avg_extension = sum(p.extension for p in self.pfx) / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(avg_extension, ndigits=1)
+        return round(avg_extension, ndigits=2)
 
     @cached_property
     def avg_break_angle(self) -> float:
@@ -270,34 +270,34 @@ class PitchFxMetrics:
     @cached_property
     def avg_spin_rate(self) -> float:
         avg_spin_rate = sum(p.spin_rate for p in self.pfx) / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(avg_spin_rate, ndigits=1)
+        return round(avg_spin_rate, ndigits=0)
 
     @cached_property
     def avg_spin_direction(self) -> float:
         avg_spin_direction = (
             sum(p.spin_direction for p in self.pfx) / float(self.total_pitches) if self.total_pitches else 0.0
         )
-        return round(avg_spin_direction, ndigits=1)
+        return round(avg_spin_direction, ndigits=0)
 
     @cached_property
     def zone_rate(self) -> float:
         zone_rate = self.total_inside_strike_zone / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(zone_rate, ndigits=1)
+        return round(zone_rate, ndigits=3)
 
     @cached_property
     def called_strike_rate(self) -> float:
         called_strike_rate = self.total_called_strikes / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(called_strike_rate, ndigits=1)
+        return round(called_strike_rate, ndigits=3)
 
     @cached_property
     def swinging_strike_rate(self) -> float:
         swinging_strike_rate = self.total_swinging_strikes / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(swinging_strike_rate, ndigits=1)
+        return round(swinging_strike_rate, ndigits=3)
 
     @cached_property
     def whiff_rate(self) -> float:
         whiff_rate = self.total_swinging_strikes / float(self.total_swings) if self.total_swings else 0.0
-        return round(whiff_rate, ndigits=1)
+        return round(whiff_rate, ndigits=3)
 
     @cached_property
     def csw_rate(self) -> float:
@@ -306,12 +306,12 @@ class PitchFxMetrics:
             if self.total_pitches
             else 0.0
         )
-        return round(csw_rate, ndigits=1)
+        return round(csw_rate, ndigits=3)
 
     @cached_property
     def bad_whiff_rate(self) -> float:
         bad_whiff_rate = self.total_bad_whiffs / float(self.total_swings) if self.total_swings else 0.0
-        return round(bad_whiff_rate, ndigits=1)
+        return round(bad_whiff_rate, ndigits=3)
 
     @cached_property
     def o_swing_rate(self) -> float:
@@ -320,7 +320,7 @@ class PitchFxMetrics:
             if self.total_outside_strike_zone
             else 0.0
         )
-        return round(o_swing_rate, ndigits=1)
+        return round(o_swing_rate, ndigits=3)
 
     @cached_property
     def z_swing_rate(self) -> float:
@@ -329,12 +329,12 @@ class PitchFxMetrics:
             if self.total_inside_strike_zone
             else 0.0
         )
-        return round(z_swing_rate, ndigits=1)
+        return round(z_swing_rate, ndigits=3)
 
     @cached_property
     def swing_rate(self) -> float:
         swing_rate = self.total_swings / float(self.total_pitches) if self.total_pitches else 0.0
-        return round(swing_rate, ndigits=1)
+        return round(swing_rate, ndigits=3)
 
     @cached_property
     def o_contact_rate(self) -> float:
@@ -343,7 +343,7 @@ class PitchFxMetrics:
             if self.total_swings_outside_zone
             else 0.0
         )
-        return round(o_contact_rate, ndigits=1)
+        return round(o_contact_rate, ndigits=3)
 
     @cached_property
     def z_contact_rate(self) -> float:
@@ -352,34 +352,34 @@ class PitchFxMetrics:
             if self.total_swings_inside_zone
             else 0.0
         )
-        return round(z_contact_rate, ndigits=1)
+        return round(z_contact_rate, ndigits=3)
 
     @cached_property
     def contact_rate(self) -> float:
         contact_rate = self.total_swings_made_contact / float(self.total_swings) if self.total_swings else 0.0
-        return round(contact_rate, ndigits=1)
+        return round(contact_rate, ndigits=3)
 
     @cached_property
     def ground_ball_rate(self) -> float:
         ground_ball_rate = (
             self.total_ground_balls / float(self.total_balls_in_play) if self.total_balls_in_play else 0.0
         )
-        return round(ground_ball_rate, ndigits=1)
+        return round(ground_ball_rate, ndigits=3)
 
     @cached_property
     def fly_ball_rate(self) -> float:
         fly_ball_rate = self.total_fly_balls / float(self.total_balls_in_play) if self.total_balls_in_play else 0.0
-        return round(fly_ball_rate, ndigits=1)
+        return round(fly_ball_rate, ndigits=3)
 
     @cached_property
     def line_drive_rate(self) -> float:
         line_drive_rate = self.total_line_drives / float(self.total_balls_in_play) if self.total_balls_in_play else 0.0
-        return round(line_drive_rate, ndigits=1)
+        return round(line_drive_rate, ndigits=3)
 
     @cached_property
     def popup_rate(self) -> float:
         popup_rate = self.total_popups / float(self.total_balls_in_play) if self.total_balls_in_play else 0.0
-        return round(popup_rate, ndigits=1)
+        return round(popup_rate, ndigits=3)
 
     @cached_property
     def avg(self) -> float:
@@ -431,7 +431,8 @@ class PitchFxMetrics:
     @cached_property
     def avg_launch_speed(self) -> float:
         balls_in_play = [p for p in self.pfx if p.launch_speed]
-        return sum(p.launch_speed for p in balls_in_play) / len(balls_in_play) if balls_in_play else 0.0
+        avg_launch_speed = sum(p.launch_speed for p in balls_in_play) / len(balls_in_play) if balls_in_play else 0.0
+        return round(avg_launch_speed, ndigits=1)
 
     @cached_property
     def max_launch_speed(self) -> float:
@@ -441,12 +442,14 @@ class PitchFxMetrics:
     @cached_property
     def avg_launch_angle(self) -> float:
         balls_in_play = [p for p in self.pfx if p.launch_angle]
-        return sum(p.launch_angle for p in balls_in_play) / len(balls_in_play) if balls_in_play else 0.0
+        avg_launch_angle = sum(p.launch_angle for p in balls_in_play) / len(balls_in_play) if balls_in_play else 0.0
+        return round(avg_launch_angle, ndigits=1)
 
     @cached_property
     def avg_hit_distance(self) -> float:
         balls_in_play = [p for p in self.pfx if p.total_distance]
-        return sum(p.total_distance for p in balls_in_play) / len(balls_in_play) if balls_in_play else 0.0
+        avg_hit_distance = sum(p.total_distance for p in balls_in_play) / len(balls_in_play) if balls_in_play else 0.0
+        return round(avg_hit_distance, ndigits=1)
 
     @cached_property
     def hard_hit_rate(self) -> float:
