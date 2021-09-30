@@ -1,8 +1,9 @@
 from functools import cached_property
-from typing import List
+from typing import Dict, List, Union
 
 import vigorish.database as db
 from vigorish.enums import DefensePosition
+from vigorish.util.list_helpers import group_and_sort_list
 from vigorish.util.string_helpers import format_decimal_bat_stat
 
 
@@ -17,8 +18,6 @@ class BatStatsMetrics:
         player_team_id_bbref: str = None,
         opponent_team_id_bbref: str = None,
         is_starter: bool = False,
-        bat_order_list: List[int] = None,
-        def_position_list: List[DefensePosition] = None,
         stint_number: int = None,
     ) -> None:
         self.year = year
@@ -29,8 +28,6 @@ class BatStatsMetrics:
         self.player_team_id_bbref = team_id_bbref or player_team_id_bbref
         self.opponent_team_id_bbref = opponent_team_id_bbref
         self.is_starter = is_starter
-        self.bat_order_list = bat_order_list or []
-        self.def_position_list = def_position_list or []
         self.stint_number = stint_number
         self.changed_teams_midseason = False
         self.all_stats_for_season = False
@@ -69,6 +66,24 @@ class BatStatsMetrics:
         return len(self.bat_stats)
 
     @cached_property
+    def total_games_started(self) -> int:
+        return sum(bs.is_starter for bs in self.bat_stats)
+
+    @property
+    def total_games_subbed(self) -> int:
+        return self.total_games - self.total_games_started
+
+    @property
+    def percent_started(self) -> float:
+        percent_started = self.total_games_started / float(self.total_games)
+        return round(percent_started, ndigits=3)
+
+    @property
+    def percent_subbed(self) -> float:
+        percent_subbed = self.total_games_subbed / float(self.total_games)
+        return round(percent_subbed, ndigits=3)
+
+    @cached_property
     def avg(self) -> float:
         avg = self.hits / float(self.at_bats) if self.at_bats else 0.0
         return float(format_decimal_bat_stat(avg))
@@ -99,17 +114,17 @@ class BatStatsMetrics:
     @cached_property
     def bb_rate(self) -> float:
         bb_rate = self.bases_on_balls / float(self.plate_appearances) if self.plate_appearances else 0.0
-        return round(bb_rate, ndigits=1)
+        return round(bb_rate, ndigits=3)
 
     @cached_property
     def k_rate(self) -> float:
         k_rate = self.strikeouts / float(self.plate_appearances) if self.plate_appearances else 0.0
-        return round(k_rate, ndigits=1)
+        return round(k_rate, ndigits=3)
 
     @cached_property
     def contact_rate(self) -> float:
         cached_property = (self.at_bats - self.strikeouts) / float(self.at_bats) if self.at_bats else 0.0
-        return round(cached_property, ndigits=1)
+        return round(cached_property, ndigits=3)
 
     @cached_property
     def plate_appearances(self) -> int:
@@ -207,6 +222,26 @@ class BatStatsMetrics:
         re24_bat = sum(bs.re24_bat for bs in self.bat_stats)
         return round(re24_bat, ndigits=1)
 
+    @cached_property
+    def def_position_list(self) -> List[DefensePosition]:
+        return list({DefensePosition(int(bs.def_position)) for bs in self.bat_stats})
+
+    @cached_property
+    def def_position_metrics(self) -> List[Dict[str, Union[bool, int, float, DefensePosition]]]:
+        bat_stats_grouped = group_and_sort_list(self.bat_stats, "def_position", "date_id")
+        pos_counts = [get_pos_metrics(k, v, self.bat_stats) for k, v in bat_stats_grouped.items()]
+        return sorted(pos_counts, key=lambda x: x["percent"], reverse=True)
+
+    @cached_property
+    def bat_order_list(self) -> List[DefensePosition]:
+        return list({bs.bat_order for bs in self.bat_stats}) if self.bat_stats else []
+
+    @cached_property
+    def bat_order_metrics(self) -> List[Dict[str, Union[int, float]]]:
+        bat_orders_grouped = group_and_sort_list(self.bat_stats, "bat_order", "date_id")
+        order_number_counts = [get_bat_order_metrics(k, v, self.bat_stats) for k, v in bat_orders_grouped.items()]
+        return sorted(order_number_counts, key=lambda x: x["percent"], reverse=True)
+
     def as_dict(self):
         dict_keys = list(filter(lambda x: not x.startswith(("__", "as_")), dir(self)))
         bat_stat_metrics_dict = {key: getattr(self, key) for key in dict_keys}
@@ -216,17 +251,31 @@ class BatStatsMetrics:
         return bat_stat_metrics_dict
 
 
+def get_pos_metrics(
+    pos_number: str, pos_stats: List[db.BatStats], all_bat_stats: List[db.BatStats]
+) -> Dict[str, Union[bool, int, float, DefensePosition]]:
+    def_pos = DefensePosition(int(pos_number))
+    return {
+        "def_pos": def_pos,
+        "is_starter": def_pos.is_starter,
+        "total_games": len(pos_stats),
+        "percent": round(len(pos_stats) / float(len(all_bat_stats)), 3) * 100,
+    }
+
+
+def get_bat_order_metrics(
+    bat_order: str, bat_order_stats: List[db.BatStats], all_bat_stats: List[db.BatStats]
+) -> Dict[str, Union[int, float]]:
+    return {
+        "bat_order": bat_order,
+        "total_games": len(bat_order_stats),
+        "percent": round(len(bat_order_stats) / float(len(all_bat_stats)), 3) * 100,
+    }
+
+
 def _format_bat_order_list(bat_order_list: List[int]) -> str:
     return ",".join(str(bat_order) for bat_order in bat_order_list)
 
 
 def _format_def_position_list(def_position_list: List[int]) -> str:
     return ",".join(str(DefensePosition(int(def_pos))) for def_pos in def_position_list)
-
-
-# from vigorish.app import Vigorish
-# from vigorish.enums import DefensePosition
-# app = Vigorish()
-# def_positions = [DefensePosition.SECOND_BASE, DefensePosition.SHORT_STOP]
-# ball = app.scraped_data.get_bat_stats_for_defpos_for_season_for_all_teams(def_positions, 2021)
-# bt = app.scraped_data.get_bat_stats_for_defpos_by_player_for_team(def_positions, "TOR", 2021)

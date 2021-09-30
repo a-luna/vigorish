@@ -75,7 +75,6 @@ class BatStatsMetricsFactory:
                 year=year,
                 team_id_bbref=team_id,
                 player_team_id_bbref=team_id,
-                bat_order_list=bat_order_list,
             )
             for team_id in list(TEAM_ID_MAP.keys())
         ]
@@ -91,7 +90,6 @@ class BatStatsMetricsFactory:
                 year=year,
                 team_id_bbref=team_id,
                 player_team_id_bbref=team_id,
-                def_position_list=def_position_list,
             )
             for team_id in list(TEAM_ID_MAP.keys())
         ]

@@ -316,7 +316,6 @@ class TeamBatStatsMetrics:
             team_id=self.team_id_bbref,
             bat_stats=bat_stats_for_lineup_spots_for_season,
             year=year,
-            bat_order_list=bat_order_list,
         )
         bat_stats_metrics.all_team_stats_for_bat_order = True
         return bat_stats_metrics
@@ -331,7 +330,6 @@ class TeamBatStatsMetrics:
             team_id=self.team_id_bbref,
             bat_stats=bat_stats_for_def_positions_for_season,
             year=year,
-            def_position_list=def_position_list,
         )
         bat_stats_metrics.all_team_stats_for_def_pos = True
         return bat_stats_metrics
@@ -432,7 +430,6 @@ class TeamBatStatsMetrics:
             year=year,
             player_id_mlb=mlb_id,
             player_id_bbref=bbref_id,
-            bat_order_list=bat_order_list,
         )
 
     def get_bat_stat_metrics_for_def_positions_for_player(
@@ -461,7 +458,6 @@ class TeamBatStatsMetrics:
             year=year,
             player_id_mlb=mlb_id,
             player_id_bbref=bbref_id,
-            def_position_list=def_position_list,
         )
 
 
@@ -530,8 +526,6 @@ def create_bat_stats_metrics(
     player_id_mlb: int = None,
     player_id_bbref: str = None,
     is_starter: bool = False,
-    bat_order_list: List[int] = 0,
-    def_position_list: List[DefensePosition] = None,
 ) -> BatStatsMetrics:
     return BatStatsMetrics(
         bat_stats=deepcopy(bat_stats),
@@ -541,6 +535,4 @@ def create_bat_stats_metrics(
         team_id_bbref=team_id,
         player_team_id_bbref=team_id,
         is_starter=is_starter,
-        bat_order_list=bat_order_list,
-        def_position_list=def_position_list,
     )
