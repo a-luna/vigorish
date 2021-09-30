@@ -416,17 +416,17 @@ class PitchFxMetrics:
     @cached_property
     def bb_rate(self) -> float:
         bb_rate = self.total_bb / float(self.total_pa) if self.total_pa else 0.0
-        return round(bb_rate, ndigits=1)
+        return round(bb_rate, ndigits=3)
 
     @cached_property
     def k_rate(self) -> float:
         k_rate = self.total_k / float(self.total_pa) if self.total_pa else 0.0
-        return round(k_rate, ndigits=1)
+        return round(k_rate, ndigits=3)
 
     @cached_property
     def hr_per_fb(self) -> float:
         hr_per_fb = self.total_homeruns / float(self.total_fly_balls) if self.total_fly_balls else 0.0
-        return round(hr_per_fb, ndigits=1)
+        return round(hr_per_fb, ndigits=3)
 
     @cached_property
     def avg_launch_speed(self) -> float:
@@ -451,22 +451,22 @@ class PitchFxMetrics:
     @cached_property
     def hard_hit_rate(self) -> float:
         hard_hit_rate = self.total_hard_hits / float(self.total_balls_in_play) if self.total_balls_in_play else 0.0
-        return round(hard_hit_rate, ndigits=1)
+        return round(hard_hit_rate, ndigits=3)
 
     @cached_property
     def medium_hit_rate(self) -> float:
         medium_hit_rate = self.total_medium_hits / float(self.total_balls_in_play) if self.total_balls_in_play else 0.0
-        return round(medium_hit_rate, ndigits=1)
+        return round(medium_hit_rate, ndigits=3)
 
     @cached_property
     def soft_hit_rate(self) -> float:
         soft_hit_rate = self.total_soft_hits / float(self.total_balls_in_play) if self.total_balls_in_play else 0.0
-        return round(soft_hit_rate, ndigits=1)
+        return round(soft_hit_rate, ndigits=3)
 
     @cached_property
     def barrel_rate(self) -> float:
         barrel_rate = self.total_barrels / float(self.total_balls_in_play) if self.total_balls_in_play else 0.0
-        return round(barrel_rate, ndigits=1)
+        return round(barrel_rate, ndigits=3)
 
     def as_dict(self):
         dict_keys = list(filter(lambda x: not x.startswith(("__", "for_", "as_", "create_", "get_", "pfx")), dir(self)))
