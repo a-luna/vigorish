@@ -304,8 +304,8 @@ Tyler Anderson,29,542881,anderty01,2019,COL,1,NL
 Tyler Anderson,30,542881,anderty01,2020,SFG,1,NL
 Tyler Anderson,31,542881,anderty01,2021,PIT,1,NL
 Tyler Anderson,31,542881,anderty01,2021,SEA,1,AL
-Tyler Anderson,31,542881,anderty01,2021,PIT,2,NL
 Tyler Anderson,31,542881,anderty01,2021,SEA,2,AL
+Tyler Anderson,31,542881,anderty01,2021,PIT,2,NL
 Robert Andino,32,435180,andinro01,2016,MIA,1,NL
 John Andreoli,28,607430,andrejo03,2018,SEA,1,AL
 John Andreoli,28,607430,andrejo03,2018,BAL,2,AL
@@ -318,8 +318,8 @@ Matt Andriese,29,542882,andrima01,2019,ARI,1,NL
 Matt Andriese,30,542882,andrima01,2020,LAA,1,AL
 Matt Andriese,31,542882,andrima01,2021,SEA,1,AL
 Matt Andriese,31,542882,andrima01,2021,BOS,1,AL
-Matt Andriese,31,542882,andrima01,2021,BOS,2,AL
 Matt Andriese,31,542882,andrima01,2021,SEA,2,AL
+Matt Andriese,31,542882,andrima01,2021,BOS,2,AL
 Elvis Andrus,27,462101,andruel01,2016,TEX,1,AL
 Elvis Andrus,28,462101,andruel01,2017,TEX,1,AL
 Elvis Andrus,29,462101,andruel01,2018,TEX,1,AL
@@ -543,8 +543,8 @@ Jacob Barnes,29,606930,barneja01,2019,KCR,2,AL
 Jacob Barnes,30,606930,barneja01,2020,LAA,1,AL
 Jacob Barnes,31,606930,barneja01,2021,TOR,1,AL
 Jacob Barnes,31,606930,barneja01,2021,NYM,1,NL
-Jacob Barnes,31,606930,barneja01,2021,NYM,2,NL
 Jacob Barnes,31,606930,barneja01,2021,TOR,2,AL
+Jacob Barnes,31,606930,barneja01,2021,NYM,2,NL
 Matt Barnes,26,598264,barnema01,2016,BOS,1,AL
 Matt Barnes,27,598264,barnema01,2017,BOS,1,AL
 Matt Barnes,28,598264,barnema01,2018,BOS,1,AL
@@ -609,8 +609,8 @@ Antonio Bastardo,30,455374,bastaan01,2016,PIT,2,NL
 Antonio Bastardo,31,455374,bastaan01,2017,PIT,1,NL
 Jake Bauers,22,641343,bauerja01,2018,TBR,1,AL
 Jake Bauers,23,641343,bauerja01,2019,CLE,1,AL
-Jake Bauers,25,641343,bauerja01,2021,CLE,1,AL
 Jake Bauers,25,641343,bauerja01,2021,SEA,1,AL
+Jake Bauers,25,641343,bauerja01,2021,CLE,1,AL
 Jake Bauers,25,641343,bauerja01,2021,SEA,2,AL
 Jake Bauers,25,641343,bauerja01,2021,CLE,2,AL
 Trevor Bauer,25,545333,bauertr01,2016,CLE,1,AL
@@ -870,10 +870,10 @@ Ronald Bolanos,24,671790,bolanro01,2021,KCR,1,AL
 Mike Bolsinger,28,502211,bolsimi01,2016,LAD,1,NL
 Mike Bolsinger,29,502211,bolsimi01,2017,TOR,1,AL
 Skye Bolt,25,621450,boltsk01,2019,OAK,1,AL
-Skye Bolt,27,621450,boltsk01,2021,SFG,1,NL
 Skye Bolt,27,621450,boltsk01,2021,OAK,1,AL
-Skye Bolt,27,621450,boltsk01,2021,SFG,2,NL
+Skye Bolt,27,621450,boltsk01,2021,SFG,1,NL
 Skye Bolt,27,621450,boltsk01,2021,OAK,2,AL
+Skye Bolt,27,621450,boltsk01,2021,SFG,2,NL
 Emilio Bonifacio,31,466988,bonifem01,2016,ATL,1,NL
 Emilio Bonifacio,32,466988,bonifem01,2017,ATL,1,NL
 Emilio Bonifacio,35,466988,bonifem01,2020,WSN,1,NL
@@ -1149,8 +1149,8 @@ Billy Burns,26,542993,burnsbi02,2016,KCR,2,AL
 Billy Burns,27,542993,burnsbi02,2017,KCR,1,AL
 Emmanuel Burriss,31,502034,burriem01,2016,PHI,1,NL
 Beau Burrows,23,663366,burrobe01,2020,DET,1,AL
-Beau Burrows,24,663366,burrobe01,2021,MIN,1,AL
 Beau Burrows,24,663366,burrobe01,2021,DET,1,AL
+Beau Burrows,24,663366,burrobe01,2021,MIN,1,AL
 Beau Burrows,24,663366,burrobe01,2021,MIN,2,AL
 Beau Burrows,24,663366,burrobe01,2021,DET,2,AL
 Ryan Burr,24,621114,burrry01,2018,CHW,1,AL
@@ -1195,10 +1195,10 @@ Asdrubal Cabrera,32,452678,cabreas01,2018,PHI,2,NL
 Asdrubal Cabrera,33,452678,cabreas01,2019,TEX,1,AL
 Asdrubal Cabrera,33,452678,cabreas01,2019,WSN,2,NL
 Asdrubal Cabrera,34,452678,cabreas01,2020,WSN,1,NL
-Asdrubal Cabrera,35,452678,cabreas01,2021,CIN,1,NL
 Asdrubal Cabrera,35,452678,cabreas01,2021,ARI,1,NL
-Asdrubal Cabrera,35,452678,cabreas01,2021,CIN,2,NL
+Asdrubal Cabrera,35,452678,cabreas01,2021,CIN,1,NL
 Asdrubal Cabrera,35,452678,cabreas01,2021,ARI,2,NL
+Asdrubal Cabrera,35,452678,cabreas01,2021,CIN,2,NL
 Edward Cabrera,23,665795,cabreed02,2021,MIA,1,NL
 Genesis Cabrera,22,650893,cabrege01,2019,STL,1,NL
 Genesis Cabrera,23,650893,cabrege01,2020,STL,1,NL
@@ -1353,8 +1353,8 @@ Diego Castillo,25,650895,castidi01,2019,TBR,1,AL
 Diego Castillo,26,650895,castidi01,2020,TBR,1,AL
 Diego Castillo,27,650895,castidi01,2021,SEA,1,AL
 Diego Castillo,27,650895,castidi01,2021,TBR,1,AL
-Diego Castillo,27,650895,castidi01,2021,TBR,2,AL
 Diego Castillo,27,650895,castidi01,2021,SEA,2,AL
+Diego Castillo,27,650895,castidi01,2021,TBR,2,AL
 Fabio Castillo,28,503566,castifa01,2017,LAD,1,NL
 Ivan Castillo,26,622668,castiiv01,2021,SDP,1,NL
 Jose Castillo,22,620454,castijo03,2018,SDP,1,NL
@@ -1466,8 +1466,8 @@ Andrew Chafin,30,605177,chafian01,2020,ARI,1,NL
 Andrew Chafin,30,605177,chafian01,2020,CHC,2,NL
 Andrew Chafin,31,605177,chafian01,2021,OAK,1,AL
 Andrew Chafin,31,605177,chafian01,2021,CHC,1,NL
-Andrew Chafin,31,605177,chafian01,2021,CHC,2,NL
 Andrew Chafin,31,605177,chafian01,2021,OAK,2,AL
+Andrew Chafin,31,605177,chafian01,2021,CHC,2,NL
 Joba Chamberlain,30,501955,chambjo03,2016,CLE,1,AL
 Yu Chang,23,644374,changyu01,2019,CLE,1,AL
 Yu Chang,24,644374,changyu01,2020,CLE,1,AL
@@ -1546,8 +1546,8 @@ Adam Cimber,28,643256,cimbead01,2019,CLE,1,AL
 Adam Cimber,29,643256,cimbead01,2020,CLE,1,AL
 Adam Cimber,30,643256,cimbead01,2021,MIA,1,NL
 Adam Cimber,30,643256,cimbead01,2021,TOR,1,AL
-Adam Cimber,30,643256,cimbead01,2021,TOR,2,AL
 Adam Cimber,30,643256,cimbead01,2021,MIA,2,NL
+Adam Cimber,30,643256,cimbead01,2021,TOR,2,AL
 Tony Cingrani,26,571561,cingrto01,2016,CIN,1,NL
 Tony Cingrani,27,571561,cingrto01,2017,CIN,1,NL
 Tony Cingrani,27,571561,cingrto01,2017,LAD,2,NL
@@ -1681,6 +1681,7 @@ Adam Conley,28,543045,conlead01,2018,MIA,1,NL
 Adam Conley,29,543045,conlead01,2019,MIA,1,NL
 Adam Conley,31,543045,conlead01,2021,TBR,1,AL
 P.J. Conlon,24,664869,conlopj01,2018,NYM,1,NL
+Roansy Contreras,21,672710,contrro01,2021,PIT,1,NL
 Willson Contreras,24,575929,contrwi01,2016,CHC,1,NL
 Willson Contreras,25,575929,contrwi01,2017,CHC,1,NL
 Willson Contreras,26,575929,contrwi01,2018,CHC,1,NL
@@ -1902,8 +1903,8 @@ Austin Davis,27,656354,davisau01,2020,PHI,1,NL
 Austin Davis,27,656354,davisau01,2020,PIT,2,NL
 Austin Davis,28,656354,davisau01,2021,PIT,1,NL
 Austin Davis,28,656354,davisau01,2021,BOS,1,AL
-Austin Davis,28,656354,davisau01,2021,PIT,2,NL
 Austin Davis,28,656354,davisau01,2021,BOS,2,AL
+Austin Davis,28,656354,davisau01,2021,PIT,2,NL
 Chris Davis,30,448801,davisch02,2016,BAL,1,AL
 Chris Davis,31,448801,davisch02,2017,BAL,1,AL
 Chris Davis,32,448801,davisch02,2018,BAL,1,AL
@@ -1929,10 +1930,10 @@ Khris Davis,29,501981,daviskh01,2017,OAK,1,AL
 Khris Davis,30,501981,daviskh01,2018,OAK,1,AL
 Khris Davis,31,501981,daviskh01,2019,OAK,1,AL
 Khris Davis,32,501981,daviskh01,2020,OAK,1,AL
-Khris Davis,33,501981,daviskh01,2021,TEX,1,AL
 Khris Davis,33,501981,daviskh01,2021,OAK,1,AL
-Khris Davis,33,501981,daviskh01,2021,OAK,2,AL
+Khris Davis,33,501981,daviskh01,2021,TEX,1,AL
 Khris Davis,33,501981,daviskh01,2021,TEX,2,AL
+Khris Davis,33,501981,daviskh01,2021,OAK,2,AL
 Rajai Davis,35,434658,davisra01,2016,CLE,1,AL
 Rajai Davis,36,434658,davisra01,2017,OAK,1,AL
 Rajai Davis,36,434658,davisra01,2017,BOS,2,AL
@@ -2123,8 +2124,8 @@ Corey Dickerson,30,572816,dickeco01,2019,PHI,2,NL
 Corey Dickerson,31,572816,dickeco01,2020,MIA,1,NL
 Corey Dickerson,32,572816,dickeco01,2021,MIA,1,NL
 Corey Dickerson,32,572816,dickeco01,2021,TOR,1,AL
-Corey Dickerson,32,572816,dickeco01,2021,MIA,2,NL
 Corey Dickerson,32,572816,dickeco01,2021,TOR,2,AL
+Corey Dickerson,32,572816,dickeco01,2021,MIA,2,NL
 R.A. Dickey,41,285079,dicker.01,2016,TOR,1,AL
 R.A. Dickey,42,285079,dicker.01,2017,ATL,1,NL
 Brandon Dickson,36,505447,dicksbr01,2021,STL,1,NL
@@ -2177,8 +2178,8 @@ Sean Doolittle,30,448281,doolise01,2017,WSN,2,NL
 Sean Doolittle,31,448281,doolise01,2018,WSN,1,NL
 Sean Doolittle,32,448281,doolise01,2019,WSN,1,NL
 Sean Doolittle,33,448281,doolise01,2020,WSN,1,NL
-Sean Doolittle,34,448281,doolise01,2021,CIN,1,NL
 Sean Doolittle,34,448281,doolise01,2021,SEA,1,AL
+Sean Doolittle,34,448281,doolise01,2021,CIN,1,NL
 Sean Doolittle,34,448281,doolise01,2021,CIN,2,NL
 Sean Doolittle,34,448281,doolise01,2021,SEA,2,AL
 Ryan Dorow,25,676900,dorowry01,2021,TEX,1,AL
@@ -2294,10 +2295,10 @@ Jarrod Dyson,33,502481,dysonja01,2018,ARI,1,NL
 Jarrod Dyson,34,502481,dysonja01,2019,ARI,1,NL
 Jarrod Dyson,35,502481,dysonja01,2020,PIT,1,NL
 Jarrod Dyson,35,502481,dysonja01,2020,CHW,2,AL
-Jarrod Dyson,36,502481,dysonja01,2021,KCR,1,AL
 Jarrod Dyson,36,502481,dysonja01,2021,TOR,1,AL
-Jarrod Dyson,36,502481,dysonja01,2021,KCR,2,AL
+Jarrod Dyson,36,502481,dysonja01,2021,KCR,1,AL
 Jarrod Dyson,36,502481,dysonja01,2021,TOR,2,AL
+Jarrod Dyson,36,502481,dysonja01,2021,KCR,2,AL
 Sam Dyson,28,473879,dysonsa01,2016,TEX,1,AL
 Sam Dyson,29,473879,dysonsa01,2017,TEX,1,AL
 Sam Dyson,29,473879,dysonsa01,2017,SFG,2,NL
@@ -2326,8 +2327,8 @@ Carl Edwards Jr.,27,605218,edwarca01,2019,SDP,2,NL
 Carl Edwards Jr.,28,605218,edwarca01,2020,SEA,1,AL
 Carl Edwards Jr.,29,605218,edwarca01,2021,ATL,1,NL
 Carl Edwards Jr.,29,605218,edwarca01,2021,TOR,1,AL
-Carl Edwards Jr.,29,605218,edwarca01,2021,ATL,2,NL
 Carl Edwards Jr.,29,605218,edwarca01,2021,TOR,2,AL
+Carl Edwards Jr.,29,605218,edwarca01,2021,ATL,2,NL
 Jon Edwards,30,457754,edwarjo02,2018,CLE,1,AL
 Jon Edwards,31,457754,edwarjo02,2019,CLE,1,AL
 Scott Effross,27,664123,effrosc01,2021,CHC,1,NL
@@ -2469,8 +2470,8 @@ Jeurys Familia,30,544727,familje01,2020,NYM,1,NL
 Jeurys Familia,31,544727,familje01,2021,NYM,1,NL
 Johneshwy Fargas,26,641561,fargajo01,2021,NYM,1,NL
 Johneshwy Fargas,26,641561,fargajo01,2021,CHC,1,NL
-Johneshwy Fargas,26,641561,fargajo01,2021,NYM,2,NL
 Johneshwy Fargas,26,641561,fargajo01,2021,CHC,2,NL
+Johneshwy Fargas,26,641561,fargajo01,2021,NYM,2,NL
 Jake Faria,23,607188,fariaja01,2017,TBR,1,AL
 Jake Faria,24,607188,fariaja01,2018,TBR,1,AL
 Jake Faria,25,607188,fariaja01,2019,TBR,1,AL
@@ -2835,10 +2836,10 @@ Joey Gallo,23,608336,gallojo01,2017,TEX,1,AL
 Joey Gallo,24,608336,gallojo01,2018,TEX,1,AL
 Joey Gallo,25,608336,gallojo01,2019,TEX,1,AL
 Joey Gallo,26,608336,gallojo01,2020,TEX,1,AL
-Joey Gallo,27,608336,gallojo01,2021,TEX,1,AL
 Joey Gallo,27,608336,gallojo01,2021,NYY,1,AL
-Joey Gallo,27,608336,gallojo01,2021,NYY,2,AL
+Joey Gallo,27,608336,gallojo01,2021,TEX,1,AL
 Joey Gallo,27,608336,gallojo01,2021,TEX,2,AL
+Joey Gallo,27,608336,gallojo01,2021,NYY,2,AL
 Freddy Galvis,26,520471,galvifr01,2016,PHI,1,NL
 Freddy Galvis,27,520471,galvifr01,2017,PHI,1,NL
 Freddy Galvis,28,520471,galvifr01,2018,SDP,1,NL
@@ -2861,10 +2862,10 @@ John Gant,24,607231,gantjo01,2017,STL,1,NL
 John Gant,25,607231,gantjo01,2018,STL,1,NL
 John Gant,26,607231,gantjo01,2019,STL,1,NL
 John Gant,27,607231,gantjo01,2020,STL,1,NL
-John Gant,28,607231,gantjo01,2021,MIN,1,AL
 John Gant,28,607231,gantjo01,2021,STL,1,NL
-John Gant,28,607231,gantjo01,2021,STL,2,NL
+John Gant,28,607231,gantjo01,2021,MIN,1,AL
 John Gant,28,607231,gantjo01,2021,MIN,2,AL
+John Gant,28,607231,gantjo01,2021,STL,2,NL
 Adonis Garcia,31,611177,garciad01,2016,ATL,1,NL
 Adonis Garcia,32,611177,garciad01,2017,ATL,1,NL
 Adolis Garcia,25,666969,garciad02,2018,STL,1,NL
@@ -2888,8 +2889,8 @@ Edgar Garcia,22,658305,garcied01,2019,PHI,1,NL
 Edgar Garcia,23,658305,garcied01,2020,TBR,1,AL
 Edgar Garcia,24,658305,garcied01,2021,MIN,1,AL
 Edgar Garcia,24,658305,garcied01,2021,CIN,1,NL
-Edgar Garcia,24,658305,garcied01,2021,MIN,2,AL
 Edgar Garcia,24,658305,garcied01,2021,CIN,2,NL
+Edgar Garcia,24,658305,garcied01,2021,MIN,2,AL
 Greg Garcia,26,594824,garcigr01,2016,STL,1,NL
 Greg Garcia,27,594824,garcigr01,2017,STL,1,NL
 Greg Garcia,28,594824,garcigr01,2018,STL,1,NL
@@ -2941,8 +2942,8 @@ Yimi Garcia,28,554340,garciyi01,2019,LAD,1,NL
 Yimi Garcia,29,554340,garciyi01,2020,MIA,1,NL
 Yimi Garcia,30,554340,garciyi01,2021,MIA,1,NL
 Yimi Garcia,30,554340,garciyi01,2021,HOU,1,AL
-Yimi Garcia,30,554340,garciyi01,2021,MIA,2,NL
 Yimi Garcia,30,554340,garciyi01,2021,HOU,2,AL
+Yimi Garcia,30,554340,garciyi01,2021,MIA,2,NL
 Nick Gardewine,23,643320,gardeni01,2017,TEX,1,AL
 Nick Gardewine,24,643320,gardeni01,2018,TEX,1,AL
 Brett Gardner,32,458731,gardnbr01,2016,NYY,1,AL
@@ -2983,10 +2984,10 @@ Mitch Garver,30,641598,garvemi01,2021,MIN,1,AL
 Justin Garza,27,621057,garzaju01,2021,CLE,1,AL
 Matt Garza,32,490063,garzama01,2016,MIL,1,NL
 Matt Garza,33,490063,garzama01,2017,MIL,1,NL
-Ralph Garza,27,621248,garzara01,2021,HOU,1,AL
 Ralph Garza,27,621248,garzara01,2021,MIN,1,AL
-Ralph Garza,27,621248,garzara01,2021,MIN,2,AL
+Ralph Garza,27,621248,garzara01,2021,HOU,1,AL
 Ralph Garza,27,621248,garzara01,2021,HOU,2,AL
+Ralph Garza,27,621248,garzara01,2021,MIN,2,AL
 Evan Gattis,29,594828,gattiev01,2016,HOU,1,AL
 Evan Gattis,30,594828,gattiev01,2017,HOU,1,AL
 Evan Gattis,31,594828,gattiev01,2018,HOU,1,AL
@@ -3031,6 +3032,7 @@ Domingo German,25,593334,germado01,2018,NYY,1,AL
 Domingo German,26,593334,germado01,2019,NYY,1,AL
 Domingo German,28,593334,germado01,2021,NYY,1,AL
 Gonzalez Germen,28,542674,germego01,2016,COL,1,NL
+Trent Giambrone,27,623508,giambtr01,2021,CHC,1,NL
 Johnny Giavotella,28,543213,giavojo01,2016,LAA,1,AL
 Johnny Giavotella,29,543213,giavojo01,2017,BAL,1,AL
 Ian Gibaut,25,664139,gibauia01,2019,TBR,1,AL
@@ -3136,8 +3138,8 @@ Yan Gomes,31,543228,gomesya01,2019,WSN,1,NL
 Yan Gomes,32,543228,gomesya01,2020,WSN,1,NL
 Yan Gomes,33,543228,gomesya01,2021,WSN,1,NL
 Yan Gomes,33,543228,gomesya01,2021,OAK,1,AL
-Yan Gomes,33,543228,gomesya01,2021,WSN,2,NL
 Yan Gomes,33,543228,gomesya01,2021,OAK,2,AL
+Yan Gomes,33,543228,gomesya01,2021,WSN,2,NL
 Carlos Gomez,30,460576,gomezca01,2016,HOU,1,AL
 Carlos Gomez,30,460576,gomezca01,2016,TEX,2,AL
 Carlos Gomez,31,460576,gomezca01,2017,TEX,1,AL
@@ -3261,8 +3263,8 @@ Trevor Gott,27,641627,gotttr01,2020,SFG,1,NL
 Ashton Goudeau,27,623485,goudeas01,2020,COL,1,NL
 Ashton Goudeau,28,623485,goudeas01,2021,COL,1,NL
 Ashton Goudeau,28,623485,goudeas01,2021,CIN,1,NL
-Ashton Goudeau,28,623485,goudeas01,2021,COL,2,NL
 Ashton Goudeau,28,623485,goudeas01,2021,CIN,2,NL
+Ashton Goudeau,28,623485,goudeas01,2021,COL,2,NL
 Yuli Gurriel,32,493329,gourryu01,2016,HOU,1,AL
 Yuli Gurriel,33,493329,gourryu01,2017,HOU,1,AL
 Yuli Gurriel,34,493329,gourryu01,2018,HOU,1,AL
@@ -3311,8 +3313,8 @@ Jon Gray,28,592351,grayjo02,2020,COL,1,NL
 Jon Gray,29,592351,grayjo02,2021,COL,1,NL
 Josiah Gray,23,680686,grayjo03,2021,WSN,1,NL
 Josiah Gray,23,680686,grayjo03,2021,LAD,1,NL
-Josiah Gray,23,680686,grayjo03,2021,WSN,2,NL
 Josiah Gray,23,680686,grayjo03,2021,LAD,2,NL
+Josiah Gray,23,680686,grayjo03,2021,WSN,2,NL
 Sonny Gray,26,543243,grayso01,2016,OAK,1,AL
 Sonny Gray,27,543243,grayso01,2017,OAK,1,AL
 Sonny Gray,27,543243,grayso01,2017,NYY,2,AL
@@ -3459,8 +3461,8 @@ Franklin Gutierrez,33,429711,gutiefr01,2016,SEA,1,AL
 Franklin Gutierrez,34,429711,gutiefr01,2017,LAD,1,NL
 Kelvin Gutierrez,24,642721,gutieke01,2019,KCR,1,AL
 Kelvin Gutierrez,25,642721,gutieke01,2020,KCR,1,AL
-Kelvin Gutierrez,26,642721,gutieke01,2021,BAL,1,AL
 Kelvin Gutierrez,26,642721,gutieke01,2021,KCR,1,AL
+Kelvin Gutierrez,26,642721,gutieke01,2021,BAL,1,AL
 Kelvin Gutierrez,26,642721,gutieke01,2021,BAL,2,AL
 Kelvin Gutierrez,26,642721,gutieke01,2021,KCR,2,AL
 Vladimir Gutiérrez,25,661269,gutievl01,2021,CIN,1,NL
@@ -3547,8 +3549,8 @@ Brad Hand,30,543272,handbr01,2020,CLE,1,AL
 Brad Hand,31,543272,handbr01,2021,TOR,1,AL
 Brad Hand,31,543272,handbr01,2021,WSN,1,NL
 Brad Hand,31,543272,handbr01,2021,TOR,2,AL
-Brad Hand,31,543272,handbr01,2021,NYM,2,NL
 Brad Hand,31,543272,handbr01,2021,WSN,2,NL
+Brad Hand,31,543272,handbr01,2021,NYM,2,NL
 Brad Hand,31,543272,handbr01,2021,WSN,3,NL
 Brad Hand,31,543272,handbr01,2021,NYM,3,NL
 Eric Hanhold,24,621098,hanhoer01,2018,NYM,1,NL
@@ -3603,10 +3605,10 @@ Josh Harrison,29,543281,harrijo05,2017,PIT,1,NL
 Josh Harrison,30,543281,harrijo05,2018,PIT,1,NL
 Josh Harrison,31,543281,harrijo05,2019,DET,1,AL
 Josh Harrison,32,543281,harrijo05,2020,WSN,1,NL
-Josh Harrison,33,543281,harrijo05,2021,WSN,1,NL
 Josh Harrison,33,543281,harrijo05,2021,OAK,1,AL
-Josh Harrison,33,543281,harrijo05,2021,WSN,2,NL
+Josh Harrison,33,543281,harrijo05,2021,WSN,1,NL
 Josh Harrison,33,543281,harrijo05,2021,OAK,2,AL
+Josh Harrison,33,543281,harrijo05,2021,WSN,2,NL
 Monte Harrison,24,656509,harrimo01,2020,MIA,1,NL
 Monte Harrison,25,656509,harrimo01,2021,MIA,1,NL
 Will Harris,31,501789,harriwi10,2016,HOU,1,AL
@@ -3678,8 +3680,8 @@ Andrew Heaney,28,571760,heanean01,2019,LAA,1,AL
 Andrew Heaney,29,571760,heanean01,2020,LAA,1,AL
 Andrew Heaney,30,571760,heanean01,2021,LAA,1,AL
 Andrew Heaney,30,571760,heanean01,2021,NYY,1,AL
-Andrew Heaney,30,571760,heanean01,2021,LAA,2,AL
 Andrew Heaney,30,571760,heanean01,2021,NYY,2,AL
+Andrew Heaney,30,571760,heanean01,2021,LAA,2,AL
 Taylor Hearn,24,621368,hearnta01,2019,TEX,1,AL
 Taylor Hearn,25,621368,hearnta01,2020,TEX,1,AL
 Taylor Hearn,26,621368,hearnta01,2021,TEX,1,AL
@@ -3731,8 +3733,8 @@ Heath Hembree,31,592390,hembrhe01,2020,BOS,1,AL
 Heath Hembree,31,592390,hembrhe01,2020,PHI,2,NL
 Heath Hembree,32,592390,hembrhe01,2021,CIN,1,NL
 Heath Hembree,32,592390,hembrhe01,2021,NYM,1,NL
-Heath Hembree,32,592390,hembrhe01,2021,CIN,2,NL
 Heath Hembree,32,592390,hembrhe01,2021,NYM,2,NL
+Heath Hembree,32,592390,hembrhe01,2021,CIN,2,NL
 Jim Henderson,33,449104,hendeji01,2016,NYM,1,NL
 Kyle Hendricks,26,543294,hendrky01,2016,CHC,1,NL
 Kyle Hendricks,27,543294,hendrky01,2017,CHC,1,NL
@@ -3956,8 +3958,8 @@ David Holmberg,25,571787,holmbda01,2017,CHW,1,AL
 Clay Holmes,25,605280,holmecl01,2018,PIT,1,NL
 Clay Holmes,26,605280,holmecl01,2019,PIT,1,NL
 Clay Holmes,27,605280,holmecl01,2020,PIT,1,NL
-Clay Holmes,28,605280,holmecl01,2021,PIT,1,NL
 Clay Holmes,28,605280,holmecl01,2021,NYY,1,AL
+Clay Holmes,28,605280,holmecl01,2021,PIT,1,NL
 Clay Holmes,28,605280,holmecl01,2021,NYY,2,AL
 Clay Holmes,28,605280,holmecl01,2021,PIT,2,NL
 Brock Holt,28,571788,holtbr01,2016,BOS,1,AL
@@ -4024,8 +4026,8 @@ Daniel Hudson,32,543339,hudsoda01,2019,WSN,2,NL
 Daniel Hudson,33,543339,hudsoda01,2020,WSN,1,NL
 Daniel Hudson,34,543339,hudsoda01,2021,WSN,1,NL
 Daniel Hudson,34,543339,hudsoda01,2021,SDP,1,NL
-Daniel Hudson,34,543339,hudsoda01,2021,WSN,2,NL
 Daniel Hudson,34,543339,hudsoda01,2021,SDP,2,NL
+Daniel Hudson,34,543339,hudsoda01,2021,WSN,2,NL
 Dakota Hudson,23,641712,hudsoda02,2018,STL,1,NL
 Dakota Hudson,24,641712,hudsoda02,2019,STL,1,NL
 Dakota Hudson,25,641712,hudsoda02,2020,STL,1,NL
@@ -4106,8 +4108,8 @@ Hisashi Iwakuma,35,547874,iwakuhi01,2016,SEA,1,AL
 Hisashi Iwakuma,36,547874,iwakuhi01,2017,SEA,1,AL
 Alex Jackson,23,656577,jacksal02,2019,ATL,1,NL
 Alex Jackson,24,656577,jacksal02,2020,ATL,1,NL
-Alex Jackson,25,656577,jacksal02,2021,ATL,1,NL
 Alex Jackson,25,656577,jacksal02,2021,MIA,1,NL
+Alex Jackson,25,656577,jacksal02,2021,ATL,1,NL
 Alex Jackson,25,656577,jacksal02,2021,MIA,2,NL
 Alex Jackson,25,656577,jacksal02,2021,ATL,2,NL
 Andre Jackson,25,656578,jacksan01,2021,LAD,1,NL
@@ -4442,8 +4444,8 @@ Craig Kimbrel,31,518886,kimbrcr01,2019,CHC,1,NL
 Craig Kimbrel,32,518886,kimbrcr01,2020,CHC,1,NL
 Craig Kimbrel,33,518886,kimbrcr01,2021,CHW,1,AL
 Craig Kimbrel,33,518886,kimbrcr01,2021,CHC,1,NL
-Craig Kimbrel,33,518886,kimbrcr01,2021,CHW,2,AL
 Craig Kimbrel,33,518886,kimbrcr01,2021,CHC,2,NL
+Craig Kimbrel,33,518886,kimbrcr01,2021,CHW,2,AL
 Ha-Seong Kim,25,673490,kimha01,2021,SDP,1,NL
 Hyun Soo Kim,28,547957,kimhy01,2016,BAL,1,AL
 Hyun Soo Kim,29,547957,kimhy01,2017,BAL,1,AL
@@ -4735,8 +4737,8 @@ Kyle Lewis,23,641786,lewisky01,2019,SEA,1,AL
 Kyle Lewis,24,641786,lewisky01,2020,SEA,1,AL
 Kyle Lewis,25,641786,lewisky01,2021,SEA,1,AL
 Domingo Leyba,23,642736,leybado01,2019,ARI,1,NL
-Domingo Leyba,25,642736,leybado01,2021,ARI,1,NL
 Domingo Leyba,25,642736,leybado01,2021,BAL,1,AL
+Domingo Leyba,25,642736,leybado01,2021,ARI,1,NL
 Domingo Leyba,25,642736,leybado01,2021,ARI,2,NL
 Domingo Leyba,25,642736,leybado01,2021,BAL,2,AL
 Robinson Leyer,27,622490,leyerro01,2020,BOS,1,AL
@@ -4794,8 +4796,8 @@ Tim Locastro,24,641796,locasti01,2017,LAD,1,NL
 Tim Locastro,25,641796,locasti01,2018,LAD,1,NL
 Tim Locastro,26,641796,locasti01,2019,ARI,1,NL
 Tim Locastro,27,641796,locasti01,2020,ARI,1,NL
-Tim Locastro,28,641796,locasti01,2021,NYY,1,AL
 Tim Locastro,28,641796,locasti01,2021,ARI,1,NL
+Tim Locastro,28,641796,locasti01,2021,NYY,1,AL
 Tim Locastro,28,641796,locasti01,2021,ARI,2,NL
 Tim Locastro,28,641796,locasti01,2021,NYY,2,AL
 Jeff Locke,28,502046,lockeje01,2016,PIT,1,NL
@@ -5206,10 +5208,10 @@ Phil Maton,25,664208,matonph01,2018,SDP,1,NL
 Phil Maton,26,664208,matonph01,2019,SDP,1,NL
 Phil Maton,26,664208,matonph01,2019,CLE,2,AL
 Phil Maton,27,664208,matonph01,2020,CLE,1,AL
-Phil Maton,28,664208,matonph01,2021,HOU,1,AL
 Phil Maton,28,664208,matonph01,2021,CLE,1,AL
-Phil Maton,28,664208,matonph01,2021,CLE,2,AL
+Phil Maton,28,664208,matonph01,2021,HOU,1,AL
 Phil Maton,28,664208,matonph01,2021,HOU,2,AL
+Phil Maton,28,664208,matonph01,2021,CLE,2,AL
 Isaac Mattson,25,676755,mattsis01,2021,BAL,1,AL
 Brian Matusz,29,451085,matusbr01,2016,BAL,1,AL
 Brian Matusz,29,451085,matusbr01,2016,CHC,2,NL
@@ -5253,8 +5255,8 @@ Jack Mayfield,28,608686,mayfija01,2019,HOU,1,AL
 Jack Mayfield,29,608686,mayfija01,2020,HOU,1,AL
 Jack Mayfield,30,608686,mayfija01,2021,SEA,1,AL
 Jack Mayfield,30,608686,mayfija01,2021,LAA,1,AL
-Jack Mayfield,30,608686,mayfija01,2021,SEA,2,AL
 Jack Mayfield,30,608686,mayfija01,2021,LAA,2,AL
+Jack Mayfield,30,608686,mayfija01,2021,SEA,2,AL
 Jacob May,25,594576,mayja02,2017,CHW,1,AL
 Trevor May,26,543507,maytr01,2016,MIN,1,AL
 Trevor May,28,543507,maytr01,2018,MIN,1,AL
@@ -5372,8 +5374,8 @@ Billy McKinney,24,641856,mckinbi01,2019,TOR,1,AL
 Billy McKinney,25,641856,mckinbi01,2020,TOR,1,AL
 Billy McKinney,26,641856,mckinbi01,2021,MIL,1,NL
 Billy McKinney,26,641856,mckinbi01,2021,NYM,1,NL
-Billy McKinney,26,641856,mckinbi01,2021,MIL,2,NL
 Billy McKinney,26,641856,mckinbi01,2021,NYM,2,NL
+Billy McKinney,26,641856,mckinbi01,2021,MIL,2,NL
 Billy McKinney,26,641856,mckinbi01,2021,LAD,3,NL
 Zach McKinstry,25,656716,mckinza01,2020,LAD,1,NL
 Zach McKinstry,26,656716,mckinza01,2021,LAD,1,NL
@@ -5739,10 +5741,10 @@ Taylor Motter,26,600301,motteta01,2016,TBR,1,AL
 Taylor Motter,27,600301,motteta01,2017,SEA,1,AL
 Taylor Motter,28,600301,motteta01,2018,SEA,1,AL
 Taylor Motter,28,600301,motteta01,2018,MIN,2,AL
-Taylor Motter,31,600301,motteta01,2021,COL,1,NL
 Taylor Motter,31,600301,motteta01,2021,BOS,1,AL
-Taylor Motter,31,600301,motteta01,2021,BOS,2,AL
+Taylor Motter,31,600301,motteta01,2021,COL,1,NL
 Taylor Motter,31,600301,motteta01,2021,COL,2,NL
+Taylor Motter,31,600301,motteta01,2021,BOS,2,AL
 Ryan Mountcastle,23,663624,mountry01,2020,BAL,1,AL
 Ryan Mountcastle,24,663624,mountry01,2021,BAL,1,AL
 Mike Moustakas,27,519058,moustmi01,2016,KCR,1,AL
@@ -5973,8 +5975,8 @@ James Norwood,27,656803,norwoja01,2021,SDP,1,NL
 Jacob Nottingham,23,641924,nottija01,2018,MIL,1,NL
 Jacob Nottingham,24,641924,nottija01,2019,MIL,1,NL
 Jacob Nottingham,25,641924,nottija01,2020,MIL,1,NL
-Jacob Nottingham,26,641924,nottija01,2021,MIL,1,NL
 Jacob Nottingham,26,641924,nottija01,2021,SEA,1,AL
+Jacob Nottingham,26,641924,nottija01,2021,MIL,1,NL
 Jacob Nottingham,26,641924,nottija01,2021,MIL,2,NL
 Jacob Nottingham,26,641924,nottija01,2021,SEA,2,AL
 Ivan Nova,29,467100,novaiv01,2016,NYY,1,AL
@@ -6014,6 +6016,7 @@ Brett Oberholtzer,26,519085,oberhbr01,2016,LAA,2,AL
 Peter O'Brien,25,598284,obriepe01,2016,ARI,1,NL
 Peter O'Brien,27,598284,obriepe01,2018,MIA,1,NL
 Peter O'Brien,28,598284,obriepe01,2019,MIA,1,NL
+Riley O'Brien,26,676617,obrieri01,2021,CIN,1,NL
 Darren O'Day,33,503285,odayda01,2016,BAL,1,AL
 Darren O'Day,34,503285,odayda01,2017,BAL,1,AL
 Darren O'Day,35,503285,odayda01,2018,BAL,1,AL
@@ -6167,8 +6170,8 @@ Chris Paddack,24,663978,paddach01,2020,SDP,1,NL
 Chris Paddack,25,663978,paddach01,2021,SDP,1,NL
 Kevin Padlo,24,656821,padloke01,2021,SEA,1,AL
 Kevin Padlo,24,656821,padloke01,2021,TBR,1,AL
-Kevin Padlo,24,656821,padloke01,2021,SEA,2,AL
 Kevin Padlo,24,656821,padloke01,2021,TBR,2,AL
+Kevin Padlo,24,656821,padloke01,2021,SEA,2,AL
 Angel Pagan,34,434636,paganan01,2016,SFG,1,NL
 Emilio Pagan,26,641941,paganem01,2017,SEA,1,AL
 Emilio Pagan,27,641941,paganem01,2018,OAK,1,AL
@@ -6327,8 +6330,8 @@ Wandy Peralta,26,593974,peralwa01,2018,CIN,1,NL
 Wandy Peralta,27,593974,peralwa01,2019,CIN,1,NL
 Wandy Peralta,27,593974,peralwa01,2019,SFG,2,NL
 Wandy Peralta,28,593974,peralwa01,2020,SFG,1,NL
-Wandy Peralta,29,593974,peralwa01,2021,NYY,1,AL
 Wandy Peralta,29,593974,peralwa01,2021,SFG,1,NL
+Wandy Peralta,29,593974,peralwa01,2021,NYY,1,AL
 Wandy Peralta,29,593974,peralwa01,2021,NYY,2,AL
 Wandy Peralta,29,593974,peralwa01,2021,SFG,2,NL
 Wily Peralta,27,503449,peralwi01,2016,MIL,1,NL
@@ -6405,8 +6408,8 @@ Dillon Peters,25,596071,peterdi01,2018,MIA,1,NL
 Dillon Peters,26,596071,peterdi01,2019,LAA,1,AL
 Dillon Peters,27,596071,peterdi01,2020,LAA,1,AL
 Dillon Peters,28,596071,peterdi01,2021,PIT,1,NL
-DJ Peters,25,656847,peterdj01,2021,LAD,1,NL
 DJ Peters,25,656847,peterdj01,2021,TEX,1,AL
+DJ Peters,25,656847,peterdj01,2021,LAD,1,NL
 DJ Peters,25,656847,peterdj01,2021,LAD,2,NL
 DJ Peters,25,656847,peterdj01,2021,TEX,2,AL
 Dustin Peterson,23,640460,peterdu01,2018,ATL,1,NL
@@ -6575,8 +6578,8 @@ Daniel Ponce de Leon,28,594965,ponceda01,2020,STL,1,NL
 Daniel Ponce de Leon,29,594965,ponceda01,2021,STL,1,NL
 Sean Poppen,25,664092,poppese01,2019,MIN,1,AL
 Sean Poppen,26,664092,poppese01,2020,MIN,1,AL
-Sean Poppen,27,664092,poppese01,2021,PIT,1,NL
 Sean Poppen,27,664092,poppese01,2021,TBR,1,AL
+Sean Poppen,27,664092,poppese01,2021,PIT,1,NL
 Sean Poppen,27,664092,poppese01,2021,ARI,2,NL
 Sean Poppen,27,664092,poppese01,2021,TBR,2,AL
 Sean Poppen,27,664092,poppese01,2021,PIT,3,NL
@@ -6773,10 +6776,10 @@ Wilson Ramos,30,467092,ramoswi01,2018,TBR,1,AL
 Wilson Ramos,30,467092,ramoswi01,2018,PHI,2,NL
 Wilson Ramos,31,467092,ramoswi01,2019,NYM,1,NL
 Wilson Ramos,32,467092,ramoswi01,2020,NYM,1,NL
-Wilson Ramos,33,467092,ramoswi01,2021,DET,1,AL
 Wilson Ramos,33,467092,ramoswi01,2021,CLE,1,AL
-Wilson Ramos,33,467092,ramoswi01,2021,CLE,2,AL
+Wilson Ramos,33,467092,ramoswi01,2021,DET,1,AL
 Wilson Ramos,33,467092,ramoswi01,2021,DET,2,AL
+Wilson Ramos,33,467092,ramoswi01,2021,CLE,2,AL
 Matt Ramsey,29,543677,ramsema01,2019,LAA,1,AL
 Anthony Ranaudo,26,519168,ranauan01,2016,TEX,1,AL
 Anthony Ranaudo,26,519168,ranauan01,2016,CHW,2,AL
@@ -6785,10 +6788,10 @@ Colby Rasmus,30,458675,rasmuco01,2017,TBR,1,AL
 Colby Rasmus,31,458675,rasmuco01,2018,BAL,1,AL
 Cory Rasmus,28,474284,rasmuco02,2016,LAA,1,AL
 Drew Rasmussen,24,656876,rasmudr01,2020,MIL,1,NL
-Drew Rasmussen,25,656876,rasmudr01,2021,TBR,1,AL
 Drew Rasmussen,25,656876,rasmudr01,2021,MIL,1,NL
-Drew Rasmussen,25,656876,rasmudr01,2021,TBR,2,AL
+Drew Rasmussen,25,656876,rasmudr01,2021,TBR,1,AL
 Drew Rasmussen,25,656876,rasmudr01,2021,MIL,2,NL
+Drew Rasmussen,25,656876,rasmudr01,2021,TBR,2,AL
 Rangel Ravelo,27,592660,ravelra01,2019,STL,1,NL
 Rangel Ravelo,28,592660,ravelra01,2020,STL,1,NL
 Josh Ravin,28,502051,ravinjo01,2016,LAD,1,NL
@@ -6837,8 +6840,8 @@ Cody Reed,26,642003,reedco01,2019,CIN,1,NL
 Cody Reed,27,642003,reedco01,2020,CIN,1,NL
 Cody Reed,27,642003,reedco01,2020,TBR,2,AL
 Cody Reed,28,642003,reedco01,2021,TBR,1,AL
-Jake Reed,28,596082,reedja02,2021,LAD,1,NL
 Jake Reed,28,596082,reedja02,2021,NYM,1,NL
+Jake Reed,28,596082,reedja02,2021,LAD,1,NL
 Jake Reed,28,596082,reedja02,2021,LAD,2,NL
 Jake Reed,28,596082,reedja02,2021,NYM,2,NL
 Michael Reed,23,605439,reedmi02,2016,MIL,1,NL
@@ -6934,12 +6937,12 @@ Trevor Richards,25,670950,richatr01,2018,MIA,1,NL
 Trevor Richards,26,670950,richatr01,2019,MIA,1,NL
 Trevor Richards,26,670950,richatr01,2019,TBR,2,AL
 Trevor Richards,27,670950,richatr01,2020,TBR,1,AL
-Trevor Richards,28,670950,richatr01,2021,TOR,1,AL
 Trevor Richards,28,670950,richatr01,2021,TBR,1,AL
+Trevor Richards,28,670950,richatr01,2021,TOR,1,AL
 Trevor Richards,28,670950,richatr01,2021,TBR,2,AL
 Trevor Richards,28,670950,richatr01,2021,MIL,2,NL
-Trevor Richards,28,670950,richatr01,2021,MIL,3,NL
 Trevor Richards,28,670950,richatr01,2021,TOR,3,AL
+Trevor Richards,28,670950,richatr01,2021,MIL,3,NL
 Joey Rickard,25,572073,rickajo01,2016,BAL,1,AL
 Joey Rickard,26,572073,rickajo01,2017,BAL,1,AL
 Joey Rickard,27,572073,rickajo01,2018,BAL,1,AL
@@ -6997,8 +7000,8 @@ Anthony Rizzo,29,519203,rizzoan01,2019,CHC,1,NL
 Anthony Rizzo,30,519203,rizzoan01,2020,CHC,1,NL
 Anthony Rizzo,31,519203,rizzoan01,2021,CHC,1,NL
 Anthony Rizzo,31,519203,rizzoan01,2021,NYY,1,AL
-Anthony Rizzo,31,519203,rizzoan01,2021,NYY,2,AL
 Anthony Rizzo,31,519203,rizzoan01,2021,CHC,2,NL
+Anthony Rizzo,31,519203,rizzoan01,2021,NYY,2,AL
 Donn Roach,26,543698,roachdo01,2016,SEA,1,AL
 Tanner Roark,29,543699,roarkta01,2016,WSN,1,NL
 Tanner Roark,30,543699,roarkta01,2017,WSN,1,NL
@@ -7082,8 +7085,8 @@ Joely Rodriguez,25,570257,rodrijo06,2017,PHI,1,NL
 Joely Rodriguez,28,570257,rodrijo06,2020,TEX,1,AL
 Joely Rodriguez,29,570257,rodrijo06,2021,TEX,1,AL
 Joely Rodriguez,29,570257,rodrijo06,2021,NYY,1,AL
-Joely Rodriguez,29,570257,rodrijo06,2021,TEX,2,AL
 Joely Rodriguez,29,570257,rodrijo06,2021,NYY,2,AL
+Joely Rodriguez,29,570257,rodrijo06,2021,TEX,2,AL
 Jose Rodriguez,23,642578,rodrijo07,2019,LAA,1,AL
 Jose Rodríguez,24,642578,rodrijo07,2020,LAA,1,AL
 Manuel Rodriguez,24,655889,rodrima01,2021,CHC,1,NL
@@ -7097,8 +7100,8 @@ Richard Rodriguez,29,593144,rodriri05,2019,PIT,1,NL
 Richard Rodriguez,30,593144,rodriri05,2020,PIT,1,NL
 Richard Rodriguez,31,593144,rodriri05,2021,ATL,1,NL
 Richard Rodriguez,31,593144,rodriri05,2021,PIT,1,NL
-Richard Rodriguez,31,593144,rodriri05,2021,ATL,2,NL
 Richard Rodriguez,31,593144,rodriri05,2021,PIT,2,NL
+Richard Rodriguez,31,593144,rodriri05,2021,ATL,2,NL
 Ronny Rodriguez,26,500135,rodriro03,2018,DET,1,AL
 Ronny Rodriguez,27,500135,rodriro03,2019,DET,1,AL
 Sean Rodriguez,31,446481,rodrise01,2016,PIT,1,NL
@@ -7151,8 +7154,8 @@ Sal Romano,23,607219,romansa01,2017,CIN,1,NL
 Sal Romano,24,607219,romansa01,2018,CIN,1,NL
 Sal Romano,25,607219,romansa01,2019,CIN,1,NL
 Sal Romano,26,607219,romansa01,2020,CIN,1,NL
-Sal Romano,27,607219,romansa01,2021,NYY,1,AL
 Sal Romano,27,607219,romansa01,2021,CIN,1,NL
+Sal Romano,27,607219,romansa01,2021,NYY,1,AL
 Sal Romano,27,607219,romansa01,2021,NYY,2,AL
 Sal Romano,27,607219,romansa01,2021,CIN,2,NL
 Sal Romano,27,607219,romansa01,2021,MIL,3,NL
@@ -7287,8 +7290,8 @@ Jose Ruiz,24,614179,ruizjo01,2019,CHW,1,AL
 Jose Ruiz,25,614179,ruizjo01,2020,CHW,1,AL
 Jose Ruiz,26,614179,ruizjo01,2021,CHW,1,AL
 Keibert Ruiz,21,660688,ruizke01,2020,LAD,1,NL
-Keibert Ruiz,22,660688,ruizke01,2021,LAD,1,NL
 Keibert Ruiz,22,660688,ruizke01,2021,WSN,1,NL
+Keibert Ruiz,22,660688,ruizke01,2021,LAD,1,NL
 Keibert Ruiz,22,660688,ruizke01,2021,WSN,2,NL
 Keibert Ruiz,22,660688,ruizke01,2021,LAD,2,NL
 Rio Ruiz,22,547004,ruizri01,2016,ATL,1,NL
@@ -7430,6 +7433,7 @@ Patrick Sandoval,22,663776,sandopa02,2019,LAA,1,AL
 Patrick Sandoval,23,663776,sandopa02,2020,LAA,1,AL
 Patrick Sandoval,24,663776,sandopa02,2021,LAA,1,AL
 Jerry Sands,28,543742,sandsje01,2016,CHW,1,AL
+Reiver Sanmartin,25,665665,sanmare01,2021,CIN,1,NL
 Miguel Sano,23,593934,sanomi01,2016,MIN,1,AL
 Miguel Sano,24,593934,sanomi01,2017,MIN,1,AL
 Miguel Sano,25,593934,sanomi01,2018,MIN,1,AL
@@ -7553,10 +7557,10 @@ Kyle Schwarber,24,656941,schwaky01,2017,CHC,1,NL
 Kyle Schwarber,25,656941,schwaky01,2018,CHC,1,NL
 Kyle Schwarber,26,656941,schwaky01,2019,CHC,1,NL
 Kyle Schwarber,27,656941,schwaky01,2020,CHC,1,NL
-Kyle Schwarber,28,656941,schwaky01,2021,WSN,1,NL
 Kyle Schwarber,28,656941,schwaky01,2021,BOS,1,AL
-Kyle Schwarber,28,656941,schwaky01,2021,WSN,2,NL
+Kyle Schwarber,28,656941,schwaky01,2021,WSN,1,NL
 Kyle Schwarber,28,656941,schwaky01,2021,BOS,2,AL
+Kyle Schwarber,28,656941,schwaky01,2021,WSN,2,NL
 Frank Schwindel,27,643524,schwifr01,2019,KCR,1,AL
 Frank Schwindel,29,643524,schwifr01,2021,OAK,1,AL
 Frank Schwindel,29,643524,schwifr01,2021,CHC,2,NL
@@ -7804,8 +7808,8 @@ Joe Smith,34,501925,smithjo05,2018,HOU,1,AL
 Joe Smith,35,501925,smithjo05,2019,HOU,1,AL
 Joe Smith,37,501925,smithjo05,2021,SEA,1,AL
 Joe Smith,37,501925,smithjo05,2021,HOU,1,AL
-Joe Smith,37,501925,smithjo05,2021,SEA,2,AL
 Joe Smith,37,501925,smithjo05,2021,HOU,2,AL
+Joe Smith,37,501925,smithjo05,2021,SEA,2,AL
 Josh Smith,28,595001,smithjo07,2016,CIN,1,NL
 Josh Smith,29,595001,smithjo07,2017,OAK,1,AL
 Josh Smith,31,595001,smithjo07,2019,BOS,1,AL
@@ -8200,10 +8204,10 @@ Anthony Swarzak,31,461872,swarzan01,2017,MIL,2,NL
 Anthony Swarzak,32,461872,swarzan01,2018,NYM,1,NL
 Anthony Swarzak,33,461872,swarzan01,2019,SEA,1,AL
 Anthony Swarzak,33,461872,swarzan01,2019,ATL,2,NL
-Anthony Swarzak,35,461872,swarzan01,2021,ARI,1,NL
 Anthony Swarzak,35,461872,swarzan01,2021,KCR,1,AL
-Anthony Swarzak,35,461872,swarzan01,2021,KCR,2,AL
+Anthony Swarzak,35,461872,swarzan01,2021,ARI,1,NL
 Anthony Swarzak,35,461872,swarzan01,2021,ARI,2,NL
+Anthony Swarzak,35,461872,swarzan01,2021,KCR,2,AL
 Darnell Sweeney,27,572182,sweenda02,2018,TOR,1,AL
 Blake Swihart,24,596119,swihabl01,2016,BOS,1,AL
 Blake Swihart,25,596119,swihabl01,2017,BOS,1,AL
@@ -8214,6 +8218,7 @@ Noah Syndergaard,23,592789,syndeno01,2016,NYM,1,NL
 Noah Syndergaard,24,592789,syndeno01,2017,NYM,1,NL
 Noah Syndergaard,25,592789,syndeno01,2018,NYM,1,NL
 Noah Syndergaard,26,592789,syndeno01,2019,NYM,1,NL
+Noah Syndergaard,28,592789,syndeno01,2021,NYM,1,NL
 Thomas Szapucki,25,663378,szaputh01,2021,NYM,1,NL
 Matt Szczur,26,519333,szczuma01,2016,CHC,1,NL
 Matt Szczur,27,519333,szczuma01,2017,CHC,1,NL
@@ -8316,8 +8321,8 @@ Ryan Tepera,31,572193,teperry01,2019,TOR,1,AL
 Ryan Tepera,32,572193,teperry01,2020,CHC,1,NL
 Ryan Tepera,33,572193,teperry01,2021,CHC,1,NL
 Ryan Tepera,33,572193,teperry01,2021,CHW,1,AL
-Ryan Tepera,33,572193,teperry01,2021,CHW,2,AL
 Ryan Tepera,33,572193,teperry01,2021,CHC,2,NL
+Ryan Tepera,33,572193,teperry01,2021,CHW,2,AL
 Nick Tepesch,27,519344,tepesni01,2016,LAD,1,NL
 Nick Tepesch,28,519344,tepesni01,2017,MIN,1,AL
 Nick Tepesch,28,519344,tepesni01,2017,TOR,2,AL
@@ -8337,8 +8342,8 @@ Lane Thomas,23,657041,thomala02,2019,STL,1,NL
 Lane Thomas,24,657041,thomala02,2020,STL,1,NL
 Lane Thomas,25,657041,thomala02,2021,WSN,1,NL
 Lane Thomas,25,657041,thomala02,2021,STL,1,NL
-Lane Thomas,25,657041,thomala02,2021,STL,2,NL
 Lane Thomas,25,657041,thomala02,2021,WSN,2,NL
+Lane Thomas,25,657041,thomala02,2021,STL,2,NL
 Jake Thompson,22,622097,thompja03,2016,PHI,1,NL
 Jake Thompson,23,622097,thompja03,2017,PHI,1,NL
 Jake Thompson,24,622097,thompja03,2018,PHI,1,NL
@@ -8403,10 +8408,10 @@ Justin Topa,29,623437,topaju01,2020,MIL,1,NL
 Justin Topa,30,623437,topaju01,2021,MIL,1,NL
 Abraham Toro,22,647351,toroab01,2019,HOU,1,AL
 Abraham Toro,23,647351,toroab01,2020,HOU,1,AL
-Abraham Toro,24,647351,toroab01,2021,SEA,1,AL
 Abraham Toro,24,647351,toroab01,2021,HOU,1,AL
-Abraham Toro,24,647351,toroab01,2021,HOU,2,AL
+Abraham Toro,24,647351,toroab01,2021,SEA,1,AL
 Abraham Toro,24,647351,toroab01,2021,SEA,2,AL
+Abraham Toro,24,647351,toroab01,2021,HOU,2,AL
 Carlos Torres,33,448614,torreca01,2016,MIL,1,NL
 Carlos Torres,34,448614,torreca01,2017,MIL,1,NL
 Carlos Torres,35,448614,torreca01,2018,WSN,1,NL
@@ -8471,10 +8476,10 @@ Nick Tropeano,25,607374,tropeni01,2016,LAA,1,AL
 Nick Tropeano,27,607374,tropeni01,2018,LAA,1,AL
 Nick Tropeano,28,607374,tropeni01,2019,LAA,1,AL
 Nick Tropeano,29,607374,tropeni01,2020,PIT,1,NL
-Nick Tropeano,30,607374,tropeni01,2021,SFG,1,NL
 Nick Tropeano,30,607374,tropeni01,2021,NYM,1,NL
-Nick Tropeano,30,607374,tropeni01,2021,SFG,2,NL
+Nick Tropeano,30,607374,tropeni01,2021,SFG,1,NL
 Nick Tropeano,30,607374,tropeni01,2021,NYM,2,NL
+Nick Tropeano,30,607374,tropeni01,2021,SFG,2,NL
 Mike Trout,24,545361,troutmi01,2016,LAA,1,AL
 Mike Trout,25,545361,troutmi01,2017,LAA,1,AL
 Mike Trout,26,545361,troutmi01,2018,LAA,1,AL
@@ -8490,8 +8495,8 @@ Jen-Ho Tseng,22,627500,tsengje01,2017,CHC,1,NL
 Jen-Ho Tseng,23,627500,tsengje01,2018,CHC,1,NL
 Yoshi Tsutsugo,28,660294,tsutsyo01,2020,TBR,1,AL
 Yoshi Tsutsugo,29,660294,tsutsyo01,2021,TBR,1,AL
-Yoshi Tsutsugo,29,660294,tsutsyo01,2021,PIT,2,NL
 Yoshi Tsutsugo,29,660294,tsutsyo01,2021,LAD,2,NL
+Yoshi Tsutsugo,29,660294,tsutsyo01,2021,PIT,2,NL
 Yoshi Tsutsugo,29,660294,tsutsyo01,2021,PIT,3,NL
 Yoshi Tsutsugo,29,660294,tsutsyo01,2021,LAD,3,NL
 Cole Tucker,22,657061,tuckeco01,2019,PIT,1,NL
@@ -9050,10 +9055,10 @@ Bryse Wilson,22,669060,wilsobr02,2020,ATL,1,NL
 Bryse Wilson,23,669060,wilsobr02,2021,ATL,1,NL
 Bryse Wilson,23,669060,wilsobr02,2021,PIT,2,NL
 Cody Wilson,24,680963,wilsoco01,2021,WSN,1,NL
-Jacob Wilson,30,607111,wilsoja04,2021,HOU,1,AL
 Jacob Wilson,30,607111,wilsoja04,2021,OAK,1,AL
-Jacob Wilson,30,607111,wilsoja04,2021,OAK,2,AL
+Jacob Wilson,30,607111,wilsoja04,2021,HOU,1,AL
 Jacob Wilson,30,607111,wilsoja04,2021,HOU,2,AL
+Jacob Wilson,30,607111,wilsoja04,2021,OAK,2,AL
 Justin Wilson,28,458677,wilsoju10,2016,DET,1,AL
 Justin Wilson,29,458677,wilsoju10,2017,DET,1,AL
 Justin Wilson,29,458677,wilsoju10,2017,CHC,2,NL
@@ -9090,10 +9095,10 @@ Matt Wisler,25,605538,wislema01,2018,CIN,2,NL
 Matt Wisler,26,605538,wislema01,2019,SDP,1,NL
 Matt Wisler,26,605538,wislema01,2019,SEA,2,AL
 Matt Wisler,27,605538,wislema01,2020,MIN,1,AL
-Matt Wisler,28,605538,wislema01,2021,SFG,1,NL
 Matt Wisler,28,605538,wislema01,2021,TBR,1,AL
-Matt Wisler,28,605538,wislema01,2021,TBR,2,AL
+Matt Wisler,28,605538,wislema01,2021,SFG,1,NL
 Matt Wisler,28,605538,wislema01,2021,SFG,2,NL
+Matt Wisler,28,605538,wislema01,2021,TBR,2,AL
 Chris Withrow,27,519437,withrch01,2016,ATL,1,NL
 Nick Wittgren,25,621295,wittgni01,2016,MIA,1,NL
 Nick Wittgren,26,621295,wittgni01,2017,MIA,1,NL
@@ -9151,8 +9156,8 @@ Brandon Workman,29,519443,workmbr01,2018,BOS,1,AL
 Brandon Workman,30,519443,workmbr01,2019,BOS,1,AL
 Brandon Workman,31,519443,workmbr01,2020,BOS,1,AL
 Brandon Workman,31,519443,workmbr01,2020,PHI,2,NL
-Brandon Workman,32,519443,workmbr01,2021,BOS,1,AL
 Brandon Workman,32,519443,workmbr01,2021,CHC,1,NL
+Brandon Workman,32,519443,workmbr01,2021,BOS,1,AL
 Brandon Workman,32,519443,workmbr01,2021,CHC,2,NL
 Brandon Workman,32,519443,workmbr01,2021,BOS,2,AL
 Vance Worley,28,474699,worleva01,2016,BAL,1,AL
@@ -9227,8 +9232,8 @@ Alex Young,25,622065,youngal01,2019,ARI,1,NL
 Alex Young,26,622065,youngal01,2020,ARI,1,NL
 Alex Young,27,622065,youngal01,2021,CLE,1,AL
 Alex Young,27,622065,youngal01,2021,ARI,1,NL
-Alex Young,27,622065,youngal01,2021,ARI,2,NL
 Alex Young,27,622065,youngal01,2021,CLE,2,AL
+Alex Young,27,622065,youngal01,2021,ARI,2,NL
 Andrew Young,26,670370,youngan02,2020,ARI,1,NL
 Andrew Young,27,670370,youngan02,2021,ARI,1,NL
 Chris Young,37,432934,youngch03,2016,KCR,1,AL
