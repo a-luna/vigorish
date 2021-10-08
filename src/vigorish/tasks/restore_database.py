@@ -17,6 +17,7 @@ from vigorish.util.string_helpers import (
 )
 
 DATACLASS_CSV_MAP = {
+    db.PlayerCsvRow: "new_players.csv",
     db.DateScrapeStatusCsvRow: "scrape_status_date.csv",
     db.GameScrapeStatusCsvRow: "scrape_status_game.csv",
     db.PitchAppScrapeStatusCsvRow: "scrape_status_pitch_app.csv",
@@ -26,12 +27,13 @@ DATACLASS_CSV_MAP = {
 }
 
 RESTORE_TABLE_ORDER = {
-    1: (db.DateScrapeStatusCsvRow, db.DateScrapeStatus),
-    2: (db.GameScrapeStatusCsvRow, db.GameScrapeStatus),
-    3: (db.PitchAppScrapeStatusCsvRow, db.PitchAppScrapeStatus),
-    4: (db.BatStatsCsvRow, db.BatStats),
-    5: (db.PitchStatsCsvRow, db.PitchStats),
-    6: (db.PitchFxCsvRow, db.PitchFx),
+    1: (db.PlayerCsvRow, db.Player),
+    2: (db.DateScrapeStatusCsvRow, db.DateScrapeStatus),
+    3: (db.GameScrapeStatusCsvRow, db.GameScrapeStatus),
+    4: (db.PitchAppScrapeStatusCsvRow, db.PitchAppScrapeStatus),
+    5: (db.BatStatsCsvRow, db.BatStats),
+    6: (db.PitchStatsCsvRow, db.PitchStats),
+    7: (db.PitchFxCsvRow, db.PitchFx),
 }
 
 BATCH_SIZE = 20000
@@ -76,6 +78,7 @@ class RestoreDatabaseTask(Task):
     @property
     def update_relationships_map(self):
         return {
+            db.PlayerCsvRow: self.update_player_relationships,
             db.DateScrapeStatusCsvRow: self.update_date_status_relationships,
             db.GameScrapeStatusCsvRow: self.update_game_status_relationships,
             db.PitchAppScrapeStatusCsvRow: self.update_pitch_app_status_relationships,
@@ -90,6 +93,9 @@ class RestoreDatabaseTask(Task):
             team_id_map_for_year = db.Team.get_team_id_map_for_year(self.db_session, year)
             self._team_id_map[year] = team_id_map_for_year
         return team_id_map_for_year
+
+    def update_player_relationships(self, dataclass):
+        return asdict(dataclass)
 
     def update_date_status_relationships(self, dataclass):
         date_status_dict = asdict(dataclass)
@@ -188,13 +194,13 @@ class RestoreDatabaseTask(Task):
             self.restore_table_from_csv(csv_file, dataclass, db_table)
             self.events.restore_table_complete(db_table)
 
-    def restore_table_from_csv(self, csv_file, csv_dataclass, db_table):
+    def restore_table_from_csv(self, csv_file, dataclass, db_table):
         with open(csv_file) as csv:
-            reader = DataclassReader(csv, csv_dataclass)
+            reader = DataclassReader(csv, dataclass)
             batch = []
             batch_count = 1
             for csv_row in reader:
-                obj_dict = self.update_relationships_map[csv_dataclass](csv_row)
+                obj_dict = self.update_relationships_map[dataclass](csv_row)
                 batch.append(obj_dict)
                 if len(batch) < BATCH_SIZE:
                     continue
