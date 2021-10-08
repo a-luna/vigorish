@@ -22,6 +22,7 @@ from vigorish.models import (
     PitchStatsCsvRow,
     PitchTypePercentile,
     Player,
+    PlayerCsvRow,
     PlayerId,
     ScrapeError,
     ScrapeJob,
