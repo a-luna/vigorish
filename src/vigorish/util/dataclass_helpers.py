@@ -61,7 +61,7 @@ def dict_to_csv_row(csv_dict, date_format):
 
 def sanitize_value_for_csv(val, date_format):
     if isinstance(val, str):
-        val.replace(",", ";")
+        val = val.replace(",", ";")
     return (
         val.strftime(date_format).strip()
         if isinstance(val, datetime)

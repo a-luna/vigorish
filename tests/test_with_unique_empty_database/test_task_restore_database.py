@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 import vigorish.database as db
@@ -49,8 +51,13 @@ def vig_app(request):
     return app
 
 
-@pytest.mark.skip(reason="no way of currently testing this")
 def test_restore_database(vig_app):
+    total_rows_before = get_total_number_of_rows(vig_app, db.Player)
+    create_recently_debuted_player_data(vig_app)
+    total_rows_after = get_total_number_of_rows(vig_app, db.Player)
+    rows_added = total_rows_after - total_rows_before
+    assert rows_added == 2
+
     total_rows = get_total_number_of_rows(vig_app, db.PitchFx)
     assert total_rows == 298
     result = AddToDatabaseTask(vig_app).execute()
@@ -68,6 +75,10 @@ def test_restore_database(vig_app):
 
     result = RestoreDatabaseTask(vig_app).execute(csv_folder=CSV_FOLDER)
     assert result.success
+    check_player_1 = db.Player.find_by_mlb_id(vig_app.db_session, 660644)
+    assert check_player_1 and check_player_1.add_to_db_backup and check_player_1.bbref_id == "brujavi01"
+    check_player_2 = db.Player.find_by_mlb_id(vig_app.db_session, 669016)
+    assert check_player_2 and check_player_2.add_to_db_backup and check_player_2.bbref_id == "marshbr02"
     status_date = db.DateScrapeStatus.find_by_date(vig_app.db_session, GAME_DATE)
     assert status_date.scraped_daily_dash_bbref
     assert status_date.scraped_daily_dash_brooks
@@ -89,6 +100,62 @@ def test_restore_database(vig_app):
     row_count = get_total_number_of_rows(vig_app, db.PitchFx)
     assert row_count == 298
     vig_app.db_session.close()
+
+
+def create_recently_debuted_player_data(vig_app):
+    players = [
+        {
+            "id": 7585,
+            "name_first": "Vidal",
+            "name_last": "Brujan",
+            "name_given": "Vidal",
+            "bats": "S",
+            "throws": "R",
+            "weight": 180,
+            "height": 70,
+            "debut": datetime(2021, 7, 7, 0, 0),
+            "birth_year": 1998,
+            "birth_month": 2,
+            "birth_day": 9,
+            "birth_country": "Dominican Republic",
+            "birth_state": "",
+            "birth_city": "San Pedro de Macoris",
+            "bbref_id": "brujavi01",
+            "retro_id": "",
+            "mlb_id": 660644,
+            "scraped_transactions": False,
+            "minor_league_player": False,
+            "missing_mlb_id": False,
+            "add_to_db_backup": True,
+        },
+        {
+            "id": 7598,
+            "name_first": "Brandon",
+            "name_last": "Marsh",
+            "name_given": "Brandon",
+            "bats": "L",
+            "throws": "R",
+            "weight": 215,
+            "height": 76,
+            "debut": datetime(2021, 7, 18, 0, 0),
+            "birth_year": 1997,
+            "birth_month": 12,
+            "birth_day": 18,
+            "birth_country": "USA",
+            "birth_state": "GA",
+            "birth_city": "Buford",
+            "bbref_id": "marshbr02",
+            "retro_id": "",
+            "mlb_id": 669016,
+            "scraped_transactions": False,
+            "minor_league_player": False,
+            "missing_mlb_id": False,
+            "add_to_db_backup": True,
+        },
+    ]
+    for player in players:
+        vig_app.db_session.add(db.Player(**player))
+    vig_app.db_session.commit()
 
 
 def get_total_number_of_rows(vig_app, db_table):

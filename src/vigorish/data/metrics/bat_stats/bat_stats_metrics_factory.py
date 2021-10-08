@@ -135,12 +135,12 @@ class BatStatsMetricsFactory:
     def _get_bat_stats_for_lineup_spots_for_team(
         self, bat_order_list: List[int], team_id_bbref: str, year: int
     ) -> List[db.BatStats]:
-        return (
+        team_bat_stats = (
             self.db_session.query(db.BatStats)
             .filter(db.BatStats.player_team_id == self.team_id_map[year][team_id_bbref])
-            .filter(db.BatStats.bat_order in bat_order_list)
             .all()
         )
+        return [bat_stats for bat_stats in team_bat_stats if bat_stats.bat_order in bat_order_list]
 
     def _get_bat_stats_for_def_positions_for_team(
         self, def_position_list: List[DefensePosition], team_id_bbref: str, year: int

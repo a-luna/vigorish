@@ -1,8 +1,14 @@
 """Biographical information for a single player."""
+from dataclasses import dataclass
+from datetime import datetime
+
+from dataclass_csv import accept_whitespaces
+from dataclass_csv.decorators import dateformat
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import backref, relationship
 
 import vigorish.database as db
+from vigorish.util.dt_format_strings import DATE_ONLY
 
 
 class Player(db.Base):
@@ -53,3 +59,31 @@ class Player(db.Base):
     @classmethod
     def find_by_mlb_id(cls, db_session, mlb_id) -> "Player":
         return db_session.query(cls).filter_by(mlb_id=mlb_id).first()
+
+
+@accept_whitespaces
+@dateformat(DATE_ONLY)
+@dataclass
+class PlayerCsvRow:
+    id: int = None
+    name_first: str = None
+    name_last: str = None
+    name_given: str = None
+    bats: str = None
+    throws: str = None
+    weight: int = None
+    height: int = None
+    debut: datetime = None
+    birth_year: int = None
+    birth_month: int = None
+    birth_day: int = None
+    birth_country: str = None
+    birth_state: str = None
+    birth_city: str = None
+    bbref_id: str = None
+    retro_id: str = None
+    mlb_id: int = None
+    scraped_transactions: bool = False
+    minor_league_player: bool = False
+    missing_mlb_id: bool = False
+    add_to_db_backup: bool = False
