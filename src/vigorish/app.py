@@ -4,7 +4,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import Optional
 
-from sqlalchemy import create_engine, func, inspect
+from sqlalchemy import create_engine, inspect, select
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.schema import Table
@@ -80,9 +80,7 @@ class Vigorish:
         self.scraped_data = ScrapedData(self.db_engine, self.db_session, self.config)
 
     def get_total_number_of_rows(self, db_table: Table) -> int:
-        q = self.db_session.query(db_table)
-        count_q = q.statement.with_only_columns([func.count()]).order_by(None)
-        return q.session.execute(count_q).scalar()
+        return len([list(r)[0] for r in self.db_engine.execute(select([db_table.id])).fetchall() if list(r)[0]])
 
     def initialize_database(self, csv_folder: Optional[Path] = None, json_folder: Optional[Path] = None) -> Result:
         if not csv_folder:
