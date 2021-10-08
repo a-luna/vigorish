@@ -4,6 +4,7 @@ from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from events import Events
+from sqlalchemy import select
 
 import vigorish.database as db
 from vigorish.tasks.base import Task
@@ -13,6 +14,7 @@ from vigorish.util.numeric_helpers import ONE_PERCENT
 from vigorish.util.result import Result
 
 DB_MODEL_TO_CSV_MAP = {
+    db.Player: {"dataclass": db.PlayerCsvRow, "date_format": DATE_ONLY},
     db.DateScrapeStatus: {"dataclass": db.DateScrapeStatusCsvRow, "date_format": DATE_ONLY},
     db.GameScrapeStatus: {"dataclass": db.GameScrapeStatusCsvRow, "date_format": DATE_ONLY},
     db.PitchAppScrapeStatus: {"dataclass": db.PitchAppScrapeStatusCsvRow, "date_format": DT_AWARE},
@@ -55,6 +57,7 @@ class BackupDatabaseTask(Task):
     def get_csv_map(self):
         self.csv_folder = self.create_csv_folder()
         return {
+            db.Player: self.csv_folder.joinpath("new_players.csv"),
             db.DateScrapeStatus: self.csv_folder.joinpath("scrape_status_date.csv"),
             db.GameScrapeStatus: self.csv_folder.joinpath("scrape_status_game.csv"),
             db.PitchAppScrapeStatus: self.csv_folder.joinpath("scrape_status_pitch_app.csv"),
@@ -73,21 +76,48 @@ class BackupDatabaseTask(Task):
         return csv_folder
 
     def export_table_to_csv(self, table, csv_file):
+        export_query = self.get_table_export_query(table)
+        export_ids = self.get_row_ids_to_export(export_query)
+        total_rows = len(export_ids)
+        if not total_rows:
+            return
         self.append_to_csv(csv_file, text=self.get_csv_column_names(table))
-        total_rows = self.app.get_total_number_of_rows(table)
         chunk_size, chunk_count, row_count, last_reported = 10000, 0, 0, 0
         while True:
             start = chunk_size * chunk_count
-            stop = min(chunk_size * (chunk_count + 1), total_rows)
-            table_chunk = self.db_session.query(table).slice(start, stop).all()
-            if not table_chunk:
+            stop = min(start + chunk_size, total_rows)
+            chunk_ids = export_ids[start:stop]
+            if not chunk_ids:
                 break
+            table_chunk = self.db_session.query(table).filter(table.id.in_(chunk_ids)).all()
+            if len(table_chunk) != len(chunk_ids):
+                error = (
+                    f"len(table_chunk)={len(table_chunk)}, len(chunk_ids)={len(chunk_ids)}\n"
+                    f"table: {table.__tablename__}, total_rows: {total_rows},\n"
+                    f"chunk_count: {chunk_count}, row_count: {row_count}"
+                )
+                raise ValueError(error)
             self.append_to_csv(csv_file, text=self.create_csv_rows(table_chunk, table))
             row_count += len(table_chunk)
             chunk_count += 1
             last_reported = self.report_progress(row_count, total_rows, last_reported)
             if row_count == total_rows:
                 break
+
+    def get_table_export_query(self, table):
+        query_map = {
+            db.Player: select([db.Player.id]).where(db.Player.add_to_db_backup),
+            db.DateScrapeStatus: select([db.DateScrapeStatus.id]),
+            db.GameScrapeStatus: select([db.GameScrapeStatus.id]),
+            db.PitchAppScrapeStatus: select([db.PitchAppScrapeStatus.id]),
+            db.BatStats: select([db.BatStats.id]),
+            db.PitchStats: select([db.PitchStats.id]),
+            db.PitchFx: select([db.PitchFx.id]),
+        }
+        return query_map[table]
+
+    def get_row_ids_to_export(self, export_query):
+        return [list(r)[0] for r in self.db_engine.execute(export_query).fetchall() if list(r)[0]]
 
     def append_to_csv(self, csv_file, text):
         with csv_file.open("a") as csv:
@@ -116,8 +146,7 @@ class BackupDatabaseTask(Task):
         return last_reported
 
     def create_zip_file(self, csv_map):
-        zip_filename = f"{self.csv_folder.name}.zip"
-        zip_file = self.csv_folder.parent.joinpath(zip_filename)
+        zip_file = self.csv_folder.parent.joinpath(f"{self.csv_folder.name}.zip")
         with ZipFile(zip_file, "w", ZIP_DEFLATED) as zip:
             for csv_file in csv_map.values():
                 arcname = f"{self.csv_folder.name}/{csv_file.name}"
