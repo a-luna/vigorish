@@ -15,7 +15,7 @@ halo==0.0.31
 idna==3.2
 jmespath==0.10.0
 log-symbols==0.0.14
-lxml==4.6.3
+lxml==4.6.5
 Naked==0.1.31
 py-getch==1.0.1
 pyfiglet==0.8.post1
