@@ -49,7 +49,7 @@ ENV IP="0.0.0.0"
 
 # Install vigorish
 
-RUN cd /workspace/vigorish
-    && echo '\n[settings]\napi_key = $WAKA_TIME_API_KEY\n' >> ~/.wakatime.cfg
-    && pip install -e .
+RUN cd /workspace/vigorish \
+    && echo '\n[settings]\napi_key = $WAKA_TIME_API_KEY\n' >> ~/.wakatime.cfg \
+    && pip install -e . \
     && vig
