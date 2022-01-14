@@ -1,0 +1,22 @@
+tasks:
+  - before: PYTHONPATH=./src
+  - init: |
+      pip install -u pip setuptools wheel
+      pip install -e .
+    command: vig
+
+vscode:
+  extensions:
+    - github.vscode-pull-request-github
+    - redhat.vscode-yaml
+    - vivaxy.vscode-conventional-commits
+    - mhutchie.git-graph
+    - oderwat.indent-rainbow
+    - christian-kohler.path-intellisense
+    - esbenp.prettier-vscode
+    - vscode-icons-team.vscode-icons
+    - wakatime.vscode-wakatime
+    - qcz.text-power-tools
+    - ms-python.python
+    - ms-python.vscode-pylance
+    - yasinedr.yasine-vs-theme
