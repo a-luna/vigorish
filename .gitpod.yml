@@ -1,9 +1,5 @@
-tasks:
-  - before: PYTHONPATH=./src
-  - init: |
-      pip install -u pip setuptools wheel
-      pip install -e .
-    command: vig
+image:
+  file: .gitpod.Dockerfile
 
 vscode:
   extensions:
