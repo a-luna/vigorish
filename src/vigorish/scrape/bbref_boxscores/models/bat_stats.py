@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List
 
 from vigorish.scrape.bbref_boxscores.models.bat_stats_detail import BBRefBatStatsDetail
 from vigorish.util.list_helpers import as_dict_list
@@ -30,7 +29,7 @@ class BBRefBatStats:
     wpa_bat_pos: str = "0"
     wpa_bat_neg: str = "0"
     re24_bat: str = "0"
-    details: List[BBRefBatStatsDetail] = field(default_factory=list)
+    details: list[BBRefBatStatsDetail] = field(default_factory=list)
 
     def as_dict(self):
         """Convert batting statistics for one player in a single game to a dictionary."""

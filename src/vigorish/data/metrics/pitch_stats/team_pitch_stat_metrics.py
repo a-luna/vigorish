@@ -1,6 +1,5 @@
 from copy import deepcopy
 from functools import cached_property
-from typing import Dict, List
 
 from sqlalchemy.orm import Session
 
@@ -9,7 +8,7 @@ from vigorish.data.metrics.pitch_stats import PitchStatsMetrics
 
 
 class TeamPitchStatsMetrics:
-    def __init__(self, db_session: Session, pitch_stats: List[db.PitchStats], team_id_bbref: str):
+    def __init__(self, db_session: Session, pitch_stats: list[db.PitchStats], team_id_bbref: str):
         self.db_session = db_session
         self.pitch_stats = pitch_stats
         self.team_id_bbref = team_id_bbref
@@ -29,7 +28,7 @@ class TeamPitchStatsMetrics:
         return self._create_pitch_stats_metrics(rp_pitch_stats, role="RP")
 
     @cached_property
-    def by_year(self) -> Dict[int, PitchStatsMetrics]:
+    def by_year(self) -> dict[int, PitchStatsMetrics]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.pitch_stats})
         return {
             year: self._get_pitch_stat_metrics_for_season(self.pitch_stats, season_id, year)
@@ -37,7 +36,7 @@ class TeamPitchStatsMetrics:
         }
 
     @cached_property
-    def for_sp_by_year(self) -> Dict[int, PitchStatsMetrics]:
+    def for_sp_by_year(self) -> dict[int, PitchStatsMetrics]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.pitch_stats})
         return {
             year: self._get_pitch_stat_metrics_for_sp_for_season(self.pitch_stats, season_id, year)
@@ -45,7 +44,7 @@ class TeamPitchStatsMetrics:
         }
 
     @cached_property
-    def for_rp_by_year(self) -> Dict[int, PitchStatsMetrics]:
+    def for_rp_by_year(self) -> dict[int, PitchStatsMetrics]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.pitch_stats})
         return {
             year: self._get_pitch_stat_metrics_for_rp_for_season(self.pitch_stats, season_id, year)
@@ -53,7 +52,7 @@ class TeamPitchStatsMetrics:
         }
 
     @cached_property
-    def by_player_by_year(self) -> Dict[int, List[PitchStatsMetrics]]:
+    def by_player_by_year(self) -> dict[int, list[PitchStatsMetrics]]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.pitch_stats})
         by_player_by_year = {}
         for year, season_id in sorted(all_season_ids, key=lambda x: x[0]):
@@ -71,7 +70,7 @@ class TeamPitchStatsMetrics:
         return by_player_by_year
 
     @cached_property
-    def for_sp_by_player_by_year(self) -> Dict[int, List[PitchStatsMetrics]]:
+    def for_sp_by_player_by_year(self) -> dict[int, list[PitchStatsMetrics]]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.pitch_stats})
         for_sp_by_player_by_year = {}
         for year, season_id in sorted(all_season_ids, key=lambda x: x[0]):
@@ -91,7 +90,7 @@ class TeamPitchStatsMetrics:
         return for_sp_by_player_by_year
 
     @cached_property
-    def for_rp_by_player_by_year(self) -> Dict[int, List[PitchStatsMetrics]]:
+    def for_rp_by_player_by_year(self) -> dict[int, list[PitchStatsMetrics]]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.pitch_stats})
         for_rp_by_player_by_year = {}
         for year, season_id in sorted(all_season_ids, key=lambda x: x[0]):
@@ -111,25 +110,25 @@ class TeamPitchStatsMetrics:
         return for_rp_by_player_by_year
 
     def _get_pitch_stat_metrics_for_season(
-        self, pitch_stats: List[db.PitchStats], season_id: int, year: int
+        self, pitch_stats: list[db.PitchStats], season_id: int, year: int
     ) -> PitchStatsMetrics:
         pitch_stats_for_season = self._get_pitch_stats_for_season(season_id, pitch_stats)
         return self._create_pitch_stats_metrics(pitch_stats_for_season, year=year)
 
     def _get_pitch_stat_metrics_for_sp_for_season(
-        self, pitch_stats: List[db.PitchStats], season_id: int, year: int
+        self, pitch_stats: list[db.PitchStats], season_id: int, year: int
     ) -> PitchStatsMetrics:
         sp_pitch_stats_for_season = self._get_sp_pitch_stats(self._get_pitch_stats_for_season(season_id, pitch_stats))
         return self._create_pitch_stats_metrics(sp_pitch_stats_for_season, role="SP", year=year)
 
     def _get_pitch_stat_metrics_for_rp_for_season(
-        self, pitch_stats: List[db.PitchStats], season_id: int, year: int
+        self, pitch_stats: list[db.PitchStats], season_id: int, year: int
     ) -> PitchStatsMetrics:
         rp_pitch_stats_for_season = self._get_rp_pitch_stats(self._get_pitch_stats_for_season(season_id, pitch_stats))
         return self._create_pitch_stats_metrics(rp_pitch_stats_for_season, role="RP", year=year)
 
     def _get_pitch_stat_metrics_for_player(
-        self, pitch_stats: List[db.PitchStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
+        self, pitch_stats: list[db.PitchStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
     ) -> PitchStatsMetrics:
         pitch_stats_for_player = self._get_pitch_stats_for_player(
             player_id, self._get_pitch_stats_for_season(season_id, pitch_stats)
@@ -139,7 +138,7 @@ class TeamPitchStatsMetrics:
         )
 
     def _get_pitch_stat_metrics_for_player_as_sp(
-        self, pitch_stats: List[db.PitchStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
+        self, pitch_stats: list[db.PitchStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
     ) -> PitchStatsMetrics:
         pitch_stats_for_player_as_sp = self._get_sp_pitch_stats(
             self._get_pitch_stats_for_player(player_id, self._get_pitch_stats_for_season(season_id, pitch_stats))
@@ -149,7 +148,7 @@ class TeamPitchStatsMetrics:
         )
 
     def _get_pitch_stat_metrics_for_player_as_rp(
-        self, pitch_stats: List[db.PitchStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
+        self, pitch_stats: list[db.PitchStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
     ) -> PitchStatsMetrics:
         pitch_stats_for_player_as_rp = self._get_rp_pitch_stats(
             self._get_pitch_stats_for_player(player_id, self._get_pitch_stats_for_season(season_id, pitch_stats))
@@ -158,25 +157,25 @@ class TeamPitchStatsMetrics:
             pitch_stats_for_player_as_rp, role="RP", player_id_mlb=mlb_id, player_id_bbref=bbref_id, year=year
         )
 
-    def _get_sp_pitch_stats(self, pitch_stats: List[db.PitchStats]) -> List[db.PitchStats]:
+    def _get_sp_pitch_stats(self, pitch_stats: list[db.PitchStats]) -> list[db.PitchStats]:
         sp_pitch_stats = filter(lambda x: x.is_sp == 1, pitch_stats)
         return list(sp_pitch_stats)
 
-    def _get_rp_pitch_stats(self, pitch_stats: List[db.PitchStats]) -> List[db.PitchStats]:
+    def _get_rp_pitch_stats(self, pitch_stats: list[db.PitchStats]) -> list[db.PitchStats]:
         rp_pitch_stats = filter(lambda x: x.is_rp == 1, pitch_stats)
         return list(rp_pitch_stats)
 
-    def _get_pitch_stats_for_season(self, season_id: int, pitch_stats: List[db.PitchStats]) -> List[db.PitchStats]:
+    def _get_pitch_stats_for_season(self, season_id: int, pitch_stats: list[db.PitchStats]) -> list[db.PitchStats]:
         pitch_stats_for_season = filter(lambda x: x.season_id == season_id, pitch_stats)
         return list(pitch_stats_for_season)
 
-    def _get_pitch_stats_for_player(self, player_id: int, pitch_stats: List[db.PitchStats]) -> List[db.PitchStats]:
+    def _get_pitch_stats_for_player(self, player_id: int, pitch_stats: list[db.PitchStats]) -> list[db.PitchStats]:
         pitch_stats_for_player = filter(lambda x: x.player_id == player_id, pitch_stats)
         return list(pitch_stats_for_player)
 
     def _create_pitch_stats_metrics(
         self,
-        pitch_stats: List[db.PitchStats],
+        pitch_stats: list[db.PitchStats],
         role: str = None,
         year: int = None,
         player_id_mlb: int = None,

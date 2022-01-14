@@ -1,7 +1,6 @@
 from collections import defaultdict
 from copy import deepcopy
 from functools import cached_property
-from typing import Dict, List
 
 from sqlalchemy.orm import Session
 
@@ -11,7 +10,7 @@ from vigorish.enums import DefensePosition
 
 
 class TeamBatStatsMetrics:
-    def __init__(self, db_session: Session, bat_stats: List[db.BatStats], team_id_bbref: str):
+    def __init__(self, db_session: Session, bat_stats: list[db.BatStats], team_id_bbref: str):
         self.db_session = db_session
         self.bat_stats = bat_stats
         self.team_id_bbref = team_id_bbref
@@ -25,7 +24,7 @@ class TeamBatStatsMetrics:
         return create_bat_stats_metrics(team_id=self.team_id_bbref, bat_stats=self.bat_stats)
 
     @cached_property
-    def by_year(self) -> List[BatStatsMetrics]:
+    def by_year(self) -> list[BatStatsMetrics]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         return {
             year: self._get_bat_stat_metrics_for_season(self.bat_stats, season_id, year)
@@ -33,7 +32,7 @@ class TeamBatStatsMetrics:
         }
 
     @cached_property
-    def for_starters_by_year(self) -> List[BatStatsMetrics]:
+    def for_starters_by_year(self) -> list[BatStatsMetrics]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         return {
             year: self._get_bat_stat_metrics_for_starters(self.bat_stats, season_id, year)
@@ -41,7 +40,7 @@ class TeamBatStatsMetrics:
         }
 
     @cached_property
-    def for_bench_by_year(self) -> Dict[int, BatStatsMetrics]:
+    def for_bench_by_year(self) -> dict[int, BatStatsMetrics]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         return {
             year: self._get_bat_stat_metrics_for_bench(self.bat_stats, season_id, year)
@@ -49,7 +48,7 @@ class TeamBatStatsMetrics:
         }
 
     @cached_property
-    def by_lineup_spot_by_year(self) -> Dict[int, List[BatStatsMetrics]]:
+    def by_lineup_spot_by_year(self) -> dict[int, list[BatStatsMetrics]]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         by_lineup_spot_by_year = {}
         for year, season_id in sorted(all_season_ids, key=lambda x: x[0]):
@@ -63,7 +62,7 @@ class TeamBatStatsMetrics:
         return by_lineup_spot_by_year
 
     @cached_property
-    def by_def_position_by_year(self) -> Dict[int, List[BatStatsMetrics]]:
+    def by_def_position_by_year(self) -> dict[int, list[BatStatsMetrics]]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         by_def_position_by_year = {}
         for year, season_id in sorted(all_season_ids, key=lambda x: x[0]):
@@ -79,7 +78,7 @@ class TeamBatStatsMetrics:
         return by_def_position_by_year
 
     @cached_property
-    def by_player_by_year(self) -> Dict[int, List[BatStatsMetrics]]:
+    def by_player_by_year(self) -> dict[int, list[BatStatsMetrics]]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         by_player_by_year = {}
         for year, season_id in sorted(all_season_ids, key=lambda x: x[0]):
@@ -97,7 +96,7 @@ class TeamBatStatsMetrics:
         return by_player_by_year
 
     @cached_property
-    def by_lineup_spot_by_player_by_year(self) -> Dict[int, Dict[int, List[BatStatsMetrics]]]:
+    def by_lineup_spot_by_player_by_year(self) -> dict[int, dict[int, list[BatStatsMetrics]]]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         by_player_by_lineup_spot_by_year = defaultdict(dict)
         for year, season_id in sorted(all_season_ids, key=lambda x: x[0]):
@@ -121,7 +120,7 @@ class TeamBatStatsMetrics:
         return by_player_by_lineup_spot_by_year
 
     @cached_property
-    def by_def_position_by_player_by_year(self) -> Dict[int, Dict[DefensePosition, List[BatStatsMetrics]]]:
+    def by_def_position_by_player_by_year(self) -> dict[int, dict[DefensePosition, list[BatStatsMetrics]]]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         by_player_by_def_position_by_year = defaultdict(dict)
         for year, season_id in sorted(all_season_ids, key=lambda x: x[0]):
@@ -150,21 +149,21 @@ class TeamBatStatsMetrics:
                 ]
         return by_player_by_def_position_by_year
 
-    def for_lineup_spots_by_year(self, bat_order_list: List[int]) -> Dict[int, BatStatsMetrics]:
+    def for_lineup_spots_by_year(self, bat_order_list: list[int]) -> dict[int, BatStatsMetrics]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         return {
             year: self._get_bat_stat_metrics_for_lineup_spots(self.bat_stats, bat_order_list, season_id, year)
             for year, season_id in all_season_ids
         }
 
-    def for_def_positions_by_year(self, def_position_list: List[DefensePosition]) -> Dict[int, BatStatsMetrics]:
+    def for_def_positions_by_year(self, def_position_list: list[DefensePosition]) -> dict[int, BatStatsMetrics]:
         all_season_ids = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         return {
             year: self._get_bat_stat_metrics_for_def_positions(self.bat_stats, def_position_list, season_id, year)
             for year, season_id in all_season_ids
         }
 
-    def for_starters_by_player_for_year(self, year: int) -> List[BatStatsMetrics]:
+    def for_starters_by_player_for_year(self, year: int) -> list[BatStatsMetrics]:
         all_player_ids = list(
             {
                 (stats.player_id, stats.player_id_mlb, stats.player_id_bbref)
@@ -179,7 +178,7 @@ class TeamBatStatsMetrics:
             for player_id, mlb_id, bbref_id in all_player_ids
         ]
 
-    def for_bench_by_player_for_year(self, year: int) -> List[BatStatsMetrics]:
+    def for_bench_by_player_for_year(self, year: int) -> list[BatStatsMetrics]:
         all_player_ids = list(
             {
                 (stats.player_id, stats.player_id_mlb, stats.player_id_bbref)
@@ -194,7 +193,7 @@ class TeamBatStatsMetrics:
             for player_id, mlb_id, bbref_id in all_player_ids
         ]
 
-    def for_lineup_spots_by_player_for_year(self, bat_order_list: List[int], year: int) -> List[BatStatsMetrics]:
+    def for_lineup_spots_by_player_for_year(self, bat_order_list: list[int], year: int) -> list[BatStatsMetrics]:
         all_player_ids = list(
             {
                 (stats.player_id, stats.player_id_mlb, stats.player_id_bbref)
@@ -247,8 +246,8 @@ class TeamBatStatsMetrics:
         return combined_and_separate_metrics
 
     def for_def_positions_by_player_for_year(
-        self, def_position_list: List[DefensePosition], year: int
-    ) -> List[BatStatsMetrics]:
+        self, def_position_list: list[DefensePosition], year: int
+    ) -> list[BatStatsMetrics]:
         all_player_ids = list(
             {
                 (stats.player_id, stats.player_id_mlb, stats.player_id_bbref)
@@ -301,13 +300,13 @@ class TeamBatStatsMetrics:
         return combined_and_separate_metrics
 
     def _get_bat_stat_metrics_for_season(
-        self, bat_stats: List[db.BatStats], season_id: int, year: int
+        self, bat_stats: list[db.BatStats], season_id: int, year: int
     ) -> BatStatsMetrics:
         bat_stats_for_season = get_bat_stats_for_season(season_id, bat_stats)
         return create_bat_stats_metrics(team_id=self.team_id_bbref, bat_stats=bat_stats_for_season, year=year)
 
     def _get_bat_stat_metrics_for_lineup_spots(
-        self, bat_stats: List[db.BatStats], bat_order_list: List[int], season_id: int, year: int
+        self, bat_stats: list[db.BatStats], bat_order_list: list[int], season_id: int, year: int
     ):
         bat_stats_for_lineup_spots_for_season = get_bat_stats_for_lineup_spots(
             bat_order_list, get_bat_stats_for_season(season_id, bat_stats)
@@ -321,7 +320,7 @@ class TeamBatStatsMetrics:
         return bat_stats_metrics
 
     def _get_bat_stat_metrics_for_def_positions(
-        self, bat_stats: List[db.BatStats], def_position_list: List[DefensePosition], season_id: int, year: int
+        self, bat_stats: list[db.BatStats], def_position_list: list[DefensePosition], season_id: int, year: int
     ):
         bat_stats_for_def_positions_for_season = get_bat_stats_for_def_positions(
             def_position_list, get_bat_stats_for_season(season_id, bat_stats)
@@ -335,7 +334,7 @@ class TeamBatStatsMetrics:
         return bat_stats_metrics
 
     def _get_bat_stat_metrics_for_starters(
-        self, bat_stats: List[db.BatStats], season_id: int, year: int
+        self, bat_stats: list[db.BatStats], season_id: int, year: int
     ) -> BatStatsMetrics:
         bat_stats_for_starters_for_season = get_bat_stats_for_starters(get_bat_stats_for_season(season_id, bat_stats))
         return create_bat_stats_metrics(
@@ -343,7 +342,7 @@ class TeamBatStatsMetrics:
         )
 
     def _get_bat_stat_metrics_for_bench(
-        self, bat_stats: List[db.BatStats], season_id: int, year: int
+        self, bat_stats: list[db.BatStats], season_id: int, year: int
     ) -> BatStatsMetrics:
         bat_stats_for_bench_for_season = get_bat_stats_for_bench(get_bat_stats_for_season(season_id, bat_stats))
         return create_bat_stats_metrics(
@@ -351,7 +350,7 @@ class TeamBatStatsMetrics:
         )
 
     def _get_bat_stat_metrics_for_player(
-        self, bat_stats: List[db.BatStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
+        self, bat_stats: list[db.BatStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
     ) -> BatStatsMetrics:
         bat_stats_for_player = get_bat_stats_for_player(player_id, get_bat_stats_for_season(season_id, bat_stats))
         return create_bat_stats_metrics(
@@ -363,7 +362,7 @@ class TeamBatStatsMetrics:
         )
 
     def _get_bat_stat_metrics_when_starter_for_player(
-        self, bat_stats: List[db.BatStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
+        self, bat_stats: list[db.BatStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
     ) -> BatStatsMetrics:
         bat_stats_for_player = get_bat_stats_for_starters(
             get_bat_stats_for_player(
@@ -384,7 +383,7 @@ class TeamBatStatsMetrics:
         )
 
     def _get_bat_stat_metrics_when_bench_for_player(
-        self, bat_stats: List[db.BatStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
+        self, bat_stats: list[db.BatStats], player_id: int, mlb_id: int, bbref_id: str, year: int, season_id: int
     ) -> BatStatsMetrics:
         bat_stats_for_player = get_bat_stats_for_bench(
             get_bat_stats_for_player(
@@ -406,8 +405,8 @@ class TeamBatStatsMetrics:
 
     def get_bat_stat_metrics_for_lineup_spots_for_player(
         self,
-        bat_stats: List[db.BatStats],
-        bat_order_list: List[int],
+        bat_stats: list[db.BatStats],
+        bat_order_list: list[int],
         player_id: int,
         mlb_id: int,
         bbref_id: str,
@@ -434,8 +433,8 @@ class TeamBatStatsMetrics:
 
     def get_bat_stat_metrics_for_def_positions_for_player(
         self,
-        bat_stats: List[db.BatStats],
-        def_position_list: List[DefensePosition],
+        bat_stats: list[db.BatStats],
+        def_position_list: list[DefensePosition],
         player_id: int,
         mlb_id: int,
         bbref_id: str,
@@ -481,47 +480,47 @@ def set_flag_for_combined_def_pos_metrics(bat_stats_metrics: BatStatsMetrics) ->
     return bat_stats_metrics
 
 
-def get_bat_stats_for_season(season_id: int, bat_stats: List[db.BatStats]) -> List[db.BatStats]:
+def get_bat_stats_for_season(season_id: int, bat_stats: list[db.BatStats]) -> list[db.BatStats]:
     bat_stats_for_season = filter(lambda x: x.season_id == season_id, bat_stats)
     return list(bat_stats_for_season)
 
 
-def get_bat_stats_for_player(player_id: int, bat_stats: List[db.BatStats]) -> List[db.BatStats]:
+def get_bat_stats_for_player(player_id: int, bat_stats: list[db.BatStats]) -> list[db.BatStats]:
     bat_stats_for_player = filter(lambda x: x.player_id == player_id, bat_stats)
     return list(bat_stats_for_player)
 
 
-def get_bat_stats_for_starters(bat_stats: List[db.BatStats]) -> List[db.BatStats]:
+def get_bat_stats_for_starters(bat_stats: list[db.BatStats]) -> list[db.BatStats]:
     bat_stats_for_staters = filter(lambda x: x.is_starter == 1, bat_stats)
     return list(bat_stats_for_staters)
 
 
-def get_bat_stats_for_bench(bat_stats: List[db.BatStats]) -> List[db.BatStats]:
+def get_bat_stats_for_bench(bat_stats: list[db.BatStats]) -> list[db.BatStats]:
     bat_stats_for_bench = filter(lambda x: x.is_starter == 0, bat_stats)
     return list(bat_stats_for_bench)
 
 
-def get_bat_stats_for_lineup_spots(bat_order_list: List[int], bat_stats: List[db.BatStats]) -> List[db.BatStats]:
+def get_bat_stats_for_lineup_spots(bat_order_list: list[int], bat_stats: list[db.BatStats]) -> list[db.BatStats]:
     bat_stats_for_lineup_spots = filter(lambda x: x.bat_order in bat_order_list, bat_stats)
     return list(bat_stats_for_lineup_spots)
 
 
 def get_bat_stats_for_def_positions(
-    def_position_list: List[DefensePosition], bat_stats: List[db.BatStats]
-) -> List[db.BatStats]:
+    def_position_list: list[DefensePosition], bat_stats: list[db.BatStats]
+) -> list[db.BatStats]:
     bat_stats_for_def_positions = filter(
         lambda x: x.def_position in convert_def_position_list_to_str_list(def_position_list), bat_stats
     )
     return list(bat_stats_for_def_positions)
 
 
-def convert_def_position_list_to_str_list(def_positions: List[DefensePosition]) -> List[str]:
+def convert_def_position_list_to_str_list(def_positions: list[DefensePosition]) -> list[str]:
     return [str(int(def_pos)) for def_pos in def_positions]
 
 
 def create_bat_stats_metrics(
     team_id: str,
-    bat_stats: List[db.BatStats],
+    bat_stats: list[db.BatStats],
     year: int = None,
     player_id_mlb: int = None,
     player_id_bbref: str = None,

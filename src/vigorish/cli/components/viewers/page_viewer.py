@@ -1,6 +1,5 @@
 import os
 import subprocess
-from typing import List
 
 from bullet import Bullet, colors, keyhandler
 from bullet.charDef import ARROW_LEFT_KEY, ARROW_RIGHT_KEY
@@ -21,7 +20,7 @@ NAV_NEXT_LEN = len(NAV_NEXT)
 class PageViewer(Bullet):
     def __init__(
         self,
-        pages: List[DisplayPage],
+        pages: list[DisplayPage],
         prompt: str,
         confirm_only: bool = False,
         yes_choice: str = "YES",
@@ -30,7 +29,7 @@ class PageViewer(Bullet):
         text_color: str = None,
     ) -> None:
         self.choices_dict = self.get_prompt_choices(confirm_only, yes_choice, no_choice)
-        super(PageViewer, self).__init__(
+        super().__init__(
             prompt=prompt,
             choices=list(self.choices_dict.keys()),
             bullet="",

@@ -1,6 +1,5 @@
 """Reusable menu prompts to get various values/data types from the user."""
 import subprocess
-from typing import List, Optional
 
 from bullet import Check, colors
 from getch import pause
@@ -97,8 +96,8 @@ def audit_report_season_prompt(audit_report, prompt=None):
 def data_sets_prompt(
     heading: str = None,
     prompt: str = None,
-    valid_data_sets: Optional[List[DataSet]] = None,
-    checked_data_sets: Optional[List[DataSet]] = None,
+    valid_data_sets: list[DataSet] | None = None,
+    checked_data_sets: list[DataSet] | None = None,
 ):
     if not prompt:
         prompt = "Select one or multiple data sets from the list below:"

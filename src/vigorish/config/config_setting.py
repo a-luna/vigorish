@@ -1,6 +1,6 @@
 """Functions that enable reading/writing the config file."""
 from abc import ABC
-from typing import Iterable, Mapping, Union
+from typing import Iterable, Mapping
 
 from vigorish.config.types.batch_job_settings import BatchJobSettings
 from vigorish.config.types.batch_scrape_delay import BatchScrapeDelay
@@ -20,7 +20,7 @@ from vigorish.util.list_helpers import report_dict
 
 
 def same_value_for_all_data_sets_is_required(setting_name: str) -> bool:
-    return setting_name in [
+    return setting_name in {
         "STATUS_REPORT",
         "S3_BUCKET",
         "SCRAPE_TASK_OPTION",
@@ -29,21 +29,15 @@ def same_value_for_all_data_sets_is_required(setting_name: str) -> bool:
         "COMBINED_DATA_LOCAL_FOLDER_PATH",
         "COMBINED_DATA_S3_FOLDER_PATH",
         "DB_BACKUP_FOLDER_PATH",
-    ]
+    }
 
 
-EnumSetting = Union[
-    CombinedDataStorageOption,
-    HtmlStorageOption,
-    JsonStorageOption,
-    ScrapeCondition,
-    ScrapeTaskOption,
-]
-NumericSetting = Union[BatchJobSettings, BatchScrapeDelay, UrlScrapeDelay]
-PathSetting = Union[LocalFolderPathSetting, S3FolderPathSetting]
-ConfigValue = Union[None, bool, int, str, EnumSetting]
-ConfigDict = Mapping[str, Union[None, bool, int, str]]
-ConfigSettingValue = Union[EnumSetting, NumericSetting, PathSetting, str]
+EnumSetting = CombinedDataStorageOption | HtmlStorageOption | JsonStorageOption | ScrapeCondition | ScrapeTaskOption
+NumericSetting = BatchJobSettings | BatchScrapeDelay | UrlScrapeDelay
+PathSetting = LocalFolderPathSetting | S3FolderPathSetting
+ConfigValue = EnumSetting | bool | int | str | None
+ConfigDict = Mapping[str, None | bool | int | str]
+ConfigSettingValue = EnumSetting | NumericSetting | PathSetting | str
 
 
 class ConfigSetting(ABC):

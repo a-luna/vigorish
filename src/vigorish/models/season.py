@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import List
 
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -577,7 +576,7 @@ class Season(db.Base):
         return Result.Ok(season)
 
     @classmethod
-    def get_all_regular_seasons(cls, db_session) -> List[db.Season]:
+    def get_all_regular_seasons(cls, db_session) -> list[db.Season]:
         return db_session.query(cls).filter_by(season_type=SeasonType.REGULAR_SEASON).all()
 
     @classmethod

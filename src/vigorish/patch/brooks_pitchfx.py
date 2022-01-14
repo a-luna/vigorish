@@ -1,7 +1,6 @@
 from collections import defaultdict, OrderedDict
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import List
 
 from dacite import from_dict
 
@@ -16,7 +15,7 @@ from vigorish.util.string_helpers import get_brooks_team_id
 
 @dataclass
 class BrooksPitchFxPatchList(PatchList):
-    original_pfx_logs: List[BrooksPitchFxLog] = field(repr=False, init=False)
+    original_pfx_logs: list[BrooksPitchFxLog] = field(repr=False, init=False)
 
     def __post_init__(self):
         self.data_set = DataSet.BROOKS_PITCHFX

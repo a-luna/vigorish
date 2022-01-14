@@ -1,5 +1,4 @@
 from functools import cached_property
-from typing import Dict, List, Union
 
 import vigorish.database as db
 from vigorish.enums import DefensePosition
@@ -10,7 +9,7 @@ from vigorish.util.string_helpers import format_decimal_bat_stat
 class BatStatsMetrics:
     def __init__(
         self,
-        bat_stats: List[db.BatStats],
+        bat_stats: list[db.BatStats],
         year: int = None,
         player_id_mlb: int = None,
         player_id_bbref: str = None,
@@ -223,21 +222,21 @@ class BatStatsMetrics:
         return round(re24_bat, ndigits=1)
 
     @cached_property
-    def def_position_list(self) -> List[DefensePosition]:
+    def def_position_list(self) -> list[DefensePosition]:
         return list({DefensePosition(int(bs.def_position)) for bs in self.bat_stats})
 
     @cached_property
-    def def_position_metrics(self) -> List[Dict[str, Union[bool, int, float, DefensePosition]]]:
+    def def_position_metrics(self) -> list[dict[str, bool | int | float | DefensePosition]]:
         bat_stats_grouped = group_and_sort_list(self.bat_stats, "def_position", "date_id")
         pos_counts = [get_pos_metrics(k, v, self.bat_stats) for k, v in bat_stats_grouped.items()]
         return sorted(pos_counts, key=lambda x: x["percent"], reverse=True)
 
     @cached_property
-    def bat_order_list(self) -> List[DefensePosition]:
+    def bat_order_list(self) -> list[DefensePosition]:
         return list({bs.bat_order for bs in self.bat_stats}) if self.bat_stats else []
 
     @cached_property
-    def bat_order_metrics(self) -> List[Dict[str, Union[int, float]]]:
+    def bat_order_metrics(self) -> list[dict[str, int | float]]:
         bat_orders_grouped = group_and_sort_list(self.bat_stats, "bat_order", "date_id")
         order_number_counts = [get_bat_order_metrics(k, v, self.bat_stats) for k, v in bat_orders_grouped.items()]
         return sorted(order_number_counts, key=lambda x: x["percent"], reverse=True)
@@ -252,8 +251,8 @@ class BatStatsMetrics:
 
 
 def get_pos_metrics(
-    pos_number: str, pos_stats: List[db.BatStats], all_bat_stats: List[db.BatStats]
-) -> Dict[str, Union[bool, int, float, DefensePosition]]:
+    pos_number: str, pos_stats: list[db.BatStats], all_bat_stats: list[db.BatStats]
+) -> dict[str, bool | int | float | DefensePosition]:
     def_pos = DefensePosition(int(pos_number))
     return {
         "def_pos": def_pos,
@@ -264,8 +263,8 @@ def get_pos_metrics(
 
 
 def get_bat_order_metrics(
-    bat_order: str, bat_order_stats: List[db.BatStats], all_bat_stats: List[db.BatStats]
-) -> Dict[str, Union[int, float]]:
+    bat_order: str, bat_order_stats: list[db.BatStats], all_bat_stats: list[db.BatStats]
+) -> dict[str, int | float]:
     return {
         "bat_order": bat_order,
         "total_games": len(bat_order_stats),
@@ -273,9 +272,9 @@ def get_bat_order_metrics(
     }
 
 
-def _format_bat_order_list(bat_order_list: List[int]) -> str:
+def _format_bat_order_list(bat_order_list: list[int]) -> str:
     return ",".join(str(bat_order) for bat_order in bat_order_list)
 
 
-def _format_def_position_list(def_position_list: List[int]) -> str:
+def _format_def_position_list(def_position_list: list[int]) -> str:
     return ",".join(str(DefensePosition(int(def_pos))) for def_pos in def_position_list)

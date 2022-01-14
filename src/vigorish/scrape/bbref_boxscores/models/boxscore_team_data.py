@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List
 
 from vigorish.scrape.bbref_boxscores.models.bat_stats import BBRefBatStats
 from vigorish.scrape.bbref_boxscores.models.pitch_stats import BBRefPitchStats
@@ -21,9 +20,9 @@ class BBRefBoxscoreTeamData:
     team_won: bool = field(init=False)
     pitcher_of_record: str = ""
     pitcher_earned_save: str = ""
-    starting_lineup: List[BBRefStartingLineupSlot] = field(default_factory=list)
-    batting_stats: List[BBRefBatStats] = field(default_factory=list)
-    pitching_stats: List[BBRefPitchStats] = field(default_factory=list)
+    starting_lineup: list[BBRefStartingLineupSlot] = field(default_factory=list)
+    batting_stats: list[BBRefBatStats] = field(default_factory=list)
+    pitching_stats: list[BBRefPitchStats] = field(default_factory=list)
 
     def __post_init__(self):
         self.team_won = self.total_runs_scored_by_team > self.total_runs_scored_by_opponent

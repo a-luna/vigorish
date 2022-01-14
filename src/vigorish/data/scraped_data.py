@@ -1,6 +1,5 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
 
 import vigorish.database as db
 from vigorish.data.file_helper import FileHelper
@@ -253,7 +252,7 @@ class ScrapedData:
             for s in all_seasons
         }
 
-    def get_all_seasons_with_data_for_player(self, player_mlb_id: int) -> List[db.Season]:
+    def get_all_seasons_with_data_for_player(self, player_mlb_id: int) -> list[db.Season]:
         seasons_with_pitch_data = db.PitchStats.get_all_seasons_with_data_for_player(self.db_session, player_mlb_id)
         seasons_with_bat_data = db.BatStats.get_all_seasons_with_data_for_player(self.db_session, player_mlb_id)
         seasons_with_player_data = list(set(list(seasons_with_pitch_data) + list(seasons_with_bat_data)))
@@ -331,7 +330,7 @@ class ScrapedData:
 
     # PITCHFX QUERIES
 
-    def get_all_barrels_for_game_date(self, game_date: datetime) -> List[db.PitchFx]:
+    def get_all_barrels_for_game_date(self, game_date: datetime) -> list[db.PitchFx]:
         date_status = db.DateScrapeStatus.find_by_date(self.db_session, game_date)
         if not date_status:
             return []
@@ -355,33 +354,33 @@ class ScrapedData:
     def get_pitch_stats_for_rp_for_team(self, team_id_bbref: str, year: int) -> PitchStatsMetrics:
         return self.pitch_stats.for_team(team_id_bbref).for_rp_by_year.get(year)
 
-    def get_pitch_stats_by_year_for_team(self, team_id_bbref: str) -> Dict[int, PitchStatsMetrics]:
+    def get_pitch_stats_by_year_for_team(self, team_id_bbref: str) -> dict[int, PitchStatsMetrics]:
         return self.pitch_stats.for_team(team_id_bbref).by_year
 
-    def get_pitch_stats_for_sp_by_year_for_team(self, team_id_bbref: str) -> Dict[int, PitchStatsMetrics]:
+    def get_pitch_stats_for_sp_by_year_for_team(self, team_id_bbref: str) -> dict[int, PitchStatsMetrics]:
         return self.pitch_stats.for_team(team_id_bbref).for_sp_by_year
 
-    def get_pitch_stats_for_rp_by_year_for_team(self, team_id_bbref: str) -> Dict[int, PitchStatsMetrics]:
+    def get_pitch_stats_for_rp_by_year_for_team(self, team_id_bbref: str) -> dict[int, PitchStatsMetrics]:
         return self.pitch_stats.for_team(team_id_bbref).for_rp_by_year
 
-    def get_pitch_stats_by_player_for_team(self, team_id_bbref: str, year: int) -> List[PitchStatsMetrics]:
+    def get_pitch_stats_by_player_for_team(self, team_id_bbref: str, year: int) -> list[PitchStatsMetrics]:
         return self.pitch_stats.for_team(team_id_bbref).by_player_by_year.get(year, [])
 
-    def get_pitch_stats_for_sp_by_player_for_team(self, team_id_bbref: str, year: int) -> List[PitchStatsMetrics]:
+    def get_pitch_stats_for_sp_by_player_for_team(self, team_id_bbref: str, year: int) -> list[PitchStatsMetrics]:
         return self.pitch_stats.for_team(team_id_bbref).for_sp_by_player_by_year.get(year, [])
 
-    def get_pitch_stats_for_rp_by_player_for_team(self, team_id_bbref: str, year: int) -> List[PitchStatsMetrics]:
+    def get_pitch_stats_for_rp_by_player_for_team(self, team_id_bbref: str, year: int) -> list[PitchStatsMetrics]:
         return self.pitch_stats.for_team(team_id_bbref).for_rp_by_player_by_year.get(year, [])
 
-    def get_pitch_stats_for_season_for_all_teams(self, year: int) -> Dict[str, PitchStatsMetrics]:
+    def get_pitch_stats_for_season_for_all_teams(self, year: int) -> dict[str, PitchStatsMetrics]:
         team_pitch_stats = self.pitch_stats.for_all_teams(year)
         return _sort_and_map_team_pitch_stats(team_pitch_stats)
 
-    def get_pitch_stats_for_sp_for_season_for_all_teams(self, year: int) -> Dict[str, PitchStatsMetrics]:
+    def get_pitch_stats_for_sp_for_season_for_all_teams(self, year: int) -> dict[str, PitchStatsMetrics]:
         team_pitch_stats_for_sp = self.pitch_stats.for_sp_for_all_teams(year)
         return _sort_and_map_team_pitch_stats(team_pitch_stats_for_sp)
 
-    def get_pitch_stats_for_rp_for_season_for_all_teams(self, year: int) -> Dict[str, PitchStatsMetrics]:
+    def get_pitch_stats_for_rp_for_season_for_all_teams(self, year: int) -> dict[str, PitchStatsMetrics]:
         team_pitch_stats_for_rp = self.pitch_stats.for_rp_for_all_teams(year)
         return _sort_and_map_team_pitch_stats(team_pitch_stats_for_rp)
 
@@ -390,10 +389,10 @@ class ScrapedData:
     def get_bat_stats_for_team(self, team_id_bbref: str, year: int) -> BatStatsMetrics:
         return self.bat_stats.for_team(team_id_bbref).by_year.get(year)
 
-    def get_bat_stats_by_lineup_spot_for_team(self, team_id_bbref: str, year: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_by_lineup_spot_for_team(self, team_id_bbref: str, year: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).by_lineup_spot_by_year.get(year, [])
 
-    def get_bat_stats_by_defpos_for_team(self, team_id_bbref: str, year: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_by_defpos_for_team(self, team_id_bbref: str, year: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).by_def_position_by_year.get(year, [])
 
     def get_bat_stats_for_starters_for_team(self, team_id_bbref: str, year: int) -> BatStatsMetrics:
@@ -402,65 +401,65 @@ class ScrapedData:
     def get_bat_stats_for_subs_for_team(self, team_id_bbref: str, year: int) -> BatStatsMetrics:
         return self.bat_stats.for_team(team_id_bbref).for_bench_by_year.get(year)
 
-    def get_bat_stats_by_year_for_team(self, team_id_bbref: str) -> Dict[int, BatStatsMetrics]:
+    def get_bat_stats_by_year_for_team(self, team_id_bbref: str) -> dict[int, BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).by_year
 
     def get_bat_stats_for_lineup_spot_by_year_for_team(
-        self, bat_order_list: List[int], team_id_bbref: str
-    ) -> Dict[int, BatStatsMetrics]:
+        self, bat_order_list: list[int], team_id_bbref: str
+    ) -> dict[int, BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).for_lineup_spots_by_year(bat_order_list)
 
     def get_bat_stats_for_defpos_by_year_for_team(
-        self, def_position_list: List[DefensePosition], team_id_bbref: str
-    ) -> Dict[int, BatStatsMetrics]:
+        self, def_position_list: list[DefensePosition], team_id_bbref: str
+    ) -> dict[int, BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).for_def_positions_by_year(def_position_list)
 
-    def get_bat_stats_for_starters_by_year_for_team(self, team_id_bbref: str) -> Dict[int, BatStatsMetrics]:
+    def get_bat_stats_for_starters_by_year_for_team(self, team_id_bbref: str) -> dict[int, BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).for_starters_by_year
 
-    def get_bat_stats_for_subs_by_year_for_team(self, team_id_bbref: str) -> Dict[int, BatStatsMetrics]:
+    def get_bat_stats_for_subs_by_year_for_team(self, team_id_bbref: str) -> dict[int, BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).for_bench_by_year
 
-    def get_bat_stats_by_player_for_team(self, team_id_bbref: str, year: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_by_player_for_team(self, team_id_bbref: str, year: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).by_player_by_year.get(year, [])
 
     def get_bat_stats_for_lineup_spot_by_player_for_team(
-        self, bat_order_list: List[int], team_id_bbref: str, year: int
-    ) -> List[BatStatsMetrics]:
+        self, bat_order_list: list[int], team_id_bbref: str, year: int
+    ) -> list[BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).for_lineup_spots_by_player_for_year(bat_order_list, year)
 
     def get_bat_stats_for_defpos_by_player_for_team(
-        self, def_position_list: List[DefensePosition], team_id_bbref: str, year: int
-    ) -> List[BatStatsMetrics]:
+        self, def_position_list: list[DefensePosition], team_id_bbref: str, year: int
+    ) -> list[BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).for_def_positions_by_player_for_year(def_position_list, year)
 
-    def get_bat_stats_for_starters_by_player_for_team(self, team_id_bbref: str, year: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_for_starters_by_player_for_team(self, team_id_bbref: str, year: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).for_starters_by_player_for_year(year)
 
-    def get_bat_stats_for_subs_by_player_for_team(self, team_id_bbref: str, year: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_for_subs_by_player_for_team(self, team_id_bbref: str, year: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_team(team_id_bbref).for_bench_by_player_for_year(year)
 
-    def get_bat_stats_for_season_for_all_teams(self, year: int) -> Dict[str, BatStatsMetrics]:
+    def get_bat_stats_for_season_for_all_teams(self, year: int) -> dict[str, BatStatsMetrics]:
         team_bat_stats = self.bat_stats.for_all_teams(year)
         return _sort_and_map_team_bat_stats(team_bat_stats)
 
     def get_bat_stats_for_lineup_spot_for_season_for_all_teams(
-        self, bat_order_list: List[int], year: int
-    ) -> Dict[str, BatStatsMetrics]:
+        self, bat_order_list: list[int], year: int
+    ) -> dict[str, BatStatsMetrics]:
         team_bat_stats_for_lineup_spots = self.bat_stats.for_lineup_spots_for_all_teams(bat_order_list, year)
         return _sort_and_map_team_bat_stats(team_bat_stats_for_lineup_spots)
 
     def get_bat_stats_for_defpos_for_season_for_all_teams(
-        self, def_position_list: List[DefensePosition], year: int
-    ) -> Dict[str, BatStatsMetrics]:
+        self, def_position_list: list[DefensePosition], year: int
+    ) -> dict[str, BatStatsMetrics]:
         team_bat_stats_for_def_positions = self.bat_stats.for_def_positions_for_all_teams(def_position_list, year)
         return _sort_and_map_team_bat_stats(team_bat_stats_for_def_positions)
 
-    def get_bat_stats_for_starters_for_season_for_all_teams(self, year: int) -> Dict[str, BatStatsMetrics]:
+    def get_bat_stats_for_starters_for_season_for_all_teams(self, year: int) -> dict[str, BatStatsMetrics]:
         team_bat_stats_for_starters = self.bat_stats.for_starters_for_all_teams(year)
         return _sort_and_map_team_bat_stats(team_bat_stats_for_starters)
 
-    def get_bat_stats_for_subs_for_season_for_all_teams(self, year: int) -> Dict[str, BatStatsMetrics]:
+    def get_bat_stats_for_subs_for_season_for_all_teams(self, year: int) -> dict[str, BatStatsMetrics]:
         team_bat_stats_for_bench = self.bat_stats.for_bench_for_all_teams(year)
         return _sort_and_map_team_bat_stats(team_bat_stats_for_bench)
 
@@ -475,31 +474,29 @@ class ScrapedData:
     def get_pitch_stats_as_rp_for_player(self, mlb_id: int) -> PitchStatsMetrics:
         return self.pitch_stats.for_pitcher(mlb_id).by_role["as_rp"]
 
-    def get_pitch_stats_by_year_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
+    def get_pitch_stats_by_year_for_player(self, mlb_id: int) -> list[PitchStatsMetrics]:
         return self.pitch_stats.for_pitcher(mlb_id).by_year
 
-    def get_pitch_stats_by_team_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
+    def get_pitch_stats_by_team_for_player(self, mlb_id: int) -> list[PitchStatsMetrics]:
         return self.pitch_stats.for_pitcher(mlb_id).by_team
 
-    def get_pitch_stats_by_team_by_year_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
+    def get_pitch_stats_by_team_by_year_for_player(self, mlb_id: int) -> list[PitchStatsMetrics]:
         return self.pitch_stats.for_pitcher(mlb_id).by_team_by_year
 
-    def get_pitch_stats_by_opp_team_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
+    def get_pitch_stats_by_opp_team_for_player(self, mlb_id: int) -> list[PitchStatsMetrics]:
         return self.pitch_stats.for_pitcher(mlb_id).by_opponent
 
-    def get_pitch_stats_by_opp_team_by_year_for_player(self, mlb_id: int) -> List[PitchStatsMetrics]:
+    def get_pitch_stats_by_opp_team_by_year_for_player(self, mlb_id: int) -> list[PitchStatsMetrics]:
         return self.pitch_stats.for_pitcher(mlb_id).by_opponent_by_year
 
     # PERCENTILES
 
     def calculate_pitch_type_percentiles(
         self, p_throws: str, pfx_metrics: PitchFxMetrics
-    ) -> Dict[str, Union[PitchType, Tuple[float, float]]]:
+    ) -> dict[str, PitchType | tuple[float, float]]:
         return db.PitchTypePercentile.calculate_pitch_type_percentiles(self.db_session, p_throws, pfx_metrics)
 
-    def calculate_batter_percentiles(
-        self, pfx_metrics: PitchFxMetrics
-    ) -> Dict[str, Union[PitchType, Tuple[float, float]]]:
+    def calculate_batter_percentiles(self, pfx_metrics: PitchFxMetrics) -> dict[str, PitchType | tuple[float, float]]:
         return db.BatterPercentile.calculate_batter_percentiles(self.db_session, pfx_metrics)
 
     # PLAYER BAT STATS
@@ -507,19 +504,19 @@ class ScrapedData:
     def get_bat_stats_for_career_for_player(self, mlb_id: int) -> BatStatsMetrics:
         return self.bat_stats.for_player(mlb_id).all_bat_stats
 
-    def get_bat_stats_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_by_year_for_player(self, mlb_id: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_player(mlb_id).by_year
 
-    def get_bat_stats_by_team_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_by_team_for_player(self, mlb_id: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_player(mlb_id).by_team
 
-    def get_bat_stats_by_team_by_year_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_by_team_by_year_for_player(self, mlb_id: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_player(mlb_id).by_team_by_year
 
-    def get_bat_stats_by_opp_for_player(self, mlb_id: int) -> List[BatStatsMetrics]:
+    def get_bat_stats_by_opp_for_player(self, mlb_id: int) -> list[BatStatsMetrics]:
         return self.bat_stats.for_player(mlb_id).by_opponent
 
-    def get_bat_stats_by_opp_by_year_for_player(self, mlb_id: int) -> Dict[str, BatStatsMetrics]:
+    def get_bat_stats_by_opp_by_year_for_player(self, mlb_id: int) -> dict[str, BatStatsMetrics]:
         return self.bat_stats.for_player(mlb_id).by_opponent_by_year
 
 
@@ -528,11 +525,11 @@ def _sort_and_map_stats_list(stats_list, sort_attr, group_attr):
     return {getattr(s, group_attr): s for s in map(_set_team_rank, enumerate(stats_list, start=1))}
 
 
-def _sort_and_map_team_bat_stats(team_stats_list: List[db.BatStats]):
+def _sort_and_map_team_bat_stats(team_stats_list: list[db.BatStats]):
     return _sort_and_map_stats_list(team_stats_list, sort_attr="ops", group_attr="team_id_bbref")
 
 
-def _sort_and_map_team_pitch_stats(team_stats_list: List[db.PitchStats]):
+def _sort_and_map_team_pitch_stats(team_stats_list: list[db.PitchStats]):
     return _sort_and_map_stats_list(team_stats_list, sort_attr="re24_pitch", group_attr="team_id_bbref")
 
 

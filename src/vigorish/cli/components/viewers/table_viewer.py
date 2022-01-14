@@ -19,7 +19,7 @@ class TableViewer(PageViewer):
         message_color=None,
         table_color=None,
     ):
-        super(TableViewer, self).__init__(
+        super().__init__(
             pages=table_list,
             prompt=prompt,
             confirm_only=confirm_only,

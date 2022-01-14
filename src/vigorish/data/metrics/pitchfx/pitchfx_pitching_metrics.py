@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import List
 
 import vigorish.database as db
 from vigorish.data.metrics.pitchfx.pitchfx_metrics_set import (
@@ -15,7 +14,7 @@ class PitchFxPitchingMetrics:
     rhb: PitchFxMetricsSet
     lhb: PitchFxMetricsSet
 
-    def __init__(self, pfx: List[db.PitchFx], mlb_id: int, p_throws: str, remove_outliers: bool = False):
+    def __init__(self, pfx: list[db.PitchFx], mlb_id: int, p_throws: str, remove_outliers: bool = False):
         pfx_metrics_builder = PfxMetricsSetBuilder()
         pfx_vs_rhb = list(filter(lambda x: x.stand == "R", pfx))
         pfx_vs_lhb = list(filter(lambda x: x.stand == "L", pfx))
