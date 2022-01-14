@@ -1,5 +1,10 @@
 image:
   file: .gitpod.Dockerfile
+  
+tasks:
+  - before: printf "\n[settings]\napi_key = $WAKA_TIME_API_KEY\n" > ~/.wakatime.cfg
+  - init: pip install -e .
+    command: vig
 
 vscode:
   extensions:
