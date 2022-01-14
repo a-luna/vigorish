@@ -46,3 +46,15 @@ RUN echo 'alias python=python3' >> ~/.bashrc && \
 
 ENV PORT="8080"
 ENV IP="0.0.0.0"
+
+# Install vigorish
+
+RUN pip install -e .
+
+# Create wakatime config file
+
+RUN printf "\n[settings]\napi_key = $WAKA_TIME_API_KEY\n" > ~/.wakatime.cfg
+
+# Run vigorish
+
+RUN vig
