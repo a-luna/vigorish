@@ -36,7 +36,7 @@ ENV PATH=$PYTHONUSERBASE/bin:$PATH
 
 # SQLite
 
-RUN apt-get update && apt-get install -y build-essential uuid-dev sqlite3
+RUN sudo apt-get update && sudo apt-get install -y build-essential uuid-dev sqlite3
 
 # Add aliases
 
