@@ -34,6 +34,10 @@ ENV PYTHONUSERBASE=/workspace/.pip-modules \
   PIP_USER=yes
 ENV PATH=$PYTHONUSERBASE/bin:$PATH
 
+# SQLite
+
+RUN apt-get update && apt-get install -y build-essential uuid-dev sqlite3
+
 # Add aliases
 
 RUN echo 'alias python=python3' >> ~/.bashrc && \
