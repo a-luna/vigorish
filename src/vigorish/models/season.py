@@ -537,9 +537,12 @@ class Season(db.Base):
 
     @classmethod
     def get_most_recent_scraped_date(cls, db_session, year):
-        season = cls.find_by_year(db_session, year)
-        if not season:
-            return None
+        season = None
+        while not season:
+            try:
+                season = cls.find_by_year(db_session, year)
+            except InvalidSeasonException:
+                year -= 1
         today = datetime.today()
         if today < season.start_date:
             last_season = cls.find_by_year(db_session, year - 1)
