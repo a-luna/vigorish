@@ -22,7 +22,7 @@ class ScrapeBBRefGamesForDate(ScrapeTaskABC):
         bbref_games_for_date = db.DateScrapeStatus.verify_bbref_daily_dashboard_scraped_for_date(
             self.db_session, game_date
         )
-        return Result.Ok() if not bbref_games_for_date else Result.Fail("skip")
+        return Result.Fail("skip") if bbref_games_for_date else Result.Ok()
 
     def parse_html(self, url_details):
         result = parse_bbref_dashboard_page(url_details.html, url_details.url_id, url_details.url)
