@@ -3,6 +3,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 
 import vigorish.database as db
 from vigorish.constants import TEAM_ID_MAP
+from vigorish.util.datetime_util import calculate_player_age_for_season
 
 
 class Assoc_Player_Team(db.Base):
@@ -54,13 +55,13 @@ class Assoc_Player_Team(db.Base):
             "role": self.player_team_role,
             "stint_number": self.stint_number,
             "starting_lineup": bool(self.starting_lineup),
-            "percent_started": self.percent_started,
+            "percent_started": self.percent_started or 0,
             "bench_player": bool(self.bench_player),
-            "percent_bench": self.percent_bench,
+            "percent_bench": self.percent_bench or 0,
             "starting_pitcher": bool(self.starting_pitcher),
-            "percent_sp": self.percent_sp,
+            "percent_sp": self.percent_sp or 0,
             "relief_pitcher": bool(self.relief_pitcher),
-            "percent_rp": self.percent_rp,
+            "percent_rp": self.percent_rp or 0,
             "def_pos_list": self.def_pos_metrics,
             "bat_order_list": self.bat_order_metrics,
         }
@@ -69,7 +70,7 @@ class Assoc_Player_Team(db.Base):
         player_id = db.PlayerId.find_by_mlb_id(db_session, self.mlb_id)
         return {
             "name_common": player_id.mlb_name,
-            "age": 0,
+            "age": calculate_player_age_for_season(self.year, db_session, self.mlb_id),
             "mlb_ID": str(self.mlb_id),
             "player_ID": self.bbref_id,
             "year_ID": str(self.year),

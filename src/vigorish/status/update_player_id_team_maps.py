@@ -1,8 +1,10 @@
+from xxlimited import new
 import vigorish.database as db
 from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 
 
 def update_player_id_map(app, new_player_ids):
+    new_db_player_ids = []
     for id_map in new_player_ids:
         player_id = db.PlayerId(
             mlb_id=int(id_map["mlb_ID"]),
@@ -11,10 +13,14 @@ def update_player_id_map(app, new_player_ids):
             bbref_name=None,
         )
         app.db_session.add(player_id)
-        player = db.Player.find_by_bbref_id(app.db_session, player_id.bbref_id)
+        new_db_player_ids.append(player_id)
+    app.db_session.commit()
+
+    for player_id in new_db_player_ids:
+        player = db.Player.find_by_mlb_id(app.db_session, player_id.mlb_id)
         if not player:
             scrape_task = ScrapeMlbPlayerInfoTask(app)
-            result = scrape_task.find_by_mlb_id(id_map["mlb_ID"], id_map["player_ID"])
+            result = scrape_task.find_by_mlb_id(player_id.mlb_id, player_id.bbref_id)
             if result.failure:
                 continue
             player = result.value
@@ -44,3 +50,4 @@ def update_player_team_map(app, new_player_teams):
             season_id=season.id,
         )
         app.db_session.add(player_team)
+    app.db_session.commit()

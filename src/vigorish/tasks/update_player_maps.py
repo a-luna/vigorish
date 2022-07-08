@@ -128,12 +128,12 @@ class BBRefPlayerIdMap:
 @dataclass(eq=True, frozen=True)
 class BBRefPlayerTeamMap:
     name_common: str = field(compare=False, repr=False)
-    age: str = field(compare=False, repr=False)
+    age: str = field(repr=False)
     mlb_ID: str = field(repr=False)
     player_ID: str
     year_ID: str
     team_ID: str
-    stint_ID: str = field(repr=False)
+    stint_ID: str
     lg_ID: str = field(compare=False, repr=False)
 
 

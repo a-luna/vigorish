@@ -52,6 +52,10 @@ class Player(db.Base):
     def name(self):
         return f"{self.name_first} {self.name_last}"
 
+    @property
+    def birth_date(self):
+        return datetime(self.birth_year, self.birth_month, self.birth_day)
+
     @classmethod
     def find_by_bbref_id(cls, db_session, bbref_id):
         return db_session.query(cls).filter_by(bbref_id=bbref_id).first()
