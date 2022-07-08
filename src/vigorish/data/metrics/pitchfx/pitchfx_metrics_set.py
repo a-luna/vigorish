@@ -102,7 +102,7 @@ class PfxMetricsSetBuilder:
         all_pitch_types = PitchType(sum({p.pitch_type_int for p in self.pfx}))
         valid_pfx_metrics, outlier_pitch_types = [], []
         for pitch_type in all_pitch_types:
-            pfx_for_pitch_type = list(filter(lambda x: x.mlbam_pitch_name == str(pitch_type), self.pfx))
+            pfx_for_pitch_type = [p for p in self.pfx if p.mlbam_pitch_name == str(pitch_type)]
             percent = round(len(pfx_for_pitch_type) / float(len(self.pfx)), 3)
             if self.remove_outliers and percent < 0.01:
                 outlier_pitch_types.append(str(pitch_type))

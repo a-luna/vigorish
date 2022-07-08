@@ -60,7 +60,7 @@ class PitchFxMetricsFactory:
         pfx_metrics_by_year = {}
         for sid in sorted(season_ids):
             season = self.db_session.query(db.Season).get(sid)
-            pfx_for_season = list(filter(lambda x: x.season_id == sid, pfx))
+            pfx_for_season = [p for p in pfx if p.season_id == sid]
             pfx_metrics_by_year[season.year] = PitchFxPitchingMetrics(
                 deepcopy(pfx_for_season), mlb_id, p_throws, remove_outliers
             )
@@ -112,7 +112,7 @@ class PitchFxMetricsFactory:
         pfx_metrics_by_year = {}
         for sid in season_ids:
             season = self.db_session.query(db.Season).get(sid)
-            pfx_for_season = list(filter(lambda x: x.season_id == sid, pfx))
+            pfx_for_season = [p for p in pfx if p.season_id == sid]
             pfx_metrics_by_year[season.year] = PitchFxBattingMetrics(pfx_for_season, mlb_id, remove_outliers)
         return pfx_metrics_by_year
 

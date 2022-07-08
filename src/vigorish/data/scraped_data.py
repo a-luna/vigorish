@@ -288,8 +288,8 @@ class ScrapedData:
         all_teams = db.Team.get_all_teams_for_season(self.db_session, year)
         for team in all_teams:
             all_games = db.GameScrapeStatus.get_all_games_for_team(self.db_session, team.team_id_br, year, game_date)
-            away_games = list(filter(lambda x: x.away_team_id_br == team.team_id_br, all_games))
-            home_games = list(filter(lambda x: x.home_team_id_br == team.team_id_br, all_games))
+            away_games = [g for g in all_games if g.away_team_id_br == team.team_id_br]
+            home_games = [g for g in all_games if g.home_team_id_br == team.team_id_br]
             away_results = self._get_away_game_results(away_games)
             home_results = self._get_home_game_results(home_games)
             team_results = self._combine_team_results(team, away_results, home_results)
