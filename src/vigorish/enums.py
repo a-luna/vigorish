@@ -321,6 +321,8 @@ class PitchType(IntFlag):
     SINKER = auto()
     SLIDER = auto()
     UNKNOWN = auto()
+    SLOW_CURVE = auto()
+    AUTOMATIC_BALL = auto()
     ALL = (
         CHANGEUP
         | CURVEBALL
@@ -339,6 +341,8 @@ class PitchType(IntFlag):
         | SINKER
         | SLIDER
         | UNKNOWN
+        | SLOW_CURVE
+        | AUTOMATIC_BALL
     )
     PERCENTILES = (
         CHANGEUP
@@ -351,6 +355,7 @@ class PitchType(IntFlag):
         | KNUCKLE_BALL_CURVE
         | SINKER
         | SLIDER
+        | SLOW_CURVE
     )
 
     def __str__(self):
@@ -358,6 +363,7 @@ class PitchType(IntFlag):
             "NONE": "N/A",
             "CHANGEUP": "CH",
             "CURVEBALL": "CU",
+            "SLOW_CURVE": "CS",
             "EEPHUS": "EP",
             "FASTBALL": "FA",
             "CUTTER": "FC",
@@ -373,6 +379,7 @@ class PitchType(IntFlag):
             "SINKER": "SI",
             "SLIDER": "SL",
             "UNKNOWN": "UN",
+            "AUTOMATIC_BALL": "AB",
         }
         return abbrev_dict.get(self.name, self.name)
 
