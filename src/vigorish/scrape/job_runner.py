@@ -97,7 +97,7 @@ class JobRunner:
                     self.spinners[data_set].stop()
                     continue
                 return result
-            self.events.data_set_scraped(data_set)
+            self.events.data_set_scraped(data_set, result.value)
             self.log_result_data_set_scraped(data_set, task_number)
             self.spinners[data_set].stop()
         return Result.Ok()
@@ -111,7 +111,10 @@ class JobRunner:
             DataSet.BBREF_BOXSCORES: ScrapeBBRefBoxscores,
         }
         scrape_task = task_dict[data_set](self.app, self.db_job)
-        return scrape_task.execute(start_date, end_date)
+        result = scrape_task.execute(start_date, end_date)
+        if result.failure:
+            return result
+        return Result.Ok(scrape_task.total_urls)
 
     def update_spinner(self, data_set, task_number):
         set_name = DATA_SET_TO_NAME_MAP[data_set]
