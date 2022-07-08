@@ -32,9 +32,8 @@ def cli(ctx):
 
     Please visit https://aaronluna.dev/projects/vigorish for user guides and project documentation.
     """
-    if os.environ.get("ENV") != "TEST":  # pragma: no cover
-        if not VIG_FOLDER.exists():
-            VIG_FOLDER.mkdir()
+    if os.environ.get("ENV") != "TEST" and not VIG_FOLDER.exists():
+        VIG_FOLDER.mkdir()
     ctx.obj = Vigorish()
 
 

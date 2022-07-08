@@ -147,7 +147,7 @@ class CalculateAvgPitchTimesTask(Task):
             data_set = winsorize(data_set, limits=[0.01, 0.01], nan_policy="omit")
         return {
             "total": int(sum(data_set)),
-            "count": int(len(data_set)),
+            "count": len(data_set),
             "avg": round(sum(data_set) / len(data_set), 1),
             "max": int(max(data_set)),
             "min": int(min(data_set)),

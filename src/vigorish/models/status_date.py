@@ -252,11 +252,14 @@ class DateScrapeStatus(db.Base):
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
         return (
-            True
-            if not self.pitch_apps
-            else False
-            if not self.scraped_all_brooks_pitch_logs
-            else self.pitch_app_count_pitchfx == self.total_pitch_apps_scraped_pitchfx
+            (
+                self.pitch_app_count_pitchfx
+                == self.total_pitch_apps_scraped_pitchfx
+                if self.scraped_all_brooks_pitch_logs
+                else False
+            )
+            if self.pitch_apps
+            else True
         )
 
     @hybrid_property
@@ -441,7 +444,7 @@ class DateScrapeStatus(db.Base):
             "scraped_all_game_data": self.scraped_all_game_data,
             "scrape_status_description": self.scrape_status_description,
         }
-        return {**columns_dict, **hybrid_properties_dict}
+        return columns_dict | hybrid_properties_dict
 
     def status_report(self):
         scraped_daily_bbref = "YES" if self.scraped_daily_dash_bbref == 1 else "NO"

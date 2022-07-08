@@ -72,11 +72,17 @@ class ScrapedData:
             for pitch_app_id in self.get_all_pitch_app_ids_with_pfx_data_for_game(bbref_game_id)
         ]
         return (
-            Result.Fail(f"Failed to retrieve all pitchfx logs for game {bbref_game_id}")
-            if not all(pfx_log for pfx_log in pitchfx_logs)
-            else self.apply_patch_list(DataSet.BROOKS_PITCHFX, bbref_game_id, pitchfx_logs)
-            if apply_patch_list
-            else Result.Ok(pitchfx_logs)
+            (
+                self.apply_patch_list(
+                    DataSet.BROOKS_PITCHFX, bbref_game_id, pitchfx_logs
+                )
+                if apply_patch_list
+                else Result.Ok(pitchfx_logs)
+            )
+            if all(pitchfx_logs)
+            else Result.Fail(
+                f"Failed to retrieve all pitchfx logs for game {bbref_game_id}"
+            )
         )
 
     def get_all_pitch_app_ids_with_pfx_data_for_game(self, bbref_game_id):

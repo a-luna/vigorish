@@ -395,13 +395,14 @@ class GameData:
         return batter_box
 
     def get_player_id_map(self, mlb_id=None, bbref_id=None):
-        if not mlb_id and not bbref_id:
+        if mlb_id or bbref_id:
+            return (
+                db.PlayerId.find_by_mlb_id(self.db_session, mlb_id)
+                if mlb_id
+                else db.PlayerId.find_by_bbref_id(self.db_session, bbref_id)
+            )
+        else:
             return None
-        return (
-            db.PlayerId.find_by_mlb_id(self.db_session, mlb_id)
-            if mlb_id
-            else db.PlayerId.find_by_bbref_id(self.db_session, bbref_id)
-        )
 
     def get_all_player_ids_by_team(self, team_id):
         return [
@@ -680,7 +681,6 @@ class GameData:
         return f"{w_pitcher} {l_pitcher} {sv_pitcher}"
 
     def get_pitcher_results(self):
-        pitcher_results = {}
         w_pitcher_bbref_id = (
             self.away_team_data["pitcher_of_record"]
             if self.away_team_data["team_won"]
@@ -689,7 +689,14 @@ class GameData:
         w_pitcher_id = self.get_player_id_map(bbref_id=w_pitcher_bbref_id).mlb_id
         w_pitcher_name = self.get_player_id_map(bbref_id=w_pitcher_bbref_id).mlb_name
         w_pitcher_team_id = self.away_team_id if self.away_team_data["team_won"] else self.home_team_id
-        pitcher_results["wp"] = {"mlb_id": w_pitcher_id, "name": w_pitcher_name, "team_id": w_pitcher_team_id}
+        pitcher_results = {
+            "wp": {
+                "mlb_id": w_pitcher_id,
+                "name": w_pitcher_name,
+                "team_id": w_pitcher_team_id,
+            }
+        }
+
         l_pitcher_bbref_id = (
             self.home_team_data["pitcher_of_record"]
             if self.away_team_data["team_won"]

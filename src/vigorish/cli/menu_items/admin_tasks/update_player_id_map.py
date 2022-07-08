@@ -29,14 +29,12 @@ class UpdatePlayerIdMap(MenuItem):
         result = self.update_player_data(self.id_map_task, "Player-ID map", no_prompts)
         if result.failure:
             return result
-        updated_player_ids = result.value
-        if updated_player_ids:
+        if updated_player_ids := result.value:
             update_player_id_map(self.app, updated_player_ids)
         result = self.update_player_data(self.team_map_task, "Player-Team map", no_prompts)
         if result.failure:
             return result
-        updated_player_teams = result.value
-        if updated_player_teams:
+        if updated_player_teams := result.value:
             update_player_team_map(self.app, updated_player_teams)
         return Result.Ok(False)
 

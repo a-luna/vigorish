@@ -41,8 +41,13 @@ class PitchStatsMetrics:
             splits.append(f"opponent={self.opponent_team_id_bbref}")
         if self.stint_number:
             splits.append(f"stint={self.stint_number}")
-        splits.append(f"total_games={self.total_games}")
-        splits.append(f"innings_pitched={self.innings_pitched}")
+        splits.extend(
+            (
+                f"total_games={self.total_games}",
+                f"innings_pitched={self.innings_pitched}",
+            )
+        )
+
         return f"PitchStatsMetrics({', '.join(splits)})"
 
     @cached_property

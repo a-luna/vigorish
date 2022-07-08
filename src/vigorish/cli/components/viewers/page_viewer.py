@@ -123,8 +123,8 @@ class PageViewer(Bullet):
             return
         page_number = f"({self.page_index + 1}/{self.page_count})"
         (pad_left, pad_right) = self.get_pad_lengths(len(page_number))
-        nav_prev = NAV_PREV if not self.first_page_displayed() else f'{" " * NAV_PREV_LEN}'
-        nav_next = NAV_NEXT if not self.last_page_displayed() else f'{" " * NAV_NEXT_LEN}'
+        nav_prev = f'{" " * NAV_PREV_LEN}' if self.first_page_displayed() else NAV_PREV
+        nav_next = f'{" " * NAV_NEXT_LEN}' if self.last_page_displayed() else NAV_NEXT
         page_nav = f'\n{nav_prev}{" " * pad_left}{page_number}{" " * pad_right}{nav_next}'
         print_message(page_nav, fg=self.text_color)
 
