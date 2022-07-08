@@ -545,9 +545,9 @@ class Season(db.Base):
                 year -= 1
         today = datetime.today()
         if today < season.start_date:
-            last_season = cls.find_by_year(db_session, year - 1)
-            return last_season.end_date
-        return max(d.game_date for d in season.dates if d.combined_data_for_all_pitchfx_logs)
+            season = cls.find_by_year(db_session, year - 1)
+        scraped_dates_in_season = [d.game_date for d in season.dates if d.combined_data_for_all_pitchfx_logs]
+        return max(scraped_dates_in_season) if scraped_dates_in_season else season.start_date
 
     @classmethod
     def validate_date_range(cls, db_session, start, end):

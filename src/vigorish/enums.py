@@ -43,6 +43,14 @@ class DataSet(IntFlag):
     def __str__(self):
         return self.name
 
+    def display_string(self):
+        split = self.name.split('_')
+        site_name = "BBRef" if split[0] == "BBREF" else "Brooks"
+        data_type = ' '.join(s.title() for s in split[1:])
+        if data_type == 'Pitchfx':
+            data_type = 'PitchFX'
+        return f"{site_name} {data_type}"
+
     @classmethod
     def from_str(cls, name):
         if name.upper() == "ALL":
