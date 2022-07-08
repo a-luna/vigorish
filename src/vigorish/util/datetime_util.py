@@ -4,7 +4,9 @@ from datetime import date, datetime, timedelta, timezone
 
 from dateutil import tz
 
+import vigorish.database as db
 from vigorish.util.dt_format_strings import DATE_ONLY_2, DT_AWARE, DT_NAIVE
+from vigorish.util.exceptions import UnknownPlayerException
 
 TIME_ZONE_LA = tz.gettz("America/Los_Angeles")
 TIME_ZONE_NEW_YORK = tz.gettz("America/New_York")
@@ -86,3 +88,11 @@ def format_timedelta_str(td, precise=True):
     if milliseconds > 0:
         return f"{milliseconds}ms"
     return f"{microseconds}us"
+
+
+def calculate_player_age_for_season(year, db_session, mlb_id):
+    player = db.Player.find_by_mlb_id(db_session, mlb_id)
+    if not player:
+        raise UnknownPlayerException(mlb_id)
+    (years, _) = divmod((datetime(year, 6, 30) - player.birth_date).days, 365)
+    return years
