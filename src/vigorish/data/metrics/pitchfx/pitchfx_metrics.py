@@ -436,7 +436,7 @@ class PitchFxMetrics:
     @cached_property
     def max_launch_speed(self) -> float:
         has_launch_speed = [p.launch_speed for p in self.pfx if p.launch_speed]
-        return max(has_launch_speed) if has_launch_speed else 0.0
+        return max(has_launch_speed, default=0.0)
 
     @cached_property
     def avg_launch_angle(self) -> float:

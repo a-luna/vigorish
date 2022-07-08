@@ -14,7 +14,7 @@ class Patch(ABC):
 
     def as_dict(self):
         patch_dict = {self.patch_id: True}
-        patch_dict.update(asdict(self))
+        patch_dict |= asdict(self)
         patch_dict.pop("patch_id")
         patch_dict.pop("data_set")
         return patch_dict

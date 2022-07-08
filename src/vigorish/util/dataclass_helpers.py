@@ -73,7 +73,7 @@ def sanitize_value_for_csv(val, date_format):
         if (isinstance(val, float) and not val)
         else "1"
         if (isinstance(val, bool) and val)
-        else ""
-        if not val
         else str(val)
+        if val
+        else ""
     )

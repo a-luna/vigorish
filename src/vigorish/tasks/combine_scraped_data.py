@@ -308,11 +308,9 @@ class CombineScrapedDataTask(Task):
     def get_new_at_bat_id(self, game_event):
         instance_num = 0
         at_bat_id = self.get_at_bat_id_for_pbp_event(game_event, instance_num)
-        id_exists = at_bat_id in self.at_bat_ids
-        while id_exists:
+        while id_exists := at_bat_id in self.at_bat_ids:
             instance_num += 1
             at_bat_id = self.get_at_bat_id_for_pbp_event(game_event, instance_num)
-            id_exists = at_bat_id in self.at_bat_ids
         return at_bat_id
 
     def create_bbref_game_event_dict(self, event, at_bat_id):
@@ -659,13 +657,13 @@ class CombineScrapedDataTask(Task):
                 "max": self.avg_pitch_times["time_between_pitches"]["max"],
             }
         same_inning = self.at_bat_ids_are_in_same_inning([at_bat_id, prev_ab_id])
-        if pitch_num == 1 and same_inning:
-            return {
-                "avg": self.avg_pitch_times["time_between_at_bats"]["avg"],
-                "min": self.avg_pitch_times["time_between_at_bats"]["min"],
-                "max": self.avg_pitch_times["time_between_at_bats"]["max"],
-            }
         if pitch_num == 1:
+            if same_inning:
+                return {
+                    "avg": self.avg_pitch_times["time_between_at_bats"]["avg"],
+                    "min": self.avg_pitch_times["time_between_at_bats"]["min"],
+                    "max": self.avg_pitch_times["time_between_at_bats"]["max"],
+                }
             return {
                 "avg": self.avg_pitch_times["time_between_innings"]["avg"],
                 "min": self.avg_pitch_times["time_between_innings"]["min"],
@@ -1054,8 +1052,9 @@ class CombineScrapedDataTask(Task):
             pitcher_id_mlb = self.player_id_dict[pitch_stats.player_id_br].get("mlb_id")
             updated_pitcher_ids.append(pitcher_id_mlb)
         pitcher_ids_invalid_pfx = self.get_pitcher_ids_with_invalid_pfx()
-        invalid_pitcher_ids = list(set(pitcher_ids_invalid_pfx) - set(updated_pitcher_ids))
-        if invalid_pitcher_ids:
+        if invalid_pitcher_ids := list(
+            set(pitcher_ids_invalid_pfx) - set(updated_pitcher_ids)
+        ):
             raise NotImplementedError(
                 "The code for this condition was removed, create a test case for "
                 f"{self.bbref_game_id}, using these pitcher_ids {invalid_pitcher_ids}."
@@ -1139,7 +1138,7 @@ class CombineScrapedDataTask(Task):
         for pfx in all_pfx:
             pitch_count_unordered[pfx["mlbam_pitch_name"]] += 1
         pitch_count_ordered = OrderedDict()
-        ptype_tuples = [(pitch_type, count) for pitch_type, count in pitch_count_unordered.items()]
+        ptype_tuples = list(pitch_count_unordered.items())
         for t in sorted(ptype_tuples, key=lambda x: x[1], reverse=True):
             pitch_count_ordered[t[0]] = t[1]
         return pitch_count_ordered

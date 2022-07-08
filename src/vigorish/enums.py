@@ -23,10 +23,10 @@ class VigFile(IntFlag):
     def from_str(cls, name):
         if name.upper() == "ALL":
             return cls.ALL
-        for enum_item in cls:
-            if name.upper() == enum_item.name:
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if name.upper() == enum_item.name),
+            cls.NONE,
+        )
 
 
 class DataSet(IntFlag):
@@ -47,10 +47,10 @@ class DataSet(IntFlag):
     def from_str(cls, name):
         if name.upper() == "ALL":
             return cls.ALL
-        for enum_item in cls:
-            if name.upper() == enum_item.name:
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if name.upper() == enum_item.name),
+            cls.NONE,
+        )
 
     @classmethod
     def get_data_sets_from_int(cls, data_sets_int):
@@ -142,10 +142,10 @@ class StatusReport(IntEnum):
 
     @classmethod
     def from_str(cls, name):
-        for enum_item in cls:
-            if name.upper() == enum_item.name:
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if name.upper() == enum_item.name),
+            cls.NONE,
+        )
 
 
 class FileTask(str, Enum):
@@ -195,10 +195,10 @@ class JobStatus(IntEnum):
 
     @classmethod
     def from_str(cls, name):
-        for enum_item in cls:
-            if name.upper() == enum_item.name:
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if name.upper() == enum_item.name),
+            cls.NONE,
+        )
 
 
 class TeamID(str, Enum):
@@ -285,17 +285,17 @@ class DefensePosition(IntEnum):
 
     @classmethod
     def from_abbrev(cls, abbrev):
-        for enum_item in cls:
-            if abbrev.upper() == str(enum_item):
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if abbrev.upper() == str(enum_item)),
+            cls.NONE,
+        )
 
     @classmethod
     def from_str(cls, name):
-        for enum_item in cls:
-            if name.upper() == enum_item.name:
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if name.upper() == enum_item.name),
+            cls.NONE,
+        )
 
     @classmethod
     def get_position_weights(cls):
@@ -394,19 +394,19 @@ class PitchType(IntFlag):
     def from_abbrev(cls, abbrev):
         if abbrev.upper() == "ALL":
             return cls.ALL
-        for enum_item in cls:
-            if abbrev.upper() == str(enum_item):
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if abbrev.upper() == str(enum_item)),
+            cls.NONE,
+        )
 
     @classmethod
     def from_name(cls, name):
         if name.upper() == "ALL":
             return cls.ALL
-        for enum_item in cls:
-            if name.upper() == enum_item.name:
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if name.upper() == enum_item.name),
+            cls.NONE,
+        )
 
     @classmethod
     def deconstruct_pitch_types_from_int(cls, pitch_mix_int) -> list[PitchType]:
@@ -465,10 +465,10 @@ class AuditTask(IntEnum):
 
     @classmethod
     def from_str(cls, name):
-        for enum_item in cls:
-            if name.upper() == enum_item.name:
-                return enum_item
-        return cls.NONE
+        return next(
+            (enum_item for enum_item in cls if name.upper() == enum_item.name),
+            cls.NONE,
+        )
 
 
 class PatchType(str, Enum):

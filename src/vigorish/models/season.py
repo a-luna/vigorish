@@ -341,11 +341,14 @@ class Season(db.Base):
     @hybrid_property
     def scraped_all_pitchfx_logs(self):
         return (
-            True
-            if not self.pitch_apps
-            else False
-            if not self.scraped_all_brooks_pitch_logs
-            else self.pitch_app_count_pitchfx == self.total_pitch_apps_scraped_pitchfx
+            (
+                self.pitch_app_count_pitchfx
+                == self.total_pitch_apps_scraped_pitchfx
+                if self.scraped_all_brooks_pitch_logs
+                else False
+            )
+            if self.pitch_apps
+            else True
         )
 
     @hybrid_property
@@ -531,9 +534,13 @@ class Season(db.Base):
 
     @classmethod
     def regular_season_is_in_progress(cls, db_session):
-        today = datetime.today()
+        today = datetime.now()
         current_season = cls.find_by_year(db_session, today.year)
-        return current_season.start_date <= today and today <= current_season.end_date if current_season else False
+        return (
+            current_season.start_date <= today <= current_season.end_date
+            if current_season
+            else False
+        )
 
     @classmethod
     def get_most_recent_scraped_date(cls, db_session, year):
@@ -543,7 +550,7 @@ class Season(db.Base):
                 season = cls.find_by_year(db_session, year)
             except InvalidSeasonException:
                 year -= 1
-        today = datetime.today()
+        today = datetime.now()
         if today < season.start_date:
             last_season = cls.find_by_year(db_session, year - 1)
             return last_season.end_date

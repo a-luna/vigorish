@@ -49,8 +49,7 @@ def single_date_prompt(prompt):
     while not user_date:
         subprocess.run(["clear"])
         date_prompt = DateInput(prompt=prompt)
-        result = date_prompt.launch()
-        if result:
+        if result := date_prompt.launch():
             user_date = result
     return user_date
 
