@@ -43,13 +43,12 @@ class Vigorish:
 
     @property
     def db_setup_complete(self) -> bool:
-        inspector = inspect(self.db_engine)
-        tables_missing = (
-            "player" not in inspector.get_table_names()
-            or "season" not in inspector.get_table_names()
-            or "team" not in inspector.get_table_names()
-        )
-        if tables_missing:
+        table_names = inspect(self.db_engine).get_table_names()
+        if (
+            "player" not in table_names
+            or "season" not in table_names
+            or "team" not in table_names
+        ):
             return False
         return (
             self.get_total_number_of_rows(db.Season) > 0
