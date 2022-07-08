@@ -32,7 +32,7 @@ INSTALL_REQUIRES = [
     "aenum",
     "boto3",
     "bullet",
-    "click==7.1.2",
+    "click",
     "dacite",
     "dataclass-csv",
     "enlighten",
