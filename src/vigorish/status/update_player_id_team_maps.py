@@ -1,4 +1,3 @@
-from xxlimited import new
 import vigorish.database as db
 from vigorish.tasks.scrape_mlb_player_info import ScrapeMlbPlayerInfoTask
 

@@ -627,7 +627,7 @@ def _parse_game_meta_info(page_content):
         first_pitch_temperature = match_dict["temperature"]
         first_pitch_clouds = 'In Dome'
         first_pitch_precipitation = ""
-        first_pitch_wind = f'Wind 0mph'
+        first_pitch_wind = 'Wind 0mph'
     else:
         error = f"First pitch weather info is not in expected format:\n{first_pitch_weather}"
         return Result.Fail(error)
