@@ -25,7 +25,10 @@ class ScrapeBBRefGamesForDate(ScrapeTaskABC):
         return Result.Ok() if not bbref_games_for_date else Result.Fail("skip")
 
     def parse_html(self, url_details):
-        return parse_bbref_dashboard_page(url_details.html, url_details.url_id, url_details.url)
+        result = parse_bbref_dashboard_page(url_details.html, url_details.url_id, url_details.url)
+        if result.failure and "redirected to game results for the previous day" in result.error:
+            url_details.file_path.unlink()
+        return result
 
     def update_status(self, parsed_data):
         result = update_bbref_games_for_date_single_date(self.db_session, parsed_data)
