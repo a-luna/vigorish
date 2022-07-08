@@ -7,7 +7,6 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Tuple, Union
 from zipfile import ZipFile
 
 from Naked.toolshed.shell import execute as execute_shell_command
@@ -96,7 +95,7 @@ def get_last_mod_time_utc(filepath):
     return dtaware_fromtimestamp(filepath.stat().st_mtime, use_tz=timezone.utc)
 
 
-def validate_folder_path(input_path: Union[Path, str]):
+def validate_folder_path(input_path: Path | str):
     if not input_path:
         return Result.Fail("NoneType or empty string is not a valid folder path.")
     if isinstance(input_path, str):
@@ -115,7 +114,7 @@ def validate_folder_path(input_path: Union[Path, str]):
     return Result.Ok(folderpath)
 
 
-def validate_file_path(input_path: Union[Path, str]):
+def validate_file_path(input_path: Path | str):
     if not input_path:
         return Result.Fail("NoneType or empty string is not a valid file path.")
     if isinstance(input_path, str):
@@ -132,7 +131,7 @@ def validate_file_path(input_path: Union[Path, str]):
     return Result.Ok(filepath)
 
 
-def get_terminal_size(fallback: Tuple[int, int] = (80, 24)):  # pragma: no cover
+def get_terminal_size(fallback: tuple[int, int] = (80, 24)):  # pragma: no cover
     columns, rows = fallback
     for i in range(3):
         try:
@@ -211,7 +210,7 @@ def file_size_str(size_bytes):
     )
 
 
-def hash_all_files_in_folder(folderpath: Path, create_hash_files: bool = True) -> Dict[Path, str]:
+def hash_all_files_in_folder(folderpath: Path, create_hash_files: bool = True) -> dict[Path, str]:
     remove_ds_store_file_from_folder(folderpath)
     file_hash_map = {
         file.name: calc_file_hash(file) for file in folderpath.glob("*.*") if not file.name.endswith("md5")

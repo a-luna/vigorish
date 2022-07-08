@@ -2,7 +2,6 @@
 import json
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List
 
 from vigorish.scrape.bbref_games_for_date.models.game_info import BBRefGameInfo
 from vigorish.util.list_helpers import as_dict_list
@@ -16,7 +15,7 @@ class BBRefGamesForDate:
     game_date: datetime = None
     game_date_str: str = ""
     game_count: str = "0"
-    games: List[BBRefGameInfo] = field(default_factory=list)
+    games: list[BBRefGameInfo] = field(default_factory=list)
 
     @property
     def all_urls(self):

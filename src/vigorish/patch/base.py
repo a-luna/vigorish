@@ -1,7 +1,6 @@
 import json
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
-from typing import List
 
 from vigorish.enums import DataSet
 from vigorish.util.list_helpers import as_dict_list
@@ -33,7 +32,7 @@ class PatchList(ABC):
     patch_list_id: str = field(repr=False, init=False)
     data_set: DataSet = field(repr=False, init=False)
     url_id: str
-    patch_list: List[Patch] = field(repr=False, default_factory=list)
+    patch_list: list[Patch] = field(repr=False, default_factory=list)
 
     def as_dict(self):
         return {

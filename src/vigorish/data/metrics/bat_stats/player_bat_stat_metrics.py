@@ -1,6 +1,5 @@
 from copy import deepcopy
 from functools import cached_property
-from typing import Dict, List
 
 from sqlalchemy.orm import Session
 
@@ -9,7 +8,7 @@ from vigorish.data.metrics.bat_stats.bat_stats_metrics import BatStatsMetrics
 
 
 class PlayerBatStatsMetrics:
-    def __init__(self, db_session: Session, bat_stats: List[db.BatStats], mlb_id: int):
+    def __init__(self, db_session: Session, bat_stats: list[db.BatStats], mlb_id: int):
         self.db_session = db_session
         self.bat_stats = bat_stats
         self.mlb_id = mlb_id
@@ -35,7 +34,7 @@ class PlayerBatStatsMetrics:
         )
 
     @cached_property
-    def by_year(self) -> Dict[int, BatStatsMetrics]:
+    def by_year(self) -> dict[int, BatStatsMetrics]:
         all_seasons = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         return [
             self._get_bat_stat_metrics_for_season(season_id, year)
@@ -43,12 +42,12 @@ class PlayerBatStatsMetrics:
         ]
 
     @cached_property
-    def by_team(self) -> Dict[str, BatStatsMetrics]:
+    def by_team(self) -> dict[str, BatStatsMetrics]:
         all_teams = list({stats.player_team_id_bbref for stats in self.bat_stats})
         return [self._get_bat_stat_metrics_for_team(team_id_bbref) for team_id_bbref in sorted(all_teams)]
 
     @cached_property
-    def by_team_by_year(self) -> Dict[int, Dict[str, BatStatsMetrics]]:
+    def by_team_by_year(self) -> dict[int, dict[str, BatStatsMetrics]]:
         all_seasons = list({stats.season.year for stats in self.bat_stats})
         by_team_by_year = []
         for year in sorted(all_seasons):
@@ -63,14 +62,14 @@ class PlayerBatStatsMetrics:
         return by_team_by_year
 
     @cached_property
-    def by_opponent(self) -> Dict[str, BatStatsMetrics]:
+    def by_opponent(self) -> dict[str, BatStatsMetrics]:
         all_opponents = list({stats.opponent_team_id_bbref for stats in self.bat_stats})
         return {
             team_id_bbref: self._get_bat_stat_metrics_vs_team(team_id_bbref) for team_id_bbref in sorted(all_opponents)
         }
 
     @cached_property
-    def by_opponent_by_year(self) -> Dict[str, BatStatsMetrics]:
+    def by_opponent_by_year(self) -> dict[str, BatStatsMetrics]:
         all_seasons = list({(stats.season.year, stats.season_id) for stats in self.bat_stats})
         by_opponent_by_year = {}
         for year, season_id in sorted(all_seasons, key=lambda x: x[0]):

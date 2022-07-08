@@ -1,6 +1,5 @@
 """Individual game info scraped from brooksbaseball.com."""
 from dataclasses import dataclass, field
-from typing import Dict
 
 from vigorish.util.string_helpers import validate_bbref_game_id
 
@@ -23,7 +22,7 @@ class BrooksGameInfo:
     home_team_id_bb: str = field(repr=False, default="")
     game_number_this_day: int = field(repr=False, default=0)
     pitcher_appearance_count: int = field(repr=False, default=0)
-    pitcher_appearance_dict: Dict[str, str] = field(repr=False, default_factory=dict)
+    pitcher_appearance_dict: dict[str, str] = field(repr=False, default_factory=dict)
 
     @property
     def game_date(self):

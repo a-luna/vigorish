@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from enum import Enum, IntEnum
-from typing import List
 
 from aenum import auto, IntFlag
 
@@ -410,7 +409,7 @@ class PitchType(IntFlag):
         return cls.NONE
 
     @classmethod
-    def deconstruct_pitch_types_from_int(cls, pitch_mix_int) -> List[PitchType]:
+    def deconstruct_pitch_types_from_int(cls, pitch_mix_int) -> list[PitchType]:
         return [pitch_type for pitch_type in cls if pitch_mix_int & pitch_type == pitch_type]
 
 

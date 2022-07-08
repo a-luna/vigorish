@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import List
 
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -538,9 +537,12 @@ class Season(db.Base):
 
     @classmethod
     def get_most_recent_scraped_date(cls, db_session, year):
-        season = cls.find_by_year(db_session, year)
-        if not season:
-            return None
+        season = None
+        while not season:
+            try:
+                season = cls.find_by_year(db_session, year)
+            except InvalidSeasonException:
+                year -= 1
         today = datetime.today()
         if today < season.start_date:
             last_season = cls.find_by_year(db_session, year - 1)
@@ -577,7 +579,7 @@ class Season(db.Base):
         return Result.Ok(season)
 
     @classmethod
-    def get_all_regular_seasons(cls, db_session) -> List[db.Season]:
+    def get_all_regular_seasons(cls, db_session) -> list[db.Season]:
         return db_session.query(cls).filter_by(season_type=SeasonType.REGULAR_SEASON).all()
 
     @classmethod

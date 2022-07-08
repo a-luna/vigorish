@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 from functools import cached_property
 from pathlib import Path
-from typing import Optional
 
 from sqlalchemy import create_engine, inspect, select
 from sqlalchemy.engine import Engine
@@ -31,9 +30,9 @@ class Vigorish:
 
     def __init__(
         self,
-        dotenv_file: Optional[Path] = None,
-        db_engine: Optional[Engine] = None,
-        db_session: Optional[Session] = None,
+        dotenv_file: Path | None = None,
+        db_engine: Engine | None = None,
+        db_session: Session | None = None,
     ) -> None:
         self.initialize_app(dotenv_file, db_engine, db_session)
         os.environ["INTERACTIVE_MODE"] = "NO" if "TEST" in os.environ.get("ENV", "DEV") else "YES"
@@ -68,9 +67,9 @@ class Vigorish:
 
     def initialize_app(
         self,
-        dotenv_file: Optional[Path] = None,
-        db_engine: Optional[Engine] = None,
-        db_session: Optional[Session] = None,
+        dotenv_file: Path | None = None,
+        db_engine: Engine | None = None,
+        db_session: Session | None = None,
     ) -> None:
         self.dotenv = DotEnvFile(dotenv_filepath=dotenv_file)
         self.db_url = _get_db_url()
@@ -82,7 +81,7 @@ class Vigorish:
     def get_total_number_of_rows(self, db_table: Table) -> int:
         return len([list(r)[0] for r in self.db_engine.execute(select([db_table.id])).fetchall() if list(r)[0]])
 
-    def initialize_database(self, csv_folder: Optional[Path] = None, json_folder: Optional[Path] = None) -> Result:
+    def initialize_database(self, csv_folder: Path | None = None, json_folder: Path | None = None) -> Result:
         if not csv_folder:
             csv_folder = CSV_FOLDER
         if not json_folder:
@@ -90,9 +89,7 @@ class Vigorish:
         self._create_db_schema()
         return setup_db.populate_tables(self, csv_folder, json_folder)
 
-    def prepare_database_for_restore(
-        self, csv_folder: Optional[Path] = None, json_folder: Optional[Path] = None
-    ) -> Result:
+    def prepare_database_for_restore(self, csv_folder: Path | None = None, json_folder: Path | None = None) -> Result:
         if not csv_folder:
             csv_folder = CSV_FOLDER
         if not json_folder:
@@ -108,7 +105,7 @@ class Vigorish:
         self.initialize_app(self.dotenv_filepath)
 
     def create_scrape_job(
-        self, data_set: DataSet, start_date: datetime, end_date: datetime, job_name: Optional[str] = None
+        self, data_set: DataSet, start_date: datetime, end_date: datetime, job_name: str | None = None
     ) -> Result[db.ScrapeJob]:
         result = db.Season.validate_date_range(self.db_session, start_date, end_date)
         if result.failure:

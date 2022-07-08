@@ -1,5 +1,4 @@
 from functools import cached_property
-from typing import Dict, List
 
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
@@ -26,11 +25,11 @@ class TeamData:
         return self.scraped_data.get_pitch_stats_for_team(self.team_id_bbref, self.year)
 
     @cached_property
-    def pitch_stats_by_year(self) -> Dict[int, PitchStatsMetrics]:
+    def pitch_stats_by_year(self) -> dict[int, PitchStatsMetrics]:
         return self.scraped_data.get_pitch_stats_by_year_for_team(self.team_id_bbref)
 
     @cached_property
-    def pitch_stats_by_player(self) -> List[PitchStatsMetrics]:
+    def pitch_stats_by_player(self) -> list[PitchStatsMetrics]:
         return self.scraped_data.get_pitch_stats_by_player_for_team(self.team_id_bbref, self.year)
 
     @cached_property
@@ -38,11 +37,11 @@ class TeamData:
         return self.scraped_data.get_pitch_stats_for_sp_for_team(self.team_id_bbref, self.year)
 
     @cached_property
-    def pitch_stats_for_sp_by_year(self) -> Dict[int, PitchStatsMetrics]:
+    def pitch_stats_for_sp_by_year(self) -> dict[int, PitchStatsMetrics]:
         return self.scraped_data.get_pitch_stats_for_sp_by_year_for_team(self.team_id_bbref)
 
     @cached_property
-    def pitch_stats_for_sp_by_player(self) -> List[PitchStatsMetrics]:
+    def pitch_stats_for_sp_by_player(self) -> list[PitchStatsMetrics]:
         return self.scraped_data.get_pitch_stats_for_sp_by_player_for_team(self.team_id_bbref, self.year)
 
     @cached_property
@@ -50,11 +49,11 @@ class TeamData:
         return self.scraped_data.get_pitch_stats_for_rp_for_team(self.team_id_bbref, self.year)
 
     @cached_property
-    def pitch_stats_for_rp_by_year(self) -> Dict[int, PitchStatsMetrics]:
+    def pitch_stats_for_rp_by_year(self) -> dict[int, PitchStatsMetrics]:
         return self.scraped_data.get_pitch_stats_for_rp_by_year_for_team(self.team_id_bbref)
 
     @cached_property
-    def pitch_stats_for_rp_by_player(self) -> List[PitchStatsMetrics]:
+    def pitch_stats_for_rp_by_player(self) -> list[PitchStatsMetrics]:
         return self.scraped_data.get_pitch_stats_for_rp_by_player_for_team(self.team_id_bbref, self.year)
 
     @cached_property
@@ -62,19 +61,19 @@ class TeamData:
         return self.scraped_data.get_bat_stats_for_team(self.team_id_bbref, self.year)
 
     @cached_property
-    def bat_stats_by_year(self) -> Dict[int, BatStatsMetrics]:
+    def bat_stats_by_year(self) -> dict[int, BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_by_year_for_team(self.team_id_bbref)
 
     @cached_property
-    def bat_stats_by_player(self) -> List[BatStatsMetrics]:
+    def bat_stats_by_player(self) -> list[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_by_player_for_team(self.team_id_bbref, self.year)
 
     @cached_property
-    def bat_stats_by_lineup_spot(self) -> List[BatStatsMetrics]:
+    def bat_stats_by_lineup_spot(self) -> list[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_by_lineup_spot_for_team(self.team_id_bbref, self.year)
 
     @cached_property
-    def bat_stats_by_defpos(self) -> List[BatStatsMetrics]:
+    def bat_stats_by_defpos(self) -> list[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_by_defpos_for_team(self.team_id_bbref, self.year)
 
     @cached_property
@@ -82,11 +81,11 @@ class TeamData:
         return self.scraped_data.get_bat_stats_for_starters_for_team(self.team_id_bbref, self.year)
 
     @cached_property
-    def bat_stats_for_starters_by_year(self) -> Dict[int, BatStatsMetrics]:
+    def bat_stats_for_starters_by_year(self) -> dict[int, BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_starters_by_year_for_team(self.team_id_bbref)
 
     @cached_property
-    def bat_stats_for_starters_by_player(self) -> List[BatStatsMetrics]:
+    def bat_stats_for_starters_by_player(self) -> list[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_starters_by_player_for_team(self.team_id_bbref, self.year)
 
     @cached_property
@@ -94,25 +93,25 @@ class TeamData:
         return self.scraped_data.get_bat_stats_for_subs_for_team(self.team_id_bbref, self.year)
 
     @cached_property
-    def bat_stats_for_subs_by_year(self) -> Dict[int, BatStatsMetrics]:
+    def bat_stats_for_subs_by_year(self) -> dict[int, BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_subs_by_year_for_team(self.team_id_bbref)
 
     @cached_property
-    def bat_stats_for_subs_by_player(self) -> List[BatStatsMetrics]:
+    def bat_stats_for_subs_by_player(self) -> list[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_subs_by_player_for_team(self.team_id_bbref, self.year)
 
-    def get_bat_stats_for_lineup_spot_by_year(self, bat_order_list: List[int]) -> Dict[int, BatStatsMetrics]:
+    def get_bat_stats_for_lineup_spot_by_year(self, bat_order_list: list[int]) -> dict[int, BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_lineup_spot_by_year_for_team(bat_order_list, self.team_id_bbref)
 
-    def get_bat_stats_for_lineup_spot_by_player(self, bat_order_list: List[int]) -> List[BatStatsMetrics]:
+    def get_bat_stats_for_lineup_spot_by_player(self, bat_order_list: list[int]) -> list[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_lineup_spot_by_player_for_team(
             bat_order_list, self.team_id_bbref, self.year
         )
 
-    def get_bat_stats_for_defpos_by_year(self, def_position_list: List[DefensePosition]) -> Dict[int, BatStatsMetrics]:
+    def get_bat_stats_for_defpos_by_year(self, def_position_list: list[DefensePosition]) -> dict[int, BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_defpos_by_year_for_team(def_position_list, self.team_id_bbref)
 
-    def get_bat_stats_for_defpos_by_player(self, def_position_list: List[DefensePosition]) -> List[BatStatsMetrics]:
+    def get_bat_stats_for_defpos_by_player(self, def_position_list: list[DefensePosition]) -> list[BatStatsMetrics]:
         return self.scraped_data.get_bat_stats_for_defpos_by_player_for_team(
             def_position_list, self.team_id_bbref, self.year
         )

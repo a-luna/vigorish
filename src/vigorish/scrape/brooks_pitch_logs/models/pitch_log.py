@@ -1,7 +1,6 @@
 """A single pitching appearance scraped from brooksbaseball.com."""
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Dict
 
 from dateutil import tz
 
@@ -15,7 +14,7 @@ class BrooksPitchLog:
     pitcher_id_mlb: int = 0
     pitch_app_id: str = ""
     total_pitch_count: int = 0
-    pitch_count_by_inning: Dict[str, int] = field(default_factory=dict)
+    pitch_count_by_inning: dict[str, int] = field(default_factory=dict)
     pitcher_team_id_bb: str = ""
     opponent_team_id_bb: str = ""
     mlb_game_id: str = ""

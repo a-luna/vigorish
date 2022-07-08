@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Union
 
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.numeric_helpers import ONE_KB
@@ -10,7 +9,7 @@ from vigorish.util.numeric_helpers import ONE_KB
 @dataclass
 class UrlDetails:
     url: str
-    url_id: Union[str, datetime]
+    url_id: str | datetime
     fileName: str
     cachedHtmlFolderPath: str
     scrapedHtmlFolderpath: str

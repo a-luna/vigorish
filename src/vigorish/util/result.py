@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Generic, Iterable, Optional, TypeVar
+from typing import Callable, Generic, Iterable, TypeVar
 
 T = TypeVar("T")
 
@@ -47,7 +47,7 @@ class Result(Generic[T]):
         return Result(False, value=None, error=error_message)
 
     @staticmethod
-    def Ok(value: Optional[T] = None) -> Result[T]:
+    def Ok(value: T | None = None) -> Result[T]:
         """Create a Result object for a successful operation."""
         return Result(True, value=value, error=None)
 

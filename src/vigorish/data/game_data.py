@@ -447,11 +447,12 @@ class GameData:
         return pitcher_box
 
     def get_pitcher_app_order(self, pitcher_ids):
-        pitcher_app_dict = {
-            mlb_id: min(at_bat["pbp_table_row_number"] for at_bat in self.get_valid_at_bats_for_pitcher(mlb_id).value)
-            for mlb_id in pitcher_ids
-        }
-        return sorted(pitcher_ids, key=lambda x: pitcher_app_dict[x])
+        at_bat_map = {}
+        last_at_bat = max(at_bat["pbp_table_row_number"] for at_bat in self.valid_at_bats)
+        for mlb_id in pitcher_ids:
+            at_bats = self.get_valid_at_bats_for_pitcher(mlb_id).value
+            at_bat_map[mlb_id] = min(at_bat["pbp_table_row_number"] for at_bat in at_bats) if at_bats else last_at_bat
+        return sorted(pitcher_ids, key=lambda x: at_bat_map[x])
 
     def get_pitch_boxscore_for_player(self, mlb_id, team_data):
         player_id = self.get_player_id_map(mlb_id=mlb_id)

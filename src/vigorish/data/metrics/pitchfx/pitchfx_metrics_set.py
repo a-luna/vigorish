@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
 
 import vigorish.database as db
 from vigorish.data.metrics.pitchfx.pitchfx_metrics import PitchFxMetrics
 from vigorish.enums import PitchType
 
-PitchFxByPitchTypeResults = Tuple[PitchFxMetrics, Dict[str, PitchFxMetrics], int, int]
+PitchFxByPitchTypeResults = tuple[PitchFxMetrics, dict[str, PitchFxMetrics], int, int]
 
 
 @dataclass
@@ -17,18 +16,18 @@ class PitchFxMetricsSet:
     total_pitches: int
     total_pfx_removed: int
     metrics_combined: PitchFxMetrics
-    metrics_by_pitch_type: Dict[str, PitchFxMetrics]
+    metrics_by_pitch_type: dict[str, PitchFxMetrics]
 
     @property
-    def pitch_type(self) -> List[PitchType]:
+    def pitch_type(self) -> list[PitchType]:
         return PitchType(self.pitch_type_int)
 
     @property
-    def pitch_type_abbrevs(self) -> List[str]:
+    def pitch_type_abbrevs(self) -> list[str]:
         return [str(pt) for pt in self.pitch_type]
 
     @property
-    def pitch_mix(self) -> List[Dict[str, str]]:
+    def pitch_mix(self) -> list[dict[str, str]]:
         return [
             {
                 "pitch_type": PitchType.from_abbrev(pitch_type).print_name,
@@ -47,21 +46,21 @@ class PitchFxMetricsSet:
             "metrics_by_pitch_type": {k: v.as_dict() for k, v in self.metrics_by_pitch_type.items()},
         }
 
-    def get_bat_stats_pitch_type_splits(self, include_pa_count: bool = False) -> List[Dict[str, str]]:
+    def get_bat_stats_pitch_type_splits(self, include_pa_count: bool = False) -> list[dict[str, str]]:
         bat_stats_pt_splits = [
             metrics.get_bat_stats(include_pa_count) for metrics in self.metrics_by_pitch_type.values()
         ]
         bat_stats_pt_splits.insert(0, self.metrics_combined.get_bat_stats(include_pa_count))
         return bat_stats_pt_splits
 
-    def get_plate_discipline_pitch_type_splits(self, include_pitch_count: bool = False) -> List[Dict[str, str]]:
+    def get_plate_discipline_pitch_type_splits(self, include_pitch_count: bool = False) -> list[dict[str, str]]:
         pd_split_stats = [
             metrics.get_plate_discipline_stats(include_pitch_count) for metrics in self.metrics_by_pitch_type.values()
         ]
         pd_split_stats.insert(0, self.metrics_combined.get_plate_discipline_stats(include_pitch_count))
         return pd_split_stats
 
-    def get_batted_ball_pitch_type_splits(self, include_bip_count: bool = False) -> List[Dict[str, str]]:
+    def get_batted_ball_pitch_type_splits(self, include_bip_count: bool = False) -> list[dict[str, str]]:
         bb_split_stats = [
             metrics.get_batted_ball_stats(include_bip_count) for metrics in self.metrics_by_pitch_type.values()
         ]
@@ -79,12 +78,12 @@ class PitchFxMetricsSet:
 class PfxMetricsSetBuilder:
     def create_pfx_metrics_set(
         self,
-        pfx: List[db.PitchFx],
+        pfx: list[db.PitchFx],
         mlb_id: int = None,
         p_throws: str = None,
         bat_stand: str = None,
         remove_outliers: bool = False,
-    ):
+    ) -> PitchFxMetricsSet:
         self.pfx = pfx
         self.total_pfx = len(pfx)
         self.mlb_id = mlb_id
@@ -96,14 +95,14 @@ class PfxMetricsSetBuilder:
         (valid_pfx_metrics, outlier_pitch_types) = self._create_pfx_metrics_for_each_pitch_type()
         return self._create_pfx_metrics_set(valid_pfx_metrics, outlier_pitch_types)
 
-    def _remove_invalid_data(self):
+    def _remove_invalid_data(self) -> None:
         self.pfx = list(filter(lambda x: not (x.is_invalid_ibb or x.is_out_of_sequence), self.pfx))
 
-    def _create_pfx_metrics_for_each_pitch_type(self):
+    def _create_pfx_metrics_for_each_pitch_type(self) -> tuple[list[PitchFxMetrics], list[str]]:
         all_pitch_types = PitchType(sum({p.pitch_type_int for p in self.pfx}))
         valid_pfx_metrics, outlier_pitch_types = [], []
         for pitch_type in all_pitch_types:
-            pfx_for_pitch_type = list(filter(lambda x: x.mlbam_pitch_name == str(pitch_type), self.pfx))
+            pfx_for_pitch_type = [p for p in self.pfx if p.mlbam_pitch_name == str(pitch_type)]
             percent = round(len(pfx_for_pitch_type) / float(len(self.pfx)), 3)
             if self.remove_outliers and percent < 0.01:
                 outlier_pitch_types.append(str(pitch_type))
@@ -113,15 +112,15 @@ class PfxMetricsSetBuilder:
         valid_pfx_metrics = self._sort_by_percent_thrown(valid_pfx_metrics)
         return (valid_pfx_metrics, outlier_pitch_types)
 
-    def _sort_by_percent_thrown(self, pitch_type_metrics: List[PitchFxMetrics]) -> None:
+    def _sort_by_percent_thrown(self, pitch_type_metrics: list[PitchFxMetrics]) -> list[PitchFxMetrics]:
         total_pitches = sum(metrics.total_pitches for metrics in pitch_type_metrics)
         for metrics in pitch_type_metrics:
             metrics.percent = metrics.total_pitches / float(total_pitches)
         return sorted(pitch_type_metrics, key=lambda x: x.percent, reverse=True)
 
     def _create_pfx_metrics_set(
-        self, valid_pfx_metrics: List[PitchFxMetrics], outlier_pitch_types: List[str]
-    ) -> PitchFxByPitchTypeResults:
+        self, valid_pfx_metrics: list[PitchFxMetrics], outlier_pitch_types: list[str]
+    ) -> PitchFxMetricsSet:
         self.pfx = list(filter(lambda x: x.mlbam_pitch_name not in outlier_pitch_types, self.pfx))
         total_pfx_removed = self.total_pfx - len(self.pfx)
 

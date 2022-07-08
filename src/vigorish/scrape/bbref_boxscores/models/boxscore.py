@@ -1,6 +1,5 @@
 import json
 from dataclasses import dataclass, field
-from typing import Dict, List, Union
 
 from vigorish.scrape.bbref_boxscores.models.boxscore_game_meta import BBRefBoxscoreMeta
 from vigorish.scrape.bbref_boxscores.models.boxscore_team_data import BBRefBoxscoreTeamData
@@ -19,11 +18,11 @@ class BBRefBoxscore:
     game_meta_info: BBRefBoxscoreMeta = None
     away_team_data: BBRefBoxscoreTeamData = None
     home_team_data: BBRefBoxscoreTeamData = None
-    player_id_match_log: Dict[str, Union[str, int, List[str]]] = field(default_factory=dict)
-    player_team_dict: Dict[str, str] = field(default_factory=dict)
-    player_name_dict: Dict[str, str] = field(default_factory=dict)
-    innings_list: List[BBRefHalfInning] = field(default_factory=list)
-    umpires: List[BBRefUmpire] = field(default_factory=list)
+    player_id_match_log: dict[str, str | int | list[str]] = field(default_factory=dict)
+    player_team_dict: dict[str, str] = field(default_factory=dict)
+    player_name_dict: dict[str, str] = field(default_factory=dict)
+    innings_list: list[BBRefHalfInning] = field(default_factory=list)
+    umpires: list[BBRefUmpire] = field(default_factory=list)
 
     @property
     def bb_game_id(self):
