@@ -131,7 +131,9 @@ class Vigorish:
         return db.Season.regular_season_is_in_progress(self.db_session)
 
     def get_most_recent_scraped_date(self):
-        return db.Season.get_most_recent_scraped_date(self.db_session, datetime.today().year)
+        return db.Season.get_most_recent_scraped_date(
+            self.db_session, datetime.now().year
+        )
 
     def _create_db_engine(self) -> Engine:
         return create_engine(self.db_url, connect_args={"check_same_thread": False})
