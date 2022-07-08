@@ -108,7 +108,7 @@ class ChangeConfigSettting(MenuItem):
         if not self.setting.cannot_be_disabled:
             prompt = f"\nEnable {self.setting_name_title} (Data Set = {data_set.name})? "
             if not yes_no_prompt(prompt):
-                return (prompt, (True, None, None, None, None))
+                return (prompt, (False, None, None, None, None))
         if yes_no_prompt(f"\nUse random values (Data Set = {data_set.name})? "):
             prompt, random_min, random_max, min_max_are_valid = None, 0, 0, False
             while not min_max_are_valid:

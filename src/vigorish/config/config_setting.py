@@ -103,12 +103,15 @@ class PathConfigSetting(ConfigSetting):
     def __repr__(self) -> str:
         return f"<PathConfigSetting setting={self.setting_name}, value={self.current_settings_report}>"
 
+    @property
+    def class_name(self) -> str:
+        return self.config_dict.get("CLASS_NAME")
+
     def current_setting(self, data_set: DataSet) -> PathSetting:
         current_setting = super().current_setting(data_set)
-        class_name = self.config_dict.get("CLASS_NAME")
-        if class_name == "LocalFolderPathSetting":
+        if self.class_name == "LocalFolderPathSetting":
             return LocalFolderPathSetting(path=current_setting, data_set=data_set)
-        if class_name == "S3FolderPathSetting":
+        if self.class_name == "S3FolderPathSetting":
             return S3FolderPathSetting(path=current_setting, data_set=data_set)
 
 
@@ -141,19 +144,21 @@ class EnumConfigSetting(ConfigSetting):
         return []
 
     def current_setting(self, data_set: DataSet) -> EnumSetting:
-        current_setting = super().current_setting(data_set).upper()
+        current_setting = super().current_setting(data_set)
+        if not current_setting:
+            return None
         if self.enum_name == "ScrapeCondition":
-            return ScrapeCondition[current_setting]
+            return ScrapeCondition[current_setting.upper()]
         if self.enum_name == "ScrapeTaskOption":
-            return ScrapeTaskOption[current_setting]
+            return ScrapeTaskOption[current_setting.upper()]
         if self.enum_name == "HtmlStorageOption":
-            return HtmlStorageOption[current_setting]
+            return HtmlStorageOption[current_setting.upper()]
         if self.enum_name == "JsonStorageOption":
-            return JsonStorageOption[current_setting]
+            return JsonStorageOption[current_setting.upper()]
         if self.enum_name == "CombinedDataStorageOption":
-            return CombinedDataStorageOption[current_setting]
+            return CombinedDataStorageOption[current_setting.upper()]
         if self.enum_name == "StatusReport":
-            return StatusReport[current_setting]
+            return StatusReport[current_setting.upper()]
         return None
 
 
@@ -165,13 +170,20 @@ class NumericConfigSetting(ConfigSetting):
     def __repr__(self) -> str:
         return f"<NumericConfigSetting setting={self.setting_name}, value={self.current_settings_report}>"
 
+    @property
+    def class_name(self) -> str:
+        return self.config_dict.get("CLASS_NAME")
+
+    @property
+    def cannot_be_disabled(self) -> bool:
+        return self.class_name == "UrlScrapeDelay"
+
     def current_setting(self, data_set: DataSet) -> NumericSetting:
         current_setting = super().current_setting(data_set)
-        class_name = self.config_dict.get("CLASS_NAME")
-        if class_name == "UrlScrapeDelay":
+        if self.class_name == "UrlScrapeDelay":
             return UrlScrapeDelay.from_config(current_setting)
-        if class_name == "BatchJobSettings":
+        if self.class_name == "BatchJobSettings":
             return BatchJobSettings.from_config(current_setting)
-        if class_name == "BatchScrapeDelay":
+        if self.class_name == "BatchScrapeDelay":
             return BatchScrapeDelay.from_config(current_setting)
         return None
