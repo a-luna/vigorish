@@ -380,9 +380,19 @@ def _parse_team_data(
 
 def _parse_team_record(page_content, is_home_team, reverse_home_away_status):
     if is_home_team:
-        team_record_xpath = _HOME_TEAM_RECORD_XPATH if not reverse_home_away_status else _AWAY_TEAM_RECORD_XPATH
+        team_record_xpath = (
+            _AWAY_TEAM_RECORD_XPATH
+            if reverse_home_away_status
+            else _HOME_TEAM_RECORD_XPATH
+        )
+
     else:
-        team_record_xpath = _AWAY_TEAM_RECORD_XPATH if not reverse_home_away_status else _HOME_TEAM_RECORD_XPATH
+        team_record_xpath = (
+            _HOME_TEAM_RECORD_XPATH
+            if reverse_home_away_status
+            else _AWAY_TEAM_RECORD_XPATH
+        )
+
     team_record_dirty = page_content.xpath(team_record_xpath)
     if not team_record_dirty:
         return None
@@ -480,23 +490,51 @@ def _parse_pitching_stats_for_team(team_pitching_table, player_team_id, opponent
 
 def _get_pitch_stat_value(player_pitch_data_html, stat_name):
     pitch_stat_xpath = Template(_T_PITCH_STAT_XPATH).substitute(stat=stat_name)
-    pitch_stat_value = "0"
     result = player_pitch_data_html.xpath(pitch_stat_xpath)
-    if result and len(result) > 0:
-        pitch_stat_value = result[0]
+    pitch_stat_value = result[0] if result and len(result) > 0 else "0"
     return pitch_stat_value if isinstance(pitch_stat_value, list) else pitch_stat_value.rstrip("%")
 
 
 def _parse_starting_lineup_for_team(page_content, team_id, is_home_team, reverse_home_away_status):
     lineup = []
     if is_home_team:
-        bat_order_xpath = _HOME_LINEUP_ORDER_XPATH if not reverse_home_away_status else _AWAY_LINEUP_ORDER_XPATH
-        player_link_xpath = _HOME_LINEUP_PLAYER_XPATH if not reverse_home_away_status else _AWAY_LINEUP_PLAYER_XPATH
-        def_pos_xpath = _HOME_LINEUP_DEF_POS_XPATH if not reverse_home_away_status else _AWAY_LINEUP_DEF_POS_XPATH
+        bat_order_xpath = (
+            _AWAY_LINEUP_ORDER_XPATH
+            if reverse_home_away_status
+            else _HOME_LINEUP_ORDER_XPATH
+        )
+
+        player_link_xpath = (
+            _AWAY_LINEUP_PLAYER_XPATH
+            if reverse_home_away_status
+            else _HOME_LINEUP_PLAYER_XPATH
+        )
+
+        def_pos_xpath = (
+            _AWAY_LINEUP_DEF_POS_XPATH
+            if reverse_home_away_status
+            else _HOME_LINEUP_DEF_POS_XPATH
+        )
+
     else:
-        bat_order_xpath = _AWAY_LINEUP_ORDER_XPATH if not reverse_home_away_status else _HOME_LINEUP_ORDER_XPATH
-        player_link_xpath = _AWAY_LINEUP_PLAYER_XPATH if not reverse_home_away_status else _HOME_LINEUP_PLAYER_XPATH
-        def_pos_xpath = _AWAY_LINEUP_DEF_POS_XPATH if not reverse_home_away_status else _HOME_LINEUP_DEF_POS_XPATH
+        bat_order_xpath = (
+            _HOME_LINEUP_ORDER_XPATH
+            if reverse_home_away_status
+            else _AWAY_LINEUP_ORDER_XPATH
+        )
+
+        player_link_xpath = (
+            _HOME_LINEUP_PLAYER_XPATH
+            if reverse_home_away_status
+            else _AWAY_LINEUP_PLAYER_XPATH
+        )
+
+        def_pos_xpath = (
+            _HOME_LINEUP_DEF_POS_XPATH
+            if reverse_home_away_status
+            else _AWAY_LINEUP_DEF_POS_XPATH
+        )
+
 
     bat_orders = page_content.xpath(bat_order_xpath)
     player_links = page_content.xpath(player_link_xpath)
@@ -572,8 +610,7 @@ def _parse_game_meta_info(page_content):
         attendance = "0"
 
     park_name = ""
-    venue_matches = _parse_venue_from_strings(scorebox_meta_strings)
-    if venue_matches:
+    if venue_matches := _parse_venue_from_strings(scorebox_meta_strings):
         park_name = venue_matches["match"]
         venue_index = venue_matches["index"]
         del scorebox_meta_strings[venue_index]
@@ -627,7 +664,7 @@ def _parse_game_meta_info(page_content):
         first_pitch_temperature = match_dict["temperature"]
         first_pitch_clouds = 'In Dome'
         first_pitch_precipitation = ""
-        first_pitch_wind = f'Wind 0mph'
+        first_pitch_wind = 'Wind 0mph'
     else:
         error = f"First pitch weather info is not in expected format:\n{first_pitch_weather}"
         return Result.Fail(error)
@@ -649,8 +686,7 @@ def _parse_game_meta_info(page_content):
 def _parse_attendance_from_strings(strings):
     attendance = []
     for i in range(len(strings)):
-        matches = _ATTENDANCE_REGEX.findall(strings[i])
-        if matches:
+        if matches := _ATTENDANCE_REGEX.findall(strings[i]):
             for m in matches:
                 d = {"match": m.replace(",", ""), "index": i}
                 attendance.append(d)
@@ -670,8 +706,7 @@ def _parse_game_duration_from_strings(strings):
     for i in range(len(strings)):
         if "start time" in strings[i].lower():
             continue
-        matches = _GAME_DURATION_REGEX.findall(strings[i])
-        if matches:
+        if matches := _GAME_DURATION_REGEX.findall(strings[i]):
             for m in matches:
                 d = {"match": m, "index": i}
                 duration.append(d)
@@ -734,7 +769,7 @@ def _create_player_name_dict(
         return Result.Fail(error)
     batter_name_dict = {**away_team_batter_name_dict, **home_team_batter_name_dict}
     pitcher_name_dict = {**away_team_pitcher_name_dict, **home_team_pitcher_name_dict}
-    return {**batter_name_dict, **pitcher_name_dict}
+    return batter_name_dict | pitcher_name_dict
 
 
 def _parse_batter_name_dict(team_batting_table, team_id_br):
@@ -790,13 +825,12 @@ def _parse_all_game_events(play_by_play_table, game_id, away_team_id, home_team_
     in_game_substitutions = result_dict["sub_list"]
 
     misc_events = []
-    missing_row_ids = _find_missing_pbp_events(
+    if missing_row_ids := _find_missing_pbp_events(
         inning_summaries_top,
         inning_summaries_bottom,
         play_by_play_events,
         in_game_substitutions,
-    )
-    if missing_row_ids:
+    ):
         misc_events = _parse_missing_pbp_events(missing_row_ids, play_by_play_table, game_id)
 
     result = _create_innings_list(
@@ -843,8 +877,7 @@ def _parse_inning_summary_bottom(play_by_play_table):
         return None
     inning_summaries = [s.strip() for s in summaries]
     last_summary = play_by_play_table.xpath(_PBP_INN_SUM_BOT_LAST_XPATH)
-    for s in last_summary:
-        inning_summaries.append(s.strip())
+    inning_summaries.extend(s.strip() for s in last_summary)
     row_numbers = play_by_play_table.xpath(_PBP_INN_SUM_BOT_ROW_NUM_XPATH)
     if row_numbers is None:
         return None
@@ -919,11 +952,8 @@ def _get_pbp_event_stat_value(pbp_table, stat_name, event_number):
         templ_xpath = './tbody//tr[@id="event_${n}"]/td[@data-stat="runners_on_bases_pbp"]/@data-endpoint'
         query = Template(templ_xpath).substitute(n=event_number)
 
-    pbp_value = ""
     result = pbp_table.xpath(query)
-    if result and len(result) > 0:
-        pbp_value = result[0]
-    return pbp_value
+    return result[0] if result and len(result) > 0 else ""
 
 
 def _match_player_id(name, team_id, id_dict):
@@ -952,11 +982,8 @@ def _create_player_team_dict(play_by_play):
     ids = []
     teams = []
     for pbp in play_by_play:
-        ids.append(pbp.batter_id_br)
-        ids.append(pbp.pitcher_id_br)
-        teams.append(pbp.team_batting_id_br)
-        teams.append(pbp.team_pitching_id_br)
-
+        ids.extend((pbp.batter_id_br, pbp.pitcher_id_br))
+        teams.extend((pbp.team_batting_id_br, pbp.team_pitching_id_br))
     player_dict = dict(zip(ids, teams))
     for id in player_dict:
         if len(id) == 0:
@@ -1089,8 +1116,7 @@ def _parse_substitution_description(sub_description):
     parsed_sub["lineup_slot"] = int(match.group())
 
     split3 = None
-    match = _POS_REGEX.search(remaining_description)
-    if match:
+    if match := _POS_REGEX.search(remaining_description):
         parsed_sub["outgoing_player_pos"] = match.group()[1:-1]
         split3 = [s.strip() for s in remaining_description.split(match.group())]
         if not split3 or len(split3) != 2:
@@ -1252,8 +1278,7 @@ def _create_innings_list(
         inning.substitutions = inning_substitutions
         inning.misc_events = misc
 
-        match = _INNING_TOTALS_REGEX.search(summaries_end[end_row])
-        if match:
+        if match := _INNING_TOTALS_REGEX.search(summaries_end[end_row]):
             inning_totals = match.groupdict()
             inning.inning_total_runs = inning_totals["runs"]
             inning.inning_total_hits = inning_totals["hits"]
