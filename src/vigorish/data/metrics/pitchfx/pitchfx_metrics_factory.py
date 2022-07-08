@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Dict
 
 import vigorish.database as db
 from vigorish.data.metrics.pitchfx.pitchfx_batting_metrics import PitchFxBattingMetrics
@@ -52,7 +51,7 @@ class PitchFxMetricsFactory:
 
     def for_pitcher_by_year(
         self, mlb_id: int, p_throws: str, remove_outliers: bool = True
-    ) -> Dict[int, PitchFxPitchingMetrics]:
+    ) -> dict[int, PitchFxPitchingMetrics]:
         pitcher = db.PlayerId.find_by_mlb_id(self.db_session, mlb_id)
         if not pitcher:
             return None
@@ -61,7 +60,7 @@ class PitchFxMetricsFactory:
         pfx_metrics_by_year = {}
         for sid in sorted(season_ids):
             season = self.db_session.query(db.Season).get(sid)
-            pfx_for_season = list(filter(lambda x: x.season_id == sid, pfx))
+            pfx_for_season = [p for p in pfx if p.season_id == sid]
             pfx_metrics_by_year[season.year] = PitchFxPitchingMetrics(
                 deepcopy(pfx_for_season), mlb_id, p_throws, remove_outliers
             )
@@ -104,7 +103,7 @@ class PitchFxMetricsFactory:
         pfx = self.db_session.query(db.PitchFx).filter_by(batter_id=batter.db_player_id).all()
         return PitchFxBattingMetrics(pfx, mlb_id, remove_outliers)
 
-    def for_batter_by_year(self, mlb_id: int, remove_outliers: bool = False) -> Dict[int, PitchFxBattingMetrics]:
+    def for_batter_by_year(self, mlb_id: int, remove_outliers: bool = False) -> dict[int, PitchFxBattingMetrics]:
         batter = db.PlayerId.find_by_mlb_id(self.db_session, mlb_id)
         if not batter:
             return None
@@ -113,7 +112,7 @@ class PitchFxMetricsFactory:
         pfx_metrics_by_year = {}
         for sid in season_ids:
             season = self.db_session.query(db.Season).get(sid)
-            pfx_for_season = list(filter(lambda x: x.season_id == sid, pfx))
+            pfx_for_season = [p for p in pfx if p.season_id == sid]
             pfx_metrics_by_year[season.year] = PitchFxBattingMetrics(pfx_for_season, mlb_id, remove_outliers)
         return pfx_metrics_by_year
 

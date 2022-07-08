@@ -18,7 +18,7 @@ def serialize_dataclass_list_to_csv(data_class_objects, date_format):
         return None
     col_names = [",".join(list(dataclass_dicts[0].keys()))]
     csv_rows = [dict_to_csv_row(d, date_format) for d in dataclass_dicts]
-    return "\n".join((col_names + csv_rows))
+    return "\n".join(col_names + csv_rows)
 
 
 def get_dataclass_list_from_csv_file(csv_filepath, data_class):

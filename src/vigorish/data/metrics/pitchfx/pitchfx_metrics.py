@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Dict, List
 
 import vigorish.database as db
 from vigorish.enums import PitchType
@@ -23,7 +22,7 @@ PFX_BATTED_BALL_METRICS = {
 
 
 class PitchFxMetrics:
-    def __init__(self, pfx: List[db.PitchFx], mlb_id: int = None, p_throws: str = None, bat_stand: str = None) -> None:
+    def __init__(self, pfx: list[db.PitchFx], mlb_id: int = None, p_throws: str = None, bat_stand: str = None) -> None:
         self.pfx = pfx
         self.mlb_id = mlb_id
         self.p_throws = p_throws
@@ -58,7 +57,7 @@ class PitchFxMetrics:
         return PitchType(self.pitch_type_int)
 
     @property
-    def pitch_type_abbrevs(self) -> List[str]:
+    def pitch_type_abbrevs(self) -> list[str]:
         return [str(pt) for pt in self.pitch_type]
 
     @property
@@ -479,7 +478,7 @@ class PitchFxMetrics:
         pfx_metrics_dict["pitch_type"] = pfx_metrics_dict.pop("pitch_type_abbrevs")
         return pfx_metrics_dict
 
-    def get_bat_stats(self, include_pa_count: bool = False) -> Dict[str, str]:
+    def get_bat_stats(self, include_pa_count: bool = False) -> dict[str, str]:
         total_pa = f" ({self.total_pa})" if include_pa_count else ""
         return {
             "pitch_type": f"{self.pitch_name}{total_pa}",
@@ -489,7 +488,7 @@ class PitchFxMetrics:
             "HR/FB": f"{self.hr_per_fb:.0%}",
         }
 
-    def get_plate_discipline_stats(self, include_pitch_count: bool = False) -> Dict[str, str]:
+    def get_plate_discipline_stats(self, include_pitch_count: bool = False) -> dict[str, str]:
         total_pitches = f" ({self.total_pitches})" if include_pitch_count else ""
         pd_stats = {"pitch_type": f"{self.pitch_name}{total_pitches}"}
         for metric, (rate, total) in PFX_PLATE_DISCIPLINE_METRICS.items():
@@ -497,7 +496,7 @@ class PitchFxMetrics:
             pd_stats[metric] = f"{getattr(self, rate):.0%}{pitch_count}"
         return pd_stats
 
-    def get_batted_ball_stats(self, include_bip_count: bool = False) -> Dict[str, str]:
+    def get_batted_ball_stats(self, include_bip_count: bool = False) -> dict[str, str]:
         total_bip = f" ({self.total_balls_in_play})" if include_bip_count else ""
         bb_stats = {"pitch_type": f"{self.pitch_name}{total_bip}"}
         for metric, (rate, total) in PFX_BATTED_BALL_METRICS.items():

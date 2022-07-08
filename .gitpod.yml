@@ -1,0 +1,26 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - before: printf "\n[settings]\napi_key = $WAKA_TIME_API_KEY\n" > ~/.wakatime.cfg
+  - init: |
+      pip install -r requirements-dev.txt
+      pip install -e .
+    command: vig
+
+vscode:
+  extensions:
+    - github.vscode-pull-request-github
+    - redhat.vscode-yaml
+    - vivaxy.vscode-conventional-commits
+    - mhutchie.git-graph
+    - oderwat.indent-rainbow
+    - christian-kohler.path-intellisense
+    - esbenp.prettier-vscode
+    - vscode-icons-team.vscode-icons
+    - wakatime.vscode-wakatime
+    - qcz.text-power-tools
+    - ms-python.python
+    - ms-toolsai.jupyter
+    - ms-azuretools.vscode-docker
+    - alexcvzz.vscode-sqlite

@@ -1,5 +1,4 @@
 from functools import cached_property
-from typing import List
 
 import vigorish.database as db
 
@@ -7,7 +6,7 @@ import vigorish.database as db
 class PitchStatsMetrics:
     def __init__(
         self,
-        pitch_stats: List[db.PitchStats],
+        pitch_stats: list[db.PitchStats],
         year: int = None,
         player_id_mlb: int = None,
         player_id_bbref: str = None,

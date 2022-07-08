@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Union
 
 from vigorish.util.dt_format_strings import DATE_ONLY_2
 from vigorish.util.numeric_helpers import ONE_KB
@@ -10,7 +9,7 @@ from vigorish.util.numeric_helpers import ONE_KB
 @dataclass
 class UrlDetails:
     url: str
-    url_id: Union[str, datetime]
+    url_id: str | datetime
     fileName: str
     cachedHtmlFolderPath: str
     scrapedHtmlFolderpath: str
@@ -46,6 +45,16 @@ class UrlDetails:
     @property
     def html(self):
         return self.cached_html or self.scraped_html or None
+
+    @property
+    def file_path(self):
+        return (
+            self.cached_file_path
+            if self.cached_html_is_valid
+            else self.scraped_file_path
+            if self.scraped_html_is_valid
+            else None
+        )
 
     def as_dict(self):
         valid_json_id = self.url_id.strftime(DATE_ONLY_2) if isinstance(self.url_id, datetime) else self.url_id

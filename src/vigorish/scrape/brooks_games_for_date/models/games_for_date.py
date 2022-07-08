@@ -2,7 +2,6 @@
 import json
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List
 
 from vigorish.scrape.brooks_games_for_date.models.game_info import BrooksGameInfo
 from vigorish.util.list_helpers import as_dict_list, flatten_list2d
@@ -16,7 +15,7 @@ class BrooksGamesForDate:
     game_date: datetime = None
     game_date_str: str = ""
     game_count: str = "0"
-    games: List[BrooksGameInfo] = field(default_factory=list)
+    games: list[BrooksGameInfo] = field(default_factory=list)
 
     @property
     def all_pitch_app_ids_for_date(self):

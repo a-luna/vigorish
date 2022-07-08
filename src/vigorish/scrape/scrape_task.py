@@ -45,6 +45,10 @@ class ScrapeTaskABC(ABC):
     def date_range(self):
         return get_date_range(self.start_date, self.end_date)
 
+    @property
+    def total_urls(self):
+        return self.url_tracker.total_urls if self.url_tracker else 0
+
     def execute(self, start_date=None, end_date=None):
         self.start_date = start_date
         self.end_date = end_date
@@ -127,6 +131,7 @@ class ScrapeTaskABC(ABC):
     def invoke_nodejs_script(self):
         missing_urls_filepath = self.url_tracker.create_missing_urls_json_file()
         script_args = self.config.get_nodejs_script_args(self.data_set, missing_urls_filepath)
+        print()
         result = execute_nodejs_script(NODEJS_SCRIPT, script_args)
         missing_urls_filepath.unlink()
         return result

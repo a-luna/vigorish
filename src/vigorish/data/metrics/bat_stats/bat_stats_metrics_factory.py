@@ -1,6 +1,5 @@
 from copy import deepcopy
 from functools import cached_property
-from typing import Dict, List
 
 import vigorish.database as db
 from vigorish.constants import TEAM_ID_MAP
@@ -13,8 +12,8 @@ from vigorish.enums import DefensePosition
 class BatStatsMetricsFactory:
     def __init__(self, db_session):
         self.db_session = db_session
-        self.player_cache: Dict[int, PlayerBatStatsMetrics] = {}
-        self.team_cache: Dict[int, TeamBatStatsMetrics] = {}
+        self.player_cache: dict[int, PlayerBatStatsMetrics] = {}
+        self.team_cache: dict[int, TeamBatStatsMetrics] = {}
 
     @cached_property
     def team_id_map(self):
@@ -33,7 +32,7 @@ class BatStatsMetricsFactory:
             self.team_cache[team_id_bbref] = self._get_bat_stats_metrics_set_for_team(team_id_bbref)
         return self.team_cache[team_id_bbref]
 
-    def for_all_teams(self, year: int) -> List[BatStatsMetrics]:
+    def for_all_teams(self, year: int) -> list[BatStatsMetrics]:
         return [
             BatStatsMetrics(
                 bat_stats=deepcopy(self._get_bat_stats_for_team(team_id, year)),
@@ -44,7 +43,7 @@ class BatStatsMetricsFactory:
             for team_id in list(TEAM_ID_MAP.keys())
         ]
 
-    def for_starters_for_all_teams(self, year: int) -> List[BatStatsMetrics]:
+    def for_starters_for_all_teams(self, year: int) -> list[BatStatsMetrics]:
         return [
             BatStatsMetrics(
                 bat_stats=deepcopy(self._get_bat_stats_for_starters_for_team(team_id, year)),
@@ -56,7 +55,7 @@ class BatStatsMetricsFactory:
             for team_id in list(TEAM_ID_MAP.keys())
         ]
 
-    def for_bench_for_all_teams(self, year: int) -> List[BatStatsMetrics]:
+    def for_bench_for_all_teams(self, year: int) -> list[BatStatsMetrics]:
         return [
             BatStatsMetrics(
                 bat_stats=deepcopy(self._get_bat_stats_for_bench_for_team(team_id, year)),
@@ -68,7 +67,7 @@ class BatStatsMetricsFactory:
             for team_id in list(TEAM_ID_MAP.keys())
         ]
 
-    def for_lineup_spots_for_all_teams(self, bat_order_list: List[int], year: int) -> List[BatStatsMetrics]:
+    def for_lineup_spots_for_all_teams(self, bat_order_list: list[int], year: int) -> list[BatStatsMetrics]:
         return [
             BatStatsMetrics(
                 bat_stats=deepcopy(self._get_bat_stats_for_lineup_spots_for_team(bat_order_list, team_id, year)),
@@ -81,9 +80,9 @@ class BatStatsMetricsFactory:
 
     def for_def_positions_for_all_teams(
         self,
-        def_position_list: List[DefensePosition],
+        def_position_list: list[DefensePosition],
         year: int,
-    ) -> List[BatStatsMetrics]:
+    ) -> list[BatStatsMetrics]:
         return [
             BatStatsMetrics(
                 bat_stats=deepcopy(self._get_bat_stats_for_def_positions_for_team(def_position_list, team_id, year)),
@@ -106,17 +105,17 @@ class BatStatsMetricsFactory:
         bat_stats = self.db_session.query(db.BatStats).filter_by(player_id=player.db_player_id).all()
         return PlayerBatStatsMetrics(self.db_session, bat_stats, mlb_id)
 
-    def _get_bat_stats_for_team_franchise(self, team_id_bbref: str) -> List[db.BatStats]:
+    def _get_bat_stats_for_team_franchise(self, team_id_bbref: str) -> list[db.BatStats]:
         return self.db_session.query(db.BatStats).filter(db.BatStats.player_team_id_bbref == team_id_bbref).all()
 
-    def _get_bat_stats_for_team(self, team_id_bbref: str, year: int) -> List[db.BatStats]:
+    def _get_bat_stats_for_team(self, team_id_bbref: str, year: int) -> list[db.BatStats]:
         return (
             self.db_session.query(db.BatStats)
             .filter(db.BatStats.player_team_id == self.team_id_map[year][team_id_bbref])
             .all()
         )
 
-    def _get_bat_stats_for_starters_for_team(self, team_id_bbref: str, year: int) -> List[db.BatStats]:
+    def _get_bat_stats_for_starters_for_team(self, team_id_bbref: str, year: int) -> list[db.BatStats]:
         return (
             self.db_session.query(db.BatStats)
             .filter(db.BatStats.player_team_id == self.team_id_map[year][team_id_bbref])
@@ -124,7 +123,7 @@ class BatStatsMetricsFactory:
             .all()
         )
 
-    def _get_bat_stats_for_bench_for_team(self, team_id_bbref: str, year: int) -> List[db.BatStats]:
+    def _get_bat_stats_for_bench_for_team(self, team_id_bbref: str, year: int) -> list[db.BatStats]:
         return (
             self.db_session.query(db.BatStats)
             .filter(db.BatStats.player_team_id == self.team_id_map[year][team_id_bbref])
@@ -133,8 +132,8 @@ class BatStatsMetricsFactory:
         )
 
     def _get_bat_stats_for_lineup_spots_for_team(
-        self, bat_order_list: List[int], team_id_bbref: str, year: int
-    ) -> List[db.BatStats]:
+        self, bat_order_list: list[int], team_id_bbref: str, year: int
+    ) -> list[db.BatStats]:
         team_bat_stats = (
             self.db_session.query(db.BatStats)
             .filter(db.BatStats.player_team_id == self.team_id_map[year][team_id_bbref])
@@ -143,8 +142,8 @@ class BatStatsMetricsFactory:
         return [bat_stats for bat_stats in team_bat_stats if bat_stats.bat_order in bat_order_list]
 
     def _get_bat_stats_for_def_positions_for_team(
-        self, def_position_list: List[DefensePosition], team_id_bbref: str, year: int
-    ) -> List[db.BatStats]:
+        self, def_position_list: list[DefensePosition], team_id_bbref: str, year: int
+    ) -> list[db.BatStats]:
         team_bat_stats = (
             self.db_session.query(db.BatStats)
             .filter(db.BatStats.player_team_id == self.team_id_map[year][team_id_bbref])
@@ -157,5 +156,5 @@ class BatStatsMetricsFactory:
         ]
 
 
-def _convert_def_position_list_to_str_list(def_positions: List[DefensePosition]) -> List[str]:
+def _convert_def_position_list_to_str_list(def_positions: list[DefensePosition]) -> list[str]:
     return [str(int(def_pos)) for def_pos in def_positions]

@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Mapping
+from typing import Mapping
 
 from dateutil import tz
 
@@ -27,7 +27,7 @@ class BrooksPitchFxLog:
     game_time_minute: str = ""
     time_zone_name: str = ""
     pitchfx_url: str = ""
-    pitchfx_log: List[BrooksPitchFxData] = field(default_factory=list)
+    pitchfx_log: list[BrooksPitchFxData] = field(default_factory=list)
 
     @property
     def game_date(self):

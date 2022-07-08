@@ -2,7 +2,6 @@
 from collections import defaultdict, OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Dict, List
 
 import vigorish.database as db
 from vigorish.constants import (
@@ -39,18 +38,18 @@ class CombineScrapedDataTask(Task):
     game_status: db.GameScrapeStatus
     boxscore: BBRefBoxscore
     pitchfx_logs_for_game: BrooksPitchFxLog
-    player_id_dict: Dict
-    at_bat_ids: List
-    at_bat_event_groups: Dict
-    all_pfx_data_for_game: List
-    removed_pfx: List
+    player_id_dict: dict
+    at_bat_ids: list
+    at_bat_event_groups: dict
+    all_pfx_data_for_game: list
+    removed_pfx: list
     all_removed_pfx: defaultdict
     invalid_pitchfx: defaultdict
-    game_events_combined_data: List
+    game_events_combined_data: list
     gather_scraped_data_success: bool
     combined_data_success: bool
     save_combined_data_success: bool
-    error_messages: List[str]
+    error_messages: list[str]
 
     def __init__(self, app):
         super().__init__(app)

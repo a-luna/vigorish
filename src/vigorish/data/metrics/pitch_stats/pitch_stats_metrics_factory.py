@@ -1,6 +1,5 @@
 from copy import deepcopy
 from functools import cached_property
-from typing import Dict, List
 
 import vigorish.database as db
 from vigorish.constants import TEAM_ID_MAP
@@ -12,8 +11,8 @@ from vigorish.data.metrics.pitch_stats.team_pitch_stat_metrics import TeamPitchS
 class PitchStatsMetricsFactory:
     def __init__(self, db_session):
         self.db_session = db_session
-        self.player_cache: Dict[int, PlayerPitchStatsMetrics] = {}
-        self.team_cache: Dict[int, TeamPitchStatsMetrics] = {}
+        self.player_cache: dict[int, PlayerPitchStatsMetrics] = {}
+        self.team_cache: dict[int, TeamPitchStatsMetrics] = {}
 
     @cached_property
     def team_id_map(self):
@@ -32,7 +31,7 @@ class PitchStatsMetricsFactory:
             self.team_cache[team_id_bbref] = self._get_pitch_stats_metrics_set_for_team(team_id_bbref)
         return self.team_cache[team_id_bbref]
 
-    def for_all_teams(self, year: int) -> List[PitchStatsMetrics]:
+    def for_all_teams(self, year: int) -> list[PitchStatsMetrics]:
         return [
             PitchStatsMetrics(
                 pitch_stats=deepcopy(self._get_pitch_stats_for_team(team_id, year)),
@@ -43,7 +42,7 @@ class PitchStatsMetricsFactory:
             for team_id in list(TEAM_ID_MAP.keys())
         ]
 
-    def for_sp_for_all_teams(self, year: int) -> List[PitchStatsMetrics]:
+    def for_sp_for_all_teams(self, year: int) -> list[PitchStatsMetrics]:
         return [
             PitchStatsMetrics(
                 pitch_stats=deepcopy(self._get_pitch_stats_for_sp_for_team(team_id, year)),
@@ -55,7 +54,7 @@ class PitchStatsMetricsFactory:
             for team_id in list(TEAM_ID_MAP.keys())
         ]
 
-    def for_rp_for_all_teams(self, year: int) -> List[PitchStatsMetrics]:
+    def for_rp_for_all_teams(self, year: int) -> list[PitchStatsMetrics]:
         return [
             PitchStatsMetrics(
                 pitch_stats=deepcopy(self._get_pitch_stats_for_rp_for_team(team_id, year)),
@@ -79,17 +78,17 @@ class PitchStatsMetricsFactory:
         pitch_stats = self.db_session.query(db.PitchStats).filter_by(player_id=pitcher.db_player_id).all()
         return PlayerPitchStatsMetrics(self.db_session, pitch_stats, mlb_id)
 
-    def _get_pitch_stats_for_team_franchise(self, team_id_bbref: str) -> List[db.PitchStats]:
+    def _get_pitch_stats_for_team_franchise(self, team_id_bbref: str) -> list[db.PitchStats]:
         return self.db_session.query(db.PitchStats).filter(db.PitchStats.player_team_id_bbref == team_id_bbref).all()
 
-    def _get_pitch_stats_for_team(self, team_id_bbref: str, year: int) -> List[db.PitchStats]:
+    def _get_pitch_stats_for_team(self, team_id_bbref: str, year: int) -> list[db.PitchStats]:
         return (
             self.db_session.query(db.PitchStats)
             .filter(db.PitchStats.player_team_id == self.team_id_map[year][team_id_bbref])
             .all()
         )
 
-    def _get_pitch_stats_for_sp_for_team(self, team_id_bbref: str, year: int) -> List[db.PitchStats]:
+    def _get_pitch_stats_for_sp_for_team(self, team_id_bbref: str, year: int) -> list[db.PitchStats]:
         return (
             self.db_session.query(db.PitchStats)
             .filter(db.PitchStats.player_team_id == self.team_id_map[year][team_id_bbref])
@@ -97,7 +96,7 @@ class PitchStatsMetricsFactory:
             .all()
         )
 
-    def _get_pitch_stats_for_rp_for_team(self, team_id_bbref: str, year: int) -> List[db.PitchStats]:
+    def _get_pitch_stats_for_rp_for_team(self, team_id_bbref: str, year: int) -> list[db.PitchStats]:
         return (
             self.db_session.query(db.PitchStats)
             .filter(db.PitchStats.player_team_id == self.team_id_map[year][team_id_bbref])

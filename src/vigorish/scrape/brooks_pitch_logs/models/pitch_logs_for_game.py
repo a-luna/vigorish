@@ -1,7 +1,6 @@
 """Pitch logs and pitchfx URLs for a single game."""
 import json
 from dataclasses import dataclass, field
-from typing import List
 
 from vigorish.scrape.brooks_pitch_logs.models.pitch_log import BrooksPitchLog
 from vigorish.util.list_helpers import as_dict_list
@@ -15,7 +14,7 @@ class BrooksPitchLogsForGame:
     bb_game_id: str = ""
     bbref_game_id: str = ""
     pitch_log_count: str = ""
-    pitch_logs: List[BrooksPitchLog] = field(default_factory=list)
+    pitch_logs: list[BrooksPitchLog] = field(default_factory=list)
 
     @property
     def game_date(self):

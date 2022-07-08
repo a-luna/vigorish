@@ -3,7 +3,6 @@ import itertools
 from collections import defaultdict, OrderedDict
 from datetime import datetime
 from random import randint
-from typing import Dict
 
 from vigorish.util.dt_format_strings import DT_AWARE
 
@@ -43,7 +42,7 @@ def report_dict(dict, title="", title_prefix="### ", title_suffix=" ###", extra_
     return report.strip()
 
 
-def dict_to_param_list(input_dict: Dict):
+def dict_to_param_list(input_dict: dict):
     params = []
     for name, value in input_dict.items():
         if isinstance(value, bool) and value:

@@ -21,9 +21,11 @@ from vigorish.util.numeric_helpers import is_even
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import fuzzy_match
 
+
 _SPECIAL_NOTE_XPATH = '//div[@class="special_note"]/text()'
 _TEAM_ID_XPATH = '//a[@itemprop="name"]/@href'
-_SCOREBOX_TEAM_URL_XPATH = '//div[@class="scorebox"]//a[@itemprop="name"]/@href'
+# _SCOREBOX_TEAM_URL_XPATH = '//div[@class="scorebox"]/div[contains(@class, "logo")]//a/@href'
+_SCOREBOX_TEAM_URL_XPATH = '//div[@class="scorebox"]//a[contains(@href, "/teams/")]//@href'
 _LINESCORE_TEAM_URL_XPATH = '//div[@class="linescore_wrap"]/table/tbody/tr[position()=1 or position()=2]/td[2]//a/@href'
 _AWAY_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[1]/div[3]/text()'
 _HOME_TEAM_RECORD_XPATH = '//div[@class="scorebox"]/div[2]/div[3]/text()'
@@ -127,6 +129,8 @@ PBP_STATS = {
     "play_index_url": "play_index_url",
 }
 
+_TEAM_URL_REGEX = re.compile(r"/teams/(?P<team_id>[A-Z]{3,3})/\d{4,4}.shtml")
+
 _TEAM_ID_REGEX = re.compile(r"[A-Z]{3,3}")
 _W_L_SV_NAME_REGEX = re.compile(r"[LPSVW]{2,2}: (.+) (?:\(\d{1,2}-?\d{0,2}\))")
 _ATTENDANCE_REGEX = re.compile(r"\d{1,2},\d{3,3}")
@@ -141,6 +145,7 @@ _START_WEATHER_REGEX = re.compile(
 _START_WEATHER_DOME_REGEX = re.compile(
     r"(?P<temperature>\d{1,3})° F, Wind (?P<wind_speed>\d{1,3})mph, (?P<cloud_cover>[\w\s]+)"
 )
+_START_WEATHER_DOME2_REGEX = re.compile(r"(?P<temperature>\d{1,3})° F, In Dome.")
 _CHANGE_POS_REGEX = re.compile(r"from\s\b(?P<old_pos>\w+)\b\sto\s\b(?P<new_pos>\w+)\b")
 _POS_REGEX = re.compile(r"\([BCDFHLPRS123]{1,2}\)")
 _NUM_REGEX = re.compile(r"[1-9]{1}")
@@ -154,7 +159,6 @@ _INNING_TOTALS_REGEX = re.compile(
     r"(?P<home_team_name>\s\b\w+\b){1,2} "
     r"(?P<home_team_runs>\d{1,2})"
 )
-
 
 def parse_bbref_boxscore(scraped_html, url, game_id):
     """Parse boxscore data from the page source."""
@@ -240,21 +244,22 @@ def _parse_team_ids(page_content):
     sbox_urls = page_content.xpath(_SCOREBOX_TEAM_URL_XPATH)
     if not sbox_urls or len(sbox_urls) != 2:
         return None
-    matches = _TEAM_ID_REGEX.findall(sbox_urls[0])
-    sbox_away_team_id = matches[0] if matches else None
-    matches = _TEAM_ID_REGEX.findall(sbox_urls[1])
-    sbox_home_team_id = matches[0] if matches else None
+    sbox_away_team_id = _parse_team_id_from_url(sbox_urls[0])
+    sbox_home_team_id = _parse_team_id_from_url(sbox_urls[1])
 
     line_urls = page_content.xpath(_LINESCORE_TEAM_URL_XPATH)
     if not line_urls or len(line_urls) != 2:
         return None
-    matches = _TEAM_ID_REGEX.findall(line_urls[0])
-    line_away_team_id = matches[0] if matches else None
-    matches = _TEAM_ID_REGEX.findall(line_urls[1])
-    line_home_team_id = matches[0] if matches else None
+    line_away_team_id = _parse_team_id_from_url(line_urls[0])
+    line_home_team_id = _parse_team_id_from_url(line_urls[1])
 
     reverse_home_away = sbox_away_team_id == line_home_team_id and sbox_home_team_id == line_away_team_id
     return (line_away_team_id, line_home_team_id, reverse_home_away)
+
+
+def _parse_team_id_from_url(url):
+    match = _TEAM_URL_REGEX.search(url)
+    return match.groupdict()['team_id'] if match else None
 
 
 def _parse_data_tables(page_content):
@@ -285,22 +290,6 @@ def _parse_data_tables(page_content):
         home_team_pitch_table,
         play_by_play_table,
     )
-
-
-def _parse_away_team_id(page_content):
-    name_urls = page_content.xpath(_TEAM_ID_XPATH)
-    if not name_urls:
-        return None
-    matches = _TEAM_ID_REGEX.findall(name_urls[0])
-    return matches[0] if matches else None
-
-
-def _parse_home_team_id(page_content):
-    name_urls = page_content.xpath(_TEAM_ID_XPATH)
-    if not name_urls:
-        return None
-    matches = _TEAM_ID_REGEX.findall(name_urls[1])
-    return matches[0] if matches else None
 
 
 def _parse_all_team_data(
@@ -620,6 +609,7 @@ def _parse_game_meta_info(page_content):
         return Result.Fail(error)
     match_norm = _START_WEATHER_REGEX.search(first_pitch_weather[0])
     match_dome = _START_WEATHER_DOME_REGEX.search(first_pitch_weather[0])
+    match_dome2 = _START_WEATHER_DOME2_REGEX.search(first_pitch_weather[0])
     if match_norm:
         match_dict = match_norm.groupdict()
         first_pitch_temperature = match_dict["temperature"]
@@ -632,6 +622,12 @@ def _parse_game_meta_info(page_content):
         first_pitch_clouds = match_dict["cloud_cover"]
         first_pitch_precipitation = ""
         first_pitch_wind = f'Wind {match_dict["wind_speed"]}mph'
+    elif match_dome2:
+        match_dict = match_dome2.groupdict()
+        first_pitch_temperature = match_dict["temperature"]
+        first_pitch_clouds = 'In Dome'
+        first_pitch_precipitation = ""
+        first_pitch_wind = 'Wind 0mph'
     else:
         error = f"First pitch weather info is not in expected format:\n{first_pitch_weather}"
         return Result.Fail(error)

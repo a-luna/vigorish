@@ -380,7 +380,7 @@ class DateScrapeStatus(db.Base):
         )
 
     def __init__(self, **kwargs):
-        super(DateScrapeStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = self.game_date.strftime(DATE_ONLY_TABLE_ID)
 
     def __repr__(self):

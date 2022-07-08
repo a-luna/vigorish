@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List
 
 from vigorish.scrape.bbref_boxscores.models.pbp_event import BBRefPlayByPlayEvent
 from vigorish.scrape.bbref_boxscores.models.pbp_other import BBRefPlayByPlayMiscEvent
@@ -19,9 +18,9 @@ class BBRefHalfInning:
     inning_total_left_on_base: str = "0"
     away_team_runs_after_inning: str = "0"
     home_team_runs_after_inning: str = "0"
-    game_events: List[BBRefPlayByPlayEvent] = field(default_factory=list)
-    substitutions: List[BBRefInGameSubstitution] = field(default_factory=list)
-    misc_events: List[BBRefPlayByPlayMiscEvent] = field(default_factory=list)
+    game_events: list[BBRefPlayByPlayEvent] = field(default_factory=list)
+    substitutions: list[BBRefInGameSubstitution] = field(default_factory=list)
+    misc_events: list[BBRefPlayByPlayMiscEvent] = field(default_factory=list)
 
     def as_dict(self):
         """Convert half-inning to a dictionary."""

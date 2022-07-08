@@ -123,6 +123,19 @@ def add_mlb_seasons(db_session):
                 end_date=date(2021, 11, 3),
                 season_type=SeasonType.POST_SEASON,
             ),
+            db.Season(
+                year=2022,
+                start_date=date(2022, 4, 7),
+                end_date=date(2022, 10, 5),
+                asg_date=date(2022, 7, 19),
+                season_type=SeasonType.REGULAR_SEASON,
+            ),
+            db.Season(
+                year=2022,
+                start_date=date(2022, 10, 7),
+                end_date=date(2022, 11, 3),
+                season_type=SeasonType.POST_SEASON,
+            ),
         ]
 
         for season in tqdm(

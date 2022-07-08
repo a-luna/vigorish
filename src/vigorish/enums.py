@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from enum import Enum, IntEnum
-from typing import List
 
 from aenum import auto, IntFlag
 
@@ -43,6 +42,14 @@ class DataSet(IntFlag):
 
     def __str__(self):
         return self.name
+
+    def display_string(self):
+        split = self.name.split('_')
+        site_name = "BBRef" if split[0] == "BBREF" else "Brooks"
+        data_type = ' '.join(s.title() for s in split[1:])
+        if data_type == 'Pitchfx':
+            data_type = 'PitchFX'
+        return f"{site_name} {data_type}"
 
     @classmethod
     def from_str(cls, name):
@@ -322,6 +329,8 @@ class PitchType(IntFlag):
     SINKER = auto()
     SLIDER = auto()
     UNKNOWN = auto()
+    SLOW_CURVE = auto()
+    AUTOMATIC_BALL = auto()
     ALL = (
         CHANGEUP
         | CURVEBALL
@@ -340,6 +349,8 @@ class PitchType(IntFlag):
         | SINKER
         | SLIDER
         | UNKNOWN
+        | SLOW_CURVE
+        | AUTOMATIC_BALL
     )
     PERCENTILES = (
         CHANGEUP
@@ -352,6 +363,7 @@ class PitchType(IntFlag):
         | KNUCKLE_BALL_CURVE
         | SINKER
         | SLIDER
+        | SLOW_CURVE
     )
 
     def __str__(self):
@@ -359,6 +371,7 @@ class PitchType(IntFlag):
             "NONE": "N/A",
             "CHANGEUP": "CH",
             "CURVEBALL": "CU",
+            "SLOW_CURVE": "CS",
             "EEPHUS": "EP",
             "FASTBALL": "FA",
             "CUTTER": "FC",
@@ -374,6 +387,7 @@ class PitchType(IntFlag):
             "SINKER": "SI",
             "SLIDER": "SL",
             "UNKNOWN": "UN",
+            "AUTOMATIC_BALL": "AB",
         }
         return abbrev_dict.get(self.name, self.name)
 
@@ -410,7 +424,7 @@ class PitchType(IntFlag):
         return cls.NONE
 
     @classmethod
-    def deconstruct_pitch_types_from_int(cls, pitch_mix_int) -> List[PitchType]:
+    def deconstruct_pitch_types_from_int(cls, pitch_mix_int) -> list[PitchType]:
         return [pitch_type for pitch_type in cls if pitch_mix_int & pitch_type == pitch_type]
 
 

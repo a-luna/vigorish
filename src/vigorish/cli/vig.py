@@ -21,6 +21,7 @@ from vigorish.tasks import SyncDataNoPromptsTask
 from vigorish.util.datetime_util import current_year, today_str
 from vigorish.util.result import Result
 from vigorish.util.string_helpers import flatten_list2d
+from vigorish.util.sys_helpers import run_command
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
@@ -330,3 +331,7 @@ def exit_app_error(message):
         else:
             print_message(message, fg="bright_red", bold=True)
     return 1
+
+
+if __name__ == '__main__':
+    run_command('vig ui')

@@ -53,9 +53,9 @@ class CalculateAvgPitchTimesTask(Task):
         return Result.Ok(metrics)
 
     def calc_pitch_metrics(self, combined_data):
-        pitch_samples = []
-        at_bat_samples = []
-        inning_samples = []
+        all_pitch_samples = []
+        all_at_bat_samples = []
+        all_inning_samples = []
         prev_ab_pfx = None
         prev_inn_pfx = None
         for half_inning in combined_data["play_by_play_data"]:
@@ -65,34 +65,54 @@ class CalculateAvgPitchTimesTask(Task):
                     or at_bat["at_bat_pitchfx_audit"]["missing_pitchfx_count"]
                 ):
                     continue
-                for count, pfx in enumerate(at_bat["pitchfx"], start=1):
-                    if count == 1 and prev_inn_pfx and ab_num == 1:
-                        between_innings = self.get_seconds_between_pitches(prev_inn_pfx, pfx)
-                        if between_innings > 0:
-                            inning_samples.append(between_innings)
-                        prev_inn_pfx = None
-                    if count == 1 and prev_ab_pfx and ab_num != 1:
-                        between_at_bats = self.get_seconds_between_pitches(prev_ab_pfx, pfx)
-                        if between_at_bats > 0:
-                            at_bat_samples.append(between_at_bats)
-                        prev_ab_pfx = None
-                    if count == len(at_bat["pitchfx"]):
-                        if ab_num == len(half_inning["inning_events"]):
-                            prev_inn_pfx = pfx
-                        else:
-                            prev_ab_pfx = pfx
-                        continue
-                    between_pitches = self.get_seconds_between_pitches(pfx, at_bat["pitchfx"][count])
-                    if between_pitches > 0:
-                        pitch_samples.append(between_pitches)
+                (
+                    pitch_samples,
+                    at_bat_samples,
+                    inning_samples,
+                    prev_ab_pfx,
+                    prev_inn_pfx,
+                ) = self.calc_pitch_metrics_for_at_bat(half_inning, at_bat, ab_num, prev_inn_pfx, prev_ab_pfx)
+                if pitch_samples:
+                    all_pitch_samples.extend(pitch_samples)
+                if at_bat_samples:
+                    all_at_bat_samples.extend(at_bat_samples)
+                if inning_samples:
+                    all_inning_samples.extend(inning_samples)
+
         return (
-            pitch_samples,
-            self.process_data_set(pitch_samples),
-            at_bat_samples,
-            self.process_data_set(at_bat_samples),
-            inning_samples,
-            self.process_data_set(inning_samples),
+            all_pitch_samples,
+            self.process_data_set(all_pitch_samples),
+            all_at_bat_samples,
+            self.process_data_set(all_at_bat_samples),
+            all_inning_samples,
+            self.process_data_set(all_inning_samples),
         )
+
+    def calc_pitch_metrics_for_at_bat(self, half_inning, at_bat, ab_num, prev_inn_pfx, prev_ab_pfx):
+        pitch_samples = []
+        at_bat_samples = []
+        inning_samples = []
+        for count, pfx in enumerate(at_bat["pitchfx"], start=1):
+            if count == 1 and prev_inn_pfx and ab_num == 1:
+                between_innings = self.get_seconds_between_pitches(prev_inn_pfx, pfx)
+                if between_innings > 0:
+                    inning_samples.append(between_innings)
+                prev_inn_pfx = None
+            if count == 1 and prev_ab_pfx and ab_num != 1:
+                between_at_bats = self.get_seconds_between_pitches(prev_ab_pfx, pfx)
+                if between_at_bats > 0:
+                    at_bat_samples.append(between_at_bats)
+                prev_ab_pfx = None
+            if count == len(at_bat["pitchfx"]):
+                if ab_num == len(half_inning["inning_events"]):
+                    prev_inn_pfx = pfx
+                else:
+                    prev_ab_pfx = pfx
+                continue
+            between_pitches = self.get_seconds_between_pitches(pfx, at_bat["pitchfx"][count])
+            if between_pitches > 0:
+                pitch_samples.append(between_pitches)
+        return (pitch_samples, at_bat_samples, inning_samples, prev_ab_pfx, prev_inn_pfx)
 
     def get_seconds_between_pitches(self, pitch1, pitch2):
         pitch1_thrown = self.get_time_pitch_thrown(pitch1)

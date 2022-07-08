@@ -1,6 +1,6 @@
 const { readFileSync, writeFileSync } = require("fs")
 const cliProgress = require("cli-progress")
-const colors = require("colors")
+const colors = require("ansi-colors")
 var joinPath = require("path.join")
 const { makeChunkedList, makeIrregularChunkedList } = require("./list_functions")
 
@@ -58,7 +58,7 @@ const sleep = (timeoutMs) => new Promise((resolve) => setTimeout(resolve, timeou
 const getRandomInt = (min, max) =>
     Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min))) + Math.ceil(min)
 
-async function executeBatchJob(nightmare, urlSetFilepath, batchParams, timeoutParams) {
+async function executeBatchJob(page, urlSetFilepath, batchParams, timeoutParams) {
     let batchCounter = 0
     let urlCounter = 0
     const allUrls = readUrlSetFromFile(urlSetFilepath)
@@ -67,7 +67,7 @@ async function executeBatchJob(nightmare, urlSetFilepath, batchParams, timeoutPa
     for await (const urlBatch of batchList) {
         batchBar.update(batchCounter, { message: urlBatchMessage(batchList[batchCounter].length) })
         urlCounter = await scrapeUrlBatch(
-            nightmare,
+            page,
             urlBatch,
             timeoutParams,
             urlCounter,
@@ -104,7 +104,7 @@ function initializeProgressBars(batchList, totalUrls) {
     return [batchBar, urlBar, comboBar]
 }
 
-async function scrapeUrlBatch(nightmare, urlSet, timeoutParams, urlCounter, urlBar, comboBar) {
+async function scrapeUrlBatch(page, urlSet, timeoutParams, urlCounter, urlBar, comboBar) {
     comboBar.setTotal(urlSet.length)
     const urlCounterStart = urlCounter
     for await (const { url, url_id, htmlFileName, htmlFolderpath } of urlSet) {
@@ -113,7 +113,7 @@ async function scrapeUrlBatch(nightmare, urlSet, timeoutParams, urlCounter, urlB
             unit: "URLs",
         })
         urlBar.update(urlCounter, { message: pBarMessage(url_id) })
-        await scrapeUrl(nightmare, url, htmlFileName, htmlFolderpath, timeoutParams)
+        await scrapeUrl(page, url, htmlFileName, htmlFolderpath, timeoutParams)
         urlCounter += 1
     }
     urlBar.update(urlCounter)
@@ -159,50 +159,41 @@ function timeoutMessage(minutes, seconds) {
     return pBarMessage(`${minPad}:${secPad} until next batch`)
 }
 
-async function scrapeUrls(nightmare, urlSetFilepath, timeoutParams) {
+async function scrapeUrls(page, urlSetFilepath, timeoutParams) {
     const urlSet = readUrlSetFromFile(urlSetFilepath)
     const urlBar = multibar.create(urlSet.length, 0, { message: "N/A", unit: "URLs" })
     let counter = 0
     for await (const { url, url_id, htmlFileName, htmlFolderpath } of urlSet) {
         urlBar.update(counter, { message: url_id })
-        await scrapeUrl(nightmare, url, htmlFileName, htmlFolderpath, timeoutParams)
+        await scrapeUrl(page, url, htmlFileName, htmlFolderpath, timeoutParams)
         counter += 1
     }
     urlBar.stop()
 }
 
-async function scrapeUrl(nightmare, url, outputFileName, outputFolderPath, timeoutParams) {
+async function scrapeUrl(page, url, outputFileName, outputFolderPath, timeoutParams) {
+    const {urlTimeoutMinMs, urlTimeoutMaxMs} = timeoutParams
     let remaining = 10
     let html = ""
     while (remaining > 0 && html == "") {
         try {
-            html = await fetchUrl(nightmare, url, timeoutParams)
+            await page.goto(url, { waitUntil: 'networkidle0' })
+            html = await page.content()
         } catch (error) {
             remaining -= 1
             if (remaining > 0) {
                 await sleep(getRandomInt(urlTimeoutMinMs, urlTimeoutMaxMs))
             }
         }
+        finally {
+            await page.waitForTimeout(getRandomInt(urlTimeoutMinMs, urlTimeoutMaxMs))
+        }
     }
     if (html == "") {
-        throw `Failed to retrieve HTML after 10 attempts. URL: ${url}`
+        throw `Failed to retrieve HTML! URL: ${url}`
     }
     const filePath = joinPath(outputFolderPath, outputFileName)
     writeFileSync(filePath, html)
-    return filePath
-}
-
-async function fetchUrl(nightmare, url, { urlTimeoutMinMs, urlTimeoutMaxMs }) {
-    try {
-        await nightmare.on("did-get-response-details", () => (startTime = Date.now()))
-        await nightmare.goto(url)
-        await nightmare.waitUntilNetworkIdle(500)
-        const html = await nightmare.evaluate(() => document.body.innerHTML)
-        await nightmare.wait(getRandomInt(urlTimeoutMinMs, urlTimeoutMaxMs))
-        return html
-    } catch (e) {
-        console.log(e)
-    }
 }
 
 module.exports = {
