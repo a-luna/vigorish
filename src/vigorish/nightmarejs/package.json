@@ -10,6 +10,6 @@
     "fs": "0.0.1-security",
     "minimist": "^1.2.5",
     "path.join": "^1.0.0",
-    "puppeteer": "^15.0.0"
+    "puppeteer": "^15.3.2"
   } 
 }
