@@ -65,7 +65,7 @@ jedi==0.18.1
 jeepney==0.8.0
 jmespath==1.0.1
 jupyter-client==7.3.4
-jupyter-core==4.11.0
+jupyter-core==4.11.2
 keyring==23.6.0
 log-symbols==0.0.14
 lxml==4.9.1
