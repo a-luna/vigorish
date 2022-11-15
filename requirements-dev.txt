@@ -155,3 +155,4 @@ w3lib==1.22.0
 wcwidth==0.2.5
 webencodings==0.5.1
 zipp==3.8.0
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
