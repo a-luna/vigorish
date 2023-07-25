@@ -13,7 +13,7 @@ blessed==1.19.1
 boto3==1.24.25
 botocore==1.27.25
 bullet==2.2.0
-certifi==2022.6.15
+certifi==2023.7.22
 cffi==1.15.1
 chardet==4.0.0
 charset-normalizer==2.0.12
