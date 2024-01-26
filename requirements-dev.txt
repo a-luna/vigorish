@@ -25,7 +25,7 @@ colorama==0.4.5
 colorclass==2.2.2
 commonmark==0.9.1
 coverage==6.4.1
-cryptography==37.0.4
+cryptography==42.0.0
 dacite==1.6.0
 dataclass-csv==1.4.0
 DataProperty==0.55.0
