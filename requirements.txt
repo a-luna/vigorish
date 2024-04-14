@@ -12,7 +12,7 @@ dataclass-csv==1.4.0
 enlighten==1.10.2
 Events==0.4
 halo==0.0.31
-idna==3.3
+idna==3.7
 jmespath==1.0.1
 log-symbols==0.0.14
 lxml==4.9.1
