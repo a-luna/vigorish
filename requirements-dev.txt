@@ -25,7 +25,7 @@ colorama==0.4.5
 colorclass==2.2.2
 commonmark==0.9.1
 coverage==6.4.1
-cryptography==37.0.4
+cryptography==42.0.8
 dacite==1.6.0
 dataclass-csv==1.4.0
 DataProperty==0.55.0
@@ -141,7 +141,7 @@ termcolor==1.1.0
 terminaltables==3.1.10
 toml==0.10.2
 tomli==2.0.1
-tornado==6.2
+tornado==6.4.1
 tox==3.25.1
 tqdm==4.64.0
 traitlets==5.3.0
